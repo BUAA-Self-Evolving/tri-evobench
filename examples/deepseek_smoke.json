@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1",
+  "benchmark": {
+    "id": "trievo-deepseek-smoke",
+    "max_total_tokens": 3000000
+  },
+  "agent": {
+    "type": "openai_compatible",
+    "system_prompt": "You are an execution agent in a benchmark. Return one valid JSON object only, with no Markdown fences. Required keys are response as a string and actions as an array. Each action must be a file write or file removal under /workspace. Use exact paths and contents requested. Do not claim a file was changed unless an action changes it."
+  },
+  "judge": {
+    "type": "hybrid",
+    "rubric": "Be strict and only use the supplied rubric, response, and sandbox snapshot."
+  },
+  "flows": [
+    {
+      "id": "deepseek-flow-001",
+      "sandbox": {
+        "backend": "docker",
+        "image": "trievo-ubuntu:22.04"
+      },
+      "turns": [
+        {
+          "id": "turn-profile-fact",
+          "request": "Create /workspace/profile.txt. The file must contain name=Lin and language=Chinese, with no Markdown.",
+          "max_interactions": 2,
+          "user": {
+            "followups": [
+              "Correction: write the exact file /workspace/profile.txt and include both name=Lin and language=Chinese."
+            ]
+          },
+          "verifier": {
+            "type": "all",
+            "checks": [
+              {"type": "file_contains", "path": "/workspace/profile.txt", "value": "name=Lin"},
+              {"type": "file_contains", "path": "/workspace/profile.txt", "value": "language=Chinese"}
+            ]
+          }
+        },
+        {
+          "id": "turn-delayed-use",
+          "request": "Use the shared Flow workspace. Read the existing profile fact name=Lin and create /workspace/greeting.txt containing Hello Lin.",
+          "max_interactions": 2,
+          "user": {
+            "followups": [
+              "Please inspect the shared workspace and create /workspace/greeting.txt containing Hello Lin."
+            ]
+          },
+          "verifier": {
+            "type": "file_contains",
+            "path": "/workspace/greeting.txt",
+            "value": "Hello Lin"
+          }
+        },
+        {
+          "id": "turn-config-repair",
+          "request": "Repair /workspace/app.conf by changing mode=development to mode=production. Preserve port=8080 and debug=false. Do not add Markdown.",
+          "setup": {
+            "files": [
+              {
+                "path": "/workspace/app.conf",
+                "content": "port=8080;mode=development;debug=false"
+              }
+            ]
+          },
+          "max_interactions": 2,
+          "user": {
+            "followups": [
+              "Only change mode to production in /workspace/app.conf and preserve port=8080 and debug=false."
+            ]
+          },
+          "verifier": {
+            "type": "all",
+            "checks": [
+              {"type": "file_contains", "path": "/workspace/app.conf", "value": "port=8080"},
+              {"type": "file_contains", "path": "/workspace/app.conf", "value": "mode=production"},
+              {"type": "file_contains", "path": "/workspace/app.conf", "value": "debug=false"}
+            ]
+          }
+        },
+        {
+          "id": "turn-json-artifact",
+          "request": "Create /workspace/report.json as valid JSON with status ready, owner Lin, and items equal to 2. Do not wrap it in Markdown.",
+          "max_interactions": 2,
+          "user": {
+            "followups": [
+              "Create valid JSON at /workspace/report.json with status ready, owner Lin, and items 2."
+            ]
+          },
+          "verifier": {
+            "type": "json_file_equals",
+            "path": "/workspace/report.json",
+            "value": {
+              "status": "ready",
+              "owner": "Lin",
+              "items": 2
+            }
+          }
+        },
+        {
+          "id": "turn-llm-judge",
+          "request": "In one concise sentence, summarize the final state: owner Lin, status ready, and two items. Do not invent other facts.",
+          "max_interactions": 1,
+          "verifier": {
+            "type": "llm_rubric",
+            "rubric": "Pass if the response is one concise sentence and states all three facts: owner is Lin, status is ready, and there are two items. Fail if any fact is missing or contradicted.",
+            "pass_threshold": 0.8
+          }
+        }
+      ]
+    }
+  ]
+}

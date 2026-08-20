@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trievo-bench.local/schema/0.1/benchmark.json",
+  "title": "Tri-EvoBench benchmark specification",
+  "type": "object",
+  "required": ["schema_version", "flows"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "benchmark": {"type": "object", "properties": {"id": {"type": "string"}, "max_total_tokens": {"type": "integer", "minimum": 1}}},
+    "agent": {"type": "object"},
+    "judge": {"type": "object"},
+    "flows": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["id", "turns"],
+        "properties": {
+          "id": {"type": "string"},
+          "sandbox": {"type": "object", "properties": {"backend": {"enum": ["local", "docker"]}, "image": {"type": "string"}}},
+          "turns": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "required": ["id", "request", "verifier"],
+              "properties": {
+                "id": {"type": "string"},
+                "request": {"type": "string"},
+                "max_interactions": {"type": "integer", "minimum": 1},
+                "success_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+                "setup": {"type": "object"},
+                "user": {"type": "object"},
+                "verifier": {"type": "object", "required": ["type"]},
+                "metadata": {"type": "object"},
+                "oracle_update": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# Python bytecode and test caches
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments and local package metadata
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account.json
+
+# Experiment outputs and unpacked demo packages
+runs/
+tmp/
+release/
+*.log
+
+# Local clones of external benchmark/framework repositories
+frameworks/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local Docker/runtime state
+.docker/
+.l2_state/

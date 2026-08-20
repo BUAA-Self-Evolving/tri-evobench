@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1",
+  "benchmark": {"id": "trievo-smoke", "max_total_tokens": 3000000},
+  "agent": {
+    "type": "scripted",
+    "policy": {
+      "turn-correction": {
+        "1": {"response": "I created the file, but used the first filename I chose.", "actions": [{"op": "write_file", "path": "/workspace/report.txt", "content": "Weekly report"}], "state_update": {"last_feedback_target": "report_snake_case.txt"}},
+        "2": {"response": "I corrected the filename and content.", "actions": [{"op": "remove", "path": "/workspace/report.txt"}, {"op": "write_file", "path": "/workspace/report_snake_case.txt", "content": "Weekly report\nStatus: ready"}]}
+      },
+      "turn-shared-state": {
+        "1": {"response": "The shared-flow marker is present.", "actions": [{"op": "write_file", "path": "/workspace/flow_marker.txt", "content": "created in an earlier turn"}]}
+      }
+    }
+  },
+  "judge": {"type": "deterministic"},
+  "flows": [
+    {
+      "id": "smoke-flow-001",
+      "sandbox": {"backend": "local", "image": "trievo-ubuntu:22.04"},
+      "turns": [
+        {
+          "id": "turn-correction",
+          "request": "Create the weekly report using the requested naming convention.",
+          "max_interactions": 2,
+          "user": {"followups": ["Please apply the correction: use the exact filename report_snake_case.txt and include the status line."]},
+          "verifier": {"type": "all", "checks": [
+            {"type": "file_contains", "path": "/workspace/report_snake_case.txt", "value": "Weekly report"},
+            {"type": "file_contains", "path": "/workspace/report_snake_case.txt", "value": "Status: ready"}
+          ]}
+        },
+        {
+          "id": "turn-shared-state",
+          "request": "Create a marker proving that this Flow shares its sandbox across Turns.",
+          "setup": {"files": [{"path": "/workspace/previous_turn.txt", "content": "persisted"}]},
+          "verifier": {"type": "all", "checks": [
+            {"type": "file_contains", "path": "/workspace/previous_turn.txt", "value": "persisted"},
+            {"type": "file_contains", "path": "/workspace/flow_marker.txt", "value": "earlier turn"}
+          ]}
+        }
+      ]
+    }
+  ]
+}
