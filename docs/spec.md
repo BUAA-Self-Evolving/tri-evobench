@@ -10,7 +10,11 @@
 4. 发送 request，解析 Agent 的 JSON response 和 actions。
 5. 应用 actions，运行 verifier/judge，记录 snapshot 和 feedback。
 6. 未通过且未达到 max_interactions 时，User Simulator 从 followups 取下一请求。
-7. Turn 结束后，learner 读取轨迹，更新持久 state。
+   不因为分数下降或持平而提前结束。
+7. 达到阈值时，当前 Interaction 结束 Turn；达到最大次数仍未通过时，使用最后一次 Interaction 的分数和结果。
+8. Turn 结束后，learner 读取轨迹，更新持久 state。
+
+`user.followups` 支持 `{feedback}`、`{history}` 和 `{turn_id}` 占位符，因此后续请求可以显式引用当前 Turn 的上下文和上一轮 Judge 反馈。静态字符串仍然有效。
 
 ## Agent 输出
 
@@ -34,7 +38,7 @@ state_update 只有在 --learner evolving 时才会由 runner 在 Turn 结束后
 
 - user_sim.py：替换为 grounded、可修正的 user simulator。
 - sandbox.py：增加工具服务或容器快照，同时保持 write/read/remove/snapshot 接口。
-- verifier.py：接入任务自己的确定性 evaluator；Judge 只用于补充语言质量或诊断。
+- verifier.py：接入任务自己的确定性 evaluator，或使用 LLM rubric Judge。严格 Baseline 配置使用 LLM Judge；deterministic/python verifier 是离线可复现扩展。
 - learner.py：实现 memory、skill、harness 或 parameter state 的更新，不改变 Flow/Turn/Interaction 协议。
 - agent.py：接入不同模型、rollout 或 tool protocol，不改任务数据。
 

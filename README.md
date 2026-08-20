@@ -11,7 +11,7 @@ Flow: one shared sandbox
   after Turn: learner observes trajectory and may update persistent state
 ~~~
 
-当前版本的稳定边界是 schema_version = 0.1。任务内容可以继续变，但执行器只依赖 id/request/setup/user/verifier 这些字段；额外信息放在 metadata，隐藏 oracle 信息放在 oracle_update，不会发送给普通 Agent。
+当前版本的稳定边界是 schema_version = 0.1。任务内容可以继续变，但执行器只依赖 id/request/setup/user/verifier 这些字段；额外信息放在 metadata，隐藏 oracle 信息放在 oracle_update，不会发送给普通 Agent。未通过时严格执行到 `max_interactions`，不会因分数下降提前停止；Turn 失败时取最后一次 Interaction 的分数。
 
 ## 快速 smoke test
 
@@ -45,9 +45,9 @@ C:\\Users\\Lenovo\\anaconda3\\envs\\codex-work\\python.exe -m trievo_bench.runne
 
 ## 迁移数据规范
 
-- request 是第一个用户请求；user.followups 是 simulator 在失败后的后续请求，后续可替换为 grounded simulator。
+- request 是第一个用户请求；user.followups 是 simulator 在失败后的后续请求，支持 `{feedback}`、`{history}`、`{turn_id}` 占位符，也可替换为 grounded simulator。
 - setup.files/remove 只描述 Turn 初始化时对共享 workspace 的变更。
-- verifier 是确定性主评分，支持 response_contains、file_exists、file_contains、json_file_equals、all、any。
+- 严格 Baseline 使用 LLM rubric Judge；离线 smoke 和可复现测试可使用确定性 verifier，支持 response_contains、file_exists、file_contains、json_file_equals、all、any，以及 task-owned Python verifier。
 - Agent 只通过结构化 actions 修改 sandbox；这样可以把未来工具 API、AppWorld/τ-bench 风格工具和当前文件操作放在同一执行边界。
 - 每个 Interaction、Turn 和 Flow 都落盘；结果包含 state、sandbox snapshot、feedback、token budget 和基础曲线指标。
 - --learner frozen|raw-replay|evolving|oracle-update 已接入；其中 oracle-update 仅用于校准上界，不属于普通评测。

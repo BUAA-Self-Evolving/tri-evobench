@@ -89,7 +89,7 @@ class PythonVerifier:
 
 
 class LLMJudge:
-    """Optional rubric judge; deterministic verifiers remain the primary score path."""
+    """Stateless rubric judge instantiated independently for each Interaction."""
 
     def __init__(self, client: Any, rubric: str, max_output_tokens: int = 2048) -> None:
         self.client = client

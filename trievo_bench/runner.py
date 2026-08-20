@@ -71,15 +71,11 @@ class Runner:
             raise ValueError(f"unsupported agent type: {self.agent_mode}")
         self.program_verifier = DeterministicVerifier()
         self.python_verifier = PythonVerifier()
-        self.llm_judge = None
-        if self.judge_mode in {"llm", "hybrid"}:
-            self.llm_judge = LLMJudge(self.client, str(spec.judge.get("rubric", "")), int(spec.judge.get("max_output_tokens", 2048)))
-        if self.judge_mode in {"deterministic", "hybrid"}:
-            self.judge = self.program_verifier
-        elif self.judge_mode == "llm":
-            self.judge = self.llm_judge
-        else:
+        if self.judge_mode not in {"deterministic", "llm", "hybrid"}:
             raise ValueError(f"unsupported judge type: {self.judge_mode}")
+        # Program verifiers remain reusable and stateless. LLM judges are
+        # instantiated inside _evaluate so each Interaction gets a fresh judge.
+        self.judge = self.program_verifier if self.judge_mode in {"deterministic", "hybrid"} else None
 
     def run(self, flow: FlowSpec) -> dict[str, Any]:
         started = time.time()
@@ -120,7 +116,6 @@ class Runner:
         interactions: list[InteractionRecord] = []
         all_events: list[dict[str, Any]] = []
         all_tool_calls: list[dict[str, Any]] = []
-        best: InteractionRecord | None = None
         for index in range(1, turn.max_interactions + 1):
             agent_sandbox = sandbox.snapshot()
             if self.spec.agent.get("include_workspace_content"):
@@ -158,25 +153,32 @@ class Runner:
                     check = CheckResult(0.0, False, f"Verifier model request failed: {exc}", {"type": "verifier_model_error", "error": str(exc)})
             interaction = InteractionRecord(index, request, reply.text, reply.actions, executed_calls, reply.events, reply.state_update, action_error, check.score, check.passed, check.feedback, check.details, sandbox.snapshot(), sorted(self.state))
             interactions.append(interaction)
-            if best is None or interaction.score > best.score:
-                best = interaction
             history.extend([{"role": "user", "content": request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": check.feedback}])
             if check.score >= turn.success_threshold:
-                break
-            if len(interactions) >= 2 and interaction.score <= interactions[-2].score:
                 break
             request = user.next_request(history=history, feedback=check.feedback)
         trajectory = [asdict(item) for item in interactions]
         self.state = self.learner.after_turn(self.state, trajectory, turn)
-        final = best or interactions[-1]
+        # The baseline defines a Turn score as the first successful Interaction's
+        # score, or the final Interaction's score when the Turn is unsuccessful.
+        # Do not select the historical maximum: that would hide later failures.
+        final = interactions[-1]
         return TurnRecord(turn.id, final.score, final.passed, interactions)
 
     def _evaluate(self, verifier: dict[str, Any], response: str, sandbox: Sandbox, trajectory: Any = None) -> Any:
         verifier_type = str(verifier.get("type", ""))
         if verifier_type in {"llm", "llm_rubric"}:
-            if self.llm_judge is None:
+            if self.judge_mode not in {"llm", "hybrid"}:
                 raise ValueError("this Turn requires an LLM verifier, but judge mode is not hybrid/llm")
-            return self.llm_judge.evaluate(verifier, response, sandbox, trajectory)
+            # The baseline gives every Interaction an independent Judge
+            # context. The client and token budget remain shared infrastructure,
+            # but the evaluator itself carries no state across Interactions.
+            judge = LLMJudge(
+                self.client,
+                str(self.spec.judge.get("rubric", "")),
+                int(self.spec.judge.get("max_output_tokens", 2048)),
+            )
+            return judge.evaluate(verifier, response, sandbox, trajectory)
         if verifier_type == "python_verifier":
             return self.python_verifier.evaluate(verifier, response, sandbox, trajectory)
         return self.program_verifier.evaluate(verifier, response, sandbox)
