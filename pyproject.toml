@@ -14,3 +14,6 @@ trievo-bench = "trievo_bench.runner:main"
 
 [tool.setuptools.packages.find]
 include = ["trievo_bench*"]
+
+[tool.setuptools.package-data]
+"trievo_bench.baselines" = ["manifests/*.json"]

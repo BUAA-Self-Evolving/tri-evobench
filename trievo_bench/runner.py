@@ -7,9 +7,17 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .agent import OpenAICompatibleAgent, ScriptedAgent
-from .learner import learner_from_mode
-from .model import ModelReply, TokenBudget, client_from_config
+from .baselines import (
+    BaselineInteractionError,
+    BaselineReply,
+    EvolutionContext,
+    FlowContext,
+    InteractionContext,
+    TurnContext,
+)
+from .baselines.manifest import load_mapping
+from .baselines.registry import create_baseline_runtime, resolve_baseline_selection
+from .model import TokenBudget, client_from_config
 from .sandbox import Sandbox, create_sandbox
 from .spec import BenchmarkSpec, FlowSpec, TurnSpec, load_spec
 from .user_sim import UserSimulator
@@ -32,6 +40,7 @@ class InteractionRecord:
     verifier_details: dict[str, Any]
     sandbox: dict[str, Any]
     state_keys: list[str]
+    usage: dict[str, Any]
 
 
 @dataclass
@@ -40,35 +49,57 @@ class TurnRecord:
     score: float
     passed: bool
     interactions: list[InteractionRecord] = field(default_factory=list)
+    evolution: dict[str, Any] = field(default_factory=dict)
 
 
 class Runner:
-    def __init__(self, spec: BenchmarkSpec, *, output_dir: Path, backend: str | None = None, image: str | None = None, agent_mode: str | None = None, judge_mode: str | None = None, learner_mode: str = "frozen", max_total_tokens: int | None = None) -> None:
+    def __init__(
+        self,
+        spec: BenchmarkSpec,
+        *,
+        output_dir: Path,
+        backend: str | None = None,
+        image: str | None = None,
+        agent_mode: str | None = None,
+        judge_mode: str | None = None,
+        learner_mode: str = "frozen",
+        max_total_tokens: int | None = None,
+        baseline: str | None = None,
+        baseline_manifest: str | None = None,
+        baseline_config: dict[str, Any] | None = None,
+        repo_root: Path | None = None,
+    ) -> None:
         self.spec = spec
         self.output_dir = output_dir
         self.backend = backend
         self.image = image
-        self.agent_mode = agent_mode or str(spec.agent.get("type", "scripted"))
         self.judge_mode = judge_mode or str(spec.judge.get("type", "deterministic"))
+        self.learner_mode = learner_mode
         self.budget = TokenBudget(max_total_tokens or int(spec.benchmark.get("max_total_tokens", 3_000_000)))
-        self.learner = learner_from_mode(learner_mode)
-        self.state: dict[str, Any] = {}
+        self.repo_root = (repo_root or Path(__file__).resolve().parents[1]).resolve()
+        self.baseline_id, resolved_manifest, runtime_overrides = resolve_baseline_selection(
+            spec,
+            baseline_override=baseline,
+            agent_override=agent_mode,
+            config_override=baseline_config,
+            manifest_override=baseline_manifest,
+        )
+        self.agent_mode = self.baseline_id
+        self.runtime = create_baseline_runtime(
+            self.baseline_id,
+            spec=spec,
+            budget=self.budget,
+            learner_mode=learner_mode,
+            repo_root=self.repo_root,
+            manifest_path=resolved_manifest,
+            overrides=runtime_overrides,
+        )
 
         self.client = None
-        if self.agent_mode == "openai_compatible" or self.judge_mode in {"llm", "hybrid"}:
-            merged = dict(spec.agent if self.agent_mode == "openai_compatible" else spec.judge)
+        if self.judge_mode in {"llm", "hybrid"}:
+            merged = dict(spec.agent)
+            merged.update(spec.judge)
             self.client = client_from_config(merged, self.budget)
-        if self.agent_mode == "openai_compatible":
-            self.agent = OpenAICompatibleAgent(
-                self.client,
-                spec.agent.get("system_prompt"),
-                str(spec.agent.get("response_format", "json")),
-                int(spec.agent.get("max_output_tokens", 1024)),
-            )
-        elif self.agent_mode == "scripted":
-            self.agent = ScriptedAgent(spec.agent.get("policy", {}))
-        else:
-            raise ValueError(f"unsupported agent type: {self.agent_mode}")
         self.program_verifier = DeterministicVerifier()
         self.python_verifier = PythonVerifier()
         if self.judge_mode not in {"deterministic", "llm", "hybrid"}:
@@ -83,21 +114,40 @@ class Runner:
         flow_dir.mkdir(parents=True, exist_ok=True)
         sandbox = create_sandbox(flow.sandbox, self.backend, self.image)
         turn_records: list[TurnRecord] = []
+        runtime_started = False
         try:
+            self.runtime.start_flow(
+                FlowContext(
+                    flow_id=flow.id,
+                    workspace=sandbox.workspace_path(),
+                    output_dir=flow_dir,
+                    metadata=self._public_metadata(flow.metadata),
+                )
+            )
+            runtime_started = True
             for turn in flow.turns:
                 turn_records.append(self._run_turn(turn, sandbox))
+            final_snapshot = self.runtime.snapshot_state()
         finally:
-            sandbox.close()
+            try:
+                if runtime_started:
+                    self.runtime.end_flow()
+            finally:
+                sandbox.close()
+        runtime_metadata = self.runtime.metadata()
         result = {
             "schema_version": "0.1",
             "flow_id": flow.id,
-            "learner_mode": self.learner.__class__.__name__,
+            "baseline": self.baseline_id,
+            "baseline_runtime": runtime_metadata,
+            "learner_mode": runtime_metadata.get("learner", learner_mode_label(self.learner_mode)),
             "agent_mode": self.agent_mode,
             "judge_mode": self.judge_mode,
             "turns": [asdict(record) for record in turn_records],
             "metrics": self._metrics(turn_records),
             "token_budget": asdict(self.budget),
-            "state": self.state,
+            "state": final_snapshot.state,
+            "state_snapshot": final_snapshot.to_dict(),
             "wall_clock_seconds": round(time.time() - started, 3),
         }
         (flow_dir / "summary.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -109,7 +159,14 @@ class Runner:
 
     def _run_turn(self, turn: TurnSpec, sandbox: Sandbox) -> TurnRecord:
         sandbox.setup(turn.setup)
-        self.state = self.learner.before_turn(self.state)
+        self.runtime.start_turn(
+            TurnContext(
+                turn_id=turn.id,
+                request=turn.request,
+                max_interactions=turn.max_interactions,
+                metadata=self._public_metadata(turn.metadata),
+            )
+        )
         user = UserSimulator(turn.user, turn.request)
         request = user.initial_request
         history: list[dict[str, Any]] = []
@@ -126,19 +183,35 @@ class Runner:
                         item["content"] = "(file unavailable)"
             model_error = None
             try:
-                reply = self.agent.respond(turn_id=turn.id, interaction_index=index, request=request, history=history, state=self.state, sandbox=agent_sandbox)
+                reply = self.runtime.interact(
+                    InteractionContext(
+                        turn_id=turn.id,
+                        interaction_index=index,
+                        request=request,
+                        history=list(history),
+                        sandbox=agent_sandbox,
+                        remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                    )
+                )
+            except BaselineInteractionError as exc:
+                model_error = str(exc)
+                reply = exc.reply
             except RuntimeError as exc:
                 model_error = str(exc)
-                reply = ModelReply(text="", actions=[], state_update={})
+                reply = BaselineReply()
             action_error = None
             try:
-                self._apply_actions(reply.actions, sandbox)
-                executed_calls = self._apply_tool_calls(reply.tool_calls, sandbox)
+                if not reply.actions_are_executed:
+                    self._apply_actions(reply.actions, sandbox)
+                executed_calls = (
+                    reply.tool_calls
+                    if reply.tool_calls_are_executed
+                    else self._apply_tool_calls(reply.tool_calls, sandbox)
+                )
             except (KeyError, TypeError, ValueError) as exc:
                 action_error = str(exc)
                 executed_calls = []
             if not action_error:
-                self.state = self._merge_state(self.state, reply.state_update)
                 all_events.extend(item for item in reply.events if isinstance(item, dict))
                 all_tool_calls.extend(executed_calls)
             if model_error:
@@ -146,24 +219,78 @@ class Runner:
             elif action_error:
                 check = CheckResult(0.0, False, f"Invalid agent action: {action_error}", {"type": "action_error", "error": action_error})
             else:
-                trajectory = {"events": all_events, "tool_calls": all_tool_calls, "state": self.state}
+                state_snapshot = self.runtime.snapshot_state()
+                trajectory = {"events": all_events, "tool_calls": all_tool_calls, "state": state_snapshot.state}
                 try:
                     check = self._evaluate(turn.verifier, reply.text, sandbox, trajectory)
                 except RuntimeError as exc:
                     check = CheckResult(0.0, False, f"Verifier model request failed: {exc}", {"type": "verifier_model_error", "error": str(exc)})
-            interaction = InteractionRecord(index, request, reply.text, reply.actions, executed_calls, reply.events, reply.state_update, action_error, check.score, check.passed, check.feedback, check.details, sandbox.snapshot(), sorted(self.state))
+            state_snapshot = self.runtime.snapshot_state()
+            state_keys = [str(item["path"]) for item in state_snapshot.files] or sorted(state_snapshot.state)
+            interaction = InteractionRecord(
+                index,
+                request,
+                reply.text,
+                reply.actions,
+                executed_calls,
+                reply.events,
+                reply.state_update,
+                action_error,
+                check.score,
+                check.passed,
+                check.feedback,
+                check.details,
+                sandbox.snapshot(),
+                state_keys,
+                reply.usage.to_dict(),
+            )
             interactions.append(interaction)
             history.extend([{"role": "user", "content": request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": check.feedback}])
             if check.score >= turn.success_threshold:
                 break
             request = user.next_request(history=history, feedback=check.feedback)
-        trajectory = [asdict(item) for item in interactions]
-        self.state = self.learner.after_turn(self.state, trajectory, turn)
+        trajectory = [self._public_interaction(item) for item in interactions]
+        feedback = [
+            {
+                "interaction_index": item.index,
+                "score": item.score,
+                "passed": item.passed,
+                "feedback": item.feedback,
+            }
+            for item in interactions
+        ]
+        evolution = self.runtime.evolve(
+            EvolutionContext(turn_id=turn.id, trajectory=trajectory, feedback=feedback)
+        )
         # The baseline defines a Turn score as the first successful Interaction's
         # score, or the final Interaction's score when the Turn is unsuccessful.
         # Do not select the historical maximum: that would hide later failures.
         final = interactions[-1]
-        return TurnRecord(turn.id, final.score, final.passed, interactions)
+        return TurnRecord(turn.id, final.score, final.passed, interactions, evolution.to_dict())
+
+    @staticmethod
+    def _public_interaction(item: InteractionRecord) -> dict[str, Any]:
+        return {
+            "index": item.index,
+            "request": item.request,
+            "response": item.response,
+            "actions": item.actions,
+            "tool_calls": item.tool_calls,
+            "events": item.events,
+            "state_update": item.state_update,
+            "action_error": item.action_error,
+            "score": item.score,
+            "passed": item.passed,
+            "feedback": item.feedback,
+            "sandbox": item.sandbox,
+            "state_keys": item.state_keys,
+            "usage": item.usage,
+        }
+
+    @staticmethod
+    def _public_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
+        public = metadata.get("public", {})
+        return dict(public) if isinstance(public, dict) else {}
 
     def _evaluate(self, verifier: dict[str, Any], response: str, sandbox: Sandbox, trajectory: Any = None) -> Any:
         verifier_type = str(verifier.get("type", ""))
@@ -260,18 +387,6 @@ class Runner:
             return []
 
     @staticmethod
-    def _merge_state(base: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
-        if not isinstance(update, dict):
-            return dict(base)
-        merged = dict(base)
-        for key, value in update.items():
-            if isinstance(value, dict) and isinstance(merged.get(key), dict):
-                merged[key] = Runner._merge_state(merged[key], value)
-            else:
-                merged[key] = value
-        return merged
-
-    @staticmethod
     def _metrics(turns: list[TurnRecord]) -> dict[str, Any]:
         scores = [turn.score for turn in turns]
         interactions = [item for turn in turns for item in turn.interactions]
@@ -292,19 +407,46 @@ def main() -> None:
     parser.add_argument("--flow-id")
     parser.add_argument("--backend", choices=["local", "docker"])
     parser.add_argument("--image")
+    parser.add_argument("--baseline", help="baseline id registered by a manifest or legacy adapter")
+    parser.add_argument("--baseline-manifest", help="explicit baseline manifest path")
+    parser.add_argument("--baseline-config", help="JSON/YAML manifest overrides")
     parser.add_argument("--agent", choices=["scripted", "openai_compatible"])
     parser.add_argument("--judge", choices=["deterministic", "llm", "hybrid"])
     parser.add_argument("--learner", choices=["frozen", "raw-replay", "evolving", "oracle-update"], default="frozen")
     parser.add_argument("--max-total-tokens", type=int)
     args = parser.parse_args()
     spec = load_spec(args.spec)
+    baseline_config = load_mapping(args.baseline_config) if args.baseline_config else None
     flows = [flow for flow in spec.flows if args.flow_id is None or flow.id == args.flow_id]
     if not flows:
         raise SystemExit(f"flow not found: {args.flow_id}")
     for flow in flows:
-        runner = Runner(spec, output_dir=Path(args.output), backend=args.backend, image=args.image, agent_mode=args.agent, judge_mode=args.judge, learner_mode=args.learner, max_total_tokens=args.max_total_tokens)
+        runner = Runner(
+            spec,
+            output_dir=Path(args.output),
+            backend=args.backend,
+            image=args.image,
+            agent_mode=args.agent,
+            judge_mode=args.judge,
+            learner_mode=args.learner,
+            max_total_tokens=args.max_total_tokens,
+            baseline=args.baseline,
+            baseline_manifest=args.baseline_manifest,
+            baseline_config=baseline_config,
+        )
         result = runner.run(flow)
-        print(json.dumps({"flow_id": flow.id, "metrics": result["metrics"], "token_budget": result["token_budget"]}, ensure_ascii=False))
+        print(json.dumps({"flow_id": flow.id, "baseline": result["baseline"], "metrics": result["metrics"], "token_budget": result["token_budget"]}, ensure_ascii=False))
+
+
+def learner_mode_label(mode: str) -> str:
+    labels = {
+        "reset": "FrozenLearner",
+        "frozen": "FrozenLearner",
+        "evolving": "EvolvingLearner",
+        "raw-replay": "RawReplayLearner",
+        "oracle-update": "OracleLearner",
+    }
+    return labels.get(mode, mode)
 
 
 if __name__ == "__main__":

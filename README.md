@@ -4,9 +4,22 @@ Tri-EvoBench 是一个面向自演化 Agent 的评测运行时，提供统一的
 
 当前版本为研究原型，运行配置使用 `schema_version = 0.1`。
 
+## Baseline 框架切换
+
+Runner 现在通过统一 `BaselineRuntime 1.0` 接入完整 Agent 框架。内置 Hermes 接入支持 Flow 级 Memory/Skills、Turn 级新会话、严格 Turn 末单次进化、状态快照和增量 Token 计量。
+
+```bash
+docker build -t trievo-hermes:0.1 -f baseline/adapters/hermes/Dockerfile .
+# 先将 override 中的 seed_from 改成干净 Hermes 配置目录的绝对路径
+trievo-bench --spec examples/smoke.json --baseline hermes --baseline-config examples/hermes-baseline.override.json
+```
+
+Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baseline Runtime 接入说明](docs/baseline-runtime.md)。
+
 ## Features
 
 - Flow 内共享 Sandbox，支持本地和 Ubuntu Docker 后端
+- 通过 manifest 和独立 Adapter 参数化切换 Agent baseline
 - 支持程序 Verifier、Python Verifier 和 LLM Judge
 - 支持 frozen、raw-replay、evolving、oracle-update learner
 - 支持 L1 session/turn 数据和 L2 Stream/Episode 数据
@@ -32,7 +45,7 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-Python 版本要求：3.11+。Docker 仅在 Docker Sandbox 和 L2 运行时需要。
+Python 版本要求：3.11+。Docker 在 Docker Sandbox、Hermes 等容器 baseline 和 L2 运行时需要。
 
 ## Run with a model
 
@@ -107,6 +120,7 @@ docker build -t trievo-l2-browser:0.1 -f sandbox/l2/Dockerfile.browser .
 
 ```text
 trievo_bench/       core runtime and L1/L2 adapters
+baseline/adapters/   external baseline container adapters
 schemas/             benchmark schema
 examples/            example specifications
 sandbox/             Dockerfiles

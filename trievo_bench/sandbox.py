@@ -47,6 +47,10 @@ class Sandbox:
     def export_workspace(self) -> Path:
         raise NotImplementedError
 
+    def workspace_path(self) -> Path:
+        """Return the live host path shared with an external baseline runtime."""
+        raise NotImplementedError
+
     def cleanup_export(self, path: Path) -> None:
         pass
 
@@ -95,6 +99,9 @@ class LocalSandbox(Sandbox):
     def export_workspace(self) -> Path:
         return self.root / "workspace"
 
+    def workspace_path(self) -> Path:
+        return self.root / "workspace"
+
     def close(self) -> None:
         if self._owned:
             shutil.rmtree(self.root, ignore_errors=True)
@@ -106,8 +113,19 @@ class DockerSandbox(Sandbox):
     def __init__(self, image: str = "ubuntu:22.04", name: str | None = None) -> None:
         self.image = image
         self.name = name or f"trievo-{uuid.uuid4().hex[:12]}"
-        self._run(["docker", "run", "-d", "--name", self.name, image, "sleep", "infinity"])
-        self._run_exec(["mkdir", "-p", "/workspace"])
+        self._host_workspace = Path(tempfile.mkdtemp(prefix="trievo-workspace-"))
+        try:
+            command = ["docker", "run", "-d", "--name", self.name]
+            if hasattr(os, "getuid") and hasattr(os, "getgid"):
+                command.extend(["--user", f"{os.getuid()}:{os.getgid()}"])
+            command.extend([
+                "-v", f"{self._host_workspace}:/workspace",
+                image, "sleep", "infinity",
+            ])
+            self._run(command)
+        except Exception:
+            shutil.rmtree(self._host_workspace, ignore_errors=True)
+            raise
 
     def _run(self, command: list[str], input_text: str | None = None) -> str:
         try:
@@ -144,11 +162,15 @@ class DockerSandbox(Sandbox):
         self._run(["docker", "cp", f"{self.name}:/workspace/.", str(exported)])
         return exported
 
+    def workspace_path(self) -> Path:
+        return self._host_workspace
+
     def cleanup_export(self, path: Path) -> None:
         shutil.rmtree(path, ignore_errors=True)
 
     def close(self) -> None:
         subprocess.run(["docker", "rm", "-f", self.name], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
+        shutil.rmtree(self._host_workspace, ignore_errors=True)
 
 
 def create_sandbox(config: dict[str, Any], backend_override: str | None = None, image_override: str | None = None) -> Sandbox:

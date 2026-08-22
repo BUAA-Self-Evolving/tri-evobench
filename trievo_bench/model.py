@@ -24,9 +24,9 @@ class TokenBudget:
         if self.used + estimated_input + max_output > self.limit:
             raise TokenBudgetExceeded(f"token budget would exceed {self.limit}: used={self.used}, requested={estimated_input + max_output}")
 
-    def record(self, total_tokens: int) -> None:
+    def record(self, total_tokens: int, *, calls: int = 1) -> None:
         self.used += max(0, int(total_tokens))
-        self.calls += 1
+        self.calls += max(0, int(calls))
         if self.used > self.limit:
             raise TokenBudgetExceeded(f"token budget exceeded: {self.used} > {self.limit}")
 

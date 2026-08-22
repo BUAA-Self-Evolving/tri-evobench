@@ -82,6 +82,7 @@ class BenchmarkSpec:
     schema_version: str
     benchmark: dict[str, Any]
     flows: list[FlowSpec]
+    baseline: dict[str, Any] = field(default_factory=dict)
     agent: dict[str, Any] = field(default_factory=dict)
     judge: dict[str, Any] = field(default_factory=dict)
 
@@ -97,6 +98,7 @@ class BenchmarkSpec:
             schema_version=version,
             benchmark=dict(raw.get("benchmark", {})),
             flows=[FlowSpec.from_dict(item, i) for i, item in enumerate(flows_raw)],
+            baseline=dict(raw.get("baseline", {})),
             agent=dict(raw.get("agent", {})),
             judge=dict(raw.get("judge", {})),
         )

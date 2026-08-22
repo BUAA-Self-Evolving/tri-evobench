@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "id": "hermes",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-i",
+      "--name",
+      "trievo-hermes-{instance_id}",
+      "--user",
+      "{uid}:{gid}",
+      "--cap-drop",
+      "ALL",
+      "--security-opt",
+      "no-new-privileges",
+      "--pids-limit",
+      "512",
+      "--memory",
+      "8g",
+      "--cpus",
+      "4",
+      "-v",
+      "{workspace}:/workspace",
+      "-v",
+      "{state_dir}:/hermes-state",
+      "-e",
+      "HERMES_HOME=/hermes-state",
+      "-e",
+      "HOME=/hermes-state/home",
+      "-e",
+      "OPENAI_API_KEY",
+      "-e",
+      "OPENROUTER_API_KEY",
+      "-e",
+      "ANTHROPIC_API_KEY",
+      "-e",
+      "DEEPSEEK_API_KEY",
+      "-e",
+      "GEMINI_API_KEY",
+      "-e",
+      "GOOGLE_API_KEY",
+      "-e",
+      "XAI_API_KEY",
+      "-e",
+      "NOUS_API_KEY",
+      "{image}"
+    ],
+    "cleanup_command": [
+      "docker",
+      "rm",
+      "-f",
+      "trievo-hermes-{instance_id}"
+    ]
+  },
+  "source": {
+    "path": "baseline/hermes-agent",
+    "revision": "fce30d818e2a1833e99bb12160ccec648e8b2661"
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY",
+      "OPENROUTER_API_KEY",
+      "ANTHROPIC_API_KEY",
+      "DEEPSEEK_API_KEY",
+      "GEMINI_API_KEY",
+      "GOOGLE_API_KEY",
+      "XAI_API_KEY",
+      "NOUS_API_KEY"
+    ]
+  },
+  "workspace": {
+    "mode": "shared_volume",
+    "adapter_path": "/workspace"
+  },
+  "state": {
+    "scope": "flow",
+    "adapter_path": "/hermes-state",
+    "paths": [
+      "memories/MEMORY.md",
+      "memories/USER.md",
+      "skills/**/*"
+    ],
+    "guard_paths": ["config.yaml"],
+    "seed_files": ["config.yaml"],
+    "enforce_turn_freeze": true
+  },
+  "evolution": {
+    "policy": "turn_boundary",
+    "timeout_seconds": 900
+  },
+  "options": {
+    "image": "trievo-hermes:0.1",
+    "approval_policy": "session",
+    "allow_revision_mismatch": false
+  },
+  "capabilities": [
+    "direct_workspace",
+    "terminal",
+    "memory",
+    "skills",
+    "events",
+    "usage",
+    "evolution_barrier"
+  ]
+}
