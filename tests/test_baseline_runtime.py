@@ -20,6 +20,7 @@ class BaselineRuntimeTest(unittest.TestCase):
         *,
         violate_state_freeze: bool = False,
         violate_start_turn: bool = False,
+        write_ignored_telemetry: bool = False,
         incomplete_evolution: bool = False,
         source_revision: str | None = None,
         source_path: Path | None = None,
@@ -38,12 +39,14 @@ class BaselineRuntimeTest(unittest.TestCase):
             "state": {
                 "adapter_path": "{state_dir}",
                 "paths": ["learning/*", "learning/**/*"],
+                "ignore_paths": ["learning/telemetry.json"],
                 "enforce_turn_freeze": True,
             },
             "evolution": {"policy": "turn_boundary", "timeout_seconds": 30},
             "options": {
                 "violate_state_freeze": violate_state_freeze,
                 "violate_start_turn": violate_start_turn,
+                "write_ignored_telemetry": write_ignored_telemetry,
                 "incomplete_evolution": incomplete_evolution,
             },
             "capabilities": ["direct_workspace", "usage", "evolution_barrier"],
@@ -146,6 +149,22 @@ class BaselineRuntimeTest(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "during start_turn"):
                 runner.run(spec.flows[0])
+
+    def test_process_runtime_ignores_declared_foreground_telemetry(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = self._spec()
+            result = Runner(
+                spec,
+                output_dir=root / "runs",
+                baseline="fake",
+                baseline_manifest=str(self._manifest(root, write_ignored_telemetry=True)),
+            ).run(spec.flows[0])
+
+            exported = root / "runs" / "process-flow" / "baseline_state" / "learning" / "telemetry.json"
+
+        self.assertTrue(result["turns"][0]["passed"])
+        self.assertFalse(exported.exists())
 
     def test_process_runtime_requires_completed_evolution_barrier(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

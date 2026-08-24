@@ -42,6 +42,10 @@ class FakeAdapter:
                 learning = self.state_dir / "learning"
                 learning.mkdir(parents=True, exist_ok=True)
                 (learning / "illegal.txt").write_text("illegal foreground update", encoding="utf-8")
+            if self.options.get("write_ignored_telemetry"):
+                learning = self.state_dir / "learning"
+                learning.mkdir(parents=True, exist_ok=True)
+                (learning / "telemetry.json").write_text("foreground telemetry", encoding="utf-8")
             return {
                 "text": "The process baseline completed the task.",
                 "tool_calls": [{

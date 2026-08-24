@@ -85,6 +85,10 @@
       "memories/USER.md",
       "skills/**/*"
     ],
+    "ignore_paths": [
+      "skills/.usage.json",
+      "skills/.usage.json.lock"
+    ],
     "guard_paths": ["config.yaml"],
     "seed_files": ["config.yaml"],
     "enforce_turn_freeze": true

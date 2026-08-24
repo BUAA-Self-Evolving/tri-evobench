@@ -306,6 +306,7 @@ Runner 按以下顺序查找 manifest：
 | `state.adapter_path` | Adapter 看到的状态目录 |
 | `state.paths` | 学习状态快照和导出白名单 glob |
 | `state.guard_paths` | 参与冻结检查和 hash、但不导出的配置/框架文件 glob |
+| `state.ignore_paths` | 从快照、冻结检查和导出中排除的易变遥测文件 glob；仅限不影响学习决策的运行计数或锁文件 |
 | `state.seed_from` | 初始配置目录 |
 | `state.seed_files` | 从 seed 复制的相对路径 |
 | `state.enforce_turn_freeze` | 检测并恢复 Interaction 期间的非法学习状态写入 |

@@ -531,7 +531,12 @@ class ProcessBaselineRuntime(BaselineRuntime):
                     continue
                 relative = resolved.relative_to(root_resolved).as_posix()
                 found[relative] = resolved
-        return sorted(found.items())
+        ignored = [str(pattern) for pattern in self.manifest.state.get("ignore_paths", [])]
+        return sorted(
+            (relative, path)
+            for relative, path in found.items()
+            if not any(PurePosixPath(relative).match(pattern) for pattern in ignored)
+        )
 
     def _restore_state(self, capture: _StateCapture) -> None:
         if self._state_dir is None:

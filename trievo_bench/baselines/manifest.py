@@ -78,6 +78,9 @@ class BaselineManifest:
         guard_paths = state.get("guard_paths", []) if isinstance(state, dict) else []
         if not isinstance(guard_paths, list) or not all(isinstance(item, str) and item for item in guard_paths):
             raise BaselineManifestError(f"{path}: state.guard_paths must be a string array")
+        ignore_paths = state.get("ignore_paths", []) if isinstance(state, dict) else []
+        if not isinstance(ignore_paths, list) or not all(isinstance(item, str) and item for item in ignore_paths):
+            raise BaselineManifestError(f"{path}: state.ignore_paths must be a string array")
         return cls(path=path, raw=dict(raw))
 
 
