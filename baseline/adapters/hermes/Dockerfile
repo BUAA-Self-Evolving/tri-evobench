@@ -7,7 +7,9 @@ RUN apt-get update \
 
 WORKDIR /opt/hermes
 COPY baseline/hermes-agent/ /opt/hermes/
-RUN pip install --no-cache-dir '.[acp]'
+# Hermes intentionally blocks wheel builds from a source checkout; use the
+# supported editable-install path inside this runtime image.
+RUN pip install --no-cache-dir -e '.[acp]'
 
 WORKDIR /opt/trievo
 COPY pyproject.toml /opt/trievo/pyproject.toml
