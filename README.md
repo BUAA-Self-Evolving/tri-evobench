@@ -116,6 +116,13 @@ Browser-smoke Stream 使用：
 docker build -t trievo-l2-browser:0.1 -f sandbox/l2/Dockerfile.browser .
 ```
 
+对旧版 materialized `l2_demo`，先执行一次 browser oracle 兼容修复，再运行 browser Stream：
+
+```bash
+python tools/repair_l2_browser_oracles.py <path-to-l2_demo>
+python tools/repair_l2_browser_oracles.py <path-to-l2_demo> --check
+```
+
 ## Project layout
 
 ```text
