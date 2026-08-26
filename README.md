@@ -19,6 +19,17 @@ trievo-bench --spec <benchmark.json> --baseline skillopt \
 
 不指定 override 时，manifest 使用 `baseline/SkillOpt` 的 SearchQA 初始 Skill 和默认配置。
 
+Trace2Skill 也已注册为 `trace2skill` baseline，默认使用预加载 XLSX Skill，并在每个 Turn 结束时执行一次公开轨迹演化：
+
+```bash
+pip install openai tqdm openpyxl requests diskcache
+trievo-bench --spec <benchmark.json> --baseline trace2skill \
+  --baseline-config examples/trace2skill-baseline.override.json \
+  --output runs/trace2skill
+```
+
+也可以直接在 benchmark spec 中设置 `baseline.type` 为 `trace2skill`。通过 override 的 `options.agent` 可切换 `cli_skill_preloaded`/`cli_only`，并可调整 `model`、`max_turns`、`temperature`、`skill`、`skill_name`、`evolution_batch_size`、`max_workers` 等参数。
+
 ```bash
 docker build -t trievo-hermes:0.1 -f baseline/adapters/hermes/Dockerfile .
 # 先将 override 中的 seed_from 改成干净 Hermes 配置目录的绝对路径

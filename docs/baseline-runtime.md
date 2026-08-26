@@ -520,3 +520,34 @@ trievo-bench --spec <benchmark.json> --baseline skillopt \
   --baseline-config examples/skillopt-docker.override.json \
   --output runs/skillopt
 ```
+
+## 11. Trace2Skill 接入
+
+仓库中的 `baseline/Trace2Skill` 通过 `baseline/manifests/trace2skill.json` 注册为 `trace2skill` baseline。它使用独立的 NDJSON bridge：Interaction 在共享 workspace 中直接运行 Trace2Skill 的 `CLIOnlyAgent` 或 `CLISkillPreloadedAgent`，Turn 结束时把 Runner 提供的公开 trajectory 和 Judge feedback 转换为 Trace2Skill 的并行混合记录，并执行 MAP → REDUCE → APPLY → VERIFY 演化流程。Bridge 不接收 `verifier_details`、`oracle_update` 或私有 metadata。
+
+默认选择 Trace2Skill：
+
+```bash
+trievo-bench \
+  --spec <benchmark.json> \
+  --baseline trace2skill \
+  --baseline-config examples/trace2skill-baseline.override.json \
+  --output runs/trace2skill
+```
+
+`options.agent` 默认是 `cli_skill_preloaded`，也可以设置为 `cli_only`。默认 Skill 根目录是 `baseline/Trace2Skill/spreadsheet_agent/skills`；`options.skill` 可指定一个 `SKILL.md` 或 Skill 目录，`options.skill_name` 指定演化的 Skill 子目录。模型参数使用 `options.model`、`options.base_url`、`options.llm_client`、`options.generation_config` 和 `options.max_turns`；未设置模型时读取 `TRIEVO_MODEL`/`OPENAI_API_KEY`/`OPENAI_BASE_URL`。
+
+Trace2Skill 的学习状态保存在 Flow 独占的 `skills/` 与 `history/`，Interaction 阶段受到 Runtime 冻结检查保护。可通过 `evolution.policy=disabled` 做不演化的控制实验。运行依赖按 `baseline/Trace2Skill/README.md` 安装：
+
+```bash
+python -m pip install openai tqdm openpyxl requests diskcache
+```
+
+需要容器隔离时，构建 `baseline/adapters/trace2skill/Dockerfile`，并使用 `examples/trace2skill-docker.override.json`：
+
+```bash
+docker build -t trievo-trace2skill:0.1 -f baseline/adapters/trace2skill/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline trace2skill \
+  --baseline-config examples/trace2skill-docker.override.json \
+  --output runs/trace2skill
+```
