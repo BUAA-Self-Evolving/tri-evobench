@@ -1,0 +1,36 @@
+{
+  "adapter": {
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-i",
+      "--user",
+      "{uid}:{gid}",
+      "-v",
+      "{workspace}:/workspace",
+      "-v",
+      "{state_dir}:/agent-state",
+      "-e",
+      "TRIEVO_REPO_ROOT=/opt/trievo",
+      "-e",
+      "PYTHONPATH=/opt/trievo/baseline/SkillOpt:/opt/trievo",
+      "-e",
+      "OPENAI_API_KEY",
+      "-e",
+      "OPENAI_COMPATIBLE_BASE_URL",
+      "-e",
+      "OPENAI_COMPATIBLE_API_KEY",
+      "{image}"
+    ]
+  },
+  "workspace": {
+    "adapter_path": "/workspace"
+  },
+  "state": {
+    "adapter_path": "/agent-state"
+  },
+  "options": {
+    "image": "trievo-skillopt:0.1"
+  }
+}

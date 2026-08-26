@@ -8,6 +8,17 @@ Tri-EvoBench 是一个面向自演化 Agent 的评测运行时，提供统一的
 
 Runner 现在通过统一 `BaselineRuntime 1.0` 接入完整 Agent 框架。内置 Hermes 接入支持 Flow 级 Memory/Skills、Turn 级新会话、严格 Turn 末单次进化、状态快照和增量 Token 计量。
 
+SkillOpt 也已注册为 `skillopt` baseline，可仅通过 baseline 超参数切换：
+
+```bash
+pip install -r baseline/SkillOpt/requirements.txt
+trievo-bench --spec <benchmark.json> --baseline skillopt \
+  --baseline-config examples/skillopt-baseline.override.json \
+  --output runs/skillopt
+```
+
+不指定 override 时，manifest 使用 `baseline/SkillOpt` 的 SearchQA 初始 Skill 和默认配置。
+
 ```bash
 docker build -t trievo-hermes:0.1 -f baseline/adapters/hermes/Dockerfile .
 # 先将 override 中的 seed_from 改成干净 Hermes 配置目录的绝对路径
