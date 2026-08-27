@@ -114,13 +114,12 @@ def _task_to_turn(task_dir: Path, task: dict[str, Any], first: bool, workspace: 
         "setup": {"files": _workspace_files(workspace)} if first else {},
         "user": {"followups": followups},
         "verifier": verifier,
-        "metadata": {
+        "metadata": {"public": {
             "source_format": "l1_demo_task_json",
-            "source_task_dir": str(task_dir),
             "task_type": task.get("task_type"),
             "available_tools": available_tools,
             "iteration_policy": task.get("iteration_policy", {}),
-        },
+        }},
     }
 
 

@@ -180,6 +180,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._current_turn_metadata: dict[str, Any] = {}
         self._turn_evolved = False
         self._adapter_metadata: dict[str, Any] = {}
+        self._semantic_state: dict[str, Any] = {}
         self._stable_state: _StateCapture | None = None
         self._cleanup_command: list[str] | None = None
         self._template_values: dict[str, str] | None = None
@@ -312,6 +313,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
             tool_calls_are_executed=bool(result.get("tool_calls_are_executed", True)),
             raw=result.get("raw"),
         )
+        if reply.state_update:
+            self._semantic_state = _merge_state(self._semantic_state, reply.state_update)
         after = self._capture_state(include_bytes=False)
         changed = _changed_paths(before.snapshot, after.snapshot)
         if changed and bool(self.manifest.state.get("enforce_turn_freeze", False)):
@@ -418,6 +421,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
             self._stable_state = None
             self._cleanup_command = None
             self._template_values = None
+            self._semantic_state = {}
 
     def metadata(self) -> dict[str, Any]:
         source = self.manifest.source
@@ -544,7 +548,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
             hasher.update(str(item["path"]).encode("utf-8"))
             hasher.update(str(item["sha256"]).encode("ascii"))
         digest = hasher.hexdigest()
-        state = {"digest": digest, "files": [item["path"] for item in metadata]}
+        state = {"digest": digest, "files": [item["path"] for item in metadata], **self._semantic_state}
         return _StateCapture(captured, BaselineSnapshot(state=state, digest=digest, files=metadata))
 
     def _iter_state_files(self, patterns: list[str] | None = None) -> list[tuple[str, Path]]:
@@ -705,6 +709,18 @@ def _dict_list(value: Any) -> list[dict[str, Any]]:
     if not isinstance(value, list):
         return []
     return [dict(item) for item in value if isinstance(item, dict)]
+
+
+def _merge_state(current: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
+    """Merge public semantic state without treating it as a filesystem write."""
+
+    merged = dict(current)
+    for key, value in update.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_state(dict(merged[key]), value)
+        else:
+            merged[key] = value
+    return merged
 
 
 def _positive_seconds(value: Any) -> float | None:

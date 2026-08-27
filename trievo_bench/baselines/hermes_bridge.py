@@ -30,6 +30,7 @@ class HermesBridge:
         self._tool_calls: list[dict[str, Any]] = []
         self._turn_limits: dict[str, int] = {}
         self._limit_state: dict[str, Any] = {}
+        self._l1_tools: list[str] = []
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -98,6 +99,8 @@ class HermesBridge:
             agent._memory_nudge_interval = 0
             agent._skill_nudge_interval = 0
         self._turn_limits = _parse_l2_agent_limits(params.get("metadata"))
+        metadata = params.get("metadata")
+        self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
         self._limit_state = {"tool_starts": 0, "reasons": []}
         if self._turn_limits:
             # Hermes reserves one no-tools call to request a concise final
@@ -122,6 +125,8 @@ class HermesBridge:
             raise RuntimeError("Hermes interaction request is empty")
         self._events = []
         self._tool_calls = []
+        if self._l1_tools:
+            request = _l1_protocol_prompt(self._l1_tools) + "\n\n" + request
         agent = state.agent
         self._install_callbacks(agent)
         with self._foreground_policy(agent, state.session_id, state.cwd, self._turn_limits):
@@ -143,10 +148,13 @@ class HermesBridge:
         limit_reasons = list(dict.fromkeys(limit_reasons))
         if result.get("failed") and not result.get("final_response"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
+        text, state_update, simulated_calls = _extract_l1_protocol(str(result.get("final_response", "")), self._l1_tools)
         return {
-            "text": str(result.get("final_response", "")),
+            "text": text,
             "events": self._events,
-            "tool_calls": self._tool_calls,
+            "tool_calls": simulated_calls or self._tool_calls,
+            "state_update": state_update,
+            "tool_calls_are_executed": not bool(simulated_calls),
             "usage": usage,
             "raw": {
                 "completed": bool(result.get("completed", False)),
@@ -488,6 +496,43 @@ class HermesBridge:
             + "\n\nPUBLIC EVALUATOR FEEDBACK:\n"
             + json.dumps(_json_safe(feedback), ensure_ascii=False)
         )
+
+
+def _l1_protocol_prompt(available_tools: list[str]) -> str:
+    tools = ", ".join(available_tools)
+    return (
+        "L1 SIMULATED-TOOL PROTOCOL: these evaluator tools are available and must not be described as missing: "
+        + tools
+        + ". In your final response, after the user-facing text, emit one line per required call exactly as "
+        "TRIEVO_TOOL_CALL: {\"tool\": \"name\", \"arguments\": {...}}. "
+        "For durable facts emit exactly one TRIEVO_STATE_UPDATE: {\"facts\": {...}} line. "
+        "The bridge removes these protocol lines before showing the user and the evaluator executes the calls."
+    )
+
+
+def _extract_l1_protocol(text: str, available_tools: list[str]) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
+    visible: list[str] = []
+    state_update: dict[str, Any] = {}
+    calls: list[dict[str, Any]] = []
+    for line in text.splitlines():
+        if line.startswith("TRIEVO_STATE_UPDATE:"):
+            try:
+                value = json.loads(line.split(":", 1)[1].strip())
+                if isinstance(value, dict):
+                    state_update = value
+            except json.JSONDecodeError:
+                pass
+            continue
+        if line.startswith("TRIEVO_TOOL_CALL:"):
+            try:
+                value = json.loads(line.split(":", 1)[1].strip())
+                if isinstance(value, dict) and str(value.get("tool")) in available_tools and isinstance(value.get("arguments"), dict):
+                    calls.append({"tool": str(value["tool"]), "arguments": value["arguments"]})
+            except json.JSONDecodeError:
+                pass
+            continue
+        visible.append(line)
+    return "\n".join(visible).strip(), state_update, calls
 
 
 def _normalize_tool_result(item: Any) -> dict[str, Any]:
