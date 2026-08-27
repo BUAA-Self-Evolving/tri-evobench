@@ -108,6 +108,22 @@ class HermesBridge:
             # L1 retry consume several model calls before the evaluator can
             # supply its scripted follow-up or feedback.
             agent.max_iterations = 1
+            # L1's calendar, messaging and file calls are evaluator-owned
+            # simulated tools, serialised in the final response as protocol
+            # lines and executed by Runner._apply_tool_calls.  Passing
+            # Hermes' large native tool schema here both wastes context and
+            # invites the model to mutate the real workspace instead of using
+            # the auditable simulated interface.
+            agent.valid_tool_names = set()
+            # The DeepSeek V4 profile otherwise enables an expensive hidden
+            # reasoning stream by default.  L1 needs a concise protocol reply,
+            # and the evaluator itself supplies bounded retry feedback.
+            agent.reasoning_config = {"enabled": False}
+            # Hermes' normal interactive UX retries length-truncated output
+            # and then asks for a summary.  Those are extra model calls that
+            # bypass L1's max_interactions contract, so return the partial
+            # result to the evaluator instead.
+            agent.max_length_continue_retries = 0
         self._limit_state = {"tool_starts": 0, "reasons": []}
         if self._turn_limits:
             # Hermes reserves one no-tools call to request a concise final
@@ -514,6 +530,7 @@ def _l1_protocol_prompt(available_tools: list[str]) -> str:
         "TRIEVO_TOOL_CALL: {\"tool\": \"name\", \"arguments\": {...}}. "
         "For durable facts emit exactly one TRIEVO_STATE_UPDATE: {\"facts\": {...}} line. "
         "The bridge removes these protocol lines before showing the user and the evaluator executes the calls. "
+        "Do not attempt native Hermes tool calls: only the TRIEVO protocol lines enact L1 side effects. "
         "Benchmark task literals are authoritative: use an explicitly stated absolute date exactly; do not replace it using the host date. "
         "Use fact keys default_output_language=zh-CN, aurora.technical_owner, and default_delivery_calendar_id when applicable."
     )
