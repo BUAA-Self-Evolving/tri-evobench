@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .runner import Runner
+from .baselines.manifest import load_mapping
 from .spec import BenchmarkSpec
 
 
@@ -161,11 +162,25 @@ def main() -> None:
     parser.add_argument("--backend", choices=["local", "docker"], default="docker")
     parser.add_argument("--image", default="trievo-ubuntu:22.04")
     parser.add_argument("--learner", choices=["frozen", "raw-replay", "evolving", "oracle-update"], default="evolving")
+    parser.add_argument("--baseline", help="run the L1 session through a registered real-agent baseline")
+    parser.add_argument("--baseline-config", help="JSON/YAML manifest overrides for --baseline")
     parser.add_argument("--max-total-tokens", type=int, default=3_000_000)
     args = parser.parse_args()
     selected = [item.strip() for item in args.turns.split(",") if item.strip()]
     spec = load_l1_session(args.session, selected, args.backend, args.image)
-    result = Runner(spec, output_dir=Path(args.output), backend=args.backend, image=args.image, agent_mode="openai_compatible", judge_mode="hybrid", learner_mode=args.learner, max_total_tokens=args.max_total_tokens).run(spec.flows[0])
+    baseline_config = load_mapping(args.baseline_config) if args.baseline_config else None
+    result = Runner(
+        spec,
+        output_dir=Path(args.output),
+        backend=args.backend,
+        image=args.image,
+        agent_mode=None if args.baseline else "openai_compatible",
+        judge_mode="hybrid",
+        learner_mode=args.learner,
+        max_total_tokens=args.max_total_tokens,
+        baseline=args.baseline,
+        baseline_config=baseline_config,
+    ).run(spec.flows[0])
     print(json.dumps({"flow_id": result["flow_id"], "metrics": result["metrics"], "token_budget": result["token_budget"]}, ensure_ascii=False))
 
 

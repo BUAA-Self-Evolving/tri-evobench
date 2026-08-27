@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from baseline.adapters.skillopt.bridge import SkillOptBridge, _trajectory_results
+from baseline.adapters.skillopt.bridge import SkillOptBridge, _looks_like_workspace_task, _trajectory_results
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.spec import BenchmarkSpec
@@ -76,6 +76,26 @@ class SkillOptBaselineContractTest(unittest.TestCase):
         )
         self.assertEqual(override["workspace"]["adapter_path"], "/workspace")
         self.assertEqual(override["state"]["adapter_path"], "/agent-state")
+
+    def test_workspace_actions_are_safe_and_executable(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp) / "workspace"
+            workspace.mkdir()
+            bridge = SkillOptBridge()
+            bridge.workspace = workspace
+            result = bridge._apply_workspace_action({
+                "op": "write_file",
+                "path": "/workspace/profile.txt",
+                "content": "name=Lin\nlanguage=Chinese\n",
+            })
+            self.assertEqual(result["path"], "/workspace/profile.txt")
+            self.assertEqual((workspace / "profile.txt").read_text(), "name=Lin\nlanguage=Chinese\n")
+            with self.assertRaises(ValueError):
+                bridge._apply_workspace_action({"op": "remove", "path": "/workspace/../secret.txt"})
+
+    def test_workspace_task_detection(self) -> None:
+        self.assertTrue(_looks_like_workspace_task("Create /workspace/a.txt"))
+        self.assertFalse(_looks_like_workspace_task("Answer the question in one sentence."))
 
 
 if __name__ == "__main__":

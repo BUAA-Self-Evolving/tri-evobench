@@ -5,9 +5,13 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 from trievo_bench.baselines.hermes_bridge import HermesBridge
+from trievo_bench.baselines.manifest import load_manifest
+from trievo_bench.baselines.process import ProcessBaselineRuntime
+from trievo_bench.model import TokenBudget
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.runner import Runner
 from trievo_bench.spec import BenchmarkSpec
@@ -179,6 +183,28 @@ class BaselineRuntimeTest(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "evolution did not complete"):
                 runner.run(spec.flows[0])
+
+    def test_process_runtime_archives_deep_state_on_windows_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest_path = self._manifest(root)
+            runtime = ProcessBaselineRuntime(
+                load_manifest(manifest_path), budget=TokenBudget(limit=100), repo_root=root
+            )
+            runtime._state_dir = root / "state"
+            deep_name = "x" * 80
+            source = runtime._state_dir / "learning" / deep_name / "learned.json"
+            source.parent.mkdir(parents=True)
+            source.write_text("{}", encoding="utf-8")
+            output = root / ("run" * 60)
+            output.mkdir()
+
+            runtime._export_state(output, runtime.snapshot_state())
+
+            archive = output / "baseline_state.zip"
+            self.assertTrue(archive.exists())
+            with zipfile.ZipFile(archive) as bundle:
+                self.assertIn(f"learning/{deep_name}/learned.json", bundle.namelist())
 
     def test_hermes_usage_converts_cumulative_tokens_but_not_per_run_calls(self) -> None:
         bridge = HermesBridge()

@@ -16,7 +16,8 @@
       "OPENAI_BASE_URL",
       "TRIEVO_API_KEY",
       "TRIEVO_BASE_URL",
-      "TRIEVO_MODEL"
+      "TRIEVO_MODEL",
+      "DOCKER_EXE"
     ],
     "set": {
       "PYTHONPATH": "{repo_root}/baseline/Trace2Skill:{repo_root}/baseline/Trace2Skill/src:{repo_root}",
@@ -41,7 +42,7 @@
     "timeout_seconds": 1200
   },
   "options": {
-    "agent": "cli_skill_preloaded",
+    "agent": "auto",
     "skill_name": "xlsx",
     "model": "",
     "max_turns": 20,
@@ -53,7 +54,11 @@
     "max_workers": 1,
     "evolution_temperature": 0.3,
     "max_verification_rounds": 1,
-    "patch_pipeline": "json"
+    "patch_pipeline": "json",
+    "max_merge_levels": 1,
+    "evolution_max_tokens": 2048,
+    "enable_json_format_self_fix": false,
+    "skip_translation": true
   },
   "capabilities": [
     "direct_workspace",

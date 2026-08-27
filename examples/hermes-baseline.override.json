@@ -5,6 +5,14 @@
   },
   "options": {
     "image": "trievo-hermes:0.1",
-    "approval_policy": "session"
+    "approval_policy": "session",
+    "l2_agent_limits": {
+      "max_model_calls": 10,
+      "max_tool_calls": 8,
+      "terminal_timeout_seconds": 90,
+      "episode_timeout_seconds": 480,
+      "evolution_timeout_seconds": 120,
+      "evolution_max_model_calls": 4
+    }
   }
 }

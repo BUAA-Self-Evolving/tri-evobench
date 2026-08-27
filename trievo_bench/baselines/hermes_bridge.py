@@ -28,6 +28,8 @@ class HermesBridge:
         self._last_usage: dict[str, float] = {}
         self._events: list[dict[str, Any]] = []
         self._tool_calls: list[dict[str, Any]] = []
+        self._turn_limits: dict[str, int] = {}
+        self._limit_state: dict[str, Any] = {}
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -95,6 +97,18 @@ class HermesBridge:
         if self._policy == "turn_boundary":
             agent._memory_nudge_interval = 0
             agent._skill_nudge_interval = 0
+        self._turn_limits = _parse_l2_agent_limits(params.get("metadata"))
+        self._limit_state = {"tool_starts": 0, "reasons": []}
+        if self._turn_limits:
+            # Hermes reserves one no-tools call to request a concise final
+            # answer after its iteration budget is depleted.  Leave that
+            # grace call inside the benchmark's advertised model-call cap.
+            agent.max_iterations = max(1, self._turn_limits["max_model_calls"] - 1)
+            agent.run_budget_seconds = float(self._turn_limits["episode_timeout_seconds"])
+            agent._trievo_evolution_limits = {
+                "max_model_calls": self._turn_limits["evolution_max_model_calls"],
+                "timeout_seconds": self._turn_limits["evolution_timeout_seconds"],
+            }
         self._state = state
         self._turn_id = str(params.get("turn_id", ""))
         self._turn_evolved = False
@@ -110,7 +124,7 @@ class HermesBridge:
         self._tool_calls = []
         agent = state.agent
         self._install_callbacks(agent)
-        with self._foreground_policy(agent, state.session_id, state.cwd):
+        with self._foreground_policy(agent, state.session_id, state.cwd, self._turn_limits):
             result = agent.run_conversation(
                 user_message=request,
                 conversation_history=state.history,
@@ -123,6 +137,10 @@ class HermesBridge:
             state.history = result["messages"]
             self._manager.save_session(state.session_id)
         usage = self._usage_delta(result)
+        limit_reasons = list(self._limit_state.get("reasons", []))
+        if self._turn_limits and int(result.get("api_calls", 0) or 0) >= self._turn_limits["max_model_calls"]:
+            limit_reasons.append("max_model_calls")
+        limit_reasons = list(dict.fromkeys(limit_reasons))
         if result.get("failed") and not result.get("final_response"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
         return {
@@ -136,6 +154,9 @@ class HermesBridge:
                 "turn_exit_reason": result.get("turn_exit_reason"),
                 "model": result.get("model"),
                 "provider": result.get("provider"),
+                "work_limits": self._turn_limits,
+                "limit_exhausted": bool(limit_reasons),
+                "limit_reasons": limit_reasons,
             },
         }
 
@@ -163,10 +184,41 @@ class HermesBridge:
                     review_run.cancel()
                 except Exception:
                     pass
-                raise RuntimeError(
-                    f"Hermes background review exceeded {self._review_timeout:.0f}s"
-                )
-            events.append({"type": "evolution.completed", "policy": self._policy})
+                review_run.request_done.wait(timeout=5)
+                after_usage = self._background_review_usage(agent)
+                self._turn_evolved = True
+                return {
+                    "completed": False,
+                    "recoverable_failure": True,
+                    "events": [{
+                        "type": "evolution.limit_exhausted",
+                        "reason": "evolution_timeout",
+                        "policy": self._policy,
+                        "timeout_seconds": self._review_timeout,
+                        "review_trace": getattr(review_run, "outcome", {}),
+                    }],
+                    "usage": _subtract_usage(after_usage, before_usage),
+                }
+            review_trace = getattr(review_run, "outcome", {})
+            max_calls = self._turn_limits.get("evolution_max_model_calls")
+            review_calls = int(review_trace.get("api_calls", 0) or 0) if isinstance(review_trace, dict) else 0
+            if (isinstance(review_trace, dict) and review_trace.get("error")) or (max_calls and review_calls >= max_calls):
+                after_usage = self._background_review_usage(agent)
+                self._turn_evolved = True
+                reason = "evolution_error" if review_trace.get("error") else "evolution_max_model_calls"
+                return {
+                    "completed": False,
+                    "recoverable_failure": True,
+                    "events": [{
+                        "type": "evolution.limit_exhausted",
+                        "reason": reason,
+                        "policy": self._policy,
+                        "work_limits": {"max_model_calls": max_calls, "timeout_seconds": self._review_timeout},
+                        "review_trace": review_trace,
+                    }],
+                    "usage": _subtract_usage(after_usage, before_usage),
+                }
+            events.append({"type": "evolution.completed", "policy": self._policy, "review_trace": review_trace})
         elif self._policy == "native":
             review_run = getattr(agent, "_background_review_run", None)
             if review_run is not None and not review_run.request_done.wait(timeout=self._review_timeout):
@@ -219,11 +271,14 @@ class HermesBridge:
         self._state = None
         self._turn_id = None
         self._turn_evolved = False
+        self._turn_limits = {}
+        self._limit_state = {}
 
     def _install_callbacks(self, agent: Any) -> None:
         def tool_progress(event_type: str, name: str | None = None, preview: str | None = None, args: Any = None, **kwargs: Any) -> None:
             if event_type != "tool.started":
                 return
+            self._limit_state["tool_starts"] = int(self._limit_state.get("tool_starts", 0)) + 1
             arguments = args if isinstance(args, dict) else {"raw": args} if args is not None else {}
             self._events.append(
                 {
@@ -233,6 +288,13 @@ class HermesBridge:
                     "preview": str(preview or ""),
                 }
             )
+            max_tools = self._turn_limits.get("max_tool_calls")
+            if max_tools is not None and self._limit_state["tool_starts"] >= max_tools:
+                self._record_limit("max_tool_calls")
+                # The current call is the last permitted one.  Hermes checks
+                # this flag before starting another model iteration, so no
+                # subsequent tool batch is accepted.
+                agent._interrupt_requested = True
 
         def step(api_call_count: int, previous_tools: Any = None) -> None:
             if not isinstance(previous_tools, list):
@@ -255,7 +317,7 @@ class HermesBridge:
         agent.event_callback = event
 
     @contextlib.contextmanager
-    def _foreground_policy(self, agent: Any, session_id: str, cwd: str):
+    def _foreground_policy(self, agent: Any, session_id: str, cwd: str, limits: dict[str, int]):
         from hermes_cli.plugins import clear_thread_tool_whitelist, set_thread_tool_whitelist
         from tools import terminal_tool
 
@@ -263,9 +325,41 @@ class HermesBridge:
         if self._policy == "turn_boundary":
             allowed.difference_update({"memory", "skill_manage", "session_search"})
         previous_approval = terminal_tool._get_approval_callback()
+        previous_terminal_timeout = os.environ.get("TERMINAL_TIMEOUT")
+        previous_terminal_handler = terminal_tool.terminal_tool
 
         def approval_callback(*args: Any, **kwargs: Any) -> str:
             return self._approval_policy
+
+        def limited_terminal(*args: Any, **kwargs: Any) -> str:
+            """Keep terminal work inside the same hard per-command budget."""
+
+            terminal_limit = limits.get("terminal_timeout_seconds")
+            if terminal_limit is None:
+                return previous_terminal_handler(*args, **kwargs)
+            if bool(kwargs.get("background", False)):
+                self._record_limit("background_terminal_forbidden")
+                return json.dumps(
+                    {
+                        "output": "",
+                        "exit_code": 124,
+                        "error": "L2 evaluation forbids background terminal jobs; finish within the foreground command budget.",
+                        "status": "error",
+                    },
+                    ensure_ascii=False,
+                )
+            requested_timeout = kwargs.get("timeout")
+            if requested_timeout is None:
+                kwargs["timeout"] = terminal_limit
+            else:
+                try:
+                    kwargs["timeout"] = min(int(requested_timeout), terminal_limit)
+                except (TypeError, ValueError):
+                    kwargs["timeout"] = terminal_limit
+            result = previous_terminal_handler(*args, **kwargs)
+            if '"exit_code": 124' in str(result) or "timed out after" in str(result):
+                self._record_limit("terminal_timeout")
+            return result
 
         session_tokens = None
         clear_session_vars = None
@@ -284,6 +378,9 @@ class HermesBridge:
             except Exception:
                 pass
             terminal_tool.set_approval_callback(approval_callback)
+            if limits.get("terminal_timeout_seconds") is not None:
+                os.environ["TERMINAL_TIMEOUT"] = str(limits["terminal_timeout_seconds"])
+                terminal_tool.terminal_tool = limited_terminal
             if self._policy == "turn_boundary":
                 set_thread_tool_whitelist(
                     allowed,
@@ -296,12 +393,23 @@ class HermesBridge:
         finally:
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
+            terminal_tool.terminal_tool = previous_terminal_handler
+            if previous_terminal_timeout is None:
+                os.environ.pop("TERMINAL_TIMEOUT", None)
+            else:
+                os.environ["TERMINAL_TIMEOUT"] = previous_terminal_timeout
             terminal_tool.set_approval_callback(previous_approval)
             if session_tokens is not None and clear_session_vars is not None:
                 try:
                     clear_session_vars(session_tokens)
                 except Exception:
                     pass
+
+    def _record_limit(self, reason: str) -> None:
+        reasons = self._limit_state.setdefault("reasons", [])
+        if reason not in reasons:
+            reasons.append(reason)
+            self._events.append({"type": "work_limit.reached", "reason": reason})
 
     def _usage_delta(self, result: dict[str, Any]) -> dict[str, Any]:
         current: dict[str, float] = {}
@@ -393,6 +501,39 @@ def _normalize_tool_result(item: Any) -> dict[str, Any]:
             "result": _json_safe(result),
         }
     return {"tool": str(item), "arguments": {}, "result": None}
+
+
+def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
+    """Validate the optional bounded-autonomy contract supplied by L2."""
+
+    if not isinstance(metadata, dict):
+        return {}
+    raw = metadata.get("l2_agent_limits")
+    if not isinstance(raw, dict):
+        return {}
+    fields = {
+        "max_model_calls": (2, 100),
+        "max_tool_calls": (1, 100),
+        "terminal_timeout_seconds": (1, 600),
+        "episode_timeout_seconds": (30, 3600),
+        "evolution_max_model_calls": (1, 16),
+        "evolution_timeout_seconds": (10, 900),
+    }
+    result: dict[str, int] = {}
+    for name, (minimum, maximum) in fields.items():
+        value = raw.get(name)
+        if isinstance(value, bool):
+            raise RuntimeError(f"l2_agent_limits.{name} must be an integer")
+        try:
+            parsed = int(value)
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError(f"l2_agent_limits.{name} must be an integer") from exc
+        if not minimum <= parsed <= maximum:
+            raise RuntimeError(
+                f"l2_agent_limits.{name} must be between {minimum} and {maximum}"
+            )
+        result[name] = parsed
+    return result
 
 
 def _subtract_usage(after: dict[str, Any], before: dict[str, Any]) -> dict[str, Any]:

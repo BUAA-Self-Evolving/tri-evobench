@@ -1,0 +1,9 @@
+# Offline extension of the already-built Hermes agent image for real L2 runs.
+# Both source images use CPython 3.11.  The L2 image is the canonical source
+# for packages promised to public L2 tasks, so this avoids an agent-side
+# dependency mismatch and makes rebuilds independent of external package
+# mirrors during evaluation.
+FROM trievo-l2:0.1 AS l2_runtime
+FROM trievo-hermes:0.1
+
+COPY --from=l2_runtime /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/

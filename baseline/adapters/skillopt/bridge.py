@@ -150,15 +150,68 @@ class SkillOptBridge:
         if tracker_usage["total_tokens"] or tracker_usage["api_calls"]:
             usage = tracker_usage
         self._last_summary = after
-        response_text = _extract_answer(text) if str(self.config.get("env", "")) == "searchqa" else str(text or "")
+        raw_text = str(text or "")
+        from trievo_bench.model import parse_reply
+
+        parsed = parse_reply(raw_text)
+        # Some reasoning models follow the task content but ignore the outer
+        # action envelope. Give them one bounded formatting retry before the
+        # interaction is returned, so a plain-language claim cannot silently
+        # become a successful no-op.
+        if _looks_like_workspace_task(request) and not parsed.actions and not is_target_exec_backend():
+            repair_user = (
+                f"{user}\n\n## Required correction\n"
+                "Your previous output did not contain a parseable action list. "
+                "Return JSON only, with no commentary, using this exact shape: "
+                "{\\\"response\\\":\\\"brief result\\\",\\\"actions\\\":[{\\\"op\\\":\\\"write_file\\\",\\\"path\\\":\\\"/workspace/file.txt\\\",\\\"content\\\":\\\"...\\\"}]}"
+            )
+            retry_text, retry_usage = chat_target(
+                system=system,
+                user=repair_user,
+                max_completion_tokens=int(self.config.get("max_completion_tokens", 16384)),
+                retries=1,
+                stage="target_format_retry",
+                reasoning_effort=self.config.get("reasoning_effort"),
+                timeout=_optional_int(self.config.get("exec_timeout")),
+            )
+            if retry_text:
+                raw_text = str(retry_text)
+                parsed = parse_reply(raw_text)
+        executed_actions: list[dict[str, Any]] = []
+        action_events: list[dict[str, Any]] = []
+        action_error: str | None = None
+        for action in parsed.actions:
+            try:
+                executed = self._apply_workspace_action(action)
+                executed_actions.append(executed)
+                action_events.append({
+                    "type": "action.completed",
+                    "op": executed["op"],
+                    "path": executed["path"],
+                })
+            except (TypeError, ValueError, OSError) as exc:
+                action_error = str(exc)
+                action_events.append({"type": "action.failed", "error": action_error})
+                break
+        response_text = parsed.text
+        if str(self.config.get("env", "")) == "searchqa" and not parsed.actions:
+            response_text = _extract_answer(raw_text)
+        if not response_text:
+            response_text = raw_text
         return {
             "text": response_text,
-            "events": [{"type": "target.completed"}],
+            "actions": executed_actions,
+            "events": [{"type": "target.completed"}, *action_events],
             "tool_calls": [],
             "usage": usage,
             "actions_are_executed": True,
             "tool_calls_are_executed": True,
-            "raw": {"provider_usage": raw_usage, "model_response": str(text or "")},
+            "raw": {
+                "provider_usage": raw_usage,
+                "model_response": raw_text,
+                "parsed_response": parsed.raw,
+                "action_error": action_error,
+            },
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -347,7 +400,15 @@ class SkillOptBridge:
         sandbox = params.get("sandbox", {})
         environment = str(self.config.get("env", self.options.get("env", "generic")))
         output_rule = ""
-        if environment == "searchqa":
+        action_task = _looks_like_workspace_task(request)
+        if action_task:
+            output_rule = (
+                " Return exactly one JSON object with keys `response` and `actions`. "
+                "Each action must be `{\\\"op\\\":\\\"write_file\\\",\\\"path\\\":\\\"/workspace/...\\\",\\\"content\\\":\\\"...\\\"}` "
+                "or `{\\\"op\\\":\\\"remove\\\",\\\"path\\\":\\\"/workspace/...\\\"}`. "
+                "Use `actions: []` when no file change is required. Do not claim a file was changed unless it appears in actions."
+            )
+        elif environment == "searchqa":
             output_rule = " Return the answer inside <answer>...</answer> tags."
         system = (
             "You are the SkillOpt target agent. Follow the Skill below as durable "
@@ -367,6 +428,26 @@ class SkillOptBridge:
             f"## Workspace snapshot\n{json.dumps(sandbox, ensure_ascii=False)}"
         )
         return system, user
+
+    def _apply_workspace_action(self, action: dict[str, Any]) -> dict[str, Any]:
+        if self.workspace is None:
+            raise RuntimeError("SkillOpt workspace is unavailable")
+        op = str(action.get("op", "")).strip().lower()
+        raw_path = str(action.get("path", "")).strip()
+        if not raw_path:
+            raise ValueError("workspace action requires a path")
+        path = _workspace_path(self.workspace, raw_path)
+        if op == "write_file":
+            content = action.get("content", "")
+            if not isinstance(content, str):
+                content = str(content)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+            return {"op": "write_file", "path": _workspace_display_path(self.workspace, path), "bytes": len(content.encode("utf-8"))}
+        if op == "remove":
+            path.unlink(missing_ok=True)
+            return {"op": "remove", "path": _workspace_display_path(self.workspace, path)}
+        raise ValueError(f"unsupported workspace action: {op}")
 
     def _reflect_and_update(self, trajectory: Any, feedback: Any) -> list[str]:
         if not isinstance(trajectory, list) or not trajectory:
@@ -576,6 +657,47 @@ def _extract_answer(value: Any) -> str:
     if start >= 0 and end >= 0:
         return text[start + len("<answer>"):end].strip()
     return text
+
+
+def _looks_like_workspace_task(request: str) -> bool:
+    text = str(request).lower()
+    markers = (
+        "/workspace",
+        "write_file",
+        "create a file",
+        "create /",
+        "写入",
+        "创建文件",
+        "修改文件",
+        "删除文件",
+    )
+    return any(marker in text for marker in markers)
+
+
+def _workspace_path(workspace: Path, raw_path: str) -> Path:
+    root = workspace.resolve()
+    value = raw_path.replace("\\", "/")
+    if value == "/workspace":
+        relative = ""
+    elif value.startswith("/workspace/"):
+        relative = value[len("/workspace/"):]
+    else:
+        candidate = Path(raw_path).expanduser()
+        if candidate.is_absolute():
+            resolved = candidate.resolve()
+            if resolved != root and root not in resolved.parents:
+                raise ValueError(f"workspace action path escapes workspace: {raw_path}")
+            return resolved
+        relative = value.lstrip("/")
+    resolved = (root / relative).resolve()
+    if resolved != root and root not in resolved.parents:
+        raise ValueError(f"workspace action path escapes workspace: {raw_path}")
+    return resolved
+
+
+def _workspace_display_path(workspace: Path, path: Path) -> str:
+    relative = path.resolve().relative_to(workspace.resolve()).as_posix()
+    return "/workspace" + (f"/{relative}" if relative else "")
 
 
 def main() -> None:

@@ -11,6 +11,7 @@ import tempfile
 import threading
 import time
 import uuid
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -176,6 +177,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._state_dir: Path | None = None
         self._flow: FlowContext | None = None
         self._current_turn: str | None = None
+        self._current_turn_metadata: dict[str, Any] = {}
         self._turn_evolved = False
         self._adapter_metadata: dict[str, Any] = {}
         self._stable_state: _StateCapture | None = None
@@ -194,12 +196,15 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._template_values = variables
         adapter = self.manifest.adapter
         command = [_render(item, variables) for item in adapter["command"]]
+        command[0] = _resolve_executable(command[0])
         cleanup = adapter.get("cleanup_command")
         self._cleanup_command = (
             [_render(item, variables) for item in cleanup]
             if isinstance(cleanup, list) and all(isinstance(item, str) for item in cleanup)
             else None
         )
+        if self._cleanup_command:
+            self._cleanup_command[0] = _resolve_executable(self._cleanup_command[0])
         cwd_value = _render(str(adapter.get("cwd", "{repo_root}")), variables)
         cwd = Path(cwd_value)
         if not cwd.is_absolute():
@@ -262,6 +267,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
             },
         )
         self._current_turn = context.turn_id
+        self._current_turn_metadata = dict(context.metadata)
         self._turn_evolved = False
         started_state = self._capture_state(include_bytes=True)
         if prior_state is not None and bool(self.manifest.state.get("enforce_turn_freeze", False)):
@@ -278,6 +284,9 @@ class ProcessBaselineRuntime(BaselineRuntime):
             raise RuntimeError(f"interaction belongs to inactive turn: {context.turn_id}")
         self._ensure_stable_state("before interact", interaction_error=True)
         before = self._capture_state(include_bytes=True)
+        interaction_timeout = _positive_seconds(
+            self._current_turn_metadata.get("interaction_timeout_seconds")
+        )
         result = self._request(
             "interact",
             {
@@ -288,6 +297,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 "sandbox": context.sandbox,
                 "remaining_token_budget": context.remaining_token_budget,
             },
+            timeout=interaction_timeout,
         )
         usage = UsageDetails.from_mapping(result.get("usage"))
         self._record_usage(usage)
@@ -336,8 +346,21 @@ class ProcessBaselineRuntime(BaselineRuntime):
         if not bool(result.get("completed", True)):
             self._restore_state(before_capture)
             self._stable_state = before_capture
-            raise BaselineProtocolError(
-                f"baseline evolution did not complete for turn {context.turn_id}"
+            if not bool(result.get("recoverable_failure", False)):
+                raise BaselineProtocolError(
+                    f"baseline evolution did not complete for turn {context.turn_id}"
+                )
+            # A bounded evolution pass can fail without making the baseline
+            # transport unusable. Roll back its learning state, cross the
+            # lifecycle barrier, and let the evaluator mark this Turn failed.
+            self._turn_evolved = True
+            return EvolutionResult(
+                completed=False,
+                events=_dict_list(result.get("events")),
+                usage=usage,
+                state_before=before,
+                state_after=before,
+                changed_files=[],
             )
         after_capture = self._capture_state(include_bytes=True)
         after = after_capture.snapshot
@@ -391,6 +414,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 shutil.rmtree(self._state_dir, ignore_errors=True)
             self._state_dir = None
             self._current_turn = None
+            self._current_turn_metadata = {}
             self._stable_state = None
             self._cleanup_command = None
             self._template_values = None
@@ -457,6 +481,14 @@ class ProcessBaselineRuntime(BaselineRuntime):
             *[str(item) for item in environment.get("inherit", [])],
         }
         env = {key: value for key, value in os.environ.items() if key in inherit}
+        if os.name == "nt":
+            # Python's Windows socket extension requires SYSTEMROOT. Keep the
+            # small set of OS runtime variables even when the manifest uses a
+            # strict application-environment allowlist.
+            for key in ("SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE", "COMSPEC"):
+                value = os.environ.get(key)
+                if value:
+                    env[key] = value
         env["PYTHONUNBUFFERED"] = "1"
         for key, value in environment.get("set", {}).items():
             env[str(key)] = _render(str(value), variables)
@@ -570,11 +602,54 @@ class ProcessBaselineRuntime(BaselineRuntime):
 
     def _export_state(self, output_dir: Path, snapshot: BaselineSnapshot) -> None:
         artifact_root = output_dir / "baseline_state"
-        artifact_root.mkdir(parents=True, exist_ok=True)
-        for relative, path in self._iter_state_files():
-            target = artifact_root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(path, target)
+        state_files = [(relative, path) for relative, path in self._iter_state_files() if path.is_file()]
+        # Self-evolving baselines can create deep history/evolver trees. On
+        # Windows the nested run path may exceed the filesystem limit during
+        # export even when the state itself is valid, so preserve the same
+        # files in a zip with POSIX archive names.
+        # The output path itself is already deeply nested in Windows runs;
+        # checking individual descendants is too late because mkdir can fail
+        # on an intermediate directory first. Always use the short zip file on
+        # Windows and retain the directory form on POSIX hosts.
+        use_zip = os.name == "nt"
+        if use_zip:
+            archive = output_dir / "baseline_state.zip"
+            with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+                for relative, path in state_files:
+                    try:
+                        if path.is_file():
+                            bundle.write(path, arcname=relative)
+                    except FileNotFoundError:
+                        continue
+            # Keep the traditional directory form for short paths so existing
+            # consumers remain compatible. Deep entries are already preserved
+            # losslessly in the zip above; skip only entries rejected by the
+            # Windows path-length limit.
+            try:
+                artifact_root.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                artifact_root = None
+            if artifact_root is not None:
+                for relative, path in state_files:
+                    if not path.is_file():
+                        continue
+                    target = artifact_root / relative
+                    try:
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(path, target)
+                    except (FileNotFoundError, OSError):
+                        continue
+        else:
+            artifact_root.mkdir(parents=True, exist_ok=True)
+            for relative, path in state_files:
+                if not path.is_file():
+                    continue
+                target = artifact_root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    shutil.copy2(path, target)
+                except FileNotFoundError:
+                    continue
         (output_dir / "baseline_state_snapshot.json").write_text(
             json.dumps(snapshot.to_dict(), ensure_ascii=False, indent=2),
             encoding="utf-8",
@@ -632,6 +707,18 @@ def _dict_list(value: Any) -> list[dict[str, Any]]:
     return [dict(item) for item in value if isinstance(item, dict)]
 
 
+def _positive_seconds(value: Any) -> float | None:
+    """Accept only a finite positive per-interaction timeout override."""
+
+    if isinstance(value, bool):
+        return None
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        return None
+    return seconds if seconds > 0 and seconds != float("inf") else None
+
+
 def _changed_paths(before: BaselineSnapshot, after: BaselineSnapshot) -> list[str]:
     before_hashes = {str(item.get("path")): item.get("sha256") for item in before.files}
     after_hashes = {str(item.get("path")): item.get("sha256") for item in after.files}
@@ -655,3 +742,15 @@ def _safe_relative_state_path(value: str) -> Path:
     if path.is_absolute() or ".." in path.parts:
         raise BaselineProtocolError(f"state seed path escapes seed root: {value}")
     return Path(*path.parts)
+
+
+def _resolve_executable(value: str) -> str:
+    """Resolve common host CLIs when a GUI installer omitted PATH registration."""
+
+    if Path(value).is_file() or shutil.which(value):
+        return value
+    if value == "docker" and os.name == "nt":
+        docker_desktop = Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "DockerDesktop" / "resources" / "bin" / "docker.exe"
+        if docker_desktop.is_file():
+            return str(docker_desktop)
+    return value

@@ -8,9 +8,12 @@ from types import SimpleNamespace
 
 from baseline.adapters.trace2skill.bridge import (
     Trace2SkillBridge,
+    _normalize_generation_config,
+    _select_agent_name,
     _steps_to_trace,
     _trajectory_records,
 )
+from baseline.Trace2Skill.src.react_agent.converter import ReActConverter
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.spec import BenchmarkSpec
@@ -134,6 +137,56 @@ class Trace2SkillBaselineContractTest(unittest.TestCase):
         trace = _steps_to_trace([step])
         self.assertEqual(trace["tool_calls"][0]["name"], "bash")
         self.assertEqual(trace["events"][0]["type"], "tool.completed")
+
+    def test_auto_agent_uses_cli_only_for_generic_tasks(self) -> None:
+        self.assertEqual(_select_agent_name({"agent": "auto"}, {"instruction": "Create /workspace/a.txt"}), "cli_workspace")
+        self.assertEqual(_select_agent_name({"agent": "auto"}, {"input_file": "input.xlsx"}), "cli_skill_preloaded")
+
+    def test_deepseek_thinking_is_normalized_for_openai_sdk(self) -> None:
+        config = _normalize_generation_config({"max_tokens": 128, "thinking": {"type": "disabled"}})
+        self.assertNotIn("thinking", config)
+        self.assertEqual(config["extra_body"]["thinking"]["type"], "disabled")
+
+    def test_react_converter_parses_deepseek_dsml_tool_call(self) -> None:
+        response = (
+            'prefix\n'
+            '<\\ufffd\\ufffd\\ufffd\\ufffdDSML\\ufffd\\ufffd\\ufffd\\ufffd1"python">\n'
+            '<argument1>{"code": "print(1)"}</argument1>\n'
+            '</argument1>\n'
+            '</\\ufffd\\ufffd\\ufffd\\ufffdDSML\\ufffd\\ufffd\\ufffd\\ufffd1>'
+        )
+        result = ReActConverter().parse_response(response)
+        self.assertTrue(result.is_action)
+        self.assertEqual(result.action.name, "python")
+        self.assertEqual(result.action.arguments, {"code": "print(1)"})
+
+    def test_react_converter_parses_dsml_eval_execute_and_fenced_calls(self) -> None:
+        eval_response = (
+            '<｜｜DSML｜｜eval_execute>\n'
+            '<｜｜DSML｜｜parameter name="code">print(2)</｜｜DSML｜｜parameter>\n'
+            '</｜｜DSML｜｜eval_execute>'
+        )
+        result = ReActConverter().parse_response(eval_response)
+        self.assertTrue(result.is_action)
+        self.assertEqual(result.action.name, "python")
+        self.assertEqual(result.action.arguments, {"code": "print(2)"})
+
+        fenced = ReActConverter().parse_response("```bash\necho ok\n```")
+        self.assertTrue(fenced.is_action)
+        self.assertEqual(fenced.action.name, "bash")
+        self.assertEqual(fenced.action.arguments, {"command": "echo ok"})
+
+    def test_react_converter_parses_dsml_json_action_with_reasoning_prefix(self) -> None:
+        response = (
+            "I will inspect the workspace first.\n"
+            "<｜｜DSML｜｜eval_action>\n"
+            '{"name": "bash", "arguments": {"command": "ls -la /workspace"}}\n'
+            "</｜｜DSML｜｜eval_action>"
+        )
+        result = ReActConverter().parse_response(response)
+        self.assertTrue(result.is_action)
+        self.assertEqual(result.action.name, "bash")
+        self.assertEqual(result.action.arguments, {"command": "ls -la /workspace"})
 
 
 if __name__ == "__main__":

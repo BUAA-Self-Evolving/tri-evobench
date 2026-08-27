@@ -188,6 +188,10 @@ def main() -> None:
     parser.add_argument("--api-base")
     parser.add_argument("--reasoning-effort", default="medium")
     parser.add_argument("--allow-generated-code", action="store_true")
+    parser.add_argument("--baseline", help="run L2 through a real agent baseline (currently: hermes)")
+    parser.add_argument("--baseline-config", help="JSON/YAML overrides for the agent baseline manifest")
+    parser.add_argument("--max-total-tokens", type=int, default=2_000_000)
+    parser.add_argument("--browser-image", default="trievo-l2-browser:0.1")
     args = parser.parse_args()
     inventory = inspect_l2_package(args.package)
     if args.inspect:
@@ -195,6 +199,26 @@ def main() -> None:
         return
     if not args.stream:
         raise SystemExit("--stream is required unless --inspect is used")
+    if args.baseline:
+        if not args.allow_generated_code:
+            raise SystemExit("L2 real-agent execution requires --allow-generated-code")
+        from .l2_agent import L2AgentRunOptions, load_baseline_overrides, run_l2_agent_stream
+
+        report = run_l2_agent_stream(
+            L2AgentRunOptions(
+                package_dir=Path(args.package),
+                stream_id=args.stream,
+                output_root=Path(args.output),
+                baseline=args.baseline,
+                baseline_overrides=load_baseline_overrides(args.baseline_config),
+                max_total_tokens=args.max_total_tokens,
+                verifier_image=args.image,
+                browser_verifier_image=args.browser_image,
+                repo_root=Path(__file__).resolve().parents[1],
+            )
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return
     raise SystemExit(run_l2_in_docker(
         package_dir=args.package,
         stream_id=args.stream,

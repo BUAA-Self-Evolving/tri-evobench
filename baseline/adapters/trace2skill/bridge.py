@@ -333,9 +333,14 @@ class Trace2SkillBridge:
         if str(source_root / "src") not in sys.path:
             sys.path.insert(0, str(source_root / "src"))
         from spreadsheet_agent import CLIOnlyAgent, CLISkillPreloadedAgent
+        from spreadsheet_agent.agents.cli_workspace_agent import CLIWorkspaceAgent
 
-        agent_name = str(self.options.get("agent", "cli_skill_preloaded"))
-        agent_class = {"cli_only": CLIOnlyAgent, "cli_skill_preloaded": CLISkillPreloadedAgent}.get(agent_name)
+        agent_name = _select_agent_name(self.options, self.turn_metadata)
+        agent_class = {
+            "cli_only": CLIOnlyAgent,
+            "cli_workspace": CLIWorkspaceAgent,
+            "cli_skill_preloaded": CLISkillPreloadedAgent,
+        }.get(agent_name)
         if agent_class is None:
             raise RuntimeError(f"unsupported Trace2Skill agent: {agent_name}")
         kwargs = {
@@ -482,6 +487,7 @@ def _build_client(options: dict[str, Any], repo_root: Path, stage: str) -> Any:
         )
     if not isinstance(generation_config, dict):
         raise RuntimeError("Trace2Skill generation_config must be an object or JSON file")
+    generation_config = _normalize_generation_config(generation_config)
     use_cache = bool(options.get("use_cache", False))
     cache_path = options.get("cache_path")
     if client_name == "api_chat":
@@ -511,8 +517,44 @@ def _build_client(options: dict[str, Any], repo_root: Path, stage: str) -> Any:
     )
 
 
+def _normalize_generation_config(config: dict[str, Any]) -> dict[str, Any]:
+    """Keep provider-specific knobs out of the OpenAI SDK keyword surface."""
+    normalized = dict(config)
+    thinking = normalized.pop("thinking", None)
+    if thinking is not None:
+        extra_body = normalized.get("extra_body")
+        extra_body = dict(extra_body) if isinstance(extra_body, dict) else {}
+        extra_body.setdefault("thinking", thinking)
+        normalized["extra_body"] = extra_body
+    return normalized
+
+
 def _trace2skill_root(repo_root: Path) -> Path:
     return repo_root / "baseline" / "Trace2Skill"
+
+
+def _select_agent_name(options: dict[str, Any], turn_metadata: dict[str, Any]) -> str:
+    """Select the spreadsheet-aware agent only for spreadsheet turns.
+
+    ``auto`` keeps the historical XLSX default when the benchmark item clearly
+    describes a workbook, while generic file tasks use the tool-capable CLI
+    agent instead of spending its turns on spreadsheet-specific actions.
+    """
+    requested = str(options.get("agent", "cli_skill_preloaded"))
+    if requested != "auto":
+        return requested
+    item = turn_metadata.get("item") if isinstance(turn_metadata, dict) else None
+    item = item if isinstance(item, dict) else turn_metadata
+    candidates = [
+        str(options.get("input_file", "")),
+        str(item.get("input_file", "")) if isinstance(item, dict) else "",
+        str(item.get("input_path", "")) if isinstance(item, dict) else "",
+        str(item.get("instruction_type", "")) if isinstance(item, dict) else "",
+    ]
+    spreadsheet_markers = (".xlsx", ".xlsm", "spreadsheet", "workbook", "xlsx")
+    if any(any(marker in value.lower() for marker in spreadsheet_markers) for value in candidates):
+        return "cli_skill_preloaded"
+    return "cli_workspace"
 
 
 def _steps_to_trace(steps: Any) -> dict[str, Any]:
@@ -696,6 +738,11 @@ def _json_safe(value: Any) -> Any:
 
 def main() -> None:
     protocol_stdout = sys.stdout
+    # Keep the NDJSON protocol UTF-8 on Windows. Provider control tokens in a
+    # model response are not necessarily representable in the system GBK code
+    # page and must not crash the adapter while serializing a trace.
+    if hasattr(protocol_stdout, "reconfigure"):
+        protocol_stdout.reconfigure(encoding="utf-8", errors="replace")
     bridge = Trace2SkillBridge()
     for line in sys.stdin:
         stripped = line.strip()

@@ -1,0 +1,7 @@
+# Offline overlay used by bounded L2 self-evolution evaluations.
+# Keep the large L2 runtime image cached and replace only the adapter and
+# background-review implementation that belongs to this checkout.
+FROM trievo-hermes-l2:0.1
+
+COPY baseline/hermes-agent/agent/background_review.py /opt/hermes/agent/background_review.py
+COPY trievo_bench/baselines/hermes_bridge.py /opt/trievo/trievo_bench/baselines/hermes_bridge.py
