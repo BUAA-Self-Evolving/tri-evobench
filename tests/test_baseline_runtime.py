@@ -8,7 +8,7 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from trievo_bench.baselines.hermes_bridge import HermesBridge
+from trievo_bench.baselines.hermes_bridge import HermesBridge, _extract_l1_protocol
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.process import ProcessBaselineRuntime
 from trievo_bench.model import TokenBudget
@@ -253,6 +253,19 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(usage["total_tokens"], 19)
         self.assertEqual(usage["reasoning_tokens"], 5)
         self.assertEqual(usage["api_calls"], 2)
+
+    def test_hermes_l1_protocol_keeps_only_visible_text_and_normalizes_fact_aliases(self) -> None:
+        visible, state_update, calls = _extract_l1_protocol(
+            "已创建会议。\n"
+            "TRIEVO_TOOL_CALL: {\"tool\": \"calendar.create_event\", \"arguments\": {\"calendar_id\": \"cal_delivery_team\"}}\n"
+            "TRIEVO_STATE_UPDATE: {\"facts\": {\"default_work_language\": {\"value\": \"zh-CN\"}, \"delivery_calendar_id\": {\"value\": \"cal_delivery_team\"}}}",
+            ["calendar.create_event"],
+        )
+
+        self.assertEqual(visible, "已创建会议。")
+        self.assertEqual(calls[0]["tool"], "calendar.create_event")
+        self.assertIn("default_output_language", state_update["facts"])
+        self.assertIn("default_delivery_calendar_id", state_update["facts"])
 
     def test_process_runtime_rejects_source_revision_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

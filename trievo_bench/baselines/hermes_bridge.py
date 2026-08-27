@@ -102,9 +102,12 @@ class HermesBridge:
         metadata = params.get("metadata")
         self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
         if self._l1_tools:
-            # L1 already controls retries through max_interactions; avoid an
-            # unbounded inner Hermes deliberation consuming the flow budget.
-            agent.max_iterations = 3
+            # L1 already controls retries through max_interactions.  Give the
+            # framework exactly one foreground decision per Interaction: an
+            # inner tool/reasoning loop would otherwise make one simulated
+            # L1 retry consume several model calls before the evaluator can
+            # supply its scripted follow-up or feedback.
+            agent.max_iterations = 1
         self._limit_state = {"tool_starts": 0, "reasons": []}
         if self._turn_limits:
             # Hermes reserves one no-tools call to request a concise final
