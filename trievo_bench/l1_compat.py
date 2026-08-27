@@ -119,6 +119,7 @@ def _task_to_turn(task_dir: Path, task: dict[str, Any], first: bool, workspace: 
             "task_type": task.get("task_type"),
             "available_tools": available_tools,
             "iteration_policy": task.get("iteration_policy", {}),
+            "interaction_timeout_seconds": 180,
         }},
     }
 
