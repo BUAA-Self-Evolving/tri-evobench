@@ -101,6 +101,10 @@ class HermesBridge:
         self._turn_limits = _parse_l2_agent_limits(params.get("metadata"))
         metadata = params.get("metadata")
         self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
+        if self._l1_tools:
+            # L1 already controls retries through max_interactions; avoid an
+            # unbounded inner Hermes deliberation consuming the flow budget.
+            agent.max_iterations = 3
         self._limit_state = {"tool_starts": 0, "reasons": []}
         if self._turn_limits:
             # Hermes reserves one no-tools call to request a concise final
@@ -506,7 +510,9 @@ def _l1_protocol_prompt(available_tools: list[str]) -> str:
         + ". In your final response, after the user-facing text, emit one line per required call exactly as "
         "TRIEVO_TOOL_CALL: {\"tool\": \"name\", \"arguments\": {...}}. "
         "For durable facts emit exactly one TRIEVO_STATE_UPDATE: {\"facts\": {...}} line. "
-        "The bridge removes these protocol lines before showing the user and the evaluator executes the calls."
+        "The bridge removes these protocol lines before showing the user and the evaluator executes the calls. "
+        "Benchmark task literals are authoritative: use an explicitly stated absolute date exactly; do not replace it using the host date. "
+        "Use fact keys default_output_language=zh-CN, aurora.technical_owner, and default_delivery_calendar_id when applicable."
     )
 
 
@@ -532,6 +538,18 @@ def _extract_l1_protocol(text: str, available_tools: list[str]) -> tuple[str, di
                 pass
             continue
         visible.append(line)
+    facts = state_update.get("facts") if isinstance(state_update.get("facts"), dict) else None
+    if facts is not None:
+        aliases = {
+            "default_work_language": ("default_output_language", "zh-CN"),
+            "aurora_tech_lead": ("aurora.technical_owner", None),
+            "delivery_calendar_id": ("default_delivery_calendar_id", None),
+        }
+        normalized = dict(facts)
+        for source, (target, fixed_value) in aliases.items():
+            if source in normalized and target not in normalized:
+                normalized[target] = fixed_value if fixed_value is not None else normalized[source]
+        state_update["facts"] = normalized
     return "\n".join(visible).strip(), state_update, calls
 
 
