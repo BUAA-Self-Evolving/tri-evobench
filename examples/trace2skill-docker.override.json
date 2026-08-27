@@ -1,0 +1,41 @@
+{
+  "adapter": {
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-i",
+      "--user",
+      "{uid}:{gid}",
+      "-v",
+      "{workspace}:/workspace",
+      "-v",
+      "{state_dir}:/agent-state",
+      "-e",
+      "TRIEVO_REPO_ROOT=/opt/trievo",
+      "-e",
+      "PYTHONPATH=/opt/trievo/baseline/Trace2Skill:/opt/trievo/baseline/Trace2Skill/src:/opt/trievo",
+      "-e",
+      "OPENAI_API_KEY",
+      "-e",
+      "OPENAI_BASE_URL",
+      "-e",
+      "TRIEVO_API_KEY",
+      "-e",
+      "TRIEVO_BASE_URL",
+      "-e",
+      "TRIEVO_MODEL",
+      "{image}"
+    ]
+  },
+  "workspace": {
+    "adapter_path": "/workspace"
+  },
+  "state": {
+    "adapter_path": "/agent-state"
+  },
+  "options": {
+    "image": "trievo-trace2skill:0.1",
+    "model": "gpt-4o"
+  }
+}

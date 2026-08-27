@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "trace2skill",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "python3",
+      "baseline/adapters/trace2skill/bridge.py"
+    ]
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY",
+      "OPENAI_BASE_URL",
+      "TRIEVO_API_KEY",
+      "TRIEVO_BASE_URL",
+      "TRIEVO_MODEL"
+    ],
+    "set": {
+      "PYTHONPATH": "{repo_root}/baseline/Trace2Skill:{repo_root}/baseline/Trace2Skill/src:{repo_root}",
+      "TRIEVO_REPO_ROOT": "{repo_root}"
+    }
+  },
+  "workspace": {
+    "mode": "shared_volume",
+    "adapter_path": "{workspace}"
+  },
+  "state": {
+    "scope": "flow",
+    "adapter_path": "{state_dir}",
+    "paths": [
+      "skills/**/*",
+      "history/**/*"
+    ],
+    "enforce_turn_freeze": true
+  },
+  "evolution": {
+    "policy": "turn_boundary",
+    "timeout_seconds": 1200
+  },
+  "options": {
+    "agent": "cli_skill_preloaded",
+    "skill_name": "xlsx",
+    "model": "",
+    "max_turns": 20,
+    "temperature": 0.0,
+    "tool_timeout": 120,
+    "use_cache": false,
+    "evolution_batch_size": 1,
+    "merge_batch_size": 5,
+    "max_workers": 1,
+    "evolution_temperature": 0.3,
+    "max_verification_rounds": 1,
+    "patch_pipeline": "json"
+  },
+  "capabilities": [
+    "direct_workspace",
+    "tool_calls",
+    "usage",
+    "skill_reflection",
+    "evolution_barrier"
+  ]
+}

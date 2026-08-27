@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "id": "skillopt",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "python3",
+      "baseline/adapters/skillopt/bridge.py"
+    ]
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY",
+      "OPENROUTER_API_KEY",
+      "ANTHROPIC_API_KEY",
+      "AZURE_OPENAI_ENDPOINT",
+      "AZURE_OPENAI_API_VERSION",
+      "AZURE_OPENAI_API_KEY",
+      "AZURE_OPENAI_AUTH_MODE",
+      "AZURE_OPENAI_AD_SCOPE",
+      "OPTIMIZER_AZURE_OPENAI_ENDPOINT",
+      "OPTIMIZER_AZURE_OPENAI_API_VERSION",
+      "OPTIMIZER_AZURE_OPENAI_API_KEY",
+      "OPTIMIZER_AZURE_OPENAI_AUTH_MODE",
+      "TARGET_AZURE_OPENAI_ENDPOINT",
+      "TARGET_AZURE_OPENAI_API_VERSION",
+      "TARGET_AZURE_OPENAI_API_KEY",
+      "TARGET_AZURE_OPENAI_AUTH_MODE",
+      "OPENAI_COMPATIBLE_BASE_URL",
+      "OPENAI_COMPATIBLE_API_KEY",
+      "OPENAI_COMPATIBLE_MODEL",
+      "OPTIMIZER_OPENAI_COMPATIBLE_BASE_URL",
+      "OPTIMIZER_OPENAI_COMPATIBLE_API_KEY",
+      "TARGET_OPENAI_COMPATIBLE_BASE_URL",
+      "TARGET_OPENAI_COMPATIBLE_API_KEY",
+      "TARGET_OPENAI_COMPATIBLE_MODEL",
+      "QWEN_CHAT_BASE_URL",
+      "QWEN_CHAT_API_KEY",
+      "TARGET_QWEN_CHAT_BASE_URL",
+      "TARGET_QWEN_CHAT_API_KEY",
+      "MINIMAX_API_KEY",
+      "MINIMAX_BASE_URL",
+      "COPILOT_HOME",
+      "CODEX_EXEC_PATH",
+      "TRIEVO_BASE_URL",
+      "TRIEVO_API_KEY",
+      "TRIEVO_MODEL"
+    ],
+    "set": {
+      "PYTHONPATH": "{repo_root}/baseline/SkillOpt:{repo_root}",
+      "TRIEVO_REPO_ROOT": "{repo_root}"
+    }
+  },
+  "workspace": {
+    "mode": "shared_volume",
+    "adapter_path": "{workspace}"
+  },
+  "state": {
+    "scope": "flow",
+    "adapter_path": "{state_dir}",
+    "paths": [
+      "skill.md",
+      "history/**/*"
+    ],
+    "enforce_turn_freeze": true
+  },
+  "evolution": {
+    "policy": "turn_boundary",
+    "timeout_seconds": 900
+  },
+  "options": {
+    "config": "baseline/SkillOpt/configs/searchqa/default.yaml",
+    "skill": "baseline/SkillOpt/skillopt/envs/searchqa/skills/initial.md",
+    "env": "searchqa",
+    "optimizer_backend": "openai_chat",
+    "target_backend": "openai_chat",
+    "optimizer_model": "gpt-5.5",
+    "target_model": "gpt-5.5",
+    "reasoning_effort": "medium",
+    "max_completion_tokens": 16384,
+    "analyst_workers": 1,
+    "minibatch_size": 8,
+    "edit_budget": 4,
+    "skill_update_mode": "patch"
+  },
+  "capabilities": [
+    "target_chat",
+    "target_exec",
+    "skill_reflection",
+    "direct_workspace",
+    "usage",
+    "evolution_barrier"
+  ]
+}

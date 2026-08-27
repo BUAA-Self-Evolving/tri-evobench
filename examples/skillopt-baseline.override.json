@@ -1,0 +1,14 @@
+{
+  "options": {
+    "config": "baseline/SkillOpt/configs/searchqa/default.yaml",
+    "skill": "baseline/SkillOpt/skillopt/envs/searchqa/skills/initial.md",
+    "target_backend": "openai_compatible",
+    "optimizer_backend": "openai_compatible",
+    "target_model": "deepseek-chat",
+    "optimizer_model": "deepseek-chat",
+    "config_options": [
+      "train.seed=42",
+      "optimizer.learning_rate=4"
+    ]
+  }
+}
