@@ -46,6 +46,14 @@ class L2AgentLimitsTest(unittest.TestCase):
             "evolution_timeout_seconds": 120,
         }})
         self.assertEqual(parsed["max_tool_calls"], 8)
+        self.assertEqual(_parse_l2_agent_limits({"agent_limits": {
+            "max_model_calls": 3,
+            "max_tool_calls": 1,
+            "terminal_timeout_seconds": 90,
+            "episode_timeout_seconds": 180,
+            "evolution_max_model_calls": 2,
+            "evolution_timeout_seconds": 120,
+        }})["evolution_max_model_calls"], 2)
         self.assertEqual(_limit_reasons({"limit_exhausted": True, "limit_reasons": ["max_tool_calls"]}), ["max_tool_calls"])
         self.assertEqual(_limit_reasons({"limit_exhausted": False}), [])
 

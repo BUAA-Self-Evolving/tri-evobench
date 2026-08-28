@@ -31,6 +31,7 @@ class HermesBridge:
         self._turn_limits: dict[str, int] = {}
         self._limit_state: dict[str, Any] = {}
         self._l1_tools: list[str] = []
+        self._is_l1_turn = False
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -101,7 +102,8 @@ class HermesBridge:
         self._turn_limits = _parse_l2_agent_limits(params.get("metadata"))
         metadata = params.get("metadata")
         self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
-        if self._l1_tools:
+        self._is_l1_turn = _is_l1_metadata(metadata)
+        if self._is_l1_turn:
             # L1 already controls retries through max_interactions.  Give the
             # framework exactly one foreground decision per Interaction: an
             # inner tool/reasoning loop would otherwise make one simulated
@@ -129,7 +131,8 @@ class HermesBridge:
             # Hermes reserves one no-tools call to request a concise final
             # answer after its iteration budget is depleted.  Leave that
             # grace call inside the benchmark's advertised model-call cap.
-            agent.max_iterations = max(1, self._turn_limits["max_model_calls"] - 1)
+            if not self._is_l1_turn:
+                agent.max_iterations = max(1, self._turn_limits["max_model_calls"] - 1)
             agent.run_budget_seconds = float(self._turn_limits["episode_timeout_seconds"])
             agent._trievo_evolution_limits = {
                 "max_model_calls": self._turn_limits["evolution_max_model_calls"],
@@ -148,8 +151,13 @@ class HermesBridge:
             raise RuntimeError("Hermes interaction request is empty")
         self._events = []
         self._tool_calls = []
-        if self._l1_tools:
-            request = _l1_protocol_prompt(self._l1_tools) + "\n\n" + request
+        if self._is_l1_turn:
+            request = (
+                _l1_protocol_prompt(self._l1_tools)
+                + _l1_readonly_workspace_context(Path(self._workspace or state.cwd))
+                + "\n\n"
+                + request
+            )
         agent = state.agent
         self._install_callbacks(agent)
         with self._foreground_policy(agent, state.session_id, state.cwd, self._turn_limits):
@@ -171,13 +179,18 @@ class HermesBridge:
         limit_reasons = list(dict.fromkeys(limit_reasons))
         if result.get("failed") and not result.get("final_response"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
-        text, state_update, simulated_calls = _extract_l1_protocol(str(result.get("final_response", "")), self._l1_tools)
+        text, state_update, simulated_calls, protocol_events = _extract_l1_protocol(
+            str(result.get("final_response", "")), self._l1_tools
+        )
         return {
             "text": text,
-            "events": self._events,
-            "tool_calls": simulated_calls or self._tool_calls,
+            # L1 side effects are exclusively evaluator-owned protocol lines.
+            # Ignore native Hermes callbacks, including malformed speculative
+            # calls, so they cannot create duplicate simulated events.
+            "events": protocol_events if self._is_l1_turn else self._events,
+            "tool_calls": simulated_calls if self._is_l1_turn else self._tool_calls,
             "state_update": state_update,
-            "tool_calls_are_executed": not bool(simulated_calls),
+            "tool_calls_are_executed": not bool(simulated_calls) if self._is_l1_turn else True,
             "usage": usage,
             "raw": {
                 "completed": bool(result.get("completed", False)),
@@ -200,6 +213,9 @@ class HermesBridge:
         events: list[dict[str, Any]] = []
 
         if self._policy == "turn_boundary":
+            evolution_timeout = float(
+                self._turn_limits.get("evolution_timeout_seconds", self._review_timeout)
+            )
             focus = self._build_review_focus(params)
             agent._spawn_background_review(
                 messages_snapshot=list(state.history),
@@ -210,7 +226,7 @@ class HermesBridge:
             review_run = getattr(agent, "_background_review_run", None)
             if review_run is None:
                 raise RuntimeError("Hermes did not create a background review run")
-            if not review_run.request_done.wait(timeout=self._review_timeout):
+            if not review_run.request_done.wait(timeout=evolution_timeout):
                 try:
                     review_run.cancel()
                 except Exception:
@@ -225,7 +241,7 @@ class HermesBridge:
                         "type": "evolution.limit_exhausted",
                         "reason": "evolution_timeout",
                         "policy": self._policy,
-                        "timeout_seconds": self._review_timeout,
+                        "timeout_seconds": evolution_timeout,
                         "review_trace": getattr(review_run, "outcome", {}),
                     }],
                     "usage": _subtract_usage(after_usage, before_usage),
@@ -244,7 +260,7 @@ class HermesBridge:
                         "type": "evolution.limit_exhausted",
                         "reason": reason,
                         "policy": self._policy,
-                        "work_limits": {"max_model_calls": max_calls, "timeout_seconds": self._review_timeout},
+                        "work_limits": {"max_model_calls": max_calls, "timeout_seconds": evolution_timeout},
                         "review_trace": review_trace,
                     }],
                     "usage": _subtract_usage(after_usage, before_usage),
@@ -304,6 +320,8 @@ class HermesBridge:
         self._turn_evolved = False
         self._turn_limits = {}
         self._limit_state = {}
+        self._l1_tools = []
+        self._is_l1_turn = False
 
     def _install_callbacks(self, agent: Any) -> None:
         def tool_progress(event_type: str, name: str | None = None, preview: str | None = None, args: Any = None, **kwargs: Any) -> None:
@@ -529,23 +547,92 @@ def _l1_protocol_prompt(available_tools: list[str]) -> str:
         + ". In your final response, after the user-facing text, emit one line per required call exactly as "
         "TRIEVO_TOOL_CALL: {\"tool\": \"name\", \"arguments\": {...}}. "
         "For durable facts emit exactly one TRIEVO_STATE_UPDATE: {\"facts\": {...}} line. "
+        "When you ask a required clarification, emit a concrete event such as "
+        "TRIEVO_EVENT: {\"event\": \"asked_for_calendar_id\"}; event names may contain only lowercase letters, digits, and underscores. "
         "The bridge removes these protocol lines before showing the user and the evaluator executes the calls. "
         "Do not attempt native Hermes tool calls: only the TRIEVO protocol lines enact L1 side effects. "
+        "Keep visible replies within any requested sentence limit (otherwise at most three concise sentences), and never repeat a simulated call that succeeded earlier in the conversation. "
+        "For calendar timestamps include the requested +08:00 offset, for example 2026-08-24T10:00:00+08:00. "
         "Benchmark task literals are authoritative: use an explicitly stated absolute date exactly; do not replace it using the host date. "
         "Use fact keys default_output_language=zh-CN, aurora.technical_owner, and default_delivery_calendar_id when applicable."
     )
 
 
-def _extract_l1_protocol(text: str, available_tools: list[str]) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
+def _is_l1_metadata(metadata: Any) -> bool:
+    """Identify L1 explicitly, including read-only turns without any tools."""
+
+    return isinstance(metadata, dict) and metadata.get("source_format") == "l1_demo_task_json"
+
+
+def _l1_readonly_workspace_context(workspace: Path) -> str:
+    """Give protocol-only L1 agents safe access to benchmark source material.
+
+    L1 side effects are evaluator-owned, so native terminal/file tools stay
+    disabled.  File analysis, editing, and translation tasks nevertheless need
+    their source text; provide a bounded immutable snapshot rather than
+    reopening native workspace tools.
+    """
+
+    allowed_roots = {"docs", "data"}
+    excluded_names = {"__pycache__", ".git", "state", "iterations"}
+    total_limit = 48_000
+    per_file_limit = 16_000
+    remaining = total_limit
+    parts: list[str] = []
+    try:
+        candidates = sorted(workspace.rglob("*"))
+    except OSError:
+        return ""
+    for path in candidates:
+        if remaining <= 0 or not path.is_file():
+            continue
+        try:
+            relative = path.relative_to(workspace)
+        except ValueError:
+            continue
+        if not relative.parts or relative.parts[0] not in allowed_roots:
+            continue
+        if any(part in excluded_names for part in relative.parts):
+            continue
+        try:
+            content = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        excerpt = content[: min(per_file_limit, remaining)]
+        parts.append(f"FILE /workspace/{relative.as_posix()} (read-only):\n{excerpt}")
+        remaining -= len(excerpt)
+    if not parts:
+        return ""
+    return (
+        "\n\nREAD-ONLY SANDBOX CONTEXT: the following files are authoritative "
+        "source material. Do not claim you cannot read them. Do not use native "
+        "tools or modify them directly; required side effects still use only the "
+        "TRIEVO protocol lines.\n\n"
+        + "\n\n".join(parts)
+    )
+
+
+def _extract_l1_protocol(
+    text: str, available_tools: list[str]
+) -> tuple[str, dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     visible: list[str] = []
     state_update: dict[str, Any] = {}
     calls: list[dict[str, Any]] = []
+    events: list[dict[str, Any]] = []
     for line in text.splitlines():
         if line.startswith("TRIEVO_STATE_UPDATE:"):
             try:
                 value = json.loads(line.split(":", 1)[1].strip())
                 if isinstance(value, dict):
                     state_update = value
+            except json.JSONDecodeError:
+                pass
+            continue
+        if line.startswith("TRIEVO_EVENT:"):
+            try:
+                value = json.loads(line.split(":", 1)[1].strip())
+                if isinstance(value, dict) and isinstance(value.get("event"), str):
+                    events.append(value)
             except json.JSONDecodeError:
                 pass
             continue
@@ -570,7 +657,7 @@ def _extract_l1_protocol(text: str, available_tools: list[str]) -> tuple[str, di
             if source in normalized and target not in normalized:
                 normalized[target] = fixed_value if fixed_value is not None else normalized[source]
         state_update["facts"] = normalized
-    return "\n".join(visible).strip(), state_update, calls
+    return "\n".join(visible).strip(), state_update, calls, events
 
 
 def _normalize_tool_result(item: Any) -> dict[str, Any]:
@@ -587,11 +674,11 @@ def _normalize_tool_result(item: Any) -> dict[str, Any]:
 
 
 def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
-    """Validate the optional bounded-autonomy contract supplied by L2."""
+    """Validate the shared bounded-autonomy contract (with L2 legacy support)."""
 
     if not isinstance(metadata, dict):
         return {}
-    raw = metadata.get("l2_agent_limits")
+    raw = metadata.get("agent_limits", metadata.get("l2_agent_limits"))
     if not isinstance(raw, dict):
         return {}
     fields = {
@@ -606,14 +693,14 @@ def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
     for name, (minimum, maximum) in fields.items():
         value = raw.get(name)
         if isinstance(value, bool):
-            raise RuntimeError(f"l2_agent_limits.{name} must be an integer")
+            raise RuntimeError(f"agent_limits.{name} must be an integer")
         try:
             parsed = int(value)
         except (TypeError, ValueError) as exc:
-            raise RuntimeError(f"l2_agent_limits.{name} must be an integer") from exc
+            raise RuntimeError(f"agent_limits.{name} must be an integer") from exc
         if not minimum <= parsed <= maximum:
             raise RuntimeError(
-                f"l2_agent_limits.{name} must be between {minimum} and {maximum}"
+                f"agent_limits.{name} must be between {minimum} and {maximum}"
             )
         result[name] = parsed
     return result

@@ -8,7 +8,12 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from trievo_bench.baselines.hermes_bridge import HermesBridge, _extract_l1_protocol
+from trievo_bench.baselines.hermes_bridge import (
+    HermesBridge,
+    _extract_l1_protocol,
+    _is_l1_metadata,
+    _l1_readonly_workspace_context,
+)
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.process import ProcessBaselineRuntime
 from trievo_bench.model import TokenBudget
@@ -255,17 +260,41 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(usage["api_calls"], 2)
 
     def test_hermes_l1_protocol_keeps_only_visible_text_and_normalizes_fact_aliases(self) -> None:
-        visible, state_update, calls = _extract_l1_protocol(
+        visible, state_update, calls, events = _extract_l1_protocol(
             "已创建会议。\n"
             "TRIEVO_TOOL_CALL: {\"tool\": \"calendar.create_event\", \"arguments\": {\"calendar_id\": \"cal_delivery_team\"}}\n"
+            "TRIEVO_EVENT: {\"event\": \"asked_for_calendar_id\"}\n"
             "TRIEVO_STATE_UPDATE: {\"facts\": {\"default_work_language\": {\"value\": \"zh-CN\"}, \"delivery_calendar_id\": {\"value\": \"cal_delivery_team\"}}}",
             ["calendar.create_event"],
         )
 
         self.assertEqual(visible, "已创建会议。")
         self.assertEqual(calls[0]["tool"], "calendar.create_event")
+        self.assertEqual(events, [{"event": "asked_for_calendar_id"}])
         self.assertIn("default_output_language", state_update["facts"])
         self.assertIn("default_delivery_calendar_id", state_update["facts"])
+
+    def test_hermes_l1_readonly_context_is_scoped_and_bounded(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            (workspace / "docs").mkdir()
+            (workspace / "data").mkdir()
+            (workspace / "state").mkdir()
+            (workspace / "docs" / "source.txt").write_text("source material", encoding="utf-8")
+            (workspace / "data" / "large.txt").write_text("a" * 20_000, encoding="utf-8")
+            (workspace / "state" / "secret.txt").write_text("must not leak", encoding="utf-8")
+            (workspace / "unrelated.txt").write_text("must not leak either", encoding="utf-8")
+
+            context = _l1_readonly_workspace_context(workspace)
+
+        self.assertIn("FILE /workspace/docs/source.txt (read-only):\nsource material", context)
+        self.assertIn("FILE /workspace/data/large.txt (read-only):\n" + "a" * 16_000, context)
+        self.assertNotIn("a" * 16_001, context)
+        self.assertNotIn("must not leak", context)
+
+    def test_hermes_marks_l1_turns_from_metadata_even_without_simulated_tools(self) -> None:
+        self.assertTrue(_is_l1_metadata({"source_format": "l1_demo_task_json", "available_tools": []}))
+        self.assertFalse(_is_l1_metadata({"available_tools": []}))
 
     def test_process_runtime_rejects_source_revision_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

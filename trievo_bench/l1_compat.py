@@ -120,6 +120,14 @@ def _task_to_turn(task_dir: Path, task: dict[str, Any], first: bool, workspace: 
             "available_tools": available_tools,
             "iteration_policy": task.get("iteration_policy", {}),
             "interaction_timeout_seconds": 180,
+            "agent_limits": {
+            "max_model_calls": 3,
+            "max_tool_calls": max(1, len(available_tools)),
+            "terminal_timeout_seconds": 90,
+            "episode_timeout_seconds": 180,
+            "evolution_max_model_calls": 1,
+            "evolution_timeout_seconds": 120,
+            },
         }},
     }
 
