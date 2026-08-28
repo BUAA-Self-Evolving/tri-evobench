@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper]{ctexart}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{Tri-EvoBench 周度工作进展报告}
+\author{项目组}
+\date{2026 年 8 月 28 日}
+
+\begin{document}
+\maketitle
+
+\section{本周结论}
+
+本周完成了 Hermes L1 真实评测链路的关键修复与端到端复测。最终使用 Docker 隔离环境和 DeepSeek 模型完成 7 个 L1 回合，全部通过，平均分为 0.9214。评测保持了 turn-boundary evolution；每回合 evolution 实际发起一次模型调用，并按工作上限可恢复地结束，而非被禁用。
+
+上周已经以 LLM 跑通基础 L1 与 L2 路径。本周工作的重点不是重复 smoke test，而是消除 Hermes L1 适配、模拟副作用、跨轮评判和工作区上下文中的实际缺口，使结果可复现、可审计。
+
+\section{上周基线状态}
+
+\begin{longtable}{p{0.28\linewidth}p{0.24\linewidth}p{0.40\linewidth}}
+\toprule
+项目 & 已有结果 & 说明 \\
+\midrule
+基础 L1 / L2 链路 & 已跑通 & 已验证 Docker、LLM 连接、评测 Runner 与 trace 基础链路。\\
+Trace2Skill & 5/5 通过，约 664 tokens & 真实 Docker + DeepSeek 回归记录位于 \texttt{runs/merge-trace2skill-real-fixed/}。\\
+SkillOpt & 5/5 通过，约 4,644 tokens & 真实 Docker + DeepSeek 回归记录位于 \texttt{runs/merge-skillopt-real/}。\\
+Hermes L2 & SRA E001/E002 通过，约 286,814 runtime tokens / 13 calls & 历史真实 L2 结果位于 \texttt{runs/merge-hermes-l2-real/}。\\
+\bottomrule
+\end{longtable}
+
+\section{本周完成的工程工作}
+
+\subsection{L1 只读工作区上下文}
+
+L1 保持禁用 Hermes 原生工具，所有副作用仍只能经由 Tri-Evo 协议交给 Runner 执行。同时，桥接层受限地注入 \texttt{docs/} 与 \texttt{data/} 下的 UTF-8 文本快照，排除 \texttt{.git}、\texttt{state}、\texttt{iterations}、缓存与过大文件。该机制解决了分析、润色与翻译任务无法读取基准输入的问题，而不向 agent 开放原生文件写入能力。
+
+\subsection{L1 协议与副作用修复}
+
+\begin{itemize}
+  \item L1 不再依赖 ``available\_tools 非空'' 判断模式；没有模拟工具的只读回合也会关闭原生工具并采用 L1 工作上限。
+  \item 新增 \texttt{TRIEVO\_ACTION} 的 \texttt{write\_file} 解析；文件创建可将完整内容真正写入 sandbox。
+  \item 对携带完整内容的既有 \texttt{file.create\_file} 协议调用进行兼容归一化，形成可审计的 \texttt{write\_file} action。
+  \item 协议 prompt 明确规定：澄清回合不得发起依赖该澄清的工具调用；日历调用不得缺失 \texttt{calendar\_id}、\texttt{title}、\texttt{start}、\texttt{end}。
+\end{itemize}
+
+\subsection{跨回合状态与评判修复}
+
+\begin{itemize}
+  \item 已审计的 \texttt{state\_update} 会作为只读持久事实提供给后续 L1 回合，避免模型丢失已确认的日历 ID、输出语言或项目事实。
+  \item LLM judge 现可取得当前 Turn 已发生的 interaction 轨迹，包括先前的澄清文本、事件、工具调用与状态更新；不再只看最终一句回复而误判已发生的澄清。
+  \item 保留 public-trajectory 边界：judge 与 evolution 只接触公开任务、公开事件、公开工具结果和公开状态，不读取私有 oracle 内容。
+\end{itemize}
+
+\section{最终 L1 真实回归结果}
+
+运行配置：Docker 隔离；Hermes 镜像 \texttt{trievo-hermes-merged:0.14}；DeepSeek；总 token 上限 750,000；每个前台 interaction 的模型调用及 evolution 均受限。
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+回合 & 分数 & 交互次数 & 结果 \\
+\midrule
+turn1 & 0.95 & 2 & 通过 \\
+turn2 & 0.95 & 3 & 通过 \\
+turn3 & 0.85 & 2 & 通过 \\
+turn4 & 0.85 & 2 & 通过 \\
+turn5 & 0.95 & 2 & 通过 \\
+turn6 & 0.95 & 1 & 通过 \\
+turn7 & 0.95 & 1 & 通过 \\
+\midrule
+总计 & 0.9214 & 13 & 7/7 通过 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+本次完整运行消耗 329,129 tokens、31 次 API 调用。每个 Turn 的 evolution 使用 1 次 API 调用后触及 \texttt{evolution\_max\_model\_calls}，以可恢复的受限结果记录在 trace 中；这符合 ``evolution 保持启用且必须受工作上限约束'' 的评测要求。
+
+完整 summary 和 human-readable trace 位于：\texttt{runs/merge-hermes-l1-full-final/l1-session-1/}。
+
+\section{质量保证与提交}
+
+\begin{itemize}
+  \item 本地单元测试：44 项全部通过。
+  \item 已执行 Python 编译检查与 \texttt{git diff --check}。
+  \item 本周核心提交：\texttt{6e1bbe3 Fix Hermes L1 readonly context and limits}；\texttt{f96cf4e Harden L1 protocol execution and judging}。
+  \item API 密钥未写入仓库、日志、报告或提交信息；临时评测 override 与 \texttt{runs/} 结果未纳入提交。
+\end{itemize}
+
+\section{后续工作}
+
+L1 最终回归已达标。下一阶段应基于当前最终代码和镜像重新执行 Hermes L2、SkillOpt 与 Trace2Skill 的真实回归，避免将旧镜像的历史结果当作最终版本结论；同时汇总三套 baseline 的最终可读 trace 与 token 审计。
+
+\end{document}
