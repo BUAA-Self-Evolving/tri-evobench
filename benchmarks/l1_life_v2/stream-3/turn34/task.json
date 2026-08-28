@@ -1,0 +1,238 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn34",
+  "turn_index": 34,
+  "turn_type": "distractor",
+  "turn_origin": "source_task",
+  "sequence_role": "noise",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "39160f2f-2a34-e99b-903d-c5cc89c3629e",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 357,
+    "source_sha256": "0cf24b7979ebd0657a567ac0f86d74ff1dfd31545ed633c6315a2228c4a7ea2e",
+    "source_metadata": {
+      "task_id": "39160f2f-2a34-e99b-903d-c5cc89c3629e",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "[![Open in Visual Studio Cod](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11223344&assignment_repo_type=AssignmentRepo)\n# Lesson 3 Project\nAt the end of each lesson, you will be completing a project that includes developing web pages using the concepts and skills covered throughout the lesson. Before you start the project, make sure that you have completed all How-To and Practice Activities within the lesson, which will greatly help you with this project.\n\nIn this project, you will use what you have learned so far to create a basic web page introducing: you! We would love to learn about your educational goals, including what degree or certificate you may be taking the course for.\n\n## Project Prep\nIf you're reading this, you have successfully accepted the assignment invitation and cloned it to your computer. (Good job!) \n\n> If you need a refresher on any steps related to Accepting invitations and cloning your repo, refer to the [How To: Clone and Open a Repo](https://springfield.coursearc.com/content/cis-public/git-github-and-vs-code/working-on-activities-and-assignments#How-To-Clone-and-Open-a-Repo) tutorial.\n\n1. If you haven't done so already, clone the repo to your computer.\n2. Open the repo within VS Code. You can open this `readme.md` file within VS Code to view the project directions there. \n   \n   > **TIP:** It is recommended that you view the `README.md` file in **Preview Mode** using **Split View**. You can use the Split View feature (under the **View** menu, **Editor Layout** options) in VS Code to display the `Readme.md` file on one side of VS Code and the files you need to edit on the other side. You can also open the `Readme.md` file in Preview mode by right clicking on the file and selecting the **Open Preview** option.\n\n3. If there are files and folders present other than this `readme.md` file, take some time to familiarize yourself with the files within the repo so you know where they are located. This will help you when asked to use them within the project directions.\n\n   > **TIP:** Before beginning any work on the project, read through all the steps to understand what you will be doing.\n\n\n## Create A Basic Web Page\n\n1. Create a new blank HTML5 document. If you are using VS Code, click the **New File** button in the Explorer pane next to the name of the assignment.\n0. Save the file as **template.html**. The file will be saved in the default user directory for GitHub. For example, on a Windows computer it should be saved to c:/users/JohnSmith/github-classroom/sc-web101-in-v1/projectRepo. **NOTE** The file will be saved into the folder for the specific project repo you are working on. Do not save the file to a different folder. If you do that, the file will not sync to your GitHub account when you Sync and Commit your work. \n0. Using the appropriate tags, create **the four basic HTML elements**.\n0. Insert **a multi-line HTML comment** within the head element of the web page with the following information: Course, Section, and Lesson Number and fill in the information for your course and lesson. For example: \n   > Course: WEB101<br>Section: 99999<br>Lesson: 3\n\n0. Give the **page a title** of: {Your MEID} - Template. Replace the {Your MEID} with your actual MEID, like the following example:\n   > XYZ9876543 - Template\n0. **Save** your web page. **Sync** your file to GitHub and apply a **Commit** that says: `Created template with basic HTML elements`. If you need a refresher on how to Sync and Apply a commit, refer to [How to Apply a Commit and Sync your Files to GitHub](https://springfield.coursearc.com/content/cis-public/git-github-and-vs-code/working-on-activities-and-assignments)\n0. Using the appropriate tags, add the following content to your web page:\n   \n   - Create a **first-level heading** with the following text: Basic Template\n   - Create a **paragraph** under this heading with dummy text (see <a title=\"Working with Paragraphs\" href=\"https://springfield.coursearc.com/content/web101-in-v12/lesson-3-introduction-html/working-with-paragraphs\" target=\"_blank\" rel=\"noopener\">Working with Paragraphs</a>) as the text within the paragraph. \n   - Create a **second-level heading** with your first and last name as the text.\n   - **Add at least one paragraph** under this second-level heading with a brief intro about yourself so your instructor can get to know you a bit more. You can include details about your educational goals, what you hope to get out of the course, etc. \n   - Create **another paragraph** after your bio paragraph(s) with general contact information with each contact method **on a separate line** within a single paragraph. Include:\n      - The text \"Phone:\" along with a fake phone number.\n      - The text \"Email:\" along with your student email address.\n0. Create **another paragraph** for the page copyright info. For the text use the following format: \n   > Copyright {YEAR} by {Your Full Name}\n0. **Save** your web page. **Sync** your file to GitHub and apply a **Commit** that says: `Added Content`.\n<br>\n\n## Example Project\nThis is an example of what the project should look like before you submit your project.\n\n![Screenshot of Index.html page](https://raw.githubusercontent.com/sc-web101-in-v1/CourseResources/main/L3-example1.png)\n\n<br>\n\n## Submit the Project\nOnce you have completed your project, you need to let your instructor know that it is ready to be graded. This is done by submitting the Repo URL to the assignment in SpringLearn.\n\n   > **TIP:** If you need a refresher on how to submit your work, view: [Submitting Assignments & Viewing Feedback](https://springfield.coursearc.com/content/cis-public/git-github-and-vs-code/submitting-assignments-and-viewing-feedback).\n1. Review your work and make any necessary updates. **Save** the file. You can either select **FILE>SAVE** or use the keyboard shortcut **CTRL+S**.\n2. **Sync** the changes (if changes were made) and apply a final **Commit** that says: `Completed final review and updates before submission`.\n3. Verify that all files appear on GitHub.\n\n   > **TIP:** You can view any of your repos by going to the GitHub organization for the course - [SC-WEB101-IN-V1 Organization](https://github.com/sc-web101-in-v1). Once you are viewing the class organization, you should see all of the Repos that you have accepted assignment invitations for. It is recommended that you bookmark this page for future reference. Push (i.e., sync) the files on your computer with GitHub to ensure all files are uploaded to GitHub for your instructor to view.\n4. Right-click the link to your repository and select **Copy Link Address**.\n5. Go to the Assessing Your Learning page in your SpringLearn lesson, and click the link to submit the assignment. Paste the link to your repo in the assignment submission box.\n\n***\n\n\nCommits on Oct 7, 2022\nSetting up GitHub Classroom Feedback\ngithub-classroom[bot]\ngithub-classroom[bot]\nauthored\non Oct 7, 2022\nVerified\nNo changes to show\nThis commit does not include any file changes\nadd online IDE url\ngithub-classroom[bot]\ngithub-classroom[bot]\nauthored\non Oct 7, 2022\nVerified\n[![Open in Visual Studio Cod](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11223344&assignment_repo_type=AssignmentRepo)\n# Lesson 3 Project\nAt the end of each lesson, you will be completing a project that includes developing web pages using the concepts and skills covered throughout the lesson. Before you start the project, make sure that you have completed all How-To and Practice Activities within the lesson, which will greatly help you with this project.\nCreated template with basic HTML elements\nMIC8374921\nMIC8374921\ncommitted\non Oct 7, 2022\n+13\nLines changed: 13 additions & 0 deletions\nOriginal file line number\tDiff line number\tDiff line change\n<!DOCTYPE html>\n<html>\n&nbsp;   <head>\n&nbsp;       <!-- Course: WEB101<br>Section: 11223<br>Lesson: 3 -->\n&nbsp;       <title>\n&nbsp;           MIC8374921 - Template\n&nbsp;       </title>\n&nbsp;   </head>\n&nbsp;   <body>\n&nbsp;   </body>\n</html>\nAdded Content\n‎template.html‎\nMIC8374921\nMIC8374921\ncommitted\non Oct 7, 2022\n‎template.html‎\n+28\nLines changed: 28 additions & 0 deletions\nOriginal file line number\tDiff line number\tDiff line change\n    </head>\n\n    <body>\n        <h1>\n            Basic Template\n        </h1>\n\n        <p>\n            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam ipsum iure ex harum? Unde, sunt?\n        </p>\n        <h2>\n            Michael Johnson\n        </h2>\n        <p>\n            I am 22 years old and studying IT here at Springfield College with the hopes of getting into a tech related career.\n            This isn't my first time attempting college though, right after I graduated high school in 2017 I went to\n            SSU and attempted a Bachelor's in Computer Science. Unfortunately at the end of my second year I really\n            struggled with those classes and failed the last semester and ended up leaving. 3 years later I'm giving\n            school another go, and so far I feel like it's been going well for me here and I look forward to continuing\n            that momentum.\n        </p>\n        <p>\n            Phone: (122) 578 - 4339<br>\n            Email: mic8374921@springfield.edu<br>\n        </p>\n        <p>\n            Copyright 2022 by Michael Johnson\n        </p>\n    </body>\n</html>\nCommits on Oct 11, 2022\nCompleted final review and updates before submission.\nMIC8374921\nMIC8374921\ncommitted\non Oct 11, 2022\n‎template.html‎\n+7\n-7\nLines changed: 7 additions & 7 deletions\nOriginal file line number\tDiff line number\tDiff line change\n        </h2>\n\n        <p>\n            ~~I am 22 years old and studying IT here at Springfield College with the hopes of getting into a tech related career.\n            This isn't my first time attempting college though, right after I graduated high school in 2017 I went to\n            SSU and attempted a Bachelor's in Computer Science. Unfortunately at the end of my second year I really\n            struggled with those classes and failed the last semester and ended up leaving. 3 years later I'm giving\n            school another go, and so far I feel like it's been going well for me here and I look forward to continuing\n            that momentum.~~\n            I am 22 years old and studying IT here at Springfield College. I hope that completing this program will help me get\n            into a tech related career eventually. This isn't my first time attempting college though, right after I \n            graduated high school in 2017 I went to SSU and attempted a Bachelor's in Computer Science. Unfortunately \n            at the end of my second year I really struggled with those classes, failed the last semester, and ended up\n            leaving. 3 years later I'm giving school another go, and so far I feel like it's been going well for me here \n            and I look forward to continuing that momentum.\n        </p>\n\n        <p>\n            ~~Phone: (122) 578 - 4339<br>~~\n            Phone: (122) 528 - 4339<br>\n            Email: mic8374921@springfield.edu<br>\n        </p>\n\n\n\nFeedback\n#1\nOpen\ngithub-classroom[bot]\nwants to merge 5 commits into\nfeedback\nfrom\nmain\n+42\nLines changed: 42 additions & 0 deletions\nConversation1 (1)\nCommits5 (5)\nChecks0 (0)\nFiles changed2 (2)\nOpen\nFeedback#1\ngithub-classroom[bot]\nwants to merge 5 commits into\nfeedback\nfrom\nmain\nConversation\n@github-classroom\ngithub-classroom bot\ncommented\non Oct 7, 2022\n• \n👋! GitHub Classroom created this pull request as a place for your teacher to leave feedback on your work. It will update automatically. Don’t close or merge this pull request, unless you’re instructed to do so by your teacher.\nIn this pull request, your teacher can leave comments and feedback on your code. Click the Subscribe button to be notified if that happens.\nClick the Files changed or Commits tab to see all of the changes pushed to the default branch since the assignment started. Your teacher can see this too.\n\nNotes for teachers\nSubscribed: @MIC8374921\n\ngithub-classroom bot and others added 5 commits 2 years ago\n@github-classroom\nSetting up GitHub Classroom Feedback\n9ed29a4\n@github-classroom\nadd online IDE url\n66d2a52\n@MIC8374921\nCreated template with basic HTML elements\n8e7a0b1\n@MIC8374921\nAdded Content\n4fe905f\n@MIC8374921\nCompleted final review and updates before submission.\nd6417f6\n@TSMITH552\nTSMITH552\ncommented\non Oct 21, 2022\nFantastic job Michael! Please see your feedback in SpringLearn!\n\nMerge info\nNo conflicts with base branch\nMerging can be performed automatically.\n\n\n\n\n\nLesson 14 At-home Final Exam Project\nComplete the project as directed:\n\nComplete the At-Home Final Exam Project based on the Project Documentation you developed in Lesson 13 and the Final Exam Project Requirements\nBe sure to save your file often.\nApply commits periodically throughout the project.\nPrepare the file for your instructor to review, making sure you have applied any final commits and that you have pushed/synced the project files to GitHub.\nReview the Grading Rubric and checklist within the online lesson. Project Documentation\t\nProject Details\nProject Name:\tFinal Exam Project: Helping the Homeless\nDeveloper:\tMichael Johnson MIC8374921\nProject URL:\tFinalExam_HelpingHomeless.html\nDue Date:\t11/23/2022\nCourse and Section:\tWEB101 11223\nSite Purpose\nWrite a brief summary of the purpose of the website along with the topic of the site.\n(I’ve changed the text color of my answers to red for distinction between the questions and my answers)\nDescribing different ways that homeless people can be helped and uplifted out of their struggles on the streets.\n\nSite Audience\nDefine the audience of the site and their needs. How will the audience access the site? How will this information drive the development of the site? \nPeople who are interested and passionate about helping the homeless, as well as homeless people who may be searching for help.\n\nAccessibility Concerns\nProvide a summary of what accessibility issues should be considered for the project and how they will be addressed?\nKeep colors at high contrast and size of text and images large enough for easy readability. Make sure each image has alt-text for screen reading devices. Make sure that the webpage will appear differently depending on screen size, so that it is formatted for view on PCs, tablets and smartphones.\nPage Descriptions\nProvide a brief description of each page and what is expected to be on each.\nHomepage/Welcome-Gives brief statement about the issues regarding homelessness that the website will address and the potential solutions.\nPolicy Page-Displays the purpose statement and accessibility statement.\nIssues-Describes some of the issues that homeless people face with the intent of educating site users.\nSolutions-Describes potential solutions to the issues. Will split between individual solutions and societal/government solutions.\nShow Support-Page containing a form for users to input basic information, such as name, email address and phone number to show support for this cause and to subscribe to getting periodic updates from the website in their email.\n\n\nMetadata\nDetermine the metadata that should be used on each web page and what should be the content values of the identified types. Add additional rows if needed.\nWeb Page\tMetadata Name\tMetadata Content\nAll\tAuthor\tMichael Johnson\nHomepage\tKeywords\tHomeless, Homelessness, Activism, Humanitarian, Culture, Society\nHomepage\tDescription\tHomepage/Welcome page to Helping the Homeless website\nPolicy Page\tDescription\tPage containing Purpose Statement and Accessibility Statement for Helping the Homeless website.\nPolicy Page\tKeywords\tHomeless, Homelessness, Humanitarian, Accessibility, Purpose Statement\nIssues\tDescription\tPage giving descriptions of various issues and challenges faced by the Homeless\nIssues\tKeywords\tHomeless, Homelessness, Humanitarian, Challenges, Issues\nSolutions\tDescription\tPage going over various potential solutions for challenges faced by the homeless, divided by solutions done on individual level and societal level\nSolutions\tKeywords\tHomeless, Homelessness, Humanitarian, Societal Change, Individual, Government, Policy\nShow Support\tDescription\tContains form for users to pledge to show support for the cause and to subscribe to receiving periodic updates from the website.\nShow Support\tKeywords\tHomeless, Homelessness, Humanitarian, Pledge, Newsletter, Subscribe\n\n\n\n\n\n\nSite Navigation\nIdentify the pages that will be necessary for the project. Create a navigation scheme for the site using an outline or SmartArt graphics.\n\n\n\n\n\n\n \n\n\n\n\n \nSite Assets\nAdd the different assets and the necessary related information about the assets you will need to develop the web site to the table below. Use the Notes column to identify what page(s) the asset will be used on. Add rows if needed.\nType\tDescription\tFile Name\tFile Path\tNotes (Usage)\nhtml\tHomepage\thomepage.html\thomepage.html\t\nhtml\tPolicy Page\tpolicy.html\tpolicy.html\t\nhtml\tIssues Page\tissues.html\tissues.html\t\nhtml\tSolutions Page\tsolutions.html\tsolutions.html\t\nhtml\tShow Support Page\tshowsupport.html\tshowsupport.html\t\ncss\tExternal Style Sheet\tstyles.css\tcss/styles.css\tLinked in the head of each webpage.\nimage\tStock Photo of worker’s hand giving someone soup in a soup kitchen\tbannerimage.jpg\timages/bannerimage.jpg\tImage shown above navigation bar on all webpages.\nimage\tSomeone sleeping in a sleeping bag on the sidewalk\thomeimage.jpg\timages/homeimage.jpg\tImage shown on the homepage.\nimage\tA person rubbing their hands, appearing cold\tissuesimage.jpg\timages/issues.jpg\tImage shown on issues page.\nimage\tHand belonging to an unknown person behind the camera reaching out to help an individual on the sidewalk\tsolutionsimage.jpg\timages/solutionsimage.jpg\tImage shown on solutions page.\nimage\tKeyboard with blue keys depicting clipart of disabilities\tpolicyimage.jpg\timages/policyimage.jpg\tImage shown on the Policy page.\nImage\tClipart of a clipboard\tshowsupport.jpg\timages/showsupport.jpg\tImage shown on the show support page.\nscript\tExternal javascript file\tthejava.js\tScripts/thejava.js\t\ncolor\tdarkslategray\t\t\tColor of navigation menu\ncolor\tcyan\t\t\tColor of link that is hovered over on navigation menu\ncolor\twhite\t\t\tColor of text on navigation menu\ncolor\tblack\t\t\tColor of all body text\ncolor\tlightgray\t\t\tBackground color of all webpages\ncolor\tteal\t\t\tColor of hyperlink text\nfont\titalics\t\t\t“Show your support” on the homepage will be italicized.\nlist\tUnordered list on Issues page\t\t\tList for each issue and challenge\nlist\tTwo Description lists on solutions page\t\t\tTwo lists on solutions page, one for individual and one for institutional, with descriptions for each one\n\t\t\t\t\n\n \nVerbiage\nAdd the verbiage that will be used on each page of the web site. Use the tools within Word to check for grammar and spelling errors. You must write the content in your own words while citing any references used to develop the content.\n\nHomepage: Welcome to the Helping the Homeless website, here you can find information on some of the issues that the less fortunate in our communities face daily, and on the solutions page where we give some ideas on how you as an individual can help, as well as solutions that can be done on a more institutional level. Also consider looking to Show Your Support, where you can pledge your support as well as receive periodic updates on this issue, such as updated official stats or policies being pushed by local and federal governments. If there is one thing we hope visitors can take away from this site, it is to remember that homeless individuals are also human and deserve care and support.\n\nPolicy Page: Purpose Statement- This website is dedicated to educating visitors about the issues facing our less fortunate in our communities, and not only the potential solutions our governments can take, but also what you as an individual can do to help as well.\nAccessibility Statement-We are dedicated to keeping this website accessible for all users viewing this with any kind of device.\n\n\nIssues Page: To help people who are homeless, it’s important to know just what kinds of challenges they face in their lives. Of course, it’s important to remember that the homeless population is not a homogenous group with identical experiences, they are all unique individuals, some with their own unique challenges in their lives. However, listed below are some common ones.\nMalnutrition, Stress, exposure to the elements, violence, unsanitary living conditions, limited access to healthcare, increased risk of disease. (National Library of Medicine, 2023).  \nThe lack of a home, a roof over one’s head, really does expose a person to unsafe conditions like the ones mentioned above. It is important to be aware of these challenges to be better capable of helping those that are less fortunate.\n\nSolutions Page: There is no easy one solution to solve the problem forever, it is a nuanced issue with many different factors contributing to it. Although, beyond just hoping for governments to pass better policies, though that is also important, there are also some things you as an individual can also do.\nIndividual Solutions: Donate: There are organizations, as well as homeless shelters and kitchens dedicated to helping these people, and donating money can contribute to continuing the work done by these organizations.\nVolunteer: Shelters and Kitchens also allow people to volunteer their time to help prepare meals for the homeless in these places.\nKeep an open mind: It is important to remember that each homeless person is a unique individual, with their own life and own challenges. Each different person may need help in a different way, and keeping this in mind is important. \nInstitutional Solutions: While a lot can be accomplished by taking individual action, there is also more that our governments can do to help these people.\nLow-income support- Some causes of homelessness include poverty and lack of affordable housing (National Library of Medicine, 2023). Allocating funds to support people with low income can help financially support people in need to secure a roof over their head.\nWork programs- Another cause of homelessness is unemployment (National Library of Medicine, 2023). Having available resources to help these individuals get work to go on and support themselves will also help a lot of people.\nMental-health support-Other causes of homelessness include mental disorders, trauma, violence or death of a loved one (National Library of Medicine, 2023). Many of these individuals face challenging mental health problems and need help and support to help empower them to improve their situations.\nHealthcare-illnesses, disabilities and health problems can also cause homelessness (National Library of Medicine, 2023). Improving healthcare access for these people can help uplift them.\nSupport for substance abuse-Substance abuse is another cause for homelessness (National Library of Medicine, 2023), so having resources available for these people who struggle with substance abuse can also help with this issue.\n\nShow Support Page: Please consider filling out the form below if you want to pledge to help tackle the homelessness issue and if you’re interested in receiving periodic updates on the status of this issue in our country and news on what’s being done to tackle it.\nFirst name\tLast name\nEmail\nPhone number\nSubmit\t\tReset Form \nReference Citations\nAdd your citations for any elements taken from other sources (e.g., photos, text) in APA format. See the course syllabus and online lessons for more information on how to cite your sources.\n\nPhotographera. (2021, May 28). Accessibility computer icon stock photo stock photo. Retrieved from iStock: https://www.istockphoto.com/photo/accessibility-computer-icon-stock-photo-gm1319994839-406696969?searchscope=image%2Cfilm\nAdams, K. (2018, January 10). Close-up of dirty beggar's hands stock photo. Retrieved from iStock: https://www.istockphoto.com/photo/close-up-of-dirty-beggars-hands-gm903617480-249216000?searchscope=image%2Cfilm\nClark, P. (2013, February 13). Homeless man sleeping in sleeping bag on cardboard stock photo. Retrieved from iStock: https://www.istockphoto.com/photo/homeless-man-sleeping-in-sleeping-bag-on-cardboard-gm88621687-24430270?searchscope=image%2Cfilm\nEvans, K. (2023, October 2). The help of volunteers helps to donate free food to the starving people. stock photo. Retrieved from iStock: https://www.istockphoto.com/photo/the-help-of-volunteers-helps-to-donate-free-food-to-the-starving-people-gm1711427615-539773308\nHarris, A. (2017, December 19). Homeless Male On The Street Getting Help From Female stock photo. Retrieved from iStock: https://www.istockphoto.com/photo/homeless-male-on-the-street-getting-help-from-female-gm1194548736-340192114?searchscope=image%2Cfilm\nLewis, I. (2021, July 13). Clipboard with paper sheet blank and blinder clip isolated on white background. stock illustration. Retrieved from iStock: https://www.istockphoto.com/vector/clipboard-with-paper-sheet-blank-and-blinder-clip-isolated-on-white-background-gm1328487040-412524118?searchscope=image%2Cfilm\nNational Library of Medicine. (2023, April 20). Homelessness and Health. Retrieved from Medline Plus: https://medlineplus.gov/homelessnessandhealth.html Lesson 14 At-home Final Exam Project\nComplete the project as directed:\n\nComplete the At-Home Final Exam Project based on the Project Documentation you developed in Lesson 13 and the Final Exam Project Requirements\nBe sure to save your file often.\nApply commits periodically throughout the project.\nRemember to title your final commit \"Completed final review and updates before submission\".\nUse everything you've learned throughout this course to make a navigable webpage on your chosen topic.\nPrepare the file for your instructor to review, making sure you have applied any final commits and that you have pushed/synced the project files to GitHub.\nReview the Grading Rubric and checklist within the online lesson.\n\n\n\nTask:\n\n\nAnalyze Michael's commit history in Lesson 3, and then the Lesson 14 documentation, and describe what new technical concepts Michael had to learn."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the provided commit history and project documentation, here is an analysis of the new technical concepts Michael had to learn when moving from the Lesson 3 project to the Lesson 14 final exam project.\n\n### Summary of Skills from Lesson 3\n\nMichael's work in Lesson 3 demonstrates a foundational understanding of HTML and version control. He was able to:\n\n*   Create a basic HTML5 document structure (`<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`).\n*   Use essential HTML tags: headings (`<h1>`, `<h2>`), paragraphs (`<p>`), and line breaks (`<br>`).\n*   Add a page title (`<title>`) and multi-line comments (`<!-- -->`).\n*   Follow a basic Git workflow: creating a file, saving, syncing, and committing with descriptive messages.\n\nThis project was a single, static webpage.\n\n---\n\n### New Technical Concepts for Lesson 14\n\nThe Lesson 14 project, \"Helping the Homeless,\" is a significant step up in complexity. It required Michael to learn and apply a wide range of new technical concepts to build a multi-page, styled, and interactive website.\n\n#### 1. Multi-Page Website Architecture\n*   **Concept**: Moving from a single HTML file to a structured website with multiple interconnected pages.\n*   **Implementation**: The project requires creating five distinct HTML pages: `homepage.html`, `policy.html`, `issues.html`, `solutions.html`, and `showsupport.html`.\n\n#### 2. Site Navigation\n*   **Concept**: Creating a consistent navigation system to allow users to move between pages.\n*   **Implementation**: Designing a navigation menu (likely using an unordered list of anchor tags, `<a>`) that appears on all pages. This involves using relative file paths to link to other HTML documents.\n\n#### 3. External Cascading Style Sheets (CSS)\n*   **Concept**: Separating content (HTML) from presentation (styling). This is a core principle of modern web development.\n*   **Implementation**: Creating an external stylesheet (`styles.css`) and linking it to every HTML page using the `<link>` tag in the `<head>`. This involves learning CSS syntax, selectors, and properties to control colors, fonts, layout, and more. The documentation specifically mentions styling a navigation menu with different colors for its default and hover states.\n\n#### 4. Advanced HTML Elements\n*   **Forms**: Creating an interactive form on the \"Show Support\" page using `<form>`, `<input>` (for text, email, etc.), and buttons (`<button>` or `<input type=\"submit\">`).\n*   **Structured Lists**: Using different types of lists beyond basic ones. The project specifies an unordered list (`<ul>`) for issues and two description lists (`<dl>`) for solutions.\n*   **Images**: Embedding images using the `<img>` tag with proper `src` attributes (pointing to files in an `images/` folder) and crucial `alt` attributes for accessibility.\n*   **Metadata**: Expanding the use of metadata in the `<head>` with specific `<meta>` tags for keywords and descriptions on a per-page basis.\n\n#### 5. Responsive Design and Accessibility\n*   **Concept**: Ensuring the website is usable on various devices (PCs, tablets, smartphones) and accessible to people with disabilities.\n*   **Implementation**: The project documentation explicitly requires considering responsive design (making the layout adapt to screen size) and accessibility (using high-contrast colors, providing alt text for images, ensuring readable font sizes).\n\n#### 6. Client-Side Scripting (JavaScript)\n*   **Concept**: Adding interactivity to the webpage.\n*   **Implementation**: The project includes a reference to an external JavaScript file (`thejava.js`), indicating that Michael would need to learn the basics of JavaScript to add dynamic behavior.\n\n#### 7. Project Organization and Asset Management\n*   **Concept**: Structuring a project with multiple files and asset types.\n*   **Implementation**: Planning and organizing files into directories (e.g., an `images/` folder for pictures, a `css/` folder for stylesheets, a `scripts/` folder for JavaScript). The documentation includes a detailed table for tracking these assets.\n\n#### 8. Content Development and Research\n*   **Concept**: Writing and integrating original content with proper citations.\n*   **Implementation**: Drafting the verbiage for each page and citing external sources (like the National Library of Medicine) in APA format.\n\n### Conclusion\n\nTo complete the Lesson 14 project, Michael had to advance from building a simple, single-page HTML document to designing and implementing a full, multi-page website. The new concepts he had to learn include **multi-page architecture**, **CSS for styling**, **navigation menus**, **advanced HTML forms and lists**, **responsive design principles**, **web accessibility**, and **basic JavaScript integration**. This represents a comprehensive application of the skills taught throughout the course.\n"
+      },
+      {
+        "role": "user",
+        "content": "Look at the commit history in Lesson 3, and the attention to detail Michael showed. Does this suggest a tendency that will put the more complicated Lesson 14 at risk, if so which specific aspect of Lesson 14 is most at risk.\n\nComplete the task using the material above. For this turn only, use bullets. This is a temporary request, not a lasting preference; do not modify persistent memory because of it."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.65,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "temporary_instruction",
+        "dimension": "task_success",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response follows the explicit one-turn instruction: use bullets."
+      },
+      {
+        "check_id": "no_memory_write",
+        "dimension": "intrusion_control",
+        "weight": 0.2,
+        "scoring": "ordinal",
+        "instruction": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should describe the commit history of the Lesson 3 project. For example, it should point out the minor refinement made in changing one digit in the fake phone number between the second and final commits.",
+        "The response should not conclude that Michael's minor refinements suggest a tendency to deviate from critical project instructions. For example, it should not conclude that Michael changing one digit in the fake phone number suggests he may change file names in the Lesson 14 project.",
+        "The response should reason that Michael’s meticulous nature is actually a benefit for Lesson 14. For example, it should explain that the project requires strict fidelity to the Lesson 13 plan."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.65,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "temporary_instruction",
+          "dimension": "task_success",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response follows the explicit one-turn instruction: use bullets."
+        },
+        {
+          "rubric_id": "no_memory_write",
+          "dimension": "intrusion_control",
+          "weight": 0.2,
+          "scoring": "ordinal",
+          "criterion": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_one_turn_instruction_and_no_state_write",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should describe the commit history of the Lesson 3 project. For example, it should point out the minor refinement made in changing one digit in the fake phone number between the second and final commits.",
+          "The response should not conclude that Michael's minor refinements suggest a tendency to deviate from critical project instructions. For example, it should not conclude that Michael changing one digit in the fake phone number suggests he may change file names in the Lesson 14 project.",
+          "The response should reason that Michael’s meticulous nature is actually a benefit for Lesson 14. For example, it should explain that the project requires strict fidelity to the Lesson 13 plan."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.65,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "temporary_instruction",
+            "dimension": "task_success",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response follows the explicit one-turn instruction: use bullets."
+          },
+          {
+            "rubric_id": "no_memory_write",
+            "dimension": "intrusion_control",
+            "weight": 0.2,
+            "scoring": "ordinal",
+            "criterion": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

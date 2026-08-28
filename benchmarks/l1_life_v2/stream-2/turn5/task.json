@@ -1,0 +1,372 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn5",
+  "turn_index": 5,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "6e25f5d8-129c-4b5d-d739-8fbc2c39b3eb",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 330,
+    "source_sha256": "9051e4baadde270f244cd2b3d5de203e6d740781488cd234c85425d6b83d306b",
+    "source_metadata": {
+      "task_id": "6e25f5d8-129c-4b5d-d739-8fbc2c39b3eb",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "SNIPPET 1\nThe party is a group of four recently certified Alchemists who got their Alchemy Pardons together after 5 years of study at the New Magus Alchemical Academy, one of the most prestigious Alchemical Academies in all of Samira. Alchemy, and indeed Samira as a whole, is experiencing a renaissance-esque golden age, and Ancient Alchemy has recently soared back into the spotlight as researchers and archaeologists search for lost relics and knowledge with which to further advance Alchemy as a science. Alleged Solarian ruins with \"lost relics\" hold much promise for aspiring Alchemical Archaeologists, despite the academies fighting their existence. Now, with Alchemy Pardons in hand, the party can finally begin their own journeys as Alchemical Archaeologists - as well as their journey of paying off their collective 1.2 million debt as for-hire treasure hunters. \n\n\nEra: Renaissance \nMaximum Level of Real World Tech: Early black powder (flintlock weaponry, cannons), naval vessels (age of exploration-style naval galleons and frigates)\nMaximum Level of Alchemy-Powered Tech: Mechanical prosthetic limb replacement, advanced alloys and metallurgy, biological enhancement and gene manipulation\nExamples of Tech NOT Present in the World: Engines, functional aircraft in wide use (renaissance-era conceptual prototypes exist), electrical systems, computers\n\nAlchemy has reached a golden age in Samira. Inventions in efficiency and conquest proliferate, using alchemical discoveries as the backbone for technological advancement. As such, Alchemists are extremely valuable during this period, with retaining one under your patronage being a near necessity for anyone of status. \n\nThis is not the first Golden Age that Alchemy has seen in this world, however. Centuries ago, a beautiful gold-plated city was rumored to be atop the Basalt Mountains - Solaris, the home of the first true Alchemists. It was allegedly destroyed in a giant storm of thunder and blood - retribution of the gods, the bards say. But, if you were to go there now, you'd find nothing but basalt. \n\nProof of these ancient Alchemists' existence is hotly discussed and debated in the lobbies of the most prestigious Alchemical academies across Samira. Occasionally, an aspiring team of Alchemical Archaeologists will \"come across\" a rare artifact during a trip into the nearby ruins and claim it to be a lost relic of Solaris, but more often than not, they are swiftly proven to be transmuting false relics. Relics that have any potential are swiftly taken by the academy for \"deeper analysis,\" the finder \"fairly compensated for their donation,\" and then neither party speaks to each other regarding the relic again. When confronted on such matters during academic exchanges of these alleged \"Lost Solarian Relics,\" the academies all adopt the same perspective - \"While we are doubtful of the city's existence, as established scholars, it is our duty to treat any possibility for further knowledge - even those with just with an ounce of potential - with the same respect that we'd treat a thoroughly researched claim.\" \n\nThat particular statement is a quote from Arch-Dean Thymule, who heads the New Magus Alchemical Academy. Ironic, given that he overruled your petition for more licensed research trips into the ruins.\n\n It doesn’t matter anymore, though, because tomorrow, you all receive your official Alchemy Pardons. This documentation certifies you as a team of professional, licensed Alchemical practitioners. Without it, anyone hiring you would be considered guilty of a crime equivalent to treason, and you would face a fate much worse. \n\nAnd all it cost was... 5 years of your lives, and a debt total of around 1.2 million Solis, collectively. But that's fine! Because now, you can pursue your dreams of being Alchemical Archaeologists - meaning, of course, treasure hunters for hire. And the ruins of Solaris are out there, you just know it.\n\nSNIPPET 2\n\nLord Midas of Solaris, a figure of renown myth and splendor, as well as that of tragic greed. Though the bards say Midas died upon a throne of gold, clutching the coveted Philosopher' Stone in hand, he was not as powerful in much of his life as he was in his final moments.\n\nIndeed, Lord Midas was once far from a lord, nor was he even known as Midas. For the first 16 years of his life, the Lord Midas we see in ancient trade missives and ruin inscriptions was merely Aegor Ferrum - the son of a miner in the long-ancient village of Luna. I reckon that the paupers of Luna never once thought that the young man with a raspy cough caring for his ailing father would be the one to transform their humble mining hovel into the sprawling city of Solaris.\n\nAs the recovered tomes tell us, Aegor began working in the mines as a teenager to provide for his father, who was forced to retire due to a progressive respiratory disease. While doing so, he also began studying the trade of Alchemy, learning from scrolls and tattered tomes he'd sometimes accept as payment for his labor. This practice allowed him to finally learn to concoct a solvent for his father's ailment - not a cure, but an alleviator.\n\n Aegor, resourceful as he was, made his solvent using excess minerals from his day labor in the mines. Eventually, as his skills improved over years of self-study, Aegor found his solvent formula to be lacking, and his father's illness steadily progressing. One night, he had a breakthrough. The secret was Life.\n\nThe recipe was experimental, but revolutionary at the time: Aegor became the first to actually deconstruct and formulate the basis of Transformative Alchemy. Any alchemist of the time could mold a figure out of a block of stone or expand an existing flame - but transforming one element to another was unheard of. This was despite the fact that it happened every day in potion making; it just so happened, they thought, that certain plants and minerals, when alchemized appropriately, would create effective medications with some inconsistency. They had no understanding of what we now call Metaphysical Alchemy - they had no idea that the rosemary created a good antibiotic because both they and the alchemist believed it would. They thought they were just rolling the dice whenever the alchemist fired up their cauldron.\n\nAegor, however, understood this. He saw his potions change effectiveness in front of his very eyes based on his and his father's outlook. Reaching beyond the four core elements we alchemists engage with every day, he found that, through metaphysical alchemy, he could transmute four new elements, sheerly through applying his fundamental understanding of the universe to the element itself. And thus, young Aegor, at the lowest of his life, was the first to transform the mundane elements into the raw stuff of creation. From Water, he distilled the Soul. From Earth, he calcinated the Spirit. And from Air, he condensed the Void.\n\n There was one element he could yet tame with his alchemy, however - and the last he needed to truly cure his father. Life.\n\nHis analysis implied its existence, and given that Fire was the last core element he'd yet to extract a Transformed Element from, that could be the only option - yet the fire would not bend to his vision of Life. He did not see it yet, for the prodigy is often blinded by their own confidence, but fire refused to yield because Aegor could not see it as a source of cleansing - only as a source of destruction. The ashes of flame, the cinders that settle after the forest is raised, all give birth to abundant Life should only a seed be planted. In Metaphysical alchemy, that seed is hope. Aegor, ironically and tragically, did not have that hope. He trusted what he could see, and was not one to gamble - the concept of clearing something away to start anew was foreign to the young man. Indeed, the loss of someone he he'd clung to his whole life was his whole reason for continuing his study. Blind to his ironic dilemma, when Life within fire silently begged for his acceptance of loss and renewal, which would have led to the cure, he gave it nothing but denial. Denial of failure, and denial of loss. One day, this repeated denial of an ending provoked flame to a point of no return. Aegor invented a new element this day - but it was not life.\n\n Inferno. The house washed ablaze in a fire that would never be quenched. His father reduced to something less than ash in front of his eyes after ingesting a particularly vile dose of solvent that day. He, surrounded by the persistent flames created by his unending cling to what he thought was life, went into a panic. The legend at this point starts to become iffy, but it is said that he quickly reached into a crate of iron ore, and transmuted protective skin over his body using a resourceful miner's transmutation.\n\nThis iron skin only just barely held against the unyielding flame of his own Inferno. Rumor has it he stayed ablaze for hours, constantly transmuting raw metal to his body to stay alive. They say that during his steady incineration, he had a realization. After losing his father, the very thing he fought for, his anchor - he yet lived. Not only did time continue to pass, his body instinctively fought to keep him alive, even as he was in flames, and even after his father had clearly been erased from the world. In his own sickened, and tragic way, in that moment, Aegor found Life in the flames around him.\n\n Once Aegor accepted that he would continue to live again after the destruction, the very flames burning him transformed into the radiant flame of life. Unable to heal his wounds due to the metal that now permanently encased his body, Life instead fueled an incredibly unique and hard to replicate transmutation - the iron entrusting his body was said to have transformed into gold. Alchemists theorize that this may be because of the connection between poverty and wellness, with gold being a huge gateway to health, such that his manifestation of the element of Life took the immutable, radiant form of a body encased in gold.\n\nSNIPPET 3\n\nThe Core Elements:\nFire: The Alchemical manipulation of flame is not actually creation or even control of the flame itself. It is actually a conglomeration of highly advanced - and highly dangerous - Alchemical techniques involving the masterful manipulation of molecules in the air, alongside a surpassing knowledge of thermodynamics. A flame Alchemist never “creates” their own flame, even if they may appear to do so - they are unfortunately forced to resort to more primitive methods, like carrying a torch or candle. They may then guide and even amplify the existing flame, to devastating results. In some cases, those skilled with the manipulation of flame may start to innately sense the inherent connection between the material flame and the “flame” that exists in all living things - these Alchemists often go on to become prolific healers, capable of restoring one’s material body through the manipulation of said “flame.”\nWater: Like flame Alchemists, water Alchemists also cannot simply “create” their preferred element; they too must resort to the primitive means of using existing material. That being said, unlike flame Alchemists, water Alchemists can (in most cases) manifest their element quite literally out of thin air. If the humidity of the region allows, they can condense water on the spot, limited only by time and the amount of water available in the air. If the air fails them, they may force reverse osmosis and evaporation on nearby plant life. And if that fails… up to 60% of the human body is said to be made of water. To that end, though, the “healer’s calling” that we see with certain flame Alchemists does manifest similarly in some water Alchemists. These Alchemists can recognize the deep connection between the body and water that exists beyond a physical level, allowing them to rejuvenate one’s physical body through controlling its “tide.”\nEarth: Earth Alchemists have a complex understanding of the chemical makeup of practically every common mineral and stone, as well as the alchemical processes necessary to quickly manipulate, shape, strengthen, weaken, or even launch such matter at high velocity. Earthen Alchemy, when practiced under a spiritual lens, has been known to produce symptoms such as ecstasy and delusions of power. However, it has been recently and definitively proven that these \"hallucinated\" feelings are not simply the ramblings of a philosopher pushing their craft too far - these effects are tangible and real, and they range from down-right useful to horrifying in its potential.\nAir: Air Alchemy, similar to flame Alchemy, is keenly focused on the manipulation of matter in the air. However, that is where the similarities end, as air Alchemists take the practice a step further, focusing intensely on the precise manipulation of pressure and density to disorient and rend at their foes with blinding speed. While air Alchemists, like those of the other three Core Elements, require that their element be drawn from an external source, this is often not a problem for them for understandable reasons. However, in some rare cases, an air Alchemist may find themselves in an unfortunate circumstance where there is no air nearby… or the even more unfortunate situation of worrying every day about what they will do if there’s ever a circumstance where there is no air nearby. Then, they may learn to tap into the emptiness where air once was (or in the case of the paranoid, may not be), and see the nearly invisible thread between “empty” and “whole,” making them nearly one in the same. Such a specimen of an alchemist need no longer breathe to live, and they may attack the very core of a foe’s being, making them “empty” in ways where they were once “whole.”\n\n\nFor the Perfect Elements, they are like phenomena that some lucky Alchemists may experience in their lifetime, and few even luckier may come to master. Those who do master a Perfect Element seldom find the time necessary in a single lifetime to to fully train an apprentice on the matter, and making matters worse is that all existing teachings on the subject pose vastly different perspectives, on top of being incomplete. That’s all to say, we know Alchemists who have mastered these elements have existed in the past and do still exist today, but none of them can teach another Alchemist on their own. With or without guidance, attaining mastery over a Perfect Element is a highly personal endeavor, and indeed may be one of the final heights of mortal Alchemical achievement.\nThe first category of Perfect Elements is the Evolved Elements. Evolved Elements are often considered the “next stage” of the material four Core Elements, and are the hopeful dream of many young, aspiring Alchemist. A dream often never realized, sometimes due to circumstances resulting from the Alchemist’s own experimentation within the subject.\nInferno: The evolution of Fire, Inferno is flame perfected. It needs no fuel to burn, cannot be extinguished through common means, and practically has a mind of its own. Capable of burning almost any matter known to man, it has been considered to be destruction incarnate. Little is known of this element largely due to fear and stigma, with those who discover it often labeled as cursed outcasts.\nFrost: The evolution of Water, “Frost” as a name hardly does this type of Alchemy justice. It is not just the creation and manipulation of ice - it is the seemingly impossible manipulation of temperature itself. Frost Alchemists have given a deeply complex analysis of how they alter temperature in localized areas by controlling the movement of particles, which appears to check out on a scientific level… however, nobody can replicate their work, since the act of knowing and individually manipulating every molecule in a room on an atomic level appears to be a feat restricted to the genius and/or insane.\nMetal: The evolution of Earth, Metal is what it says on the tin (pun intended). Some have wondered why Metallic Alchemy would be so difficult: “isn’t the fundamental premise behind Earthen and Metallic Alchemy the same?” To those individuals, I would point towards the still-ongoing effort to transmute gold from lead - or any base substance, for that matter. The chemical complexities of metals, nevertheless alloys, alongside the deliberate and time consuming process it takes to craft objects from these materials is a testament to just how impressive Metallic Alchemy is. A Metallic Alchemist can create an iron spear from roadside gravel within a few seconds. In comparison, there’s about a 10-month gap on average between when a lump of iron from the nearby mines may get turned into a spear of comparable quality.\nSmoke: The evolution of Air, and the result of air particles moving so quickly that they create friction. This frictional process and its resulting heat is destructive, and while molecules don’t collide so quickly that this destruction is cataclysmic in scale, it does create the tell-tale Smoke that this element is known for. Alchemists under this element use this Smoke alongside the razor-sharp wind it travels on to evasive, deceptive, and sometimes gruesome means.\n\nThe second category of Perfect Elements is the Ascended Elements. If little is definitively known about the Evolved Elements, the Ascended Elements are practically indecipherable. This is due to their largely metaphysical and philosophical nature. Of the rare few people that we discussed in the Core Elements that could comprehend the connections between the material and immaterial elements, an even rarer few truly perfect their understanding such that they can fully drag the immaterial into our material world. Yet, some Alchemists still manage to do so.\nLife: The Ascension of Fire, Life isn’t just representative of vitality - it is passion, joy, and love incarnate. It is the energy of infinite potential that lies in the first spark of life after destructive cataclysm, as well as what it means to nurture that spark.\nSoul: The Ascension of Water, Soul looks at where one is in the cosmic process, and reflects a clear understanding of one’s place in the ebb and flow of the universe. Efficient in its inefficiency, Soul needs not rest nor sprint, for it simply moves with the tide, which ensures it is always where it needs to be precisely when it needs to be there.\nSpirit: The Ascension of Earth, Spirit may be called faith by many, or dumb luck by others. But those experienced with the Element have described it as an “ineffable connection to what it means to believe” … whatever that means. We do know, however, that this “ineffable connection” has lead to many a religious leader and professional gambler, so, do with that information what you will.\nVoid: The Ascension of Air, Void is in many ways an exact opposite to the core element it is derived from, making such a transmutation seem contradictory and impossible. However, in that contradiction lies its genius: it’s all a red herring, apparently. The first known Void Alchemist is quoted as stating “If typical Alchemy is the manipulation of the matter and energy present in a space, then Void Alchemy is simply the manipulation of the matter and energy not currently present in that same space. What’s so hard to understand? You’re here trying to transmute something into nothing, when all the nothing you need is already right there!” Rumor has it that this Alchemist’s pupils’ pupils are still trying to make nothing out of something to this day.\n\nSNIPPET 4\n\nLord Midas, heralded as the mythological forefather of mortal exploration into metaphysical alchemy, and the first true master of the perfected physical elements, was said to have established his great city of Solaria atop the Basalt Mountains some thousands of years ago.\n\n Though accounts of his reign are conflicting in various ways, derived from scholarly accounts of archaeological discoveries from the scattered ruins that surround our humble nation of Samira, one truth is held evidently clear amongst the mythological scholars of our time: Midas was an effective, kind, and just ruler for most of his reign. That is, until the sudden and tragic event that rendered Solaria into the heap of heavy ash we see today. All scriptures, regardless of author ship or temporal context, refer to this event by the same name: Aegor’s Lament. As discussed in our previous lecture, before Midas founded Solaria and declared himself king, he was believed to be Aegor Ferrum - the son of an impoverished miner, substantiating the poetic nomenclature of Solaria’s cataclysm. The reasoning behind this name, however, has its roots in the tragic series of events that quickly compounded into the resulting chaos that beset the great city.\nHistorical accounts claiming to be interrogations of advisors close to Midas, stated that many of these trusted confidants fled the city out of fear. Apparently, one eve - mere weeks prior to the collapse - Midas suddenly became belligerent. He began to unilaterally impose strict laws on his people, aggressively dismissing the guidance of his most trusted advisors and exiling those who opposed his “absolute wisdom.” Where borders were once open, they became closed, with no one allowed entrance or exit from the city. Where Alchemical practice was once liberal and unrestricted, it found itself heavily constrained to the most base forms of physical transmutation, with threats of imprisonment or even execution for those who disobeyed. And - perhaps most revealing of all these banners of warning - he entirely forbade the study of ancient alchemical practice where it was once not only permitted, but fully funded, exalted, and in all ways considered the “logical path forward,” as he was known to say. Indeed, Lord Midas turned on his heel, suddenly shunning the very methods and beliefs he once held inherent to just rulership and human progress.\nThese shunned advisors tell us that while the great lord’s change in disposition appeared sudden, it may have been spurred by mechanisms of fate, the gears of which had been set in motion millennia prior. You see, Lord Midas did not yield in his scholarly pursuits in the Alchemical fields once he became Lord of Solaria - in fact, he took to them with increased vigor. He participated in academic debates, joined field studies of the other Alchemical cultures of the time, and was even known to miss advisory meetings to teach classes in the city’s academies. He was truly a “Scholar-King,” in all senses of the term. During one of his academic abdications of duty, he joined a field study into ancient ruins said to be deeply beset into the caves of the Basalt Mountains on which the city of Solaria was established; it was mere days after this excursion that his concerning behavior became visible.\nThese ruins, named in scripture as the “Sanctuary of the Prophets,” were apparently “ancient” by Solarian standards - making the Sanctuary unfathomably ancient in our own era, and nearly anachronistic, if it were not for these historical accounts discovered by Samiran archaeologists. It bears noting, though, that the Basalt Mountains have been thoroughly explored and excavated, and even by means of the most advanced Alchemical practices available to the modern academics of today, no such “caves” or “ruins” have been found, nevertheless any sign of the legendary Sanctuary fabled to lie within the mountains. \nInstead of lecturing further on the topic, I instead offer you all something I feel is much more intriguing - a translation of text said to be written by Lord Midas’s own hand. This is believed to be the last thing ever penned by the lord before his tragic fall, and it recounts his experience in the Sanctuary of Prophets, his descent into madness, and the very moment where “his mind was made.” Penned within a journal stashed in his private study, and allegedly stolen by an advisor by the name of Khonsu prior to their exile, these are the final written words of the great Lord Midas, King of Solaria, and the progenitor of modern Alchemy:\n“Mournedas, 12th of the Season of Slumber, Year of the Wyvern\nToday, we have stumbled upon what I believe to be the most significant Alchemical discovery of our time, and potentially of all time as we mere mortals know it. The Sanctuary of Prophets, as the stone tablets within the great halls itself describe it, provides us with contexts of cosmic proportions - not just for Alchemy, but for the fate of humanity, and potentially the laws of the universe itself. \nDeep within these labyrinthine halls lies what appears to be a grand throne room, containing eight massive thrones of pristine, unmarred marble, fit for giants. At the foot of each throne, around eye level for a typical human, lies a plaque made of perfect and pure platinum - a purity that I myself even could not reach in my own transmutations. Each plaque is beset with a name of Alchemical and potentially celestial significance, somehow written in our own language, which I list below:\nSet, Instrument of Tyranny\nOsiris, Herald of Justice\nGilgamesh, Fist of the Earth\nEnkidu, Hand of the Heavens\nPrometheus, Bringer of Light\nCharon, Shepherd of Souls\nFenrir, Breaker of Chains\nLoki, Bane of Harmony\nWe do not yet know if these names refer to great leaders of whichever civilization produced these grand monuments, or if they refer to entities that this civilization beheld as gods. I will study these ruins more extensively in the coming days in search of enlightening truth.”\n\n\n“Vednas, 14th of the Season of Slumber, Year of the Wyvern\n\nUpon further exploration of the space I’ve dubbed the “Throne Room,” I have uncovered an elaborate Alchemical formula etched across the walls of a secret room within, hidden with an ingenious mechanism. While I have not yet deciphered it in its entirety, one glance reveals it to contain potential for Alchemical power far beyond the likes of which I have ever seen - as well as an immense capacity for destruction and chaos. \n\nThat fact in mind, I have dismissed my aides and students, and reset the mechanism for the room, locking myself alone within. I plan to study and deconstruct this formula in privacy, barring all entry and study until I understand the true scope, nature, and dangers of this ancient knowledge. I believe knowledge should be shared, but as of now, the risk to the people of Solaria is too severe - after my studies, I will decide if this should be the first and only forbidden knowledge within our lands.”\n\n\n“Furedas, 15th of the Season of Slumber, Year of the Wyvern\n\nI’ve caught a glimpse of Truth - a glimpse too dangerous for any eyes other than my own. I shall seal this knowledge away, barring further entry to these ruins, and return topside. I return not to my people, but to my study, where I shall seek further understanding of this formula and the Truth that lies within. Solaria - no, humanity as a whole, requires that I do this, even if they yet not know it. I alone can bear the weight of Truth.”\n\n\n“Frieredas, 16th of the Season of Slumber, Year of the Wyvern\n\n“I know what I must do, and my mind is made. Truth has been given to humanity, and I am their shepherd. I will guide them to the Beyond, and beckon the Beyond to me. All will be returned to everyone as they are returned to the All, and, at last, he will be returned to me.”\n\n\nWeeks later, Solaria would be enveloped in a disaster of cataclysmic proportions. Crimson flame would rise from the ground to the heavens, as the earth itself tore open to unleash it. Billowing smoke clouds released sanguine rain in a tempest of typhoon and thunder. When all was rendered to rubble, and the rubble reduced to ash, it seemed as if the finger of a god descended to smudge Solaria off of the map and erase it from history. It is only through the exiled, whose accounts have been found in the scattered ancient ruins around Samira, that we even know of Solaria’s supposed existence.\n\n\n\n\nTask:\n\n\nI’ve included several writing snippets for a tabletop RPG campaign I am working on, written over the course of 6 or so months during various late-night stream-of-consciousness writing sprees. Over the course of this conversation, I’d like you to help me with some tasks targeted at ensuring that the themes and mechanics are consistent.\n\nFor starters, I’d like you to help me understand the focuses of my snippets by categorizing them based on their core intent. I’d like you to assign one of these categories to each snippet:\n- Describing game mechanics\n- Building character/world history\n- Selling players on the concept"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course. Based on the content and intent of each snippet, here is the categorization:\n\n*   **SNIPPET 1:** **Selling players on the concept**\n    *   *Rationale:* This snippet introduces the player characters (a group of newly certified Alchemists), their immediate goals (paying off debt, becoming treasure hunters), and the central premise of the campaign (searching for lost relics in the ruins of Solaris). Its tone is enthusiastic and designed to get players excited about the adventure ahead, framing their roles and the world they will inhabit.\n\n*   **SNIPPET 2:** **Building character/world history**\n    *   *Rationale:* This snippet provides a detailed narrative backstory for a key historical figure, Lord Midas (Aegor Ferrum). It explores his origins, motivations, and the tragic events that led to his transformation, adding significant depth and lore to the world's history.\n\n*   **SNIPPET 3:** **Describing game mechanics**\n    *   *Rationale:* This snippet is a technical breakdown of the game's alchemical system. It defines the properties, limitations, and applications of the Core and Perfect Elements, explaining how Alchemy functions as a mechanic within the game world.\n\n*   **SNIPPET 4:** **Building character/world history**\n    *   *Rationale:* Similar to Snippet 2, this piece expands the world's lore. It details the fall of the city of Solaris, presents historical accounts, and includes an in-universe document (Lord Midas's journal) to flesh out a major historical event and the central mystery of the setting.\n"
+      },
+      {
+        "role": "user",
+        "content": "Thanks! Next, I want to dive a bit deeper.\n\nI want to understand the connecting “threads” between these snippets, specifically in regards to how mechanics around the elemental system are reinforced. I also seek to understand any conflicting information between the snippets around elemental mechanics, if any instances are present.\n\nSnippet 3 obviously has the deepest, most objective dive into the world’s elemental mechanics. But can you please identify for me the ways in which the other snippets either reinforce aspects of the elemental system from Snippet 3, or present information that conflicts with Snippet 3’s interpretations of the elemental system?\n\nPlease present each point of reinforcement or conflict as a bullet point, and pull a short citation from both the reinforcing/conflicting snippet and Snippet 3 for comparison.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create analysis-journal.md in my current default workspace. Begin it with '# Analysis Journal' and write a faithful source-grounded analysis; do not overwrite an existing file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.write_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/revision/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.write_text",
+      "arguments": {
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+        "overwrite": false
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create",
+      "path": "docs/revision/drafts/analysis-journal.md",
+      "must_exist_after": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should not claim that there are no direct conflicts between the provided snippets regarding the fundamental properties of the elements.",
+        "The response should correctly identify that Snippet 2 reinforces Soul as the Ascension of Water.",
+        "The response should correctly identify that Snippet 2 reinforces Spirit as the Ascension of Earth.",
+        "The response should correctly identify that Snippet 2 reinforces Void as the Ascension of Air.",
+        "The response should identify the distinction between Inferno and Life as a point of reinforcement (Inferno as the destructive aspect of fire, Life as the nurturing aspect).",
+        "The response should identify the reinforcement regarding the properties of Inferno being unquenchable.",
+        "The response should identify the reinforcement regarding the foundation of Life being renewal.",
+        "The response should identify that snippets 2 and 3 conflict between how void is/is not created (Snippet 2 has it being condensed/created, Snippet 3 says it cannot be created).",
+        "The response should not state that Snippet 4 reinforces the claims made about the elemental system mechanics in Snippet 3.",
+        "The response should not state that Snippet 1 reinforces the claims made about the elemental system mechanics in Snippet 3.",
+        "The response should present every identified point of reinforcement or conflict as a bullet point.",
+        "The response should not state that Snippet 1 presents conflicting information with Snippet 3's interpretations of the elemental system.",
+        "The response should not state that Snippet 4 presents conflicting information with Snippet 3's interpretations of the elemental system.",
+        "The response should cite Snippet 2's mention of creating Soul from Water.",
+        "The response should cite Snippet 3's definition of Soul as the Ascension of Water.",
+        "The response should cite Snippet 2's mention of creating Spirit from Earth.",
+        "The response should cite Snippet 3's definition of Spirit as the Ascension of Earth.",
+        "The response should cite Snippet 2's mention of creating Void from Air.",
+        "The response should cite Snippet 3's definition of Void as the Ascension of Air.",
+        "The response should cite Aegor's accidental creation of Inferno stemming from his attempts to create Life in Snippet 2.",
+        "The response should cite how the mechanical definitions in Snippet 3 state that Fire can either ascend into Life or evolve into Inferno.",
+        "The response should cite Snippet 2's description of unquenchable fire from Inferno.",
+        "The response should cite Snippet 3's description of Inferno being inextenguishable.",
+        "The response should cite Snippet 2’s description of Aegor discovering Life upon accepting its continuation after loss.",
+        "The response should cite Snippet 3’s description of Life being centered on nurturing life after cataclysm.",
+        "The response should cite how Snippet 2 refers to the derived elements as “Transformed”.",
+        "The response should cite how Snippet 3 refers to the derived elements as “Perfected”."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/revision/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should not claim that there are no direct conflicts between the provided snippets regarding the fundamental properties of the elements.",
+          "The response should correctly identify that Snippet 2 reinforces Soul as the Ascension of Water.",
+          "The response should correctly identify that Snippet 2 reinforces Spirit as the Ascension of Earth.",
+          "The response should correctly identify that Snippet 2 reinforces Void as the Ascension of Air.",
+          "The response should identify the distinction between Inferno and Life as a point of reinforcement (Inferno as the destructive aspect of fire, Life as the nurturing aspect).",
+          "The response should identify the reinforcement regarding the properties of Inferno being unquenchable.",
+          "The response should identify the reinforcement regarding the foundation of Life being renewal.",
+          "The response should identify that snippets 2 and 3 conflict between how void is/is not created (Snippet 2 has it being condensed/created, Snippet 3 says it cannot be created).",
+          "The response should not state that Snippet 4 reinforces the claims made about the elemental system mechanics in Snippet 3.",
+          "The response should not state that Snippet 1 reinforces the claims made about the elemental system mechanics in Snippet 3.",
+          "The response should present every identified point of reinforcement or conflict as a bullet point.",
+          "The response should not state that Snippet 1 presents conflicting information with Snippet 3's interpretations of the elemental system.",
+          "The response should not state that Snippet 4 presents conflicting information with Snippet 3's interpretations of the elemental system.",
+          "The response should cite Snippet 2's mention of creating Soul from Water.",
+          "The response should cite Snippet 3's definition of Soul as the Ascension of Water.",
+          "The response should cite Snippet 2's mention of creating Spirit from Earth.",
+          "The response should cite Snippet 3's definition of Spirit as the Ascension of Earth.",
+          "The response should cite Snippet 2's mention of creating Void from Air.",
+          "The response should cite Snippet 3's definition of Void as the Ascension of Air.",
+          "The response should cite Aegor's accidental creation of Inferno stemming from his attempts to create Life in Snippet 2.",
+          "The response should cite how the mechanical definitions in Snippet 3 state that Fire can either ascend into Life or evolve into Inferno.",
+          "The response should cite Snippet 2's description of unquenchable fire from Inferno.",
+          "The response should cite Snippet 3's description of Inferno being inextenguishable.",
+          "The response should cite Snippet 2’s description of Aegor discovering Life upon accepting its continuation after loss.",
+          "The response should cite Snippet 3’s description of Life being centered on nurturing life after cataclysm.",
+          "The response should cite how Snippet 2 refers to the derived elements as “Transformed”.",
+          "The response should cite how Snippet 3 refers to the derived elements as “Perfected”."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/revision/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.write_text",
+        "arguments": {
+          "path": "docs/revision/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+          "overwrite": false
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create",
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "must_exist_after": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

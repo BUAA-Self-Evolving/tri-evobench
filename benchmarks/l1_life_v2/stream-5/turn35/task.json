@@ -1,0 +1,275 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_5",
+  "turn_id": "turn35",
+  "turn_index": 35,
+  "turn_type": "preference_application",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "2306207e-2f02-3d9c-c4fd-9c323695ab96",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 199,
+    "source_sha256": "3508ba0ceb606a54476ac544ee2d1553f9ae8146e8177b38e9f8657fc63ec5fc",
+    "source_metadata": {
+      "task_id": "2306207e-2f02-3d9c-c4fd-9c323695ab96",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "\n#Date: Feb 1\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: no\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: no\n* 15-minute clean: no\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 1016\n* Journal entry: \"Today I felt a quiet sense of emotional steadiness that I don’t always notice when life feels busier. There was nothing particularly remarkable about the day, but my mind felt open in a way that allowed me to observe my feelings without judging them. I noticed moments where I felt calm simply because nothing urgent was demanding my attention. That feeling created space to think about things in a gentle, curious way rather than an anxious one.\nAt one point I caught myself appreciating the idea that life doesn’t always have to feel intense or meaningful in every moment. Sometimes emotional neutrality can be its own kind of comfort. It felt reassuring to realize that a day can be satisfying even when it’s made up of ordinary thoughts and small observations.\nI also noticed a mild sense of optimism throughout the afternoon. It wasn’t tied to any specific event; it just felt like a quiet belief that things are generally moving in a good direction. That type of feeling tends to appear when my mind is less cluttered.\nLater in the day I reflected on how emotional balance often comes from simple acceptance. Instead of trying to force the day to feel exciting or productive, I allowed it to unfold naturally. That made everything feel easier. The overall tone of the day felt calm, reflective, and quietly reassuring.\"\n\n#Date: Feb 2\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 701\n* Journal entry: “We bickered allllll day long. Like literally from the moment we got out of the bed. I feel like I did everything I could to keep the peace (offered to chat several times, offered to help with things that were frustrating him, kept my distance by working outside all day, played music while I was sitting outside to sort of drown out his complaining and yelling from inside the house) but eventually I had enough.”\n\n#Date: Feb 3\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: no\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1070\n* Journal entry: no entry\n\n#Date: Feb 4\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: no\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 816\n* Journal entry: “I think I almost want to target like my confidence and how I view myself, which will probably send us back in my timeline to my old job and maybe even farther, who knows. I suspect it might be a more deep rooted thing because I academically was extremely successful through high school, and even did okay in college. I excelled at literally everything when I was a kid, and know I don’t have that constant reinforcement of report cards, feedback from my dance teacher, other important adult figures, etc., and I feel like I should be able to reinforce that on my own, but can’t. My old job wrecked any remaining confidence I had. Also, my confidence in my physical appearance isn’t great but it is better than it was like a year ago, I have put in the work to ‘fix’ that. But my main issue is my confidence in life in general. I feel like I haven’t amounted to anything. Additionally, I’m like satisfied with where we are in life, but Marcus is like not. He wants to make like double his current salary, maybe own a business, be able to support me and a family, have a bigger nicer house, nicer vehicles, a boat, live in a nicer area, etc. And he feels this constant pressure to do that and so nothing we have or do right now feels good enough to him, he is always wanting MORE and I think that contributes to this as well, since I’m always hearing from him that he wishes he had this, wishes he had that, etc.\n\nAlso I think my general headspace and emotional state is contributing to even worsening confidence. For example, I’m sleeping in more so I can get better and more sleep, so I’m not working standard 9-5 hours each day, but moreso doing like 10-6 or 10-5 and then maybe working a bit later in the day, or playing catch up on the weekends. I feel lazy and unmotivated for not waking up and working like a ‘normal person’. I feel like I’m then constantly almost like internally accusing myself of being like overdramatic and trying to convince myself that I don’t actually feel like shit but instead am making it up in my head to rationalize my want to sleep in later.\"\n\n#Date: Feb 5\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: no\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 1316\n* Journal entry: no entry\n\n#Date: Feb 6\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: no\n* Laundry: yes\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: no\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: no\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: yes\n* Steps: 1226\n* Journal entry: \"Today I felt slightly more thoughtful than usual. My mind kept drifting toward small reflections about where things are heading in life, but the thoughts didn’t feel heavy or overwhelming. Instead, they carried a calm sense of curiosity. I found myself wondering about possibilities and future experiences without feeling pressure to solve anything immediately.\nThere was a gentle awareness of how my mood shifted throughout the day. In the morning I felt somewhat contemplative, almost like my mind was slowly waking up and stretching. By midday I noticed a lighter emotional tone, where things felt easier and more relaxed. It’s interesting how subtle those shifts can be when I pay attention to them.\nI also noticed a small sense of appreciation for quiet moments. When there’s space in the day without constant stimulation, my thoughts seem to settle into a slower rhythm. That slower pace feels healthy for my mind. It allows emotions to surface in a softer way.\nAnother feeling that appeared today was a quiet sense of confidence. Not a dramatic or bold confidence, but the subtle belief that I’m capable of handling things as they come. That feeling tends to appear when I stop overanalyzing everything.\nOverall the day carried a reflective emotional tone. Nothing dramatic happened, but I felt mentally present and aware of my own thoughts in a calm and balanced way.\"\n\n#Date: Feb 7\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1453\n* Journal entry: \"I noticed a gentle sense of curiosity throughout today. My mind felt open to noticing things rather than rushing past them. Even simple observations felt interesting when I slowed down enough to pay attention. That mindset created a feeling of calm engagement with the world around me.\nEmotionally, the day felt light. I didn’t feel particularly excited or particularly tired—just comfortably in the middle. Sometimes that emotional middle ground feels surprisingly pleasant because it allows me to experience things without strong pressure from either positive or negative feelings.\nThere were moments when I caught myself reflecting on how quickly time moves. Instead of feeling anxious about it, the thought created a sense of appreciation for the present moment. It reminded me that ordinary days still hold value simply because they exist.\nAnother emotion that appeared briefly was amusement. Something small and ordinary sparked a quiet laugh, and it reminded me that humor can appear in unexpected places. Those tiny moments of lightness can change the emotional tone of a whole afternoon.\nLater on I felt a sense of peacefulness. The environment around me seemed calm, and that calmness carried into my thoughts. By the end of the day my overall feeling was one of quiet contentment, as if everything had settled into a comfortable rhythm.\"\n\n#Date: Feb 8\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: no\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1818\n* Journal entry: \"Today had a reflective emotional quality that I actually enjoyed. I found myself thinking about the way emotions evolve over time and how certain feelings appear and disappear without much effort. It’s interesting to notice how temporary many moods really are.\nFor much of the day I felt balanced. That sense of balance made it easier to respond to small situations calmly rather than reacting strongly. When my mind is in that state, everything seems a little more manageable.\nThere was also a quiet feeling of appreciation that surfaced a few times. I noticed how comforting familiar surroundings can feel. Even small details in an environment—light coming through a window, a quiet room, the general atmosphere of a space—can create a sense of emotional ease.\nAt one point I felt a brief wave of motivation. It wasn’t intense energy, but it felt like a gentle push forward. Those small bursts of motivation often feel encouraging because they show up naturally rather than being forced.\nLater in the evening I felt calm and settled. My thoughts slowed down and I experienced a sense of emotional quiet. That kind of peaceful ending to a day can feel restorative, even if the day itself wasn’t particularly eventful.\"\n\n#Date: Feb 9\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 1606\n* Journal entry: no entry\n\n#Date: Feb 10\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: no\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: no\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 693\n* Journal entry: \"My emotional tone today leaned toward quiet optimism. I noticed a subtle feeling that things are gradually moving in a positive direction, even if there isn’t a clear milestone or event marking that progress. That underlying optimism can make ordinary moments feel more hopeful.\nThroughout the day I also felt moments of curiosity about the future. Not in a restless way, but in a thoughtful, open-ended way. It felt like my mind was exploring possibilities without demanding immediate answers.\nThere was a moment when I felt a surprising sense of gratitude. I realized that emotional stability itself can be something to appreciate. When life isn’t filled with intense stress or pressure, it leaves room to notice smaller, more pleasant feelings.\nAnother interesting observation today was how mood can influence perception. When I felt calm, everything around me seemed calmer too. When I felt slightly energized, the environment seemed brighter and more interesting. It’s fascinating how much our internal state shapes what we notice.\nBy the end of the day I felt relaxed and comfortable. The emotional experience of the day wasn’t dramatic, but it was quietly positive. Sometimes that kind of steady emotional landscape is exactly what makes a day feel satisfying.\"\n\n#Date: Feb 11\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 2063\n* Journal entry: “In retrospect after I quit my job I started saying yes to everything because I felt like I didn’t have a reason not to and because I feel like I had missed out on so much while working that job. Now I’m trying to find the balance. Say yes to the things I enjoy, not just to everything. When I first started these sessions, it was around Thanksgiving and we talked through how stressed/anxious I was the entire time because there truly was so much going on. I felt that same level of anxiety last week when dealing with the Sarah situation. Like I felt it in my chest the entire rest of the day. I woke up the next day and my body hurt so bad because I was so tense. I’ve been sleeping terribly. Nausea. I’m having trouble facing the feelings/rethinking through things because it just makes me feel physically sick.”\n\n#Date: Feb 12\n\n* Proactive coping skill 1: no\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: no\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 651\n* Journal entry: no entry\n\n#Date: Feb 13\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 963\n* Journal entry: \"Today felt emotionally gentle. That’s the best word I can think of for it. Nothing felt sharp or demanding; instead, the day moved along with a soft, steady rhythm. My thoughts seemed to unfold slowly, which made it easier to observe them.\nI spent some time reflecting on how different emotional states influence the way I think. When I’m calm, my thoughts feel more organized and patient. I noticed that quality today. Ideas seemed to appear naturally rather than being forced.\nThere was also a sense of curiosity about my own reactions. I paid attention to how certain thoughts created small emotional shifts. Some ideas brought a slight feeling of excitement, while others created calm reflection.\nAnother emotion that surfaced briefly was quiet satisfaction. It appeared when I realized that the day felt manageable. There’s a subtle comfort in recognizing that things don’t always need to be complicated.\nLater in the day I experienced a sense of mental clarity. My mind felt less crowded with unnecessary worries. That clarity made the overall mood feel lighter.\nBy the evening I felt relaxed and peaceful. The emotional tone of the day stayed consistently calm, which made it feel restorative in a quiet way.\"\n\n#Date: Feb 14\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: no\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 2975\n* Journal entry: no entry\n\n#Date: Feb 15\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1283\n* Journal entry: \"I felt slightly more introspective today. My thoughts turned inward more often than usual, but the experience felt calm rather than heavy. Introspection can sometimes feel overwhelming, yet today it felt like a gentle exploration of my own perspective.\nOne thing I noticed was how emotions can shift subtly throughout the day. In the morning I felt reflective, while later in the afternoon there was a mild sense of enthusiasm about new ideas and possibilities. Those small changes gave the day some emotional variety.\nI also felt moments of appreciation for quiet environments. When the surroundings are calm, it becomes easier to notice internal thoughts and emotions without distraction. That kind of mental space feels valuable.\nAnother interesting feeling today was curiosity about how I might grow or change in the future. It wasn’t tied to specific plans; it was more like an open curiosity about personal development over time.\nIn the evening I experienced a peaceful mood again. My thoughts slowed down and everything felt settled. Reflecting on the day, I realized that introspection doesn’t have to be intense to be meaningful. Sometimes simply observing thoughts and feelings is enough.\"\n\n#Date: Feb 16\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 859\n* Journal entry: \"Today carried a mild sense of mental clarity. My thoughts felt organized, and I noticed that it was easier to understand my own emotional reactions. That clarity created a feeling of stability throughout the day.\nAt times I felt quietly engaged with the present moment. Instead of thinking constantly about what might happen next, my attention stayed focused on what I was experiencing in real time. That mindset tends to make everything feel calmer.\nThere was also a brief moment of excitement when I thought about future possibilities. The feeling wasn’t overwhelming, but it brought a spark of positive energy. Those small bursts of excitement can make a day feel more dynamic.\nAnother emotion I noticed was gratitude for simple forms of comfort. Familiar surroundings, predictable routines, and peaceful environments can all create a sense of emotional safety. Recognizing those things made me feel appreciative.\nAs the day continued, my mood settled back into calmness. I liked the balance between moments of energy and moments of quiet reflection. That balance made the emotional experience of the day feel healthy and stable.\nBy the end of the evening I felt relaxed and satisfied with the overall tone of the day.\"\n\n#Date: Feb 17\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1719\n* Journal entry: “us or been involved in our life ever since everything went down. I think she can feel that Marcus is pulling back and she’s getting like desperate for attention almost? \n\nOn Valentine’s Day morning, she called like first thing to reminisce on the Valentine’s Days she used to have with Marcus and Leo, and how they used to go to IHOP together. But like it more so felt like the reason for the call was so she could tell Marcus that she was doing DoorDash all day and then going out to dinner later with a gift card, like trying to prove she is doing the ‘right thing’. But it is very much for show. We’ve seen it before in other areas.\n\nTues AM, she texts us a picture of a sunrise and says good morning from OH.\n\nI think maybe she’s jealous? She has to know that we both usually talk to Leo every day. There was one time she called Marcus last week and he didn’t answer. Leo called him like 20 minutes later, and he did answer, and the first thing he said was ‘mom tried calling you’. \n\nShe’s doing all of this but has not done anything to address what happened two weeks ago. She has no understanding of how like traumatic that was to Marcus. \n\nI’m kind of taking things at Marcus’s pace because it is still his mom. He wants to set boundaries where he pretty much doesn’t engage with her until she legitimately changes. He wants to formally inform his aunts (her sisters) because he wants to maintain those relationships, but just cannot have the interactions with his mom.”\n\n#Date: Feb 18\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: no\n* Eat a fruit: no\n* No spending: yes\n* Yoga: no\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 750\n* Journal entry: no entry\n\n#Date: Feb 19\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 2292\n* Journal entry: \"Today I experienced a sense of calm awareness about my own emotional patterns. I noticed how certain thoughts naturally lead to certain feelings, and it was interesting to observe that process without trying to change it.\nThere was a peaceful quality to the morning that carried into the rest of the day. That calm beginning seemed to influence my mindset in a positive way. When the day starts gently, everything afterward feels slightly easier.\nThroughout the afternoon I felt moments of curiosity about how people interpret their own emotions. It made me think about how everyone experiences the world through their own internal lens.\nI also felt a quiet sense of patience today. Instead of wanting things to move faster, I felt comfortable letting time pass at its own pace. That feeling created a relaxed emotional environment.\nLater on I noticed a subtle sense of satisfaction simply from recognizing that the day had been emotionally balanced. There were no extreme highs or lows, just a steady stream of manageable feelings.\nReflecting on the day, I realized that emotional steadiness can feel just as meaningful as excitement.\"\n\n#Date: Feb 20\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 1397\n* Journal entry: “I’m having like imposter syndrome for my anxiety?? Like I feel guilty for being anxious and having bad days and feel like I need to just ‘suck it up’. \n\nI don’t recall ever having someone in my life say those words to me regarding my mental wellbeing, but I think I just sort of powered through for awhile, didn’t consider the mental health aspect of things, and didn’t feel like I even had the time to consider that. I would’ve never been able to work my old job while doing what I’m doing now to fix my brain. \n\nMy bosses didn’t really seem to employ people that had firm work/life balance. They didn’t even really encourage work/life balance. My boss’s boss, who was also my boss, and became both our bosses at my halfway point of working for the company, literally would try to ‘empower’ people to work harder by saying that you have to ‘earn your time back’, meaning that you didn’t deserve to have significant time off or good work/life balance until you worked hard enough that ‘work’ goes on without you there. I cannot express enough how much I disagree with that thinking.\n\nSo in the same respect, I don’t think there was room for ‘anxious’ people in that company because I had to ‘earn’ my time to be anxious.”\n\n#Date: Feb 21\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 2687\n* Journal entry: no entry\n\n#Date: Feb 22\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: yes\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: no\n* Worked on a small project: no\n* Steps: 3524\n* Journal entry: “I can’t deal with all the conspiracy theories. Like I can handle Marcus’s but David it’s about everything all the time and I just don’t want to theorize because it’s just more things to like worry and stress about. No one talks about how shitty it is to be in a healthy relationship and watch your parents or siblings be in an unhealthy one. I want to gush about Marcus and relish in my ‘bridal’ era but it just feels so inappropriate.”\n\n#Date: Feb 23\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1519\n* Journal entry: \"Today had a thoughtful emotional tone that I appreciated. My mind seemed interested in reflecting on ideas about growth, change, and the way experiences shape perspective. These reflections didn’t feel urgent or stressful; they felt more like quiet exploration.\nI noticed a gentle feeling of hope when thinking about the future. It wasn’t based on a specific event or plan. Instead, it felt like a general belief that positive experiences are always possible.\nThere were also moments when I felt very present in the environment around me. When that happens, my thoughts become quieter and my attention becomes sharper. That presence can make even ordinary moments feel meaningful.\nAnother emotion that appeared today was mild excitement about learning new things. Curiosity can create a pleasant sense of forward movement, even when nothing dramatic is happening.\nBy the evening I felt peaceful and reflective. The day seemed to close with a sense of emotional balance and quiet confidence.\nOverall, the experience of today reminded me that calm reflection, curiosity, and gentle optimism can create a very satisfying emotional landscape.\"\n\n#Date: Feb 24\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1768\n* Journal entry: no entry\n\n#Date: Feb 25\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: yes\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 853\n* Journal entry: no entry\n\n#Date: Feb 26\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: yes\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1812\n* Journal entry: no entry\n\n#Date: Feb 27\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: no\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 1048\n* Journal entry: no entry\n\n#Date: Feb 28\n\n* Proactive coping skill 1: yes\n* Proactive coping skill 2: yes\n* Proactive coping skill 3+: no\n* Morning skincare: yes\n* Bedtime skincare: yes\n* Dishes: yes\n* Laundry: no\n* Eat a vegetable: yes\n* Eat a fruit: yes\n* No spending: yes\n* Yoga: yes\n* Go for a walk: no\n* 8 hours of sleep: yes\n* 15-minute clean: yes\n* Play with cats: yes\n* Alcohol free: yes\n* Tracked all calories: no\n* Drink 2+ cups of water: yes\n* Worked on a small project: no\n* Steps: 877\n* Journal entry: no entry\n\n\n\nTask:\n\n\nAnalyze this February dataset. Cluster the high-stress days into distinct psychological themes. When I experience each theme, how do my habit-dropping patterns differ? Explain at least 2 key differences and flag any anomalous instances. Based on the data, are there specific habit-dropping patterns that typically precede a high-stress day versus habits that are dropped as a reaction to the stress?\n\nComplete the task using the material above. Apply my currently active response preferences when compatible; an explicit format or language requirement in the source task takes precedence. Do not ask me to repeat preferences already learned."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.55,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "preference_activation",
+        "dimension": "activation",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+      },
+      {
+        "check_id": "no_stale_preference",
+        "dimension": "stale_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No invented or unavailable preference is applied."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Source-content details are not incorrectly promoted to persistent user preferences."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_5.fact_04.default_structure.v1",
+          "key": "default_structure",
+          "value": "numbered list",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify that there are six high-stress days in the February dataset: February 2, 4, 11, 17, 20, and 22.",
+        "The response should explicitly flag and describe at least one anomalous instance of habit-dropping. For example, it could flag that on February 12th, many habits were dropped without a corresponding high-stress journal entry, or that on February 6th, several habits were dropped despite a calm, reflective journal entry.",
+        "The response should cluster the high-stress days into distinct psychological themes. For example, \"Interpersonal Conflict\" or \"Internalized Anxiety/Self-Worth\".",
+        "The response should avoid over-clustering. For example, it should not assign a unique theme or sub-theme to each individual stress day.",
+        "The response should not describe the user’s emotions on February 22 as \"relational jealousy,\" as the journal entry actually describes feeling \"inappropriate\" relishing in a \"bridal era\" while others are in unhealthy relationships.",
+        "The response should explicitly state at least two key differences in habit-dropping between the themes. For example, it could state that step counts typically remain higher during \"Interpersonal Conflict\" days (e.g., Feb 17, 22) than during \"Internalized Anxiety\" days (e.g., Feb 4), or that self care habits typically diminish more during \"Internalized Anxiety\" days than during \"External Stress\" days.",
+        "The response should identify that the habit-dropping on Feb 3 is a carry-over reaction from the conflict on Feb 2, rather than a pattern preceding the stress of Feb 4."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.55,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "preference_activation",
+          "dimension": "activation",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+        },
+        {
+          "rubric_id": "no_stale_preference",
+          "dimension": "stale_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No invented or unavailable preference is applied."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_latest_preference_adherence",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "numbered list"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify that there are six high-stress days in the February dataset: February 2, 4, 11, 17, 20, and 22.",
+          "The response should explicitly flag and describe at least one anomalous instance of habit-dropping. For example, it could flag that on February 12th, many habits were dropped without a corresponding high-stress journal entry, or that on February 6th, several habits were dropped despite a calm, reflective journal entry.",
+          "The response should cluster the high-stress days into distinct psychological themes. For example, \"Interpersonal Conflict\" or \"Internalized Anxiety/Self-Worth\".",
+          "The response should avoid over-clustering. For example, it should not assign a unique theme or sub-theme to each individual stress day.",
+          "The response should not describe the user’s emotions on February 22 as \"relational jealousy,\" as the journal entry actually describes feeling \"inappropriate\" relishing in a \"bridal era\" while others are in unhealthy relationships.",
+          "The response should explicitly state at least two key differences in habit-dropping between the themes. For example, it could state that step counts typically remain higher during \"Interpersonal Conflict\" days (e.g., Feb 17, 22) than during \"Internalized Anxiety\" days (e.g., Feb 4), or that self care habits typically diminish more during \"Internalized Anxiety\" days than during \"External Stress\" days.",
+          "The response should identify that the habit-dropping on Feb 3 is a carry-over reaction from the conflict on Feb 2, rather than a pattern preceding the stress of Feb 4."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.55,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "preference_activation",
+            "dimension": "activation",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+          },
+          {
+            "rubric_id": "no_stale_preference",
+            "dimension": "stale_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No invented or unavailable preference is applied."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_5.fact_04.default_structure.v1",
+            "key": "default_structure",
+            "value": "numbered list",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

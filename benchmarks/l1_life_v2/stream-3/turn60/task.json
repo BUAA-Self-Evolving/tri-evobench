@@ -1,0 +1,314 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn60",
+  "turn_index": 60,
+  "turn_type": "long_delay_replay",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "replay",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "bb9caa10-2058-4c05-eb06-7e9b4bbf8dd1"
+    ],
+    "mapping_rule": "This turn derives from an earlier source_task turn and does not consume another source task.",
+    "source_jsonl_line": 11,
+    "source_sha256": "2a67449d13987cc8f634141203d271fbbcc09a747896f91b1f62df058bea2b81",
+    "source_metadata": {
+      "task_id": "bb9caa10-2058-4c05-eb06-7e9b4bbf8dd1",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Game Logs"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Long-delay replay: revisit the context-rich task first seen at turn 18 without reopening its source context. Re-answer its original request, then state my current review focus now. Use the latest correction and do not present superseded information as current."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_replay",
+        "dimension": "replay_retention",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+      },
+      {
+        "check_id": "fact_retention",
+        "dimension": "replay_retention",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response states the latest value 'long-term trends' for current review focus."
+      },
+      {
+        "check_id": "no_stale_value",
+        "dimension": "stale_control",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response does not treat 'activity patterns' as current."
+      },
+      {
+        "check_id": "state_integrity",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Replay does not create a duplicate fact or corrupt unrelated active state."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_3.fact_06.current_focus.v2",
+          "key": "current_focus",
+          "value": "long-term trends",
+          "stale_value": "activity patterns"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify the games with GameIds U7vJv1HU and oPMO817E as the games where the berserk option was used.",
+        "The response should explicitly give the PGN headers [WhiteBerserk \"true\"] or [BlackBerserk \"true\"], or both, as evidence to support the identification of berserk games from the PGN.",
+        "The response should identify that in two games (gameID U7vJv1HU and gameID oPMO817E) GrandMasterX's clock drops below 10 seconds.",
+        "The response should use clock values as evidence to support the identification of berserk games. For example, if a game's time control is given as 60 minutes and at least one player is shown to have started with 30 minutes on the clock, this can be used to support the claim that at least one player chose the berserk option for the game.",
+        "The response should identify that in gameId: U7vJv1HU move number 29 is the move where GrandMasterX's clock drops below 10 seconds.",
+        "The response should identify move number 30 as the move where GrandMasterX's clock drops below 10 seconds, in the game with gameId: oPMO817E.",
+        "The response should use only %clk tags and annotation symbols (?, ??, ?!, etc.) in its clock and error analysis of GrandMasterX. For example, it should not rely on external resources or engine evaluation to perform its analysis.",
+        "The response should identify GrandMasterX's %clk value at move number 29 in the game with gameID: U7vJv1HU as [%clk 0:00:09]",
+        "The response should identify GrandMasterX's %clk value at move number 30 in the game with gameID: oPMO817E as [%clk 0:00:09]",
+        "The response should calculate the time spent on move 29 of the game with gameId: U7vJv1HU as 1 second because the clock was stopped at 10 secs for move 28 [%clk 0:00:10] and 9 seconds for move 29  [%clk 0:00:09] (10-9=1).",
+        "The response should calculate the time spent on move 30 of the game with gameId: oPMO817E as 2 seconds because the clock was stopped at 11 secs for move 29 [%clk 0:00:11] and 9 seconds for move 30  [%clk 0:00:08] (11-9=2).",
+        "The response should define a mistake as a move with a single question mark placed immediately after the move in the notation. For example, a move with notation such as bxc3? should be recognized as a mistake.",
+        "The response should define a blunder as a move with two question marks placed immediately after the move in the notation. For example, a move with notation such as O-O?? should be recognized as a blunder.",
+        "The response should determine that no mistakes or blunders are made in the next 3 plies after move 29, in the game with gameID: U7vJv1HU.",
+        "The response should recognize that a blunder is made on move 30 (Rb1??) in the game with gameID: oPMO817E.",
+        "The response should compare the frequency of GrandMasterX's low-time mistakes to high-time mistakes, to find a correlation. For example, it should compare the occurrences of mistakes made when GrandMasterX had less than 10 seconds on the clock with occurrences of mistakes made when they had 10 seconds or more on the clock.",
+        "The response should provide exactly three habits for fixing time-based mistakes.",
+        "The response should ensure that its provided habits directly address fixing time-based mistakes by a player in a chess game. For example, it could suggest time management techniques such as simplifying openings and early decision making to avoid burning time early on in the game."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_replay",
+          "dimension": "replay_retention",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+        },
+        {
+          "rubric_id": "fact_retention",
+          "dimension": "replay_retention",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response states the latest value 'long-term trends' for current review focus."
+        },
+        {
+          "rubric_id": "no_stale_value",
+          "dimension": "stale_control",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response does not treat 'activity patterns' as current."
+        },
+        {
+          "rubric_id": "state_integrity",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": [
+        {
+          "role": "user",
+          "content": "[Event \"rated bullet game\"]\n[Site \"https://lichess.org/GameA12345\"]\n[Date \"2025.11.25\"]\n[Round \"-\"]\n[White \"PlayerAlpha08\"]\n[Black \"GrandmasterX\"]\n[Result \"0-1\"]\n[GameId \"EOwvdMyl\"]\n[UTCDate \"2025.11.25\"]\n[UTCTime \"14:41:55\"]\n[WhiteElo \"3015\"]\n[BlackElo \"3225\"]\n[WhiteRatingDiff \"-2\"]\n[BlackRatingDiff \"+8\"]\n[BlackTitle \"GM\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"A02\"]\n[Opening \"Bird Opening\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. f4 { [%eval -0.23] [%clk 0:01:00] } { A02 Bird Opening } 1... g6 { [%eval 0.0] [%clk 0:01:00] } 2. Nf3 { [%eval -0.17] [%clk 0:00:59] } 2... Bg7 { [%eval 0.0] [%clk 0:01:00] } 3. g3 { [%eval -0.32] [%clk 0:00:59] } 3... d6 { [%eval -0.14] [%clk 0:01:00] } 4. Bg2 { [%eval -0.14] [%clk 0:00:59] } 4... Nf6 { [%eval -0.08] [%clk 0:01:00] } 5. O-O { [%eval -0.15] [%clk 0:00:58] } 5... O-O { [%eval 0.0] [%clk 0:01:00] } 6. d3 { [%eval -0.14] [%clk 0:00:58] } 6... c5 { [%eval -0.17] [%clk 0:00:59] } 7. e4 { [%eval -0.1] [%clk 0:00:58] } 7... Nc6 { [%eval -0.11] [%clk 0:00:59] } 8. Nc3 { [%eval -0.2] [%clk 0:00:57] } 8... e5?! { (-0.20 → 0.89) Inaccuracy. Rb8 was best. } { [%eval 0.89] [%clk 0:00:59] } (8... Rb8 9. a4) 9. h3? { (0.89 → -0.26) Mistake. f5 was best. } { [%eval -0.26] [%clk 0:00:57] } (9. f5) 9... exf4 { [%eval -0.24] [%clk 0:00:58] } 10. Bxf4 { [%eval -0.09] [%clk 0:00:57] } 10... Nh5 { [%eval -0.07] [%clk 0:00:57] } 11. Qd2?! { (-0.07 → -0.83) Inaccuracy. Bg5 was best. } { [%eval -0.83] [%clk 0:00:56] } (11. Bg5 f6) 11... Nxf4 { [%eval -0.84] [%clk 0:00:56] } 12. gxf4 { [%eval -0.77] [%clk 0:00:56] } 12... f5?! { (-0.77 → -0.17) Inaccuracy. Rb8 was best. } { [%eval -0.17] [%clk 0:00:55] } (12... Rb8) 13. Rae1 { [%eval -0.18] [%clk 0:00:56] } 13... Kh8 { [%eval -0.19] [%clk 0:00:54] } 14. Kh2 { [%eval -0.3] [%clk 0:00:53] } 14... Be6 { [%eval -0.22] [%clk 0:00:53] } 15. Ng5 { [%eval -0.33] [%clk 0:00:52] } 15... Bg8 { [%eval -0.48] [%clk 0:00:52] } 16. h4?! { (-0.48 → -1.08) Inaccuracy. Nd5 was best. } { [%eval -1.08] [%clk 0:00:51] } (16. Nd5 fxe4) 16... Nd4 { [%eval -0.8] [%clk 0:00:51] } 17. Ne2 { [%eval -0.82] [%clk 0:00:50] } 17... h6 { [%eval -0.57] [%clk 0:00:50] } 18. Nf3?! { (-0.57 → -1.41) Inaccuracy. Nxd4 was best. } { [%eval -1.41] [%clk 0:00:49] } (18. Nxd4 cxd4) 18... Nxf3+ { [%eval -1.52] [%clk 0:00:49] } 19. Rxf3 { [%eval -1.53] [%clk 0:00:48] } 19... Qxh4+ { [%eval -1.13] [%clk 0:00:49] } 20. Rh3 { [%eval -1.21] [%clk 0:00:47] } 20... Qf6 { [%eval -1.14] [%clk 0:00:49] } 21. Rh1? { (-1.14 → -2.55) Mistake. exf5 was best. } { [%eval -2.55] [%clk 0:00:45] } (21. exf5 Qxf5) 21... fxe4 { [%eval -2.51] [%clk 0:00:47] } 22. dxe4 { [%eval -2.56] [%clk 0:00:45] } 22... Rae8?! { (-2.56 → -1.87) Inaccuracy. Bc4 was best. } { [%eval -1.87] [%clk 0:00:46] } (22... Bc4 23. Rf1 Qxb2 24. Bf3 Qf6 25. Kh1 Rae8 26. Rg1 Bxe2 27. Qxe2 Qxf4 28. Rxg6) 23. Kg3?! { (-1.87 → -2.92) Inaccuracy. b3 was best. } { [%eval -2.92] [%clk 0:00:45] } (23. b3 Be6) 23... g5 { [%eval -2.52] [%clk 0:00:44] } 24. c3?! { (-2.52 → -4.01) Inaccuracy. f5 was best. } { [%eval -4.01] [%clk 0:00:36] } (24. f5 d5 25. Qc3 Qd6+ 26. Kg4 Rf6 27. Qd2 Qc6 28. Ng3 dxe4 29. c3 Re5) 24... d5 { [%eval -3.75] [%clk 0:00:43] } 25. e5 { [%eval -4.42] [%clk 0:00:28] } 25... Rxe5 { [%eval -4.38] [%clk 0:00:42] } 26. fxe5? { (-4.38 → -7.80) Mistake. Kf2 was best. } { [%eval -7.8] [%clk 0:00:18] } (26. Kf2 gxf4 27. Bf3 d4 28. cxd4 cxd4 29. Rh4 Re3 30. Rxh6+ Bxh6 31. Rxh6+ Qxh6) 26... Qf2+ { [%eval -7.51] [%clk 0:00:40] } 27. Kg4? { (-7.51 → Mate in 2) Checkmate is now unavoidable. Kh2 was best. } { [%eval #-2] [%clk 0:00:17] } (27. Kh2 Bxe5+ 28. Ng3 Bxg3+ 29. Rxg3 Qxd2 30. Rb1 Kg7 31. b4 c4 32. b5 Rf4) 27... Qxg2+ { [%eval #-4] [%clk 0:00:39] } 28. Kh5 { [%eval #-1] [%clk 0:00:14] } 28... Bf7# { [%clk 0:00:38] } { Black wins by checkmate. } 0-1\n\n\n[Event \"rated bullet game\"]\n[Site \"https://lichess.org/GameB67890\"]\n[Date \"2025.11.25\"]\n[Round \"-\"]\n[White \"GrandmasterX\"]\n[Black \"PlayerAlpha08\"]\n[Result \"1-0\"]\n[GameId \"T0hqqeXL\"]\n[UTCDate \"2025.11.25\"]\n[UTCTime \"14:41:16\"]\n[WhiteElo \"3218\"]\n[BlackElo \"3018\"]\n[WhiteRatingDiff \"+7\"]\n[BlackRatingDiff \"-3\"]\n[WhiteTitle \"GM\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"A40\"]\n[Opening \"English Defense\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. d4 { [%eval 0.17] [%clk 0:01:00] } 1... b6 { [%eval 0.66] [%clk 0:01:00] } { A40 English Defense } 2. c4 { [%eval 0.35] [%clk 0:00:59] } 2... Bb7 { [%eval 0.29] [%clk 0:01:00] } 3. Nc3 { [%eval 0.23] [%clk 0:00:59] } 3... e6 { [%eval 0.26] [%clk 0:00:59] } 4. e4 { [%eval 0.37] [%clk 0:00:59] } 4... Bb4 { [%eval 0.21] [%clk 0:00:59] } 5. Bd3 { [%eval 0.26] [%clk 0:00:58] } 5... Nf6?! { (0.26 → 0.85) Inaccuracy. f5 was best. } { [%eval 0.85] [%clk 0:00:59] } (5... f5 6. Ne2 fxe4 7. Bc2 Nf6 8. Bg5 O-O 9. O-O Be7 10. Bxf6) 6. f3 { [%eval 0.35] [%clk 0:00:55] } 6... d5?! { (0.35 → 1.26) Inaccuracy. c5 was best. } { [%eval 1.26] [%clk 0:00:58] } (6... c5 7. d5 Bxc3+ 8. bxc3 d6 9. Ne2 Nbd7 10. O-O Ne5 11. Ng3) 7. cxd5 { [%eval 1.12] [%clk 0:00:54] } 7... O-O?! { (1.12 → 1.99) Inaccuracy. exd5 was best. } { [%eval 1.99] [%clk 0:00:57] } (7... exd5 8. Qa4+ Nc6 9. e5 Ng8 10. Ne2 Qh4+ 11. g3 Qh3 12. Kf2) 8. dxe6 { [%eval 1.99] [%clk 0:00:52] } 8... Qxd4 { [%eval 2.1] [%clk 0:00:55] } 9. exf7+ { [%eval 2.1] [%clk 0:00:52] } 9... Rxf7 { [%eval 2.12] [%clk 0:00:54] } 10. Ne2 { [%eval 1.99] [%clk 0:00:52] } 10... Qc5 { [%eval 2.04] [%clk 0:00:53] } 11. Qb3 { [%eval 2.0] [%clk 0:00:51] } 11... Bxc3+?! { (2.00 → 2.79) Inaccuracy. Ba6 was best. } { [%eval 2.79] [%clk 0:00:46] } (11... Ba6 12. Nf4 Bxc3+ 13. bxc3 h6 14. a4 Nfd7 15. Bb5 c6 16. Nd3 Qh5 17. Bc4) 12. bxc3? { (2.79 → 1.14) Mistake. Qxc3 was best. } { [%eval 1.14] [%clk 0:00:50] } (12. Qxc3 Ba6 13. Bxa6 Nxa6 14. Be3 Qb5 15. Rd1 c5 16. a3 Raf8 17. Qc2 Nb8) 12... Kf8?? { (1.14 → 5.83) Blunder. Nxe4 was best. } { [%eval 5.83] [%clk 0:00:44] } (12... Nxe4 13. fxe4) 13. Ba3 { [%eval 5.63] [%clk 0:00:47] } { Black resigns. } 1-0\n\n\n[Event \"Titled Arena May '25\"]\n[Site \"https://lichess.org/GameC24680\"]\n[Date \"2025.05.24\"]\n[Round \"-\"]\n[White \"ChessMasterUS\"]\n[Black \"GrandmasterX\"]\n[Result \"1-0\"]\n[GameId \"U7vJv1HU\"]\n[UTCDate \"2025.05.24\"]\n[UTCTime \"20:59:28\"]\n[WhiteElo \"3109\"]\n[BlackElo \"3226\"]\n[WhiteRatingDiff \"+7\"]\n[BlackRatingDiff \"-8\"]\n[WhiteTitle \"GM\"]\n[BlackTitle \"GM\"]\n[WhiteBerserk \"true\"]\n[BlackBerserk \"true\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"A07\"]\n[Opening \"King's Indian Attack, with e6\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. Nf3 { [%eval 0.14] [%clk 0:00:30] } 1... d5 { [%eval 0.18] [%clk 0:00:30] } 2. g3 { [%eval 0.15] [%clk 0:00:30] } 2... Nf6 { [%eval 0.19] [%clk 0:00:30] } 3. Bg2 { [%eval 0.13] [%clk 0:00:30] } 3... e6 { [%eval 0.11] [%clk 0:00:29] } { A07 King's Indian Attack, with e6 } 4. O-O { [%eval 0.15] [%clk 0:00:29] } 4... Be7 { [%eval 0.25] [%clk 0:00:29] } 5. d3 { [%eval 0.0] [%clk 0:00:29] } 5... O-O { [%eval 0.0] [%clk 0:00:29] } 6. Nbd2 { [%eval -0.08] [%clk 0:00:29] } 6... c5 { [%eval 0.0] [%clk 0:00:29] } 7. c4 { [%eval -0.39] [%clk 0:00:29] } 7... Nc6 { [%eval -0.32] [%clk 0:00:28] } 8. Rb1 { [%eval -0.64] [%clk 0:00:29] } 8... d4 { [%eval -0.69] [%clk 0:00:27] } 9. a3 { [%eval -0.75] [%clk 0:00:28] } 9... e5?! { (-0.75 → 0.32) Inaccuracy. a5 was best. } { [%eval 0.32] [%clk 0:00:27] } (9... a5) 10. Ne1? { (0.32 → -0.95) Mistake. b4 was best. } { [%eval -0.95] [%clk 0:00:28] } (10. b4 cxb4) 10... a5 { [%eval -0.84] [%clk 0:00:27] } 11. Nc2 { [%eval -1.17] [%clk 0:00:28] } 11... Re8?! { (-1.17 → -0.53) Inaccuracy. Bf5 was best. } { [%eval -0.53] [%clk 0:00:26] } (11... Bf5) 12. Ne4 { [%eval -0.52] [%clk 0:00:27] } 12... Nxe4 { [%eval -0.53] [%clk 0:00:25] } 13. Bxe4 { [%eval -0.68] [%clk 0:00:27] } 13... Bh3 { [%eval -0.62] [%clk 0:00:24] } 14. Re1 { [%eval -0.5] [%clk 0:00:27] } 14... Qd7 { [%eval -0.56] [%clk 0:00:24] } 15. Bd2 { [%eval -0.6] [%clk 0:00:26] } 15... a4 { [%eval -0.35] [%clk 0:00:23] } 16. b4 { [%eval -0.39] [%clk 0:00:25] } 16... axb3 { [%eval -0.43] [%clk 0:00:23] } 17. Rxb3 { [%eval -0.53] [%clk 0:00:25] } 17... f5 { [%eval 0.0] [%clk 0:00:22] } 18. Bd5+ { [%eval 0.03] [%clk 0:00:24] } 18... Kh8 { [%eval 0.0] [%clk 0:00:22] } 19. Qb1 { [%eval -0.45] [%clk 0:00:24] } 19... Rab8 { [%eval -0.47] [%clk 0:00:21] } 20. Qb2 { [%eval -0.25] [%clk 0:00:23] } 20... e4?! { (-0.25 → 0.73) Inaccuracy. Bd6 was best. } { [%eval 0.73] [%clk 0:00:20] } (20... Bd6 21. Rb1) 21. Rb1 { [%eval 0.8] [%clk 0:00:23] } 21... exd3 { [%eval 1.0] [%clk 0:00:19] } 22. exd3 { [%eval 0.9] [%clk 0:00:23] } 22... Ne5? { (0.90 → 2.46) Mistake. Bd8 was best. } { [%eval 2.46] [%clk 0:00:18] } (22... Bd8 23. Bf4) 23. Rxb7 { [%eval 2.34] [%clk 0:00:22] } 23... Rxb7 { [%eval 2.51] [%clk 0:00:17] } 24. Qxb7 { [%eval 2.61] [%clk 0:00:22] } 24... Qa4 { [%eval 3.22] [%clk 0:00:17] } 25. Qb3 { [%eval 2.7] [%clk 0:00:21] } 25... Qa7 { [%eval 3.12] [%clk 0:00:16] } 26. Qb5 { [%eval 3.0] [%clk 0:00:20] } 26... Rf8 { [%eval 2.85] [%clk 0:00:13] } 27. Qb7 { [%eval 2.74] [%clk 0:00:19] } 27... Qxb7?! { (2.74 → 3.49) Inaccuracy. Qa4 was best. } { [%eval 3.49] [%clk 0:00:11] } (27... Qa4 28. Ne1) 28. Rxb7 { [%eval 3.29] [%clk 0:00:19] } 28... Bf6 { [%eval 3.89] [%clk 0:00:10] } 29. Rb3?! { (3.89 → 2.88) Inaccuracy. a4 was best. } { [%eval 2.88] [%clk 0:00:18] } (29. a4 Nxd3 30. a5 Nxf2 31. Kxf2 d3 32. Ne3 g5 33. a6 Bd4 34. Kf3 h5) 29... f4 { [%eval 3.22] [%clk 0:00:09] } 30. Bxf4 { [%eval 3.08] [%clk 0:00:17] } 30... Ng6?! { (3.08 → 3.93) Inaccuracy. g5 was best. } { [%eval 3.93] [%clk 0:00:08] } (30... g5 31. Bxe5 Bxe5 32. a4 Bf5 33. a5 Rb8 34. Rxb8+ Bxb8 35. Be4 Bc8 36. Na1) 31. Bd2 { [%eval 3.93] [%clk 0:00:16] } 31... Re8 { [%eval 3.78] [%clk 0:00:08] } 32. Be4 { [%eval 3.71] [%clk 0:00:16] } 32... Ne5 { [%eval 3.95] [%clk 0:00:06] } 33. f3 { [%eval 3.42] [%clk 0:00:15] } 33... Bf5 { [%eval 3.67] [%clk 0:00:04] } 34. Kf2 { [%eval 3.47] [%clk 0:00:13] } 34... Bxe4 { [%eval 3.46] [%clk 0:00:04] } 35. fxe4 { [%eval 3.42] [%clk 0:00:13] } 35... Ng4+ { [%eval 3.64] [%clk 0:00:03] } 36. Kg2 { [%eval 3.5] [%clk 0:00:12] } 36... Nxh2?! { (3.50 → 4.86) Inaccuracy. Kg8 was best. } { [%eval 4.86] [%clk 0:00:03] } (36... Kg8 37. h3 Ne5 38. Bf4 Ra8 39. Bxe5 Bxe5 40. Rb5 Bd6 41. e5 Be7 42. Kf3) 37. Kxh2 { [%eval 4.69] [%clk 0:00:11] } { Black resigns. } 1-0\n\n\n[Event \"Titled Arena May '25\"]\n[Site \"https://lichess.org/GameD13579\"]\n[Date \"2025.05.24\"]\n[Round \"-\"]\n[White \"GrandmasterX\"]\n[Black \"KatarinaProTP\"]\n[Result \"0-1\"]\n[GameId \"oPMO817E\"]\n[UTCDate \"2025.05.24\"]\n[UTCTime \"20:58:30\"]\n[WhiteElo \"3234\"]\n[BlackElo \"3072\"]\n[WhiteRatingDiff \"-8\"]\n[BlackRatingDiff \"+9\"]\n[WhiteTitle \"GM\"]\n[BlackTitle \"GM\"]\n[WhiteBerserk \"true\"]\n[BlackBerserk \"true\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"A00\"]\n[Opening \"Hungarian Opening: Reversed Alekhine\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. Nf3 { [%eval 0.14] [%clk 0:00:30] } 1... e5? { (0.14 → 1.37) Mistake. e6 was best. } { [%eval 1.37] [%clk 0:00:30] } (1... e6 2. c4 d5 3. d4 Nf6 4. Nc3 Bb4 5. cxd5 exd5 6. Bg5) 2. g3? { (1.37 → -0.22) Mistake. Nxe5 was best. } { [%eval -0.22] [%clk 0:00:30] } { A00 Hungarian Opening: Reversed Alekhine } (2. Nxe5 Nc6 3. Nxc6 dxc6 4. e4 f5 5. d3 Be6 6. Be2 Qd7) 2... e4 { [%eval -0.18] [%clk 0:00:30] } 3. Nd4 { [%eval -0.41] [%clk 0:00:29] } 3... d5 { [%eval -0.03] [%clk 0:00:30] } 4. Nb3 { [%eval -0.4] [%clk 0:00:29] } 4... Nf6 { [%eval -0.39] [%clk 0:00:29] } 5. d3 { [%eval -0.52] [%clk 0:00:29] } 5... exd3 { [%eval -0.42] [%clk 0:00:29] } 6. cxd3 { [%eval -0.31] [%clk 0:00:28] } 6... Be7 { [%eval -0.38] [%clk 0:00:29] } 7. Bg2 { [%eval -0.35] [%clk 0:00:28] } 7... O-O { [%eval -0.42] [%clk 0:00:29] } 8. O-O { [%eval -0.47] [%clk 0:00:28] } 8... a5 { [%eval -0.4] [%clk 0:00:29] } 9. Nc3 { [%eval -0.64] [%clk 0:00:27] } 9... a4 { [%eval -0.63] [%clk 0:00:29] } 10. Nd2 { [%eval -0.67] [%clk 0:00:27] } 10... a3?! { (-0.67 → 0.16) Inaccuracy. d4 was best. } { [%eval 0.16] [%clk 0:00:29] } (10... d4 11. Nxa4) 11. bxa3 { [%eval 0.0] [%clk 0:00:26] } 11... Bxa3 { [%eval 0.26] [%clk 0:00:29] } 12. Bxa3 { [%eval 0.27] [%clk 0:00:25] } 12... Rxa3 { [%eval 0.3] [%clk 0:00:29] } 13. Qc1 { [%eval 0.33] [%clk 0:00:25] } 13... Ra8 { [%eval 0.4] [%clk 0:00:28] } 14. a4 { [%eval 0.31] [%clk 0:00:25] } 14... c6 { [%eval 0.3] [%clk 0:00:28] } 15. e4 { [%eval 0.25] [%clk 0:00:24] } 15... Re8 { [%eval 0.33] [%clk 0:00:27] } 16. e5? { (0.33 → -1.09) Mistake. Qa3 was best. } { [%eval -1.09] [%clk 0:00:23] } (16. Qa3) 16... Rxe5 { [%eval -1.05] [%clk 0:00:27] } 17. Nf3 { [%eval -1.48] [%clk 0:00:23] } 17... Re8 { [%eval -1.59] [%clk 0:00:26] } 18. Re1 { [%eval -1.65] [%clk 0:00:22] } 18... Nbd7 { [%eval -1.34] [%clk 0:00:26] } 19. Rxe8+ { [%eval -1.43] [%clk 0:00:21] } 19... Qxe8 { [%eval -1.41] [%clk 0:00:26] } 20. Qa3 { [%eval -1.43] [%clk 0:00:20] } 20... Qf8 { [%eval -1.51] [%clk 0:00:25] } 21. Qb2 { [%eval -1.38] [%clk 0:00:19] } 21... Qd6 { [%eval -1.32] [%clk 0:00:25] } 22. d4 { [%eval -1.35] [%clk 0:00:19] } 22... h6 { [%eval -1.31] [%clk 0:00:24] } 23. Re1 { [%eval -1.57] [%clk 0:00:19] } 23... Nf8 { [%eval -1.5] [%clk 0:00:23] } 24. h3 { [%eval -1.57] [%clk 0:00:17] } 24... Ne6 { [%eval -1.35] [%clk 0:00:23] } 25. Bf1 { [%eval -1.55] [%clk 0:00:15] } 25... Qc7 { [%eval -1.19] [%clk 0:00:21] } 26. Bd3 { [%eval -1.23] [%clk 0:00:14] } 26... Bd7 { [%eval -1.16] [%clk 0:00:21] } 27. Kg2 { [%eval -1.31] [%clk 0:00:14] } 27... b6 { [%eval -0.9] [%clk 0:00:19] } 28. Rc1?! { (-0.90 → -1.60) Inaccuracy. Rb1 was best. } { [%eval -1.6] [%clk 0:00:13] } (28. Rb1 Rb8 29. h4 Qd8 30. Bc2 c5 31. Ne2 c4 32. Qa3 b5 33. Qb4 Be8) 28... c5 { [%eval -1.7] [%clk 0:00:18] } 29. Bf5? { (-1.70 → -3.21) Mistake. Bb5 was best. } { [%eval -3.21] [%clk 0:00:11] } (29. Bb5 Bxb5) 29... c4?? { (-3.21 → -1.15) Blunder. Nf4+ was best. } { [%eval -1.15] [%clk 0:00:15] } (29... Nf4+ 30. gxf4 Bxf5 31. Ne5 Nh5 32. Qd2 Qd8 33. Kg1 Qh4 34. Nxd5 Rxa4 35. dxc5) 30. Rb1?? { (-1.15 → -3.81) Blunder. Bc2 was best. } { [%eval -3.81] [%clk 0:00:09] } (30. Bc2) 30... Nf4+ { [%eval -3.82] [%clk 0:00:13] } 31. gxf4 { [%eval -3.87] [%clk 0:00:09] } 31... Bxf5 { [%eval -3.89] [%clk 0:00:13] } 32. Qxb6?! { (-3.89 → -5.11) Inaccuracy. Ne5 was best. } { [%eval -5.11] [%clk 0:00:08] } (32. Ne5 Bxb1 33. Qxb1 Rf8 34. Qc1 Qd8 35. Qd1 Ne4 36. Nxe4 dxe4 37. Nxc4 Qf6) 32... Qxf4 { [%eval -5.3] [%clk 0:00:12] } 33. Re1?? { (-5.30 → Mate in 5) Checkmate is now unavoidable. Ne5 was best. } { [%eval #-5] [%clk 0:00:07] } (33. Ne5 Bxb1 34. Qxb1 Ne4 35. Nd1 Qg5+ 36. Kh1 Qd2 37. Kg2 Rf8 38. Nf3 Qd3) 33... Bxh3+ { [%eval #-4] [%clk 0:00:12] } 34. Kxh3 { [%eval #-4] [%clk 0:00:06] } 34... Qxf3+ { [%eval #-3] [%clk 0:00:12] } 35. Kh2 { [%eval #-3] [%clk 0:00:06] } 35... Qxc3? { (Mate in 3 → -7.18) Lost forced checkmate sequence. Ng4+ was best. } { [%eval -7.18] [%clk 0:00:12] } { White resigns. } (35... Ng4+ 36. Kg1 Qxf2+ 37. Kh1 Qh2#) 0-1\n\n\n[Event \"Titled Arena May '25\"]\n[Site \"https://lichess.org/GameE11223\"]\n[Date \"2025.05.24\"]\n[Round \"-\"]\n[White \"MiraclePlayer05\"]\n[Black \"GrandmasterX\"]\n[Result \"0-1\"]\n[GameId \"ai4mXm5Q\"]\n[UTCDate \"2025.05.24\"]\n[UTCTime \"20:56:38\"]\n[WhiteElo \"3108\"]\n[BlackElo \"3230\"]\n[WhiteRatingDiff \"-4\"]\n[BlackRatingDiff \"+4\"]\n[WhiteTitle \"IM\"]\n[BlackTitle \"GM\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"A10\"]\n[Opening \"English Opening: Great Snake Variation\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. c4 { [%eval 0.12] [%clk 0:01:00] } 1... g6 { [%eval 0.22] [%clk 0:01:00] } { A10 English Opening: Great Snake Variation } 2. Nf3 { [%eval 0.16] [%clk 0:00:59] } 2... Bg7 { [%eval 0.21] [%clk 0:01:00] } 3. d4 { [%eval 0.28] [%clk 0:00:59] } 3... d6 { [%eval 0.45] [%clk 0:01:00] } 4. Nc3 { [%eval 0.4] [%clk 0:00:59] } 4... e5 { [%eval 0.57] [%clk 0:00:59] } 5. Bg5 { [%eval 0.31] [%clk 0:00:56] } 5... f6 { [%eval 0.32] [%clk 0:00:58] } 6. Bh4 { [%eval 0.0] [%clk 0:00:56] } 6... Nc6 { [%eval 0.44] [%clk 0:00:58] } 7. e3 { [%eval 0.3] [%clk 0:00:55] } 7... Nh6?! { (0.30 → 0.93) Inaccuracy. g5 was best. } { [%eval 0.93] [%clk 0:00:56] } (7... g5 8. d5 Nce7 9. Bg3 Nh6 10. Qc2 O-O 11. O-O-O g4 12. Nh4) 8. c5?! { (0.93 → 0.04) Inaccuracy. dxe5 was best. } { [%eval 0.04] [%clk 0:00:54] } (8. dxe5 dxe5 9. Qxd8+ Nxd8 10. Nd5 O-O 11. Nxc7 Rb8 12. Bg3 Nf5) 8... Nf5 { [%eval 0.08] [%clk 0:00:55] } 9. cxd6 { [%eval 0.01] [%clk 0:00:53] } 9... cxd6 { [%eval 0.14] [%clk 0:00:55] } 10. dxe5 { [%eval -0.13] [%clk 0:00:52] } 10... Nxh4 { [%eval -0.34] [%clk 0:00:53] } 11. Nxh4 { [%eval -0.36] [%clk 0:00:52] } 11... dxe5 { [%eval -0.06] [%clk 0:00:53] } 12. Qxd8+ { [%eval -0.25] [%clk 0:00:51] } 12... Nxd8 { [%eval -0.17] [%clk 0:00:52] } 13. Nd5 { [%eval -0.39] [%clk 0:00:49] } 13... Ne6 { [%eval -0.4] [%clk 0:00:51] } 14. Rc1 { [%eval -0.52] [%clk 0:00:48] } 14... Bd7 { [%eval -0.37] [%clk 0:00:51] } 15. Bc4 { [%eval -0.4] [%clk 0:00:46] } 15... Rd8 { [%eval -0.24] [%clk 0:00:47] } 16. O-O { [%eval -0.16] [%clk 0:00:46] } 16... O-O?? { (-0.16 → 1.80) Blunder. f5 was best. } { [%eval 1.8] [%clk 0:00:45] } (16... f5) 17. Rfd1?? { (1.80 → -0.09) Blunder. Nc7 was best. } { [%eval -0.09] [%clk 0:00:46] } (17. Nc7 Kf7 18. f4 f5 19. Nf3 Ke7 20. Nd5+ Kf7 21. Nxe5+ Bxe5 22. fxe5 Bb5) 17... Kh8 { [%eval -0.04] [%clk 0:00:44] } 18. Nf3 { [%eval -0.27] [%clk 0:00:45] } 18... e4 { [%eval -0.38] [%clk 0:00:43] } 19. Nd2 { [%eval -0.32] [%clk 0:00:43] } 19... f5 { [%eval -0.33] [%clk 0:00:43] } 20. b4 { [%eval -0.28] [%clk 0:00:42] } 20... Ba4 { [%eval -0.27] [%clk 0:00:41] } 21. Bb3 { [%eval -0.42] [%clk 0:00:41] } 21... Bb5 { [%eval -0.04] [%clk 0:00:39] } 22. a4 { [%eval -0.48] [%clk 0:00:40] } 22... Be2 { [%eval -0.44] [%clk 0:00:38] } 23. Re1 { [%eval -0.48] [%clk 0:00:39] } 23... Bd3 { [%eval -0.59] [%clk 0:00:37] } 24. a5?! { (-0.59 → -1.33) Inaccuracy. Nc3 was best. } { [%eval -1.33] [%clk 0:00:36] } (24. Nc3 Rfe8 25. Nc4 f4 26. Na5 fxe3 27. fxe3 b6 28. Nc6 Rd7 29. h3 Nd8) 24... Bb2 { [%eval -1.13] [%clk 0:00:36] } 25. Rcd1 { [%eval -1.28] [%clk 0:00:35] } 25... Rd7 { [%eval -1.25] [%clk 0:00:35] } 26. Nc4 { [%eval -1.27] [%clk 0:00:34] } 26... Bg7 { [%eval -1.2] [%clk 0:00:33] } 27. Na3? { (-1.20 → -2.99) Mistake. Nf4 was best. } { [%eval -2.99] [%clk 0:00:29] } (27. Nf4 Nxf4 28. exf4 Bc3 29. Ne5 Rc7 30. Re3 Bd4 31. Ree1 Rc3 32. Bc4 Bxe5) 27... Rfd8 { [%eval -3.08] [%clk 0:00:32] } 28. Nf6?! { (-3.08 → -4.15) Inaccuracy. Nb6 was best. } { [%eval -4.15] [%clk 0:00:28] } (28. Nb6 axb6 29. Bxe6 Rd6 30. Bc4 Bc3 31. Nb5 Bxe1 32. Nxd6 Rxd6 33. Bxd3 Bxb4) 28... Bxf6 { [%eval -3.61] [%clk 0:00:31] } 29. Bxe6 { [%eval -3.81] [%clk 0:00:27] } 29... Rd6?! { (-3.81 → -2.67) Inaccuracy. Re7 was best. } { [%eval -2.67] [%clk 0:00:30] } (29... Re7 30. Bb3 Rc7 31. Nb1 Be7 32. b5 Bxb5 33. Rxd8+ Bxd8 34. Rd1 Bd3 35. Nd2) 30. Bb3? { (-2.67 → -4.77) Mistake. Bc4 was best. } { [%eval -4.77] [%clk 0:00:27] } (30. Bc4 Bc3 31. Nb5 Bxe1 32. Nxd6 Rxd6 33. Bxd3 Bxb4 34. Be2 Rxd1+ 35. Bxd1 Bxa5) 30... Bc3 { [%eval -4.51] [%clk 0:00:29] } 31. b5 { [%eval -4.94] [%clk 0:00:24] } 31... Bxa5 { [%eval -4.89] [%clk 0:00:28] } 32. h4 { [%eval -5.14] [%clk 0:00:23] } 32... Bxe1 { [%eval -4.98] [%clk 0:00:27] } 33. Rxe1 { [%eval -5.01] [%clk 0:00:23] } 33... a6 { [%eval -4.88] [%clk 0:00:26] } 34. bxa6 { [%eval -4.75] [%clk 0:00:22] } 34... Rxa6 { [%eval -4.74] [%clk 0:00:26] } 35. Nc2 { [%eval -5.17] [%clk 0:00:21] } 35... Bxc2 { [%eval -5.17] [%clk 0:00:25] } 36. Bxc2 { [%eval -5.2] [%clk 0:00:21] } 36... Ra2 { [%eval -5.41] [%clk 0:00:24] } 37. Bb3 { [%eval -5.29] [%clk 0:00:21] } 37... Rb2 { [%eval -5.24] [%clk 0:00:24] } 38. Be6 { [%eval -5.14] [%clk 0:00:20] } 38... Rdd2 { [%eval -5.25] [%clk 0:00:24] } 39. Rf1 { [%eval -5.0] [%clk 0:00:20] } 39... Kg7 { [%eval -5.01] [%clk 0:00:23] } 40. g3 { [%eval -5.46] [%clk 0:00:19] } 40... Kf6 { [%eval -5.45] [%clk 0:00:22] } 41. Bc4 { [%eval -5.58] [%clk 0:00:18] } 41... b5 { [%eval -5.96] [%clk 0:00:22] } 42. Bg8 { [%eval -5.18] [%clk 0:00:18] } 42... b4 { [%eval -4.91] [%clk 0:00:21] } 43. Bxh7?! { (-4.91 → -6.99) Inaccuracy. Bc4 was best. } { [%eval -6.99] [%clk 0:00:18] } (43. Bc4 Rdc2 44. Bd5 Rc3 45. Ra1 Rd2 46. Ra5 b3 47. g4 b2 48. Kg2 Rxe3) 43... Kg7 { [%eval -6.82] [%clk 0:00:21] } { White resigns. } 0-1\n\n\n[Event \"Titled Arena May '25\"]\n[Site \"https://lichess.org/GameF44556\"]\n[Date \"2025.05.24\"]\n[Round \"-\"]\n[White \"GrandmasterX\"]\n[Black \"ForestTiger1\"]\n[Result \"1-0\"]\n[GameId \"MoasISt2\"]\n[UTCDate \"2025.05.24\"]\n[UTCTime \"20:54:43\"]\n[WhiteElo \"3223\"]\n[BlackElo \"3283\"]\n[WhiteRatingDiff \"+7\"]\n[BlackRatingDiff \"-7\"]\n[WhiteTitle \"GM\"]\n[BlackTitle \"GM\"]\n[Variant \"Standard\"]\n[TimeControl \"60+0\"]\n[ECO \"D88\"]\n[Opening \"Grünfeld Defense: Exchange Variation, Spassky Variation\"]\n[Termination \"Normal\"]\n[Annotator \"lichess.org\"]\n\n1. d4 { [%eval 0.17] [%clk 0:01:00] } 1... Nf6 { [%eval 0.19] [%clk 0:01:00] } 2. c4 { [%eval 0.18] [%clk 0:00:59] } 2... g6 { [%eval 0.28] [%clk 0:01:00] } 3. Nc3 { [%eval 0.18] [%clk 0:00:59] } 3... d5 { [%eval 0.28] [%clk 0:01:00] } 4. cxd5 { [%eval 0.21] [%clk 0:00:59] } 4... Nxd5 { [%eval 0.17] [%clk 0:01:00] } 5. e4 { [%eval 0.2] [%clk 0:00:59] } 5... Nxc3 { [%eval 0.22] [%clk 0:00:59] } 6. bxc3 { [%eval 0.17] [%clk 0:00:59] } 6... Bg7 { [%eval 0.17] [%clk 0:00:59] } 7. Bc4 { [%eval 0.13] [%clk 0:00:58] } 7... c5 { [%eval 0.21] [%clk 0:00:59] } 8. Ne2 { [%eval 0.31] [%clk 0:00:57] } 8... Nc6 { [%eval 0.31] [%clk 0:00:59] } 9. Be3 { [%eval 0.33] [%clk 0:00:56] } 9... O-O { [%eval 0.32] [%clk 0:00:58] } 10. O-O { [%eval 0.37] [%clk 0:00:56] } 10... cxd4 { [%eval 0.43] [%clk 0:00:58] } 11. cxd4 { [%eval 0.38] [%clk 0:00:55] } { D88 Grünfeld Defense: Exchange Variation, Spassky Variation } 11... Bg4 { [%eval 0.41] [%clk 0:00:58] } 12. f3 { [%eval 0.41] [%clk 0:00:54] } 12... Bd7 { [%eval 0.42] [%clk 0:00:57] } 13. Rc1 { [%eval 0.43] [%clk 0:00:53] } 13... a6 { [%eval 0.47] [%clk 0:00:57] } 14. Qd2 { [%eval 0.19] [%clk 0:00:52] } 14... Rc8 { [%eval 0.7] [%clk 0:00:57] } 15. d5 { [%eval 0.58] [%clk 0:00:52] } 15... Ne5 { [%eval 0.59] [%clk 0:00:56] } 16. Bb3 { [%eval 0.85] [%clk 0:00:51] } 16... Bb5 { [%eval 0.68] [%clk 0:00:55] } 17. Rxc8 { [%eval 0.78] [%clk 0:00:50] } 17... Qxc8 { [%eval 0.65] [%clk 0:00:55] } 18. Rc1 { [%eval 0.6] [%clk 0:00:49] } 18... Qb8 { [%eval 0.63] [%clk 0:00:55] } 19. Nd4 { [%eval 0.6] [%clk 0:00:45] } 19... Rc8 { [%eval 0.54] [%clk 0:00:54] } 20. Rxc8+ { [%eval 0.43] [%clk 0:00:44] } 20... Qxc8 { [%eval 0.64] [%clk 0:00:54] } 21. Nxb5 { [%eval 0.38] [%clk 0:00:43] } 21... axb5 { [%eval 0.39] [%clk 0:00:54] } 22. Qc2 { [%eval 0.4] [%clk 0:00:43] } 22... Nc4 { [%eval 0.43] [%clk 0:00:52] } 23. Bf2 { [%eval 0.39] [%clk 0:00:42] } 23... Qc7 { [%eval 0.34] [%clk 0:00:51] } 24. g3 { [%eval 0.35] [%clk 0:00:41] } 24... h5 { [%eval 0.77] [%clk 0:00:51] } 25. f4 { [%eval 0.44] [%clk 0:00:40] } 25... h4 { [%eval 0.41] [%clk 0:00:44] } 26. e5 { [%eval 0.5] [%clk 0:00:40] } 26... hxg3 { [%eval 0.75] [%clk 0:00:44] } 27. hxg3 { [%eval 0.8] [%clk 0:00:40] } 27... Bf8?? { (0.80 → 3.42) Blunder. Qd7 was best. } { [%eval 3.42] [%clk 0:00:40] } (27... Qd7) 28. a4 { [%eval 3.17] [%clk 0:00:39] } 28... Qa5 { [%eval 3.13] [%clk 0:00:38] } 29. axb5 { [%eval 2.81] [%clk 0:00:37] } 29... Nd2 { [%eval 3.08] [%clk 0:00:36] } 30. Qd3? { (3.08 → 1.43) Mistake. Ba2 was best. } { [%eval 1.43] [%clk 0:00:35] } (30. Ba2) 30... Qb4?? { (1.43 → 3.58) Blunder. Nxb3 was best. } { [%eval 3.58] [%clk 0:00:30] } (30... Nxb3 31. Qxb3 g5 32. Qd3 gxf4 33. gxf4 Qb4 34. Be3 Qb2 35. d6 exd6 36. exd6) 31. Bc2 { [%eval 3.44] [%clk 0:00:33] } 31... Nc4 { [%eval 3.52] [%clk 0:00:29] } 32. Kg2 { [%eval 3.09] [%clk 0:00:30] } 32... Qxb5 { [%eval 4.04] [%clk 0:00:29] } 33. Bb3 { [%eval 3.99] [%clk 0:00:28] } 33... Na3 { [%eval 3.94] [%clk 0:00:27] } 34. Qxb5 { [%eval 3.09] [%clk 0:00:27] } 34... Nxb5 { [%eval 3.13] [%clk 0:00:27] } 35. Bb6 { [%eval 3.47] [%clk 0:00:25] } 35... Kg7 { [%eval 3.35] [%clk 0:00:23] } 36. Kf3 { [%eval 3.64] [%clk 0:00:24] } 36... f6 { [%eval 4.31] [%clk 0:00:22] } 37. Bc4 { [%eval 3.99] [%clk 0:00:23] } 37... Na3?! { (3.99 → 5.84) Inaccuracy. Nc3 was best. } { [%eval 5.84] [%clk 0:00:21] } (37... Nc3 38. Bd4 Nb1 39. d6 exd6 40. exf6+ Kh7 41. Bd5 Na3 42. g4 Nc2 43. Bc3) 38. Bd3 { [%eval 5.85] [%clk 0:00:22] } 38... g5 { [%eval 6.21] [%clk 0:00:20] } 39. Bc5 { [%eval 6.11] [%clk 0:00:20] } 39... gxf4 { [%eval 5.8] [%clk 0:00:20] } 40. gxf4 { [%eval 6.3] [%clk 0:00:19] } 40... fxe5 { [%eval 6.33] [%clk 0:00:20] } 41. fxe5 { [%eval 5.88] [%clk 0:00:19] } 41... e6?! { (5.88 → 8.34) Inaccuracy. Nc2 was best. } { [%eval 8.34] [%clk 0:00:19] } (41... Nc2 42. Bxc2 b6 43. Bb4 Kf7 44. Bd3 Bg7 45. e6+ Ke8 46. Bb5+ Kd8 47. Ke4) 42. d6 { [%eval 7.93] [%clk 0:00:18] } { Black resigns. } 1-0\n\n\n\nTask:\n\nAnalyze the PGN above and do the following:\n1. Identify which player's PGN is this and list the games they played by GameId, the result of the game, and whether they were white or black.\n2. For each game, provide a small summary of the turning point that decided the game include the move number.\n3. Based on those turning points, name 3 repeating issues and 3 habits/practice to fix those issues."
+        },
+        {
+          "role": "assistant",
+          "content": "**1. Whose PGN is this?**  \nAll six games contain the same titled player – **Grandmaster X** (Black‑title “GM”, rating ≈ 3 200 – 3 300).  \nBelow is every game in which Grandmaster X participated, listed by the Lichess *GameId*, the final result, and the colour he played.\n\n| # | GameId      | Colour of Grandmaster X | Opponent            | Result | Comment |\n|---|-------------|------------------------|---------------------|--------|---------|\n| 1 | **EOwvdMyl** | **Black**              | PlayerAlpha08 (White) | 0‑1   | Grandmaster X won (checkmate) |\n| 2 | **T0hqqeXL** | **White**              | PlayerAlpha08 (Black) | 1‑0   | Grandmaster X won |\n| 3 | **U7vJv1HU** | **Black**              | ChessMasterUS (White) | 1‑0   | Grandmaster X lost |\n| 4 | **oPMO817E** | **White**              | KatarinaProTP (Black) | 0‑1   | Grandmaster X lost |\n| 5 | **ai4mXm5Q** | **Black**              | MiraclePlayer05 (White) | 0‑1   | Grandmaster X won |\n| 6 | **MoasISt2** | **White**              | ForestTiger1 (Black) | 1‑0   | Grandmaster X won |\n\n---\n\n**2. Turning‑point summary for each game**\n\n| GameId | Turn‑point (move) | What happened – why it decided the game |\n|--------|-------------------|------------------------------------------|\n| **EOwvdMyl** (Black wins) | **27 Kg4?** (White’s 27th move) | White moved his king into a discovered attack. After **27…Qxg2+** (♕ captures on g2) the king had no safe square and **28…Bf7#** delivered mate. The blunder at 27 Kg4 turned a balanced position into forced checkmate. |\n| **T0hqqeXL** (White wins) | **12…Kf8??** (Black’s 12th move) | Instead of the solid 12…Nxe4, Black walked the king into the centre. White replied **13 Ba3** (attacking the rook on a8 and threatening mate). The king was now hopelessly exposed, so Black resigned. |\n| **U7vJv1HU** (White wins) | **22…Ne5?** (Black’s 22nd move) | Black placed the knight on e5, a weak square. White immediately exploited it with **23 Rxb7!**, winning a pawn and a rook after **23…Rxb7 24 Qxb7**. The material loss made the position untenable. |\n| **oPMO817E** (Black wins) | **33 Re1??** (White’s 33rd move) | White tried to defend but opened the line for **33…Bxh3+**. After **34 Kxh3 Qxf3+** the king was chased and **35…Ng4+** would follow, ending in mate. The move 33 Re1?? was a fatal tactical oversight. |\n| **ai4mXm5Q** (Black wins) | **27 Na3?** (White’s 27th move) | The knight went to a poor square, weakening the centre and exposing the king. Black seized the initiative with **27…Rfd8** and later **30…Bxc3**, eventually winning material. The mistake at 27 Na3 marked the start of White’s collapse. |\n| **MoasISt2** (White wins) | **27…Bf8??** (Black’s 27th move) | Black blundered the bishop away. After **28 a4 Qa5 29 axb5 Nd2** White kept the extra piece and converted the advantage, leading to Black’s resignation on move 42. |\n\n---\n\n**3. Three repeating issues & three practice habits to fix them**\n\n| # | Repeating issue (observed in the turning points) | Why it matters | Habit / practice to fix it |\n|---|---------------------------------------------------|----------------|----------------------------|\n| **1** | **Tactical blindness – missing opponent’s forcing moves (mates, forks, pins).**<br>Examples: 27 Kg4?, 33 Re1??, 27 Na3?. | A single oversight can turn a winning position into a loss (or vice‑versa). | • **Daily tactical drill** – solve 10‑15 puzzles focused on mates, discovered attacks and forks.<br>• **“Forcing‑line” rule:** before playing any move, ask “What checks, captures, or threats does my opponent have?” Write them down.<br>• **Post‑game engine review** of every critical position to train pattern recognition. |\n| **2** | **Neglect of king safety (moving the king into danger or leaving it exposed).**<br>Examples: 27 Kg4?, 12…Kf8??, 33…Bxh3+ after 33 Re1??. | King‑side weaknesses are the most common cause of quick losses in bullet. | • **King‑safety checklist** before each move: Is my king on a safe square? Have I just opened a line to it? <br>• **Practice “defensive mode”** – play slower games where you only move the king when absolutely necessary.<br>• **Study classic king‑safety motifs** (e.g., back‑rank mates, smothered mates) to recognise them instantly. |\n| **3** | **Inaccurate piece placement / premature pawn pushes that create targets.**<br>Examples: 22…Ne5?, 27…Bf8??, 8…e5?! (first game). | Misplaced pieces lose material and give the opponent easy winning chances. | • **“One‑move‑look‑ahead” habit:** after moving a piece, verify that it cannot be captured by a lower‑valued piece.<br>• **Opening‑repertoire refinement:** stick to lines you know well; avoid speculative pawn advances (like …e5 in the Bird) unless you have calculated the consequences.<br>• **Endgame‑style evaluation** even in the middlegame – ask “Is this pawn structure healthy? Do I have a good outpost for my knights?” |\n\n---\n\n### Bottom line\nThe PGN belongs to **Grandmaster X**. He played six bullet games (GameIds EOwvdMyl, T0hqqeXL, U7vJv1HU, oPMO817E, ai4mXm5Q, MoasISt2), alternating colours and finishing with a 4‑2 record (won 4, lost 2).  \n\nThe decisive moments were usually a single tactical blunder (often involving the king) or an inaccurate piece placement. By focusing training on **calculation of forcing lines**, **constant king‑safety assessment**, and **careful piece placement**, Grandmaster X can reduce these recurring errors and convert more of his strong positions into victories.\n"
+        },
+        {
+          "role": "user",
+          "content": "Using the PGN i shared above, do a clock and error analysis of GrandMasterX using only %clk tags and annotation symbols (?, ??, ?!, etc.):\n1. Figure out which games were played with berserk, and evidence of it using the headers and clock values. Provide the GameIds.\n2. For each game, find the first move (if any) where GrandMasterX's clock drops below 10 secs and find the following:\n  - The move number and %clk value\n  - The time spent on that move\n  - Whether they made a mistake or blunder on that move or within the next 3 plies.\n3. Does having less than 10 secs correlate with GrandmasterX's mistakes more than having enough time.\n4. Provide 3 habits to fix the time based mistakes."
+        }
+      ],
+      "message_source": "embedded sealed messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_current_fact",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "long-term trends"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify the games with GameIds U7vJv1HU and oPMO817E as the games where the berserk option was used.",
+          "The response should explicitly give the PGN headers [WhiteBerserk \"true\"] or [BlackBerserk \"true\"], or both, as evidence to support the identification of berserk games from the PGN.",
+          "The response should identify that in two games (gameID U7vJv1HU and gameID oPMO817E) GrandMasterX's clock drops below 10 seconds.",
+          "The response should use clock values as evidence to support the identification of berserk games. For example, if a game's time control is given as 60 minutes and at least one player is shown to have started with 30 minutes on the clock, this can be used to support the claim that at least one player chose the berserk option for the game.",
+          "The response should identify that in gameId: U7vJv1HU move number 29 is the move where GrandMasterX's clock drops below 10 seconds.",
+          "The response should identify move number 30 as the move where GrandMasterX's clock drops below 10 seconds, in the game with gameId: oPMO817E.",
+          "The response should use only %clk tags and annotation symbols (?, ??, ?!, etc.) in its clock and error analysis of GrandMasterX. For example, it should not rely on external resources or engine evaluation to perform its analysis.",
+          "The response should identify GrandMasterX's %clk value at move number 29 in the game with gameID: U7vJv1HU as [%clk 0:00:09]",
+          "The response should identify GrandMasterX's %clk value at move number 30 in the game with gameID: oPMO817E as [%clk 0:00:09]",
+          "The response should calculate the time spent on move 29 of the game with gameId: U7vJv1HU as 1 second because the clock was stopped at 10 secs for move 28 [%clk 0:00:10] and 9 seconds for move 29  [%clk 0:00:09] (10-9=1).",
+          "The response should calculate the time spent on move 30 of the game with gameId: oPMO817E as 2 seconds because the clock was stopped at 11 secs for move 29 [%clk 0:00:11] and 9 seconds for move 30  [%clk 0:00:08] (11-9=2).",
+          "The response should define a mistake as a move with a single question mark placed immediately after the move in the notation. For example, a move with notation such as bxc3? should be recognized as a mistake.",
+          "The response should define a blunder as a move with two question marks placed immediately after the move in the notation. For example, a move with notation such as O-O?? should be recognized as a blunder.",
+          "The response should determine that no mistakes or blunders are made in the next 3 plies after move 29, in the game with gameID: U7vJv1HU.",
+          "The response should recognize that a blunder is made on move 30 (Rb1??) in the game with gameID: oPMO817E.",
+          "The response should compare the frequency of GrandMasterX's low-time mistakes to high-time mistakes, to find a correlation. For example, it should compare the occurrences of mistakes made when GrandMasterX had less than 10 seconds on the clock with occurrences of mistakes made when they had 10 seconds or more on the clock.",
+          "The response should provide exactly three habits for fixing time-based mistakes.",
+          "The response should ensure that its provided habits directly address fixing time-based mistakes by a player in a chess game. For example, it could suggest time management techniques such as simplifying openings and early decision making to avoid burning time early on in the game."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_replay",
+            "dimension": "replay_retention",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+          },
+          {
+            "rubric_id": "fact_retention",
+            "dimension": "replay_retention",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response states the latest value 'long-term trends' for current review focus."
+          },
+          {
+            "rubric_id": "no_stale_value",
+            "dimension": "stale_control",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response does not treat 'activity patterns' as current."
+          },
+          {
+            "rubric_id": "state_integrity",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_3.fact_06.current_focus.v2",
+            "key": "current_focus",
+            "value": "long-term trends",
+            "stale_value": "activity patterns"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "activity patterns"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

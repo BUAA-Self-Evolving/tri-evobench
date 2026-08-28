@@ -1,0 +1,309 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn3",
+  "turn_index": 3,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "interactive",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "33f9d648-e727-2474-08bf-6cdbc4a94b2a",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 117,
+    "source_sha256": "b94bc22d28dbf1285f370019834e49a33f8b63da0e2f9e0bab8367add07a9594",
+    "source_metadata": {
+      "task_id": "33f9d648-e727-2474-08bf-6cdbc4a94b2a",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "MARCH 3, 2026\n1. Flyers won't look for rentals at Trade Deadline\n2. Devils' Luke Hughes shares some helpful tips on how to skate like a defenseman\n3. Dallas Stars set franchise record last night with ninth straight win\nMARCH 2, 2026\n1. Dallas Stars longest win streak in franchise history\n2. (VIDEO) Insane puck movement by Dallas Stars\n3. Three LA Kings rookies take rookie lap\n4. Flyers' Trevor Zegras is automatic in shootouts\n5. Hughes brothers and Hilary Knight join Jimmy Fallon\n6. McTavish scores shootout winner for Ducks over Flames\n7. Chicago deals D-Man Connor Murphy to Edmonton\nMARCH 1, 2026\n1. Three stars of the week 1) Islanders' Matthew Schaefer, 2) Penguin's Arturs Silovs, 3) Wild's Matthew Boldy\n2. Rookie Goal leader = Matthew Schaefer of the New York Islanders with 20 goals\n3. Matthew Schaefer now tied for 3rd all time in goals by a rookie defenseman with 20. Brian Leetch set the record in 1988-1989 with 23\n4. San Jose Sharks  Michael Misa scores first career overtime winner\n5. Robert Thomas will return to the lineup for the St. Louis Blues\n6. LA Kings hire D.J. Smith as interim head coach\n7. Montreal's Cole Caufield 17 games played on Saturdays, 15 goals and 9 assists in those games\n8. LA Kings' Anton Forsberg earns 10 career shutout\n9. Blue Jacket's Zach Werenski has a 9 game point streak\nFEBRUARY 28, 2026\n1. Ducks win in Overtime, beating Winnipeg\nFEBRUARY 27, 2026\n1. Dylan Larkin now holds the record for most overtime goals by a Detroit Redwing\n2. Islanders' Matthew Schaefer now has the most goals every scored by an 18-year-old defenseman\n3. Oilers' Connor McDavid with his sixth straight 100 point season, nine total in his career\n4. Connor McDavid leads the NHL with 100 points. Colorado's Nathan McKinnon and Tampa's Nikita Kucherov each have 95\n5. Flyers' Matvei Michkov wins it in overtime\n6. St. Louis' Dylan Holloway with a hat trick\n7. Boston Bruins get home win earning 10 in a row on home ice\n8. (VIDEO) Islanders' Matthew Schaefer with two goals in less than a minute\n9. Igor Shesterkin and Adam Fox return to the lineup for the New York Rangers\n9. Jack Finley makes NHL debut for St. Louis Blues\nFEBRUARY 26, 2025\n1. Tampa Bay Lightning are 20-1-1 in their last 22 games\n2. Artemi Panerin makes his debut for the LA Kings\n3. Logan Cooley returning to the lineup for Utah\n4. Tampa's Andrei Vasilevskiy's numbers over his last 17 games: 16-0-1, 1.90 GAA, .923 SAV%\n5. Leo Carlesson returns to lineup for Ducks\n6. Brock Boeser returns to lineup for Vancouver Canucks\nFEBRUARY 25, 2025\n1. Brayden Point returns to lineup for Tampa Bay\n2. Edmonton's McDavid leads NHL with 96 points\n3. (VIDEO) Penguins Sidney Crosby reflects on Olympic experience\nFEBRUARY 26, 2026\n1. (VIDEO) Team USA is officially back in the United States\nFEBRUARY 22, 2026\n1. USA wins gold in Milano \n2. Colorado's Brock Nelson is the third in his family to win gold\n3. New Jersey's Jack Hughes score overtime goal to win gold for team USA\n4. Connor McDavid of team Canada awarded MVP of Tournament at 2026 Winter Olympics\nFEBRUARY 21, 2026\n1. Gold medal game set between USA and Canada to be played Feb 22, 8:10 AM ET\n2. Finland takes Bronze Medal at Winter Olympics\nFEBRUARY 20, 2026\n1. Finland to play Slovakia for Bronze Medal on Feb 21, 2:40 PM ET\n2. Canada defeats Finland to advance to Gold Medal game\n3. USA defeats Slovakia to advance to the Gold Medal game\nFEBRUARY 18, 2026\n1. Finland defeats Switzerland by a score of 3-2\n2. Team Canada defeats Czechia by a score of 4-3\n3. Team Slovakia defeats Germany by a score of 6-2\nFEBRAURY 17, 2026\n1. Team Sweden defeats Latvia by a score of 5-1\n2. Team Czechia defeats Denmark by a score of 3-2\n3. Team Germany defeats France by a score of 5-1\n4. Team Switzerland defeats Italy by a score of 3-0\nFEBRUARY 15, 2026\n1. Team USA defeats Germany by a score of 5-1\n2. Team Denmark defeats Latvia by a score of 4-2\n3. Team Canada defeats France by a score of 10-2\n4. Team Switzerland defeats Czechia by a score of 4-3\nFEBRUARY 14, 2026\n1. Team USA defeats Denmark by a score of 6-3\n2. Team Finland defeats Italy by a score of 11-0\n3. Team Sweden defeats Slovakia by a score of 5-3\n4. Team Latvia defeats Germany by a score of 4-3\nFEBRUARY 13, 2026\n1. Team Canada defeats Switzerland by a score of 5-1\n2. Team Czechia defeats France by a score of 6-3\n3. Team Slovakia defeats Italy by a score of 3-2\n4. Team Finland defeats Sweden by a score of 4-1\nFEBRUARY 12, 2026\n1. Team Germany defeats Denmark by a score of 3-1\n2. Team USA opens their 2026 Olympics with a 5-1 victory over Latvia\n3. Team Canada shines in 5-0 win over Czechia to begin their Olympic campaign\n4. Switzerland begins their Olympics with 4-0 shutout of France\nFEBRUARY 11, 2026\n1. Team Sweden opens their 2026 Olympics with 5-2 victory over Italy\n2. Team Slovakia starts strong with a 4-1 win over Finland\nFEBRUARY 10, 2026\n1. The Olympics are here. Twelve teams will compete for Gold in Milano Cortina 2026\nFEBRUAY 6, 2026\n1. Colorado's Nathan MacKinnon leads the NHL with 40 goals\n2. Edmonton's Connor McDavid leads the NHL with 96 points\n3. Three stars of the week 1) Minnesota's Matt Boldy, 2) New York Islanders' Bo Horvat, 3) Utah's Karel Vejmelka\nFEBRUARY 5, 2026\n1. Penguins' Avery Hayes scores two goals in the first period of his NHL debut. \nFEBRUARY 4, 2026\t\n1. Dallas Stars defeat Blues with goal in the last minute of the game\n2. (VIDEO) Amazing save by Vegas' Akira Schmid\n3. (VIDEO) Edmonton's Leon Draisaitl scores an unbelievable goal\n4. Brad Marchand scores shootout winner in Florida's victory over Boston\n5. Columbus improves to 10-1-0 under new head coach Rick Bowness\n6. Minnesota's Matt Boldy scores hat trick in just 12:58\n7. We get our first look at Kiefer Sherwood in a Sharks jersey\n8. New York Rangers' Artemi Panarin has led the Rangers in points every season since 2019-2020\n9. Newly acquired Artemi Panarin signs two-year deal with L.A.\n10. Artemi Panarin has been traded to the Los Angeles Kings in exchange for Liam Greentree and two draft picks\nFEBRUARY 3, 2026\n1. Andrei Vasilevskiy has not lost a game in regulation since December 18, 2025, as Lighting roll on\n2. Bo Horvat nets OT winner for Islanders against Pittsburgh\n3. Jack Guentzel scores OT winner in Tampa victory\n4. Early odds show Tampa favored to win the Atlantic Division, with Detroit a distant second\n5. Thomas Harley scores OT winner for Dallas\n6. Kirill \"the thrill\" Kaprizov nets OT winner for Wild\nFEBRUARY 2, 2026\n1. Bedard will face Celebrini as Chicago faces off against San Jose\n2. Three stars of the week: 1) Jared McCann of Seattle, 2) Andrei Vasilevskiy of Tampa Bay, 3) Travis Konecny of Philadelphia\nFEBRUARY 1, 2026\n1. (VIDEO) Goalie fight at the stadium series!\n2. Victor Hedman returns to the lineup for Tampa Bay\n3. Sebastian Aho scores OT winner for Hurricanes\n4. Three stars of the month 1) Nikita Kucherov of Tampa Bay, 2) David Pastrnak of Boston, 3) Evan Bouchard of Edmonton\nJANUARY 31, 2026\n1. Pittsburgh's Erik Karlsson scores 700th career assist\n2. Capitals win in overtime thriller\n3. Buffalo's Alex Lyon has won his last 10 games\n4. William Nylander returns to lineup for Toronto\n5. Blue Jackets' Charlie Coyle has 9 points in his last three games\n6. Quinton Byfield scores overtime goal in Kings win over Philadelphia\n7. Colorado's macKinnon scores 40th of the season\n8. L.A.'s Anze Kopitar to return to lineup\nJANUARY 30, 2026\n1. Columbus' Coyle with hat trick\nJANUARY 29, 2026\n1. Detroit's Patrick Kane now holds the record for most career points by a US born player (1375)\n2. Zach Hyman gives Edmonton the win in overtime, beating San Jose\n3. Alex Lyon gives Buffalo their longest win streak in franchise history\n4. Carolina's Brandon Bussi now holds the record for the fewest games to 20 wins in NHL History\n5. Hurricanes score three times in the final two minutes to defeat Utah 5-4\n6. Buffalo's Alex Tuch scores a hat trick\n7. Nico Hischier wins it in OT for the Devils\n8. Patrick Kane has passed Mike Madano for most points by an American born player\nJANUARY 28, 2026\n1. Vladar comes up big in net for Philadelphia\nJANUARY 27, 2026\n1. Buffalo's Rasmus Dahlin scores first career hat trick\n2. David Pastrnak wins it in OT for Boston\n3. Jake Evans wins it for Montreal in overtime\n4. Islanders and Devils make minor trade, with Palat accompanying two draft picks going to the Islanders as the Devils pick up forward Maxim Tsyplakov\nJANUARY 26, 2026\n1. First career hat trick for Edmonton's Mattias Ekholm\n2. Duck's Mikael Granlund nets third career hat trick\n3. Rangers win in overtime, send Boston home with only 1 point\n4. Utah's Karel Vejmelka records eighth win in a row between the pipes\n5. Three stars of the week: 1) Kirill Karpizov of Minnesota, 2) Nikita Kucherov of Tampa Bay, 3) Lukas Dostal of Anaheim\n6. Beckett Sennecke records first career hat trick with Ducks\n7. Netminder Lukas Dostal records sixth win in a row\nJANUARY 25, 2026\n1. Rookie Goal Leader = Becket Sennecke 18\n2. Pittsburgh goalie Stuart Skinner in his last 8 games: 7-1-0 1.63GAA .934Sv%\n3. Brock Nelson has 21 goals in his last 26 games for Colorado\n4. Connor McDavid becomes the first player to 90 points this season\n5. Edmontons' Evan Bouchard with a 6 point night (3 goals and 3 assists)\n6. First career hat trick for Evan Bouchard\n7. Leon Draisaitl earns his 600th career assist for Edmonton\nJANUARY 24, 2026\n1. Mason Marchment with hat trick for Columbus\n2. Montreal's Cole Caulfield scores hat trick\n3. Brad Marchand returning to lineup for Florida\n4. Eight straight wins for Utah's Karel Vejmelka in net\n5. San Jose's Macklin Celebrini becomes the second-youngest active player to reach 50 career goals with his first goal in tonight's game\nJANUARY 23, 2026\n1. Tampa's Andrei Vasilevskiy's last 12 games: 11-0-1, 1.87 GAA, .919 Sv%\n2. Leafs Nation thanks Mitch Marner in his return to Toronto. \n3. Bo Horvat returning to lineup for the Islanders\n4. Anthony Stolarz returning to the lineup for Toronto\n5. Minnesota's Karizov scores OT winner in victory over Detroit\nJANUARY 22, 2026\n1. Steven Stamkos scores his 16th career hat trick in Nashville's victory over Ottawa\n2. Columbus' Werenski on pace for 32 goals this season\n3. Vegas' Mark Stone's 13 game point streak is now longest in franchise history\n4. Nashville's Roman Josi has played his 1000th career game\n5. Columbus' Charlie Coyle has reached 1000 career games played\n6. John Carlson earns his 600th career assist \n7. Clayton Keller with big OT winner for Utah\nJANUARY 21, 2026\n1. Dylan Larkin scores OT winner for Detroit\n2. Tom Wilson to return to lineup for Washington\n3. Anaheim's Alex Killorn plays 1000th game\n4. Buffalo has signed Josh Doan to a 7 year deal\nJANUARY 20, 2026\t\n1. Montreal's Cole Caufield scores game winners in back to back games\n2. Simon Nemec delivers OT winner in Devils' victory over Calgary\nJANUARY 19, 2026\n1. Auston Matthews has 11 goals in his last 12 games\n2. Nathan Mackinnon hits 1,100 career points milestone\n3. Matthew Tkachuk returns to lineup for slumping Panthers\n4. Sindey Crosby with 1400 games played milestone for Penguins\n5. Canucks trade Kiefer Sherwood to Sharks, receive Cole Clayton and draft picks in return\n6. Three stars of the week 1) Tage Thompson of Buffalo, 2) Roman Josi of Nashville, 3) Karel Vejmelka of Utah\n\n\n\n2026 top 25 NHL players\n1\t\nCanada flag\nConnor McDavid (F)\n\tEdmonton Oilers\tNHL\tJan 13, 1997\t6'1\"\t194\tL\n2\t\nCanada flag\nNathan MacKinnon (F)\n\tColorado Avalanche\tNHL\tSep 01, 1995\t6'0\"\t201\tR\n3\t\nCanada flag\nCale Makar (D)\n\tColorado Avalanche\tNHL\tOct 30, 1998\t6'0\"\t187\tR\n4\t\nGermany flag\nLeon Draisaitl (F)\n\tEdmonton Oilers\tNHL\tOct 27, 1995\t6'2\"\t209\tL\n5\t\nRussia flag\nNikita Kucherov (F)\n\tTampa Bay Lightning\tNHL\tJun 17, 1993\t5'11\"\t172\tL\n6\t\nCanada flag\nMacklin Celebrini (F)\n\tSan Jose Sharks\tNHL\tJun 13, 2006\t6'0\"\t190\tL\n7\t\nUSA flagMexico flag\nAuston Matthews (F)\n\tToronto Maple Leafs\tNHL\tSep 17, 1997\t6'3\"\t216\tL\n8\t\nUSA flag\nQuinn Hughes (D)\n\tMinnesota Wild\tNHL\tOct 14, 1999\t5'10\"\t181\tL\n9\t\nFinland flag\nMikko Rantanen (F)\n\tDallas Stars\tNHL\tOct 29, 1996\t6'4\"\t227\tL\n10\t\nUSA flag\nConnor Hellebuyck (G)\n\tWinnipeg Jets\tNHL\tMay 19, 1993\t6'4\"\t207\tL\n11\t\nUSA flag\nJack Eichel (F)\n\tVegas Golden Knights\tNHL\tOct 28, 1996\t6'2\"\t205\tR\n12\t\nCanada flag\nSidney Crosby (F)\n\tPittsburgh Penguins\tNHL\tAug 07, 1987\t5'11\"\t201\tL\n13\t\nCzechia flag\nDavid Pastrnak (F)\n\tBoston Bruins\tNHL\tMay 25, 1996\t6'0\"\t198\tR\n14\t\nSweden flagCanada flag\nWilliam Nylander (F)\n\tToronto Maple Leafs\tNHL\tMay 01, 1996\t6'0\"\t201\tR\n\n\n\n\n\nNHL 2025-26 Power Rankings: Week 18\nMarch 2, 2026 by Eugene Helfrick\n32. Vancouver Canucks (Previously: 32)\n31. New York Rangers (Previously: 31)\n30. St. Louis Blues (Previously: 30)\n29. Chicago Blackhawks (Previously: 29)\n28. Toronto Maple Leafs (Previously: 26)\n27. New Jersey Devils (Previously: 23)\n26. San Jose Sharks (Previously: 21)\n25. Winnipeg Jets (Previously: 25)\n24. Los Angeles Kings (Previously: 24)\n23. Florida Panthers (Previously: 20)\n22. Calgary Flames (Previously: 28)\n21. Philadelphia Flyers (Previously: 27)\n20. Seattle Kraken (Previously: 17)\n19. Nashville Predators (Previously: 22)\n18. Ottawa Senators (Previously: 18)\n17. Edmonton Oilers (Previously: 16)\n16. Washington Capitals (Previously: 19)\n15. Vegas Golden Knights (Previously: 11)\n14. Utah Mammoth (Previously: 14)\n13. Columbus Blue Jackets (Previously: 12)\n12. Boston Bruins (Previously: 10)\n11. New York Islanders (Previously: 15)\n10. Anaheim Ducks (Previously: 13)\n9. Detroit Red Wings (Previously: 8)\n8. Montreal Canadiens (Previously: 7)\n7. Buffalo Sabres (Previously: 9)\n6. Colorado Avalanche (Previously: 4)\n5. Pittsburgh Penguins (Previously: 3)\n4. Minnesota Wild (Previously: 5)\n3. Tampa Bay Lightning (Previously: 1)\n2. Dallas Stars (Previously: 6)\n1. Carolina Hurricanes (Previously: 2)\n\n\n\n\nNHL: Awards Betting Odds\n    Hart Trophy 2025-26 - Winner\n    Regular Season MVP. Parlay Eligible with Vezina & Norris Trophy Markets.\n    Nathan MacKinnon\n    -185\n    Nikita Kucherov\n    +280\n    Macklin Celebrini\n    +600\n    Connor McDavid\n    +700\n    Ilya Sorokin\n    +50000\n    Rasmus Dahlin\n    +50000\n    Apr 16, 11:00pm CT\n    Show more\n    Hart Trophy 2025-26 - Nathan MacKinnon vs The Field\n    Nathan MacKinnon\n    -184\n    The Field\n    +140\n    Apr 16, 11:00pm CT\n    Calder Trophy 2025-26 - Matthew Schaefer vs The Field\n    Matthew Schaefer\n    -8000\n    The Field\n    +2700\n    Apr 16, 11:00pm CT\n    Vezina Trophy 2025-26 - Winner\n    Goaltender of the Year. Parlay Eligible with Hart & Norris Trophy Markets.\n    Andrei Vasilevskiy\n    -165\n    Ilya Sorokin\n    +100\n    Logan Thompson\n    +1800\n    John Gibson\n    +4500\n    Jeremy Swayman\n    +8000\n    Brandon Bussi\n    +8000\n    Apr 16, 11:00pm CT\n    Show more\n    Norris Trophy 2025-26 - Winner\n    Defenseman of the Year. Parlay Eligible with Hart & Vezina Trophy Markets.\n    Zach Werenski\n    +115\n    Cale Makar\n    +125\n    Evan Bouchard\n    +800\n    Quinn Hughes\n    +1200\n    Lane Hutson\n    +4500\n    Moritz Seider\n    +10000\n    Apr 16, 11:00pm CT\n    Show more\n    Rocket Richard Trophy 2025-26 - Winner\n    Regular Season Leading Goal Scorer. Dead Heat Rules Apply.\n    Nathan MacKinnon\n    -280\n    Connor McDavid\n    +500\n    Cole Caufield\n    +1900\n    Kirill Kaprizov\n    +2200\n    Matt Boldy\n    +2200\n    Jason Robertson\n    +2700\n    Apr 16, 11:00pm CT\n    Show more\n    Art Ross Trophy 2025-26 - Winner\n    Regular Season Points Leader\n    Connor McDavid\n    +125\n    Nikita Kucherov\n    +185\n    Nathan MacKinnon\n    +180\n    Leon Draisaitl\n    +20000\n    Macklin Celebrini\n    +22500\n    Mark Scheifele\n    +35000\n    Apr 16, 11:00pm CT\n    Show more\n    Jack Adams Award 2025-26 - Winner\n    Coach of the Year\n    Lindy Ruff\n    -115\n    Jon Cooper\n    +150\n    Dan Muse\n    +1000\n    Jared Bednar\n    +1400\n    Todd McLellan\n    +3300\n    Joel Quenneville\n    +3300\n    Apr 16, 11:00pm CT\n    Show more\n\nSportsbook Odds / NHL Odds / NHL Awards Odds\n\nNHL Awards Odds - Odds to Win Hart Trophy, Calder Trophy, and More\n\nBet on NHL awards odds for the 2025–26 season, featuring top honors like the Hart, Calder, and Vezina Trophies. Explore NHL trophy futures and follow your favorite players’ performances all year.\nHart Trophy Odds (NHL MVP)\n\nThe Hart Trophy is awarded to the NHL’s Most Valuable Player. Track NHL MVP odds and bet on which star will have the biggest contribution to their team's success.\nCalder Trophy Odds (Rookie of the Year)\n\nThe Calder Trophy recognizes the league’s best rookie. Check NHL Calder odds and back the standout newcomers making an impact this season.\nVezina Trophy Odds (Best Goaltender)\n\nThe Vezina Trophy goes to the NHL’s top goaltender. Follow FanDuel Sportsbook's Vezina Trophy odds and wager on who will be the top goalie this season.\n\nOther NHL Trophy Futures\n\nFind odds for NHL trophy futures for the 2025–26 season. Look above for more awards and betting markets, including the Norris Trophy (best defenseman), Rocket Richard Trophy (top goal scorer), Art Ross Trophy (points leader), and more.\nVerifying location…\n\n    About\n    Register\n    All Sports\n    Promotions\n    Support\n    About Us\n    How to Bet\n    Responsible Gaming\n    Accessibility\n    California Privacy Rights\n    Your Privacy Choices\n\n    FanDuel Group Sites\n    FanDuel Fantasy\n    FanDuel Research\n    FanDuel TV\n\n    FanDuel Apps\n    Fantasy (iOS)\n    Fantasy (Android)\n    Sportsbook (iOS)\n    Sportsbook (Android)\n\n    Sportsbook Odds\n    NFL Odds\n    NFL Team Odds\n    NBA Odds\n    NBA Team Odds\n    MLB Odds\n    NHL Odds\n    College Football Odds\n    College Basketball Odds\n    Soccer Odds\n    Golf Odds\n    UFC Odds\n    NASCAR and F1 Odds\n    Tennis Odds\n    Boxing Odds\n    WNBA Odds\n\n    Follow FanDuel\n    Facebook\n    X.com\n    Instagram\n    YouTube\n    Snapchat\n\n    •Careers\n    •Security\n    •Privacy Policy\n    •Terms of Use\n    •Press & Media\n\n© Betfair Interactive US LLC, 2026\nIf you or someone you know has a gambling problem and wants help, call 1-800-Gambler \nThis site has been authorized by the Missouri Gaming Commission for use by registered users physically present in Missouri.\nPersons under 21 are not permitted to engage in sports wagering.\nFor customer support please contact us here.\n3/3/2026, 1:40:14 PM\nBack to top\n0\nBetslip\nBetslip emptyAdd selections to place bet\n\n\n\n\n\nThe James Norris Memorial Trophy is an annual award given \"to the defense player who demonstrates throughout the season the greatest all-round ability in the position.\" The winner is selected in a poll of the Professional Hockey Writers Association at the end of the regular season.\n\nThe trophy was presented to the NHL in 1953 by the four children of the late James E. Norris in memory of their father, owner-president of the Detroit Red Wings from 1932 to 1952. The first winner was Red Kelly of the Red Wings in 1954.\n\nBobby Orr of the Boston Bruins won the Norris for a record eight consecutive seasons (1968-75). Doug Harvey and Nicklas Lidstrom each won it seven times, and Ray Bourque won it five times during his career. The Bruins lead all teams with 14 Norris Trophy winners; the Montreal Canadiens are second with 12.\n\nThe voting is conducted at the end of the regular season, and each voter ranks the top five candidates on a 10-7-5-3-1 points system. Three finalists are named and the trophy is presented at the NHL Awards after the conclusion of the Stanley Cup Playoffs.\n\nCale Makar surprised with James Norris Memorial Trophy after golf outing with friends\nJames Norris Memorial Trophy Winners\n\n    2025: Cale Makar, Colorado Avalanche\n    2024: Quinn Hughes, Vancouver Canucks\n    2023: Erik Karlsson, San Jose Sharks\n    2022: Cale Makar, Colorado Avalanche\n    2021: Adam Fox, New York Rangers\n    2020: Roman Josi, Nashville Predators\n\n\n\n\n\nThe 2025 calendar year is coming to a close, and there’s plenty to reflect on. Over the past year in hockey, we saw a rivalry renewed on the international stage, a repeat champ crowned, record-setting contracts signed, a new CBA stamped, and blockbuster trades that shook things up in a big way.\n\nBut the hockey world is forever moving forward, and as we approach a new year, we’re looking at what 2026 may bring. Here are nine storylines we’re eying in the year ahead.\n\nThe Central Division playoff race is going to be Wild\n\nPun intended, of course, considering Minnesota’s show-stopping acquisition of Canucks captain Quinn Hughes loudly declared the Wild’s intent to win now. If Minnesota is to make good on its quest, it’ll have to emerge victorious from one of the toughest divisions we’ve seen in quite some time. Look at the top of the league standings as we close out 2025 and you’ll see a trio of Central heavyweights leading the way, with the Colorado Avalanche pacing all clubs, followed by the Dallas Stars and the Wild. \n\nIt’s pretty clear Minnesota felt they had to make a bold move to challenge their Central peers, and bringing in one of the most dynamic defenders in the game is the perfect way to do just that. Hughes is in good company in the Central. The division now houses the league’s best defencemen in Colorado’s Cale Makar, Dallas’s Miro Heiskanen, and Minnesota’s Hughes. Now the question is, will we see more major moves within the division as the battles heat up? The top seed is even more coveted now than before, considering the stakes — whoever lands in the 2-3 first-round series is going to be battle-tested, to say the least. And hockey fans are all the luckier to get to see how it all shakes out. \n'Never out of a game': Boldy on Wild's identity this season\nSean Reynolds spoke with Matt Boldy after a comeback win about how his team was able to pull it out, what it says about his team this season and taking that next step in his game.\n\nWho are the post-Hughes Canucks?\n\nSpeaking of Hughes… the Vancouver Canucks got a haul worthy of the franchise defender, but what comes next? The team is currently sitting 32nd in the league after entering the 2025-26 campaign with plenty of question marks, the biggest of which centres around their identity moving forward.\n\nThis is a rebuild, to be sure… but that term can mean many things — one GM’s full overhaul is another’s retooling, as we know. How will president Jim Rutherford and general manager Patrik Allvin proceed from here? Are more stars on their way out? After years of retooling and almost contending, fans clamouring for a full overhaul might just get exactly that in 2026. \n\nAll eyes on Edmonton’s blue paint\n\nThe Edmonton Oilers’ goaltender situation has been a major talking point for a few years now, and that may not change in 2026 thanks to December’s goalie swap that saw Stuart Skinner dealt to Pittsburgh in exchange for Tristan Jarry. It was a deal that allowed both organizations — and both goalies — a much-needed fresh start. We’ll have to wait and see whether Jarry is the answer in Edmonton, thanks to an injury that sidelined the netminder just three games into his Oiler tenure. But in the meantime, a new starter has emerged.\n\nWhile Jarry heals, Connor Ingram now gets the starting gig for Edmonton, bringing yet more intrigue to a position that’s had plenty. How Edmonton navigates Jarry’s recovery, and whether he and Ingram can collaborate to be an effective tandem, will be a fascinating storyline in 2026 — as will any rumours that rise up, should Edmonton’s search for a solution continue.  \nShould Oilers explore trade market for Mangiapane amid recent struggles?\nRob Brown joins Nick Kypreos and Justin Bourne to discuss Andrew Mangiapane's start with the Edmonton Oilers and why a potential trade could make sense for both parties.\n\nWhere do Maple Leafs go from here?\n\nWhile we ponder the fate of the Canucks and Oilers in the west, all eyes are on the disastrous first-half efforts of the Toronto Maple Leafs in the East. Floundering in the Atlantic’s basement mere months after finishing atop the division last season, Toronto is home to perhaps the most puzzling roster questions in the league. This is a team that was expected to contend, despite losing one of the league’s most talented playmakers when Mitch Marner signed with Vegas in free agency. This is also a team that’s been hit with the injury bug, particularly in net, and has struggled to make up for it with any kind of offensive momentum. And after all that, this is now also a team whose captain and biggest star is appearing in the rumour mill at an increasingly alarming rate as bold predictors wonder aloud about blowing up the core in a major way. There’s a case to be made for a patient approach, and calls for urgent action. Is this season salvageable? Is this first half of the season a blip on the radar? The rock bottom before a rapid rise up the standings and back into relevance? A sign of more pain to come? Or the launch point for a major shakeup?\nDevils' Keefe reflects on Matthews' progression as leader of Maple Leafs\nNew Jersey Devils head coach Sheldon Keefe joins Nick Kypreos and Justin Bourne to look back on his time with the Toronto Maple Leafs, discussing how Auston Matthews' leadership style has changed over time.\n\nNew faces in the playoff race\n\nA lot can happen between now and the end of the regular season, but as we turn the calendar and near the midway point of the NHL season, it’s safe to say we’ve got interesting times ahead. Just look at the current playoff picture. Ringing in the new year atop the Eastern Conference are the Detroit Red Wings, with fellow rebuilders like the Islanders, Flyers, and — yes — the Buffalo Sabres, freshly into another new era and looking ready to jump into the fray. Meanwhile, should-be heavyweights like the Maple Leafs and New York Rangers are hitting troubled waters. \n\nThe Western Conference tells a similar story, with the Anaheim Ducks finally making their move in the Pacific while fellow California rebuilders in San Jose try to keep pace. The Utah Mammoth and Seattle Kraken, too, look capable of making waves. \n\nAnd just when we thought last year’s finalists were doomed, the Edmonton Oilers and Florida Panthers are picking up their respective paces… 2026 promises drama down the stretch.  \n\nOlympics, here we come! \n\nHere we are, on the eve of Team Canada’s New Year’s Eve roster reveal, about to end the months of speculation about who’s playing their way in and out of Team Canada’s lineup. The 2026 Olympic Winter Games bring the long-awaited return of NHLers to the sporting world’s greatest stage, and following last February’s dynamic 4 Nations Face-Off, this next installment of international best-on-best hockey couldn’t come at a better time. \n\nAfter spending the better part of the past year making our best guesses about roster makeup, we get to spend the first six weeks of 2026 plotting lines and matchups and soaking up the excitement. Expectations couldn’t be higher when it comes to the quality of play, but what about the quality of the rink? Questions about rink size, arena progress, and ice quality will surely be top of mind, but those will hopefully fade once the puck drops and the Games begin. How might some players boost their stock with a strong stint on the international stage? How will the condensed schedule affect the standings down the stretch post-Olympics? And, most importantly, who will reign supreme and claim four years' worth of bragging rights? \nWho would you pick as Canada's forwards for Olympic roster?\nThe Hockey Central panel discuss the Hot Topic of the week and debates who they'd pick as Canada's forwards for the Olympics, why Connor Bedard was not a unanimous choice, Nick Suzuki's likelihood of making the team, and more.\n\nFree agency brings few big names, but lots of questions \n\nThe 2026 UFA class was supposed to feature a star-studded lineup of generational talent, headlined by Connor McDavid and Jack Eichel, among others. That's no longer the case, with the biggest names already long locked up, leaving stars like Artemi Panarin and Rasmus Andersson to shoulder the load of free agency speculation. \n\nYet, there's still plenty of intrigue coming.  \n\nWith the NHL's new CBA, which was ratified in 2025, comes some interesting ramifications taking effect throughout 2026. This spring brings intrigue around how teams navigate the trade deadline without the much-discussed LTIR loophole, which allowed teams to go over the salary cap in the post-season. Summertime could bring a surge of long-term deals with maximum term limits shrinking to seven years on extensions and six for free agents. Next fall ushers in schedule changes with the introduction of an 84-game season. As the landscape changes, more trends will emerge. \n\nOvi Watch, Pt. 2 \n\nOne of the biggest hockey stories of 2025 was Alex Ovechkin’s Gr8 Chase for history last spring as he matched and then surpassed Wayne Gretzky’s long-standing goal-scoring record to become the NHL’s most prolific scorer of all time. \n\nEvery goal that’s come since the historic No. 895 has been special, too, each adding to a total that may ultimately go unmatched.\n\nNow, as we enter a new year and the Capitals dig into another stretch run with post-season hopes high, the hockey world will once again be watching Ovechkin’s every move closely as the 40-year-old decides whether this run will be his last. The longtime captain is currently playing out the final season of his five-year contract with Washington, and unlike his generational peer in Pittsburgh, there’s no speculation about Ovechkin playing in any other NHL home beyond D.C. \n\nColleague Ryan Dixon boldly predicted a two-year extension for Washington’s captain. Should that play out, we could be looking at another chase for goal No. 1,000 before all is said and done — and wouldn’t that be fun? But for now, the question is whether 2026 brings an end of an era in the NHL, or another freshly signed deal for the Great No. 8. \nCapitals' Ovechkin finds back of net to snap nine game goal drought\nWatch as Washington forward Alex Ovechkin finds the back of the net against the New Jersey Devils to cap off a great Capitals passing play and snaps a nine game goal drought in the process.\n\nEnd of an era in Pittsburgh? \n\nLike Ovechkin, Crosby also carved out a pretty special slice of history in 2025 — earlier this month, he passed the legendary Mario Lemieux’s franchise points record with No. 1,724. \n\nIt’s hard to talk about Ovechkin’s career and legacy without looking at that of Crosby in Pittsburgh. But while “retirement” is the word that garners the most speculation around Ovechkin, the central question in Pittsburgh revolves around “rebuild.”\n\nA surprising start out of the gates for the Penguins had Crosby’s club looking like it might still have another post-season run in store, but they’ve since fallen back down to Earth — and that’s brought familiar questions about where this season (and, more importantly, this franchise icon) could be going. Will Crosby stay put in Pittsburgh and see the rebuild through? Or will we witness the end of an era for the Penguins and watch No. 87 suit up on a contender for another prolific playoff run? The upcoming year may not bring all the answers — with another season remaining on his latest two-year contract, he and the team don’t yet stand at a crossroads — but we could learn plenty in 2026. \n\n\n\n\nTask:\n\n\n\nI am a huge hockey fan. However, my favorite team is the Blues and I follow them  religiously. They suck this year. I got so disgusted that I just quit watching hockey altogether back in December. Well, I watched the Olympics and got interested again, but I am not watching the Blues. I even canceled my subscription to Fan Duel. Anyway, I only lightly pay attention to other teams and players but have not watched anything NHL since December. I have give you some headlines and stuff that I just quickly copied and pasted off of the internet. I'm trying to decide who to follow for the rest of the season. Can you look over the info and give me some suggestions. I'm looking for the following: 2 teams to folllow that have a lot of buzz around them or are doing really well this year. 3 players, if possible  forwards and 1 defenseman that are really having great season. 1 rookie worth watching. 2 goalies that are doing well. For every player you name, tell me what team they are on. If there are situations where a team is really playing well and one or two of the players you name are also on that team, that would be awesome because then I could watch that one team and also see the great players. But if not, that's OK. I'm just trying to get inspiration and I want to watch the teams and players that are doing great this year. Give me some snippets from the info I provided to support your choices. Please no Colorado Avalanche or Boston Bruins, I hate those teams. Don't let what happened in the Olympics influence your choices. I want NHL stuff.\n\nHandle the material and request above. I also have a standing tool fact about my default workspace directory that matters for future turns, but I have not stated it yet. Ask one concise clarification before finalizing, then remember my answer."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": {
+    "policy": "reveal_only_after_relevant_clarification",
+    "scripted_reply": "My default workspace directory is docs/revision/drafts. Please remember it for future turns.",
+    "grounded_fact_id": "l1_life_stream_2.fact_02.default_workspace.v1"
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_workspace='docs/revision/drafts' with scope user:l1_life_stream_2 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/revision/drafts",
+          "scope": "user:l1_life_stream_2"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify exactly two teams to follow.",
+        "The response should only recommend teams performing well or that \"have a lot of buzz.\" For example, the response could only recommend teams that are in, or were previously in, the top 20 of Eugene Helfrick's Power Rankings (Florida Panthers, Seattle Kraken, Nashville Predators, Ottawa Senators, Edmonton Oilers, Washington Capitals, Vegas Golden Knights, Utah Mammoth, Columbus Blue Jackets, Boston Bruins, New York Islanders, Anaheim Ducks, Detroit Red Wings, Montreal Canadiens, Buffalo Sabres, Colorado Avalanche, Pittsburgh Penguins, Minnesota Wild, Tampa Bay Lightning, Dallas Stars and Carolina Hurricanes).",
+        "The response should recommend exactly three players to follow.",
+        "The response should recommend exactly one defenseman among the three suggested players to follow.",
+        "The response should recommend exactly two forwards among the three suggested players to follow.",
+        "The response should recommend one rookie worth watching. For example, the response could recommend Matthew Schaefer or Becket Sennecke.",
+        "The response should provide some snippets from the information provided to support each highlighted player. For example, the response should include at least two pieces of information about how the player is doing, taken directly from the provided text, for each player.",
+        "The response should provide some snippets from the information provided for each highlighted team. For example, the response should include at least two pieces of information about how the team is doing, taken directly from the provided text, for each team.",
+        "The response should not recommend players from the Colorado Avalanche.",
+        "The response should not recommend players from the Boston Bruins.",
+        "The response should not recommend players from the St. Louis Blues.",
+        "The response should not recommend following the Colorado Avalanche team.",
+        "The response should not recommend following the Boston Bruins team.",
+        "The response should not recommend following the St. Louis Blues team.",
+        "The response should not make exaggerated claims about how players or teams are performing, such as making unverified claims about their numbers. For example, the response should not claim that Evan Bouchard is putting up \"historic numbers\" for a defenseman.",
+        "The response should provide exactly two goalies.",
+        "The response should only include goalies that are doing \"well.\" For example, the response should only include goalies featured in the text, such as Andrei Vasilevskiy, Ilya Sorokin, Logan Thompson, John Gibson, Jeremy Swayman, Brandon Bussi, or Alex Lyon.",
+        "The response should only recommend players to follow who are having a great season. For example, the response should recommend players who are mentioned as doing well in the text provided, such as Connor McDavid, who is leading the NHL with 100 points.",
+        "The response should align at least one suggested team with at least one suggested player. For example, if the response recommends the Las Vegas Golden Knights, then the response should recommend at least one player from the Golden Knights.",
+        "The response should name each recommended player’s NHL team explicitly. For example, if Matthew Schaefer is recommended, the response could include his team, the New York Islanders, after his name in brackets.",
+        "The response should only use the information in the provided text to recommend teams and players to follow. For example, any information provided in the response should be found in the provided text, and no other sources should be quoted.",
+        "The response should not mention or use any information about the Olympics in its recommendations."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_workspace='docs/revision/drafts' with scope user:l1_life_stream_2 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/revision/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify exactly two teams to follow.",
+          "The response should only recommend teams performing well or that \"have a lot of buzz.\" For example, the response could only recommend teams that are in, or were previously in, the top 20 of Eugene Helfrick's Power Rankings (Florida Panthers, Seattle Kraken, Nashville Predators, Ottawa Senators, Edmonton Oilers, Washington Capitals, Vegas Golden Knights, Utah Mammoth, Columbus Blue Jackets, Boston Bruins, New York Islanders, Anaheim Ducks, Detroit Red Wings, Montreal Canadiens, Buffalo Sabres, Colorado Avalanche, Pittsburgh Penguins, Minnesota Wild, Tampa Bay Lightning, Dallas Stars and Carolina Hurricanes).",
+          "The response should recommend exactly three players to follow.",
+          "The response should recommend exactly one defenseman among the three suggested players to follow.",
+          "The response should recommend exactly two forwards among the three suggested players to follow.",
+          "The response should recommend one rookie worth watching. For example, the response could recommend Matthew Schaefer or Becket Sennecke.",
+          "The response should provide some snippets from the information provided to support each highlighted player. For example, the response should include at least two pieces of information about how the player is doing, taken directly from the provided text, for each player.",
+          "The response should provide some snippets from the information provided for each highlighted team. For example, the response should include at least two pieces of information about how the team is doing, taken directly from the provided text, for each team.",
+          "The response should not recommend players from the Colorado Avalanche.",
+          "The response should not recommend players from the Boston Bruins.",
+          "The response should not recommend players from the St. Louis Blues.",
+          "The response should not recommend following the Colorado Avalanche team.",
+          "The response should not recommend following the Boston Bruins team.",
+          "The response should not recommend following the St. Louis Blues team.",
+          "The response should not make exaggerated claims about how players or teams are performing, such as making unverified claims about their numbers. For example, the response should not claim that Evan Bouchard is putting up \"historic numbers\" for a defenseman.",
+          "The response should provide exactly two goalies.",
+          "The response should only include goalies that are doing \"well.\" For example, the response should only include goalies featured in the text, such as Andrei Vasilevskiy, Ilya Sorokin, Logan Thompson, John Gibson, Jeremy Swayman, Brandon Bussi, or Alex Lyon.",
+          "The response should only recommend players to follow who are having a great season. For example, the response should recommend players who are mentioned as doing well in the text provided, such as Connor McDavid, who is leading the NHL with 100 points.",
+          "The response should align at least one suggested team with at least one suggested player. For example, if the response recommends the Las Vegas Golden Knights, then the response should recommend at least one player from the Golden Knights.",
+          "The response should name each recommended player’s NHL team explicitly. For example, if Matthew Schaefer is recommended, the response could include his team, the New York Islanders, after his name in brackets.",
+          "The response should only use the information in the provided text to recommend teams and players to follow. For example, any information provided in the response should be found in the provided text, and no other sources should be quoted.",
+          "The response should not mention or use any information about the Olympics in its recommendations."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_workspace='docs/revision/drafts' with scope user:l1_life_stream_2 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/revision/drafts",
+            "scope": "user:l1_life_stream_2"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

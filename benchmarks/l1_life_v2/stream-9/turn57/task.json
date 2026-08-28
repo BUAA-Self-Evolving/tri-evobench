@@ -1,0 +1,290 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_9",
+  "turn_id": "turn57",
+  "turn_index": 57,
+  "turn_type": "long_delay_replay",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "replay",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "5b6e6118-4fe4-f1b7-bd90-edc8e0d35aaf"
+    ],
+    "mapping_rule": "This turn derives from an earlier source_task turn and does not consume another source task.",
+    "source_jsonl_line": 83,
+    "source_sha256": "30191f964c3ae74a5a8ff5ed3ae1f2d96a3baf8f10eb5d720bb3596164694df6",
+    "source_metadata": {
+      "task_id": "5b6e6118-4fe4-f1b7-bd90-edc8e0d35aaf",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Community Interactions"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Long-delay replay: revisit the context-rich task first seen at turn 6 without reopening its source context. Re-answer its original request, then state my current project label now. Use the latest correction and do not present superseded information as current."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_replay",
+        "dimension": "replay_retention",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+      },
+      {
+        "check_id": "fact_retention",
+        "dimension": "replay_retention",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response states the latest value 'Personal Archive' for current project label."
+      },
+      {
+        "check_id": "no_stale_value",
+        "dimension": "stale_control",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response does not treat 'Knowledge Queue' as current."
+      },
+      {
+        "check_id": "state_integrity",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Replay does not create a duplicate fact or corrupt unrelated active state."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_9.fact_03.project_label.v2",
+          "key": "project_label",
+          "value": "Personal Archive",
+          "stale_value": "Knowledge Queue"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state the total number of non-emoji responses per comment section.",
+        "The response should list three to four different opinions presented in each section.",
+        "The response should provide an approximate percentage of how much a view makes up a comment section.",
+        "The response should have five total sections with one for each given comment section.",
+        "The response should have percentages that total up to 100% with a 10% margin of error for each section.",
+        "The response should support each opinion with two to three direct comments defending it.",
+        "The response should list disagreements present in each comment section.",
+        "The response should, for every disagreement, state whether or not it was resolved within the respective comment section.",
+        "The response should, for every disagreement that is stated to have been resolved, summarize what the resolution for the disagreement was.",
+        "The response should only mention players inside the Ducks Shootout record section present in comments from that section. For example, it should include Mason McTavish and Lukas Dostal (\"Dosty\")."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_replay",
+          "dimension": "replay_retention",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+        },
+        {
+          "rubric_id": "fact_retention",
+          "dimension": "replay_retention",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response states the latest value 'Personal Archive' for current project label."
+        },
+        {
+          "rubric_id": "no_stale_value",
+          "dimension": "stale_control",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response does not treat 'Knowledge Queue' as current."
+        },
+        {
+          "rubric_id": "state_integrity",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": [
+        {
+          "role": "user",
+          "content": "1. \nDid you know that in Scripture, Jesus spoke about hell four times more often than He spoke about heaven? How was Jesus warning us?\n9h\n🙏🙏🙏🙏\n2hReply\n\nWow!\n4hReply\n\n❤️❤️\n6hReply\n\nGreat word!!! I listened to this several times .you are such an inspiration. The Lord uses you mightily!!\n8h25 likesReply\n\nYes! I agree.\n8hReply\n\nBeautiful and well said ❤️🙏\n9h2 likesReply\n\nThank you for sharing so much! Your Godly testimony, is such a blessing to me❤️\n9h5 likesReply\n\nMay God bless and keep you dear Joni, may He hold you in His embrace until you are ushered into His eternal presence, safely, and away from all horrible things. May He help you abide in His truth, kept for you as a treasure in His heart. Love u Joni.🙏\n8h10 likesReply\n\nWell said, my friend!\n8h2 likesReply\n\nThank you for sharing this 🙌❤️\n8h2 likesReply\n\nInspiration ❤️ Thank you 🙏\n9hReply\n\nAmen. Thank you once again for your encouragement. 🙏💕\n7hReply\n\nHis mercy is unfathomable. Look what He did for us to show His immense love\n9h3 likesReply\n\nJoni , thank you for sharing but I beg to differ, you were a believer and God would never give you feel like that, He love you and had you in the palm of his hand never to let you go! You cannot lose your salvation! You may have wanted to LET GO of Christ, but he will NEVER let go of you. Even when you are faithless, he remains faithful (2 Tim. 2:13). Just as your GOOD works did not join you to the Lord, your BAD works cannot separate you. So know what you describe is not from God!\n9h5 likesReply\n\n@laurstoddard it was not from God, but Gos saved hee ftpm it\n4hReply\n\n@ni.amh5475 in your video you just said I think that horrific image was from God! He wouldn’t give you that horrific image!\n3hReply\n\n@laurstoddard I understand what you're saying, but I think what Joni is saying is that the drugs (perhaps morphine) caused the hallucinations, not God. However, God worked all these hallucinations together for good by showing Joni this is what He would save her from. God uses whatever he wants to achieve His will for us ,(even drug induced hallucinations), and though our salvations are predestined, it is essential we know from what we are saved. God used the effects of drugs not simply to frighten Joni, but to show her what the alternative would have been. And doesn't that fill out souls with joy!!! I hope this helps, my friend.\n3h1 likeReply\n\n@laurstoddard he wouldnt give u a bad image, but, he lets us see these things sometimes. Ive seen things before, God didnt send them, but its real. People do go to hell\n2h1 likeReply\n\n@amanda.price3 Yes, that’s exactly what Joni is saying. The very same thing happened to me when I was in ICU.\n23m1 likeReply\n\nYou are a treasure to us believers❤️\n2mReply\n\nSo powerful! May God use these words of life and warning to bring many to Himself…while there’s still time ✝️ Thank you, Joni! 💖🙏🏼🙂\n6mReply\n\n❤️🙌🔥Amen\n18mReply\n\nAmen!\n29mReply\n\nLove you\n30mReply\n\n👏🔥👏🔥\n36mReply\n\nThank you, Joni, for this reminder. We need to always have our eyes on Jesus.❤️\n1hReply\n\n❤️❤️❤️❤️\n1hReply\n\nAmen, needed to hear this❤️\n1hReply\n\nAmen\n1hReply\n\nThank you Joni for continuing to share the truth about Jesus and heaven. I am so blessed by you and your heavenly message. God bless you!\n1hReply\n\nAmen!!!\n2hReply\n\nThank you so much for sharing❤️ May God bless you in these days we find ourselves in\n2hReply\n\n👏\n2hReply\n\nI believe this because I lived it. Praise God that my eternity is heaven ❤️\n2hReply\n\nThank you Joni we all need to hear this.\n3hReply\n\n\n3hReply\n\nWow ❤️\n3hReply\n\nI cannot get into the groups is there another way to participate or can someone show me how\n3hReply\n\nAmen and Praise our Lord Jesus Christ 🙏🏻✝️🙆‍♀️❤️\n3hReply\n\nThis absolutely happened to me, and I’m so thankful Jesus is so real\n3hReply\n\n❤️❤️❤️\n3hReply\n\nI was very surprised to learn this.\n4hReply\n\nI saw stuff when i was 15 and it is worse than we can imagine, but still ive sinned badly in my life\n4hReply\n\nThank you for sharing, so powerful\n4hReply\n\nSo appreciate your transparency ❤️ Thankyou Prayers that your faith does not fail\n4hReply\n\nAmen!!!\n4hReply\n\nWow! What a powerful message!\n4hReply\n\nAmen 🙏 Thank you ❤️\n5hReply\n\nI love you, dear sister❤️\n5hReply\n\nWow. Just…..wow.\n5hReply\n\nVery powerful ❤️🔥❤️🔥\n5hReply\n\nAmen\n5hReply\n\nAmen 🙏🙏🙏\n5hReply\n\n😍❤️\n6hReply\n\nThank you for being vulnerable and sharing that story! Your face shines when you think of Jesus! ❤️\n6hReply\n\nI needed to hear this today...thank you.\n6hReply\n\nGod is good and merciful! How I need to read these today ! God bless you my dear !\n6hReply\n\nSo good!\n6hReply\n\nBless you. Mi brother Marco takes care yo muy mom, he Is His nurse AND thid Situation causes in him frustration. Mi mom is old AND has beginings of Alzheimer. I really want to help them He Is single, Cristian AND hes 51 years old.\n6hReply\n\nAmen 🤗🙏\n6hReply\n\nHe loves us so much that he warns us\n6hReply\n\nI needed this today, and always! Praise God from whom all blessings flow!!! Amen!\n6hReply\n\nAmen! ✝️❤️🙏\n6hReply\n\nAmen!!!!\n6hReply\n\nAmen. 🙌🙌\n6hReply\n\nAMEN!🙏\n6hReply\n\n❤️\n7hReply\n\nAmen! ❤️\n7hReply\n\nThank you, Joni. God works in mysterious ways, His wonders to perform! A close family member of mine needs your experience like this in his dire straits.\n7hReply\n\nAmen and amen!! Beautiful 🤩\n7hReply\n\nWow\n7hReply\n\nThanks Joni. You are a Legend. God Bless x\n7hReply\n\nThank you for these words of warning.\n7hReply\n\nOh Joni, you’re such an inspiration and so wise. Thank you.\n8hReply\n\nSuddenly today God said , last call . And that mean a time lit for salvation .\n8hReply\n\nThank you Joni 👏\n8hReply\n\nJesus showed me hell just like St.Teresa of Avila . It was terrible !!!\n8hReply\n\nOh Joni, your beautiful spirit and faith in God encourages me!! May God bless you all the days of your life.\n8hReply\n\nThis is so true, thankyou!\n8hReply\n\n❤️\n8hReply\n\nAmen. amen.\n8hReply\n\nThank you 🙏🏻\n8hReply\n\n😍✝️\n9hReply\n\nWow!!! Very powerful words\n9hReply\n\nAmen!!\n9hReply\n\n\n2.\n👏\n9h Reply It looks like this could be a two-team race... 🐎\n\nPresented by @polymarket\n6h\n\n6h58 likesReply\n\n@kyoyatategami_35 😂\n6h1 likeReply\n\n\n6h292 likesReply\n\nWhy tf the Kraken at the bottom\n6h106 likesReply\n\n@aaliperti2706 literally lmao, they’re in a playoff spot and are put neck to neck with a lottery team in terms of odds 😭\n5h29 likesReply\n\n@aaliperti2706 because there not that good\n5h1 likeReply\n\n@bequest3333 they’re**\n5h14 likesReply\n\n@aaliperti2706 Remaining schedule difficulty\n5h7 likesReply\n\n@aaliperti2706 because they may sell. They are already putting players on waivers. Making the playoffs, ok.\nBut they don’t have a team for a deep playoff run\n5h2 likesReply\n\n@aaliperti2706 sea monsters belong at the bottom of the pacific\n5h13 likesReply\n\n@zlillemoen13 that’s fire\n5h3 likesReply\n\n@bequest3333 they just beat Carolina lol\n4h2 likesReply\n\nDoesn’t mean they’re good.\n3hReply\n\n@bequest3333 they’re record does, also helps they beat Carolina\n3hReply\n\nYou talk about beating Carolina, but the ducks have beaten Colorado so what does that say in Seattle also lost the Ducks.\n1hReply\n\n@bequest3333 all I’m saying is they aren’t bad, they have a tough schedule but are doing well against that tough schedule, they’re in a playoff spot, just beat a top 5 team. They are good\n1hReply\n\n\n6h188 likesReply\n\n\n4h4 likesReply\n\n@marshmallow.c4t best worst team in the league\n3hReply\n\n\n5h27 likesReply\n\n\n6h46 likesReply\n\nBetting my life's savings on the Canucks. It's their year. I can feel it\n6h365 likesReply\n\n@mammachine 🤣\n6h1 likeReply\n\n\n4h8 likesReply\n\n\n5h45 likesReply\n\n\n5h5 likesReply\n\nI'm so proud the Sharks are finally not at the bottom of this list\n6h78 likesReply\n\n\nFly together 🧡\n5h8 likesReply\n\n\n6h28 likesReply\n\n\n6h14 likesReply\n\n@ryan__perez2424 😂\n6hReply\n\n@jake_hawkes it’s ok I live in LA and gave up on my kings already. It’s ok to be optimistic\n5hReply\n\n\n6h92 likesReply\n\n\n6h43 likesReply\n\n\n🔥 🦆\n6h6 likesReply\n\n\n6h14 likesReply\n\n\n2hReply\n\n🦆🦆\n6h10 likesReply\n\nJust blatantly hating on the kraken\n5h6 likesReply\n\nNFC SOUTH of the NHL\n6h49 likesReply\n\n@aaron_chaide.z 👏😂\n6hReply\n\n@aaron_chaide.z nfc south more competitive bro\n5h1 likeReply\n\n@aaron_chaide.z yet they have won the west three straight years\n4hReply\n\n\n5h16 likesReply\n\n\n5h11 likesReply\n\n\n1hReply\n\n\n6h37 likesReply\n\n\n5h14 likesReply\n\n\n6h37 likesReply\n\n\n4h2 likesReply\n\nIf we got a Seahawks superbowl and Mariners made it the furthest they've ever gone, id die a happy man if Kraken could pull it off.\n5h7 likesReply\n\nDucks will win idk how Vegas are in First we gotta win against Colorado\n6h8 likesReply\n\nAnahiem has the most wins in the division how tf are they not 1st\n5h10 likesReply\n\n@jaisen_firkalicious based on points\n3hReply\n\nIk but its stupid\n3h1 likeReply\n\nAny team but Vegas im alright with that\n3h2 likesReply\n\nThe constant underestimating of @seattlekraken by the East coast pundits. Go Kraken!\n4h1 likeReply\n\nI’m a Ducks fan and I hope we don’t win lol. Whenever we win we leave the playoffs early 😂\n6h5 likesReply\n\n@catfishcarranza literally!!! It’s the first place curse!\n6h1 likeReply\n\n@catfishcarranza I won’t mind another western conference finals run\n4h1 likeReply\n\n@esteve__92 good times. Honda center was electric\n4hReply\n\n\nCanucks fan’s at 1% . . . So you’re saying there’s a chance 🏒🤞🏻🥴\n5h6 likesReply\n\nIf it wasn't for a point for ot losses the Ducks would be in 1st\n6h6 likesReply\n\nHow are the kraken that low the are 3 points back\n6h20 likesReply\n\n@tylerbbrowne I just noticed that the flames have like 10 points less but are higher in percentage like what..\n6h6 likesReply\n\n@tylerbbrowne there’s always an agenda against us it seems\n6h4 likesReply\n\n@tylerbbrowne also check seattles points ;)\n6hReply\n\nSleeping on Seattle\n6h1 likeReply\n\nI ain’t a fan of Seattle but like aren’t they like 3rd in their division right now lol\n4h1 likeReply\n\nGarbage by the @nhl partnering with polymarket betting site\n2h1 likeReply\n\nWhat did the kracken do to you 😭\n4h1 likeReply\n\n\n6h15 likesReply\n\nQuack\n5h2 likesReply\n\n\n4h2 likesReply\n\nWhy are the flames above Seattle\n6h3 likesReply\n\n@peter._.schneider best goalie in the league\n4hReply\n\n\n6h6 likesReply\n\n0 of these teams would be in a playoff spot in the east\n6h6 likesReply\n\nSo canuck still have a chance ?\n5h2 likesReply\n\nCHILL!!!!\n5h1 likeReply\n\nryan whitney gave buffalo a 1% chance, look where they are now\n6h1 likeReply\n\nbooo vegas, let’s go ducks 🦆 🧡🧡🧡🧡\n4mReply\n\nGo Ducks\n8mReply\n\n\n22mReply\n\n\n43mReply\n\nDucks.\n1hReply\n\nDucks\n1hReply\n\nCanucks we got this ☹️\n1hReply\n\n\n1hReply\n\nFlames\n2hReply\n\n\n2hReply\n\n\n2hReply\n\nRemember this @seattlekraken\n2hReply\n\nAre we sure about VGK??\n2hReply\n\nAnaheim\n2hReply\n\nmontreal is more likely to win the pacific division than the canucks are\n2hReply\n\nVegas only because they have like 13 OTL losses lol\n2hReply\n\n🦆🦆\n2hReply\n\n\n2hReply\n\n\n2hReply\n\n\n2hReply\n\nThe Vancouver Canucks 🔥🙌\n3hReply\n\n\n3hReply\n\nVegas baby\n3hReply\n\n\n3hReply\n\n\n3hReply\n\n\n3hReply\n\n\n3hReply\n\n\n3hReply\n\nLets go Patos!\n3hReply\n\n\n3hReply\n\n\n4hReply\n\n\n4hReply\n\nProbably the Canucks\n4hReply\n\n\n4hReply\n\n1% lets goooooooo\n4hReply\n\n\n4hReply\n\nLet’s go Sharks🔥🔥🔥\n4hReply\n\n\n4hReply\n\n\n4hReply\n\n🟠🦆🟠\n4hReply\n\ncanucks oilers or sharks\n4hReply\n\n\n4hReply\n\n\n4hReply\n\n\n4hReply\n\n🦆🦆\n4hReply\n\n\n4hReply\n\n\nI think Vancouver should be negative 1% 😂 #aquamen\n4hReply\n\nGKG 🔥\n4hReply\n\n\n4hReply\n\n\n4hReply\n\n\n5hReply\n\nOTL merchants\n5hReply\n\nFlames probably\n5hReply\n\nToronto Maple Leafs\n5hReply\n\nDucks take the vgk spot I dare you!!!\n5hReply\n\nAccurate AF👏👏👏\n5hReply\n\nCanucks cup champs 2026\n5hReply\n\n\n5hReply\n\n\n5hReply\n\nNot the fans.\n5hReply\n\n\n\n5hReply\n\n\n5hReply\n\n\n5hReply\n\n\n5hReply\n\nDoesn't matter. They will have to play the Avalanche and lose.\n5hReply\n\n\n5hReply\n\nCanucks should be at 0%\n5hReply\n\n\n5hReply\n\n\n@canucks for sure\n5hReply\n\nidk i think it’s the canucks year\n5hReply\n\n\n5hReply\n\nPlot twist: Sharks end up winning the division and go on to win the Stanley Cup 😌 (I wish one day man😭🙏)\n5hReply\n\n\n5hReply\n\n\n6hReply\n\n🦈🦈🦈🦈🦈🦈🦈🦈🦈\n6hReply\n\n🦆The Mighty QUACK ATTACK\n6hReply\n\n\n6hReply\n\nIt’d be nice to see the ducks win it instead of it being Vegas and Edmonton every year\n6hReply\n\n\n6hReply\n\nTrust me Oilers will make some move and win the division\n6hReply\n\nVegas???\n6hReply\n\nWeak division.\n6hReply\n\nTalk about a low bar\n6hReply\n\nOmg poly market 😱\n6hReply\n\nHidden by Instagram\nIf the sharks can't do it I hope the ducks do. F the knights\n6hReply\n\n3.\n6 hours ago\n STARS HISTORY 🤩\n\nThe @dallasstars extend their win streak to nine games, setting a new franchise record!\n22h\nThat’s kinda crazy it’s that low\n22h930 likesReply\n\n@alex_puck12 hard to win that many straight in the NHL\n22h193 likesReply\n\nGiven Dallas’s recent history I’m surprised they haven’t done more ever\n22h127 likesReply\n\n@alex_puck12 They tied it a couple years ago and have gotten 7 here and there the past few years. Im more surprised the late 90's teams never got more tbh\n22h59 likesReply\n\n@mason.b.jones the 90s teams were more about preventing skids than stacking up continuous wins\n22h6 likesReply\n\n@jessica_lane why cause I’m a little surprised a team that’s had an overall good history hasn’t won more than 8 games in a row ever?\n22h10 likesReply\n\n@alex_puck12 penguins lead it with 17, not that crazy in the nhl\n21h8 likesReply\n\n@alex_puck12 as good as some of the teams that Dallas has had over the years. I understand where you’re coming from.\n20h3 likesReply\n\n@alex_puck12 17 is the most. . . lol insane to even get 5 in a row, much less 10🔥🔥\n18hReply\n\n@alex_puck12 u prob couldn’t even get that many wins in a row in fortnite let alone any sports team you’ve ever played on.\n12hReply\n\n@alex_puck12 that central division is full of killers.\n10hReply\n\n@alex_puck12 more than a 10th of a season won in a row is kinda a lot, but I do agree lol.\n10hReply\n\n@david_cube88 the NHL posted the graphic today and before this win, Dallas sat last in terms of holding this record (not including Utah but they weren’t far behind). Contrary to what many (not you) have told me attacking me for being stupid, it genuinely IS a pretty low amount in terms of teams’ best streak ever.\n10h2 likesReply\n\n@alex_puck12 yeah, no, people just love to get aggressive. I think 9 seems low, but it’s so difficult in hockey to do, so it feels low but impressive at the same time! 😂\n10h1 likeReply\n\n\n22h27 likesReply\n\n\n🤩🤩🤩🤩🤩\n22h1 likeReply\n\n\n22h16 likesReply\n\n\n22h268 likesReply\n\n\n22h170 likesReply\n\n\n\n14h3 likesReply\n\n\n22h64 likesReply\n\n9 games in a row and not even in first 😂\n9hReply\n\n\n22h4 likesReply\n\n\n22h56 likesReply\n\n\n20h2 likesReply\n\ncongratulations, from a canes fan 💚\n19h6 likesReply\n\n\n22h2 likesReply\n\nyuhhh!!! ✝️🙏🏽🔥\n22h2 likesReply\n\n\n22h205 likesReply\n\nGif name?\n21hReply\n\nbro i had to search so hard but literally just do slime you out and it should come up\n21h6 likesReply\n\nThanks brotha\n21hReply\n\nwelcome\n21hReply\n\nComing here as a habs fan, I’ve been loving watching the stars for the past few years. They are so talented it’s crazy\n22h30 likesReply\n\n\n22h10 likesReply\n\n\n22h1 likeReply\n\n\n22h36 likesReply\n\n\n10h5 likesReply\n\nAwesome, but we want the cup!\n22h8 likesReply\n\nWyatt Johnston\n22h28 likesReply\n\nI’d love to see it get to double this and pass the avs\n22h9 likesReply\n\n\n22h3 likesReply\n\nAs a Sharks fan, respect!!\n22h19 likesReply\n\nThat's the @sammy_wells effect. 😎\n21h1 likeReply\n\non Texas independence day too\n22h5 likesReply\n\nTexas Independence Day magic\n22h3 likesReply\n\nWe want The Cup 😤.\n22h11 likesReply\n\nStanley Cup soon\n22h137 likesReply\n\n\n22h2 likesReply\n\n@hockey.nico no\n20h3 likesReply\n\n@hockey.nico You won’t make it past Tampa\n19hReply\n\n@hockey.nico yall been saying that for the last 3 years bub\n19h2 likesReply\n\n@lunaandtoast win a playoff round, no excuses now cuz the cats are hungover.\n12h1 likeReply\n\n@hockey.nico Red Wings of the 90s and the 2000s! Let’s get it!\n\nIt comes with a lot of winning and losing. Either way we’ll do it the Texas way\n12hReply\n\nUr confusing us and how we operate with our neighboring team down the road that plays 🏈\n12hReply\n\n@hockey.nico gotta make the finals first 😂\n9hReply\n\n\n4.\n22 hours ago The @anaheimducks seem to have mastered the art of the shootout 🎨\n1d\n\nFun fact: Only the 2016-17 Detroit Red Wings had more shootout wins in a single season without a shootout loss (9-0)\n1d300 likesReply\n\n@nhl and the wings didn’t even make the playoffs that season either!\n1d5 likesReply\n\n@nhl give us some more facts please!!!!\n1d4 likesReply\n\nMason McTavish is HIM 🔥\n1d363 likesReply\n\nThat move was nasty afffff\n1d1 likeReply\n\n\n1d20 likesReply\n\n\n1d144 likesReply\n\n\n\n1d166 likesReply\n\n\n1d7 likesReply\n\nMY BOYS🧡\n1d4 likesReply\n\n\n1d21 likesReply\n\n\n1d9 likesReply\n\n\n1d75 likesReply\n\n\n1d4 likesReply\n\nStanley Cup is all we want\n1d114 likesReply\n\n@e_lasso after the last 7 years I'll settle for a deep playoff run but yes that's the ultimate prize and this team can do it\n1d47 likesReply\n\n@e_lasso no shootouts in the playoffs\n1d5 likesReply\n\n@ellenart but it certainly helps to get them in the fight for it\n1dReply\n\n@ellenart they’re 13-0-3 in OT/SO lol\n1d8 likesReply\n\n@emdakid87 what’s your point? There’s no 3-3 OT in the playoffs either.\n1d1 likeReply\n\n\n1d5 likesReply\n\n\n1d6 likesReply\n\nThat glove save by Dosty was so good omg\n1d7 likesReply\n\n\n1d24 likesReply\n\nQUACK QUACK BAYBEEE!!\n1d42 likesReply\n\n🦆🦆🦆s we are mighty again!!!\n1d49 likesReply\n\nMy heart rate😩\n1d16 likesReply\n\n\n1d11 likesReply\n\nBest shootout team in the world hands down\n1d8 likesReply\n\nMason and Dosty got us covered every time\n1d163 likesReply\n\nthe vibes are vibing 🦆\n1d13 likesReply\n\nLET’S F’N GO DUCKS!!! 🧡🧡🧡🧡\n1d6 likesReply\n\nNone of this could be a thing without Dostal 🔥🔥🔥\n1d7 likesReply\n\n\n1d5 likesReply\n\nLove our boys!!!\n1d1 likeReply\n\nYoung and Skilled 🔥🙌\n1d6 likesReply\n\nCutter has become Our Best player ..Top 10 in NHL\n1d3 likesReply\n\n\n1d7 likesReply\n\nmason mctavish the king of shootouts 👑\n1d65 likesReply\n\nTriple deke Conway style\n1d6 likesReply\n\n\n1d4 likesReply\n\nThis ducks team could be very dangerous come playoffs\n1d19 likesReply\n\nDoes this help win a playoff game?\n1d2 likesReply\n\ndon’t even need shootout merchant zegras for it\n1d359 likesReply\n\n@colbyjackcheezit Good trade for both teams, let it go man.\n1d58 likesReply\n\n@colbyjackcheezit waiting for the Philly rematch\n1d3 likesReply\n\nMacT is filthy at shootouts.😂\n1d17 likesReply\n\nSomehow the oilers haven’t won a shootout! And the ducks are 7-0!\n1d34 likesReply\n\n@wharf9000 bro we have way better shoot out shooters lol even better than McDavid\n1d2 likesReply\n\n@tadashiyapper_1127 ehhhhh, maybe the ducks have a 4 leaf clover 🍀 with them this year in the shootout\n1dReply\n\n@wharf9000 talent bro\n1d5 likesReply\n\nQuack quack quack\n1d2 likesReply\n\nThat Terry SO was filthy\n21h1 likeReply\n\nThe ducks are back pring back perry\n1dReply\n\nSheeeeeshhhhhh !!!\n1d2 likesReply\n\n🔥🔥\n1d3 likesReply\n\n🔥🔥🔥🔥let’s go @anaheimducks 🧡🤍🖤\n1d3 likesReply\n\n👀\n1d3 likesReply\n\n🦆🦆🔥\n1d3 likesReply\n\nDosty !!!!\n1d3 likesReply\n\n😉\n1d3 likesReply\n\n🦆\n1d2 likesReply\n\nMacT's are absolutely filthy and I love it 🔥\n1d2 likesReply\n\nI wouldn't be mad at a pacific division Ducks v Avalanche, no matter what the outcome. 🔥\n1d2 likesReply\n\nQuack!\n1d2 likesReply\n\nMac-T on shoot out is a guarantee score\n1d6 likesReply\n\n\n1d10 likesReply\n\n\n1d30 likesReply\n\n\n1d41 likesReply\n\n\n1d18 likesReply\n\n\n1d36 likesReply\n\n\n1d41 likesReply\n\n\n1d33 likesReply\n\n\n1d13 likesReply\n\n\n1d14 likesReply\n\nW Dosty highlights\n1d1 likeReply\n\nWhat a game!!\n1d1 likeReply\n\nCooley made a fooley a few times\n1d1 likeReply\n\n\n1d1 likeReply\n\n@veedabee yall lost lol 😂\n1d8 likesReply\n\nI love this team so much\n1d5 likesReply\n\n\n1d2 likesReply\n\n\n1d2 likesReply\n\nLet’s go Flyers #ihateyoucutter\n1d2 likesReply\n\n\n1d3 likesReply\n\n\n1d2 likesReply\n\n\n1d12 likesReply\n\n\n1d5 likesReply\n\nLet's goooooooooo\n19hReply\n\nand @vegasgoldenknights are the Masters of OT losses\n20hReply\n\n👏\n22hReply\n\nI actually was rooting for the game to go to OT and Mac T to get the game winner! It will be a boost for him since overall he is underperforming and if we want to be a good playoff team, we need Big Mac so badly! Go Ducks 🏒\n1dReply\n\nGet em ducks\n1dReply\n\n\n1dReply\n\nMcFilthyyyyyy\n1dReply\n\n\n1dReply\n\nTheee young guys 22 and under are seriously insane\n1dReply\n\nDostal is just so patient\n1dReply\n\nyes!!!\n1dReply\n\n\n1dReply\n\nDucks, give me a cup before WWIII\n1dReply\n\nShift in the matrix\n1dReply\n\nI can smell the playoffs\n1dReply\n\nThey finally got over that rough moment\n1dReply\n\nMctavish - Playstation mode - slow motion freeze activated - Savage 🙌🙌🙌🙌\n1dReply\n\nShootout vs the pens doesn’t count\n1dReply\n\nThe trio they brought out last night is unstoppable. Carlson, Senneke, Mctavish\n1dReply\n\n❤️\n1dReply\n\n@dostyy_2 🥶 ice cold!\n1dReply\n\n🦆!!!\n1dReply\n\nMason mctavish my goat\n1dReply\n\nChris Kreider smiling ear to ear . Boy do we miss him here in NY\n1dReply\n\n\n1dReply\n\n\n1dReply\n\n🔥🔥🔥🔥\n1dReply\n\nFilthy\n1dReply\n\n\n1dReply\n\n\n\n5.\n1 day ago We're going to have to start calling this move the \"McTavish\" 🤭\n1d\nAll Pacific goalie coaches adding this to favorites folder\n1d224 likesReply\n\n@k_patterson i know right,\n1dReply\n\n\nHe's 9/13 in career shootout attempts and that 69.2% success rate is second all-time in NHL history (min. 10 shootout attempts)!\n1d303 likesReply\n\nNice!\n1d1 likeReply\n\n@mike.rossi\n1d1 likeReply\n\n@nhl niiice\n1dReply\n\n@nhl nice… 😏\n22hReply\n\n@nhl nice.\n22hReply\n\n@nhl first is Artemi??\n19hReply\n\n@j_miller44 Petteri Nummelin is first\n15h2 likesReply\n\n\n1d77 likesReply\n\n\n1d53 likesReply\n\n\n1d7 likesReply\n\nGOATAVISH\n1d33 likesReply\n\n\n1d36 likesReply\n\n\n1d29 likesReply\n\n\n1d4 likesReply\n\n\nthe McTavish 😮‍💨\n11h21 likesReply\n\n\n22h1 likeReply\n\nHe did that !!! Good for him too\n1d1 likeReply\n\n\n21h4 likesReply\n\n\n1d18 likesReply\n\nMacT!🔥\n1d17 likesReply\n\nMason McNasty with those moves sheeeesh😍\n1d36 likesReply\n\n\n1d24 likesReply\n\nMason McFilthy 🔥\n1d3 likesReply\n\nbig mac T!!!\n1d2 likesReply\n\nthe lost art of the poke check needs to find its way to the modern game\n1d22 likesReply\n\n@chris_anderson poke check will open the goalie up more he keeps it out of reach…\n21h6 likesReply\n\n@chris_anderson I agree but idk if that’s the play on this move\n9hReply\n\nIf it’s not broke don’t fix it. 🙌\n1d7 likesReply\n\nThat's McFilthy!!! 🙌👏\n5h1 likeReply\n\nLaine did it first\n1d2 likesReply\n\nMcTavish learned this from Patty Laine, so please give credit where it is due…\n1d6 likesReply\n\n@xo_walker more like Trevor Zegras\n1d5 likesReply\n\nYo @nhl just saying I think all Rangers fans are excepting for formal apology over the goal that was just called off that was not goalie interference and the refs were wrong by a mile\n1dReply\n\nCOPE\n1dReply\n\nThat’s the Sega 93 move\n1d3 likesReply\n\n@hawksfan88 exactly…this move is so old…pulled this move off many times playing minor hockey and beer league 😂😂\n15h1 likeReply\n\n\n1d2 likesReply\n\nPoke check ✔️\n2hReply\n\nUnstoppable\n6hReply\n\nDo goalies today use a poke check anymore\n6hReply\n\nNow he’s gonna need to find a new move, eh?!?\n7hReply\n\nNow he needs to keep em on their toes and just charge to fire a top shelfer\n8hReply\n\n@penguins take notes\n10hReply\n\nMagic touch\n10hReply\n\nIKTR\n11hReply\n\nThat’s how good he is and that’s why the Ducks gave him a contract extension! And I love it!! 🔥\n12hReply\n\n\nReminds me of when jokinen was always scoring with the same move back in the day\n13hReply\n\nHey, Pens, can you take a look at this?\n14hReply\n\nZegras is better\n14hReply\n\nIslanders had a guy like that...frans Nielsen was pretty automatic with one move too. Good times. Not really 😂\n15hReply\n\nNasty work Tav\n16hReply\n\nIn Finland we call this \"the Donskoi move\". Joonas Donskoi loved to use this move\n16hReply\n\n\n19hReply\n\n\n19hReply\n\nLets gooooooooo!!!\n20hReply\n\nWell, not anymore!\n20hReply\n\n\n20hReply\n\nWanna see him go against a right handed glove goalie! Seems he found a slick cheat code😂\n20hReply\n\nMcNasty😮‍💨😮‍💨😮‍💨\n21hReply\n\n🔥\n22hReply\n\nSilky smooths\n23hReply\n\nMacTweenish\n1dReply\n\nBro makes it look too easy\n1dReply\n\n💪🏾\n1dReply\n\nPut ‘em in a blender!! 🌪️\n1dReply\n\nMacTavi\n1dReply\n\n\n1dReply\n\n🦆\n1dReply\n\nHidden by Instagram\nFuture Captain of the Ducks.. McT is so underrated, it’s disgusting\n10hReply\n\nNasty\n1dReply\n\n1 day ago\n\n\n\nTask:\n\nUsing these comments, what is the general consensus of the comments over each of the comments sections? Give me the top three or four views in each section and the percentage of how many holds those views. state the denominator per section (e.g., “out of N non-emoji comments”) and give ranges if ambiguity exists (“~20–30%”) instead of forced exactness. Give me evidence found in the comments for why you answered this way, and compare the general mood of each section. Ignore meme-only/emoji-only comments unless they clearly signal agreement/disagreement. With every given disagreement, state whether or not it was resolved and what the resolution was. Treat the five posts as separate sections: (1) faith/hell warning, (2) polymarket Pacific division race odds, (3) Stars win streak, (4) Ducks shootout record this season, (5) McTavish move. Provide 2–3 direct quotes per view; if you can’t find evidence, say ‘insufficient evidence."
+        }
+      ],
+      "message_source": "embedded sealed messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_current_fact",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "Personal Archive"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state the total number of non-emoji responses per comment section.",
+          "The response should list three to four different opinions presented in each section.",
+          "The response should provide an approximate percentage of how much a view makes up a comment section.",
+          "The response should have five total sections with one for each given comment section.",
+          "The response should have percentages that total up to 100% with a 10% margin of error for each section.",
+          "The response should support each opinion with two to three direct comments defending it.",
+          "The response should list disagreements present in each comment section.",
+          "The response should, for every disagreement, state whether or not it was resolved within the respective comment section.",
+          "The response should, for every disagreement that is stated to have been resolved, summarize what the resolution for the disagreement was.",
+          "The response should only mention players inside the Ducks Shootout record section present in comments from that section. For example, it should include Mason McTavish and Lukas Dostal (\"Dosty\")."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_replay",
+            "dimension": "replay_retention",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+          },
+          {
+            "rubric_id": "fact_retention",
+            "dimension": "replay_retention",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response states the latest value 'Personal Archive' for current project label."
+          },
+          {
+            "rubric_id": "no_stale_value",
+            "dimension": "stale_control",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response does not treat 'Knowledge Queue' as current."
+          },
+          {
+            "rubric_id": "state_integrity",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_9.fact_03.project_label.v2",
+            "key": "project_label",
+            "value": "Personal Archive",
+            "stale_value": "Knowledge Queue"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "Knowledge Queue"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

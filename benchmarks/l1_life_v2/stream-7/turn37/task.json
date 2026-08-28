@@ -1,0 +1,328 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_7",
+  "turn_id": "turn37",
+  "turn_index": 37,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "2b97a9e9-409d-b98d-2f7e-934b7687c41c",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 181,
+    "source_sha256": "9f3357d9eef46d6adb0a48cc36c1694e8e99d5c2008fc9a1de75a9a25b1155fd",
+    "source_metadata": {
+      "task_id": "2b97a9e9-409d-b98d-2f7e-934b7687c41c",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "\n\n2025-03-03 17:18\n\nStatus: #child \n\nTags: [[communication]] [[technology]]\n\n# ADS-B Out\n\nADS-B Out is the piece of technology that is replacing traditional radar as the primary surveillance method for ATC.  ADS-B Out allows equipped aircraft and ground vehicles to broadcast their identification, position, altitude, and velocity to other aircraft and ATC.\n\nBeing able to receive this information is known at ADS-B In.\n\n# References\n\n\n\n2025-02-19 15:28\n\nStatus: #adult\n\nTags: [[short-hand]]\n\n# AGL\n\nAGL stands for above ground level.  This is the elevation of an object in relation to the ground.\n\nAlso known as the absolute altitude.\n\n# References\n\n\n2025-04-28 20:54\n\nStatus: #child \n\nTags: [[IFR]] \n\n# Airways\n\nAirways are routes that IFR flights fly simply put.  There are 2 classes of airways, low altitude and high altitude.\n\nLow Altitude Airways:\n- For use up to, but NOT including 18,000ft MSL\n- Generally class E airspace, unless crossing through other airspace \n- There are 2 types of low altitude airways:\n    - Victor airways\n        - Identified by a \"V\" followed by numbers\n        - Based on VORs\n        - May be flown by RNAV\n        - They have a width of 4NM from centerline, unless the VORs are more than 102NM apart, then they are 4.5 degrees on either side.\n        - Depicted by a black line and a black info box\n    - RNAV airways or TNAV\n        - Identified by a \"T\" followed by numbers\n        - May be flown using various types of RNAV\n        - Based normally on 1,200ft AGL\n        - Up to but NOT including 18,000ft MSL\n        - Depicted by a blue line and blue info box\n\n\nHigh Altitude Airways:\n- There are 3 types of high altitude airways:\n    - Jet routes\n        - Identified by a \"J\" followed by numbers\n        - 18,000ft MSL to FL 450\n        - Blue lines and info boxes are used to indicate\n    - Q-routes:\n        - Identified by a \"Q\" followed by numbers\n        - 18,000ft MSL to FL 450\n        - May be flown using various types of RNAV\n    - Y-routes:\n        - Similar to Q-routes, depicted with a \"Y\" followed by numbers\n        - Mostly used off shore\n\n# References\n\n\n\n2025-02-19 14:53\n\nStatus: #child\n\nTags: [[short-hand]]\n\n# ATC\n\nATC stands for air traffic control.\n\n# References\n\n\n\n2025-03-06 15:50\n\nStatus: #child \n\nTags: [[formula]]\n\n# Center of Gravity Formula\n\nThe formula for finding the center of gravity is as follows:\n\nCG = Total Moment / Total Weight\n\n# References\n\n\n\n2025-03-03 17:22\n\nStatus: #baby\n\nTags: [[controlled]] [[airspace]] [[class a]]\n\n# Class A Airspace\n\nClass A airspace goes over all contiguous states and Alaska, from 18,000 MSL to 60,000 MSL (FL).  \n\nATC actively tracks and provides separation for every aircraft in class A airspace\n\nIn order to fly in class A airspace the pilot and aircraft must:\n- IFR rated and current\n- IFR equipped\n- IFR clearance at altitude assigned by ATC\n- transponder with mode C\n\n# References\n\n\n\n2025-03-03 17:11\n\nStatus: #baby\n\nTags: [[controlled]] [[airspace]] [[class b]]\n\n# Class B Airspace\n\nClass B airspace is denoted by dark blue solid lines.  You need clearance in order to enter a class B airspace.  The vertical limits are denoted by a fraction.  The numerator represents the ceiling, and the denominator represents the floor.\n\nTypically surrounding all class B airspace, there is a Mode C veil.  This veil is a 30[[NM]] boundary around the airport that is from SFC to 10,000 MSL.  In order to enter this veil, a pilot must posses a mode C transponder and [[ADS-B Out]]\n\nOther requirements for flying into a class B airspace is:\n- Private pilot\n- Student pilot with correct logbook endorsements\n- Endorsement in logbook within the last 90 days competent to solo.\n\n\n![[image-52-1024x569.webp]]\n\n# References\n\n\n\n2025-02-19 16:07\n\nStatus: #baby\n\nTags: [[controlled]] [[airspace]] [[class c]]\n\n# Class C Airspace\n\nClass C airspace is indicated by 2 solid magenta lines surrounding an airport.  The first circle is about 5[[NM]] in radius, and the second circle is 10[[NM]] in radius.  The floor and ceiling of each section is indicated by a bold magenta fraction.  The bottom number indicates the floor, and the top number indicates the ceiling, both in feet [[MSL]].  The 44 over SFC indicates this section starts at the surface, and ends at 4400ft [[MSL]], and the 44 over 17 means that it starts at 1700 and ends at 4400ft [[MSL]]\n\n![[ClassCSectional.png]]\n\nThere is also a procedural outer area in a class C airspace that normally has a radius of 20[[NM]]\n# References\n\n\n\n2025-02-19 15:34\n\nStatus: #baby \n\nTags: [[airspace]] [[controlled]] [[class d]]\n\n# Class D Airspace\n\nThe horizontal boundaries of a class D airspace are indicated on a sectional chart with dashed blue lines.  The lines can jut out because the lateral dimensions of class D airspace are based on instrument procedures established for the airspace, aka [[IFR]] flight.\n\nTypically have a radius of 4.5 - 5[[NM]] \n\nVertical boundaries typically extend from the surface to 2,500ft above the airport's elevation.  This is indicated by the bold blue number in a bold blue dashed square.  The figure below has a ceiling of 2900ft [[MSL]]\n\n![[Class D Airspace.png]]\n\n\nA \"-\" in front of the number indicates that the class D airspace is below another airspace, and goes up to, but does not include that number.  The figure below indicates that class D airspaces exists up to, but not including, 8000ft [[MSL]].\n\n![[minusClassD.png]]\n# References\n\n\n\n2025-02-19 15:25\n\nStatus: #baby\n\nTags: [[airspace]] [[controlled]] [[class e]]\n\n# Class E Airspace\n\nClass E airspace is controlled airspace that typically begins where class G ends.  This is normally at 700ft or 1200ft [[AGL]].\n\nThe absolute ceiling of class E airspace is 17,999ft [[MSL]] \n\nCan also be represented by a dashed magenta circle.\n\n\n![[TypicalClassE.png]]\n# References\n\n\n\n2025-02-19 14:47\n\nStatus: #baby\n\nTags: [[airspace]] [[uncontrolled]] [[class g]]\n\n# Class G Airspace\n\nClass G airspace is uncontrolled airspace that goes from the surface up to 14.500 ft [[MSL]].\n\n[[ATC]] does not track planes flying [[IFR]] in class G airspace.\n\n# References\n\n\n\n2025-04-05 10:53\n\nStatus: #child\n\nTags: [[weather]]\n\n# Cold Front\n\nA cold front is when a cold air mass at the surface moves, resulting in any warm airmass in it's way being pushed up and away.\n\nA cold front typically moves at ~25-30 MPH\n\nTypical features of a cold front are as following:\n- Little warning\n- Change the weather in a few hours\n- Weather clears rapidly\n- They're more intense\n\nThe rapid movement of warm air upwards in a cold front is conducive to creating:\n- Towering cumulous clouds\n- Cirriform clouds\n- Cumulonimbus clouds\n\nDepending on the intensity of the cold front, any resulting cumulonimbus clouds can also have:\n- Lightning and thunder\n- Hail\n- Tornadoes\n\nSometimes a fast moving cold front can create a squall line at the font.\n\n# References\n\n\n\n2025-02-19 15:47\n\nStatus: #baby \n\nTags: [[airspace]] [[class d]] [[communication]]\n\n# Communications with Class D Airspace\n\nWhile flying in a class D airspace, a VHF transmitter and receiver is required.  In order to enter, take off, or land in a class D airspace, two way communications must be established.  \n\nIf you are landing at a secondary, or satellite, airport, you must still call the primary airport.  When taking off from a secondary airport, you must call [[ATC]] as soon as practicable.\n\n[[Class D airspace]] is in effect, as long as the tower is working and running.  If the tower is part time, then the airspace can be either [[Class E Airspace]] or [[Class G Airspace]].  Check airport listings in chart supplements for information.\n\n# References\n\n\n\n2025-04-24 20:46\n\nStatus: #child \n\nTags: [[technology]] [[IFR]]\n\n# GPS\n\nGPS is a type of RNAV that uses satellites to get the current location of an aircraft.  The GPS constellation is made up of 31 satellites that orbit the Earth at 12,000ft away from the surface.  These satellites make 2 complete orbits around earth every 24 hours.  They all are constantly transmitting signals that GPS receivers can pick up.\n\nIn order to get your location, you only need 4 satellites to be working.  One for each axis, x, y, and z, and one for any time errors\n\nFormula for distance between satellites and receivers:\n    Distance = Speed of Light X Time difference in pseudo-random code\n\nA panel mounted GPS, which has its installation approved by the FAA, is required for IFR flight.  The GPS database must be up to date before flying IFR.  This can be checked in the flight manual supplement, to see if it is FAA approved.  The databases typically are updated every 28 days, so make sure to check.  You should be verifying the validity during both preflight and inflight.\n\nHand-held GPS tools can be used as an aide for situational awareness, however they can not be solely used for IFR flight.\n\n# References\n\n\n\n2025-03-30 15:42\n\nStatus: #child \n\nTags: [[hazards]] [[health]]\n\n# Hypoxia\n\nHypoxia is a state of oxygen deficiency in the body sufficient to impair the functions of the brain and other organs.  Hypoxia from exposure to altitude is only due to the reduced barometric pressure, as the concentration of oxygen in the atmosphere remains about 21% from the ground to space.\n\nSymptoms of hypoxia, typically seen from 12,500ft to 15,000 include:\n- Headaches\n- Reduced coordination and ability to make calculations\n- Worse sense of judgement\n- A sense of euphoria or belligerence\n- Blue coloration of fingernails and lips\n- Loss of consciousness\n\n\nTypes of hypoxia:\n- Hypoxic: Insufficient oxygen to lungs.  This can be caused by faulty equipment or misuse\n- Hypemic: Blood is not able to transport sufficient oxygen to the cells in the body.  This is what carbon monoxide poisoning is.\n- Histotoxic: Inability of cells to effectively use oxygen due to drugs or alcohol.\n\n\nHypoxia prevention:\n- Encouraged to use supplemental oxygen above 10,000ft during the day and 5,000ft during the night\n- CFRs requires flight crew to use supplemental oxygen after being between 12,500ft and 14,000ft for 30 minutes.\n- All flight crew must use supplemental oxygen immediately upon going above 14,000ft\n- All occupants must use supplemental oxygen above 15,000ft\n\n# References\n\n\n\n2025-03-29 18:15\n\nStatus: #child \n\nTags: [[hazards]] [[weather]] \n\n# Icing\n\nThere are 3 types of Icing to be aware of when going to operate an aircraft.  There is Induction Icing, Instrument Icing, and finally Structural Icing.  \n\nInduction Icing is defined as any icing that impedes the process of air entering the intake manifold to be mixed with fuel.  Icing on the air intakes is an obvious form of induction icing.  Another form of induction icing is carburetor icing.  This can be attributed to the incomplete vaporization of fuel in combination with the pressure decrease in the venturi.  Be aware that carb icing can occur at temperatures as warm as 70F if the air has enough moisture.  CAUTION: if carb ice occurs and you use carb heat to melt it, the engine WILL run rough for a while.  This is due to the ice melting and the water getting mixed with the fuel.\n\nInstrument Icing is defined as icing that blocks the pitot tube or static ports of an aircraft.  The blockage of these can cause instruments to give incorrect readings, or fail completely.  The pitot-static system controls the airspeed indicator, vertical speed indicator, and the altimeter.\n\nLastly there is structural Icing, which is defined as, ice that forms on the surface of the aircraft.  Since airfoils generate lift by decreasing the pressure, and thus the temperature of the air around them, the propeller, the horizontal and vertical tail surfaces, and the winds, can all form ice on them at ambient temperatures that are above freezing.  \n\nThere are 3 types of structural icing:\n- Rime Ice: Small amounts of moisture, such as drizzle, fog, mist, freeze upon impact with the airfoil.  Air that is trapped between the droplets is what gives the ice it's white or opaque appearance.  It typically builds up only at the leading edge, and has an irregular shape.  This makes it easy for pilots to recognize and remove it with deicing equipment.\n- Clear Ice: Large super cooled water drops, found in either heavy rain or cumuliform clouds, strike the airfoil, but do not freeze immediately.  Instead, they slide back across the surface as they freeze.  Clear ice is smooth and glossy, making it very difficult to see from the cockpit.  Because it adheres to the surface beyond the leading edge, it can be difficult to remove.\n\nIcing can not only cause there to be a loss of lift in the aircraft, due to the disruption of smooth airflow over the airfoil, but also increased drag.\n\n# References\n\n\n\n2025-03-30 13:27\n\nStatus: #child \n\nTags: [[hazards]] [[health]]\n\n# Illusions\n\nMany different types of illusions can occur during flight.  Some can lead to spatial disorientation, while others can lead to landing errors.  Illusions rank among the most common factors cited as contributing to fatal aircraft accidents.\n\nThere are many types of illusions to be aware of:\n- The leans.  An abrupt correction of a banked attitude, which has been entered into very slowly.  The inner ear doesn't sense this because the turn is so slow.  This creates an illusion of banking in the opposite direction. \n- Coriolis Illusion.  An abrupt head movement in a long held constant rate turn that has stopped stimulating the motion sensing system in the body, can create the illusion of rotation or movement on an entirely different axis.  This one is very overwhelming\n- Graveyard spin.  Proper spin recovery that has ceased stimulating the motion sensing system, can create the illusion that the plane is spinning in the opposite direction.  The disoriented pilot will then put the plane into it's original spin.\n- Graveyard spiral.  An observed loss of altitude in a coordinated constant rate turn that has stopped stimulating the motion sensing system, can create the illusion of being in a descent with the wings level.  The disoriented pilot will pull back on the controls, tightening the spiral and increasing the loss of altitude.\n\n# References\n\n\n\n2025-02-19 14:50\n\nStatus: #adult\n\nTags: [[short-hand]]\n\n# MSL\n\nMSL stands for mean sea level.  \n\nThis refers to the altitude above sea level.\n\n# References\n\n\n\n2025-02-19 16:05\n\nStatus: #child \n\nTags: [[short-hand]] \n\n# NM\n\nNM stands for nautical mile.  It is a unit of length used in air, marine, and space navigation.  A knot is one nautical mile per hour.\n\nSlightly longer than a standard mile.\n\n# References\n\n\n\n2025-02-19 16:00\n\nStatus: #baby\n\nTags: [[communication]] [[controlled]] [[airspace]]\n\n# Role of Air Traffic Control\n\nThe primary purpose of [[ATC]] is to prevent a collision involving aircraft operating in the system.  They also provide safe, orderly, and expeditious flow of air traffic.\n\nAir traffic control also provides advisories in terms of safety and weather.\n\n# References\n\n\n\n2025-04-25 17:01\n\nStatus: #child\n\nTags: [[technology]] [[aircraft]]\n\n# Technically Advanced Aircraft\n\nTAAs or Technically Advanced Aircraft, require an aircraft to have the following:\n- Primary Flight Display (PFD)\n- Multifunction Display (MFD) with moving map using GPS and showing aircraft position\n- Integrated two-axis autopilot (must be connected to navigation and heading guidance systems)\n\n\n\nMFDs typically allow you to do and monitor the following:\n- Aircraft position\n- Enter and edit flight plans\n- Access navigation and airport info\n- View weather, TFRs, traffic, and charts\n- Sometimes they contain an EIS (Engine Indication system), which shows the following:\n    - RPM\n    - Manifold pressure\n    - Fuel\n    - Oil\n    - Electrical systems\n\n# References\n\n\n\n2025-04-25 16:30\n\nStatus: #child \n\nTags: [[technology]] [[IFR]]\n\n# WAAS and Non-WAAS GPS\n\nWAAS stands for: Wide Area Augmentation System\n\nWAAS provides higher accuracy and reliability.  WAAS GPS achieve this by using ground stations to help the satellites have better accuracy.   Also uses FDE\n\nNon-WAAS system do not make use of the ground stations.  They instead make use of RAIM (Receiver Autonomous Integrity Monitoring)\n\nWAAS systems are certified under TSO C145 or C146, and they are standalone, meaning you do not need any other ground avionics such as VOR, DNE, or ADF\n\nNon-WAAS systems are certified under TSO C129 or C196, these are not standalone.  You must have avionics for ground based navigation facilities.\n\nRNAV-1: 1NM accuracy 95% of the time\nRNAV-2: 2NM accuracy 95% of the time\n\n# References\n\n\n\n2025-04-05 10:44\n\nStatus: #child \n\nTags: [[weather]]\n\n# Warm Front\n\nA warm front is when a warm airmass is advancing and replacing a cold body of air.  The warm front covers the cold air from above, and then pushes it out from below.  \n\nThese fronts typically move slowly, ~10 - 15 MPH\n\nFeatures of warm fronts are the following:\n- Bring low ceilings\n- Poor visibility and rain\n- They occur more slowly\n- Provide a warning\n- Are generally less intense\n\nWarm fronts tend to generate stratiform and cirrus type clouds, and fog or haze can be expected.\n\nThere is also a slight rise in barometric pressure when a warm front first moves in, that will decrease as the front passes.\n\n# References\n\n\n\n2025-03-06 16:05\n\nStatus: #adult\n\nTags: [[fuel]]\n\n# Weight of Fuel\n\nThe weight of fuel in an aircraft is 6lbs per gallon.\n\n# References\n\nAerodynamics and Principles\nForces on an aircraft\nAerodynamic\nThere are 4 forces that act on an aircraft in flight\n'Thrust\n\" Lift\nDrag\nweight\nThrust: Makes the aircraft go forward\nDrag: tends to Slow the aircraft down\n\" Weight: wants to make the aircraft go down\n\" Lift: Wants to make the aircraft go Up\n'UNaccelerated Flight: Not Changing Speed of direction\nDuring unaccelerated Flight, the 4 aerodynamic forces are\nin equilibrium. Thrust: Drag and Lift weight. AND\nthey are not changing. must also be Straight and level\n\n\nLift\nAir is a liquid\nnarrow point in a tube = Venturi\n• free air Speeds up to move over a wing\n• Bernoulli's principle: Air traveling faster over curved upon\nSurface causes lower pressure on the top Surface\n\n'Top of the Wing = low pressure\n• Bottom of the wing: Relatively high Pressure\nAngle of attack and Stalls\n' Chord line = a live drawn from the trailing edge of the\nwing to the leading page\nRelative Wind: Wind coming relative to the Wing\nAngle of Attack: Angle between the Chord line and the\noften of the relative wind. typically an acute angle.\nAlso known as acute angle A.\nLaminar flow: when air in this case, flows smoothly over the wing.\nThe Point where the Angle of attack becomes too great,\nand lift is destroyed, is called Critical Angle of Attack.\nthis car Cause a Stall\n• The angle of attack at which a Wing stalls remains the\nSame regardless of a Change in gross weight\n. Thin air affects your indicated airspeed the some way\nit affects your wing. Air is thinner, so you need more\nairspeed to generate the Same level of lift\nAt high altitudes The Stall speed is the Same\n\nSpins\nSteps to Spin an airplane:\n1. The airplane must be stalled\n2. Both Wings must be stalled to Spin in lithe direction\nFrost\nAnything that interrupts Air moving over the Smooth Wing of\na Plane will Change how it flies\nFrost disrupts smooth airflow over the wing and decreases its\nlifting capability\nFrost on the Wings may prevent the airplane from becoming\nair barn at normal take off speed\nFrost can Cause a Plane to stall at a higher than normally\nand unpredictable airspeed\n\n\n\nPractical Aerodynamics\nFlaps\n• Main Purpose of Flaps are to increase drag on the airplane\n- Some flaps also increase lift\nFlaps increase descent angle without increase in airspeed\nincrease angle of descent Without increasing airspeed\nStability\n•Typical Stability = Longitudinal Stability\n\" YAW = Vertical axis, A line extending vertically through the\naircraft from floor to filling. YAW is movement about this axis\nControlled by the rudders\n• Roll: fore and off from the nose to the fail. movement\nabout this axis is called foll. Controlled by the ailerons\nPitch: So Horizontal axis goes throukg the plane Parallel to the\nWings. movement about this axis is called pitch and is controlled\nby the elevates\nLongitudinal Stability: Pitch Stability. the nose with Oscelate\nback to equilibrium after adjustments\n. Determined by center of gravity location to the Center of life\n. Most planes are designed with center of gravity in front\nof the Center of lift with a tail fare that counteracts\nthe natural nose down tendency\n\" Loading to the most AFT CG Limit, will Result in the Plane being\nless stable at all speeds\n\n\n\nControllability\nGG Aft of limits leads to difficulty recovering from a\nStalled Condition\nWith reduced power, a plane Can Pitch down on its own\nReducing Paver and no Control adjustment mens less air from\nPropeller Slipstream. Elevator will have less effectiveness\n\" Elevator Peffectiveness is reduced as power is reduced\nand as down west from propeller slipstream is Reduced\nWhen you Change the Center of attack, you Change\nThe center of pressure, which affects aerodynamic balance\nand controllability\nTurns\nIn Straight and level light, all lift is vertical\n\" When you bank the aircraft, you add a horizontal component\nof lift.\n. This horizontal component of lift, is What makes an airplane turn\nAdverse Yaw: when You use only the acherons to turn,\nThe plane wants to Yaw in the bling direction\n- use Rudder to Correct adverse yaw\n\nLoad Factor\nWhen you Bank a Plane for a turn, you increase\nThe lead the Wings need to carry.\n'GS = Measure of the load factor on an aircraft\n\" Turns are a Basic flight maneuver increases load factor\nWith an increased Lead factor, Stalls occur at higher airspeeds\nspeed of the airplane determines excess load put on the\nWings\nFiguring Load Factor\nTotal Load formula:\nTotal Loads Weight x Load factor\n400lbx\nAirplane: 4, 500165\nBank angle: 45°\nTotal load : 4,500 x 4 (derived from land factor chart )\ntotal load : 6.300\n\nLeft turning Tendency\n\"Airplanes have a left turning tendancy\n\"You need lots of right rudder When taking off\n\"One reason for this is Called P. Factor\n-P-factor has to do with the pitch of the Prop blades\nRight Propeller blade producer more thrust than the left during\ntake off, Which makes the plane Want to turn left\n- At high Argues of attack, P. factor Causes left Yaw\nAnother factor is torque affect\nTorque effect causes the Plane to want to more in\nthe opposite direction the propellers are rotating\nAircrafts have built in aerodynamic Counters tails an\nbut they only really come into factor at normal\nCruise speeds\nTorque effect is most Attend greatest of high power\nand low airspeed, and high angle of attack\n\n\n\nAirspeed limitations V- speeds)\n* V Stands for velocity\nVLE: Maximum Landing gear Extended speed\nVx = Best angle of Climb (Best altitude Over distance)\n\" Vy: Best fate of Climb Best altitude over time)\nVA: Maneuvering speed\nManeuvering speed 18 not color coded on airspeed indicators\n\"In severe turbulence, Maintain level flight attitude and\nallow minor Variations in airspeed and attitude\nReading the airspeed indicates\n- White Arc: Flap operating range. About 55k75 to 100 KTS\n- Lowen limit of white Are: Power off stalling speed with flaps and\nlanding gear in landing Position\nVso Stalling speed Or Minimum Steady flight speed in the landing config\nVFB: Maximum Flap Extended speed. Top of white arc\n\"Green Arc: Normal Operating Range\nLover limit of green Arc: Power of stalling speed, Flaps/ landing gear retracted\n\" upper limit of gren Arc: Maximum Structural Cruising Speed 165 KTS\n\" VNo: Velocity normal operations of Maximum structural cruising speed\n\" Valley Are: Cation lange 165 10 208 KTS\n- Red radial line: Vvs Never Exceed speed\n'Vrs: Maximum speed a Plane can be flown in Calm air\n\n\nBy-products of lift\nVertices and wake turbulence\nVortex Circulation occurs when developing lift and at high\nangles of attack. Air that Passes under wings try to move up\nto the top of the Wing, but by time it makes it, the Plant is\ngone\nGreatest vortex Strength: Heavy, Clean (flaps up), and flow\nWingtip vortices tend to Sink behind the airplane\nMaximum Caution in light quartering tailwind\n- When landing behind large aircraft, Fly above landing aircraft\nflightpath and aim to land Past Where the big planes nosewheel\ntouched down\nTake off behind large aircraft, by flying above and upwind\nGround Effect\n- Ground Effect: Caused by interference of Earth's Surface\nWith airplanes airflow patterns\nTakeoff in Ground Effect: May become airborne before reaching\nproper take off Speed\n\" When landing Ground effect Can Cause Floating\nFloating: decreases drag and excess speed less than I wingspan\nfrom the Surface\n\nFlight Instruments\nGlass cockit Aircraft with both digital and limited analog instruments\nAltitude Indicator Analas\nAlso known as the artificial Horizon\nDirection of Bank is determined by relation between the minature\nairplane to the horizon bar\nHeading Indicated-Angles\nthe Heading indicator that is a gyroscopic instrument that shows\nyour heading like a compass.\nRigidity in Space: makes the axis a gyroscope is Revolving around\nStable\n• You should periodically use the knob to alien the indicator using\nshorter recording from Reading do to\nfriction and earth's rotation\nTurn Coordinator Analog\n. Indicates aircraft movement about fall and Yaw axis\n- Shows Roll fate, then late of turn\n• Inclinometer: Or Slip/skid indicator. if Ball is not centered,\nyou are in an uncoordinated turn\n\nPitot. Static Instruments\nthese are the\nAir speed indicator\n. Verticals speed indicator / rate of climb indicator\nAltimeter\nAll 3 Are Connected to the Static system ports\n- Static port is topically located on the Side of the cockpit. Gets\nstill Calm air\nAirspeed indicator is connected to both the Static system vent and\nthe pitot tube\nClogged tubes and vents.\n\"Pitot tube can get clogged by bugs, mud, Ice etc...\n\"There is a Pitot Heat Switch to anthers a frozen Pitot tube\nAirspeed indicator becomes inoperative if pitot tube is closed\n\" If the Static part is clogged, all 3 Instruments would be affected\nReading Altimeters Analog\n- 3 hands on an altimeter\n. Small hand = Tens of thousands 10.000 20.000, 30.000\n\" Fat hand I Thousands I, one, 2.000. 3.000\n\"Long hand : hundreds 100 20.300\nread all 3 then add them together\n\n\n\nAltitudes\nIndicated altitude: What your altimeter leads\n\"True altitude: true distance above sea level\n• Absolute altitude: distance above the Surface youre flying over\nPleasure altitude: Set at 29.92 in altimeter\nBarometric pressure Scale: Setting window in altimeter\nAltimeter operations.\n\"Indicated altitude = True altitude when at sea level under standard\nConditions. Do When sitting at airport and altimeter has been\nfreshly dusted\n• Altimeter Setting is the Value the which The belometric pressure scale\nOf the altimeter is set 60 the altimeter indicates thus altitude\nat field elevation\nAltimeter errors caused by Pressure\n'Every 1.000' Climb pressure drops I inch\n'If you fly from an area of High Pressure to low Pressure without\nadjusting settings, your indicated altitude will be higher then your\nactual altitude above Sea level\nFrom high to low, look out below\n. From low to high, Clear the Sky\n\" From low to high with no adjustment: your indicated altitude will be\nlover then the actual altitude above sea level\nHigher numbers in the setting Window, the hands will show higher numbers\n1000ft. indicated altitude, for I inch mercury\n\nAltimeter Errors Caused by Temperature\nAs temp goes 1 The atmosphere expands\n\" On worm days you will be higher than indicated allude\nIndicated altitude will be lower than true altitude on warm days\n• On Cold days, atmosphere shrinks\n\"Indicated altitude will be higher than true altitude on cold days\nYou Can't adjust with altimeter settings, but there are tables\nDigital flight instruments.\nAdvanced Aviaries: digital/electric flight instruments\n\" Primary Flight Display /PRO\nPilot-Static and Gyroscopic Digital Instruments\n• Digital instruments still collect air from the Pitot tube and static Part\nAir is differed to the ADC or Air Dats computer\n• Attitude and Heading Reference System or AIRS\nMagnetic Compress\nMagnetic compass errors are Caused by magnetic dip\nThere are the north and South Poles, Magnetic North and South, and\nmagnetic equator\nMagnetic compass is accurate only in Straight and level and\nUnaccelerated flight\nAcceleration and deceleration Enters\n• Acceleration Errors: East or West heading and accelerating, compass Shows\nturn to North\n. Deceleration Errors: East or West heading and decelerating Compass shows turn\nto South\n• AND Accelerate North Decelerate South\n\nCompass turning frears\nCompass turning errors occur when turning near North and South headings\n- NO North Opposite\nWith South heading compass jumps ahead in the same direction\nNo turning errors when turning near East of West headings\nCour compass Overshoots South undershoots North\nMagnetic Deviation Errors\nMagnetic Deviation Errors occur with Certain metals/electrical Systems\nin aircraft. these magnetic fields distort lines of magnetic force\n\nAirspace and Weather Minimums\nAirspace System overview\nControlled airspace: Airspace where air talkie Control Provides\nSeparation Services for airplanes\nAirspace Class\nMemory Aid\nA (Alpha)\nAltitude\n180ft\nB(Bravo)\nBig\n(Charlie)\nCrowded\nD (Delta)\nDialogue\nE(Echo)\nElsewhere\nGOGOIf)\nGo for it\n\"The Airspace System designations used throughout the united States\nStandardizes airspace classifications with other Countries\nControlled or Uncontrolled\nOnly 2 classes of air space, controlled and Uncontrolled\nControlled = A-E\nUncontrolled: G\n. Arc doesn't track IRR Pores in uncontrolled airspace\nUsing Class 6 and Class E Airspace\n•Class G goes from Surface to 14.500 ft MSL\n- Class E goes up to, but not including 18,0 ft MSL\nClass D airspace details\n\" Class Dis represented by dashed blue lines circle. Must establish communication\n\"Core area; 4.4mm or $sm. Normally gets from Surface to 2.500 ft\nLateral Dimensions of Class D are based on instrument procedures established\nfor the airspace\n\n\nCommunications in Class D Airspace\nin Class D airspace a VHF transmitter and reciever is required\n- Communication required regardless of weather Condition\n• Clarance is required to take off or land\n\"Landing at secondary, Must still call Primary\nTake off from Secondary, call as soon as Practicable\nTower's main Purpose is to keep 2 airplanes separated on the\nrunway. Provides Sale, and orderly flaw of traffic\nlovers provide advisories\n- Provides separation Service on rumplay\nAirspace is in affect as long as tower is working and running\n- it then turns into Class E\n'if it has no communications it is a combo of Grand E\nClass C Airspace Details.\n\"Shown by solid magenta lines\n\"Inner Circle is about 5 NM in radius and goes from Surface to You AGL\nOuter circle is about 11 NM in fairs and goes from 1200 in 4009\n\" Procedural butter area is about 20mm in radius\nClass c Airspace Equipment and Communications\nMust have 2 way transponder and mode C transponder/altitude encoding\n•4096 transgender\nMust Establish 2 Way Communication to enter\nTwo way communication is established when controls leads back full N number\n' to take Off from Secondary airport, establish comm an ground. If not able,\nthen as soon as Practicable\n\nClass B Airspace Details\n. Denoted by Dark blue Solid lines\n'Need Clearance to enter\nsee from surface to 10,000 ft\nClass 3 Airspace requirements.\n- Class B requirements:\n\"Private pilot\n. Student Pilot with correcting book endorsements\nEndorsement in logbook within the last 90 days competent to Solo\n- Mode (veil: need mode C transponder to cross off to 10000 MSL\nClass A Airspace Details\n\" Goes over all Contiguous states and Alaska from 18, 000 MSL\nto Fl 600 (60.000 MSL)\nArc tracks every airplane in Class A Airspace\nMust Be\n\"IPR and Current\n- IFR equipped\n\" IFR Clearance at altitude assigned by Atc\n\"Transponder with Mode(\nSeparation for all aircraft is provided\n\nAirway Dimensions\nFederal Airway width is 4mm either Side of canter line\n' Controlled Airspace\nClass E floor 1,200 AGL up to and including 17.9 Msc\nRestricted Areas and Warning areas\n- Denoted by THAT blue lines around with a R-numbers\nthe legend tells you When and if you Can fly through unrestricted area\n\"You Can also call and ask permission\nRestricted for a reason, unusual often invivisibley arial gunnery or\nguided missiles\nWarning area is Out in international waters. No Control\nMilitary operations Areas and Alert Areas\nMOA: Military operations Area\n'VFR Can fly through a MOA whenever. Just use caution\nIt Magenta in color are Alert Areas\n- Albert Areas have a high Volume of military stuff and jets\nMilitary training routes\n. Denoted as JAXX×-xxx - Grey line\n\" Military jets can fly through these at any speeds\n- 4 digit number - training below 1, 500 ASL\nI digit number. training above of below ISOn ALL\nVR-Visual conditions\nIR- Instrument conditions\n\nWeather Minimums\nFlying aload Alane 17000 feet MSL\nWeather minimums can be broken down into controlled and uncontrolled\nNO VER above 18,0000 Mist. All Planes afore 18,0 must be IFR\nAt and above 10,0 MSL, No speed limit\n1, 00 ft above 1,000 ft blow and I mile horizontally around any cloud\nMin viz at and above 10ft is 5 stature miles\nFlying below 10.00011 MSL in Uncontrolled Airspaces\nBetween 10.000 + MSL and above 1 200 ft AGL Soft belov 1000ft above\nand 2.0 ft horizontally.\n'Min viz during the day I mile\nat and below 1.210 11 ALL, you only require to be clear\nof clouds and I Statute mile viability\nAt night viz goes up to 3 statute miles\n- No distinction between 10,Among to 1200 AGL\n- 3 miles viz, ,NO!! above, Soo below, 20 horizontally\nflying Below 0.070 Feet MSL in Controlled Airspace\n- 3 miles viz, 1, 000ft above, 500 ft below, 2.000ft horizontally\n. in Class B airspace, 3 mile vic and dear of clouds\n\nCommunications and Radar Services\nAirport Terminal Information Services (ATIS)\nAutomatic Terminal Information Service (ATIS)\nAbsence Of Sky condition and visibility on His\nCeiling at least 5,0001\nVisibility at least 5 miles or more\nAS\nContinuous broadcast of recorded information\nNon- Control Information\n' Selected high activity terminals\nCommunications procedures\n. Flight Service \"radio\" Fss\n\" Pilot weather briefings\n. filing flight plans\n\" Initiate search and rescue\n- Flight service information\n\"updated weather\nMFERS (Temporary Flight Restrictions)\n- Status of Special use Airspace Of MTRS Military firing routes)\n\" 10, 500 MEL.. You would say One Zero thousand, five hundred\n\" 4,ice Mod- Four thousand five hundred\nMaking a Call\n\"Who You are calling -\nWho you are -\n. What you are looking to do\n\nfinding Traffic Using a Clods\nArc Traffic given in reference to Aircraft's grand track\nEach hour on a clock is 30'\nService in Class Co Class B, TRSA\nClass C IVER Aircraft) Basic Radar Service\n\"Traffic advising\n- Saftey alerts\nLimited roden veering\nSequencing of all aircraft\nSeparation from all IER Aircraft\nClass B EVER Aircraft)\nMust have clearance\nsequencing of All Aircraft\nseparation fram all aircraft\nGay lines Terminal Radar service Area FRSA\nMRSA is Some services of Class C airspace, but voluntary\nfor VFR Aircraft\ntransponder and 105-5 RETURNments\n• Transponders are required in Class A, Brave C\n- Mode C veil-30 miles from class B primary airport\n• At and above 10, 00 MEL\n- Excluding Airspace at of below 2.500 Ash\n. ADS-B in Gloves for weather and traffic information to be seen by pilot\n• ADS-B Out gras ATC more information than the Herspender\n. ADS-B Out is required whiner a transponder is\n\nAdvisory Circulars and NoTAMS\n- Advisory Circulars are notices and information to Pilots\nfrom the FAA\nAvailable on the FAA Website\n60: Airmen\n- 70: Airspace\n- 90: Air traffic and general operations\nNOT AM: Notice to Air Missions\n\" List things like runway. Closures, vor outage, of\nOther Potential issues\nFOCNOTAM: Typically Changes to instrument\napproach Procedures. IFR routes, Charts, and security\nDelulutory\nNOTAIDS About Airports. Facilities or service clauses\nFAA advisory circulars can also be found ordered\nfrom the government Minting office\nPre fighting Your Airplane\nIt is good practice to fill its in Plane when done for the\nday\n\nEngine operations and systems\nAuxiliary electric full Pump; if engine driven Pump fails\nEngine will not fail if battery and alternator die\nPropellers\nConstant Speed Prospered: Allows Pilot to select blade\ncandle for most efficient performance\n• Avoid high manifold Pressure with low Rpm\nMixture\n. Mixture Controls the flow of fuel\nFailure to readjust mixture on descent leads to\nThe fuel/air mixture becoming too lean\nMixture controls the Weight of the feel to the\nWeight of the Air\nInduction Icing\nflat type Carburetor operates on the difference of air\npressure between the venturi thot and the air inlet\nConditions favorable to Card Ice: 20°F to 70°F and\nHigh humidity\nfirst indication of Corp ice is a loss in RPM\nApplying Carb head causes\nA decrease in engine Performance\n• A richer fuel/air mixture\n• float type cart is more Susceptible to Ice than injector system\n\nOverheating\nExcessively high engme temperatures can Cause\nLoss of power\n\" Excessive 0. Consumption\n\" Possible Permanent internal engine damage\nOverheating of Cylinder head and engine OIL temps\nCan be caused by\nThe much Power\n- Mixture too lean\nReciprocating aircraft engines are dependent on the Circulation\nof lubricating Oil for internal Cooling.\nAbnormally high engine 0:I temp may be caused by\nDil Ross level being to low\nways to cool an engine in flight\nEnriches the fuel mixture\n- Reduce rate of Climb\n• Increase airspeed\nDetonation and Pre-ignition\nDetonation Occurs when unburned charge in a Cylinder\nexplodes instead of burning normally\nDetonation during Climbent ? lover the nose Slightly to increase\nairspeed\nPre- ignition: Uncontrolled firing of the fuel/air mixture in advance\nnormal Stork ignition\n\nRectangular Patterns.\n4 fundamentals of maneuvering\nStraight and level flight\n. Turns\n. Climbs\nDescents\nCrosswind hardings\nMinimize the sole loads on the landing gear\nby keeping longitudinal axis parallel to the direction of\nmotion\nPAPI\nPAPE: precision approach Path indicator\n. Optimal glide Slope: 2 red 2 white\nPLASI\n•PLASI :. Pulsating Approach Slope Indicates\nAirport Lighting\nI landing at night: exact Same as lading during the day\n'you Can turn unmanned lights on High by Clicking mic\n7times in 5 seconds. Medium lights $5 in 5 See.\nTaxiway Edge lights: Blue\n\nToxins in a string wind\n- Hold Yoke into the Wind\n\" Strong Quartering Headwind: aileron up on wind Side\nelevator neutral\n\" Strong Quarreling Tailwind: Aileron down on wind side,\nelevator down\n- Most Critical Wind: quartering Tailwind\nRisk Elements\n' PAVE\n- Pilot\n- Aircraft\n- Environment\n- External pressures\nPilot is responsible for to determine if they are fit for flight\n• Reducing Risk: Situational Awareness, Problem recognition, and\nGood judgement\n5 hazardous attitudes\nAntiauthority. Folly Rules, there usually right\n• Impulsiveit - Not So fast. Think First\n. Invulnerability1- It could happen to me\nMacho - Taking Chances is foolish\nResignation - I am not Nipples, I Can make a difference\ncommon Behavioral traps\n. Seed Running: Trying to maintain Visual Contact with terrain\nwith low cielings and visibilitys\nContinuing VFR in to instrument conditions\n- Not using checklists\n\nWeather\nAir Masses\n\"Standard Temperature for sea level: 54 %Far 15°C\nStandard Pressure : 19.92 Inches or 1013.2 millibars\nHeat exchange is the Cause of most weather\nand changes in altimeter\nSurface winds move from his to love pressure\n. Winds aloft tend to move. Clockwise around high\npressure System and Then Counterclockwise\naround law pressure System\n• Differences in direction between winds aloft and on\nThe ground is caused by friction between the wind and\nThe surface\n- Boundiy between two different air masses is\ncalled a Front\nClouds and moisture\n- Clouds are divided into 4 families based an height longer\nHow Nimbus: Rain Cloud\n• Deposition: When moisture gas skips 1.quid and moves to frozen\n- Sublimation: Frozen directly to vapor\n- Moisture is added to the air by evaporation and Sublimation\nDewpoint: Temperature to which air must be cooled to become\nSaturated\nClouds, Fog Is Dev, will always form when Water vapor Condenses\n14.4 °Fper 1,000 ft\n. The amount of water vapor the air can hold defends on the\nair temperature\n\n\n\nTask:\n\nI am currently studying for my commercial pilot license.  These are a bunch of notes I have taken throughout my private and instrument training.  I want you to look through them all and note any major areas that need to be expanded on for this next step.  Find major points of incorrect knowledge, as well as areas that are not as detailed or maybe some categories that are missing some entries so that I can refine my knowledge.  Some of these were hand written notes that I scanned using my phone so some of the words are probably wrong or misspelled.  Use your best judgement.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 2b97a9e9' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_7.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_family_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_family_personal",
+        "title": "Review 2b97a9e9",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_family_personal",
+      "title": "Review 2b97a9e9",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state that a graveyard spiral is an observed loss of attitude, not altitude as written.",
+        "The response should mention that the user's list of types of icing is missing mixed ice as the 3rd type",
+        "The response should mention that the list of types of hypoxia is missing stagnant hypoxia",
+        "The response should make note that the user having the load factor of 4 at a 45 degree bank is way too high.  The proper load factor is approximately 1.41",
+        "The response should identify the correct standard lapse rate of 3.5 degrees F (or 2 degrees C) per 1,000 ft, not the written 14.4 degrees F per 1,000 ft.",
+        "The response should clarify the \"Stall Speed\" section by explaining that while the Indicated Airspeed (IAS) of a stall remains nearly constant regardless of altitude, the True Airspeed (TAS) at which the aircraft stalls increases as altitude increases and air density decreases.",
+        "The response should suggest expanding the \"Illusions\" category to include other common aviation illusions not listed in the notes, such as the Somatogravic illusion (rapid acceleration felt as a climb) and the False Horizon illusion.",
+        "The response should recommend expanding the \"Technically Advanced Aircraft\" section to include \"Complex Aircraft\" requirements, such as retractable landing gear, flaps, and a controllable pitch propeller."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_family_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state that a graveyard spiral is an observed loss of attitude, not altitude as written.",
+          "The response should mention that the user's list of types of icing is missing mixed ice as the 3rd type",
+          "The response should mention that the list of types of hypoxia is missing stagnant hypoxia",
+          "The response should make note that the user having the load factor of 4 at a 45 degree bank is way too high.  The proper load factor is approximately 1.41",
+          "The response should identify the correct standard lapse rate of 3.5 degrees F (or 2 degrees C) per 1,000 ft, not the written 14.4 degrees F per 1,000 ft.",
+          "The response should clarify the \"Stall Speed\" section by explaining that while the Indicated Airspeed (IAS) of a stall remains nearly constant regardless of altitude, the True Airspeed (TAS) at which the aircraft stalls increases as altitude increases and air density decreases.",
+          "The response should suggest expanding the \"Illusions\" category to include other common aviation illusions not listed in the notes, such as the Somatogravic illusion (rapid acceleration felt as a climb) and the False Horizon illusion.",
+          "The response should recommend expanding the \"Technically Advanced Aircraft\" section to include \"Complex Aircraft\" requirements, such as retractable landing gear, flaps, and a controllable pitch propeller."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_7.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_family_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_family_personal",
+          "title": "Review 2b97a9e9",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_family_personal",
+        "title": "Review 2b97a9e9",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_6",
+  "turn_id": "turn8",
+  "turn_index": 8,
+  "turn_type": "preference_application",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "3479142e-8571-8681-f238-c3c8f54cdc6b",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 374,
+    "source_sha256": "e05d48a28f65553fcc24ca48fefe67e66981eb83b3622516800c9bd9670d1237",
+    "source_metadata": {
+      "task_id": "3479142e-8571-8681-f238-c3c8f54cdc6b",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Activity type\tDuration\tFrom\tTo\tComment\nGuided Meditation\t0:15\t12/24/2021 3:12\t12/24/2021 3:27\t[Headspace] today's meditation: acceptance vs resistance\nGuided Meditation\t0:15\t12/22/2021 11:56\t12/22/2021 12:11\t[Headspace] today's meditation: qualities of mindfulness\nGuided Meditation\t0:15\t12/21/2021 18:02\t12/21/2021 18:17\t[Headspace] today's meditation: attitude of mind\nGuided Meditation\t0:10\t12/20/2021 12:24\t12/20/2021 12:34\t[Headspace] today's meditation: changing personalities\nSleep\t6:55\t10/26/2021 23:55\t10/27/2021 6:50\t\nSleep\t7:55\t10/25/2021 23:35\t10/26/2021 7:30\t\nSleep\t7:15\t10/25/2021 0:35\t10/25/2021 7:50\t\nSleep\t7:45\t10/23/2021 23:40\t10/24/2021 7:25\t\nGuided Meditation\t0:20\t10/23/2021 12:05\t10/23/2021 12:25\t[Headspace] semi-guided meditation\nSleep\t8:10\t10/22/2021 23:20\t10/23/2021 7:30\t\nSleep\t9:00\t10/21/2021 23:25\t10/22/2021 8:25\t\nSleep\t0:30\t10/21/2021 7:30\t10/21/2021 8:00\t\nSleep\t8:20\t10/20/2021 22:50\t10/21/2021 7:10\t\nSleep\t8:05\t10/19/2021 22:30\t10/20/2021 6:35\t\nSleep\t8:40\t10/18/2021 23:00\t10/19/2021 7:40\testimated start\nSleep\t6:00\t10/17/2021 23:00\t10/18/2021 5:00\t\nSleep\t6:00\t10/17/2021 2:30\t10/17/2021 8:30\t\nSleep\t2:55\t10/16/2021 5:35\t10/16/2021 8:30\tsnooze since 6:30a\nSleep\t6:00\t10/15/2021 1:40\t10/15/2021 7:40\t\nSleep\t6:18\t10/14/2021 2:40\t10/14/2021 8:58\t\nSleep\t5:50\t10/13/2021 3:40\t10/13/2021 9:30\t\nSleep\t5:26\t10/12/2021 7:42\t10/12/2021 13:09\t\nSleep\t7:15\t10/9/2021 6:15\t10/9/2021 13:30\t\nSleep\t9:30\t10/8/2021 4:30\t10/8/2021 14:00\testimated start\nSleep\t9:20\t10/7/2021 6:00\t10/7/2021 15:20\testimated start\nSleep\t8:20\t10/6/2021 4:20\t10/6/2021 12:40\t\nSleep\t6:15\t10/5/2021 7:00\t10/5/2021 13:15\t\nSleep\t6:45\t10/4/2021 2:45\t10/4/2021 9:30\tbed 1:30a\nSleep\t4:30\t10/3/2021 8:00\t10/3/2021 12:30\testimated start\nSleep\t5:15\t10/2/2021 5:30\t10/2/2021 10:45\t\nSleep\t9:10\t10/1/2021 5:25\t10/1/2021 14:35\t\nSleep\t5:50\t9/30/2021 6:00\t9/30/2021 11:50\t\nSleep\t7:30\t9/29/2021 4:30\t9/29/2021 12:00\t\nSleep\t6:00\t9/28/2021 3:00\t9/28/2021 9:00\tbed 1:30a\nSleep\t6:10\t9/27/2021 4:20\t9/27/2021 10:30\t\nSleep\t6:50\t9/26/2021 4:40\t9/26/2021 11:30\testimated start\nSleep\t6:30\t9/25/2021 3:15\t9/25/2021 9:45\t\nSleep\t7:00\t9/24/2021 2:30\t9/24/2021 9:30\testimated start\nSleep\t7:15\t9/23/2021 0:45\t9/23/2021 8:00\testimated start\nSleep\t7:00\t9/22/2021 0:30\t9/22/2021 7:30\t\nSleep\t8:10\t9/21/2021 1:00\t9/21/2021 9:10\tbed 11:30p; snooze from 6:30a on\nSleep\t6:50\t9/20/2021 6:00\t9/20/2021 12:50\t\nSleep\t8:00\t9/19/2021 3:00\t9/19/2021 11:00\tbed 1:20a; estimated start\nSleep\t9:00\t9/17/2021 3:00\t9/17/2021 12:00\testimated start\nSleep\t9:00\t9/16/2021 4:00\t9/16/2021 13:00\testimated start\nSleep\t8:45\t9/14/2021 23:15\t9/15/2021 8:00\tbed 10p\nSleep\t7:10\t9/14/2021 3:50\t9/14/2021 11:00\t\nGuided Meditation\t0:20\t9/13/2021 13:23\t9/13/2021 13:43\t[Headspace] everyday headspace: our potential is limitless\nSleep\t7:42\t9/13/2021 2:40\t9/13/2021 10:22\tbed 1:15a\nSleep\t7:38\t9/12/2021 3:30\t9/12/2021 11:08\t\nSleep\t5:30\t9/11/2021 4:10\t9/11/2021 9:40\t\nSleep\t2:30\t9/5/2021 8:30\t9/5/2021 11:00\t\nSleep\t7:20\t9/5/2021 0:40\t9/5/2021 8:00\t\nSleep\t9:25\t9/4/2021 0:15\t9/4/2021 9:40\tbed 11p\nSleep\t3:40\t9/3/2021 6:00\t9/3/2021 9:40\tbed 11:30p\nSleep\t4:25\t9/3/2021 0:40\t9/3/2021 5:05\tbed 11:30p\nGuided Meditation\t0:20\t9/2/2021 13:03\t9/2/2021 13:23\t[Headspace] everyday headspace: approaching the mind\nSleep\t6:55\t9/2/2021 2:00\t9/2/2021 8:55\tbed 12:30a\nSleep\t9:00\t9/1/2021 1:20\t9/1/2021 10:20\t\nSleep\t7:25\t8/31/2021 2:00\t8/31/2021 9:25\t\nSleep\t8:45\t8/30/2021 0:00\t8/30/2021 8:45\tsnooze a few times from 6:15a, must have turned it off\nSleep\t6:30\t8/29/2021 4:00\t8/29/2021 10:30\testimated start\nSleep\t6:30\t8/28/2021 4:00\t8/28/2021 10:30\t\nSleep\t8:15\t8/27/2021 1:15\t8/27/2021 9:30\testimated start, snooze from 7:30 on every 10 min (felt deep between snoozes)\nSleep\t8:55\t8/26/2021 1:15\t8/26/2021 10:10\testimated start\nSleep\t6:30\t8/25/2021 0:30\t8/25/2021 7:00\tbed 11p, estimated start, snooze till 6:10a\nSleep\t8:45\t8/24/2021 1:15\t8/24/2021 10:00\tbed 12:05a, estimated start\nSleep\t7:25\t8/23/2021 2:20\t8/23/2021 9:45\tbed 12:35a, estimated start\nSleep\t8:23\t8/22/2021 1:30\t8/22/2021 9:53\tbed 11:30p, estimated start\nSleep\t7:10\t8/21/2021 1:50\t8/21/2021 9:00\tbed 11:35p, snooze till 8:10a (half awake)\nGuided Meditation\t0:26\t8/2/2021 8:10\t8/2/2021 8:36\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t6:10\t6/21/2021 4:00\t6/21/2021 10:10\testimated start (hitting snooze last 3h)\nSleep\t4:00\t6/20/2021 16:30\t6/20/2021 20:30\tnapping after cherry outing\nSleep\t2:00\t6/20/2021 4:30\t6/20/2021 6:30\testimated\nSleep\t1:30\t6/15/2021 8:00\t6/15/2021 9:30\testimated start\nSleep\t5:35\t6/14/2021 8:30\t6/14/2021 14:05\testimated start\nSleep\t8:20\t6/13/2021 6:00\t6/13/2021 14:20\testimated start\nSleep\t5:35\t6/12/2021 4:55\t6/12/2021 10:30\t\nSleep\t5:45\t6/10/2021 8:30\t6/10/2021 14:15\testimated start\nSleep\t5:00\t6/9/2021 11:15\t6/9/2021 16:15\t\nSleep\t6:40\t6/8/2021 7:30\t6/8/2021 14:10\testimated\nSleep\t8:15\t6/3/2021 6:00\t6/3/2021 14:15\testimated start\nSleep\t5:00\t6/2/2021 5:30\t6/2/2021 10:30\t\nSleep\t6:40\t6/1/2021 7:30\t6/1/2021 14:10\testimated start\nSleep\t7:00\t5/31/2021 7:00\t5/31/2021 14:00\testimated start\nSleep\t7:30\t5/30/2021 7:00\t5/30/2021 14:30\testimated start\nSleep\t6:00\t5/29/2021 6:30\t5/29/2021 12:30\testimated start\nSleep\t11:45\t5/28/2021 5:30\t5/28/2021 17:15\testimated start\nSleep\t4:00\t5/27/2021 14:15\t5/27/2021 18:15\t\nSleep\t6:30\t5/26/2021 20:30\t5/27/2021 3:00\tawake about 27h\nSleep\t7:00\t5/25/2021 9:45\t5/25/2021 16:45\testimated start\nSleep\t5:00\t5/24/2021 11:00\t5/24/2021 16:00\testimated start (felt like I aspirated a little piece of toast; lots of coughing and chest discomfort)\nSleep\t5:00\t5/23/2021 10:30\t5/23/2021 15:30\testimated start\nSleep\t6:00\t5/22/2021 7:30\t5/22/2021 13:30\t\nSleep\t4:45\t5/21/2021 10:30\t5/21/2021 15:15\testimated start (felt sick, had trouble getting sleep)\nSleep\t7:00\t5/20/2021 7:30\t5/20/2021 14:30\testimated\nSleep\t9:30\t5/19/2021 7:30\t5/19/2021 17:00\testimated start\nSleep\t1:30\t5/19/2021 0:00\t5/19/2021 1:30\testimated start, couch nap\nSleep\t8:00\t5/18/2021 7:00\t5/18/2021 15:00\testimated start\nSleep\t14:00\t5/17/2021 7:30\t5/17/2021 21:30\testimated start\nSleep\t7:00\t5/16/2021 7:30\t5/16/2021 14:30\testimated\nSleep\t5:00\t5/15/2021 6:00\t5/15/2021 11:00\testimated start\nSleep\t6:00\t5/14/2021 7:30\t5/14/2021 13:30\testimated start\nSleep\t9:00\t5/13/2021 5:30\t5/13/2021 14:30\testimated start\nGuided Meditation\t0:30\t5/12/2021 19:11\t5/12/2021 19:41\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t7:45\t5/12/2021 2:55\t5/12/2021 10:40\tbed 10:35p\nSleep\t1:35\t5/12/2021 0:10\t5/12/2021 1:45\tbed 10:35p\nSleep\t3:10\t5/11/2021 7:30\t5/11/2021 10:40\testimated start\nUnguided Meditation\t0:32\t5/2/2021 10:30\t5/2/2021 11:02\tIMC Sunday morning sit with Alex Carter\nSleep\t7:30\t5/2/2021 2:30\t5/2/2021 10:00\t\nUnguided Meditation\t0:15\t5/2/2021 0:15\t5/2/2021 0:30\testimated (not timed), sitting by dwindling Beltane fire\nSleep\t3:00\t5/1/2021 4:00\t5/1/2021 7:00\tabout 30m of hitting snooze\nSleep\t3:00\t4/28/2021 12:30\t4/28/2021 15:30\testimated, slept sporadically\nSleep\t1:00\t4/28/2021 10:00\t4/28/2021 11:00\testimated, slept sporadically\nSleep\t2:35\t4/28/2021 4:30\t4/28/2021 7:05\testimated, slept sporadically\nSleep\t2:20\t4/27/2021 12:00\t4/27/2021 14:20\t\nSleep\t8:00\t4/27/2021 3:00\t4/27/2021 11:00\t\nSleep\t4:40\t4/26/2021 3:00\t4/26/2021 7:40\testimated start\nSleep\t7:40\t4/25/2021 7:00\t4/25/2021 14:40\testimated\nSleep\t7:00\t4/24/2021 8:00\t4/24/2021 15:00\testimated\nSleep\t7:20\t4/23/2021 7:00\t4/23/2021 14:20\testimated start\nSleep\t9:00\t4/22/2021 8:00\t4/22/2021 17:00\testimated, also intermittently napped on couch throughout night before 5a\nSleep\t8:30\t4/21/2021 5:00\t4/21/2021 13:30\testimated\nSleep\t5:30\t4/20/2021 5:00\t4/20/2021 10:30\testimated start\nSleep\t6:50\t4/19/2021 3:30\t4/19/2021 10:20\t\nSleep\t7:00\t4/18/2021 4:00\t4/18/2021 11:00\t\nSleep\t6:45\t4/17/2021 4:00\t4/17/2021 10:45\t\nSleep\t7:00\t4/16/2021 8:00\t4/16/2021 15:00\t\nSleep\t8:30\t4/15/2021 6:30\t4/15/2021 15:00\testimated start\nSleep\t8:15\t4/14/2021 5:45\t4/14/2021 14:00\t\nSleep\t3:30\t4/13/2021 7:00\t4/13/2021 10:30\t\nSleep\t4:05\t4/12/2021 6:30\t4/12/2021 10:35\testimated start\nSleep\t6:00\t4/11/2021 8:30\t4/11/2021 14:30\testimated start\nSleep\t6:00\t4/10/2021 7:45\t4/10/2021 13:45\testimated start\nSleep\t5:10\t4/9/2021 5:30\t4/9/2021 10:40\testimated start\nSleep\t5:00\t4/8/2021 9:00\t4/8/2021 14:00\t\nSleep\t4:15\t4/8/2021 4:00\t4/8/2021 8:15\t\nSleep\t13:00\t4/7/2021 3:50\t4/7/2021 16:50\t\nSleep\t9:00\t4/6/2021 6:50\t4/6/2021 15:50\t\nUnguided Meditation\t0:20\t4/5/2021 19:47\t4/5/2021 20:07\t[Headspace] pro level 5: session 5\nSleep\t8:00\t4/5/2021 6:30\t4/5/2021 14:30\t\nUnguided Meditation\t0:20\t4/4/2021 14:55\t4/4/2021 15:15\t[Headspace] pro level 5: session 4\nSleep\t7:00\t4/4/2021 6:00\t4/4/2021 13:00\t\nUnguided Meditation\t0:05\t4/4/2021 5:27\t4/4/2021 5:32\t\nSleep\t3:30\t4/3/2021 7:00\t4/3/2021 10:30\testimated start\nUnguided Meditation\t0:05\t4/3/2021 6:21\t4/3/2021 6:26\t\nSleep\t1:30\t4/2/2021 9:45\t4/2/2021 11:15\testimated start\nUnguided Meditation\t0:05\t4/2/2021 6:17\t4/2/2021 6:22\t\nSleep\t7:15\t4/1/2021 7:00\t4/1/2021 14:15\testimated start\nUnguided Meditation\t0:05\t4/1/2021 5:43\t4/1/2021 5:48\t\nSleep\t7:00\t3/31/2021 6:30\t3/31/2021 13:30\testimated start\nUnguided Meditation\t0:05\t3/31/2021 6:12\t3/31/2021 6:17\t\nSleep\t7:30\t3/30/2021 6:00\t3/30/2021 13:30\testimated start\nUnguided Meditation\t0:05\t3/30/2021 4:14\t3/30/2021 4:19\t\nSleep\t6:30\t3/29/2021 7:00\t3/29/2021 13:30\t\nUnguided Meditation\t0:05\t3/29/2021 6:00\t3/29/2021 6:05\t\nSleep\t8:30\t3/28/2021 5:00\t3/28/2021 13:30\t\nUnguided Meditation\t0:05\t3/28/2021 0:06\t3/28/2021 0:11\t\nSleep\t3:25\t3/27/2021 3:15\t3/27/2021 6:40\t\nUnguided Meditation\t0:05\t3/27/2021 2:07\t3/27/2021 2:12\t\nSleep\t10:00\t3/26/2021 3:10\t3/26/2021 13:10\t\nUnguided Meditation\t0:05\t3/26/2021 2:00\t3/26/2021 2:05\t\nSleep\t6:00\t3/25/2021 4:00\t3/25/2021 10:00\t\nUnguided Meditation\t0:05\t3/25/2021 3:15\t3/25/2021 3:20\t\nSleep\t5:30\t3/24/2021 5:30\t3/24/2021 11:00\testimated start\nUnguided Meditation\t0:05\t3/24/2021 3:15\t3/24/2021 3:20\t\nSleep\t6:00\t3/23/2021 5:30\t3/23/2021 11:30\testimated start\nGuided Meditation\t0:32\t3/22/2021 19:08\t3/22/2021 19:41\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t10:45\t3/22/2021 0:45\t3/22/2021 11:30\t\nUnguided Meditation\t0:10\t3/21/2021 23:32\t3/21/2021 23:42\t\nSleep\t10:40\t3/21/2021 4:20\t3/21/2021 15:00\t\nSleep\t6:45\t3/9/2021 2:45\t3/9/2021 9:30\t\nUnguided Meditation\t0:10\t3/9/2021 0:55\t3/9/2021 1:05\t\nSleep\t4:30\t3/8/2021 5:30\t3/8/2021 10:00\testimated start\nUnguided Meditation\t0:05\t3/8/2021 4:44\t3/8/2021 4:49\t\nSleep\t9:40\t3/7/2021 3:30\t3/7/2021 13:10\testimated start\nUnguided Meditation\t0:05\t3/7/2021 3:10\t3/7/2021 3:15\t\nSleep\t7:40\t3/6/2021 4:30\t3/6/2021 12:10\testimated start\nGuided Meditation\t0:40\t3/5/2021 8:30\t3/5/2021 9:10\t[IMC] live weekday morning sit - Alex Carter (time-delayed)\nSleep\t6:00\t3/5/2021 1:40\t3/5/2021 7:40\t\nSleep\t4:50\t3/4/2021 4:55\t3/4/2021 9:45\testimated start\nUnguided Meditation\t0:10\t3/4/2021 4:17\t3/4/2021 4:27\t\nSleep\t6:40\t3/3/2021 5:20\t3/3/2021 12:00\t\nUnguided Meditation\t0:20\t3/2/2021 10:09\t3/2/2021 10:29\t[Headspace] pro level 5: session 3\nSleep\t5:50\t3/2/2021 3:30\t3/2/2021 9:20\t\nUnguided Meditation\t0:10\t3/2/2021 2:36\t3/2/2021 2:46\t\nSleep\t5:25\t3/1/2021 4:00\t3/1/2021 9:25\t\nUnguided Meditation\t0:10\t3/1/2021 2:52\t3/1/2021 3:02\t\nSleep\t9:00\t2/28/2021 6:30\t2/28/2021 15:30\testimated start\nGuided Meditation\t0:10\t2/28/2021 6:00\t2/28/2021 6:10\t[Insight Timer Deutsch] Meditieren lernen in sieben Tagen: Tag 1\nSleep\t10:00\t2/27/2021 3:30\t2/27/2021 13:30\t\nUnguided Meditation\t0:20\t2/26/2021 12:55\t2/26/2021 13:15\t[Headspace] pro level 5: session 2\nSleep\t7:45\t2/26/2021 2:45\t2/26/2021 10:30\t\nUnguided Meditation\t0:05\t2/26/2021 2:10\t2/26/2021 2:15\t\nSleep\t5:58\t2/25/2021 3:27\t2/25/2021 9:25\t\nUnguided Meditation\t0:20\t2/24/2021 12:47\t2/24/2021 13:07\t[Headspace] pro level 5: session 1\nSleep\t7:05\t2/24/2021 2:15\t2/24/2021 9:20\t\nUnguided Meditation\t0:10\t2/23/2021 10:22\t2/23/2021 10:32\t[Headspace] pro level 4: session 10\nSleep\t5:35\t2/23/2021 3:45\t2/23/2021 9:20\t\nUnguided Meditation\t0:20\t2/22/2021 10:38\t2/22/2021 10:58\t[Headspace] pro level 4: session 9\nSleep\t4:55\t2/22/2021 4:30\t2/22/2021 9:25\testimated start\nUnguided Meditation\t0:20\t2/21/2021 19:51\t2/21/2021 20:11\t[Headspace] pro level 4: session 8\nSleep\t4:50\t2/21/2021 5:00\t2/21/2021 9:50\t\nGuided Meditation\t0:20\t2/20/2021 20:01\t2/20/2021 20:21\t[Headspace] pro level 4: session 7\nSleep\t7:00\t2/20/2021 4:20\t2/20/2021 11:20\t\nGuided Meditation\t0:20\t2/20/2021 1:05\t2/20/2021 1:25\t[Headspace] semi-guided meditation\nSleep\t5:50\t2/19/2021 4:00\t2/19/2021 9:50\testimated start\nUnguided Meditation\t0:20\t2/18/2021 11:06\t2/18/2021 11:26\t[Headspace] pro level 4: session 6\nSleep\t7:00\t2/18/2021 2:45\t2/18/2021 9:45\testimated start\nGuided Meditation\t0:31\t2/17/2021 19:11\t2/17/2021 19:42\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t4:30\t2/17/2021 3:30\t2/17/2021 8:00\testimated start\nUnguided Meditation\t0:20\t2/16/2021 12:30\t2/16/2021 12:50\t[Headspace] pro level 4: session 5\nSleep\t6:50\t2/16/2021 3:00\t2/16/2021 9:50\testimated start\nUnguided Meditation\t0:20\t2/15/2021 10:58\t2/15/2021 11:18\t[Headspace] pro level 4: session 4\nSleep\t6:50\t2/15/2021 3:00\t2/15/2021 9:50\testimated start\nUnguided Meditation\t0:15\t2/15/2021 1:15\t2/15/2021 1:30\t[Headspace] pro level 4: session 3\nSleep\t7:45\t2/14/2021 4:15\t2/14/2021 12:00\t\nUnguided Meditation\t0:20\t2/13/2021 23:54\t2/14/2021 0:14\t[Headspace] pro level 4: session 2\nSleep\t7:15\t2/13/2021 4:30\t2/13/2021 11:45\testimated start\nGuided Meditation\t0:30\t2/12/2021 19:12\t2/12/2021 19:42\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nGuided Meditation\t0:58\t2/12/2021 12:40\t2/12/2021 13:38\t[Upaya] guided meditation with David Miller from What is Enlightenment recording on 2021-02-07\nSleep\t6:45\t2/12/2021 3:15\t2/12/2021 10:00\t\nUnguided Meditation\t0:20\t2/11/2021 23:00\t2/11/2021 23:20\t[Headspace] pro level 4: session 1\nSleep\t6:15\t2/11/2021 3:30\t2/11/2021 9:45\testimated start\nGuided Meditation\t0:31\t2/10/2021 19:09\t2/10/2021 19:40\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nGuided Meditation\t0:15\t2/10/2021 11:32\t2/10/2021 11:47\t[Upaya] Intro to Meditation\nSleep\t6:40\t2/10/2021 3:00\t2/10/2021 9:40\testimated start\nGuided Meditation\t0:15\t2/9/2021 10:31\t2/9/2021 10:46\t[Headspace] productivity: session 3\nSleep\t7:30\t2/9/2021 2:30\t2/9/2021 10:00\testimated start\nGuided Meditation\t0:31\t2/8/2021 19:11\t2/8/2021 19:42\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nUnguided Meditation\t0:20\t2/8/2021 17:38\t2/8/2021 17:58\t\nSleep\t6:25\t2/8/2021 4:45\t2/8/2021 11:10\testimated start\nGuided Meditation\t0:10\t2/8/2021 3:27\t2/8/2021 3:37\t[Headspace] semi-guided meditation\nSleep\t8:00\t2/7/2021 2:45\t2/7/2021 10:45\thitting snooze from 8:30a onward\nGuided Meditation\t0:10\t2/6/2021 23:56\t2/7/2021 0:06\t[Headspace] today's meditation: different experiences\nSleep\t6:30\t2/6/2021 3:30\t2/6/2021 10:00\testimated start\nGuided Meditation\t0:32\t2/5/2021 19:10\t2/5/2021 19:42\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t4:25\t2/5/2021 5:35\t2/5/2021 10:00\t\nGuided Meditation\t0:03\t2/5/2021 5:20\t2/5/2021 5:23\t[Headspace] end of day\nSleep\t5:50\t2/4/2021 4:00\t2/4/2021 9:50\testimated start\nGuided Meditation\t0:33\t2/3/2021 19:10\t2/3/2021 19:43\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nGuided Meditation\t0:37\t2/3/2021 11:51\t2/3/2021 12:28\t[IMC] half-day retreat - maria lopez (lightly guided)\nUnguided Meditation\t0:16\t2/3/2021 11:31\t2/3/2021 11:48\t[IMC] half-day retreat - maria lopez (walking)\nGuided Meditation\t0:27\t2/3/2021 11:03\t2/3/2021 11:30\t[IMC] half-day retreat - maria lopez \nGuided Meditation\t0:26\t2/3/2021 8:21\t2/3/2021 8:47\t[IMC] live weekday morning sit - Alex Carter (time-delayed)\nSleep\t6:30\t2/3/2021 1:00\t2/3/2021 7:30\t\nGuided Meditation\t0:26\t2/2/2021 15:16\t2/2/2021 15:42\t[IMC] weekday morning sit - Alex Carter (recording played later in day)\nSleep\t6:00\t2/2/2021 1:30\t2/2/2021 7:30\t\nGuided Meditation\t0:20\t2/1/2021 23:40\t2/2/2021 0:00\t[Headspace] semi-guided meditation\nSleep\t5:10\t2/1/2021 4:50\t2/1/2021 10:00\t\nGuided Meditation\t0:10\t2/1/2021 4:09\t2/1/2021 4:19\t[Calm] daily calm - perceptions\nSleep\t5:00\t1/31/2021 4:30\t1/31/2021 9:30\t\nGuided Meditation\t0:00\t1/30/2021 14:30\t1/30/2021 14:30\t[Plum Village] Mindfulness of Breathing - Brother Thien Nhi\nSleep\t7:10\t1/30/2021 4:15\t1/30/2021 11:25\t\nGuided Meditation\t0:30\t1/29/2021 19:10\t1/29/2021 19:40\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t7:15\t1/29/2021 2:30\t1/29/2021 9:45\t\nUnguided Meditation\t0:12\t1/28/2021 11:03\t1/28/2021 11:15\t\nSleep\t5:15\t1/28/2021 4:45\t1/28/2021 10:00\t\nGuided Meditation\t0:31\t1/27/2021 19:17\t1/27/2021 19:48\t[IMC] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t7:00\t1/27/2021 4:00\t1/27/2021 11:00\testimated start\nGuided Meditation\t0:27\t1/26/2021 8:19\t1/26/2021 8:46\t[IMC] live weekday morning sit - Alex Carter\nSleep\t4:20\t1/26/2021 3:25\t1/26/2021 7:45\t\nGuided Meditation\t0:34\t1/25/2021 19:06\t1/25/2021 19:40\t[IMC] live happy hour loving-kindness practice - Samira Tariq\nGuided Meditation\t0:25\t1/25/2021 8:16\t1/25/2021 8:41\t[IMC] live weekday morning sit - Alex Carter\nSleep\t6:15\t1/25/2021 1:30\t1/25/2021 7:45\t\nGuided Meditation\t0:32\t1/24/2021 11:28\t1/24/2021 12:00\t[IMC] Sunday morning with Alex Carter (time-delayed)\nSleep\t6:50\t1/24/2021 0:55\t1/24/2021 7:45\t\nUnguided Meditation\t0:15\t1/23/2021 11:00\t1/23/2021 11:15\t\nSleep\t3:55\t1/23/2021 3:50\t1/23/2021 7:45\t\nGuided Meditation\t0:34\t1/22/2021 19:10\t1/22/2021 19:44\t[Insight Meditation Center] live weeknight happy hour loving-kindness practice - Samira Tariq\nGuided Meditation\t0:25\t1/22/2021 8:13\t1/22/2021 8:38\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t6:15\t1/22/2021 1:30\t1/22/2021 7:45\t\nGuided Meditation\t0:05\t1/22/2021 0:53\t1/22/2021 0:58\t[Headspace] semi-guided meditation\nSleep\t10:00\t1/21/2021 7:00\t1/21/2021 17:00\t\nGuided Meditation\t0:33\t1/20/2021 19:13\t1/20/2021 19:46\t[Insight Meditation Center] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t1:50\t1/20/2021 7:00\t1/20/2021 8:50\t\nGuided Meditation\t0:10\t1/20/2021 4:26\t1/20/2021 4:36\t[Headspace] semi-guided meditation\nSleep\t7:45\t1/19/2021 9:10\t1/19/2021 16:55\t\nGuided Meditation\t0:33\t1/18/2021 19:12\t1/18/2021 19:45\t[Insight Meditation Center] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t6:00\t1/18/2021 11:00\t1/18/2021 17:00\t\nGuided Meditation\t0:10\t1/18/2021 5:50\t1/18/2021 6:00\t[Headspace] semi-guided meditation\nSleep\t8:00\t1/17/2021 6:40\t1/17/2021 14:40\t\nGuided Meditation\t0:10\t1/17/2021 5:09\t1/17/2021 5:19\t[Waking Up] daily meditation\nSleep\t9:00\t1/16/2021 5:30\t1/16/2021 14:30\testimated start\nGuided Meditation\t0:10\t1/16/2021 4:43\t1/16/2021 4:53\t[Waking Up] daily meditation\nSleep\t11:00\t1/15/2021 5:45\t1/15/2021 16:45\t\nGuided Meditation\t0:11\t1/14/2021 22:56\t1/14/2021 23:07\t[Waking Up] metta 2\nSleep\t6:30\t1/14/2021 3:10\t1/14/2021 9:40\t\nGuided Meditation\t0:36\t1/13/2021 19:08\t1/13/2021 19:45\t[Insight Meditation Center] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t4:00\t1/13/2021 5:40\t1/13/2021 9:40\t\nUnguided Meditation\t0:40\t1/13/2021 4:35\t1/13/2021 5:15\t\nSleep\t5:30\t1/12/2021 8:15\t1/12/2021 13:45\t\nGuided Meditation\t0:36\t1/11/2021 19:08\t1/11/2021 19:44\t[Insight Meditation Center] live weeknight happy hour loving-kindness practice - Samira Tariq\nSleep\t6:15\t1/11/2021 9:10\t1/11/2021 15:25\t\nGuided Meditation\t0:05\t1/11/2021 7:39\t1/11/2021 7:44\t[Headspace] under the weather\nSleep\t7:10\t1/10/2021 6:35\t1/10/2021 13:45\t\nGuided Meditation\t0:10\t1/10/2021 3:45\t1/10/2021 3:55\t[Headspace] end of day\nSleep\t6:15\t1/9/2021 8:30\t1/9/2021 14:45\t\nSleep\t2:00\t1/9/2021 1:20\t1/9/2021 3:20\t\nUnguided Meditation\t0:15\t1/8/2021 20:30\t1/8/2021 20:45\t\nSleep\t10:00\t1/8/2021 3:50\t1/8/2021 13:50\thitting snooze for last 3h\nGuided Meditation\t0:12\t1/7/2021 19:18\t1/7/2021 19:30\t[Waking Up] metta 1\nSleep\t5:20\t1/7/2021 7:10\t1/7/2021 12:30\t\nUnguided Meditation\t0:10\t1/7/2021 6:19\t1/7/2021 6:29\t\nSleep\t9:35\t1/6/2021 6:15\t1/6/2021 15:50\t\nUnguided Meditation\t0:10\t1/6/2021 5:10\t1/6/2021 5:20\t\nSleep\t5:20\t1/5/2021 4:50\t1/5/2021 10:10\t\nUnguided Meditation\t0:10\t1/5/2021 4:28\t1/5/2021 4:38\t\nSleep\t6:25\t1/4/2021 7:15\t1/4/2021 13:40\t\nUnguided Meditation\t0:10\t1/4/2021 6:36\t1/4/2021 6:46\t\nSleep\t5:00\t1/3/2021 7:30\t1/3/2021 12:30\t\nUnguided Meditation\t0:10\t1/3/2021 6:13\t1/3/2021 6:23\t\nSleep\t5:00\t1/2/2021 7:40\t1/2/2021 12:40\t\nUnguided Meditation\t0:10\t1/2/2021 6:55\t1/2/2021 7:05\t\nSleep\t7:10\t1/1/2021 11:10\t1/1/2021 18:20\t\nUnguided Meditation\t0:10\t1/1/2021 7:26\t1/1/2021 7:36\t\n\n\nActivity type\tDuration\tFrom\tTo\tComment\nSleep\t6:00\t2/28/2026 11:30\t2/28/2026 17:30\t\nGuided Meditation\t0:05\t2/28/2026 11:20\t2/28/2026 11:25\t[Headspace] end of day meditation\nSleep\t10:00\t2/27/2026 5:00\t2/27/2026 15:00\t\nGuided Meditation\t0:10\t2/27/2026 3:55\t2/27/2026 4:05\t[Headspace] today's meditation: the freedom of now\nSleep\t5:00\t2/26/2026 5:30\t2/26/2026 10:30\t\nGuided Meditation\t0:10\t2/26/2026 4:40\t2/26/2026 4:50\t[Headspace] basics 2 (5 of 10)\nSleep\t4:30\t2/25/2026 6:00\t2/25/2026 10:30\t\nGuided Meditation\t0:10\t2/24/2026 18:20\t2/24/2026 18:30\t[Headspace] basics 2 (4 of 10)\nSleep\t5:30\t2/24/2026 7:30\t2/24/2026 13:00\t\nGuided Meditation\t0:10\t2/23/2026 15:00\t2/23/2026 15:10\t[Headspace] semi-guided meditation\nSleep\t7:15\t2/23/2026 2:45\t2/23/2026 10:00\t\nGuided Meditation\t0:15\t2/22/2026 16:36\t2/22/2026 16:51\t[Headspace] today's meditation: less vs more\nSleep\t7:45\t2/22/2026 3:15\t2/22/2026 11:00\t\nGuided Meditation\t0:05\t2/22/2026 3:05\t2/22/2026 3:10\t[Headspace] end of day meditation\nSleep\t8:30\t2/21/2026 0:00\t2/21/2026 8:30\t\nSleep\t9:00\t2/19/2026 22:30\t2/20/2026 7:30\t\nGuided Meditation\t0:30\t2/19/2026 8:00\t2/19/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t10:45\t2/18/2026 20:30\t2/19/2026 7:15\t\nGuided Meditation\t0:30\t2/18/2026 8:00\t2/18/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t7:30\t2/18/2026 0:30\t2/18/2026 8:00\t\nGuided Meditation\t0:30\t2/17/2026 8:00\t2/17/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t6:55\t2/16/2026 23:30\t2/17/2026 6:25\testimated chunks of sleep\nSleep\t3:00\t2/16/2026 17:30\t2/16/2026 20:30\testimated chunks of sleep\nGuided Meditation\t0:30\t2/16/2026 8:00\t2/16/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t8:00\t2/15/2026 20:00\t2/16/2026 4:00\t\nGuided Meditation\t0:15\t2/15/2026 4:10\t2/15/2026 4:25\t[Headspace] today's meditation: close the gap\nSleep\t17:15\t2/14/2026 7:00\t2/15/2026 0:15\t\nGuided Meditation\t0:05\t2/14/2026 6:41\t2/14/2026 6:46\t[Headspace] semi-guided meditation\nSleep\t3:30\t2/12/2026 23:45\t2/13/2026 3:15\t\nSleep\t7:00\t2/12/2026 13:30\t2/12/2026 20:30\t\nGuided Meditation\t0:10\t2/12/2026 12:00\t2/12/2026 12:10\t[Headspace] semi-guided meditation\nSleep\t7:00\t2/11/2026 12:30\t2/11/2026 19:30\t\nGuided Meditation\t0:05\t2/11/2026 12:25\t2/11/2026 12:30\t[Headspace] end of day meditation\nSleep\t7:30\t2/10/2026 6:00\t2/10/2026 13:30\tbed 5a, took an while to fall asleep\nGuided Meditation\t0:10\t2/10/2026 4:06\t2/10/2026 4:16\t[Headspace] today's meditation: making friends with our mind\nSleep\t3:00\t2/9/2026 10:30\t2/9/2026 13:30\t\nGuided Meditation\t0:30\t2/9/2026 6:30\t2/9/2026 7:00\t[Insight Meditation Center] recorded weekday morning sit - Alex Carter\nSleep\t10:00\t2/8/2026 8:30\t2/8/2026 18:30\t\nGuided Meditation\t0:05\t2/8/2026 8:23\t2/8/2026 8:28\t[Headspace] end of day meditation\nSleep\t8:48\t2/7/2026 9:30\t2/7/2026 18:18\t\nGuided Meditation\t0:03\t2/7/2026 9:20\t2/7/2026 9:23\t[Headspace] end of day meditation\nSleep\t7:30\t2/6/2026 10:00\t2/6/2026 17:30\t\nGuided Meditation\t0:03\t2/6/2026 9:48\t2/6/2026 9:51\t[Headspace] end of day meditation\nSleep\t7:00\t2/5/2026 6:30\t2/5/2026 13:30\t\nGuided Meditation\t0:17\t2/4/2026 20:54\t2/4/2026 21:12\t[Insight Meditation Center] Introduction to Mindfulness Meditation - Alex Carter (4 of 5) [live]\nGuided Meditation\t0:16\t2/4/2026 20:13\t2/4/2026 20:29\t[Insight Meditation Center] Introduction to Mindfulness Meditation - Alex Carter (4 of 5) [live]\nSleep\t7:45\t2/4/2026 6:45\t2/4/2026 14:30\t\nGuided Meditation\t0:10\t2/4/2026 2:37\t2/4/2026 2:47\t[Headspace] basics 2 (3 of 10)\nSleep\t7:55\t2/3/2026 3:00\t2/3/2026 10:55\t\nGuided Meditation\t0:10\t2/3/2026 1:58\t2/3/2026 2:08\t[Headspace] semi-guided meditation\nSleep\t10:00\t2/1/2026 23:30\t2/2/2026 9:30\t\nGuided Meditation\t0:03\t2/1/2026 23:25\t2/1/2026 23:28\t[Headspace] end of day meditation\nSleep\t7:45\t2/1/2026 1:00\t2/1/2026 8:45\testimated start; moved from couch to bed ~4a\nSleep\t6:00\t1/31/2026 2:00\t1/31/2026 8:00\t\nUnguided Meditation\t0:10\t1/30/2026 20:28\t1/30/2026 20:38\t\nSleep\t12:00\t1/29/2026 12:30\t1/30/2026 0:30\tlost day\nGuided Meditation\t0:05\t1/29/2026 12:25\t1/29/2026 12:30\t[Headspace] today's meditation: will and intention (fell asleep before it was over; supposed to be 10 min)\nSleep\t5:00\t1/28/2026 8:00\t1/28/2026 13:00\tbed 7:40a\nGuided Meditation\t0:30\t1/27/2026 8:05\t1/27/2026 8:35\t[Insight Meditation Center] recorded weekday morning sit - Alex Carter (from 2 weeks ago)\nSleep\t6:00\t1/26/2026 22:00\t1/27/2026 4:00\t\nGuided Meditation\t0:30\t1/26/2026 8:00\t1/26/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Kenji Sato\nSleep\t10:00\t1/25/2026 15:45\t1/26/2026 1:45\t\nSleep\t2:30\t1/24/2026 18:00\t1/24/2026 20:30\tnap, estimated start\nGuided Meditation\t0:15\t1/24/2026 8:41\t1/24/2026 8:56\t[Headspace] basics 2 (2 of 10)\nSleep\t13:00\t1/23/2026 10:30\t1/23/2026 23:30\testimated start\nGuided Meditation\t0:10\t1/23/2026 4:35\t1/23/2026 4:45\t[Headspace] basics 2 (1 of 10)\nSleep\t5:15\t1/22/2026 11:30\t1/22/2026 16:45\tbed 11a\nSleep\t0:00\t1/21/2026 0:00\t1/21/2026 0:00\tno sleep\nSleep\t9:00\t1/20/2026 15:00\t1/21/2026 0:00\testimated (awake about 24 hours, struggled to sleep)\nGuided Meditation\t0:10\t1/20/2026 10:50\t1/20/2026 11:00\t[Headspace] today's meditation: relaxed focus\nSleep\t4:00\t1/19/2026 11:00\t1/19/2026 15:00\tbed 9:30a\nGuided Meditation\t0:10\t1/19/2026 6:03\t1/19/2026 6:13\t[Headspace] basics 1 (10 of 10)\nSleep\t11:00\t1/18/2026 7:30\t1/18/2026 18:30\testimated\nGuided Meditation\t0:05\t1/18/2026 6:32\t1/18/2026 6:37\t[Headspace] basics 1 (9 of 10)\nSleep\t11:00\t1/17/2026 6:30\t1/17/2026 17:30\t\nGuided Meditation\t0:05\t1/17/2026 5:11\t1/17/2026 5:16\t[Headspace] basics 1 (8 of 10)\nSleep\t11:30\t1/16/2026 6:45\t1/16/2026 18:15\tbed 2:30a, tried to get up ~8a, but had only slept about an hour\nGuided Meditation\t0:10\t1/15/2026 23:44\t1/15/2026 23:54\t[Headspace] basics 1 (7 of 10)\nSleep\t5:00\t1/15/2026 10:30\t1/15/2026 15:30\tbed 10:20a\nGuided Meditation\t0:19\t1/14/2026 23:32\t1/14/2026 23:51\t[Insight Meditation Center] Introduction to Mindfulness Meditation - Alex Carter (1 of 5) - 2nd meditation [recording]\nGuided Meditation\t0:07\t1/14/2026 23:05\t1/14/2026 23:12\t[Insight Meditation Center] Introduction to Mindfulness Meditation - Alex Carter (1 of 5) - 1st meditation [recording]\nSleep\t8:00\t1/14/2026 9:00\t1/14/2026 17:00\testimated start\nGuided Meditation\t0:10\t1/13/2026 19:27\t1/13/2026 19:37\t[Headspace] basics 1 (6 of 10)\nSleep\t13:00\t1/13/2026 4:30\t1/13/2026 17:30\tbed 4:15a\nGuided Meditation\t0:10\t1/13/2026 3:06\t1/13/2026 3:16\t[Headspace] basics 1 (5 of 10)\nSleep\t4:45\t1/12/2026 5:00\t1/12/2026 9:45\testimated start\nGuided Meditation\t0:10\t1/12/2026 3:24\t1/12/2026 3:34\t[Headspace] basics 1 (4 of 10)\nSleep\t3:30\t1/11/2026 12:30\t1/11/2026 16:00\twent back to sleep\nSleep\t4:30\t1/11/2026 7:30\t1/11/2026 12:00\testimated start\nGuided Meditation\t0:10\t1/10/2026 14:26\t1/10/2026 14:36\t[Headspace] basics 1 (3 of 10)\nSleep\t10:05\t1/10/2026 1:30\t1/10/2026 11:35\tbed 1:15a\nGuided Meditation\t0:30\t1/9/2026 8:00\t1/9/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t6:43\t1/9/2026 1:15\t1/9/2026 7:58\tbed 1a\nGuided Meditation\t0:30\t1/8/2026 8:00\t1/8/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t5:25\t1/8/2026 2:30\t1/8/2026 7:55\t\nGuided Meditation\t0:30\t1/7/2026 8:00\t1/7/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nSleep\t6:30\t1/7/2026 1:15\t1/7/2026 7:45\testimated start\nGuided Meditation\t0:30\t1/6/2026 8:00\t1/6/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nGuided Meditation\t0:30\t1/5/2026 8:00\t1/5/2026 8:30\t[Insight Meditation Center] live weekday morning sit - Alex Carter\nUnguided Meditation\t0:08\t1/4/2026 10:53\t1/4/2026 11:01\tIMC Sunday morning sit with Alex Carter [joined for the last part of the sit]\nGuided Meditation\t0:10\t1/4/2026 0:41\t1/4/2026 0:51\t[Headspace] basics 1 (2 of 10)\nGuided Meditation\t0:10\t1/2/2026 13:48\t1/2/2026 13:58\t[Headspace] basics 1 (1 of 10)\nGuided Meditation\t0:15\t1/1/2026 12:47\t1/1/2026 13:02\t[Headspace] today's meditation: qualities of mindfulness\nGuided Meditation\t0:20\t12/31/2025 3:53\t12/31/2025 4:13\t[Headspace] today's meditation: life and laughter\nGuided Meditation\t0:10\t12/30/2025 5:25\t12/30/2025 5:35\t[Headspace] kindness 4 of 10\nGuided Meditation\t0:10\t12/28/2025 20:05\t12/28/2025 20:15\t[Headspace] kindness 3 of 10\nGuided Meditation\t0:05\t12/28/2025 1:35\t12/28/2025 1:40\t[Headspace] today's meditation: integrating meditation\nGuided Meditation\t0:05\t12/27/2025 14:10\t12/27/2025 14:15\t[Headspace] end of day\nGuided Meditation\t0:10\t12/25/2025 18:14\t12/25/2025 18:24\t[Headspace] today's meditation: reframing our perception\nGuided Meditation\t0:05\t12/25/2025 4:40\t12/25/2025 4:45\t[Headspace] end of day\nGuided Meditation\t0:10\t12/23/2025 14:44\t12/23/2025 14:54\t[Headspace] today's meditation: impermanent thoughts\nGuided Meditation\t0:10\t12/22/2025 15:10\t12/22/2025 15:20\t[Headspace] kindness 2 of 10\nGuided Meditation\t0:10\t12/21/2025 13:05\t12/21/2025 13:15\t[Headspace] today's meditation: universal contentment\nGuided Meditation\t0:15\t11/12/2025 7:04\t11/12/2025 7:19\t[Headspace] kindness 1 of 10\nSleep\t6:45\t9/19/2025 3:00\t9/19/2025 9:45\t\nSleep\t5:30\t9/18/2025 2:00\t9/18/2025 7:30\t\nSleep\t7:25\t9/16/2025 23:15\t9/17/2025 6:40\t\nSleep\t7:15\t9/15/2025 23:15\t9/16/2025 6:30\tbed 11p\nSleep\t6:10\t9/1/2025 4:30\t9/1/2025 10:40\t\nSleep\t7:15\t8/31/2025 1:30\t8/31/2025 8:45\t\nSleep\t11:00\t8/28/2025 22:00\t8/29/2025 9:00\t\nSleep\t8:30\t8/24/2025 21:45\t8/25/2025 6:15\t\nSleep\t6:30\t7/29/2025 2:30\t7/29/2025 9:00\t\nSleep\t8:30\t7/27/2025 22:45\t7/28/2025 7:15\t\nSleep\t6:00\t7/25/2025 21:00\t7/26/2025 3:00\t\nSleep\t7:00\t6/20/2025 3:30\t6/20/2025 10:30\t\nSleep\t5:30\t6/19/2025 5:30\t6/19/2025 11:00\t\nSleep\t8:30\t6/18/2025 1:00\t6/18/2025 9:30\tbed 12:45a\nSleep\t6:30\t6/17/2025 3:30\t6/17/2025 10:00\t\nSleep\t7:30\t6/15/2025 23:40\t6/16/2025 7:10\tbed 11:30p\nSleep\t4:45\t6/15/2025 1:15\t6/15/2025 6:00\t\nSleep\t6:45\t6/14/2025 2:00\t6/14/2025 8:45\t\nSleep\t8:00\t6/4/2025 8:30\t6/4/2025 16:30\t\nSleep\t6:45\t5/28/2025 0:15\t5/28/2025 7:00\t\nSleep\t12:40\t5/19/2025 4:00\t5/19/2025 16:40\testimated start\nSleep\t8:00\t5/17/2025 12:30\t5/17/2025 20:30\testimated\nSleep\t5:00\t5/16/2025 13:30\t5/16/2025 18:30\testimated\nSleep\t7:00\t5/15/2025 10:00\t5/15/2025 17:00\testimated\nSleep\t9:30\t5/14/2025 8:00\t5/14/2025 17:30\testimated\nSleep\t4:00\t5/13/2025 13:30\t5/13/2025 17:30\testimated\nSleep\t3:00\t5/13/2025 7:30\t5/13/2025 10:30\testimated\nSleep\t7:30\t5/12/2025 7:30\t5/12/2025 15:00\testimated, slept sporadically\nSleep\t2:10\t5/12/2025 0:20\t5/12/2025 2:30\tbed 11:20p\nSleep\t5:30\t5/11/2025 8:00\t5/11/2025 13:30\tbrled 7:20a\nSleep\t8:30\t5/10/2025 6:15\t5/10/2025 14:45\t\nSleep\t6:45\t4/9/2025 0:05\t4/9/2025 6:50\tbed 11:55p\nSleep\t4:30\t4/8/2025 0:10\t4/8/2025 4:40\tbed 11:55p\nSleep\t9:30\t4/6/2025 21:40\t4/7/2025 7:10\t\nSleep\t3:45\t3/22/2025 2:00\t3/22/2025 5:45\testimated start\nSleep\t8:45\t3/21/2025 1:30\t3/21/2025 10:15\t\nSleep\t8:15\t3/20/2025 3:30\t3/20/2025 11:45\t\nSleep\t9:30\t3/16/2025 23:45\t3/17/2025 9:15\t\nSleep\t7:00\t2/26/2025 0:00\t2/26/2025 7:00\t\nSleep\t10:20\t2/24/2025 23:20\t2/25/2025 9:40\t\nSleep\t5:15\t1/25/2025 10:45\t1/25/2025 16:00\t\nSleep\t6:00\t1/24/2025 8:45\t1/24/2025 14:45\testimated start\nGuided Meditation\t0:15\t1/23/2025 15:52\t1/23/2025 16:07\t[Waking Up] today's meditation\nGuided Meditation\t0:10\t1/15/2025 11:12\t1/15/2025 11:22\t[Waking Up] today's meditation\nGuided Meditation\t0:10\t1/11/2025 10:51\t1/11/2025 11:01\t[Waking Up] today's meditation\nGuided Meditation\t0:10\t1/9/2025 9:50\t1/9/2025 10:00\t[Waking Up] today's meditation\nGuided Meditation\t0:05\t1/1/2025 15:07\t1/1/2025 15:12\t[Headspace] today's meditation: what is already here\n\n\n\nTask:\n\n\nComparing my meditation data from 2021 versus 2025-2026, how were my meditation habits (such as timing, duration, and the type/source of guided vs unguided practice) different or similar during these two periods? In what ways did sleep duration or timing seem to affect meditation patterns?\n\nComplete the task using the material above. Apply my currently active response preferences when compatible; an explicit format or language requirement in the source task takes precedence. Do not ask me to repeat preferences already learned."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.55,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "preference_activation",
+        "dimension": "activation",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response applies the latest compatible preference default_response_language='English'; explicit current-turn requirements override defaults."
+      },
+      {
+        "check_id": "no_stale_preference",
+        "dimension": "stale_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No invented or unavailable preference is applied."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Source-content details are not incorrectly promoted to persistent user preferences."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_6.fact_01.default_response_language.v1",
+          "key": "default_response_language",
+          "value": "English",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should not state that meditation was consistently practiced in both the 2021 and 2025-2026 time periods from the user-provided data. For example, no sessions were recorded between May 12, 2021, and August 2, 2021 as well as between January 23, 2025, and November 12, 2025.",
+        "The response should not state that the 8 AM Insight Meditation Center (IMC) sits emerged in August 2021, as the final recorded IMC sit for that year actually took place on 8/2/2021.",
+        "The response should state that the 8 AM IMC morning sit appears frequently (13 sessions) only in the January and February 2026 data, but did not appear in the rest of the entire 14-month 2025-2026 period.",
+        "The response should identify that meditation was recorded with near-daily frequency during both the January-February 2021 (68 sessions) and January-February 2026 (51 sessions) time periods.",
+        "The response should characterize the 2021 meditation timing as ad-hoc. For example, sessions occurred at various times such as 3:12 AM (12/24), 11:56 AM (12/22), and 6:02 PM (12/21).",
+        "The response should identify the emergence of recurring \"end of day\" Headspace meditations in late 2025 and early 2026. For example, sessions recorded on 12/25/2025, 2/1/2026, and 2/28/2026.",
+        "The response should mention that meditation session durations in 2021 were variable. For example, sessions ranged from 3 minutes to 58 minutes.",
+        "The response should mention that meditation session durations in 2025-2026 were variable. For example, sessions ranged from 3 minutes to 30 minutes.",
+        "The response should provide a comparison of the type/source of practice, noting that 2021 featured a wider variety of sources than 2025-2026. For example, meditation sessions in 2021 were sourced from Upaya, Plum Village, Calm, Headspace, and IMC, while sessions in 2025-2026 primarily focused on Headspace and IMC.",
+        "The response should identify that unguided meditation was more prevalent in 2021 compared to 2025-2026. For example, frequent sessions occurred from January through March, compared to 2025-2026 with only two unguided sessions during that time period.",
+        "The response should identify that weeknight happy hour loving-kindness practice with Samira Tariq was a recurring meditation source in early 2021, but did not appear at all in the 2025-2026 data. For example, it could reference the sessions on 1/25, 1/27, and 2/3 in 2021.",
+        "The response should note that sleep duration in both periods was highly irregular, but that meditation sessions were still logged after little sleep. For example, 4.5 hours on 2/25/2026 and 4 hours on 1/13/2021 were still followed by meditation sessions.",
+        "The response should draw a conclusion about the overall impact of sleep on meditation patterns. For example, it could state that sleep had little consistent effect on meditation habits overall."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.55,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "preference_activation",
+          "dimension": "activation",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response applies the latest compatible preference default_response_language='English'; explicit current-turn requirements override defaults."
+        },
+        {
+          "rubric_id": "no_stale_preference",
+          "dimension": "stale_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No invented or unavailable preference is applied."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_latest_preference_adherence",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "English"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should not state that meditation was consistently practiced in both the 2021 and 2025-2026 time periods from the user-provided data. For example, no sessions were recorded between May 12, 2021, and August 2, 2021 as well as between January 23, 2025, and November 12, 2025.",
+          "The response should not state that the 8 AM Insight Meditation Center (IMC) sits emerged in August 2021, as the final recorded IMC sit for that year actually took place on 8/2/2021.",
+          "The response should state that the 8 AM IMC morning sit appears frequently (13 sessions) only in the January and February 2026 data, but did not appear in the rest of the entire 14-month 2025-2026 period.",
+          "The response should identify that meditation was recorded with near-daily frequency during both the January-February 2021 (68 sessions) and January-February 2026 (51 sessions) time periods.",
+          "The response should characterize the 2021 meditation timing as ad-hoc. For example, sessions occurred at various times such as 3:12 AM (12/24), 11:56 AM (12/22), and 6:02 PM (12/21).",
+          "The response should identify the emergence of recurring \"end of day\" Headspace meditations in late 2025 and early 2026. For example, sessions recorded on 12/25/2025, 2/1/2026, and 2/28/2026.",
+          "The response should mention that meditation session durations in 2021 were variable. For example, sessions ranged from 3 minutes to 58 minutes.",
+          "The response should mention that meditation session durations in 2025-2026 were variable. For example, sessions ranged from 3 minutes to 30 minutes.",
+          "The response should provide a comparison of the type/source of practice, noting that 2021 featured a wider variety of sources than 2025-2026. For example, meditation sessions in 2021 were sourced from Upaya, Plum Village, Calm, Headspace, and IMC, while sessions in 2025-2026 primarily focused on Headspace and IMC.",
+          "The response should identify that unguided meditation was more prevalent in 2021 compared to 2025-2026. For example, frequent sessions occurred from January through March, compared to 2025-2026 with only two unguided sessions during that time period.",
+          "The response should identify that weeknight happy hour loving-kindness practice with Samira Tariq was a recurring meditation source in early 2021, but did not appear at all in the 2025-2026 data. For example, it could reference the sessions on 1/25, 1/27, and 2/3 in 2021.",
+          "The response should note that sleep duration in both periods was highly irregular, but that meditation sessions were still logged after little sleep. For example, 4.5 hours on 2/25/2026 and 4 hours on 1/13/2021 were still followed by meditation sessions.",
+          "The response should draw a conclusion about the overall impact of sleep on meditation patterns. For example, it could state that sleep had little consistent effect on meditation habits overall."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.55,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "preference_activation",
+            "dimension": "activation",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response applies the latest compatible preference default_response_language='English'; explicit current-turn requirements override defaults."
+          },
+          {
+            "rubric_id": "no_stale_preference",
+            "dimension": "stale_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No invented or unavailable preference is applied."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_6.fact_01.default_response_language.v1",
+            "key": "default_response_language",
+            "value": "English",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

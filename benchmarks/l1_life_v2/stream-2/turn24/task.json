@@ -1,0 +1,348 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn24",
+  "turn_index": 24,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "90ec3beb-e359-be4b-78c3-a238c7537183",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 145,
+    "source_sha256": "7780bdd8c0a5e29490ba83ac0268f08a7242d3618e25dc656f58a10d835c57a9",
+    "source_metadata": {
+      "task_id": "90ec3beb-e359-be4b-78c3-a238c7537183",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Cookbook\nBreakfast\nIn recipe binder:\nAvocado toast with runny eggs\nBerry crumble with honey yogurt\nGerman pancakes\nMint chocolate matcha smoothie \nNutella pastry twists\nPotato crust\nProsciutto asparagus quiche\nPumpkin cinnamon rolls\nQuiche Lorraine with maple bacon\nRaspberry chia pudding\nSweet potato and chorizo hash\nAdd?\nEgg bites\n✅Avocado toast with runny eggs\nMatcha raspberry chia pudding\nhttps://pin.it/8aBcD4e\n✅Quiche w/ maple bacon & potato crust\nhttps://tasty.co/recipe/potato-crusted-quiche\n4 eggs\nNutella pastry twists with slivered almonds\nhttps://dinnerthendessert.com/nutella-pastry-twists/\nIsraeli salad\nhttps://joyfuldumplings.com/jerusalem-salad-israeli-salad/\n✅Mint matcha smoothie\n2 bananas \n1/2 avocado\nHearty handful of spinach\nOat milk\n2 tsp matcha\n1 tsp peppermint extract \n2 tbs maple syrup\n2 tbs chopped dark chocolate\nSplash of vanilla (optional)\n✅Pumpkin Cinnamon Rolls\nhttps://avarecipes.com/pumpkin-cinnamon-rolls-recipe/\n-Added a little more pumpkin to the batter\n-made a little extra filling\n-in the frosting, instead of powdered sugar I used maple syrup\n✅Berry Crumble with honey yogurt\nEgg bites\n✅German pancakes\nDinner\n✅Sundried tomato salmon - 1 night\nhttps://www.instagram.com/reel/C5bWhA_o0rq/?igsh=cFk5bTduYm1wT1F5\nSalsa Verde Chicken zucchini enchiladas -2 nights\nhttps://www.halfbakedharvest.com/salsa-verde-chicken-and-zucchini-enchiladas/\n✅Boursin orzo chicken\nhttps://www.instagram.com/reel/C_Mm1y0xPqo/?igsh=MTcwemxxa2U1a2Rzcw==\nCajun shrimp & sausage vegetable skillet\nhttps://therecipecritic.com/cajun-shrimp-and-sausage-vegetable-skillet/\nMake in big pot, smoked sausage, thicken with cornstarch, serve over brown rice\nChicken Katsu bowls\nhttps://www.halfbakedharvest.com/chicken-katsu-bowls/\nFalafel\nhttps://www.themediterraneandish.com/how-to-make-falafel/#respond\nSheet pan maple Dijon sausage & fall veg\nhttps://www.eatwell101.com/sheet-pan-sausage-veggies-recipe\nAdd pearl couscous\n16 not 12oz sausage\nThai Chicken lettuce wraps\nhttps://www.apinchofhealthy.com/thai-chicken-lettuce-wraps/\nGarlic butter chicken pad Thai \nhttps://www.halfbakedharvest.com/chicken-pad-thai/\nBBQ Salmon Bowls with mango salsa\nhttps://pinchofyum.com/bbq-salmon-mango-salsa#tasty-recipes-54138-jump-target\nChicken Parm\nmix about 1/2 to 2/3 bread crumbs with 1/2 to 2/3 parmesan cheese\ndip cutlet in egg yolk mix\ncover in breadcrumb-parmesan mixture \nfry in oil \nbake at 400 degrees with some sauce and mozzarella (until the mozzarella melts)\nBaking instructions: https://www.allrecipes.com/recipe/239507/quick-baked-chicken-parmesan/\nHoney sriracha salmon bowls\nhttps://eatwithclarity.com/honey-sriracha-salmon-bowls/?ssp_iabi=1988704558813\nRed curry garlic beef stir fry\nhttps://www.halfbakedharvest.com/red-curry-beef-and-garlic-noodles/\nMoroccan roasted eggplant-tomato stew\nhttps://minimalistbaker.com/moroccan-spiced-eggplant-and-tomato-stew/\nMediterranean bowls: meatballs, hummus, tzatziki, Israeli salad, quinoa\nBacon wrapped BBQ pork tenderloin \nChicken BBQ Bowls w/ sweet potatoes & cole slaw\nhttps://40aprons.com/bbq-chicken-bowls-with-sweet-potatoes-and-coleslaw-whole30/?pp=1\nChili\nhttps://pinchofyum.com/sunday-chili#tasty-recipes-50900-jump-target\nPumpkin Pasta with sage walnuts\nhttps://golubkakitchen.com/creamy-pumpkin-pasta-with-sage-walnuts/\nArayes with yogurt sauce\nhttps://www.madeofsugarandsaffron.com/post/arayes-with-tahini-sauce\nYogurt sauce in sababa\nStromboli\nhttps://www.cookingforkeeps.com/italian-stromboli-5-ingredients/\nPizza seasoning: Italian seasoning, garlic salt, pepper, paprika\nChicken tortilla soup\nhttps://www.halfbakedharvest.com/crockpot-spicy-chicken-tortilla-soup/\nGreek lemon chicken\nhttps://downshiftology.com/recipes/greek-lemon-chicken/#wprm-recipe-container-67692\nSides\nKorean spicy cucumber salad\nhttps://www.cookerru.com/korean-cucumber-salad/\nAutumn couscous salad\nhttps://www.fufuskitchen.com/autumn-pearl-couscous-salad/#recipe\nCantaloupe, tomato, prosciutto, burrata salad with olive oil, balsamic glaze, salt & pepper\nQuinoa brown rice\nhttps://123kimchi.com/quinoa-rice/#recipe\nSnacks\nFried cheesy pickles w/ sriracha ranch\nhttps://www.foodnetwork.com/recipes/fried-cheesy-pickles-5510743\nBurrata with roasted tomato\nhttps://www.facebook.com/share/v/9x7yUf5sDC/?mibextid=aaBBcc\nDessert\nChocolate Chip cookies\nhttps://bromabakery.com/best-chocolate-chip-cookies/?utm_campaign=later-linkinbio-bromabakery&utm_content=later-5836059&utm_medium=social&utm_source=instagram\nCrème brûlée (with broiler)\nhttps://www.thekitchn.com/how-to-make-creme-brulee-at-home-cooking-lessons-from-the-kitchn-139072?epik=aB3cD4eF5gH6iJ7kL8mN9oP0qR1sT2uV3wX4yZ5aB6cD7eF8gH9iJ0kL1mN2oP3qR4sT5uV6wX7yZ8aB9cD0eF1gH2iJ3kL4\nMargaret’s Apple Crisp\nPreheat oven to 375*.\nPare, core, & slice about 8-10 apples (8 cups or so) - Rec. cortland apples.\nAdd to a deep baking dish.\nSeason with 2 tablespoons of lemon juice (about a half a large lemon).\nCombine (aka mash with hands)\n1 cup rolled oats\n1/4 teaspoon of nutmeg\n1/4 teaspoon of vanilla paste (optional)\n1/2 cup flour\n1/2 cup packed brown sugar\n1/4 cup butter\n1/2 teaspoon salt (if butter is unsalted\n2 teaspoons of cinnamon \nMixture must be lightly worked so it does not become oily.\nSpread the crumble over the apples.\nBake 30-40 minutes.\nBroil the top.\nServe with vanilla ice cream. \nThanksgiving\n✅Maple/ balsamic Brussel sprouts w/ bacon\nhttps://reciperunner.com/balsamic-maple-roasted-brussels-sprouts-bacon/\n✅Pumpkin pie\nhttps://www.modernhoney.com/the-best-pumpkin-pie-recipe/#wprm-recipe-container-12155\nCocktails\n✅El Diablo\nhttps://www.thespruceeats.com/el-diablo-cocktail-recipe-760771\n✅Thomas’s Whiskey Sour\n✅Eggnog cream pie\nAspirational\nLemon chicken & broccolini Rachel ray\nChickpea shakshuka \nhttps://www.deliciousmagazine.co.uk/recipes/spicy-baked-eggs-with-tomatoes-and-chickpeas/?ssp_iabi=1994280806996\nShrimp etouffee\nhttps://www.simplyrecipes.com/recipes/shrimp_etouffee/\nSweet Potato Fries with Za’atar and Tahini\nLemon chicken & broccolini Rachel ray\nCarmelized sweet potato fries\n\nMEAL COMPOSITORY\nItalian marinated chicken, potatoes, salad\nZucchini noodles, marinara, sausage\nLo Mein w/ mushrooms & teriyaki chicken\nPizza (salami, mushroom)\nSheet pan steak fajitas\n\t⁃\t\t⁃\tLemon chicken, asparagus \nQuiche, asparagus\nRatatouille over rice\nChicken parm over wheat penne\nTaco bowls\nStuffed peppers w/ quinoa and sausage\nSausage tortellini soup\nChicken thighs in seasoning salt, rice pilaf, salad\nChorizo and sweet potato hash\nZucchini noodles, marinara, meatballs\nEggplant parm sandwiches on baguette \n\t•\t\t⁃\tChicken Kiev, potatoes, salad\n\n\n\nMeals\nDinner\nCoconut lime tofu\nRisotto\nBeef kabob\nChicken & kale salad\nLunch\nBeef bulgogi bowls\nPesto pasta salad\nPasta shells or orzo\nYogurt \nPesto\nLemon\nCucumber\nTomato\nSpinach\nPre marinated chicken\nParmesan\nBreakfast\nBerry crumble w/ yogurt✅\n\t•\t\t•\tApple pie chia pudding\nLunch Prep\nMediterranean Bowls\nChicken meatballs - 0\nIsraeli salad - 0\n2/3 cup jasmine rice - 27\nTzaziki - 2\nTotal: 29 carbs\nChopped Chicken Satay Salad\n-quinoa\n-sugar snap peas\n-red cabbage\n-mint\n-carrots\n-roasted peanuts (small amount)\n-2 limes\n-2Ibs chicken breast\n-coconut milk\nBulgogi beef, cucumber salad, carrots, rice, sesame seeds, green onion\n-1 shallot\nBreakfast Prep\nProtein Breakfast Bagels\n-protein bagels\n-egg white carton-16oz\n-basil\n-green onion\n-sun-dried tomatoes \n-smoked applewood or Gouda cheese\n-1 tomato\n-spinach\n\nGroceries\nBreakfast\nBerry crumble\nBanana bread\nLunch\nSandwiches\nDinner\nThai chicken bowls\nChicken tortilla soup\nSalmon, cannellini beans, spinach\nSnacks\nGrapes\nCarrots peanut butter\nTrail mix\nSmoothies\n\nMenu 1\nBreakfast\nMixed berry croissant bake\nSweet potato muffins\nLunch\nJennifer Anniston salad\nDinner\nTuscan white bean sausage soup\nSpiced roasted carrots w/lemon whipped feta & chicken \nTofu soup dumpling bake & sesame salad kit\nDessert\nPopsicles\nSnacks\nVeggies & dip\nPretzels & cheese\nSnack packs\nJuice boxes\n\n\nMeal Plan 2\nBreakfast\nSweet potato breakfast cookies\nProbiotic yogurt drinks\nCranberry orange scones\nLunch\nSalad with rotisserie chicken\nSnacks\nCheese, nut, berry snack packs \nHummus & pretzel packs\nMandarins\nDinner\nBeef kofta, tabouli, yogurt sauce\nTofu, veggie stir fry, rice\nPesto chicken, salad, cheddar bay biscuits\nDessert\nPeanut butter cookies\nChocolate pudding\nBeverages\nCoconut water\nSmoothies\n\nMenu 3\nBreakfast\nPumpkin bread\nDinner\nZuppa toscana w/ cauliflower gnocchi pg 80\nCoq au vin blanc meatballs w/ rice pg 186\nPot roast w/ whipped provolone cauliflower pg 201\nSnacks\nApples\nGrapes\nOranges\nBabybels\nClub crackers\nChocolate covered coconut\nDessert\nPeanut butter kisses\nDrinks\nLemon chai bourbon smash pg 73\n\n\nMenu 4\nChicken orzo\nThai chicken lettuce wraps\nSalmon bao buns\nGrilled cheese and tomato soup?\nBabybels\n\nMenu 5\nBreakfast\nSweet potato chorizo hash\nYogurt\nLunch\nMac & cheese\nQuesadillas\nDinner\nBBQ Chicken bowls w/ sweet potatoes & Cole slaw\nTurkey burgers w/ avocado crema & parm roasted carrots\n\nUpcoming Menu Ideas\nPink vodka chicken parm\nDump and bake veggie pasta\nEasy salmon meal\nBreakfast prep ideas\nBatch cook oozy eggs\nTacos\nChicken parm, salad, garlic bread\nBoursin orzo chicken\nPasta alla Norma\nChicken tortilla soup\nAutumn veggie sheet pan of couscous\n\n\nMeal plan 6\nBreakfast\nEgg bites - $24✅\nRaspberry chia pudding - $12 ✅\nLunch\nStrawberry, Cucumber, pecan, chicken salad - $14.50\nSnacks\nCoconut peanut butter perfect bars - $25✅\nCape cod salt & vinegar chips - $5✅\nDinner\nCoconut lime tofu - $2 ✅\nChicken meatballs with lemon orzo & zucchini - $10\nTurkey fall veg sheet pan with couscous - $24\nLazy Frozen Dinners \nButter chicken - $6 ✅\nDumplings & salad - $5✅\nChana masala - $2\nDessert\nChocolate peanut butter dates - $4✅\nGreek yogurt ice cream bars - $6✅\n\nSunday brunch\nQuiche w/ potato crust\nIsraeli salad/heirloom tomato salad\nPastry twists/Banana bread\nRaspberry chia pudding\n\nGrocery List Week 1\nMeal 1: Quiche & Zucchini\nZucchini\nMilk\nAsparagus \nProsciutto\nMeal 2: Eggplant Parm\nEggplant\nAlmond flour\nParmesan\nItalian seasoning \n2 eggs\nMarinara sauce\nShredded mozzarella\nParmesan\nFresh basil, chopped\nMeal 3: Chicken & Broccoli & Potatoes\nChicken\nMarinade packet\nBroccoli \nPotatoes\nChicken Pot Pie Stromboli \nunsalted butter\n1/2 yellow onion diced\n1 celery stalk diced\n1/2 tsp salt\n1/4 tsp pepper\n1 clove garlic minced\n2 Tbsp all-purpose flour\n1 cup low-sodium chicken broth\n1 Tbsp heavy cream or milk\n1 cup peas and carrot mix still frozen\n1 cup rotisserie chicken cooled and shredded\n1/2 cup cheddar cheese (or jack or mozzarella), shredded\nsalt and pepper to taste\n1 sheet puff pastry defrosted\n1 egg well beaten\nSour cream\nPotato chips\nChicken marinade packet (Italian herbs & wine or something)\nChicken breasts (6ish)\nMilk (regular)\nShredded cheddar cheese\nShredded mozzarella \nEggs\nProsciutto \n1 yellow onion\n1 celery stalk\n1 garlic\nBroccoli \nRed potatoes \nZucchini \nAsparagus\nFrozen peas & carrot mix\nFrozen sheet of puff pastry\nWheat bread\nHam\nProvolone cheese\n\nWeek 2\nFalafel\nBag of dried chickpeas \nChicken lo mein \nSesame oil\nEgg noodles\nSalmon & ratatouille \nHerbs de Provence \nCookies\n\nWeek 3\nCinnamon Roll Cookies\n4 sticks salted butter🙌\n3 tbs cinnamon 🙌\nEggs🙌\n3.5 cups flour😂\nCream of tartar😂\nTeeny tiny milk carton\nBalsamic chicken w/ Parmesan green beans\nGreen beans🙌\nShredded Parmesan🙌\nGarlic powder🙌ooo\nSalmon & Ratatouille \nChocolate chia pudding\nMaple syrup🙌\nVanilla🙌\nOat milk 🙌\nGrapes🙌\nCookies\nToothpaste\nJuice boxes🙌\nGrocery List Week 13\nMeal 1: Zoodles & Meatballs\nZucchini \nMeatballs\nTomato chunks \nTomato sauce\nMeal 2: Chicken fajitas\nChicken\nOnions\nRed pepper\nGreen pepper\nMeal 3: Honey Sesame Chicken & Rice\nChicken\nSoy sauce \nHoney\nSesame oil\nMeal 4: Quiche & Zucchini\nZucchini\nMilk\nAsparagus \nProsciutto\nMeal 5: Grain Bowl w/ Honey Dijon Vinaigrette \nFalafel\nQuinoa\nSweet potato\nBrussel sprouts\nHoney\nGrocery List Week 12\nTuna fish\nBread\nHam\nCheese\nMustard\nMayo\nSalad\nMeal 1: chorizo mac & cheese\nChorizo\nPasta\n...cheese?\nMeal 2: Chicken & zucchini & potatoes\nChicken\nZucchini \nPotatoes\nMeal 3: sausage and French fries and salad\nSausage\nPotatoes\nGreens\nMeal 4: seared scallops & sautéed mushrooms & rice\nBasil \nLemon\nMushrooms\nMeal 5: creamy mushroom chicken\nChicken\nOnion\nChestnut mushrooms\nBroccoli\nCreme fraiche \nGrocery List Week 11\nHam\nCheese (one pack)\nMayo\nMeal 1: Chicken Lo Mein\nChicken\nBroccoli \nGreen onion\nMeal 2: Quiche\nMilk\nEggs\nCheese (shredded mozzarella)\nMeats\nAsparagus\nMeal 3: Marinated Chicken w/ zucchini and Tabouleh\nWhite vinegar\nChicken breasts\nTomato\nLemon juice\nMeal 4: Pizza\nShredded mozzarella \nMeats\nGrocery List Week 10\nBread\nMeat\nPickles\nMayo\nMeal 1: Lo Mein\n/egg noodles\nLight soy sauce\nDark soy sauce\nGreen onions\nMushrooms\nChicken\nMeal 2: Chicken with Potatoes and salad\nChicken breasts\nPotatoes\nMixed greens\nApples\nMeal 3: Tuna Fish Sandwiches\nBread\nPotatoes\nCucumber\nLox\nMeal 4: \nSugar Cookies:\n1 cup of butter\n3 cups of sugar🍪\n3 eggs🍪\nMilk\n4 cups of flour🍪\nBaking soda\nWeek 9 Grocery List\nMayo\nCheese\nBread\nTURKEY\nMeal 1: Chicken Burrito Bowl\nRice🍪\nSalsa🍪\nGuacamole \nLime\nParsley🍪\nCorn🍪\nBlack beans\nCheese\nChicken breast🍪\nMeal 2: Spanish Chickpea & Spinach Stew\n1 red onion🍪\nOlive oil🍪\nPlum tomatoes 🍪\nTomato paste🍪\nChickpeas\nSpinach🍪\nBrown rice🍪\nMeal 3: Caramelized Brussel Sprouts & Chorizo with Sweet potatoes\nBrussel sprouts🍪\nSweet potatoes🍪\nChorizo🍪\nMeal 4: Lasagna Soup\nOlive oil🍪\nGround beef 🍪\nYellow onion🍪\nChicken broth🍪\nCan of diced tomatoes 🍪\nCrushed tomatoes 🍪\nTomato paste🍪\nMozzarella \nParmesan\nRicotta\nDried lasagna🍪\nParsley🍪\n\nWeek 8 Grocery List\nBread\nBody soap\nSmoked salmon\nCucumber\nMeal 1: tuna fish and breakfast\nTuna fish\nBagels\nEggs\nGrated cheese\nPotatoes\nMayo\nTomatoes\nMeal 2: Chicken Kiev \nChicken Kiev\nMixed greens\nApples\nCherry tomatoes\nGoat cheese\nStrawberries\nMeal 3: Eggplant parm\nEggplant\nBaguette\nParmesan\nTomato sauce\nBread crumbs\nMeal 4: marinated chicken\nChicken breasts\nBroccoli\nPotatoes\nWeek 7 Grocery List\nMilk🍪\nSandwich stuff🍪\nMeal 1: Sweet Potato Chorizo Hash\nSpicy chorizo🍪\n1 onion🍪\nSweet potato🍪\nVittoria tomatoes🍪\nSpinach🍪\nParsley\nMeal 2: Steak, asparagus, potatoes\nSteak🍪\nAsparagus 🍪\nMeal 3: Shrimp and pasta\nShrimp🍪\nPenne🍪\nButter🍪\nParsley\nSpring onions🍪\nGarlic\nMeal 4: Garlic butter chicken\nChicken🍪\nGarlic\nBroccoli🍪\nGrocery List Week 6\nMeal 1: Lo Mein\nRamen noodles/egg noodles\nDark soy sauce\nGreen/spring onions\nMushrooms\nChicken breast\nMeal 2: Chicken Pesto Pasta\nPasta\nChicken breast\nOlive oil\nMeal 3: Marinated Chicken w/ zucchini and Tabouleh\nWhite vinegar\nChicken breasts\nTomato\nLemon juice\nMeal 4: Chicken Kiev, Potatoes, Salad\nChicken Kiev\nPotatoes\nGrocery List Week 5\nBread\nCream cheese\nCheese\nDijon mustard \nRitz\nWine\nMeal 1: Pasta Carbonara \nPasta\nCarbonara \nBreaded chicken\nMeal 2: Poor person tuna fish\nMayo\nBagels\nOnion powder\nMeal 3: Chicken Kiev\nChicken Kiev \nMeal 4: Eggplant Parm\nEggplant \nZucchini \nTomato sauce\nEasy Meal Week - S1\nBreakfast\nBerry crumble thingy\nLunch\nTurkey\nCheese\nCucumber\nTomato spinach\nChipotle\nOregano\nSalt\nPepper\nWrap\nDinner\nVodka pasta - S, M\nHoney sriracha salmon - T\nChicken, zucchini/broccoli, couscous - W, T\nSnacks\nGrapes\nCheeses\nMeats\nClub crackers\nChocolate covered coconut\nClementines\nApples\nBabybels\nS2\nBreakfast\nBerry crumble thingy\nLunch\nSalmon bao buns\nDinner\nChicken piccata\nChicken tortilla soup\nSnacks\nGrapes\nCheeses\nMeats\nClub crackers\nChocolate covered coconut\nTurkey\nCheese\nCucumber\nTomato spinach\nChipotle\nOregano\nSalt\nPepper\nWrap Herby Pork Meatballs\nHerbs, fresh and dried are absolutely packed full of goodness. Throughout human history herbs have been used as medicine to treat, heal and cure a myriad of symptoms. Herbal medicines are derived from multiple plant parts ie leaves, flowers & roots and each specific component of a plant can have differing effects and implications for our health. Specialised herbalists are qualified in extracting the specific chemical constituents into concentrated tinctures, which they can prescribe to be used alongside conventional medicine, in fact patients can now be referred to a herbalist by their GP for treatment within the NHS. Stretching to osteoporosis, HIV, dementia and dermatology, the power of plants and herbs is real and is supported by a growing body of scientific evidence. If you are interested in discovering more about herbal medicine please follow this link\nSo how can we make use of all this amazing plant power in our day to day lives? I developed this recipe to include as many herbs as I could (I managed to squeeze in 5). Flavourful pork meatballs, inspired by stuffed vine leaves, contain dill, mint, oregano and coriander. Free range pork mince is combined with onion, breadcrumbs, lemon zest, chilli and all the chopped herbs. Simply rolled into balls and browned in olive oil, they are ready in 20 minutes. To pack in even more herbs, I serve with a play on tabouleh and a minty spiked tzatziki.\nYou will need\n400g free range pork mince\n1 onion\n1/2 cup breadcrumbs\nA fistful of dill\nA fistful of coriander\nA fistful of mint\n1 red chilli\n1 tsp oregano\nLemon zest\nFor the tabouleh\n150g cooked quinoa\nApple\nTomato\nSpring onion \nLemon juice\nOlive oil\n1 packet parsley & 1/2 packet coriander\nMethod\nPreheat the oven to 180 fan. Sweat 1 onion down with a little salt and oil until softened. Add chopped deseeded chillis and cook for 3 more minutes.\nTip the pork mince into a bowl and add chopped herbs, plenty of salt, pepper, breadcrumbs, lemon zest and onions. Mix well until everything is evenly distributed.\nHeat a good glug of oil in a pan and brown off the meatballs in batches, don’t worry if they aren’t cooked through as they will finish in the oven.\nOnce all the meatballs are browned, place into a tray and into the oven for 10 minutes.\nTo make the tabouleh, mix chopped tomatoes, spring onion and apple with the quinoa. Chop lots of parsley and coriander and mix through. Season with loads of lemon juice and 2 tbsp good olive oil.\nRemove the meatballs from the oven, serve on top of a bed of the tabouleh and drizzle over the tzatziki.\nI am so happy with this one, absolutely jam packed with green goodness, aromatic spices, mellowed with the rich yolk that melts into the dish. Topped with lashings of fresh mint and salt feta, this doesn’t hold back on flavour but ticks all the boxes for health! This can be make for 1, 2 or as many as your dish allows. Serve with flat breads or pitta, a dollop of thick yoghurt and allow 2 eggs per person to keep you going.\nUltimate Greens Shakshuka\nYou will need (Serves 2)\n4 spring onions \n2 tsp garlic puree or 2 small cloves, grated.\n1 tsp ground cumin\n2 tsp Za’atar (I get mine from M&S. Its heaven so worth having in your cupboard!)\n1 small handful of fresh coriander (leaves and stems)\n100g kale\n120g spinach\n60 g frozen petit pois\n4 large free-range eggs\nFresh mint\nFeta cheese for sprinkling\nChilli flakes (optional)\nMETHOD\nAdd 1tbsp good olive oil to a nice deep pan and fry chopped spring onion and garlic puree until softened. Add the cumin and za’atar and cook for another minute. Turn off the heat. \nRemove the stalks and discard from the kale. Cook briefly in boiling for water for no more than 30 seconds. Drain the kale and squeeze out excess water. Place the kale into a blender and whizz up with the fresh coriander, a good pinch of salt, whilst gradually adding ice cubes until it forms a (roughly) smooth puree. \nTurn back on the heat and add the spinach and peas to the pan until the spinach has wilted. Pour in the blitzed puree, adding a little water if needed and mix all together, cook out for 2 minutes over a medium heat. Taste and season, adding chilli flakes for heat if desired. \nMake 4 little wells for the eggs, add the eggs and cook for 2 to 3 minutes, then cover the pan or quickly put under the girl. The eggs will carry on cooking in the residual heat so remove when still slightly wobbly to not to overcook that yolk!\nSeason the yolks with salt, Za’atar and black pepper. Chop some mint and crumble feta over the eggs, enjoy with warm pita, a good dollop of creamy thick yoghurt and an extra sprinkle of Za’atar (you can never have too much!)\n\nSmoky Chicken Tacos\nImpress your guests or even just yourself by whipping up from scratch these delicious tacos. They are perfectly balanced, moorishly good and couldn’t be easier to make. Two ingredient flat breads made from gut loving wholegrain flour, with absolutely no nasties, you will never buy tortillas again. Source good quality organic chicken thighs, which are a really affordable way of buying higher welfare meat. I use field & flower or riverford for online orders. A quick marinade in a good quality olive oil along with smoked paprika, oregano, garlic and fennel seeds gives the chicken a lovely colour and flavour. Once everything is prepped, cooking time is only 10 minutes, making this a perfect dinner party feast.\nYou will need (Serves 3-4)\nFor the flatbreads\nWholemeal flour\nYoghurt (I use Yeo valley in the green tub)\nFor the garlic sauce\nKefir\nGarlic puree\n1 tbsp EVOO\nSalt\nLemon juice\nPinch of oregano\nFor the cabbage\n1 red cabbage\nVinegar of choice\nFor the chicken\n4-6 chicken thighs\n2 tsp sweet smoked paprika\n1 tsp onion granules\n2 tsp garlic puree\n1 tsp oregano\n1 tbsp fresh parsley\nLemon\n1 tsp fennel seeds, crushed\n2 tbsp EVOO\nWooden skewers\nOption extras: Spring onion and fresh avocado\nMethod\nPrep the chicken thighs, remove the skin and take out the bone. Trim any large bits of excess fat and dice the thighs up into nice chunks. Make the marinade by mixing together the extra virgin olive oil, spices, herbs, 1/2 lemon juiced, 1 tsp salt and 1tsp pepper. Mix the chicken into the marinade and leave for at least an hour or overnight.\nCut the cabbage into quarters. Use 2 of the quarters to make enough for 4 people. Remove the stem and slice very finely, removing any large chunks or thick pieces. Add to a pan with a ratio of 2/3 vinegar to 1/3 water, with just enough liquid to cover the cabbage. Bring to the boil and leave to cool. If you prefer it less pickled use a 50:50 ratio instead.\nMake the flat breads by mixing flour and yoghurt with a good pinch of salt in a ratio of 2:1. I use 1 cup of flour to 1/2 cup of yoghurt. This doesn’t need to be kneaded, but mix until it forms a ball, adding extra flour if it’s too sticky. Form into balls just a little smaller than a golf ball.  Roll out nice and thin, around 2mm. Leave to one side on a floured surface.\nFor the garlic sauce, simply whizz together 8 tbsp kefir or full fat yoghurt, 1 tsp garlic puree (more if you like a lot of garlic), 1 tsp oregano, 1 tbsp EVOO, a good pinch of salt and squeeze of lemon juice. Adjust to your taste preference with more or less of any ingredient.\nWhen you are ready to cook, heat your grill to its maximum temperature. If you don’t have a grill, a hot frying pan is fine. Place roughly 3-4 pieces of chicken onto each skewer and place under the hot grill. Wet the exposed wood end slightly to stop them burning. Turn now and then until the chicken is nicely coloured each side but not dry.\nHeat a dry frying pan nice and hot. Turn the heat down a little and add a flat bread, one at a time, turning every 10-20 seconds until it puffs up and has nice colour on both sides. Don’t worry if they don’t puff up, just roll thinner next time.\nOnce you have cooked all the flat breads, its simply a case of assembly. Fill each ‘taco’ with one chicken skewer, some pickled cabbage and a drizzle of garlic sauce. Add a few slices of fresh avocado and finish with a sprinkle of spring onion.\nSalmon & Fennel Tacos\nWith the recent hot weather, I wanted something fresh, healthy and tasty for dinner. In my vegetable box delivery I had received 2 bulbs of fennel and treating it like cabbage in a slaw, it was the perfect companion to the lone salmon fillet I needed to use up. Fennel can be an acquired taste, but when you salt it and dress it in lime juice it takes the aniseed bite down a notch. This whole meal literally took 20 minutes, I seasoned the salmon and spread a layer of wholegrain mustard on top to form a crust in the oven. Serve with simple yoghurt flatbreads, fresh slices of avocado and the flaked salmon. A scattering of diced jalapeños brings it all together, really happy with this one!\nServes 2, you will need:\n1/2 cup Wholemeal flour/ plain flour\n1/4 cup natural yoghurt ( I use yeo valley in the green tub)\n1 bulb fennel\n1 lime\n2 sustainable salmon fillets\nWholegrain mustard\nAvocado\nSalt & pepper\nJalapeños\nMethod\nPrep the fennel, cut in half and remove the woody core. Take one half, peel a few of the outer layers off and lay down flat, this makes it easier to slice it thinly. Do this with the whole fennel, make sure you reserve the green leafy bits. Once sliced, place into a bowl and salt. Leave for 5/10 mins until it softens.\nSalt and pepper on the salmon, then add a layer of wholegrain mustard on top. Bake in the oven at 180 fan for 8 mins, don’t over cook.. no one wants dry salmon.\nMix 1/2 cup of flour and 1/4 cup of natural yoghurt and pinch of salt in a bowl until it comes together. Kneed for a few seconds until it forms a ball, separate into 6 little balls. Roll out on a well floured board until they are thin and look like tacos.\nRinse the fennel under cold water, dry throughly. Squeeze in the juice of one whole lime and the zest. Add chopped fennel leaves (the green bits we saved earlier).\nTake the salmon out the oven and flake into large chunks. If you cook it right it will flake away into good thick layers.\nCook the flatbreads/tacos in a hot dry pan, turning until they are coloured on both sizes with nice little air pockets.\nSlice an avocado into thin strips and place onto each taco. Add salmon flakes, the fennel slaw and scatter over diced jalapeños.\n\n\n\nTask:\n\n\nFor years I have been compiling and listing various ways of organizing my frequently used recipes, meal plans, and grocery lists. I have added a sampling above. Help me create organization out of this madness with some kind of weekly planning guide. Using the content above, can you synthesize a master recipe list organized into Breakfast, Lunch, Dinner, and Dessert subtitles? Then under “Dinner” could you use subheadings divided by protein (i.e. beef, pork, poultry, fish, vegetarian)? For each recipe in the master list, include whether it has a link, a partial ingredient list, or only a title. If the same recipe appears in multiple places (binder vs menu vs grocery list), merge into one canonical entry and list all the aliases/where it appeared. For ambiguous entries (meal ideas vs real recipes), include an ‘Ambiguous/Needs clarification’ tag and justify why. \n\nIt would be great if you could look at the meal/menu plans I have listed and see if you can create 5 new ones. I would like each to include two breakfasts, one lunch, and three dinners, as well as one dessert. Please make use of the recipes I have saved and included. The three dinner selections should include at least two different protein types. If beef is used, it can only be one of the three dinner selections.\n\nCould you also synthesize any snacks mentioned into a separate list?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/revision/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 24"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/revision/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should include a master recipe list split into four top-level sections labeled “Breakfast”, “Lunch”, “Dinner”, and “Dessert”.",
+        "The response should include subheadings under the “Dinner” section divided by protein: “beef”, “pork”, “poultry”, “fish”, and “vegetarian”.",
+        "The response should include exactly the following recipes under Breakfast: avocado toast with runny eggs, berry crumble with honey yogurt, german pancakes, mint matcha smoothie, nutella pastry twists, prosciutto asparagus quiche, quiche Lorraine with maple bacon, potato crust, pumpkin cinnamon rolls, raspberry chia pudding, matcha raspberry chia pudding, apple pie chia pudding, sweet potato and chorizo hash, egg bites, Israeli salad, mixed berry croissant bake, sweet potato muffins, sweet potato breakfast cookies, probiotic yogurt drinks, cranberry orange scones, pumpkin bread, protein breakfast bagels, ultimate greens shakshuka.",
+        "The response should include exactly the following recipes under Lunch: Israeli salad; falafel; chopped chicken satay salad; Bulgogi Beef, Cucumber Salad, Carrots, Rice, Sesame Seeds, Green Onion bowl; Mediterranean bowls; Jennifer Anniston Salad; Salad with Rotisserie Chicken; taco bowls; Stuffed Peppers w/ Quinoa and Sausage; Sausage Tortellini Soup; Chicken Thighs in Seasoning Salt, Rice Pilaf, Salad; Zucchini Noodles, Marinara, Sausage; Lo Mein w/ Mushrooms & Teriyaki Chicken; Pizza (salami, mushroom); Chicken Parm over Wheat Penne; Zucchini Noodles, Marinara, Meatballs; Eggplant Parm Sandwiches on Baguette; Chicken Kiev, Potatoes, Salad; Pesto Pasta Salad; Mac & Cheese; Quesadillas; Salmon Bao Buns; Grilled Cheese and Tomato Soup.",
+        "The response should include exactly the following recipes under Dinner, Beef: Red Curry Garlic Beef Stir Fry; Chili; Brisket; Beef Kabob; Beef Kofta, Tabouli.",
+        "The response should include exactly the following recipes under Dinner, Pork:  Prosciutto Asparagus Quiche; Chorizo and Sweet Potato Hash; Cajun Shrimp & Sausage Vegetable Skillet; Bacon Wrapped BBQ Pork Tenderloin; Chorizo Mac & Cheese; Herby Pork Meatballs.",
+        "The response should include exactly the following recipes under Dinner, Poultry: Salsa Verde Chicken Zucchini Enchiladas; Boursin Orzo Chicken; Chicken Katsu Bowls; Thai Chicken Lettuce Wraps; Garlic Butter Chicken Pad Thai; BBQ Chicken Bowls w/ Sweet Potatoes & Cole Slaw; Chicken Parm; Chicken Tortilla Soup; Greek Lemon Chicken; Lemon Chicken & Broccolini Rachel Ray; Chicken Piccata; Chicken & Kale Salad; Pesto Chicken, Salad, Cheddar Bay Biscuits; Smoky Chicken Tacos; Coq au Vin Blanc Meatballs w/ Rice; Chicken, Zucchini/Broccoli, Couscous; Chicken Burrito Bowl; Chicken Lo Mein; Chicken Fajitas; Chicken with Potatoes and Salad; Chicken Kiev; Marinated Chicken w/ Zucchini and Tabouleh; Garlic Butter Chicken; Chicken Pesto Pasta.",
+        "The response should include exactly the following recipes under Dinner, Seafood: Sundried Tomato Salmon; Cajun Shrimp & Sausage Vegetable Skillet; BBQ Salmon Bowls with Mango Salsa; Honey Sriracha Salmon Bowls; Shrimp and Pasta; Seared Scallops & Sautéed Mushrooms & Rice; Salmon & Ratatouille; Salmon & Fennel Tacos; Shrimp Etouffee; Poor Man's Tuna Fish.",
+        "The response should include exactly the following recipes under Dessert: Chocolate Chip Cookies; Crème Brûlée; Margaret’s Apple Crisp; Pumpkin Pie; Eggnog Cream Pie; Chocolate Peanut Butter Dates; Greek Yogurt Ice Cream Bars; Popsicles; Peanut Butter Cookies; Chocolate Pudding; Peanut Butter Kisses; Sugar Cookies.",
+        "The response should categorize the following recipes as having a link: Matcha raspberry chia pudding; Quiche w/ maple bacon & potato crust; Nutella pastry twists with slivered almonds; Israeli salad; Pumpkin Cinnamon Rolls; Sundried tomato salmon; Salsa Verde Chicken zucchini enchiladas; Boursin orzo chicken; Cajun shrimp & sausage vegetable skillet; Chicken Katsu bowls; Falafel; Sheet pan maple Dijon sausage & fall vegetables; Thai Chicken lettuce wraps; Garlic butter chicken pad Thai; BBQ Salmon Bowls with mango salsa; Chicken Parm; Honey sriracha salmon bowls; Red curry garlic beef stir fry; Moroccan roasted eggplant-tomato stew; Chicken BBQ Bowls w/ sweet potatoes & cole slaw; Chili; Pumpkin Pasta with sage walnuts; Arayes with yogurt sauce; Stromboli; Chicken tortilla soup; Greek lemon chicken; Korean spicy cucumber salad; Autumn couscous salad; Quinoa brown rice; Fried cheesy pickles w/ sriracha ranch; Burrata with roasted tomato; Chocolate Chip cookies; Crème brûlée; Maple/ balsamic Brussel sprouts w/ bacon; Pumpkin pie; El Diablo; Chickpea shakshuka; Shrimp etouffee",
+        "The response should categorize the following recipes as having a partial ingredients list: Mint matcha smoothie; Chicken Parm; Margaret’s Apple Crisp; Israeli salad; Chopped Chicken Satay Salad; Protein Breakfast Bagels; Quiche & Zucchini; Eggplant Parm; Chicken & Broccoli & Potatoes; Chicken Pot Pie Stromboli; Falafel; Cinnamon Roll Cookies; Zoodles & Meatballs; Chicken fajitas; Honey Sesame Chicken & Rice; Grain Bowl w/ Honey Dijon Vinaigrette; chorizo mac & cheese; Chicken & zucchini & potatoes; sausage and French fries and salad; seared scallops & sautéed mushrooms & rice; creamy mushroom chicken; Chicken Lo Mein; Quiche; Marinated Chicken w/ zucchini and Tabouleh; Lo Mein; Chicken with Potatoes and salad; Tuna Fish Sandwiches; Sugar Cookies; Chicken Burrito Bowl; Spanish Chickpea & Spinach Stew; Caramelized Brussel Sprouts & Chorizo with Sweet potatoes; Lasagna Soup; tuna fish and breakfast; Chicken Kiev; marinated chicken; Sweet Potato Chorizo Hash; Steak, asparagus, potatoes; Shrimp and pasta; Garlic butter chicken; Chicken Pesto Pasta; Chicken Kiev, Potatoes, Salad; Pasta Carbonara; Poor person tuna fish; Wrap Herby Pork Meatballs; Smoky Chicken Tacos; Salmon & Fennel Tacos.",
+        "The response should categorize the following recipes as having only a title: Avocado Toast with Runny Eggs; Berry Crumble with Honey Yogurt; German Pancakes; Prosciutto Asparagus Quiche; Raspberry Chia Pudding; Apple Pie Chia Pudding; Egg Bites; Mixed Berry Croissant Bake; Sweet Potato Muffins; Sweet Potato Breakfast Cookies; Probiotic Yogurt Drinks; Cranberry Orange Scones; Pumpkin Bread; Mediterranean Bowls; Jennifer Anniston Salad; Salad with Rotisserie Chicken; Taco Bowls; Stuffed Peppers w/ Quinoa and Sausage; Sausage Tortellini Soup; Chicken Thighs in Seasoning Salt, Rice Pilaf, Salad; Zucchini Noodles, Marinara, Sausage; Lo Mein w/ Mushrooms & Teriyaki Chicken; Pizza (salami, mushroom); Chicken Parm over Wheat Penne; Marinara, Meatballs; Potatoes, Salad; Pesto Pasta Salad; Mac & Cheese; Quesadillas; Salmon Bao Buns; Grilled Cheese and Tomato Soup; Beef Kabob; Beef Kofta, Tabouli, Yogurt Sauce; Bacon Wrapped BBQ Pork Tenderloin; Lemon Chicken & Broccolini Rachel Ray; Chicken Piccata; Chicken & Kale Salad; Pesto Chicken, Salad, Cheddar Bay Biscuits; Coq au Vin Blanc Meatballs w/ Rice; Chicken, Zucchini/Broccoli, Couscous;; Salmon & Ratatouille; Ratatouille over Rice; Coconut Lime Tofu; Risotto; Tofu Soup Dumpling Bake & Sesame Salad Kit; Tofu, Veggie Stir Fry, Rice; Pasta alla Norma; Dump and Bake Veggie Pasta; Eggnog Cream Pie; Chocolate Peanut Butter Dates; Greek Yogurt Ice Cream Bars; Popsicles; Peanut Butter Cookies; Chocolate Pudding; Peanut Butter Kisses.",
+        "The response should include five different menu plan options.",
+        "The menu plan options provided by the response should include 2 breakfasts, 1 lunch, 3 dinners, and 1 dessert,",
+        "The response should include at least two different types of protein (i.e. beef, pork, poultry, fish, vegetarian) in the three dinners from each of the five menu plans provided.",
+        "The response should use beef no more than once for a dinner in each of the meal plans provided.",
+        "The response should extract items for the snack list that are complete, not partial ingredients, which includes Burrata with Roasted Tomato (has link), Grapes, Carrots with Peanut Butter, Trail Mix, Veggies & Dip, Pretzels & Cheese, Cheese, Nut, Berry Snack Packs, Hummus & Pretzel Packs, Mandarins, Babybels, Club Crackers, Chocolate Covered Coconut, Apples, Oranges, Coconut Peanut Butter Perfect Bars, Cape Cod Salt & Vinegar Chips, Clementines, Pickles, Roasted Peanuts, Strawberries.",
+        "The response should combine recipes that appear in multiple places under a single entry and list each different alias, such as in the case of \"Eggplant Parm Sandwiches on Baguette\" and \"Eggplant parm.\"",
+        "The response should mark entries that are ambiguous with an 'Ambiguous/Needs clarification' tag, such as unclear recipes like \"tuna fish and breakfast.\"",
+        "The response should justify any recipe tagged as ambiguous, such as explaining that \"tuna fish and breakfast\" is unclear because it could mean a tuna melt or tuna salad or some other tuna dish."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/revision/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should include a master recipe list split into four top-level sections labeled “Breakfast”, “Lunch”, “Dinner”, and “Dessert”.",
+          "The response should include subheadings under the “Dinner” section divided by protein: “beef”, “pork”, “poultry”, “fish”, and “vegetarian”.",
+          "The response should include exactly the following recipes under Breakfast: avocado toast with runny eggs, berry crumble with honey yogurt, german pancakes, mint matcha smoothie, nutella pastry twists, prosciutto asparagus quiche, quiche Lorraine with maple bacon, potato crust, pumpkin cinnamon rolls, raspberry chia pudding, matcha raspberry chia pudding, apple pie chia pudding, sweet potato and chorizo hash, egg bites, Israeli salad, mixed berry croissant bake, sweet potato muffins, sweet potato breakfast cookies, probiotic yogurt drinks, cranberry orange scones, pumpkin bread, protein breakfast bagels, ultimate greens shakshuka.",
+          "The response should include exactly the following recipes under Lunch: Israeli salad; falafel; chopped chicken satay salad; Bulgogi Beef, Cucumber Salad, Carrots, Rice, Sesame Seeds, Green Onion bowl; Mediterranean bowls; Jennifer Anniston Salad; Salad with Rotisserie Chicken; taco bowls; Stuffed Peppers w/ Quinoa and Sausage; Sausage Tortellini Soup; Chicken Thighs in Seasoning Salt, Rice Pilaf, Salad; Zucchini Noodles, Marinara, Sausage; Lo Mein w/ Mushrooms & Teriyaki Chicken; Pizza (salami, mushroom); Chicken Parm over Wheat Penne; Zucchini Noodles, Marinara, Meatballs; Eggplant Parm Sandwiches on Baguette; Chicken Kiev, Potatoes, Salad; Pesto Pasta Salad; Mac & Cheese; Quesadillas; Salmon Bao Buns; Grilled Cheese and Tomato Soup.",
+          "The response should include exactly the following recipes under Dinner, Beef: Red Curry Garlic Beef Stir Fry; Chili; Brisket; Beef Kabob; Beef Kofta, Tabouli.",
+          "The response should include exactly the following recipes under Dinner, Pork:  Prosciutto Asparagus Quiche; Chorizo and Sweet Potato Hash; Cajun Shrimp & Sausage Vegetable Skillet; Bacon Wrapped BBQ Pork Tenderloin; Chorizo Mac & Cheese; Herby Pork Meatballs.",
+          "The response should include exactly the following recipes under Dinner, Poultry: Salsa Verde Chicken Zucchini Enchiladas; Boursin Orzo Chicken; Chicken Katsu Bowls; Thai Chicken Lettuce Wraps; Garlic Butter Chicken Pad Thai; BBQ Chicken Bowls w/ Sweet Potatoes & Cole Slaw; Chicken Parm; Chicken Tortilla Soup; Greek Lemon Chicken; Lemon Chicken & Broccolini Rachel Ray; Chicken Piccata; Chicken & Kale Salad; Pesto Chicken, Salad, Cheddar Bay Biscuits; Smoky Chicken Tacos; Coq au Vin Blanc Meatballs w/ Rice; Chicken, Zucchini/Broccoli, Couscous; Chicken Burrito Bowl; Chicken Lo Mein; Chicken Fajitas; Chicken with Potatoes and Salad; Chicken Kiev; Marinated Chicken w/ Zucchini and Tabouleh; Garlic Butter Chicken; Chicken Pesto Pasta.",
+          "The response should include exactly the following recipes under Dinner, Seafood: Sundried Tomato Salmon; Cajun Shrimp & Sausage Vegetable Skillet; BBQ Salmon Bowls with Mango Salsa; Honey Sriracha Salmon Bowls; Shrimp and Pasta; Seared Scallops & Sautéed Mushrooms & Rice; Salmon & Ratatouille; Salmon & Fennel Tacos; Shrimp Etouffee; Poor Man's Tuna Fish.",
+          "The response should include exactly the following recipes under Dessert: Chocolate Chip Cookies; Crème Brûlée; Margaret’s Apple Crisp; Pumpkin Pie; Eggnog Cream Pie; Chocolate Peanut Butter Dates; Greek Yogurt Ice Cream Bars; Popsicles; Peanut Butter Cookies; Chocolate Pudding; Peanut Butter Kisses; Sugar Cookies.",
+          "The response should categorize the following recipes as having a link: Matcha raspberry chia pudding; Quiche w/ maple bacon & potato crust; Nutella pastry twists with slivered almonds; Israeli salad; Pumpkin Cinnamon Rolls; Sundried tomato salmon; Salsa Verde Chicken zucchini enchiladas; Boursin orzo chicken; Cajun shrimp & sausage vegetable skillet; Chicken Katsu bowls; Falafel; Sheet pan maple Dijon sausage & fall vegetables; Thai Chicken lettuce wraps; Garlic butter chicken pad Thai; BBQ Salmon Bowls with mango salsa; Chicken Parm; Honey sriracha salmon bowls; Red curry garlic beef stir fry; Moroccan roasted eggplant-tomato stew; Chicken BBQ Bowls w/ sweet potatoes & cole slaw; Chili; Pumpkin Pasta with sage walnuts; Arayes with yogurt sauce; Stromboli; Chicken tortilla soup; Greek lemon chicken; Korean spicy cucumber salad; Autumn couscous salad; Quinoa brown rice; Fried cheesy pickles w/ sriracha ranch; Burrata with roasted tomato; Chocolate Chip cookies; Crème brûlée; Maple/ balsamic Brussel sprouts w/ bacon; Pumpkin pie; El Diablo; Chickpea shakshuka; Shrimp etouffee",
+          "The response should categorize the following recipes as having a partial ingredients list: Mint matcha smoothie; Chicken Parm; Margaret’s Apple Crisp; Israeli salad; Chopped Chicken Satay Salad; Protein Breakfast Bagels; Quiche & Zucchini; Eggplant Parm; Chicken & Broccoli & Potatoes; Chicken Pot Pie Stromboli; Falafel; Cinnamon Roll Cookies; Zoodles & Meatballs; Chicken fajitas; Honey Sesame Chicken & Rice; Grain Bowl w/ Honey Dijon Vinaigrette; chorizo mac & cheese; Chicken & zucchini & potatoes; sausage and French fries and salad; seared scallops & sautéed mushrooms & rice; creamy mushroom chicken; Chicken Lo Mein; Quiche; Marinated Chicken w/ zucchini and Tabouleh; Lo Mein; Chicken with Potatoes and salad; Tuna Fish Sandwiches; Sugar Cookies; Chicken Burrito Bowl; Spanish Chickpea & Spinach Stew; Caramelized Brussel Sprouts & Chorizo with Sweet potatoes; Lasagna Soup; tuna fish and breakfast; Chicken Kiev; marinated chicken; Sweet Potato Chorizo Hash; Steak, asparagus, potatoes; Shrimp and pasta; Garlic butter chicken; Chicken Pesto Pasta; Chicken Kiev, Potatoes, Salad; Pasta Carbonara; Poor person tuna fish; Wrap Herby Pork Meatballs; Smoky Chicken Tacos; Salmon & Fennel Tacos.",
+          "The response should categorize the following recipes as having only a title: Avocado Toast with Runny Eggs; Berry Crumble with Honey Yogurt; German Pancakes; Prosciutto Asparagus Quiche; Raspberry Chia Pudding; Apple Pie Chia Pudding; Egg Bites; Mixed Berry Croissant Bake; Sweet Potato Muffins; Sweet Potato Breakfast Cookies; Probiotic Yogurt Drinks; Cranberry Orange Scones; Pumpkin Bread; Mediterranean Bowls; Jennifer Anniston Salad; Salad with Rotisserie Chicken; Taco Bowls; Stuffed Peppers w/ Quinoa and Sausage; Sausage Tortellini Soup; Chicken Thighs in Seasoning Salt, Rice Pilaf, Salad; Zucchini Noodles, Marinara, Sausage; Lo Mein w/ Mushrooms & Teriyaki Chicken; Pizza (salami, mushroom); Chicken Parm over Wheat Penne; Marinara, Meatballs; Potatoes, Salad; Pesto Pasta Salad; Mac & Cheese; Quesadillas; Salmon Bao Buns; Grilled Cheese and Tomato Soup; Beef Kabob; Beef Kofta, Tabouli, Yogurt Sauce; Bacon Wrapped BBQ Pork Tenderloin; Lemon Chicken & Broccolini Rachel Ray; Chicken Piccata; Chicken & Kale Salad; Pesto Chicken, Salad, Cheddar Bay Biscuits; Coq au Vin Blanc Meatballs w/ Rice; Chicken, Zucchini/Broccoli, Couscous;; Salmon & Ratatouille; Ratatouille over Rice; Coconut Lime Tofu; Risotto; Tofu Soup Dumpling Bake & Sesame Salad Kit; Tofu, Veggie Stir Fry, Rice; Pasta alla Norma; Dump and Bake Veggie Pasta; Eggnog Cream Pie; Chocolate Peanut Butter Dates; Greek Yogurt Ice Cream Bars; Popsicles; Peanut Butter Cookies; Chocolate Pudding; Peanut Butter Kisses.",
+          "The response should include five different menu plan options.",
+          "The menu plan options provided by the response should include 2 breakfasts, 1 lunch, 3 dinners, and 1 dessert,",
+          "The response should include at least two different types of protein (i.e. beef, pork, poultry, fish, vegetarian) in the three dinners from each of the five menu plans provided.",
+          "The response should use beef no more than once for a dinner in each of the meal plans provided.",
+          "The response should extract items for the snack list that are complete, not partial ingredients, which includes Burrata with Roasted Tomato (has link), Grapes, Carrots with Peanut Butter, Trail Mix, Veggies & Dip, Pretzels & Cheese, Cheese, Nut, Berry Snack Packs, Hummus & Pretzel Packs, Mandarins, Babybels, Club Crackers, Chocolate Covered Coconut, Apples, Oranges, Coconut Peanut Butter Perfect Bars, Cape Cod Salt & Vinegar Chips, Clementines, Pickles, Roasted Peanuts, Strawberries.",
+          "The response should combine recipes that appear in multiple places under a single entry and list each different alias, such as in the case of \"Eggplant Parm Sandwiches on Baguette\" and \"Eggplant parm.\"",
+          "The response should mark entries that are ambiguous with an 'Ambiguous/Needs clarification' tag, such as unclear recipes like \"tuna fish and breakfast.\"",
+          "The response should justify any recipe tagged as ambiguous, such as explaining that \"tuna fish and breakfast\" is unclear because it could mean a tuna melt or tuna salad or some other tuna dish."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/revision/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/revision/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 24"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

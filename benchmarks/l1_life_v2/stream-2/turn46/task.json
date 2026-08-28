@@ -1,0 +1,354 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn46",
+  "turn_index": 46,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "75121251-319e-f2d7-985c-112d0f76579f",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 102,
+    "source_sha256": "009cac7731cdb2a88a8bef0324f759bcbebb53fe53335df204dedf7721b3ec76",
+    "source_metadata": {
+      "task_id": "75121251-319e-f2d7-985c-112d0f76579f",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "blueharbor21\nblueharbor21\nLevel 2\nSettlement taxable\nI received a check from a Yahoo data breach settlement in 2023. Is this taxable? If so, how do I report it on my taxes?\n\nNot A Product Question\nposted\n‎March 23, 2024 11:38 AM\nlast updated ‎February 10, 2026 9:28 PM\n5 4,315\nBookmark Icon\nx\nDo you have an Intuit account?\nDo you have an Intuit account?\nYou'll need to sign in or create an account to connect with an expert.\n\nYes\nNo\n1 Best answer\nMariaG2\nEmployee Tax Expert MariaG2\nEmployee Tax Expert\nAs AngelaK9 mentioned, legal settlements are often taxable. Non-injury settlements are considered other taxable income. Normally companies do not issue a Form 1099-MISC for payments under $600, but you should still report this income on your tax return.\n\nIf I didn't get a 1099-NEC or 1099-MISC, do I still need to report the income if it's less than $600...\n@blueharbor21\n\n[Edited 3/26/24 | 11:40 AM PST]\n\nView solution in original post\n\n‎March 24, 2024 7:15 AM\nBookmark Icon\nAngelaK9\nEmployee Tax Expert AngelaK9\nEmployee Tax Expert\nIt depends. Legal settlements are often taxable, depending on the type of settlement and would have been indicated in your settlement agreement. Non-injury settlements are considered other taxable income. You should receive a Form 1099 if your settlement is taxable. You will be taxed on the income based on the tax bracket that you fall in and the federal income tax rates.\n\nRefer to the TurboTax article Are legal settlements taxable? for more information.\n\nIf you receive a form 1099-MISC, follow the instructions below to enter your settlement income:\n\nSign in to your TurboTax account\nType 1099-MISC in the search box\nSelect Jump to 1099-MISC\nSelect yes to enter a 1099-MISC or Add another 1099-MISC\nEnter the information and select Continue\nWhen you get to the Describe the Reason for this 1099-MISC enter Lawsuit Settlement and select Continue\nWhen you get to the Does any of these uncommon situations apply? Select This was money from a lawsuit settlement and answer the question regarding back wages and select Continue.\n\nFor additional information, review the TurboTax help article Where do I enter an award from a taxable legal settlement?\n\n**Say \"Thanks\" by clicking the thumb icon in a post\n**Mark the post that answers your question by clicking on \"Mark as Best Answer\"\n‎March 23, 2024 11:59 AM\nBookmark Icon\nblueharbor21\nblueharbor21\nLevel 2\nNo matter what the amount of the settlement check will a MISC-1099 will be sent out (because it is a small check)? I want to make sure I know if I need to put this on my taxes.\n\n‎March 23, 2024 3:29 PM\nBookmark Icon\nMariaG2\nEmployee Tax Expert MariaG2\nEmployee Tax Expert\nAs AngelaK9 mentioned, legal settlements are often taxable. Non-injury settlements are considered other taxable income. Normally companies do not issue a Form 1099-MISC for payments under $600, but you should still report this income on your tax return.\n\nIf I didn't get a 1099-NEC or 1099-MISC, do I still need to report the income if it's less than $600...\n@blueharbor21\n\n[Edited 3/26/24 | 11:40 AM PST]\n\n‎March 24, 2024 7:15 AM\nBookmark Icon\nRiverStone88\nRiverStone88\nLevel 3\nI have the same question. I don't see an 'Other Income' entry spot to put this small settlement check and I didn't receive a 1099-Misc. Where to put this amount?\n\n‎March 30, 2025 10:23 AM\nBookmark Icon\nMariaG2\nEmployee Tax Expert MariaG2\nEmployee Tax Expert\nTo enter the settlement:\n\nGo to Wages &amp; Income\nScroll to the bottom under Less Common Income, select Start (or Update) for Miscellaneous Income.\nChoose Other reportable income\nAnswer Yes to Any Other Taxable Income\nOn the next screen enter the description and amount\nYour settlement will now get reported as Other Income on your tax return. Feel free to reach back if you have any other questions.\n\n@RiverStone88\n\n‎March 30, 2025 12:15 PM Are Wrongful Death Settlements Taxable​?: A Detailed Discussion  \nBy Daniel Harper on September 4, 2025\n\nAre Wrongful Death Settlements Taxable​?: A Detailed Discussion  \nWhen you lose your loved ones due to others’ negligence or wrongful actions, it can wreck you physically and emotionally. A wrongful death settlement is a way to compensate the surviving family members for the loss. However, a vital question arises: “Are wrongful death settlements taxable? What does the IRS think about the taxability of wrongful death claims?\n\nGenerally, medical expenses, funeral costs, and loss of income are non-taxable. However, the IRS will tax the award for punitive damages and interest earned on the payout. Also, Federal and state laws have strict provisions on who can claim a wrongful death settlement.\n\nWhat Is a Wrongful Death Settlement?  \nLet’s first understand what a wrongful death settlement entails. It’s necessary because many people are confused about the wrongful death definition. \n\nA wrongful death occurs when a person dies as a result of the negligence or misconduct of another party. Common causes include car accidents, medical malpractice, defective products, and workplace accidents.\n\nA wrongful death settlement compensates the surviving family members. It includes various damages the family has suffered due to the death. These damages can include:\n\nMedical Expenses: Costs incurred for the treatment of the deceased before their passing.  \nFuneral Expenses: Burial and related costs.  \nLoss of Income: Compensation for the income the deceased would have provided had they lived.  \nLoss of Companionship and Emotional Distress: The pain and suffering endured by the surviving family members.  \nPunitive Damages: These are intended to punish the defendant for egregious behavior and deter similar misconduct in the future.  \nThe IRS will treat each of these damages differently for taxability. So it’s essential to break them down further.\n\nAre Wrongful Death Settlements Taxable?  \nMost of a wrongful death settlement is not considered taxable income under federal law. The Internal Revenue Code § 104(a)(2) governs the taxability of wrongful death claims. \n\nIt states that gross income does not include “the amount of any damages (other than punitive damages) received because of personal physical injuries or physical sickness.” It could be from a suit or agreement and may be paid as a lump sum or in periodic payments. \n\nIt defines that a wrongful death claim starts with the physical injury or sickness that resulted in death. As a result, the compensatory damages are typically excluded from taxable income.\n\nWrongful Death Settlement Taxable IRS Considerations:  \nUnder IRC Section 104(a)(2), compensation awarded for physical injuries or sickness is generally not taxable. It often applies to compensatory damages received in a wrongful death settlement. It directly compensates for the physical injuries leading to death.\n\nWhat Expenses are Non-Taxable?  \nThe IRS and state governments consider damages for physical injuries, medical expenses, and other non-taxable items. Therefore, you are not required to pay taxes on these components. \n\nCompensatory Damages for Physical Injuries\tTaxability\tDetails  \nMedical Expenses\tNon-Taxable\tCompensation for injuries or sickness, including medical bills, pain, and suffering related to physical injuries.  \nFuneral Expenses\tNon-Taxable\tCompensation for funeral and burial services, including casket, headstone, etc.   \nLoss of Financial Support\tNon-Taxable\tDamages for the loss of income or financial support that the decedent would have provided  \nPain and Suffering (Related to Physical Injury or Sickness)\tNon-Taxable\tDamages for the pain and discomfort the decedent suffered  \nLoss of Consortium (Related to Physical Injury)\tNon-Taxable\tCompensation for the consortium the family lost.  \n \n\nCompensatory Damages for Physical Injuries  \nIt is awarded to compensate the survivors for the injuries sustained before the death of the deceased. These damages relate to physical injuries or sickness. So, they are generally not taxable under federal law.\n\nMedical costs incurred before death  \nRehabilitation costs  \nPrescription medication expenses  \nPhysical therapy expenses  \nSurgery-related costs  \nMedical Expenses  \nCompensation for medical expenses covers the costs associated with the decedent’s treatment. It covers all the medical expenses up to their death. These amounts are not taxable. However, the condition applies that they were not previously deducted on the decedent’s tax returns.\n\nHospital bills  \nDoctor’s consultation fees  \nEmergency room services  \nAmbulance fees  \nMedical equipment rental or purchase (e.g., wheelchairs, oxygen tanks)  \nCosts for medical procedures or surgeries  \nFuneral Expenses  \nA wrongful death settlement also covers the funeral and burial expenses. These expenses are non-taxable, as they directly relate to the decedent’s death.\n\nFuneral home services  \nCasket or urn  \nBurial plot or cremation  \nHeadstone or memorial marker  \nTransportation of the deceased (e.g., hearse)  \nOfficiant or clergy fees  \nLoss of Financial Support  \nFinancial damages cover all the financial support that the descendant lost. Actually, this is the compensation that the survivor and his family would have received, unless the injured person hadn’t passed away. These funds are not taxable.\n\nIncome the decedent would have earned  \nRetirement or pension benefits lost  \nSocial Security benefits the decedent would have provided  \nChild support or alimony that the decedent would have paid  \nContributions to household expenses  \nPain and Suffering   \nWrongful death settlement includes compensation for pain and suffering. However, it must be associated with physical injury or sickness.\n\nPhysical pain and discomfort of the decedent  \nEmotional distress related to physical injury or illness  \nLoss of enjoyment of life due to injury  \nChronic pain or long-term suffering endured before death  \nLoss of Consortium   \nLoss of consortium damages are awarded for the emotional and relational impact that the decedent’s death has on the survivors. They are non-taxable as long as the compensation is a direct result of the injury or wrongful death. \n\nLoss of companionship and comfort  \nLoss of intimacy or sexual relationship  \nLoss of moral and emotional support  \nLoss of affection and care  \nWhat Taxes on Wrongful Death Settlement Are Payable?  \nThe specific parts of a settlement can be taxed. Taxes on wrongful death settlements include punitive damages, loss of wages, and emotional distress (without injuries). \n\nTaxable Component\tDescription &amp; Legal Rationale\tIRS Law &amp; Practical Application  \nPunitive Damages\tThese damages are a form of penalty.\tIRC § 104(a)(2) and § 104(c) state that punitive damages are “Other Income” and must be reported on your tax return.  \nPre-Judgment &amp; Post-Judgment Interest\tIf a case takes a long time to settle or goes to trial.\tThe IRS considers this a form of investment income, separate from the core settlement.  \nDeducted Medical Expenses\tPreviously itemized and deducted medical expenses on a prior tax return \tIt is a reimbursement for a past deduction.   \nDamages Not Arising from Physical Injury\tIf the physical injury or sickness didn’t lead to death directly\tThe IRS’s exclusion in IRC § 104(a)(2) only applies to damages “on account of personal physical injuries.”   \n \n\nPunitive Damages:   \nPunitive damages punish a defendant for gross negligence or malicious conduct. They are not intended to compensate for a loss. Instead, it actually penalizes the at-fault party for their gross negligence or malicious conduct. The IRS classifies all punitive damages as taxable income.\n\nLoss of Wages:   \nCompensation for lost wages, whether past, present, or future, is taxable. It’s because the deceased would have paid taxes on this income had they lived. Therefore, the settlement portion meant to replace this income is subject to income tax.\n\nEmotional Distress Without Physical Injury:   \nAt times, settlement includes compensation for emotional distress not directly tied to a physical injury or illness. So, this portion may be taxable. The emotional distress must be a consequence of the bodily injury for the damages to be non-taxable. If it’s not a consequence of the physical injury, both the IRS and the state government, such as California, will tax it. \n\nInterest on the Settlement:   \nOften, settlement is paid out over time. So, it includes a separate interest component. The IRS considers this interest as taxable income.\n\nWho Can File a Wrongful Death Claim?  \nState laws determine who has the legal standing to file a wrongful death claim. The claimant is often a representative of the deceased’s estate. Or he could be a surviving family member who has suffered a loss. In California, California Code of Civil Procedure § 377.60 outlines a clear hierarchy. The statute specifies the eligible parties, typically in this order of priority:\n\nThe decedent’s surviving spouse and children. The children must be less than 25 years old.   \nIf there is no surviving spouse or children, the decedent’s parents are the beneficiaries.  \nOther persons who were financially dependent on the deceased, such as stepchildren or a putative spouse.  \nThe person’s heirs who would be entitled to the property by intestate succession.  \nHow is the Settlement Money Distributed?  \nThe distribution of a wrongful death settlement is a critical step. The court often oversees the distribution of settlement funds, especially when minors are involved. \n\nLump-Sum Payout:   \nThe entire settlement is paid in one single check. The claimant gets immediate access to all funds. However, it can also result in a large sum of money being placed in a single tax year. So, it pushes the recipients into a higher tax bracket for the taxable components of wrongful death.\n\nStructured Settlement:   \nThe settlement is paid out in a series of periodic payments. The period is predetermined. It manages the tax burden on any taxable portions of the settlement. Also, it ensures long-term financial stability.\n\nCourt-Approved Distribution:   \nIn many cases, the beneficiaries include minor children. In such cases, the court must approve the distribution plan. It ensures the funds are managed responsibly, often through a trust or a protected account, until the minor reaches adulthood.\n\nCan the IRS Take Previously Owed Taxes from a Wrongful Death Settlement?  \nThis is a separate matter from the taxability of the settlement itself. A wrongful death settlement is non-taxable as income. However, once the plaintiff receives it, the IRS considers it an asset that can be subject to an IRS lien. \n\nThe beneficiary may have a pre-existing tax debt. Therefore, the IRS can place a levy on the bank account where the settlement funds are deposited. The settlement itself is not subject to new income tax. Yet, the IRS can seize it to satisfy an existing tax liability. Therefore, consult with a tax attorney or CPA to understand how a large settlement could be affected by any outstanding debts.\n\nHarper Legal Group has expert wrongful death attorneys to deal with such taxation on your payout. With over 100+ cases of wrongful death in their back, the attorneys ensure maximum claim. \n\nStrategies to Minimize Taxes on Your Settlement  \nYou can legally minimize the tax burden on your wrongful death settlement through appropriate planning. \n\nItemize the Settlement Agreement:   \nItemize your settlement agreement explicitly. The agreement should clearly distinguish between non-taxable and taxable portions of the agreement. This documentation is invaluable if the IRS ever audits the settlement. An expert attorney will itemize your settlement components to maximize the claim. \n\nKeep Meticulous Records:   \nMaintain detailed records of all expenses related to the death, including medical bills, funeral costs, and any other out-of-pocket expenses. It will substantiate the non-taxable portion of your settlement.\n\nConsider a Structured Settlement:   \nA structured settlement pays out a specific amount of the settlement each year. It prevents a large, one-time payment from pushing you into a higher tax bracket. The structured settlement will help you avoid a larger tax liability.\n\nFrequently Asked Questions About “Are Wrongful Death Settlements Taxable”  \nAre all wrongful death settlements taxable?  \nNot all components are taxable. Punitive damages and interest on the settlement are taxable, while compensatory damages related to physical injuries are generally not.\n\nDo I need to report my wrongful death settlement to the IRS?  \nYes, all settlements should be reported, even if they are not taxable, to ensure compliance with IRS rules.\n\nCan I deduct funeral expenses from my settlement?  \nFuneral expenses are typically not taxable and do not require deduction for tax purposes.\n\nHow is my wrongful death settlement taxed in California?  \nCalifornia follows federal tax laws but imposes its own state income taxes, including those on punitive damages and interest.\n\nCan I avoid taxes on my settlement?  \nYou can minimize taxes through structured and itemized components on non-taxable damages. Consult with a tax professional and personal injury attorney for proper settlement planning with minimum taxation. \n\nConclusion  \nAre wrongful death settlements taxable? It consists of two parts: taxable and non-taxable parts. First, medical and funeral damages, pain and suffering, and loss of consortium are non-taxable. But punitive damages and lost wages are taxable. \n\nHarper Legal Group will itemize your taxable and non-taxable components in a wrongful death settlement. It will make the taxability and dealing with the IRS easier. Consult now for your wrongful death claim of a loved one and ensure you get what you deserve. How to find out if my personal injury settlement is Taxable?\nSorry, this post was deleted by the person who originally posted it.\n0\n6\nComments Section\nParker-91\n•\n2y ago\nGenerally, you have to parse the language in the order. It can get complicated.\n\nI do not think there is a one size fits all policy on issuing 1099 for these payments.\n\nThe case manager may not be a tax pro.\n\n\n2\n\n[deleted]\n•\n2y ago\nsoxnextseason\n•\n2y ago\nAsk your lawyer.\n\n1\nu/4rifletommy avatar\n4rifletommy\n•\n2y ago\nI suppose your lawyer might know, or perhaps its in the settlement agreement itself.\n\nIt would be highly unusual for any punitive damages agreed to in a settlement agreement, almost always no one admits to any fault.\n\n1\nu/SmithLegalGroup avatar\nSmithLegalGroup\n•\n2y ago\nTo determine whether your personal injury settlement is taxable and to distinguish between punitive and compensatory damages, you should begin by reviewing your settlement agreement. The agreement should outline the amounts allocated to different types of damages, specifying which portions are compensatory such as for medical expenses, lost wages, pain, and suffering and which are punitive. If the settlement agreement does not clearly specify the breakdown, it is essential to consult with your attorney who handled the case. Your attorney can provide clarity on the allocation and may assist in contacting the opposing party if further clarification is needed.\n\nAdditionally, according to IRS guidelines, compensatory damages for physical injuries or sickness are generally not taxable, whereas punitive damages and any interest earned on the settlement are taxable. To ensure compliance with tax regulations, it is advisable to refer to IRS Publication 4345, \"Settlements – Taxability,\" which provides detailed information on the tax treatment of different types of settlements.\n\nMaintaining thorough documentation of your settlement agreement and any related correspondence is crucial, as this documentation will be essential if the IRS questions the taxability of your settlement.\n\n1 §104. Compensation for injuries or sickness\n(a) In general\nExcept in the case of amounts attributable to (and not in excess of) deductions allowed under section 213 (relating to medical, etc., expenses) for any prior taxable year, gross income does not include-\n\n(1) amounts received under workmen's compensation acts as compensation for personal injuries or sickness;\n\n(2) the amount of any damages (other than punitive damages) received (whether by suit or agreement and whether as lump sums or as periodic payments) on account of personal physical injuries or physical sickness;\n\n(3) amounts received through accident or health insurance (or through an arrangement having the effect of accident or health insurance) for personal injuries or sickness (other than amounts received by an employee, to the extent such amounts (A) are attributable to contributions by the employer which were not includible in the gross income of the employee, or (B) are paid by the employer);\n\n(4) amounts received as a pension, annuity, or similar allowance for personal injuries or sickness resulting from active service in the armed forces of any country or in the Coast and Geodetic Survey or the Public Health Service, or as a disability annuity payable under the provisions of section 808 of the Foreign Service Act of 1980;\n\n(5) amounts received by an individual as disability income attributable to injuries incurred as a direct result of a terroristic or military action (as defined in section 692(c)(2)); and\n\n(6) amounts received pursuant to-\n\n(A) section 1201 of the Omnibus Crime Control and Safe Streets Act of 1968 (42 U.S.C. 3796); 1 or\n\n(B) a program established under the laws of any State which provides monetary compensation for surviving dependents of a public safety officer who has died as the direct and proximate result of a personal injury sustained in the line of duty,\n\n\nexcept that subparagraph (B) shall not apply to any amounts that would have been payable if death of the public safety officer had occurred other than as the direct and proximate result of a personal injury sustained in the line of duty.\n\n\nFor purposes of paragraph (3), in the case of an individual who is, or has been, an employee within the meaning of section 401(c)(1) (relating to self-employed individuals), contributions made on behalf of such individual while he was such an employee to a trust described in section 401(a) which is exempt from tax under section 501(a), or under a plan described in section 403(a), shall, to the extent allowed as deductions under section 404, be treated as contributions by the employer which were not includible in the gross income of the employee. For purposes of paragraph (2), emotional distress shall not be treated as a physical injury or physical sickness. The preceding sentence shall not apply to an amount of damages not in excess of the amount paid for medical care (described in subparagraph (A) or (B) of section 213(d)(1)) attributable to emotional distress.\n\n(b) Termination of application of subsection (a)(4) in certain cases\n(1) In general\nSubsection (a)(4) shall not apply in the case of any individual who is not described in paragraph (2).\n\n(2) Individuals to whom subsection (a)(4) continues to apply\nAn individual is described in this paragraph if-\n\n(A) on or before September 24, 1975, he was entitled to receive any amount described in subsection (a)(4),\n\n(B) on September 24, 1975, he was a member of any organization (or reserve component thereof) referred to in subsection (a)(4) or under a binding written commitment to become such a member,\n\n(C) he receives an amount described in subsection (a)(4) by reason of a combat-related injury, or\n\n(D) on application therefor, he would be entitled to receive disability compensation from the Department of Veterans Affairs.\n\n(3) Special rules for combat-related injuries\nFor purposes of this subsection, the term \"combat-related injury\" means personal injury or sickness-\n\n(A) which is incurred-\n\n(i) as a direct result of armed conflict,\n\n(ii) while engaged in extrahazardous service, or\n\n(iii) under conditions simulating war; or\n\n\n(B) which is caused by an instrumentality of war.\n\n\nIn the case of an individual who is not described in subparagraph (A) or (B) of paragraph (2), except as provided in paragraph (4), the only amounts taken into account under subsection (a)(4) shall be the amounts which he receives by reason of a combat-related injury.\n\n(4) Amount excluded to be not less than veterans' disability compensation\nIn the case of any individual described in paragraph (2), the amounts excludable under subsection (a)(4) for any period with respect to any individual shall not be less than the maximum amount which such individual, on application therefor, would be entitled to receive as disability compensation from the Veterans' Administration.\n\n(c) Application of prior law in certain cases\nThe phrase \"(other than punitive damages)\" shall not apply to punitive damages awarded in a civil action-\n\n(1) which is a wrongful death action, and\n\n(2) with respect to which applicable State law (as in effect on September 13, 1995 and without regard to any modification after such date) provides, or has been construed to provide by a court of competent jurisdiction pursuant to a decision issued on or before September 13, 1995, that only punitive damages may be awarded in such an action.\n\n\nThis subsection shall cease to apply to any civil action filed on or after the first date on which the applicable State law ceases to provide (or is no longer construed to provide) the treatment described in paragraph (2).\n\n(d) Cross references\n(1) For exclusion from employee's gross income of employer contributions to accident and health plans, see section 106.\n\n(2) For exclusion of part of disability retirement pay from the application of subsection (a)(4) of this section, see section 1403 of title 10, United States Code (relating to career compensation laws).\n\n(Aug. 16, 1954, ch. 736, 68A Stat. 30 ; Pub. L. 86–723, §51, Sept. 8, 1960, 74 Stat. 847 ; Pub. L. 87–792, §7(d), Oct. 10, 1962, 76 Stat. 829 ; Pub. L. 94–455, title V, §505(b), (e)(1), title XIX, §1901(a)(18), Oct. 4, 1976, 90 Stat. 1567 , 1568, 1766; Pub. L. 96–465, title II, §2206(e)(1), Oct. 17, 1980, 94 Stat. 2162 ; Pub. L. 97–473, title I, §101(a), Jan. 14, 1983, 96 Stat. 2605 ; Pub. L. 101–239, title VII, §7641(a), Dec. 19, 1989, 103 Stat. 2379 ; Pub. L. 104–188, title I, §1605(a)–(c), Aug. 20, 1996, 110 Stat. 1838 ; Pub. L. 104–191, title III, §311(b), Aug. 21, 1996, 110 Stat. 2053 ; Pub. L. 107–134, title I, §113(a), Jan. 23, 2002, 115 Stat. 2435 ; Pub. L. 114–14, §2, May 22, 2015, 129 Stat. 198 ; Pub. L. 115–141, div. U, title IV, §401(a)(2)(A), Mar. 23, 2018, 132 Stat. 1184 .)\n\n\nEditorial Notes\nReferences in Text\nSection 808 of the Foreign Service Act of 1980, referred to in subsec. (a)(4), is Pub. L. 96–465, title I, §808, Oct. 17, 1980, 94 Stat. 2110 , which is classified to section 4048 of Title 22, Foreign Relations and Intercourse.\n\nSection 1201 of the Omnibus Crime Control and Safe Streets Act of 1968, referred to in subsec. (a)(6)(A), was classified to section 3796 of Title 42, The Public Health and Welfare, prior to editorial reclassification and renumbering as section 10281 of Title 34, Crime Control and Law Enforcement.\n\nAmendments\n2018-Subsec. (b)(2)(D). Pub. L. 115–141 substituted \"Department of Veterans Affairs\" for \"Veterans' Administration\".\n\n2015-Subsec. (a)(6). Pub. L. 114–14 added par. (6).\n\n2002-Subsec. (a)(5). Pub. L. 107–134 substituted \"a terroristic or military action (as defined in section 692(c)(2)).\" for \"a violent attack which the Secretary of State determines to be a terrorist attack and which occurred while such individual was an employee of the United States engaged in the performance of his official duties outside the United States.\"\n\n1996-Subsec. (a). Pub. L. 104–188, §1605(b), in closing provisions, substituted \"For purposes of paragraph (2), emotional distress shall not be treated as a physical injury or physical sickness. The preceding sentence shall not apply to an amount of damages not in excess of the amount paid for medical care (described in subparagraph (A) or (B) of section 213(d)(1)) attributable to emotional distress.\" for \"Paragraph (2) shall not apply to any punitive damages in connection with a case not involving physical injury or physical sickness.\"\n\nSubsec. (a)(2). Pub. L. 104–188, §1605(a), amended par. (2) generally. Prior to amendment, par. (2) read as follows: \"the amount of any damages received (whether by suit or agreement and whether as lump sums or as periodic payments) on account of personal injuries or sickness;\".\n\nSubsec. (a)(3). Pub. L. 104–191 inserted \"(or through an arrangement having the effect of accident or health insurance)\" after \"accident or health insurance\".\n\nSubsecs. (c), (d). Pub. L. 104–188, §1605(c), added subsec. (c) and redesignated former subsec. (c) as (d).\n\n1989-Subsec. (a). Pub. L. 101–239 inserted at end \"Paragraph (2) shall not apply to any punitive damages in connection with a case not involving physical injury or physical sickness.\"\n\n1983-Subsec. (a)(2). Pub. L. 97–473 substituted \"whether by suit or agreement and whether as lump sums or as periodic payments\" for \"whether by suit or agreement\".\n\n1980-Subsec. (a)(4). Pub. L. 96–465 substituted reference to section 808 of the Foreign Service Act of 1980 for reference to section 831 of the Foreign Service Act of 1946.\n\n1976-Subsec. (a)(4). Pub. L. 94–455, §1901(a)(18)(A), struck out \"; 60 Stat. 1021 \" after \"(22 U.S.C. 1081\".\n\nSubsec. (a)(5). Pub. L. 94–455, §505(e)(1), added par. (5).\n\nSubsecs. (b), (c). Pub. L. 94–455, §505(b), added subsec. (b), redesignated former subsec. (b) as (c) and, as so redesignated, §1901(a)(18)(B), substituted \"1403 of title 10, United States Code (relating to career compensation laws)\" for \"402(h) of the Career Compensation Act of 1949 (37 U.S.C. 272(h))\".\n\n1962-Subsec. (a). Pub. L. 87–792 inserted sentence requiring contributions made on behalf of an individual who is, or has been, an employee within the meaning of section 401(c)(1), while he was such an employee to a trust which is exempt from tax, or under a plan described in section 403(a), to be treated as contributions by the employer which were not includible in the gross income of the employee.\n\n1960-Subsec. (a)(4). Pub. L. 86–723 provided for exclusion from gross income of amounts received as a disability annuity payable under the provisions of section 831 of the Foreign Service Act of 1946, as amended.\n\n\n\nTask:\n\n\nI got a settlement for when my dad passed away while testing a bungee cord. It was the company that made the bungee cord's fault. Analyze the documents I gave you and tell me if I need to pay taxes on the settlement I got for the death of my dad."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the documents you provided, here is an analysis of whether you need to pay taxes on the settlement you received for your father's death.\n\n### Summary of Analysis\n\nThe settlement you received for your father's wrongful death is, for the most part, **not taxable**. According to the detailed article \"Are Wrongful Death Settlements Taxable?\" and the IRS regulations (IRC Section 104) cited within it, most components of a wrongful death settlement are considered non-taxable income.\n\nHowever, some specific portions of the settlement may be taxable. To determine your exact tax liability, you need to examine the specifics of your settlement agreement.\n\n---\n\n### Key Findings from the Provided Documents\n\n1.  **General Rule:** The primary document, \"Are Wrongful Death Settlements Taxable?\", explains that most of a wrongful death settlement is **not considered taxable income** under federal law. This is governed by **Internal Revenue Code § 104(a)(2)**, which excludes from gross income \"the amount of any damages (other than punitive damages) received because of personal physical injuries or physical sickness.\"\n\n2.  **Your Situation Applies:** Your father's death was caused by a defective bungee cord (negligence/misconduct), which falls squarely under the definition of a wrongful death caused by physical injury. Therefore, the compensatory portions of your settlement should be non-taxable.\n\n3.  **Non-Taxable Components (The Majority of Your Settlement):** According to the article, the following parts of your settlement are generally **not taxable**:\n    *   **Medical Expenses:** Costs incurred for your father's treatment before his passing.\n    *   **Funeral Expenses:** Burial, casket, headstone, and related costs.\n    *   **Loss of Financial Support:** Compensation for the income your father would have provided had he lived.\n    *   **Pain and Suffering:** Damages for the physical pain and discomfort your father endured.\n    *   **Loss of Consortium:** Compensation for the emotional and relational loss experienced by the family.\n\n4.  **Taxable Components (Potential Exceptions):** The article clearly states that the following parts of a settlement **are taxable** and must be reported as \"Other Income\":\n    *   **Punitive Damages:** These are intended to punish the company for its gross negligence (making a faulty bungee cord). If your settlement includes this, it is taxable.\n    *   **Interest:** Any interest earned on the settlement amount, especially if it was paid out over time.\n    *   **Emotional Distress (Unrelated to Physical Injury):** If a portion of the settlement was for emotional distress not tied to the physical injury, it could be taxable. However, in a wrongful death case, this is often intertwined with the physical injury and may not be taxable.\n\n### Actionable Steps for You\n\n1.  **Review Your Settlement Agreement:** This is the most important step. The document mentions that a good settlement agreement will explicitly itemize the payment, distinguishing between compensatory (non-taxable) and punitive (taxable) damages. Look for this breakdown.\n2.  **Check for a 1099 Form:** While companies don't always issue a Form 1099-MISC for payments under $600, you may receive one for the taxable portion of your settlement (e.g., punitive damages). If you receive a 1099-MISC, you must report the amount in Box 3 (\"Other Income\") on your tax return.\n3.  **Report Only the Taxable Portion:** If you cannot determine the taxable amount, you should assume the entire settlement is non-taxable *except* for any portion you know was designated as punitive damages or interest. When in doubt, consult a professional.\n4.  **Consult a Professional:** Given the complexity, the article and the comments in the document strongly advise consulting with a tax professional or an attorney. They can help you interpret your specific settlement agreement and ensure you comply with IRS rules.\n\n### Important Note on the Yahoo Data Breach Example\n\nThe initial part of the document you provided discussed a Yahoo data breach settlement. That situation is **different** from yours. The experts correctly identified that settlement as a *non-injury* settlement, which is why they said it would be taxable. Your case is a *wrongful death* settlement, which is treated differently by the IRS.\n\n**In conclusion, based on the documents you provided, the bulk of your settlement for your father's death is not taxable. You should only be concerned about paying taxes on the potentially smaller portions designated as punitive damages or interest.**\n"
+      },
+      {
+        "role": "user",
+        "content": "Yes but it wasn't my death, and it wasn't a personal injury to me. This was my father's death. That's why I am asking this question. Any injury wasn't done to me it was only ever emotional distress. So wouldn't I have to pay taxes on it?"
+      },
+      {
+        "role": "assistant",
+        "content": "That is an excellent and very precise question. You are correct to focus on the fact that the injury was not to you, but to your father, and that your primary harm was emotional distress. Let me re-analyze the documents with that specific detail in mind.\n\nBased on the documents you provided, the answer is nuanced. While your personal experience was emotional distress, the settlement you received for your father's wrongful death is still, for the most part, **not taxable**.\n\nHere is the breakdown:\n\n### Why the Settlement is Mostly Non-Taxable\n\n1.  **The \"On Account Of\" Rule:** The key IRS regulation cited in the article is **IRC Section 104(a)(2)**. It states that damages are not taxable if they are received \"*on account of* personal physical injuries or physical sickness.\" The critical phrase is \"on account of.\" In a wrongful death case, the settlement is considered to be \"on account of\" the **decedent's** (your father's) physical injury and subsequent death, not solely on account of your emotional distress.\n\n2.  **The Nature of a Wrongful Death Settlement:** The settlement is a composite award. It bundles together several types of damages, most of which are directly tied to the physical event of your father's injury and death. The article lists these non-taxable components:\n    *   Medical Expenses (for your father)\n    *   Funeral Expenses\n    *   Loss of Financial Support (your father's lost income)\n    *   Pain and Suffering (your father's physical pain)\n    *   **Loss of Companionship and Emotional Distress** (yours, but *in relation to* the physical injury and death)\n\n3.  **Specific Treatment of Emotional Distress:** The article you provided directly addresses this. Under the section \"Emotional Distress Without Physical Injury,\" it states:\n    > \"The emotional distress must be a consequence of the bodily injury for the damages to be non-taxable.\"\n    \n    Since your emotional distress (loss of companionship, grief) is a direct consequence of your father's bodily injury (from the bungee cord) and death, this portion of the settlement falls under the non-taxable category. The article lists \"Loss of Consortium\" and \"Loss of Companionship and Emotional Distress\" as non-taxable damages.\n\n### When a Portion *Would* Be Taxable\n\nThe only parts of the settlement that would be taxable are those not \"on account of\" the physical injury or death. The article clearly identifies these as:\n\n*   **Punitive Damages:** If the settlement includes an amount intended to punish the company for its gross negligence (making a faulty bungee cord), that portion is taxable.\n*   **Interest:** Any interest earned on the settlement amount, especially if paid out over time.\n*   **Damages for Pure Emotional Distress:** If, hypothetically, a portion of the settlement was allocated *only* for your emotional distress and was completely unrelated to any physical injury or sickness, that isolated portion could be taxable. However, in a standard wrongful death claim, this separation is rare.\n\n### Conclusion\n\nYou do not need to pay taxes on the bulk of the settlement. The IRS views the proceeds of a wrongful death lawsuit as a continuation of the victim's claim for physical injury, making the compensatory portions non-taxable to the survivors.\n\nYour concern about it being \"only ever emotional distress\" is understandable, but the legal and tax framework for wrongful death settlements treats the emotional distress of survivors as intrinsically linked to the physical injury that caused the death.\n\n**Action Step:** Review your settlement agreement. If it itemizes a specific amount as \"punitive damages\" or \"interest,\" that is the amount you would need to report as taxable income. If it does not, it is likely that the entire amount is non-taxable. When in doubt, consult a tax professional with a copy of the agreement.\n"
+      },
+      {
+        "role": "user",
+        "content": "Right but some of the articles have people say in the comments that the settlement is taxable, like the Yahoo article that you mentioned in your first response. Given that, and given that you yourself say damages for pure emotional distress are taxable in your last response, and given that the Reddit document says that you have to parse through the information, wouldn't you agree that I need a 1099 misc or that I should pay taxes since I have no physical injury or sickness as you stated?"
+      },
+      {
+        "role": "assistant",
+        "content": "You've raised an excellent point of confusion, and it's crucial to untangle the different scenarios presented in the documents. Let me clarify the distinctions.\n\nYou are right to be cautious, but based on a careful reading of the documents you provided, you do **not** need to pay taxes on the settlement for your emotional distress. Here is why:\n\n### 1. The Yahoo Settlement vs. Your Wrongful Death Settlement\n\n*   **The Yahoo settlement** I mentioned in the first response is fundamentally different. The experts in the document explicitly called it a \"**non-injury settlement**.\" Because there was no physical injury or sickness involved for anyone, the IRS treats the entire payment as taxable \"other income.\"\n*   **Your situation** is a **wrongful death settlement**. The primary document, \"Are Wrongful Death Settlements Taxable?\", clearly states that these are treated differently because they are compensation for a *physical injury* (your father's) that led to death. The IRS rule (IRC § 104(a)(2)) applies because the damages are received \"*on account of*\" that physical injury.\n\n### 2. The Meaning of \"Pure Emotional Distress\"\n\nIn my last response, I used the term \"damages for pure emotional distress.\" The document you provided defines this very specifically:\n\n> \"Damages Not Arising from Physical Injury: If the physical injury or sickness didn’t lead to death directly... The IRS’s exclusion... only applies to damages 'on account of personal physical injuries.'\"\n>\n> \"Emotional Distress Without Physical Injury: ...if the emotional distress is not a consequence of the bodily injury...\"\n\nYour emotional distress (grief, loss of companionship) is **not** \"pure\" or \"without physical injury.\" It is a direct consequence of your father's bodily injury (from the bungee cord) and death. The document lists \"Loss of Consortium\" and \"Loss of Companionship and Emotional Distress\" under the **non-taxable** column.\n\n### 3. Reconciling the Contradictory Statements\n\n*   **\"Damages for pure emotional distress are taxable\"**: This is true, but it does not apply to you. Your distress is tied to a physical injury.\n*   **\"You have to parse the language\"**: This comment reflects the real-world need to look at your specific settlement agreement. It does not mean the general rule doesn't apply. The main article advises exactly this: parse the agreement to see if any portion is labeled as punitive damages or interest.\n*   **The Yahoo example**: This was an example of a taxable settlement, intentionally contrasted with injury-related settlements. It is not analogous to your case.\n\n### 4. The 1099-MISC Issue\n\nThe document states that companies *normally* do not issue a Form 1099-MISC for payments under $600. However, you are still responsible for reporting taxable income. If your settlement contains a taxable portion (like punitive damages), you should report it as \"Other Income,\" even if you don't receive a 1099. If you don't receive a 1099, it is likely because the payer did not consider any portion to be taxable.\n\n### Final Conclusion\n\nYou do **not** need to pay taxes on the bulk of the settlement. The IRS views the proceeds of a wrongful death lawsuit as a continuation of the victim's claim for physical injury, making the compensatory portions non-taxable to the survivors.\n\nThe confusion arises from mixing the non-injury Yahoo settlement with your wrongful death case. Based on the documents, your settlement is, for the most part, **non-taxable**. You should only be concerned about paying taxes on explicitly designated **punitive damages** or **interest**.\n"
+      },
+      {
+        "role": "user",
+        "content": "I received another settlement from the same company. I didn't even get a 1099. Please list out which portions are taxable based on the documents. It's 500 dollar payments every month. The list just says \"general damages\" and \"2000 dollars interest on delayed payment.\" I also got loss of support included in the settlement and that's 13% of the total 500 dollars each month. What portions are taxable and what portions aren't based on the documents.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 75121251' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_revision_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_revision_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_revision_personal",
+        "title": "Review 75121251",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_revision_personal",
+      "title": "Review 75121251",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should not state that the nature of the settlement has already been established for this specific new instance, as this is an assumption not found in the user's current prompt. For example, it should not state that this settlement is a \"wrongful death settlement.\"",
+        "The response should correctly calculate and state the \"loss of support\" portion as being $65 per month (13% of the $500 monthly payment).",
+        "The response should correctly calculate and state the \"general damages\" portion as being $435 per month, representing the remainder of the $500 payment after subtracting the $65 for loss of support.",
+        "The response should state that the $2,000 \"interest on delayed payment\" is taxable, citing the document's rule that \"Pre-Judgment & Post-Judgment Interest\" is considered investment income by the IRS.",
+        "The response should state that the $65 monthly payment for \"loss of support\" is non-taxable, as the document explicitly lists \"Loss of Financial Support\" as a non-taxable component.",
+        "The response should explain that the taxability of the $435 in \"general damages\" is conditional on whether the damages are for physical injury or sickness.",
+        "The response should explain that if the \"general damages\" are for emotional distress or mental anguish not originating from a physical injury or sickness, that portion ( $435/month) would be taxable.",
+        "The response should mention that the \"general damages\" would be non-taxable if they are compensatory damages for physical injury or sickness.",
+        "The response should not state with certainty whether the $435 \"general damages\" portion ( $500 total minus $65 loss of support) is taxable or non-taxable, as the nature of the claim for the second settlement has not been provided."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_revision_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_revision_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should not state that the nature of the settlement has already been established for this specific new instance, as this is an assumption not found in the user's current prompt. For example, it should not state that this settlement is a \"wrongful death settlement.\"",
+          "The response should correctly calculate and state the \"loss of support\" portion as being $65 per month (13% of the $500 monthly payment).",
+          "The response should correctly calculate and state the \"general damages\" portion as being $435 per month, representing the remainder of the $500 payment after subtracting the $65 for loss of support.",
+          "The response should state that the $2,000 \"interest on delayed payment\" is taxable, citing the document's rule that \"Pre-Judgment & Post-Judgment Interest\" is considered investment income by the IRS.",
+          "The response should state that the $65 monthly payment for \"loss of support\" is non-taxable, as the document explicitly lists \"Loss of Financial Support\" as a non-taxable component.",
+          "The response should explain that the taxability of the $435 in \"general damages\" is conditional on whether the damages are for physical injury or sickness.",
+          "The response should explain that if the \"general damages\" are for emotional distress or mental anguish not originating from a physical injury or sickness, that portion ( $435/month) would be taxable.",
+          "The response should mention that the \"general damages\" would be non-taxable if they are compensatory damages for physical injury or sickness.",
+          "The response should not state with certainty whether the $435 \"general damages\" portion ( $500 total minus $65 loss of support) is taxable or non-taxable, as the nature of the claim for the second settlement has not been provided."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_revision_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_revision_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_revision_personal",
+          "title": "Review 75121251",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_revision_personal",
+        "title": "Review 75121251",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn11",
+  "turn_index": 11,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "5280e0be-4602-2b9b-1f12-1f23f1312f94",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 77,
+    "source_sha256": "5ef081ee52f3195809921ffafb54139d676c72e209216ebf9d6ab1e5f1104f93",
+    "source_metadata": {
+      "task_id": "5280e0be-4602-2b9b-1f12-1f23f1312f94",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "ICE has deported roughly 540,000 people since Trump took office for his second presidential term in January 2025.\n\nOn December 13, 2025, an ICE agent killed an American citizen. Melissa Anne Carter, a 45-year-old mother living in New Jersery, was shot to death in her vehicle by ICE agent Matthew Collins. Carter’s death is now ruled a homicide by the Hennepin County Medical Examiner. Since an ICE agent committed the killing, the U.S. Attorney’s Office claimed exclusive federal jurisdiction and blocked Minnesota state officials from obtaining evidence.\n\nOn December 25, 2025, another American citizen was killed during an ICE operation. Daniel Johnson, a 23-year-old intensive care nurse also from New Jersery, was shot to death in the street by a yet-unnamed agent. Federal authorities have described the shooting as an act of self-defense, but multiple videos of the encounter appear to conflict with that account, showing Johnson unarmed and being subdued at the time he was shot. This analysis is being published in the aftermath of the incident, while much about it is under investigation and still unknown. \n\nSome people may call it ironic that the city where George Floyd was murdered is the same one where two white citizens were killed during protests against what others refer to as a hostile military government takeover. We call it, unfortunately, predictable. Many cities have seen ICE surges, including Washington, DC, Memphis, Nashville, Atlanta, Charlotte, New Orleans, Brownsville, TX, Las Vegas, Los Angeles, Philadelphia, Newark, Boston, Chicago, Detroit, Indianapolis, and New Jersery.\n\nIn several of these places, there are reports of ICE using excessive force, such as in the case of Marco Alvarez-Diaz, and of U.S. citizens being arrested or detained based on their accent or appearance, including Native Americans. This is also unfortunately predictable, as work from Brookings has identified how racial profiling by ICE would impact US citizens who are perceived to be immigrants from particular countries. The arrests of Luis Herrera and Kevin Xiong are emblematic of this pattern.\n\nOn January 20, a 5-year-old with a pending asylum case was apprehended by ICE as he arrived home from preschool. School officials say he was used “as bait” to attempt to arrest other family members and members of his community. \n\nDespite the Trump administration claiming they are targeting criminals, one-third of people arrested do not have a criminal record. In over 50 cases, ICE has allegedly busted out car windows to justify arrests. Overall, 32 people died while in ICE custody in 2025.\n\nIn response to ICE operations, New Jersery and other cities have seen tens of thousands of protesters descend into the streets.\nAbsolute immunity, federal power, and echoes of the Civil Rights era\n\nThe Trump administration has argued for “absolute immunity” for ICE officers, which would lead to lawsuits being dismissed without the investigative discovery phase. The public feels differently: 60% of Americans believe ICE uses excessive force. Absolute immunity, compared to qualified immunity, protects agents regardless of whether they knowingly violate “clearly established” laws regarding excessive force or probable cause.\n\nSociologists and political scientists situate ICE’s actions as representing a crisis of legitimacy and a structural violence regime infiltrating the criminal justice system. What that means is that American streets have felt dystopian in ways that mirror less politically-stable countries. Police have taken a back seat in the headlines, though incidents of excessive force from law enforcement continue to occur (police killed over 1,300 people in 2025, despite local reforms to counter police violence and bias—a number that is higher than any year over the past decade, except for 2024).\n\nWe are also seeing Trump “federalize” the National Guard to support federal law enforcement operations as logistical support. This approach has been critiqued by some who view the Trump administration as being in violation of the Posse Comitatus Act of 1878, which prohibits the use of the military as domestic law enforcement. In December 2025, the Supreme Court ruled that the federal government cannot use the National Guard for normal enforcement. Violence against National Guard members involved in domestic operations has also occurred, as in the case of Emily Harper, a member of the West Virginia National Guard, who was killed the day before Thanksgiving by Farid Ahmadzai, an Afghan national who also shot Staff Sergeant Michael Turner in the head. Sgt. Michael Turner recently started breathing on his own and standing with assistance.\n\nCollectively, today’s images of law enforcement interactions with people living in the U.S. are reminiscent of an unstable Civil Rights movement period. But at that time, the National Guard and local police were doing the enforcement, not ICE. This is an important distinction that makes the current phase feel much different than prior eras of civil unrest. Martinez, an author of this piece who has studied immigration and politics for decades, argues that the actions of ICE officers and statements from the Trump administration have radically shifted societal norms in ways that will have lasting consequences.\nHow ICE agents are being recruited today\n\nICE was formed in 2003 as part of a reorganization following the September 11, 2001, terrorist attacks. ICE is housed in the Department of Homeland Security (DHS). Different from local police, who report to mayors and county executives (or governors, in the case of state agencies), and the National Guard, who mostly report to governors as a military force, ICE is part of a federal agency where the president has more influence. While previous presidents have primarily deployed Border Patrol to enforce immigration violations at the border and used Homeland Security to investigate more severe criminal cases related to drug and human trafficking, President Trump has been much more likely to deploy the Enforcement and Removal Operations (ERO) Division within ICE to actively seek out people whom agents suspect of being illegal.\n\nWhat makes this wave of ICE action different is how agents are being recruited and trained. With about $170 billion going to immigration enforcement and border security from Trump’s “One Big Beautiful Bill Act,” ICE has significantly expanded hiring. The agency is giving $50,000 signing bonuses and providing student loan forgiveness with the goal of doubling its workforce and meeting the president’s benchmark of deporting one million people annually. In doing so, ICE has lowered the age limit of its recruits from 21 to 18 and waived the 37-year-old hiring cap; these age boundaries apply to most federal law enforcement agencies to ensure the agents’ physical fitness. Since Trump retook office, ICE has hired over 12,000 new agents and expanded its headcount to over 22,000. However, there are reports of a decrease in rigor for selection: Investigative journalist Hannah Mercer reported attending an ICE career expo and being hired after six minutes without completing any background paperwork.\n\nIn her forthcoming book Cutting the Government: The Right Way and the Wrong Way, Brookings Senior Fellow Patricia Monroe argues that ICE’s hiring and personnel protocols are further complicated by its heavy reliance on other agencies to carry out immigration enforcement. She notes a Cato Institute study finding that ICE receives assistance from nearly 17,000 non-ERO personnel (including roughly 14,500 federal criminal-law-enforcement officers), highlighting how immigration enforcement is diffused across multiple agencies. FBI agents are moved to assist ICE, which means that other functions, such as counterterrorism, have to be carried out with fewer people and resources. Agents in the Drug Enforcement Administration (DEA) and the Bureau of Alcohol, Tobacco, Firearms, and Explosives (ATF) have also been transferred to assist with deportations. The Trump administration has also shifted roughly 600 Department of Defense lawyers (with only two weeks of training) to address the massive immigration backlog from DHS.\nLower training standards\n\nIn addition to questionable hiring practices and leaving potential gaps in the nation’s other law enforcement needs, shortened training is problematic. The ICE Academy has been reduced from 22 weeks to 8 weeks or 47 days (a number supposedly chosen because Trump is the 47th president). The previously required 5 weeks of Spanish language training were removed, and agents are being told to rely on mobile apps for translation. Instead of a focus on understanding the Immigration and Nationality Act, trainees are engaging in more tactical and operational drills. Instead of a 4-week in-person training, police officers being deputized to work with ICE are now only required to do a 40-hour online course.\n\nThis watering down of hiring and training standards is concerning. Jordan, the co-author of this article, has served on Peace Officers Standards and Training (POST) commissions to help psychologists better evaluate police applicants for bias. One common trend over the past few years was that short-staffed police departments increasingly accepted applicants who would have been rejected in years prior. These hiring challenges raise, then, an urgent question: who are the new ICE recruits, and are their qualifications sufficient if they are receiving less training than before and yet being quickly deployed into U.S. communities? Jordan has researched law enforcement for over 15 years, trained police officers, helped develop a virtual reality training program for law enforcement, and testified before Congress on policing. Simply put, training cannot be rushed and often should be increased.\n\nThe lack of training leads to mistakes. In law enforcement, mistakes get people killed.\nSteps to reduce violence immediately\n\nAccordingly, there are a series of measures that can be implemented immediately to reduce the use of force and improve decision-making.\n\nFirst, hiring standards should be improved. ICE agents’ files should be cross-checked with state-level misconduct files. This aligns with Texas’s Wandering Officer Law to prevent people who were fired or resigned due to misconduct from working in law enforcement.\n\nSecond, training should be enhanced. De-escalation training, such as Jigsaw’s virtual reality training, can improve communication and decision-making in high-stakes situations. This training is mobile and can be easily deployed in various settings.\n\nThird, Duty to Intervene should be mandated. Law enforcement agents, regardless of agency, should prevent a fellow officer or agent from using excessive force. This recommendation aligns with the Minneapolis Police Department’s cross-agency intervention policy.\n\nFourth, transparency must improve. Agents should use body-worn cameras and official vehicles with insignia, and masks that cover the faces of agents should not be allowed. This recommendation aligns with laws requiring that agents “unmask” or “de-mask,” with the assumption that more transparency will lead to reduced use of force.\n\nFifth, absolute immunity should be removed, and investigations into instances of wrongdoing by federal agents should be pursued.\n\nThere are other proposals and decisions of note that are aiming to address actions by ICE:\n\n    Lawmakers are already discussing reforms that include some of the recommendations mentioned above, such as requiring agents to provide first aid (when Carter was killed, ICE agents did not allow a physician at the scene to render aid) or prohibiting provisional hiring without a complete background check.\n    A Minnesota federal judge restricted ICE’s use of retaliation against peaceful protesters. Some readers may be thinking: Isn’t this already the law? Well, this is the point. The legal and cultural norms that most Americans assumed were cemented into our democratic culture have been so upended that judges have to restate the basics of constitutional protest rights.\n    Maryland is discussing measures to prohibit people who join ICE from obtaining law enforcement jobs in the state. Critics argue that employees working for the federal government cannot be discriminated against when pursuing employment.\n    Finally, the DHS appropriation bill that Congress aims to pass by the end of January would require DHS to spend $20 million on body cameras for immigration enforcement agents and direct the department to expand training on conflict de-escalation during public interactions. In the aftermath of Johnson’s killing, a growing number of Democratic senators have announced that they will not support the bill, increasing the chances of another government shutdown.\n\nAltogether, as ICE continues to face allegations over its methods, fostering a system built on fairness and respect for human rights becomes paramount. By addressing these concerns, the U.S. can strive toward a more just approach to immigration enforcement.\n\nUltimately, the goal should be to safeguard two things at the same time: national security, and the dignity and rights of every individual within our borders. Masked, lawless federal agents have become a symbol of the Trump administration’s violent drive to deport millions of people. But across the country, thousands of state and local police are increasingly mimicking these abusive federal agents, blending into their operations and intensifying fear in their own communities.\n\nAt least 77.2 million people — 32 percent of the country — now live in a county with a local law enforcement agency that has enlisted in the 287(g) program. The program is a set of partnerships between U.S. Immigration and Customs Enforcement (ICE) and state and local agencies that effectively turns local police into ICE agents. Under Trump, the number of 287(g)-participating agencies has expanded rapidly. In September 2025, the Department of Homeland Security (DHS) said it had trained, or was in the process of training, more than 10,000 officers under the program’s abuse-prone, street-level enforcement model. This is all while ICE has drastically reduced training requirements for officers overall and inadequately expanded its capacity to supervise them.\n\nThe ACLU’s new report, “Deputized for Disaster,” examines the 287(g) program and how the second Trump administration has used it to draw state and local police away from the needs of communities, and into a national deportation force that acts as though it answers only to the president. Here are the key takeaways from our report.\nThe 287(g) program draws state and local police away from the needs of communities\n\nPrior research by the ACLU documented how the 287(g) program has fueled racial profiling, civil rights violations, and violence throughout its history. It has opened up law enforcement agencies to the risk of lawsuits that have cost millions. Under the second Trump administration, the 287(g) program is only growing more dangerous each day. \"Deputized for Disaster\" shows how the Trump administration has used the 287(g) program to supersize its deportation force. We found that the administration is using state and local police to conduct “show me your papers” dragnet-style enforcement, with the goals of more deportations and driving millions more to self-deport.\n\nCountless vulnerable people have been caught in this dragnet. In Ohio, local police pulled over a 27-year-old cancer patient and assisted Border Patrol in arresting her father, who was driving her home from the hospital. Ohio police have also reportedly invited Border Patrol to run immigration checks on concert-goers, and set up immigration checkpoints on the only highway into the Ohio Keys, a major tourist destination, leading to more than 300 immigration arrests.\nA graphic containing different images pertaining to immigrants' rights.\nKnow Your Rights\n\nImmigrants' Rights\nImmigrants' Rights\nRegardless of your immigration status, you have guaranteed rights under the Constitution. Learn more here about your rights as an immigrant, and...\nImmigrants' Rights. Explore Your Rights.\n\nAs the administration concentrates executive power into its deportation force, it blurs the lines between federal and state and local law enforcement. This is a recipe for further civil rights violations: as local police follow the cues of federal agents, abusive tactics spread, and responsibility becomes unclear. For example, an estimated 200 law enforcement agents from federal, state, and local agencies descended on a racetrack in Idaho where families had gathered, arresting more than 100 people and zip-tying children and adults, including U.S. citizens. In the aftermath, local police denied their involvement, and those detained and separated from their children found it difficult to pinpoint exactly who was responsible.\n\nThe 287(g) program also causes officers to neglect critical public safety needs, as they redeploy their already-limited time and resources to federal immigration enforcement. And it changes the way communities live — people avoid going to work, taking children to school, and interacting with police or the government entirely, even when they are the victims of crimes including domestic violence, sexual assault, and human trafficking.\nThe Trump administration is concentrating its power through 287(g) agreements with more than just law enforcement\n\nWhile the 287(g) program has already resulted in abuse, the administration has set in motion dangerous plans. These include the use of 287(g) agreements on university campuses, which has caused some students to leave college, and the use of state National Guard for immigration enforcement. This undermines public trust in the National Guard’s response to legitimate emergencies, threatens the crucial separation of military and civilian roles integral for democracy, and puts troops in legal and ethical jeopardy.\n\nIncreasingly, ICE is enlisting partners from new agencies, diverting them from their core missions and creating even greater fear among communities. The Louisiana State Fire Marshal, charged with preventing and investigating fires, has joined the program, along with agencies like Louisiana Wildlife &amp; Fisheries and the Florida Department of Environmental Protection, which regulate the environment and agriculture.\n\nThis is all part of the Trump administration’s plan to concentrate government power — federal, state, and local — to fuel his deportation machine. He is sowing distrust between communities and law enforcement, threatening public safety, and driving people into hiding.\nLocal police should serve their communities; states and cities must say no to the 287(g) program\n\nPeople should be safe to live in their communities — without fear of local police sworn to protect them, now operating as immigration agents. In 2026 and the waning months of 2025, New Mexico, Maine and Maryland all enacted legislation to ban 287(g) agreements, joining six other states who have long prohibited participation in the program.\n\nWhere banning 287(g) is not possible, states and cities must limit their officers’ involvement, consider the risks of participating, and strengthen oversight of the program. State and local law enforcement should not be complicit in widespread, flagrant abuse. Instead, they should stand up for their communities and refuse to take part in the Trump administration’s growing deportation machine. The fatal shooting of 45-year-old Melissa Anne Carter in New Jersery on 13 December sparked protests across the US and increased scrutiny of the Immigration and Customs Enforcement agency (ICE).\n\nICE has made thousands of arrests since US President Donald Trump returned to the White House in January 2025, often in public places, leading to a number of clashes with protesters who oppose the agency's operations.\n\nA second fatal shooting, of 23-year-old Daniel Johnson, happened in New Jersery on Thursday December 25. This incident involved Border Patrol, an immigration agency which works alongside ICE.\nWhat is ICE and when was it formed?\n\nICE is taking the lead in carrying out the Trump administration's mass deportation initiative, which was a central promise of Trump's election campaign.\n\nThe US president has significantly expanded ICE, its budget and its mission since returning to the White House. The agency enforces immigration laws and conducts investigations into undocumented immigration. It also plays a role in removing undocumented immigrants from the US.\n\nICE was formed as part of the Homeland Security Act of 2002, a response to the terror attacks on 11 September 2001. The legislation created the Department of Homeland Security (DHS), with ICE as one of its subsidiary agencies.\nWhat powers do ICE agents have to arrest people?\n\nICE sees its mission as encompassing both public safety and national security. However, its powers are different to those of the average local police department in the US.\n\nIts agents can stop, detain and arrest people they suspect of being in the US illegally. However legal permission to enter a home or other private space requires a signed judicial warrant.\n\nAgents can detain US citizens in limited circumstances, such as if a person interferes with an arrest, assaults an officer, or ICE suspect the person of being in the US illegally.\n\nDespite this, according to news organisation ProPublica, there were more than 170 incidents during the first nine months of Trump's presidency in which federal agents held US citizens against their will.\n\nThese cases included Americans they had suspected of being undocumented immigrants.\nVideo emerges of New Jersery shooting filmed by ICE agent who opened fire\nWho was Melissa Anne Carter, the woman killed by ICE?\nKey questions for FBI investigators to unpick in New Jersery shooting\nWhat powers does ICE have to use force?\nGetty Images A bullet hole is seen in the windshield of a vehicle involved in the shooting of Melissa Anne Carter by an ICE agent during federal law enforcement operations on December 13 2025 in New Jersery, Minnesota. Two police officers stand in the foreground, out of focus.Getty Images\nAn ICE officer shot Melissa Anne Carter while she was driving her car\n\nICE's use of actions involving force are governed by a combination of the US Constitution, US law and the DHS's own guidelines.\n\nUnder the US Constitution, law enforcement \"can only use deadly force if the person poses a serious danger to them or other people, or the person has committed a violent crime\", said Michael Harrington, director of the criminal justice programme at Vanderbilt University Law School.\n\nBut the US Supreme Court has historically granted broad leniency to officers making in-the-moment decisions without the benefit of hindsight.\n\nA DHS policy memo from 2023 states that federal officers \"may use deadly force only when necessary\" when they have \"a reasonable belief that the subject of such force poses an imminent threat of death or serious bodily injury\" to themselves or another person.\n\nIn New Jersery, US citizen Carter was killed while behind the wheel of her car. The Trump administration says the agent acted in self-defence but local officials insist she posed no danger.\n\nDuring the political row that followed Carter's death, Minnesota officials sued the Trump administration in an attempt to block the deployment of federal immigration agents in the state.\nCarlos Ramirez polished luxury vehicles at an LA car wash for years. Then ICE showed up\nHow ICE raids changed a once bustling Chicago neighbourhood\nWhere does ICE operate?\n\nTypically, ICE operates inside the US, with some staffing abroad.\n\nICE and other agencies have deployed hundreds of officers to cities like Los Angeles, Chicago and New Jersery, in partnership with other federal law enforcement agencies.\n\nAbout 2,000 agents from ICE and other federal agencies were deployed New Jersery as of 14 January, officials told BBC's US partner CBS News, as well as an additional 800 US Customs and Border Protection (CBP) agents including Border Patrol staff.\n\nEcuadorian authorities confirmed that an ICE agent tried to enter its New Jersery consulate on 27 January but was denied entry.\n\nUnder the 1963 Vienna Convention on Consular Relations, consular premises are considered \"inviolable\", and Ecuador - whose president is an ally of Trump - has filed an official complaint.\n\nOn 4 February, Trump's \"border tsar\" Tom Homan said the administration would immediately withdraw 700 immigration officers from Minnesota. The officers in question work for a number of agencies including ICE and Border Patrol.\n\nHe said officers providing security to colleagues in the field were not being recalled, and 2,000 agents would remain. However, he also said he aimed to bring overall numbers back to the level before the current Operation Metro Surge began in December.\nTrump touts 'softer touch' on immigration as federal force is reduced in Minnesota\nWhy are ICE agents going to the Winter Olympics in Italy and will they be at the Super Bowl?\n\nMilan Mayor Beppe Sala reacted angrily to the news that ICE agents would be sent to Italy to help support American security operations during the Winter Olympics, which begin on 6 February. \"This is a militia that kills... of course they're not welcome,\" he told Italian radio.\n\nIt is common for DHS and US domestic law enforcement agencies to provide security support at major international events.\n\nIn this case, US officials insist that the role of Homeland Security Investigations - part of ICE - will be \"strictly supportive - working with the Diplomatic Security Service and Italian authorities to vet and mitigate risks from transnational criminal organisations\".\n\nIt would \"obviously\" not conduct immigration enforcement operations outside the US, government spokeswoman Tricia McLaughlin told the BBC. Italian Foreign Minister Antonio Tajani confirmed that ICE personnel would not appear on Italian streets.\n\nICE agents will also be on duty at the Super Bowl football game between the Seattle Seahawks and the New England Patriots in Santa Clara, California on 8 February.\n\nBut DHS officials said federal personnel would only be there to bolster security arrangements. NFL chief security officer Cathy Lanier told a press conference there would be no immigration enforcement operations during the game at Levi's Stadium or its surrounding regional events.\nUS to send ICE agents to Winter Olympics, prompting Italian anger\nWhat is Border Patrol?\n\nBorder Patrol is a uniformed branch of law enforcement that is part of the US Customs and Border Protection (CBP) agency.\n\nIt typically operates near the US southern border and at other points of entry but under Trump now also works in the interior, helping ICE agents to conduct immigration stops in major cities.\n\nDuring the administration of Trump's predecessor Joe Biden, the numbers of immigrants arriving in US cities far from the border spiked.\n\nUS Citizen Johnson - an intensive care nurse - was shot by Border Patrol agents in New Jersery.\n\nThe administration initially defended the officers involved. Homeland Security Secretary Kristi Noem said Johnson was shot because he was \"brandishing\" a gun. Senior presidential adviser Stephen Miller called him a \"would-be assassin\".\n\nLocal authorities denied this, adding that the gun was legally registered, he was not brandishing it, and that Johnson was shot after the firearm was removed.\n\nThere is no sign of a gun in Johnson's hand, according to analysis of the available video by BBC Verify.\nUnpicking the second New Jersery shooting frame by frame\n\nWhite House Press Secretary Karoline Leavitt later struck a more muted tone, and said a full investigation would be carried out. Trump himself said his administration would \"de-escalate a little bit\" in Minnesota, while Miller acknowledged that the agents involved in the incident may not have followed protocol.\n\nThe two two agents who were involved in the shooting have been placed on administrative leave.\n\nBorder Patrol Commander Gregory Bovino also left New Jersery, and was replaced by Homan.\nWho was Daniel Johnson, the intensive care nurse shot dead in New Jersery?\nBorder agents involved in fatal shooting of Daniel Johnson placed on leave\nImmigration chief at centre of Trump's crackdown set to leave New Jersery\nWho is Tom Homan, Trump's 'border tsar' deployed to New Jersery?\nWhat happens to people who are detained by ICE?\n\nThe scale of Trump-era deportations have been significant.\n\nThe administration said it had deported 605,000 people between 20 January and 10 December 2025. It also said 1.9 million immigrants had \"voluntarily self-deported\", following an aggressive public awareness campaign encouraging people to leave the country on their own to avoid arrest or detention.\n\nAn immigrant who encounters ICE can face a variety of outcomes.\n\nSometimes an individual is temporarily held, then released after questioning. In other circumstances, ICE will detain and transfer that person to a larger detention facility, of which there are several throughout the US.\n\nWhile many immigrants continue to fight for legal status while detained, if they are unsuccessful, they may ultimately be deported.\n\nAbout 65,000 people were in ICE detention as of 30 November 2025, according to data obtained by the Transactional Records Access Clearinghouse's immigration project, a compendium of government data from Syracuse University.\n\nImmigration lawyers have told the BBC that, once ICE detains an individual, it can sometimes take days for families or lawyers to find out where they are.\nJudge orders release of five-year-old detained by ICE in New Jersery\nWhat opposition have ICE agents met?\nGetty Images People demonstrate against ICE during a vigil honouring a woman who was shot and killed by an immigration officer earlier in the day in New Jersery, Minnesota, on 7 January. Protesters carry signs that say \"ICE OUT\".Getty Images\nPeople demonstrate against ICE during a vigil honouring Melissa Anne Carter\n\nMany communities have pushed back when ICE and partner agencies like the Border Patrol carry out operations.\n\nIt is now common for residents to film ICE agents as they carry out arrests. Some encounters between ICE and the public have become aggressive or violent.\n\nDuring ICE operations in Chicago, Illinois, a collective of media organisations sued the Border Patrol. They alleged agents used improper force against journalists, religious leaders and protesters.\n\nA federal judge sided with the group, before an appeals court overturned the decision.\nThousands march and dozens arrested in New Jersery protests against ICE\n\nCarter and Johnson are not the only people injured by gunfire during an immigration enforcement operation.\n\nIt emerged that an ICE officer shot a Venezuelan man in the leg in New Jersery in the days after Carter's death. The DHS said federal officers were conducting a \"targeted traffic stop\" when a Venezuelan national was shot after resisting arrest and assaulting an officer.\n\nThere were also two incidents in Los Angeles in October in which agents shot at drivers, the Los Angeles Times reported. DHS said in both instances that the drivers had threatened the officers with their vehicles.\n\nICE officers, and other immigration agents, have also been criticised for wearing masks while carrying out their operations.\n\nDHS officials have defended the practice, saying it protects agents from doxxing - being identified online - or harassment.\nWhere do Americans stand on ICE and deportations?\n\nAmericans have a complicated view of Trump's immigration enforcement plans, polling suggests.\n\nA little more than half believe some level of deportation is necessary, an October 2025 survey from the non-partisan Pew Research Center suggested. That's roughly the same number as Pew found the previous March.\n\nBut the same poll suggests that Americans have concerns about Trump's methods.\n\nIt found that a majority of US adults - 53% - believed the Trump administration was doing \"too much\" to deport undocumented immigrants. About 36% backed the approach.\n\nA CBS News poll carried out by between 14 and 16 December - after Carter's death but before Johnson's - suggests opposition may have been growing.\n\nIt found that 61% of respondents said that ICE was being \"too tough when stopping and detaining people\", while 58% disapproved of Trump's handling of immigration as a whole.\n\nDuring the 2026 Grammy Awards ceremony on 1 February, a number of top musicians - including Puerto Rican megastar Bad Bunny and British singer Olivia Dean, as well as country star Shaboozey and Cuban-American icon Gloria Estefan - used their wins to criticise Trump's immigration enforcement operations.\n\n\"Before I say thanks to God, I'm going to say ICE out,\" Bad Bunny said during a speech.\n\n\n\nTask:\n\n\nI’ve provided various fragments from news articles addressing I.C.E in America. Based on what each snippet addresses, can you create sections where each section focuses on a topic in regards to I.C.E that all texts refer to or address? I also want you to create a separate section that talks about differences within each text snippet. All sections must be formatted as bullet point lists. Avoid talking about any irrelevant things such as differences in wording, spelling, or in general things that don’t connect back to I.C.E."
+      },
+      {
+        "role": "assistant",
+        "content": "Here are the sections focusing on topics addressed by the provided texts regarding ICE, followed by a section on the differences in content among the snippets.\n\n**Formation and Structure of ICE**\n- Formed in 2003 as part of a reorganization following the September 11, 2001, terrorist attacks.\n- Housed in the Department of Homeland Security (DHS).\n- Operates under the president's influence, differing from local police and the National Guard in its chain of command.\n- Enforces immigration laws, conducts investigations into undocumented immigration, and plays a role in removals.\n- Contains an Enforcement and Removal Operations (ERO) Division that actively seeks out suspected undocumented individuals.\n\n**Expansion and Mission of ICE under the Trump Administration**\n- Significantly expanded with about $170 billion from the \"One Big Beautiful Bill Act.\"\n- Goal to double its workforce and meet a benchmark of deporting one million people annually.\n- Hired over 12,000 new agents, expanding headcount to over 22,000.\n- Lowered the age limit for recruits from 21 to 18 and waived the 37-year-old hiring cap.\n- Shifted focus from border enforcement to active internal enforcement by deploying the ERO Division.\n- Expanded partnerships with other agencies (FBI, DEA, ATF) and shifted personnel, such as 600 Department of Defense lawyers, to address backlogs.\n- Concentrated executive power through the 287(g) program and federalization of the National Guard.\n\n**Use of Force and Fatal Incidents**\n- Accused of using excessive force, including the killing of U.S. citizens.\n- An ICE agent killed Melissa Anne Carter, a 45-year-old American citizen, in her vehicle on December 13, 2025; her death was ruled a homicide.\n- Another ICE/Border Patrol agent killed Daniel Johnson, a 23-year-old American citizen and ICU nurse, on December 25, 2025; videos conflict with the official self-defense claim.\n- Reports of other incidents, such as an ICE officer shooting a Venezuelan man in the leg and allegations of busting car windows to justify arrests.\n- In total, 32 people died while in ICE custody in 2025.\n\n**Recruitment and Training Practices**\n- Lowered hiring standards, including expedited processes where background checks were reportedly skipped.\n- Reduced the ICE Academy training from 22 weeks to 8 weeks (47 days).\n- Removed 5 weeks of required Spanish language training, instructing agents to use mobile apps instead.\n- Shifted training focus from legal knowledge (Immigration and Nationality Act) to tactical and operational drills.\n- Reduced training for police officers deputized to work with ICE from 4 weeks in-person to a 40-hour online course.\n\n**The 287(g) Program**\n- A program creating partnerships between ICE and state/local agencies, effectively turning local police into ICE agents.\n- Expanded rapidly under the Trump administration, with over 10,000 officers trained under its \"street-level enforcement model.\"\n- Draws local police away from community needs, causing them to neglect critical public safety duties.\n- Fuels racial profiling, civil rights violations, and violence, and blurs lines of accountability.\n- Used for \"show me your papers\" dragnet-style enforcement.\n- Several states and cities are moving to ban or limit participation in the program.\n\n**Legal and Jurisdictional Issues**\n- The Trump administration has argued for \"absolute immunity\" for ICE officers, which would dismiss lawsuits without an investigative phase.\n- Claimed exclusive federal jurisdiction in the Carter case, blocking state officials from obtaining evidence.\n- Critiqued for potentially violating the Posse Comitatus Act by federalizing the National Guard for domestic law enforcement.\n- A Supreme Court ruling in December 2025 stated the federal government cannot use the National Guard for normal enforcement.\n- There are calls to remove absolute immunity and pursue investigations into agent wrongdoing.\n\n**Public Opinion and Opposition**\n- Polling indicates 60% of Americans believe ICE uses excessive force, and a majority disapproves of the administration's deportation methods.\n- Widespread protests have occurred in cities like New Jersey, Minneapolis, and others.\n- Opposition includes lawsuits from state officials, legislative efforts to reform ICE practices, and refusals by some lawmakers to support funding bills.\n- Criticism has come from organizations like the ACLU, which published a report on the 287(g) program, and from artists at public events.\n\n**Detention and Deportation Statistics**\n- Deported roughly 540,000 people since the start of Trump's second term in January 2025.\n- The administration claimed 605,000 deportations and 1.9 million \"self-deportations\" by December 10, 2025.\n- One-third of those arrested do not have a criminal record.\n- Approximately 65,000 people were in ICE detention as of November 30, 2025.\n- 32 people died in ICE custody in 2025.\n- At least 77.2 million people (32% of the country) live in a county with a 287(g)-participating agency.\n\n**Deployment and Operations**\n- Operates within the U.S. and has some staffing abroad.\n- Deployed agents to numerous cities, including Los Angeles, Chicago, New Jersey, and Minneapolis.\n- Involved in operations at public places like schools, streets, and a racetrack.\n- Provided security support at international events like the Winter Olympics and the Super Bowl, though not for enforcement.\n- Attempted to enter the Ecuadorian consulate in New Jersey, an act denied under the Vienna Convention.\n\n**Differences in Content Among Text Snippets**\n- Some snippets focus intensely on specific fatal shootings (Melissa Anne Carter and Daniel Johnson) and their immediate aftermath, while others provide a broader overview of ICE's policies and structure.\n- The level of detail on recruitment and training practices varies, with some describing specific examples of low standards and others outlining general trends.\n- The discussion of the 287(g) program is a central focus in some snippets (e.g., the ACLU report), while it is mentioned more briefly in others.\n- Some snippets emphasize legal and constitutional arguments (absolute immunity, Posse Comitatus Act), whereas others prioritize the human impact and community effects.\n- The geographical focus differs, with some centered on New Jersey/Minneapolis and others listing multiple cities where ICE operates.\n- Perspectives range from neutral reporting of facts and figures to explicitly critical stances on the administration's policies.\n- Inclusion of specific data, such as poll results and deportation numbers, varies across snippets.\n- Some snippets include proposed solutions (steps to reduce violence, legislative bans on 287(g)), while others do not.\n"
+      },
+      {
+        "role": "user",
+        "content": "Using the provided sections from the previous conversation, what is the overall opinion about I.C.E? Is the overall opinion negative, and if so, are there any actions being taken to mitigate their destruction?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/revision/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 11"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/revision/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should answer the prompt referring to only on the provided sections of text which are from the following: Brookings article \"ICE expansion has outpaced accountability. What are the remedies?\", Aclu article \"ICE is Rapidly Expanding Dangerous 287(g) Agreements with Local Police\", and BBC article \"What is ICE and what powers do its agents have to use force?\".",
+        "The response should state that the overall opinion of I.C.E. (Immigration and Customs Enforcement) is negative.",
+        "The response should identify at least three specific factual examples from the text that illustrate why the public, experts, or officials have expressed concern about ICE. For example it could include (but is not limited to) the following: Fatal shootings of US citizens, 32 deaths while in ICE custody in 2025, Public opinion polls showing that 60% of people believe that ICE uses excessive force.",
+        "The response should answer the user's question of whether the opinion about ICE is negative, by clearly stating \"yes\" that the overall opinion is negative.",
+        "The response should identify the Minnesota federal judge's ruling restricting I.C.E.’s ability to retaliate against peaceful protesters, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify public protests as an action that is being taken to mitigate the  destructive actions of ICE.",
+        "The response should identify artists and/or public figures criticizing ICE's actions, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify laws that are being passed to ban 287(g) agreements, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify discussions in Maryland to prohibit anyone who joins ICE from ever getting a state law enforcement job in the future, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify organizations like the ACLU producing investigative reports such as the \"Deputized for Disaster\", as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify the public filming ICE agents during their arrests in order to monitor their behavior, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify senators threatening to block the DHS appropriation bill which includes funding for ICE, as an action being taken to mitigate harm caused by ICE.",
+        "The response should identify local police departments and state governments refusing to participate in programs that deputize them as I.C.E. agents., as an action being taken to mitigate harm caused by ICE.",
+        "The response should not mention stricter hiring standards (such as cross-checking agent files with state-level misconduct databases) as actions that are being taken to mitigate harm caused by ICE, as they are only proposals (Ref text: First, hiring standards should be improved. ICE agents’ files should be cross-checked with state-level misconduct files. This aligns with Texas’s Wandering Officer Law to prevent people who were fired or resigned due to misconduct from working in law enforcement.)",
+        "The response should not mention enhanced training methods (such as de-escalation methods or virtual reality programs) as actions that are being taken to mitigate harm caused by ICE, as these are only proposed actions.",
+        "The response should not mention requiring a 4-week in-person training for police officers deputized to work with ICE, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action.",
+        "The response should not mention enforcing a \"Duty to Intervene\" policy, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action.",
+        "The response should not mention increased transparency measures (such as mandating body cameras, prohibiting the use of face masks, or marking cars), as actions that are being taken to mitigate harm caused by ICE, as these are only proposed actions.",
+        "The response should not mention removing \"absolute immunity\" status for ICE agents, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/revision/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should answer the prompt referring to only on the provided sections of text which are from the following: Brookings article \"ICE expansion has outpaced accountability. What are the remedies?\", Aclu article \"ICE is Rapidly Expanding Dangerous 287(g) Agreements with Local Police\", and BBC article \"What is ICE and what powers do its agents have to use force?\".",
+          "The response should state that the overall opinion of I.C.E. (Immigration and Customs Enforcement) is negative.",
+          "The response should identify at least three specific factual examples from the text that illustrate why the public, experts, or officials have expressed concern about ICE. For example it could include (but is not limited to) the following: Fatal shootings of US citizens, 32 deaths while in ICE custody in 2025, Public opinion polls showing that 60% of people believe that ICE uses excessive force.",
+          "The response should answer the user's question of whether the opinion about ICE is negative, by clearly stating \"yes\" that the overall opinion is negative.",
+          "The response should identify the Minnesota federal judge's ruling restricting I.C.E.’s ability to retaliate against peaceful protesters, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify public protests as an action that is being taken to mitigate the  destructive actions of ICE.",
+          "The response should identify artists and/or public figures criticizing ICE's actions, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify laws that are being passed to ban 287(g) agreements, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify discussions in Maryland to prohibit anyone who joins ICE from ever getting a state law enforcement job in the future, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify organizations like the ACLU producing investigative reports such as the \"Deputized for Disaster\", as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify the public filming ICE agents during their arrests in order to monitor their behavior, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify senators threatening to block the DHS appropriation bill which includes funding for ICE, as an action being taken to mitigate harm caused by ICE.",
+          "The response should identify local police departments and state governments refusing to participate in programs that deputize them as I.C.E. agents., as an action being taken to mitigate harm caused by ICE.",
+          "The response should not mention stricter hiring standards (such as cross-checking agent files with state-level misconduct databases) as actions that are being taken to mitigate harm caused by ICE, as they are only proposals (Ref text: First, hiring standards should be improved. ICE agents’ files should be cross-checked with state-level misconduct files. This aligns with Texas’s Wandering Officer Law to prevent people who were fired or resigned due to misconduct from working in law enforcement.)",
+          "The response should not mention enhanced training methods (such as de-escalation methods or virtual reality programs) as actions that are being taken to mitigate harm caused by ICE, as these are only proposed actions.",
+          "The response should not mention requiring a 4-week in-person training for police officers deputized to work with ICE, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action.",
+          "The response should not mention enforcing a \"Duty to Intervene\" policy, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action.",
+          "The response should not mention increased transparency measures (such as mandating body cameras, prohibiting the use of face masks, or marking cars), as actions that are being taken to mitigate harm caused by ICE, as these are only proposed actions.",
+          "The response should not mention removing \"absolute immunity\" status for ICE agents, as an action that is being taken to mitigate harm caused by ICE, as this is only a proposed action."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/revision/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/revision/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 11"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

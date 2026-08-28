@@ -1,0 +1,336 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_8",
+  "turn_id": "turn50",
+  "turn_index": 50,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "5af4d7fa-689c-2aec-b9df-12a6d78f89bf",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 195,
+    "source_sha256": "6b5d8d1c6588d7a638c59c1983473254c46b9fdf2d6efe3b5f15166ef1bc64c7",
+    "source_metadata": {
+      "task_id": "5af4d7fa-689c-2aec-b9df-12a6d78f89bf",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Title\tDate\nStranger Things: Stranger Things 5: Chapter Eight: The Rightside Up\t3/5/2026\nStranger Things: Stranger Things 5: Chapter Seven: The Bridge\t3/2/2026\nStranger Things: Stranger Things 5: Chapter Six: Escape from Camazotz\t2/27/2026\nStranger Things: Stranger Things 5: Chapter Five: Shock Jock\t2/26/2026\nStranger Things: Stranger Things 5: Chapter Four: Sorcerer\t2/24/2026\nStranger Things: Stranger Things 5: Chapter Three: The Turnbow Trap\t2/20/2026\nStranger Things: Stranger Things 5: Chapter Two: The Vanishing of Holly Wheeler\t2/19/2026\nStranger Things: Stranger Things 5: Chapter One: The Crawl\t2/18/2026\nNarcos: Mexico: Season 3: Life in Wartime\t2/16/2026\nWonder\t2/14/2026\nNarcos: Mexico: Season 3: The Reckoning\t2/14/2026\nThe Covenant\t2/12/2026\nFree Bert: The Crowd Pleaser\t2/11/2026\nNarcos: Mexico: Season 3: Last Dance\t2/8/2026\nNarcos: Mexico: Season 3: La Voz\t2/6/2026\nNarcos: Mexico: Season 3: La Jefa\t2/3/2026\nNo Time to Die\t2/1/2026\nNarcos: Mexico: Season 3: Boots on the Ground\t1/29/2026\nNarcos: Mexico: Season 3: GDL\t1/28/2026\nNarcos: Mexico: Season 3: Los Juniors\t1/27/2026\nSkyscraper Live\t1/25/2026\nNarcos: Mexico: Season 3: Como La Flor\t1/22/2026\nNarcos: Mexico: Season 3: 12 Steps\t1/21/2026\nNarcos: Mexico: Season 2: Free Trade\t1/18/2026\nTHE MAGIC PRANK SHOW with Justin Willman: Payback's a Stitch\t1/17/2026\nNarcos: Mexico: Season 2: Growth, Prosperity, and Liberation\t1/10/2026\nNarcos: Mexico: Season 2: Se CayÃ³ El Sistema\t1/9/2026\nNarcos: Mexico: Season 2: Truth and Reconciliation\t1/8/2026\nNarcos: Mexico: Season 2: El Dedazo\t1/6/2026\nNarcos: Mexico: Season 2: AFO\t1/5/2026\nNarcos: Mexico: Season 2: The Big Dig\t1/3/2026\nNarcos: Mexico: Season 2: Ruben Zuno Arce\t12/29/2025\nNarcos: Mexico: Season 2: Alea lacta Est\t12/22/2025\nNarcos: Mexico: Season 2: Salva El Tigre\t12/19/2025\nNarcos: Mexico: Season 1: Leyenda\t12/12/2025\nNarcos: Mexico: Season 1: 881 Lope de Vega\t12/10/2025\nNarcos: Mexico: Season 1: Just Say No\t12/9/2025\nNarcos: Mexico: Season 1: Jefe de Jefes\t12/7/2025\nNarcos: Mexico: Season 1: La Ãšltima Frontera\t12/6/2025\nNarcos: Mexico: Season 1: The Colombian Connection\t12/2/2025\nNarcos: Mexico: Season 1: Rafa, Rafa, Rafa!\t11/25/2025\nTrue Grit\t11/23/2025\nWhat Happened to Monday\t11/22/2025\nNarcos: Mexico: Season 1: El Padrino\t11/21/2025\nNarcos: Mexico: Season 1: The Plaza System\t11/17/2025\nTHE MAGIC PRANK SHOW with Justin Willman: Ghosting the Ghoster\t11/9/2025\nNarcos: Mexico: Season 1: Camelot\t11/7/2025\nNarcos: Season 3: Going Back to Cali\t11/3/2025\nNarcos: Season 3: Todos Los Hombres del Presidente\t11/2/2025\nInglourious Basterds\t10/30/2025\nNarcos: Season 3: Convivir\t10/26/2025\nNarcos: Season 3: Sin Salida\t10/25/2025\nNarcos: Season 3: Best Laid Plans\t10/24/2025\nNarcos: Season 3: MRO\t10/23/2025\nNarcos: Season 3: Checkmate\t10/20/2025\nThe Goonies\t10/18/2025\nNarcos: Season 3: Follow the Money\t10/18/2025\nNarcos: Season 3: The Cali KGB\t10/10/2025\nThe Mask\t10/10/2025\nNarcos: Season 3: The Kingpin Strategy\t10/5/2025\nNarcos: Season 2: Al Fin CayÃ³!\t10/4/2025\nNarcos: Season 2: Nuestra Finca\t10/2/2025\nNarcos: Season 2: Exit El PatrÃ³n\t9/25/2025\nTHE MAGIC PRANK SHOW with Justin Willman: Ride or Die\t9/23/2025\nNarcos: Season 2: Deutschland 93\t9/21/2025\nAdam Sandler: Love You\t9/19/2025\nTHE MAGIC PRANK SHOW with Justin Willman: Heads Will Roll\t9/18/2025\nNarcos: Season 2: Los Pepes\t9/17/2025\nNarcos: Season 2: The Enemies of My Enemy\t9/16/2025\nNarcos: Season 2: The Good, The Bad, and The Dead\t9/15/2025\nNarcos: Season 2: Our Man in Madrid\t9/14/2025\nNarcos: Season 2: Cambalache\t9/13/2025\nNarcos: Season 2: Free at Last\t9/10/2025\nNarcos: Season 1: Despegue\t9/9/2025\nI Think You Should Leave with Tim Robinson: Season 2: They said that to me at a dinner.\t9/8/2025\nNarcos: Season 1: La Catedral\t9/7/2025\nI Think You Should Leave with Tim Robinson: Season 1: We Used to Watch This At My Old Work\t9/5/2025\nNarcos: Season 1: La Gran Mentira\t9/4/2025\nNarcos: Season 1: You Will Cry Tears of Blood\t9/3/2025\nI Think You Should Leave with Tim Robinson: Season 1: I'm Wearing One of Their Belts Right Now\t9/2/2025\nI Think You Should Leave with Tim Robinson: Season 1: Oh Crap, A Bunch More Bad Stuff Just Happened\t8/30/2025\nNarcos: Season 1: Explosivos\t8/29/2025\nNarcos: Season 1: There Will Be a Future\t8/28/2025\nNarcos: Season 1: The Palace in Flames\t8/26/2025\nI Think You Should Leave with Tim Robinson: Season 1: It's the Cigars You Smoke That Are Gonna Give You Cancer\t8/25/2025\nNarcos: Season 1: The Men of Always\t8/24/2025\nNarcos: Season 1: The Sword of SimÃ³n BolÃ­var\t8/23/2025\nNarcos: Season 1: Descenso\t8/23/2025\nHappy Gilmore 2\t8/21/2025\nI Think You Should Leave with Tim Robinson: Season 1: Thanks For Thinking They Are Cool\t8/20/2025\nI Think You Should Leave with Tim Robinson: Season 1: Has This Ever Happened To You?\t8/19/2025\nI Think You Should Leave with Tim Robinson: Season 3: WHEN I FIRST THOUGHT OF THIS YOU DIDNâ€™T EVEN HAVE HANDS UP THERE â€” YOU WERE JUST WALKING STRAIGHT UP THE WALL.\t8/19/2025\nI Think You Should Leave with Tim Robinson: Season 3: DONâ€™T JUST SAY â€œRELAX,â€ ACTUALLY RELAX.\t8/18/2025\nI Think You Should Leave with Tim Robinson: Season 3: SO NOW EVERY TIME Iâ€™M ABOUT TO DO SOMETHING I REALLY WANT TO DO, I ASK MYSELF, â€œWAIT A MINUTE, WHAT IS THIS?â€\t8/18/2025\nUNTAMED: All Trails Lead Here\t8/16/2025\nUNTAMED: Terces\t8/15/2025\nUNTAMED: Gold Rush\t8/14/2025\nUNTAMED: El-oâ€™-win\t8/13/2025\nUNTAMED: Jane Doe\t8/12/2025\nAlone Australia: The Drop\t8/11/2025\nUNTAMED: A Celestial Event\t8/11/2025\nJaws\t8/10/2025\nI Think You Should Leave with Tim Robinson: Season 3: CUT TO: WEâ€™RE CHATTING ABOUT THIS AT YOUR BACHELOR PARTY.\t8/10/2025\nSquid Game: Season 3: Humans Areâ€¦\t8/9/2025\nSquid Game: Season 3: â—‹â–³â–¡\t8/8/2025\nI Think You Should Leave with Tim Robinson: Season 3: I CAN DO WHATEVER I WANT.\t8/7/2025\nI Think You Should Leave with Tim Robinson: Season 3: THAT WAS THE EARTH TELLING ME Iâ€™M SUPPOSED TO DO SOMETHING GREAT.\t8/7/2025\nSquid Game: Season 3: 222\t8/6/2025\nJustin Willman: Magic Lover\t8/5/2025\nSquid Game: Season 3: It's Not Your Fault\t8/1/2025\nSquid Game: Season 3: The Starry Night\t7/31/2025\nSquid Game: Season 3: Keys and Knives\t7/29/2025\nTires: Season 1: The Initiative\t7/28/2025\nTires: Season 2: At What Cost\t7/28/2025\nTires: Season 2: Misery Has Company\t7/27/2025\nTires: Season 2: Patriots and Traitors\t7/27/2025\nTires: Season 2: The Radio Ad\t7/26/2025\nTires: Season 2: Retirement\t7/26/2025\nTires: Season 2: Free Fries\t7/25/2025\nTires: Season 2: The Tri-State Mid Market Tire Expo\t7/24/2025\nTires: Season 2: Record High\t7/23/2025\nTires: Season 2: Shiny New Thing\t7/22/2025\nTires: Season 2: Inspection\t7/21/2025\nTires: Season 2: HR\t7/20/2025\nTires: Season 2: Bonus Money\t7/20/2025\nSicario\t5/26/2025\nMatilda\t5/20/2025\nInterstellar\t2/22/2025\nDark Winds: Season 2: HÃ³zhÃ³ nÃ¡hÃ¡sdlÄ¯Ä¯ (Beauty Is Restored)\t2/16/2025\nDark Winds: Season 2: Black Hole Sun\t2/14/2025\nDark Winds: Season 2: The March\t2/14/2025\nThe Unbearable Weight of Massive Talent\t1/26/2025\nYour Friend, Nate Bargatze\t1/23/2025\nSquid Game: Season 2: Friend or Foe\t1/14/2025\nSquid Game: Season 2: O ï»¿ X\t1/13/2025\nSquid Game: Season 2: One More Game\t1/12/2025\nSquid Game: Season 2: Six Legs\t1/11/2025\nSquid Game: Season 2: 001\t1/10/2025\nSquid Game: Season 2: Halloween Party\t1/9/2025\nSquid Game: Season 2: Bread and Lottery\t1/7/2025\nSquid Game: Season 1: One Lucky Day\t1/6/2025\nSquid Game: Season 1: Front Man\t1/6/2025\nSquid Game: Season 1: VIPS\t1/5/2025\nSquid Game: Season 1: Gganbu\t1/4/2025\nSquid Game: Season 1: A Fair World\t1/3/2025\nSquid Game: Season 1: Stick to the Team\t1/2/2025\nSquid Game: Season 1: The Man with the Umbrella\t12/31/2024\nSquid Game: Season 1: Hell\t12/30/2024\nSquid Game: Season 1: Red Light, Green Light\t12/28/2024\nAli Wong: Single Lady\t12/22/2024\nThe Christmas Chronicles: Part Two\t12/15/2024\nDark Winds: Season 2: Antigonish\t12/6/2024\nDark Winds: Season 2: Wonders of the Unknown\t11/30/2024\nRicky Gervais: Armageddon\t11/26/2024\nTom Segura: Ball Hog\t11/21/2024\nJake Paul vs. Mike Tyson\t11/16/2024\nDark Winds: Season 2: Na'niÅ‚kaadii (Sheep Dog)\t11/12/2024\nTom Papa: Home Free\t11/1/2024\nDark Winds: Season 1: HÃ³zhÃ³oNaashÃ¡a\t10/29/2024\nDark Winds: Season 1: Ha'Ã­Ã­nlni\t10/28/2024\nDark Winds: Season 1: Hooghandi\t10/27/2024\nDark Winds: Season 1: K'e\t10/27/2024\nDark Winds: Season 1: The Male Rain Approaches\t10/26/2024\nDark Winds: Season 1: Monster Slayer\t10/26/2024\nAll Quiet on the Western Front\t10/26/2024\nThe Butterfly Effect\t10/23/2024\nAlone: Season 10: By Any Means\t10/9/2024\nAlone: Season 10: Rats\t10/2/2024\nThe Umbrella Academy: Season 4: End of the Beginning\t10/1/2024\nAlone: Season 10: Splintered\t9/30/2024\nThe Umbrella Academy: Season 4: Six Years, Five Months, and Two Days\t9/29/2024\nThe Umbrella Academy: Season 4: The Cleanse\t9/29/2024\nThe Umbrella Academy: Season 4: The Squid and the Girl\t9/28/2024\nThe Umbrella Academy: Season 4: Jean and Gene\t9/27/2024\nThe Umbrella Academy: Season 4: The Unbearable Tragedy of Getting What You Want\t9/26/2024\nBest of Stand-Up 2020\t9/22/2024\nWyatt Earp and The Cowboy War: The Final Showdown\t9/21/2024\nWyatt Earp and The Cowboy War: The Vendetta Ride\t9/20/2024\nWyatt Earp and The Cowboy War: The Cowboys Strike Back\t9/18/2024\nWyatt Earp and The Cowboy War: Trial of the Century\t9/15/2024\n3:10 to Yuma\t9/13/2024\nShot Caller\t9/11/2024\nAlone: Season 10: Infestation\t9/10/2024\nAlone: Season 10: Aftermath\t8/28/2024\nWyatt Earp and The Cowboy War: The Gunfight\t8/27/2024\nAlone: Season 10: King's Gambit\t8/23/2024\nWyatt Earp and The Cowboy War: Trouble in Tombstone\t8/23/2024\nAlone: Season 10: Spirit Bear\t8/20/2024\nAlone: Season 10: Lake of Thieves\t8/8/2024\nAlone: Season 10: Growing Pains\t8/6/2024\nAlone: Season 10: Ties That Bind\t7/31/2024\nAlone: Season 10: Game On\t7/26/2024\nTires: Season 1: Windows of Opportunity\t7/1/2024\nMeatEater: Season 7: Episode 11\t6/26/2024\nMeatEater: Season 7: Episode 10\t6/24/2024\nMeatEater: Season 7: Episode 9\t6/21/2024\nMeatEater: Season 8: The Mud and The Trees\t6/20/2024\nMeatEater: Season 9 Part 2: Alaska Moose: The Guide Life\t6/20/2024\nMeatEater: Season 9 Part 2: Alaska Fish: Exploring the Waters of Southeast Alaska\t6/20/2024\nA Man Called Otto\t6/12/2024\nThe Peanut Butter Falcon\t6/2/2024\nOld Dads\t6/1/2024\nMeatEater: Season 9 Part 2: Montana Black Bear and Turkey: Spring Opportunities\t5/16/2024\nMeatEater: Season 9 Part 2: South Dakota Ducks\t5/14/2024\nMeatEater: Season 9 Part 1: Colorado Elk\t5/8/2024\nMeatEater: Season 9 Part 1: Wyoming Mule Deer Part 2\t5/6/2024\nRust Creek\t5/5/2024\nMeatEater: Season 9 Part 1: Wyoming Mule Deer Part 1\t5/3/2024\nMeatEater: Season 9 Part 1: South Texas Nilgai\t5/3/2024\nMeatEater: Season 9 Part 1: South Texas Redfish & Flounder\t4/30/2024\nBaby Driver\t4/24/2024\nGlass\t4/16/2024\nSplit\t4/13/2024\nTaylor Tomlinson: Have It All\t3/9/2024\nJurassic Park III\t2/21/2024\nThe Lost World: Jurassic Park\t2/17/2024\nJurassic Park\t2/10/2024\nTom Segura: Sledgehammer\t2/7/2024\nMeatEater: Season 8: Walking The Clouds\t2/4/2024\nJohn Wick\t2/4/2024\nMeatEater: Season 8: Borderland Bucks Part 2\t2/3/2024\nShane Gillis: Beautiful Dogs\t2/3/2024\nMeatEater: Season 8: Borderland Bucks Part 1\t2/2/2024\nMeatEater: Season 8: Turkey Troubles\t2/1/2024\nMeatEater: Season 8: Ghosts of the Chesapeake Part 2\t1/31/2024\nMeatEater: Season 8: Ghosts of the Chesapeake Part 1\t1/30/2024\nNate Bargatze: The Greatest Average American\t1/30/2024\nMeatEater: Season 8: Blue Mountain Bugles\t1/29/2024\nNo Hard Feelings\t1/27/2024\nLeave the World Behind\t1/26/2024\nBreaking Bad: Season 3: Full Measure\t12/9/2023\nBreaking Bad: Season 4: Open House\t12/9/2023\nBreaking Bad: Season 4: Thirty-Eight Snub\t12/9/2023\nBreaking Bad: Season 4: Box Cutter\t12/9/2023\nBreaking Bad: Season 3: Half Measures\t11/23/2023\nBreaking Bad: Season 3: Abiquiu\t11/22/2023\nBreaking Bad: Season 3: Fly\t11/21/2023\nBreaking Bad: Season 3: Kafkaesque\t11/18/2023\nBreaking Bad: Season 3: I See You\t11/17/2023\nBreaking Bad: Season 3: One Minute\t11/15/2023\nBreaking Bad: Season 3: Sunset\t11/14/2023\nBreaking Bad: Season 3: Mas\t11/10/2023\nBreaking Bad: Season 3: Green Light\t11/6/2023\nBreaking Bad: Season 3: I.F.T.\t11/4/2023\nBreaking Bad: Season 3: Caballo Sin Nombre\t10/27/2023\nBreaking Bad: Season 3: No MÃ¡s\t10/23/2023\nBreaking Bad: Season 2: ABQ\t10/22/2023\nBreaking Bad: Season 2: Phoenix\t10/20/2023\nBreaking Bad: Season 2: Mandala\t10/17/2023\nBreaking Bad: Season 2: Over\t10/10/2023\nBreaking Bad: Season 2: 4 Days Out\t10/9/2023\nBreaking Bad: Season 2: Better Call Saul\t10/8/2023\nBreaking Bad: Season 2: Negro y Azul\t10/5/2023\nThe Machine\t9/30/2023\nBreaking Bad: Season 2: Peekaboo\t9/29/2023\nBreaking Bad: Season 2: Breakage\t9/27/2023\nBreaking Bad: Season 2: Down\t9/26/2023\nBreaking Bad: Season 2: Bit by a Dead Bee\t9/25/2023\nBreaking Bad: Season 2: Grilled\t9/20/2023\nBreaking Bad: Season 2: Seven Thirty-Seven\t9/19/2023\nBreaking Bad: Season 1: A No-Rough-Stuff-Type Deal\t9/11/2023\nBreaking Bad: Season 1: Crazy Handful of Nothin'\t9/8/2023\nBreaking Bad: Season 1: Gray Matter\t9/7/2023\nBreaking Bad: Season 1: Cancer Man\t9/6/2023\nTheo Von: Regular People\t9/1/2023\nBreaking Bad: Season 1: And the Bag's in the River\t8/30/2023\nBreaking Bad: Season 1: The Cat's in the Bag\t8/20/2023\nBreaking Bad: Season 1: Pilot\t8/19/2023\nBlack Mirror: Season 6: Demon 79\t8/16/2023\nBlack Mirror: Season 6: Mazey Day\t8/15/2023\nBlack Mirror: Season 6: Beyond the Sea\t8/13/2023\nBlack Mirror: Season 6: Loch Henry\t8/11/2023\nBlack Mirror: Season 6: Joan Is Awful\t8/9/2023\nTim Dillon: A Real Hero\t6/28/2023\nAmerican Graffiti\t5/10/2023\nBert Kreischer: Razzle Dazzle\t5/4/2023\nSeven\t9/17/2022\nRoad House\t9/12/2022\nD.B. Cooper: Where Are You?!: Limited Series: Cooperland\t8/27/2022\nD.B. Cooper: Where Are You?!: Limited Series: Seeing Jesus in the Toast\t8/20/2022\nVirgin River: Season 1: Carry On\t8/18/2022\nD.B. Cooper: Where Are You?!: Limited Series: Innocent Men Don't Hide in Storage Bins\t8/18/2022\nD.B. Cooper: Where Are You?!: Limited Series: Take the Money and Jump\t8/15/2022\nPeaky Blinders: Season 6: Lock and Key\t8/12/2022\nPeaky Blinders: Season 6: The Road to Hell\t8/12/2022\nStranger Things: Stranger Things 4: Chapter Nine: The Piggyback\t8/2/2022\nStranger Things: Stranger Things 4: Chapter Eight: Papa\t8/2/2022\nThe Umbrella Academy: Season 3: Oblivion\t7/30/2022\nPeaky Blinders: Season 6: Sapphire\t7/29/2022\nThe Umbrella Academy: Season 3: Seven Bells\t7/27/2022\nThe Umbrella Academy: Season 3: Wedding at the End of the World\t7/26/2022\nThe Umbrella Academy: Season 3: Auf Wiedersehen\t7/25/2022\nThe Umbrella Academy: Season 3: Marigold\t7/24/2022\nThe Umbrella Academy: Season 3: Kindest Cut\t7/18/2022\nPeaky Blinders: Season 6: Gold\t7/16/2022\nThe Umbrella Academy: Season 3: Kugelblitz\t7/9/2022\nPeaky Blinders: Season 6: Black Shirt\t7/8/2022\nPeaky Blinders: Season 6: Black Day\t7/4/2022\nThe Umbrella Academy: Season 3: Pocket Full of Lightning\t7/1/2022\nThe Umbrella Academy: Season 3: World's Biggest Ball of Twine\t6/27/2022\nThe Umbrella Academy: Season 3: Meet the Family\t6/26/2022\nStranger Things: Stranger Things 4: Chapter Seven: The Massacre at Hawkins Lab\t6/16/2022\nStranger Things: Stranger Things 4: Chapter Six: The Dive\t6/15/2022\nStranger Things: Stranger Things 4: Chapter Five: The Nina Project\t6/12/2022\nBorrego\t6/7/2022\nAnchorman: The Legend of Ron Burgundy\t6/6/2022\nStranger Things: Stranger Things 4: Chapter Four: Dear Billy\t6/6/2022\nStranger Things: Stranger Things 4: Chapter Three: The Monster and the Superhero\t6/5/2022\nStranger Things: Stranger Things 4: Chapter Two: Vecna's Curse\t6/2/2022\nStranger Things: Stranger Things 4: Chapter One: The Hellfire Club\t6/1/2022\nBeerfest\t5/31/2022\nMeltdown: Three Mile Island: Limited Series: Fallout\t5/25/2022\nThe Gentlemen\t5/24/2022\nJackass: The Movie\t5/24/2022\nMeltdown: Three Mile Island: Limited Series: The Whistleblower\t5/23/2022\nMeltdown: Three Mile Island: Limited Series: Women and Children First\t5/21/2022\nOzark: Season 4: A Hard Way to Go\t5/19/2022\nOzark: Season 4: Mud\t5/19/2022\nMeltdown: Three Mile Island: Limited Series: The Accident\t5/18/2022\nOzark: Season 4: Trouble the Water\t5/16/2022\nOzark: Season 4: Pound of Flesh and Still Kickin'\t5/16/2022\nWar of the Worlds\t5/13/2022\nAlone: Season 7: Over the Edge\t5/10/2022\nAlone: Season 7: Pins and Needles\t5/6/2022\nOzark: Season 4: You're the Boss\t5/6/2022\nAlone: Season 7: The Wolves\t5/5/2022\nAlone: Season 7: Up in Smoke\t5/4/2022\nOzark: Season 4: Pick a God and Pray\t5/4/2022\nAlone: Season 7: Snared\t5/3/2022\nMo Amer: The Vagabond\t5/2/2022\nOzark: Season 4: The Cousin of Death\t5/1/2022\nSt. Vincent\t4/30/2022\nMetal Lords\t4/25/2022\nAlone: Season 7: The Musk Ox\t4/19/2022\nAlone: Season 7: The Rock\t4/14/2022\nAlone: Season 7: The Fly\t4/12/2022\nAlone: Season 7: That Was No Bunny\t4/12/2022\nAlone: Season 7: The Rock House\t4/11/2022\nRoad Trip\t4/8/2022\nJeff Foxworthy: The Good Old Days\t4/8/2022\nShooter\t4/7/2022\nAlone: Season 7: Million Dollar Mistake\t4/6/2022\nCatching Killers: Season 2: Thrill Kills: The Phoenix Serial Shooter\t3/21/2022\nRon White: If You Quit Listening, I'll Shut Up\t3/21/2022\nThe Standups: Season 3: Melissa VillaseÃ±or\t3/18/2022\nCatching Killers: Season 2: Bind. Torture. Kill: BTK\t3/12/2022\nHell or High Water\t3/11/2022\nOzark: Season 4: Sanctified\t3/8/2022\nOzark: Season 4: Sangre Sobre Todo\t3/5/2022\nOzark: Season 4: Ellie\t3/2/2022\nSpace Force: Season 2: BUDGET CUTS\t3/1/2022\nOzark: Season 4: Ace Deuce\t2/26/2022\nSpace Force: Season 2: THE INQUIRY\t2/25/2022\nThe Standups: Season 3: Dusty Slay\t2/25/2022\nOzark: Season 4: City on the Make\t2/24/2022\nOzark: Season 4: Let the Great World Spin\t2/20/2022\nThe Standups: Season 3: Janelle James\t2/18/2022\nThe Standups: Season 3: Mark Normand\t2/16/2022\nThe Standups: Season 3: Naomi Ekperigin\t2/16/2022\nDon't Look Up\t2/11/2022\nOzark: Season 4: The Beginning of the End\t2/9/2022\nMeatEater: Season 10 Part 2: New Mexico Ibex\t2/6/2022\nMeatEater: Season 10 Part 2: New Mexico Archery Elk\t2/6/2022\nMeatEater: Season 10 Part 2: South Carolina Turkeys\t2/4/2022\nMeatEater: Season 10 Part 2: Spearfishing the Big Island\t2/4/2022\nMeatEater: Season 10 Part 2: Hawaii Feral Goats and Wahoo\t2/3/2022\n300\t2/2/2022\nThe Standups: Season 3: Brian Simpson\t1/22/2022\nThe Witcher: Season 2: Family\t1/21/2022\nThe Witcher: Season 2: Voleth Meir\t1/20/2022\nThe Witcher: Season 2: Dear Friend...\t1/19/2022\nMo Amer: Mohammed in Texas\t1/18/2022\nThe Witcher: Season 2: Turn Your Back\t1/14/2022\nBad Grandpa .5\t1/11/2022\nThe Witcher: Season 2: Redanian Intelligence\t1/8/2022\nThe Witcher: Season 2: What Is Lost\t1/7/2022\nThe Witcher: Season 2: Kaer Morhen\t1/6/2022\nThe Witcher: Season 2: A Grain of Truth\t1/4/2022\nFireplace for Your Home: Crackling Fireplace\t12/25/2021\nFireplace for Your Home: Crackling Yule Log Fireplace\t12/25/2021\nFireplace for Your Home: Crackling Fireplace with Music\t12/25/2021\nTiger King: The Doc Antle Story: Don't Trust Bhagavan\t12/18/2021\nTiger King: The Doc Antle Story: The Great Escape\t12/17/2021\nTiger King: The Doc Antle Story: What's Up, Doc?\t12/17/2021\nThe Harder They Fall\t12/16/2021\nThe Alpinist\t12/10/2021\nNorm Macdonald: Hitler's Dog, Gossip & Trickery\t12/9/2021\nRed Notice\t12/9/2021\n14 Peaks: Nothing Is Impossible\t12/3/2021\nTiger King: Tiger King 2: Stark Raving Mad\t12/2/2021\nTiger King: Tiger King 2: The Lyin' King\t12/1/2021\nTiger King: Tiger King 2: Bounty Hunting\t12/1/2021\nTiger King: Tiger King 2: The Carole Diaries\t12/1/2021\nTiger King: Tiger King 2: Beg Your Pardon\t12/1/2021\n21 Jump Street\t11/8/2021\nThe Guilty\t11/8/2021\nUntold: Crime & Penalties\t11/6/2021\nOats Studios: Cooking With Bill: Damasu / Prestoveg / Smoothie / Sushi\t11/5/2021\nOats Studios: Firebase\t11/5/2021\nOats Studios: Rakka\t11/2/2021\nDave Chappelle: The Closer\t10/28/2021\nInside Job: Part 1: Unpresidented\t10/27/2021\nBelow Zero\t10/27/2021\nMeatEater: Season 7: Episode 2\t10/5/2021\nMeatEater: Season 10 Part 1: Hillbilly Heaven\t10/5/2021\nMeatEater: Season 10 Part 1: Flash In The Pan\t10/5/2021\nMeatEater: Season 10 Part 1: Lone Star Whitetails\t10/5/2021\nMeatEater: Season 10 Part 1: High Country Mountain Goat\t10/4/2021\nMeatEater: Season 10 Part 1: Wyoming Pronghorn With Luke Combs\t10/4/2021\nThe Walking Dead: Season 10: Here's Negan\t9/13/2021\nThe Walking Dead: Season 10: Diverged\t9/10/2021\nThe Walking Dead: Season 10: Splinter\t9/9/2021\nThe Walking Dead: Season 10: One More\t9/6/2021\nThe Walking Dead: Season 10: Find Me\t9/5/2021\nThe Walking Dead: Season 10: Home Sweet Home\t9/5/2021\nSuperbad\t7/2/2021\nBlack Summer: Season 1: Alone\t7/1/2021\nThe Witcher: Season 1: Much More\t6/30/2021\nThe Witcher: Season 1: Before a Fall\t6/29/2021\nThe Witcher: Season 1: Rare Species\t6/25/2021\nThe Witcher: Season 1: Bottled Appetites\t6/24/2021\nThe Witcher: Season 1: Of Banquets, Bastards and Burials\t6/22/2021\nBlack Summer: Season 1: Summer School\t6/18/2021\nBlack Summer: Season 1: Drive\t6/18/2021\nBlack Summer: Season 1: Human Flow\t6/17/2021\nStand by Me\t6/17/2021\nMidnight Special\t6/17/2021\nThe Witcher: Season 1: Betrayer Moon\t6/9/2021\nThe Witcher: Season 1: Four Marks\t6/7/2021\nProspect\t6/3/2021\nExtinction\t6/3/2021\nCaptain Fantastic\t5/29/2021\nInvictus\t5/28/2021\nTenacious D in The Pick of Destiny\t5/28/2021\nCreating an Army of the Dead\t5/26/2021\nArmy of the Dead\t5/26/2021\nSchulz Saves America: Special: Coronavirus: The Pandemic Unmasked Our Pitiful Politicians\t5/24/2021\nThe Witcher: Season 1: The Endâ€™s Beginning\t5/22/2021\nThe Woman in the Window\t5/21/2021\nDead Again in Tombstone\t5/12/2021\nMoving Art: Season 3: Marquesas Islands\t3/27/2021\nMoving Art: Season 3: Machu Picchu\t3/27/2021\nMoving Art: Season 3: Hokkaido\t3/27/2021\nMoving Art: Season 3: New Zealand\t3/27/2021\nMoving Art: Season 3: Tahiti\t3/27/2021\nHomefront\t3/6/2021\nSpycraft: Sexspionage\t3/1/2021\nSpycraft: Deadly Poisons\t3/1/2021\nDjango Unchained\t2/27/2021\nLongmire: Pilot\t2/22/2021\nMeatEater: Season 9 Part 2: Colorado Mule Deer: Baseball and Bucks\t2/19/2021\nKnock Knock\t2/17/2021\n \t2/16/2021\nManhunt: Deadly Games: Open Season\t2/13/2021\nManhunt: Deadly Games: Don't Tread on Me\t2/13/2021\nManhunt: Deadly Games: Join or Die\t2/13/2021\nManhunt: Deadly Games: Eric\t2/12/2021\nManhunt: Deadly Games: Army of God\t2/12/2021\nManhunt: Deadly Games: Land of the Noonday Sun\t2/12/2021\nManhunt: Deadly Games: Run Rudolph Run\t2/12/2021\nManhunt: Deadly Games: Bombingham\t2/12/2021\nManhunt: Deadly Games: Unabubba\t2/12/2021\nManhunt: Deadly Games: Centbom\t2/11/2021\nInto the Wild\t2/10/2021\nSnowden\t2/6/2021\nSpycraft: High-Tech Surveillance and an Eye in the Sky\t2/4/2021\n : Episode 13\t1/29/2021\n : Episode 12\t1/28/2021\n : Episode 11\t1/28/2021\n : Episode 10\t1/28/2021\n : Episode 9\t1/27/2021\n : Episode 8\t1/27/2021\n : Episode 7\t1/27/2021\n : Episode 6\t1/26/2021\n : Episode 5\t1/22/2021\n : Episode 4\t1/22/2021\n : Episode 3\t1/20/2021\n : Episode 2\t1/20/2021\n : Episode 1\t1/20/2021\n : Episode 13\t1/16/2021\n : Episode 12\t1/16/2021\n : Episode 11\t1/15/2021\nHunt for the Wilderpeople\t1/15/2021\n : Episode 10\t1/15/2021\n : Episode 9\t1/14/2021\n : Episode 8\t1/14/2021\n : Episode 7\t1/8/2021\n : Episode 6\t1/8/2021\n : Episode 5\t1/7/2021\n : Episode 4\t1/6/2021\nThe Last Thing He Wanted\t1/5/2021\nThe Standups: Season 1: Dan Soder\t1/2/2021\n : Episode 3\t12/31/2020\n : Episode 2\t12/30/2020\n : Episode 1\t12/29/2020\nThe Midnight Sky\t12/27/2020\nThe Standups: Season 1: Beth Stelling\t12/24/2020\n#Alive\t12/23/2020\nTinker, Tailor, Soldier, Spy\t12/22/2020\nTriple 9\t12/22/2020\nMosul\t12/21/2020\nThe Standups: Season 1: Nikki Glaser\t12/21/2020\nAva\t12/18/2020\nThe Standups: Season 1: Deon Cole\t12/8/2020\nThe Standups: Season 1: Fortune Feimster\t12/8/2020\nThe Standups: Season 1: Nate Bargatze\t12/7/2020\nThe Standups: Season 2: Aparna Nancherla\t12/1/2020\nThe Standups: Season 2: Brent Morin\t11/30/2020\nThe Standups: Season 2: Rachel Feinstein\t11/30/2020\nThe Standups: Season 2: Kyle Kinane\t11/23/2020\nThe Standups: Season 2: Gina Yashere\t11/23/2020\nThe Standups: Season 2: Joe List\t11/23/2020\nNate Bargatze: The Tennessee Kid\t11/22/2020\nDue Date\t11/8/2020\nCommunity: Season 2: Cooperative Calligraphy\t11/6/2020\nOktoberfest: Beer & Blood: Limited Series: Vision\t11/5/2020\nFree State of Jones\t11/4/2020\nThe Silence of the Lambs\t11/1/2020\nTo the Lake: Episode 8\t10/27/2020\nTo the Lake: Episode 7\t10/27/2020\nTo the Lake: Episode 6\t10/27/2020\nTo the Lake: Episode 5\t10/25/2020\nTo the Lake: Episode 4\t10/25/2020\nTo the Lake: Episode 3\t10/24/2020\nTo the Lake: Episode 2\t10/24/2020\nTo the Lake: Episode 1\t10/23/2020\nIn a Valley of Violence\t10/23/2020\nKilling Them Softly\t10/23/2020\nThe Haunting of Bly Manor: The Beast in the Jungle\t10/22/2020\nThe Haunting of Bly Manor: The Two Faces, Part Two\t10/22/2020\nThe Haunting of Bly Manor: The Jolly Corner\t10/22/2020\nThe Haunting of Bly Manor: The Altar of the Dead\t10/19/2020\nThe Haunting of Bly Manor: The Way It Came\t10/19/2020\nThe Haunting of Bly Manor: The Two Faces, Part One\t10/18/2020\nFargo\t10/16/2020\nTread\t10/15/2020\nThe Cabin with Bert Kreischer: NO PAIN, NO GAIN\t10/15/2020\nThe Cabin with Bert Kreischer: FRESH PERSPECTIVES\t10/15/2020\nThe Cabin with Bert Kreischer: RELEASE\t10/15/2020\nThe Cabin with Bert Kreischer: TOUGH LOVE\t10/15/2020\nThe Cabin with Bert Kreischer: MIND, BODY AND SOUL\t10/14/2020\nThe Dukes of Hazzard\t10/14/2020\nRiot\t10/14/2020\nThe Haunting of Bly Manor: The Pupil\t10/12/2020\nThe Haunting of Bly Manor: The Great Good Place\t10/10/2020\nThe Outpost\t10/8/2020\nTremors: A Cold Day in Hell\t10/7/2020\nWorld's Most Wanted: Matteo Messina Denaro: Cosa Nostra's Last Godfather\t10/5/2020\nWorld's Most Wanted: Semion Mogilevich: The Russian Mafia Boss\t10/2/2020\nCop Car\t10/1/2020\nHunter's Prayer\t9/29/2020\nBarbecue Showdown: Season 1: The. Whole. Hog.\t9/28/2020\nBarbecue Showdown: Season 1: Barbecue Around the World\t9/28/2020\nBarbecue Showdown: Season 1: Cooking It Old School\t9/28/2020\nBarbecue Showdown: Season 1: Raccoon, Iguana and Hare â€” Oh My!\t9/25/2020\nBarbecue Showdown: Season 1: Tournament of Sandwiches\t9/25/2020\nBarbecue Showdown: Season 1: Donâ€™t Need Teeth to Eat This Beef\t9/25/2020\nBarbecue Showdown: Season 1: Red, White and Barbecue\t9/24/2020\nBarbecue Showdown: Season 1: Barbecue in the Blood\t9/24/2020\nCommunity: Season 2: Aerodynamics of Gender\t9/24/2020\nThe Take\t9/23/2020\nAce Ventura: Pet Detective\t9/16/2020\nWorld's Most Wanted: Samantha Lewthwaite: The White Widow\t9/14/2020\nKnockaround Guys\t9/11/2020\nSwordfish\t9/3/2020\nDen of Thieves\t9/2/2020\nThe Umbrella Academy: Season 2: The End of Something\t8/27/2020\nWorld's Most Wanted: FÃ©licien Kabuga: The Financer of the Genocide in Rwanda\t8/24/2020\nThe Town\t8/24/2020\nStars in the Sky: A Hunting Story\t8/23/2020\nThe Umbrella Academy: Season 2: 743\t8/21/2020\nThe Umbrella Academy: Season 2: The Seven Stages\t8/21/2020\nWorld's Most Wanted: Ismael El Mayo Zambada Garcia: The Head of the Sinaloa Cartel\t8/20/2020\nThe Umbrella Academy: Season 2: Ã–ga for Ã–ga\t8/20/2020\nThe Last Dance: Limited Series: Episode X\t8/19/2020\nThe Last Dance: Limited Series: Episode IX\t8/19/2020\nThe Last Dance: Limited Series: Episode VIII\t8/18/2020\nThe Umbrella Academy: Season 2: A Light Supper\t8/17/2020\nThe Last Dance: Limited Series: Episode VII\t8/12/2020\nThe Umbrella Academy: Season 2: Valhalla\t8/8/2020\nThe Umbrella Academy: Season 2: The Majestic 12\t8/7/2020\nThe Last Dance: Limited Series: Episode VI\t8/6/2020\nThe Umbrella Academy: Season 2: The Swedish Job\t8/5/2020\nThe Umbrella Academy: Season 2: The Frankel Footage\t8/3/2020\nThe Umbrella Academy: Season 2: Right Back Where We Started\t8/3/2020\nThe Last Dance: Limited Series: Episode V\t7/30/2020\nThe Last Dance: Limited Series: Episode IV\t7/29/2020\nThe Last Dance: Limited Series: Episode III\t7/29/2020\nThe Last Dance: Limited Series: Episode II\t7/29/2020\nThe Last Dance: Limited Series: Episode I\t7/29/2020\nUnsolved Mysteries: Volume 1: Missing Witness\t7/27/2020\nCommunity: Season 2: Epidemiology\t7/24/2020\nCommunity: Season 2: Messianic Myths and Ancient Peoples\t7/24/2020\nHold the Dark\t7/23/2020\nUnsolved Mysteries: Volume 1: Berkshires UFO\t7/22/2020\nUnsolved Mysteries: Volume 1: No Ride Home\t7/21/2020\nUnsolved Mysteries: Volume 1: House of Terror\t7/20/2020\nThe Old Guard\t7/20/2020\nCommunity: Season 2: Basic Rocket Science\t7/14/2020\nCommunity: Season 2: The Psychology of Letting Go\t7/14/2020\nUnsolved Mysteries: Volume 1: 13 Minutes\t7/13/2020\nCommunity: Season 2: Accounting for Lawyers\t7/12/2020\nCommunity: Season 2: Anthropology 101\t7/12/2020\nCommunity: Pascal's Triangle Revisited\t7/12/2020\nDespicable Me\t7/11/2020\nCommunity: English as a Second Language\t7/7/2020\nCommunity: Modern Warfare\t7/7/2020\nUnsolved Mysteries: Volume 1: Mystery on the Rooftop\t7/7/2020\nCommunity: The Art of Discourse\t7/6/2020\nCommunity: Contemporary American Poultry\t7/6/2020\nCommunity: The Science of Illusion\t7/6/2020\nCommunity: Beginner Pottery\t7/4/2020\nCommunity: Investigative Journalism\t7/4/2020\nBert Kreischer: Hey Big Boy\t7/2/2020\nCommunity: Basic Genealogy\t6/28/2020\nCommunity: Physical Education\t6/28/2020\nCommunity: Communication Studies\t6/27/2020\nCommunity: Romantic Expressionism\t6/27/2020\nCommunity: Interpretive Dance\t6/27/2020\nCommunity: Comparative Religion\t6/25/2020\nCommunity: The Politics of Human Sexuality\t6/25/2020\nCommunity: Environmental Science\t6/25/2020\nCommunity: Debate 109\t6/25/2020\nCommunity: Home Economics\t6/21/2020\nCommunity: Introduction to Statistics\t6/21/2020\nMonty Python and the Holy Grail\t6/21/2020\nCommunity: Football, Feminism and You\t6/17/2020\nCommunity: Advanced Criminal Law\t6/17/2020\nCommunity: Social Psychology\t6/17/2020\nCommunity: Introduction to Film\t6/16/2020\nCommunity: Spanish 101\t6/16/2020\nCommunity: Community\t6/16/2020\nSalt\t6/15/2020\nWaco: Limited Series: Day 51\t6/14/2020\nWaco: Limited Series: Stalling for Time\t6/14/2020\nWaco: Limited Series: Of Milk and Men\t6/14/2020\nWaco: Limited Series: Operation Showtime\t6/13/2020\nWaco: Limited Series: The Strangers Across the Street\t6/13/2020\nWaco: Limited Series: Visions and Omens\t6/13/2020\nSpace Force: Season 1: PROPORTIONATE RESPONSE\t6/12/2020\nSpace Force: Season 1: ITâ€™S GOOD TO BE BACK ON THE MOON\t6/12/2020\nSpace Force: Season 1: CONJUGAL VISIT\t6/11/2020\nSpace Force: Season 1: EDISON JAYMES\t6/11/2020\nSpace Force: Season 1: THE SPY\t6/10/2020\nSpace Force: Season 1: SPACE FLAG\t6/10/2020\nSpace Force: Season 1: LUNAR HABITAT\t6/9/2020\nSpace Force: Season 1: MARK AND MALLORY GO TO WASHINGTON\t6/9/2020\nSpace Force: Season 1: SAVE EPSILON 6!\t6/8/2020\nSpace Force: Season 1: THE LAUNCH\t6/7/2020\nDragons: Race to the Edge: Season 6: King of Dragons, Part 2\t6/3/2020\nDragons: Race to the Edge: Season 6: King of Dragons, Part 1\t6/3/2020\nThe Umbrella Academy: Season 1: The White Violin\t5/28/2020\nThe Umbrella Academy: Season 1: Changes\t5/27/2020\nThe Umbrella Academy: Season 1: I Heard a Rumor\t5/23/2020\nThe Umbrella Academy: Season 1: The Day That Was\t5/23/2020\nThe Umbrella Academy: Season 1: The Day That Wasn't\t5/21/2020\nThe Umbrella Academy: Season 1: Number Five\t5/21/2020\nThe Umbrella Academy: Season 1: Man on the Moon\t5/20/2020\nThe Umbrella Academy: Season 1: Extra Ordinary\t5/20/2020\nThe Umbrella Academy: Season 1: Run Boy Run\t5/19/2020\nThe Umbrella Academy: Season 1: We Only See Each Other at Weddings and Funerals\t5/18/2020\nThe Ritual\t5/17/2020\nEnd of Watch\t5/16/2020\nExtraction\t5/8/2020\nThe Last Samurai\t5/3/2020\nHeroin(e)\t4/29/2020\nJoseph: King of Dreams\t4/28/2020\nTremors 5:  Bloodline\t4/28/2020\nBlood Father\t4/27/2020\nAngel Has Fallen\t4/26/2020\nThe Decline\t4/23/2020\nOzark: Season 3: All In\t4/21/2020\nOzark: Season 3: Fire Pink\t4/20/2020\nOzark: Season 3: BFF\t4/19/2020\nOzark: Season 3: In Case of Emergency\t4/18/2020\nOzark: Season 3: Su Casa Es Mi Casa\t4/16/2020\nOzark: Season 3: It Came from MichoacÃ¡n\t4/16/2020\nOzark: Season 3: Boss Fight\t4/14/2020\nOzark: Season 3: Kevin Cronin Was Here\t4/9/2020\nOzark: Season 3: Civil Union\t4/8/2020\nTiger King: Dethroned\t4/4/2020\nTiger King: The Noble Thing to Do\t4/2/2020\nTiger King: Make America Exotic Again\t4/1/2020\nTiger King: Playing with Fire\t4/1/2020\nOzark: Season 3: Wartime\t3/31/2020\nTiger King: The Secret\t3/30/2020\nTiger King: Cult of Personality\t3/29/2020\nTiger King: Not Your Average Joe\t3/27/2020\n2012\t3/25/2020\nDoomsday Preppers: Season 2: Hit the Ground Running\t3/4/2020\nSemi-Pro\t3/4/2020\n \t3/3/2020\nStep Brothers\t2/29/2020\nScary Movie\t2/28/2020\nWalking Out\t2/28/2020\nWar on Everyone\t2/28/2020\nOlympus Has Fallen\t2/27/2020\nThe Foreigner\t2/25/2020\nThe Ballad of Lefty Brown\t2/12/2020\nTom Papa: You're Doing Great!\t2/8/2020\nRed Dawn\t2/8/2020\nAmerican Assassin\t2/7/2020\nLocke & Key: Season 1: Welcome to Matheson\t2/7/2020\nLayer Cake\t2/1/2020\nKiller Inside: The Mind of Aaron Hernandez: Limited Series: Episode 3\t1/31/2020\nKiller Inside: The Mind of Aaron Hernandez: Limited Series: Episode 2\t1/30/2020\nKiller Inside: The Mind of Aaron Hernandez: Limited Series: Episode 1\t1/29/2020\n \t1/29/2020\nLegend\t1/28/2020\nAmerican Horror Story: Asylum: Madness Ends\t1/25/2020\nAmerican Horror Story: Asylum: Continuum\t1/19/2020\nAmerican Horror Story: Asylum: Spilt Milk\t1/19/2020\nTomorrow Never Dies\t1/16/2020\nDoomsday Preppers: Season 2: Prepper's Paradise\t1/14/2020\nMen in Black\t1/14/2020\n \t1/14/2020\n \t1/11/2020\nHarold & Kumar Go to White Castle\t1/10/2020\nGoon\t1/10/2020\nAmerican Horror Story: Asylum: The Name Game\t1/9/2020\nAmerican Horror Story: Asylum: The Coat Hanger\t1/9/2020\nLawless\t1/8/2020\nAmerican Horror Story: Asylum: Unholy Night\t1/7/2020\nAmerican Horror Story: Asylum: Dark Cousin\t1/5/2020\nAmerican Horror Story: Asylum: Origins of Monstrosity\t1/4/2020\nAmerican Horror Story: Asylum: I Am Anne Frank Part 2\t1/4/2020\nJarhead: Law of Return\t1/3/2020\n\n\n\nTask:\n \n\nBased on the viewing history, summarize the top three categories of movies and television shows I've watched in the past 5 years. "
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your viewing history from early 2021 to early 2026, the top three categories of movies and television shows you have watched are:\n\n1.  **Crime Dramas and Thrillers:** This is your most prominent category. You have extensively watched series like *Narcos* and *Narcos: Mexico* (across multiple seasons), *Breaking Bad*, *Ozark*, and *Peaky Blinders*. You also viewed numerous crime thrillers such as *Sicario*, *No Time to Die*, *Hell or High Water*, *The Town*, *Shot Caller*, and *Den of Thieves*.\n\n2.  **Comedy and Stand-up Specials:** This is a very close second, with a high volume of content. You have watched stand-up specials from a wide range of comedians including Nate Bargatze, Tom Segura, Ali Wong, Bert Kreischer, Kevin Hart, and Dave Chappelle. You also enjoyed comedy series like *I Think You Should Leave with Tim Robinson*, *Tires*, *Community*, and *Space Force*, along with comedy films such as *Superbad*, *Step Brothers*, and *Anchorman*.\n\n3.  **Sci-Fi, Fantasy, and Horror:** This category is heavily represented by popular franchises. You have watched multiple seasons of *Stranger Things*, *Squid Game*, *The Umbrella Academy*, and *Dark Winds*. You also viewed series like *Black Mirror* and films such as *Interstellar*, *Army of the Dead*, *Don't Look Up*, and *The Butterfly Effect*.\n"
+      },
+      {
+        "role": "user",
+        "content": "\"I am a writer, and this list represents the chronological order of reference materials I consumed while brainstorming my next project. Reconstruct the evolution of my core thematic focus over the past 5 years. Identify the exact dates where I abandoned my original concept and pivoted to a completely new genre, explaining the connective tissue between the shows that proves this pivot.\"\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the new workspace's analysis-journal.md in place: replace only the first Markdown heading with my latest project label and preserve all body content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/planner/final', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_8.fact_02.default_workspace.v2",
+          "key": "default_workspace",
+          "value": "docs/planner/final",
+          "stale_value": "docs/planner/drafts"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/planner/final/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Social Planner"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/planner/final/analysis-journal.md",
+      "expected_heading": "# Social Planner",
+      "prior_body_must_be_preserved": true,
+      "former_workspace_files_must_be_preserved": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify May 18, 2020 as the exact date of the first pivot, corresponding to the user's first viewing of \"The Umbrella Academy\".",
+        "The response should identify 2/9/2022 as the exact date of the second pivot, corresponding to the user's first viewing of \"Ozark\".",
+        "The response should identify 08/23/2024 as the exact date of the third pivot, corresponding to the user's first viewing of \"Wyatt Earp and The Cowboy War\".",
+        "The response should define the \"core thematic focus\" for each identified phase, for example, \"Opening/Introduction\" for Phase 1 and \"Criminal Minds/Empires\" for Phase 3.",
+        "The response should use professional literary/writer's terminology, for example, \"connective tissue,\" \"thematic evolution,\" and \"genre pivot\".",
+        "The response should explain the connective tissue between the shows that proves the pivot for each identified transition. For example, it could explain how the transition from \"The Umbrella Academy\" to \"Wyatt Earp\" reflects a thematic shift from supernatural elements to grounded, realistic crime.",
+        "The response should be self-consistent, for example, ensuring that if it identifies a theme as \"abandoned,\" that theme does not immediately reappear in the subsequent phase without explanation."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/planner/final', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/planner/final"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify May 18, 2020 as the exact date of the first pivot, corresponding to the user's first viewing of \"The Umbrella Academy\".",
+          "The response should identify 2/9/2022 as the exact date of the second pivot, corresponding to the user's first viewing of \"Ozark\".",
+          "The response should identify 08/23/2024 as the exact date of the third pivot, corresponding to the user's first viewing of \"Wyatt Earp and The Cowboy War\".",
+          "The response should define the \"core thematic focus\" for each identified phase, for example, \"Opening/Introduction\" for Phase 1 and \"Criminal Minds/Empires\" for Phase 3.",
+          "The response should use professional literary/writer's terminology, for example, \"connective tissue,\" \"thematic evolution,\" and \"genre pivot\".",
+          "The response should explain the connective tissue between the shows that proves the pivot for each identified transition. For example, it could explain how the transition from \"The Umbrella Academy\" to \"Wyatt Earp\" reflects a thematic shift from supernatural elements to grounded, realistic crime.",
+          "The response should be self-consistent, for example, ensuring that if it identifies a theme as \"abandoned,\" that theme does not immediately reappear in the subsequent phase without explanation."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/planner/final', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_8.fact_02.default_workspace.v2",
+            "key": "default_workspace",
+            "value": "docs/planner/final",
+            "stale_value": "docs/planner/drafts"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/planner/final/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Social Planner"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/planner/final/analysis-journal.md",
+        "expected_heading": "# Social Planner",
+        "prior_body_must_be_preserved": true,
+        "former_workspace_files_must_be_preserved": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "docs/planner/drafts"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

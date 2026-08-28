@@ -1,0 +1,275 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn17",
+  "turn_index": 17,
+  "turn_type": "preference_application",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "dcd37c6c-70cd-40d3-ad04-e138ceeb0922",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 318,
+    "source_sha256": "9196e406d3d10a3741a6c6a38d73dc3940f147e2d0fbd16ac1e015935568039a",
+    "source_metadata": {
+      "task_id": "dcd37c6c-70cd-40d3-ad04-e138ceeb0922",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Arbiter’s Guide to\nVolkritter\nA hack of David Smith’s “Mausritter” by Morgan Green\n\n\n\nTable of Contents\nRunning Volkritter\t3\n      Encounters\t4\nCreatures\t5\nHexcrawl Toolbox\t7\nLandmarks\t9\nLandmark details\t9\nSettlement Details\t10\nGovernance\t10\n      Factions\t12\n      Faction Examples\t13\nAdventure Site Toolbox\t14\n      Adventure Site Theme tables\t15\n      Randomly stocking rooms\t17\nRoom types\t18\n      Treasure\t19\n      Magic swords\t20\n\n\nI. Running Volkritter\n\nBest Practices\nTelegraph danger\nGive the heroes ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\n\nThe only way for danger to be meaningful is if the outcome of failure is meaningful. When the heroes face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the heroes have been smart and brave and \nfollow good leads, give them the rewards they have earned. Don’t be miserly when the heroes face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a hero’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \n\nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a hero wants to avoid a negative outcome.\n\n\n\n\n\n\n\n\n\n\n\nSome options for consequences are:\n\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for likely, low for unlikely), then roll a d6. If the result is equal to or less than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the heroes come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use. This hack is, and likely always will be,  a work in progress.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the Arbiter Session sheet. Each time the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\n\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a volk must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express that area’s theme. Give each entry something they are doing as the heroes arrive.\n\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\n\nIs obviously outmatched at the battle start\nTakes critical damage for the first time\nSees an ally flee or fall\n\n\nArbiter’s Guide to\nVolkritter\nA hack of David Smith’s “Mausritter” by Morgan Green\n\n\n\nTable of Contents\nRunning Volkritter\t3\n      Encounters\t4\nCreatures\t5\nHexcrawl Toolbox\t7\nLandmarks\t9\nLandmark details\t9\nSettlement Details\t10\nGovernance\t10\n      Factions\t12\n      Faction Examples\t13\nAdventure Site Toolbox\t14\n      Adventure Site Theme tables\t15\n      Randomly stocking rooms\t17\nRoom types\t18\n      Treasure\t19\n      Magic swords\t20\n\n\nI. Running Volkritter\n\nBest Practices\nTelegraph danger\nGive the heroes ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\n\nThe only way for danger to be meaningful is if the outcome of failure is meaningful. When the heroes face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the heroes have been smart and brave and \nfollow good leads, give them the rewards they have earned. Don’t be miserly when the heroes face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a hero’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \n\nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a hero wants to avoid a negative outcome.\n\n\n\n\n\n\n\n\n\n\n\nSome options for consequences are:\n\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for likely, low for unlikely), then roll a d6. If the result is equal to or less than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the heroes come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use. This hack is, and likely always will be,  a work in progress.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the Arbiter Session sheet. Each time the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\n\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a volk must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express that area’s theme. Give each entry something they are doing as the heroes arrive.\n\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\n\nIs obviously outmatched at the battle start\nTakes critical damage for the first time\nSees an ally flee or fall\nArbiter’s Guide to\nVolkritter\nA hack of David Smith’s “Mausritter” by Morgan Green\n\n\n\nTable of Contents\nRunning Volkritter\t3\n      Encounters\t4\nCreatures\t5\nHexcrawl Toolbox\t7\nLandmarks\t9\nLandmark details\t9\nSettlement Details\t10\nGovernance\t10\n      Factions\t12\n      Faction Examples\t13\nAdventure Site Toolbox\t14\n      Adventure Site Theme tables\t15\n      Randomly stocking rooms\t17\nRoom types\t18\n      Treasure\t19\n      Magic swords\t20\n\n\nI. Running Volkritter\n\nBest Practices\nTelegraph danger\nGive the heroes ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\n\nThe only way for danger to be meaningful is if the outcome of failure is meaningful. When the heroes face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the heroes have been smart and brave and \nfollow good leads, give them the rewards they have earned. Don’t be miserly when the heroes face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a hero’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \n\nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a hero wants to avoid a negative outcome.\n\n\n\n\n\n\n\n\n\n\n\nSome options for consequences are:\n\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for likely, low for unlikely), then roll a d6. If the result is equal to or less than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the heroes come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use. This hack is, and likely always will be,  a work in progress.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the Arbiter Session sheet. Each time the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\n\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a volk must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express that area’s theme. Give each entry something they are doing as the heroes arrive.\n\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\n\nIs obviously outmatched at the battle start\nTakes critical damage for the first time\nSees an ally flee or fall\nTable of Contents\nI. Running Volkritter\t2\n      Encounters\t3\nII. Creatures\t4\nIII. Hexcrawl Toolbox\t6\nLandmarks\t7\nLandmark details\t8\nSettlement Details\t9\nGovernance\t9\n      Factions\t11\n      Faction Examples\t12\nIV. Adventure Site Toolbox\t13\n      Adventure Site Theme tables\t14\n      Randomly stocking rooms\t16\nRoom types\t17\n      Treasure\t18\n      Magic swords\t19\n\n\nI. Running Volkritter\n\nBest Practices\nTelegraph danger\nGive the players ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\n\nThe only way for danger to be meaningful is if the outcome of failure is meaningful. When the players face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the players have been smart and brave and \nfollow good leads, give them the rewards they have earned. Don’t be miserly when the players face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a player’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \n\nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a player wants to avoid a negative outcome.\n\n\n\n\n\n\n\n\n\n\n\nSome options for consequences are:\n\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for likely, low for unlikely), then roll a d6. If the result is equal to or less than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the players come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use. This hack is, and likely always will be,  a work in progress.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the GM Session sheet. Each time the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\n\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a volk must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express that area’s theme. Give each entry something they are doing as the players arrive.\n\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\n\nIs obviously outmatched at the battle start\nTakes critical damage for the first time\nSees an ally flee or fall\nTable of Contents\nI. Running Volkritter\t2\n      Encounters\t3\nII. Creatures\t4\nIII. Hexcrawl Toolbox\t6\nLandmarks\t7\nLandmark details\t8\nSettlement Details\t9\nGovernance\t9\n      Factions\t11\n      Faction Examples\t12\nIV. Adventure Site Toolbox\t13\n      Adventure Site Theme tables\t14\n      Randomly stocking rooms\t16\nRoom types\t17\n      Treasure\t18\n      Magic swords\t19\n\n\nI. Running Volkritter\n\nBest Practices\nTelegraph danger\nGive the players ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\n\nThe only way for danger to be meaningful is if the outcome of failure is meaningful. When the players face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the players have been smart and brave and \nfollow good leads, give them the rewards they have earned. Don’t be miserly when the players face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a player’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \n\nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a player wants to avoid a negative outcome.\n\n\n\n\n\n\n\n\n\n\n\nSome options for consequences are:\n\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for likely, low for unlikely), then roll a d6. If the result is equal to or less than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the players come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use. This hack is, and likely always will be,  a work in progress.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the GM Session sheet. Each time the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\n\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a volk must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express that area’s theme. Give each entry something they are doing as the players arrive.\n\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\n\nIs obviously outmatched at the battle start\nTakes critical damage for the first time\nSees an ally flee or fall\n1. Running Volkritter\nBest Practices\nTelegraph danger\nGive the players ample warning of the dangers they \nface. Make traps obvious, deadly puzzles. Give warning of the dangerous beasts that hunt the volk.\nDon’t pull your punches.\nThe only way for danger to be meaningful is if the \noutcome of failure is meaningful. When the players face off against dangerous foes, or fall into a deadly trap, do not shy away from the consequences.\nReward bravery\nWhen the players have been smart and brave and \nfollowed good leads, give them the rewards they have earned. Don’t be miserly when the players face down great dangers and succeed.\nAsking for a Save\nSaves should only be asked for as the result of a player’s action or choice. volk can do anything that seems reasonable and safe, but when they do something dangerous, ask for Save to avoid the possible consequences. \nSTR Saves: avoid harm through physical power and endurance\nDEX Saves: avoid harm through quick reaction, speed and agility\nWIL Saves: avoid harm through strength of will and force of personality\nConsequences of failure\nThe consequences of a failed Save should be obvious and telegraphed. Remember that Saves should only occur when a player wants to avoid a negative outcome.\nSome options for consequences are:\nDamage: ranging from d4 to d20. d4 is minor, d6 is dangerous. d8 is enough to seriously injure a Level 1 character. d20 damage is rare but deadly.\nCondition: Exhausted or Frightened are good options.\nLost time: Each action takes a Turn. Lost time can burn torches and cause random encounter rolls.\nLoss of random item: Roll d6 for inventory slot.\nMark usage on item: Mark 1-3 usage dots.\nLuck rolls\nLuck rolls are for events that have an unpredictable \noutcome is outside the remit of a STR, DEX or WIL Save. Assign an ‘X-in-6’ chance to the outcome occurring (high for unlikely, low for likely), then roll a d6. If the result is equal to or greater than the chance, it happens.\nRulings\nThe rules of Volkritter will not cover every situation you and the players come across, and some parts have been kept intentionally vague. When this happens, adapt one of your existing tools to the purpose, or create a new one. Make a note of the ruling for future use.\nExploration and time\nWhen exploring in a dungeon or adventure site, a party of volk can perform one major action per Turn. Major actions are things like moving to a new room, examining a trap or engaging in a fight.\n\nTo easily record Turns, use the Turn tracker on the GM Session sheet. Each \ntime the party performs a major action, mark the next empty box.\nOverland travel\nWhen traveling in the wilderness, volk can travel a single five-mile hex per Watch. Hexes containing difficult terrain (streams, human roads, large rocks, hills, etc.) require two Watches to cross.\nRest\nIf the volk do not spend at least one Watch per day \nresting, give them an Exhausted Condition.\nWeather\nRoll 2d6 for weather each day.\nWeather that is highlighted are poor conditions for \ntravel. For each Watch spent traveling under these \nconditions, a mouse must make a STR save or gain an Exhausted Condition.\n\n2d6\nSpring\nSummer\nAutumn\nWinter\n2\nRain Storm\nThunder Storm\nWild Winds\nSnow Storm\n3-5\nDrizzle\nVery hot\nHeavy rain\nSleet\n6-8\nOvercast\nClear, hot\nCool\nBitter cold\n9-11\nBright and sunny\nPleasantly sunny\nPatchy rain\nOvercast\n12\nClear and warm\nBeautifully warm\nClear and crisp\nClear and crisp\n\n\nEncounters\nWhen the volk are exploring a dungeon or adventure \nsite, roll for encounters every three Turns, or whenever they create noise or mayhem that could draw attention. When they are exploring the wilderness, roll for encounters at the start of the Morning Watch and the start of the Evening watch. If an encounter occurs, roll d12 to find what hour it occurs in. To roll a random encounter, roll d6. On a 1, an encounter occurs. On a 2, an omen occurs (signs or hints of an encounter).\nEncounter tables\nFor each major area, prepare a table of d6 encounters that express the theme of that area. Give each entry something they are already doing as the players arrive.\nEntries 1-3 should be variations of a common encounter.\nEntries 4-5 should be variations of an uncommon encounter, something slightly unusual.\nEntry 6 should be dangerous or weird.\nReactions\nWhen the party encounters a creature whose reaction to the party is not obvious, you may roll on the following table for their disposition.\n\n2d6\nReaction\n2\nHostile. How have the volk angered them?\n3-5\nUnfriendly. How can they be appeased?\n6-8\nUnsure. What could win them over?\n9-11\nTalkative. What could they trade?\n12\nHelpful. How can they help the party?\n\nMorale\nWhenever an antagonist is in a battle with the volk and reaches one of the following conditions, it must make a WIL save. On failure, the creature must flee or surrender.\nIs obviously outmatched at the start of a battle\nTakes critical damage for the first time\nSees an ally flee or fall\n\n\n\nTask:\n\n\nUsing all these drafts of my TTRPG rules listed from newest to oldest, I need you to comprehensively analyze the rules I have written and edited over time and determine if any subtle changes have an impact on the balancing and rules of the game in actual play, and if any rules conflict with others. If any rules or rulings have been removed over time.\n\nComplete the task using the material above. Apply my currently active response preferences when compatible; an explicit format or language requirement in the source task takes precedence. Do not ask me to repeat preferences already learned."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.55,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "preference_activation",
+        "dimension": "activation",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+      },
+      {
+        "check_id": "no_stale_preference",
+        "dimension": "stale_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No invented or unavailable preference is applied."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Source-content details are not incorrectly promoted to persistent user preferences."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_04.default_structure.v1",
+          "key": "default_structure",
+          "value": "numbered list",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should acknowledge that the drafts provided in the prompt are ordered from newest to oldest. For example, it could begin with \"Since the first block of text is the most recent version,\" or similar.",
+        "The response should identify that the \"Luck rolls\" mechanic changed from a \"roll equal to or greater than\" system (oldest draft) to a \"roll equal to or less than\" system (newest draft).",
+        "The response should recognize that the term \"mouse\" in the weather section of the final text block was successfully removed/edited to \"volk\" in all newer versions of the rules.",
+        "The response should identify the shift in nomenclature for the game master from \"GM\" (in the older drafts) to \"Arbiter\" (in the newest draft).",
+        "The response should note that the term \"players\" used in the older drafts was changed to \"heroes\" in the newest version of the \"Best Practices\" and \"Saves\" sections.",
+        "The response should evaluate how the identified changes impact the balancing of the game in actual play. For example, it should explain that the change to Luck rolls from \"roll equal to or greater than\" to \"roll equal to or less than\" balances the game by correlating higher \"X-in-6\" chances to higher probabilities of success.",
+        "The response should confirm that no major sections or rules were removed entirely."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.55,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "preference_activation",
+          "dimension": "activation",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+        },
+        {
+          "rubric_id": "no_stale_preference",
+          "dimension": "stale_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No invented or unavailable preference is applied."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_latest_preference_adherence",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "numbered list"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should acknowledge that the drafts provided in the prompt are ordered from newest to oldest. For example, it could begin with \"Since the first block of text is the most recent version,\" or similar.",
+          "The response should identify that the \"Luck rolls\" mechanic changed from a \"roll equal to or greater than\" system (oldest draft) to a \"roll equal to or less than\" system (newest draft).",
+          "The response should recognize that the term \"mouse\" in the weather section of the final text block was successfully removed/edited to \"volk\" in all newer versions of the rules.",
+          "The response should identify the shift in nomenclature for the game master from \"GM\" (in the older drafts) to \"Arbiter\" (in the newest draft).",
+          "The response should note that the term \"players\" used in the older drafts was changed to \"heroes\" in the newest version of the \"Best Practices\" and \"Saves\" sections.",
+          "The response should evaluate how the identified changes impact the balancing of the game in actual play. For example, it should explain that the change to Luck rolls from \"roll equal to or greater than\" to \"roll equal to or less than\" balances the game by correlating higher \"X-in-6\" chances to higher probabilities of success.",
+          "The response should confirm that no major sections or rules were removed entirely."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.55,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "preference_activation",
+            "dimension": "activation",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response applies the latest compatible preference default_structure='numbered list'; explicit current-turn requirements override defaults."
+          },
+          {
+            "rubric_id": "no_stale_preference",
+            "dimension": "stale_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No invented or unavailable preference is applied."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Source-content details are not incorrectly promoted to persistent user preferences."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_04.default_structure.v1",
+            "key": "default_structure",
+            "value": "numbered list",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

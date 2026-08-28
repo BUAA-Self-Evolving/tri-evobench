@@ -1,0 +1,295 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn3",
+  "turn_index": 3,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "interactive",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "5ba7937f-6ad9-4740-fd46-c128019acc75",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 22,
+    "source_sha256": "bb1075dbf908ea55fd82678150b1aaa2f77f2f1b868ec0e04e9706874248aa2d",
+    "source_metadata": {
+      "task_id": "5ba7937f-6ad9-4740-fd46-c128019acc75",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Game Logs"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "[Event \"It\"]\n[Site \"Linares (Spain)\"]\n[Date \"1993.??.??\"]\n[Round \"?\"]\n[White \"Garry Kasparov\"]\n[Black \"Artur Yusupov\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/616315\"]\n\n1. d4 d5 2. c4 e6 3. Nc3 Be7 4. cxd5 exd5 5. Bf4 Nf6 6. e3 Bf5 7. Nge2 O-O 8.\nNg3 Be6 9. Bd3 c5 10. dxc5 Bxc5 11. O-O Nc6 12. Rc1 Bd6 13. Nh5 Be7 14. Nb5 Nxh5\n15. Qxh5 g6 16. Qf3 Rc8 17. Rfd1 Qd7 18. h3 Rfd8 19. Qg3 Nb4 20. Nc3 Nxd3 21.\nRxd3 Bf5 22. Rd2 Qe6 23. Rcd1 h5 24. h4 Rc5 25. f3 Qc6 26. e4 Rxc3 27. bxc3 Qb6+\n28. Kh2 dxe4 29. Rxd8+ Bxd8 30. Be3 Qa5 31. Qb8 Qc7+ 32. Qxc7 Bxc7+ 33. Kg1 exf3\n34. gxf3 b6 35. Kf2 Kf8 36. Rd4 Ke7 37. Bf4 Bxf4 38. Rxf4 Kd6 39. Ke3 Kc5 40.\nRd4 Be6 41. a3 a5 42. Ke4 b5 43. Ke5 a4 44. f4 Kc6 45. Kf6 Kc5 46. Rb4 Bc4 47.\nKe7 Be6 48. Re4 Kd5 49. Rd4+ Kc6 50. Kd8 Bf5 51. Ke8 Be6 52. Kf8 Kc5 53. Kg7 Kc6\n54. Kg8 Kc5 55. Kf8 Kc6 56. Kg7 Kc5 57. Kh8 Kc6 58. Kh7 Kc5 59. Kh6 Bf5 60. Kg5\nBe6 61. Kf6 Kc6 62. f5 Bxf5 63. Kxf7 Kc5 64. Kf6 Bc2 65. Ke7 Bf5 66. Kd8 Kc6 67.\nRf4 Kd6 68. Rb4 Kc5 69. Kc7 Bd3 70. Rd4 Be2 71. Kb7 Bf1 72. Ka7 Be2 73. Re4 Bd3\n74. Rb4 Bc4 75. Ka6 Kd5 76. Ka5 Ke5 77. Rb1 g5 78. hxg5 Kf5 79. Rg1 Kg6 80. Kb4\nh4 81. Kc5 h3 82. Kd4 Be6 83. Ke5 Bd7 84. Kf4 Bc6 85. Kg3 Kxg5 86. Rd1 h2 87.\nKxh2 Kf4 88. c4 bxc4 89. Rd4+ Ke5 90. Rxc4 Kd5 91. Rb4 Kc5 92. Kg3 Bb5 93. Kf4\nKb6 94. Ke3 Ka5 95. Kd4 Be2 96. Rb1 Bh5 97. Re1 Bf7 98. Kc5 Bb3 99. Re8 Ka6 100.\nKc6 Ka7 101. Kb5 Kb7 102. Re7+ Kc8 103. Kc6 Kd8 104. Rd7+ Ke8 105. Kc7 Bc2 106.\nRd2 Bb3 107. Re2+ Kf7 108. Kd6 Bc4 109. Re7+ Kf8 110. Re4 Bb3 111. Kd7 Kf7 112.\nRf4+ Kg6 113. Kd6 Kg5 114. Ke5 Kg6 115. Rf3 Kg7 116. Rf6 Bc4 117. Kf5 Bb3 118.\nKg5 Bc2 1/2-1/2\n\n[Event \"Frankrijk tt\"]\n[Site \"Frankrijk tt\"]\n[Date \"1993.??.??\"]\n[Round \"?\"]\n[White \"Jozsef Pinter\"]\n[Black \"Garry Kasparov\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/15081977\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Bd3 O-O 6. Nge2 c5 7. d5 e6 8. O-O\nexd5 9. cxd5 Re8 10. h3 Nbd7 11. Ng3 a6 12. a4 Rb8 13. a5 h5 14. Bg5 b5 15. axb6\nQxb6 16. Ra2 Ne5 17. Be2 Nh7 18. Be3 h4 19. Nh1 g5 20. Qd2 Qd8 21. Qc2 Nf8 22.\nQc1 Bf6 23. f3 Nfg6 24. Nf2 Rb6 25. Rd1 Nf4 26. Bf1 Nh5 27. Qc2 Ng3 28. b3 Re7\n29. Nb1 Ng6 30. Nd2 Nf4 31. Nc4 Rb5 32. Nd3 Ng6 33. Ra3 Rc7 34. Qd2 Rb8 35. e5\ndxe5 36. d6 Rc6 37. Nxc5 Bf5 38. Qd5 Rxc5 39. Qxc5 e4 40. fxe4 Bxe4 41. Qc7 Nf4\n42. Qxd8+ Bxd8 43. Bxf4 gxf4 44. Bd3 Bb7 45. Re1 Bf6 46. d7 Bc6 47. Re8+ Rxe8\n48. dxe8=Q+ Bxe8 49. Rxa6 Bd4+ 50. Kh2 Bb5 51. Rd6 Bf2 52. Rd8+ Kg7 53. b4 f5\n54. Rb8 Ba4 55. Nd2 Kf6 56. Ra8 Bd7 57. b5 Ke7 58. Ra6 Be6 59. Ra4 Bd5 60. Ra1\nBe4 61. Bf1 Kd6 62. Nf3 Kc5 63. Rc1+ Kb6 64. Bc4 Kc5 65. Bf1+ Kb6 66. Ne5 Bd4\n67. Nd7+ Ka5 68. Rd1 Nxf1+ 69. Rxf1 Kxb5 70. Nf8 Kc4 71. Ng6 Bf6 72. Rxf4 Bg5\n73. Rf1 Kd3 74. g3 Ke2 75. Ra1 f4 76. Ra2+ Ke3 77. Ra3+ Kf2 78. gxf4 Bh6 79.\nRa2+ Kf1 80. Ra1+ Kf2 81. Rg1 Bxg6 82. Rxg6 Bxf4+ 83. Kh1 Bg3 84. Rg4 Kf1 85.\nRg5 Kf2 86. Rf5+ Ke3 87. Kg2 Ke4 88. Rf7 Kd5 89. Re7 Kd6 90. Re2 Kd5 91. Kf3 Kd6\n92. Kg4 Kd7 93. Kf5 Kd6 94. Re8 Kd7 95. Re6 Kc7 96. Ke4 Kd7 97. Kd5 Kc7 98. Re7+\nKb6 99. Rf7 Bh2 100. Rf2 Bg3 101. Rc2 Kb7 102. Rc6 Bf4 103. Kc5 Bg3 104. Kd5 Bf4\n105. Rc2 Bg3 106. Ke6 Kb6 107. Kd7 Kb5 108. Rc6 Bh2 109. Rc2 Bg3 110. Ke6 Kb4\n111. Kf5 Kb5 112. Ke4 Kb6 113. Kf3 Kb5 114. Kg4 Be1 115. Kg5 Bg3 116. Rc8 Be1\n117. Rh8 Kc6 1/2-1/2\n\n[Event \"It (cat.17)\"]\n[Site \"Tilburg (Netherlands)\"]\n[Date \"1991.??.??\"]\n[Round \"?\"]\n[White \"Anatoly Karpov\"]\n[Black \"Garry Kasparov\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/538560\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O Nc6 8. d5 Ne7\n9. Nd2 a5 10. Rb1 Nd7 11. a3 f5 12. b4 Kh8 13. f3 Ng8 14. Qc2 Ngf6 15. Nb5 axb4\n16. axb4 Nh5 17. g3 Ndf6 18. c5 Bd7 19. Rb3 Nxg3 20. hxg3 Nh5 21. f4 exf4 22. c6\nbxc6 23. dxc6 Nxg3 24. Rxg3 fxg3 25. cxd7 g2 26. Rf3 Qxd7 27. Bb2 fxe4 28. Rxf8+\nRxf8 29. Bxg7+ Qxg7 30. Qxe4 Qf6 31. Nf3 Qf4 32. Qe7 Rf7 33. Qe6 Rf6 34. Qe8+\nRf8 35. Qe7 Rf7 36. Qe6 Rf6 37. Qb3 g5 38. Nxc7 g4 39. Nd5 Qc1+ 40. Qd1 Qxd1+\n41. Bxd1 Rf5 42. Ne3 Rf4 43. Ne1 Rxb4 44. Bxg4 h5 45. Bf3 d5 46. N3xg2 h4 47.\nNd3 Ra4 48. Ngf4 Kg7 49. Kg2 Kf6 50. Bxd5 Ra5 51. Bc6 Ra6 52. Bb7 Ra3 53. Be4\nRa4 54. Bd5 Ra5 55. Bc6 Ra6 56. Bf3 Kg5 57. Bb7 Ra1 58. Bc8 Ra4 59. Kf3 Rc4 60.\nBd7 Kf6 61. Kg4 Rd4 62. Bc6 Rd8 63. Kxh4 Rg8 64. Be4 Rg1 65. Nh5+ Ke6 66. Ng3\nKf6 67. Kg4 Ra1 68. Bd5 Ra5 69. Bf3 Ra1 70. Kf4 Ke6 71. Nc5+ Kd6 72. Nge4+ Ke7\n73. Ke5 Rf1 74. Bg4 Rg1 75. Be6 Re1 76. Bc8 Rc1 77. Kd4 Rd1+ 78. Nd3 Kf7 79. Ke3\nRa1 80. Kf4 Ke7 81. Nb4 Rc1 82. Nd5+ Kf7 83. Bd7 Rf1+ 84. Ke5 Ra1 85. Ng5+ Kg6\n86. Nf3 Kg7 87. Bg4 Kg6 88. Nf4+ Kg7 89. Nd4 Re1+ 90. Kf5 Rc1 91. Be2 Re1 92.\nBh5 Ra1 93. Nfe6+ Kh6 94. Be8 Ra8 95. Bc6 Ra1 96. Kf6 Kh7 97. Ng5+ Kh8 98. Nde6\nRa6 99. Be8 Ra8 100. Bh5 Ra1 101. Bg6 Rf1+ 102. Ke7 Ra1 103. Nf7+ Kg8 104. Nh6+\nKh8 105. Nf5 Ra7+ 106. Kf6 Ra1 107. Ne3 Re1 108. Nd5 Rg1 109. Bf5 Rf1 110. Ndf4\nRa1 111. Ng6+ Kg8 112. Ne7+ Kh8 113. Ng5 Ra6+ 114. Kf7 1/2-1/2\n\n[Event \"Ch France (team)\"]\n[Site \"France\"]\n[Date \"1993.??.??\"]\n[Round \"?\"]\n[White \"Jozsef Pinter\"]\n[Black \"Garry Kasparov\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/604647\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Bd3 O-O 6. Nge2 c5 7. d5 e6 8. O-O\nexd5 9. cxd5 Re8 10. h3 Nbd7 11. Ng3 a6 12. a4 Rb8 13. a5 h5 14. Bg5 b5 15. axb6\nQxb6 16. Ra2 Ne5 17. Be2 Nh7 18. Be3 h4 19. Nh1 g5 20. Qd2 Qd8 21. Qc2 Nf8 22.\nQc1 Bf6 23. f3 Nfg6 24. Nf2 Rb6 25. Rd1 Nf4 26. Bf1 Nh5 27. Qc2 Ng3 28. b3 Re7\n29. Nb1 Ng6 30. Nd2 Nf4 31. Nc4 Rb4 32. Nd3 Ng6 33. Ra3 Rc7 34. Qd2 Rb8 35. e5\ndxe5 36. d6 Rc6 37. Nxc5 Bf5 38. Qd5 Rxc5 39. Qxc5 e4 40. fxe4 Bxe4 41. Qc7 Nf4\n42. Qxd8+ Bxd8 43. Bxf4 gxf4 44. Bd3 Bb7 45. Re1 Bf6 46. d7 Bc6 47. Re8+ Rxe8\n48. dxe8=Q+ Bxe8 49. Rxa6 Bd4+ 50. Kh2 Bb5 51. Rd6 Bf2 52. Rd8+ Kg7 53. b4 f5\n54. Rb8 Ba4 55. Nd2 Kf6 56. Ra8 Bd7 57. b5 Ke7 58. Ra6 Be6 59. Ra4 Bd5 60. Ra1\nBe4 61. Bf1 Kd6 62. Nf3 Kc5 63. Rc1+ Kb6 64. Bc4 Kc5 65. Bf1+ Kb6 66. Ne5 Bd4\n67. Nd7+ Ka5 68. Rd1 Nxf1+ 69. Rxf1 Kxb5 70. Nf8 Kc4 71. Ng6 Bf6 72. Rxf4 Bg5\n73. Rf1 Kd3 74. g3 Ke2 75. Ra1 f4 76. Ra2+ Ke3 77. Ra3+ Kf2 78. gxf4 Bh6 79.\nRa2+ Kf1 80. Ra1+ Kf2 81. Rg1 Bxg6 82. Rxg6 Bxf4+ 83. Kh1 Bg3 84. Rg4 Kf1 85.\nRg5 Kf2 86. Rf5+ Ke3 87. Kg2 Ke4 88. Rf7 Kd5 89. Re7 Kd6 90. Re2 Kd5 91. Kf3 Kd6\n92. Kg4 Kd7 93. Kf5 Kd6 94. Re8 Kd7 95. Re6 Kc7 96. Ke4 Kd7 97. Kd5 Kc7 98. Re7+\nKb6 99. Rf7 Bh2 100. Rf2 Bg3 101. Rc2 Kb7 102. Rc6 Bf4 103. Kc5 Bg3 104. Kd5 Bf4\n105. Rc2 Bg3 106. Ke6 Kb6 107. Kd7 Kb5 108. Rc6 Bh2 109. Rc2 Bg3 110. Ke6 Kb6\n111. Kf5 Kb5 112. Ke4 Kb6 113. Kf3 Kb5 114. Kg4 1/2-1/2\n\n[Event \"Tilburg\"]\n[Site \"Tilburg NED\"]\n[Date \"1991.??.??\"]\n[Round \"?\"]\n[White \"Anatoly Karpov\"]\n[Black \"Garry Kasparov\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/14841289\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O Nc6 8. d5 Ne7\n9. Nd2 a5 10. Rb1 Nd7 11. a3 f5 12. b4 Kh8 13. f3 Ng8 14. Qc2 Ngf6 15. Nb5 axb4\n16. axb4 Nh5 17. g3 Ndf6 18. c5 Bd7 19. Rb3 Nxg3 20. hxg3 Nh5 21. f4 exf4 22. c6\nbxc6 23. dxc6 Nxg3 24. Rxg3 fxg3 25. cxd7 g2 26. Rf3 Qxd7 27. Bb2 fxe4 28. Rxf8+\nRxf8 29. Bxg7+ Qxg7 30. Qxe4 Qf6 31. Nf3 Qf4 32. Qe7 Rf7 33. Qe6 Rf6 34. Qe8+\nRf8 35. Qe7 Rf7 36. Qe6 Rf6 37. Qb3 g5 38. Nxc7 g4 39. Nd5 Qc1+ 40. Qd1 Qxd1+\n41. Bxd1 Rf5 42. Ne3 Rf4 43. Ne1 Rxb4 44. Bxg4 h5 45. Bf3 d5 46. N3xg2 h4 47.\nNd3 Ra4 48. Ngf4 Kg7 49. Kg2 Kf6 50. Bxd5 Ra5 51. Bc6 Ra6 52. Bb7 Ra3 53. Be4\nRa4 54. Bd5 Ra5 55. Bc6 Ra6 56. Bf3 Kg5 57. Bb7 Ra1 58. Bc8 Ra4 59. Kf3 Rc4 60.\nBd7 Kf6 61. Kg4 Rd4 62. Bc6 Rd8 63. Kxh4 Rg8 64. Be4 Rg1 65. Nh5+ Ke6 66. Ng3\nKf6 67. Kg4 Ra1 68. Bd5 Ra5 69. Bf3 Ra1 70. Kf4 Ke6 71. Nc5+ Kd6 72. Nge4+ Ke7\n73. Ke5 Rf1 74. Bg4 Rg1 75. Be6 Re1 76. Bc8 Rc1 77. Kd4 Rd1+ 78. Nd3 Kf7 79. Ke3\nRa1 80. Kf4 Ke7 81. Nb4 Rc1 82. Nd5+ Kf7 83. Bd7 Rf1+ 84. Ke5 Ra1 85. Ng5+ Kg6\n86. Nf3 Kg7 87. Bg4 Kg6 88. Nf4+ Kg7 89. Nd4 Re1+ 90. Kf5 Rc1 91. Be2 Re1 92.\nBh5 Ra1 93. Nfe6+ Kh6 94. Be8 Ra8 95. Bc6 Ra1 96. Kf6 Kh7 97. Ng5+ Kh8 98. Nde6\nRa6 99. Be8 Ra8 100. Bh5 Ra1 101. Bg6 Rf1+ 102. Ke7 Ra1 103. Nf7+ Kg8 104. Nh6+\nKh8 105. Nf5 Ra7+ 106. Kf6 Ra1 107. Ne3 Re1 108. Nd5 Rg1 109. Bf5 Rf1 110. Ndf4\nRa1 111. Ng6+ Kg8 112. Ne7+ Kh8 113. Ng5 Ra6+ 114. Kf7 Rf6+ 1/2-1/2 [Event \"Grand Slam Final Masters\"]\n[Site \"Bilbao ESP\"]\n[Date \"2010.10.11\"]\n[Round \"?\"]\n[White \"Alexei Shirov\"]\n[Black \"Magnus Carlsen\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/13114699\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3\nO-O 9. h3 Nb8 10. d4 Nbd7 11. Nbd2 Bb7 12. Bc2 Re8 13. a4 Bf8 14. Bd3 c6 15. b4\nNb6 16. axb5 cxb5 17. d5 Rc8 18. Bb2 Nh5 19. Bf1 f5 20. Nxe5 Rxe5 21. c4 Nf6 22.\nBxe5 dxe5 23. c5 fxe4 24. d6 Na4 25. Nc4 Nxc5 26. bxc5 Rxc5 27. Qb3 Bd5 28. Qb4\nRxc4 29. Bxc4 bxc4 30. Rxa6 Qc8 31. Qa5 c3 32. d7 Qxd7 33. Qxc3 Qb7 34. Rea1 Qb8\n35. Ra7 h6 36. Rc7 Qb6 37. Qxe5 Bd6 38. Rc8+ Kf7 39. Qc3 Qb7 40. Rca8 Qxa8 41.\nRxa8 Bxa8 42. Qd4 Bd5 43. Qa7+ Be7 44. Qc7 h5 45. Qe5 g6 46. Kh2 Be6 47. Kg1 Bf5\n48. Kf1 Ne8 49. Kg1 Ng7 50. Qd5+ Ne6 51. Qb7 h4 52. Kh2 Nf4 53. Kg1 Nd3 54. Kf1\nNc5 55. Qd5+ Be6 56. Qe5 Bf5 57. Qd5+ Ne6 58. Qb7 Kf8 59. Qa8+ Bd8 60. Qa7 Bf6\n61. Qb7 Kg8 62. Qa7 Bg5 63. Ke2 Nf4+ 64. Kf1 Nh5 65. Ke2 Kf8 66. Kf1 Bf6 67. Qc7\nNg7 68. Qa7 Ne6 69. Qb7 Nd8 70. Qa7 Nf7 71. Kg1 Kg7 72. Kf1 Be5 73. Qe7 g5 74.\nKg1 Bf6 75. Qb7 Kg6 76. Qd5 Ne5 77. Qg8+ Bg7 78. Qe8+ Kh6 79. Qe7 Nd3 80. Kf1\nNf4 81. Qd6+ Bg6 82. Qe7 Nd5 83. Qe6 Nf6 84. Kg1 Be8 85. Qf5 Bd7 86. Qe5 Kg6 87.\nKf1 Bf8 88. Kg1 Ba3 89. Qc7 Bb4 90. Qe5 Bd2 91. Qd4 Bf4 92. Qb6 Be8 93. Kf1 Bf7\n94. Kg1 Kf5 95. Qa7 Be6 96. Kf1 Kg6 97. Qb6 Bd7 98. Kg1 Ba4 99. Qe6 Bb5 100. Qb6\nBc4 101. Qd4 Be6 102. Kf1 Bf5 103. Kg1 g4 104. hxg4 Bxg4 105. Qc3 Bf5 106. Qb3\nBg5 107. Kf1 Kh6 108. Kg1 Kg6 109. Kf1 Bd7 110. Kg1 Be8 111. Qc3 Bf7 112. Qe5\nBd5 113. Qc3 Be6 114. Qe5 Bd7 115. Qc3 Bf5 116. Qb3 Nh5 117. Qg8+ Ng7 118. Qb3\nNe6 119. Kh2 Bf6 120. Kg1 Bg7 121. Kf1 Ng5 122. Qb6+ Bf6 123. Kg1 h3 124. gxh3\nBxh3 125. Qd6 Bf5 126. Kg2 Nf3 127. Qd5 Kg5 128. Qg8+ Bg6 129. Qd5+ Be5 130.\nQd8+ Kh5 131. Qd5 Bf5 132. Qf7+ Kg4 133. Qg8+ Ng5 134. Qc4 Bf4 135. Qg8 Be6 136.\nQg7 Bf7 137. Qd4 Kf5 138. Qc5+ Be5 139. Qf8 Kg6 140. Qc5 Bf6 141. Qd6 Bc4 142.\nQc6 Be6 143. Qd6 Bg4 144. Qd5 Bf3+ 145. Kf1 Nf7 146. Kg1 Ne5 147. Qg8+ Kf5 148.\nQc8+ Kg5 149. Qg8+ Ng6 150. Qd5+ Kh6 151. Qe6 Be5 152. Qf5 Bf4 153. Qf6 Bg5 154.\nQe6 Kg7 155. Qd7+ Ne7 156. Qe6 Bf6 157. Kf1 Kg6 158. Kg1 Nf5 159. Qg8+ Kh5 160.\nQf7+ Kg5 161. Qg8+ Kf4 162. Qb8+ Kg4 163. Qg8+ Bg5 164. Qc8 Bf6 165. Qg8+ Kf4\n166. Qb8+ Be5 167. Qb4 Nd4 168. Qf8+ Kg5 169. Qg8+ Kh6 170. Qf8+ Bg7 171. Qd6+\nKh5 172. Qh2+ Kg5 173. Qg3+ Bg4 174. Qe3+ Kf5 1/2-1/2\n\n[Event \"January 13 2026\"]\n[Site \"\"]\n[Date \"2026.01.13\"]\n[Round \"?\"]\n[White \"Kirill Klukin\"]\n[Black \"Magnus Carlsen\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/18264216\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Bd3 Nbd7 7. O-O e5 8. d5 a5\n9. a3 Nc5 10. Bc2 Bg4 11. h3 Bxf3 12. Qxf3 a4 13. Be3 Nfd7 14. Qd1 Nb6 15. Bxc5\ndxc5 16. Nxa4 Nxc4 17. Qe2 Nd6 18. Nxc5 h5 19. Rad1 Qe7 20. Nd3 Bh6 21. a4 b5\n22. b3 bxa4 23. bxa4 Rfb8 24. Rb1 Nc4 25. Rxb8+ Rxb8 26. Rb1 Rxb1+ 27. Bxb1 Qa3\n28. Qa2 Qc3 29. Qc2 Qd4 30. Ne1 Na3 31. Qb3 Qa1 32. a5 Bd2 33. Nc2 Nxc2 34. Qxc2\nBxa5 35. h4 Bb6 36. g3 Kg7 37. Kg2 Bd4 38. Qd3 Qb2 39. Qc2 Qb6 40. Ba2 Qf6 41.\nQe2 Qd6 42. Bc4 Qb4 43. Bd3 Qb3 44. Qc2 Qb6 45. Qe2 Qc5 46. Qc2 Qa5 47. Qe2 Bb6\n48. Qc2 Qa1 49. Qe2 Qd4 50. Qc2 Bc5 51. Qe2 Bb6 52. Qc2 Kf6 53. Qe2 Ke7 54. Qc2\nBc5 55. Qe2 Kd6 56. Qc2 Ke7 57. Qe2 Bd6 58. Qc2 Kf6 59. Qe2 Kg7 60. Qc2 Qa7 61.\nQe2 Qb8 62. Qc2 Qd8 63. Qe2 Qf6 64. Qc2 g5 65. Qe2 Qg6 66. hxg5 Qxg5 67. Qe3 Qg6\n68. Qf3 Bc5 69. Be2 h4 70. Qf5 Qxf5 71. exf5 Kf6 72. gxh4 Kxf5 73. f3 Kf4 74.\nBd3 Be7 75. h5 Kg5 76. h6 Kxh6 77. f4 exf4 78. Kf3 Bd6 79. Bb5 Kg5 80. Bc6 Kf5\n81. Bb7 Ke5 82. Bc6 f6 83. Bb7 Kd4 84. Bc6 Kc5 85. Bb7 Kd4 86. Bc6 Ke5 87. Bb7\nc5 88. dxc6 Bc7 89. Ba6 Kd4 90. Bb7 Ke5 91. Bc8 Kd5 92. Bd7 Kc5 93. Bc8 Kxc6 94.\nBf5 Kd5 95. Be4+ Ke5 96. Bd3 Bd6 97. Be2 Bc7 98. Bf1 Bd6 99. Bg2 Bc5 100. Bh3\nBd4 101. Bg2 Be3 102. Bh3 Kd4 103. Bg2 Kc3 104. Bh3 Kc4 105. Bf5 Kc5 106. Bg4\nKd6 107. Bh3 Ke7 108. Bg4 Kf8 109. Bh3 Kg7 110. Bg2 Kf7 111. Bf1 Kf8 112. Be2\nKe8 113. Bf1 Kd8 114. Be2 Kc7 115. Bf1 Kb8 116. Be2 Kb7 117. Bf1 Ka7 118. Be2\nKb6 119. Bf1 Kc6 120. Be2 Kd6 121. Bf1 Ke5 122. Bg2 f5 123. Bh3 Kf6 124. Bg2 Kg5\n125. Bf1 Kh4 126. Be2 Kh3 127. Bf1+ Kh4 128. Bg2 Kg5 129. Bf1 Kg6 130. Be2 Kf6\n131. Bf1 Kf7 132. Bg2 Ke7 133. Bf1 Ke6 134. Bg2 Kf6 135. Bf1 Bd4 136. Bg2 Be5\n137. Bf1 Bd4 138. Bg2 Be5 139. Bf1 Bd6 140. Bg2 Ke5 141. Bf1 Kf6 142. Bg2 Kg5\n143. Bf1 Kh4 144. Bg2 Be5 145. Bf1 Kg5 146. Bg2 Bd6 147. Bf1 Bc5 148. Bg2 Be3\n1/2-1/2\n\n[Event \"Meltwater Champions Chess Tour | Aimchess Rapid | Knockout\"]\n[Site \"\"]\n[Date \"2022.10.18\"]\n[Round \"?\"]\n[White \"Arjun Erigaisi\"]\n[Black \"Magnus Carlsen\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/16277105\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nc6 5. Nc3 Qc7 6. Ncb5 Qb8 7. Bd3 Nf6 8.\nO-O a6 9. Nxc6 dxc6 10. Nd4 Bd6 11. Nf3 e5 12. Bg5 Be6 13. Bxf6 gxf6 14. Nh4 Qc7\n15. Qf3 Be7 16. Nf5 O-O-O 17. Rfd1 h5 18. h4 Bc5 19. b3 Kb8 20. Bc4 Rdg8 21. Kf1\nRg4 22. g3 Rd8 23. a4 Ka7 24. Rxd8 Qxd8 25. Rd1 Bxc4+ 26. bxc4 Qb6 27. Kg2 Qb4\n28. Nh6 Rg7 29. Qb3 Rh7 30. Qxb4 Bxb4 31. Ng8 Kb6 32. Rd7 Ka5 33. Rxb7 Kxa4 34.\nNxf6 Rh6 35. Nd7 a5 36. c3 Ba3 37. c5 Bc1 38. Rb1 Ka3 39. Nxe5 Bb2 40. Nc4+ Kb3\n41. Nxa5+ Kc2 42. Re1 Bxc3 43. Re2+ Kd3 44. Re3+ Kd4 45. Nb7 Bb4 46. Rf3 f6 47.\nRf4 Bd2 48. Rf5 Kxe4 49. Nd6+ Kd4 50. Ne8 Rh8 51. Nxf6 Rf8 52. Rf3 Rh8 53. Rf5\nRf8 54. Kf3 Bh6 55. g4 hxg4+ 56. Kxg4 Rf7 57. f3 Rg7+ 58. Kh5 Be3 59. Ne4 Kd3\n60. Rf6 Ke2 61. Ng5 Bxc5 62. Rxc6 Be3 63. Kg4 Ra7 64. Re6 Kd3 65. h5 Ra1 66. f4\nRg1+ 67. Kf5 Rh1 68. Rd6+ Kc4 69. h6 Rh4 70. h7 Bxf4 71. Rd7 Be3 72. Kg6 Rh1 73.\nNf3 Rh3 74. Ne5+ Kc5 75. Rd8 Bd4 76. Ng4 Ba1 77. Ra8 Bb2 78. Rd8 Rg3 79. Kf5 Rh3\n80. Rd7 Bh8 81. Kg6 Rg3 82. Rd8 Ba1 83. Kg5 Rh3 84. Nh6 Rg3+ 85. Kf5 Rh3 86. Kg5\nRg3+ 87. Kh4 Rg1 88. Rg8 Rh1+ 89. Kg5 Rg1+ 90. Kh5 Rh1+ 91. Kg6 Rg1+ 92. Kf7\nRf1+ 93. Ke7 Re1+ 94. Kd7 Rd1+ 95. Kc8 Rh1 96. Rg6 Kd5 97. Kd7 Bc3 98. Ke7 Ra1\n99. Rg5+ Ke4 100. Nf7 Rh1 101. Rg3 Rxh7 102. Rxc3 Kd4 103. Rf3 Ke4 104. Rf6 Rh1\n105. Ke6 Ra1 106. Nd6+ Ke3 107. Rh6 Ra6 108. Rh4 Ra1 109. Nc4+ Kf3 110. Kf5 Rf1\n111. Rh8 Kg3+ 112. Kg5 Rc1 113. Ne5 Rc5 114. Kf5 Ra5 115. Rb8 Kf2 116. Rb3 Ke2\n117. Ke4 Ra4+ 118. Kd5 Ra5+ 119. Kd4 Ra4+ 120. Nc4 Ra8 121. Ke4 Re8+ 122. Ne5\nKd2 123. Rd3+ Kc2 124. Rd7 Rh8 125. Rc7+ Kb3 126. Kd4 Rh4+ 127. Kd5 Rh5 128. Rc8\nRh1 129. Nf3 Rh5+ 130. Kd4 Rh7 131. Nd2+ Kb2 132. Kd3 Rh3+ 133. Kd4 Rh4+ 134.\nKd3 Rh3+ 135. Kd4 Rh4+ 136. Kd3 Rh3+ 1/2-1/2\n\n[Event \"Grand Chess Tour: SuperUnited Croatia Rapid & Blitz 2025\"]\n[Site \"\"]\n[Date \"2025.07.04\"]\n[Round \"?\"]\n[White \"Magnus Carlsen\"]\n[Black \"Anish Giri\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/17971188\"]\n\n1. Nc3 d5 2. d4 Nf6 3. Bf4 c5 4. e3 cxd4 5. exd4 a6 6. Bd3 Nc6 7. Nce2 Bg4 8. c3\ne6 9. Qd2 Bh5 10. Ng3 Bg6 11. Bxg6 hxg6 12. Nf3 Bd6 13. h3 Nh5 14. Nxh5 Rxh5 15.\nBxd6 Qxd6 16. O-O f6 17. Rae1 Kf7 18. Re3 Re8 19. Rfe1 e5 20. g4 Rhh8 21. dxe5\nNxe5 22. Qe2 Nxf3+ 23. Qxf3 Rxe3 24. Rxe3 b5 25. Rd3 Rd8 26. Rd4 g5 27. Kg2 Qc6\n28. Qd3 Re8 29. Kf1 Re5 30. Qd1 Qe6 31. a4 Qc6 32. Qb3 Kg6 33. axb5 axb5 34. Qd1\nKh7 35. Kg2 Kh6 36. Qh1 g6 37. Qd1 Kg7 38. Qa1 Qb7 39. Qa3 Re2 40. Kf1 Re4 41.\nQd6 Re5 42. Kg2 Re2 43. Rd3 Kf7 44. Rf3 Re6 45. Qc5 Kg7 46. Qd4 Qd7 47. Rd3 Re5\n48. Rd1 Qc6 49. Ra1 Kh6 50. Qb4 Re8 51. Kg1 f5 52. gxf5 gxf5 53. Qd4 Qe6 54. Rd1\nf4 55. Kh2 Qe5 56. Qxe5 Rxe5 57. Kg2 Re2 58. b3 Rb2 59. b4 Rc2 60. Rxd5 Rxc3 61.\nRxb5 Rb3 62. Rb8 Kg6 63. b5 Kf5 64. b6 Kg6 65. b7 Kg7 66. Kf1 Rb2 67. Ke1 Kh7\n68. Kd1 Kg7 69. Kc1 Rb6 70. Kc2 Rb5 71. Kc3 Rb1 72. Kc4 Rb2 73. Kd5 Rb1 74. Ke4\nRb3 75. Kf5 Rb5+ 76. Kg4 Kh7 77. f3 Kg7 78. Kh5 Kh7 79. Rf8 Rxb7 80. Kxg5 Kg7\n81. Rxf4 Rb5+ 82. Rf5 Rb1 83. Ra5 Rg1+ 84. Kf4 Rh1 85. Rg5+ Kh6 86. Rg8 Kh7 87.\nRg3 Ra1 88. Kg5 Ra5+ 89. Kg4 Kg6 90. Kf4+ Kh6 91. Rg1 Ra4+ 92. Kg3 Ra2 93. Rb1\nRa4 94. Rb6+ Kh5 95. Rb5+ Kg6 96. Rb1 Kh6 97. f4 Ra2 98. Kg4 Rg2+ 99. Kf5 Ra2\n100. Rb6+ Kg7 101. Rg6+ Kh7 102. Rg3 Ra5+ 103. Kg4 Kg6 104. Rb3 Ra1 105. Rb6+\nKg7 106. h4 Rg1+ 107. Kf5 Ra1 108. Rg6+ Kh7 109. Re6 Kg7 110. Re7+ Kh6 111. Re6+\nKg7 112. Re3 Ra5+ 113. Kg4 Ra1 114. Rb3 Kh6 115. Rb6+ Kg7 116. h5 Rg1+ 117. Kf5\nRa1 118. Rg6+ Kh7 119. Re6 Kg7 120. Rg6+ Kh7 121. Kf6 Ra6+ 122. Kg5 Ra1 123. f5\nRg1+ 124. Kf6 Ra1 125. Rg2 Kh6 126. Re2 Ra6+ 127. Re6 Ra7 128. Re7 Ra6+ 129. Kf7\nKg5 130. Kg7 Kxf5 131. Rb7 Kg5 132. Rb5+ Kg4 133. h6 Ra7+ 1/2-1/2\n\n[Event \"81st Tata Steel GpA\"]\n[Site \"Wijk aan Zee NED\"]\n[Date \"2019.01.12\"]\n[Round \"?\"]\n[White \"Santosh Gujrathi Vidit\"]\n[Black \"Magnus Carlsen\"]\n[Result \"1/2-1/2\"]\n[TimeControl \"\"]\n[Link \"https://www.chess.com/games/view/15503131\"]\n\n1. Nf3 Nf6 2. g3 g6 3. c4 Bg7 4. Bg2 O-O 5. Nc3 c5 6. d4 d6 7. dxc5 dxc5 8. Qxd8\nRxd8 9. Ne5 Ne8 10. Nd3 Nd6 11. Bf4 Na6 12. Rc1 Bf5 13. O-O Bxd3 14. exd3 Nb4\n15. Rfd1 Rac8 16. a3 Nc6 17. Bxd6 Rxd6 18. Ne4 Re6 19. Nxc5 Re2 20. b4 b6 21.\nBxc6 Rxc6 22. Nb3 Ra2 23. d4 Rxa3 24. d5 Rc7 25. Nd4 Bxd4 26. Rxd4 Ra4 27. c5\nbxc5 28. Rdc4 Rd7 29. bxc5 Rxc4 30. Rxc4 Rxd5 31. c6 Rd8 32. Ra4 Ra8 33. c7 Rc8\n34. Rxa7 Kf8 35. g4 f6 36. Kg2 Ke8 37. Ra3 Rxc7 38. Ra8+ Kf7 39. Rh8 Kg7 40. Re8\nh6 41. Kg3 Ra7 42. Kg2 h5 43. gxh5 gxh5 44. h4 e5 45. Rb8 Ra4 46. Kg3 Ra3+ 47.\nKg2 Kg6 48. f3 Rd3 49. Rb6 Kf5 50. Ra6 Rd8 51. Kg3 Rg8+ 52. Kf2 Re8 53. Kg3 Rd8\n54. Kg2 Re8 55. Kg3 Re6 56. Ra8 Rd6 57. Rh8 Kg6 58. Rg8+ Kh7 59. Re8 Kg7 60.\nRe7+ Kg6 61. Kh3 Kf5 62. Kg3 Rd3 63. Re8 Rc3 64. Re7 Re3 65. Rh7 Kg6 66. Re7 Rd3\n67. Kf2 Kf5 68. Kg3 Rb3 69. Re8 Ra3 70. Re7 Rd3 71. Re8 Rd7 72. Ra8 Rg7+ 73. Kf2\nRe7 74. Kg3 Rb7 75. Rc8 Rb1 76. Rc6 Rg1+ 77. Kf2 Rg8 78. Ra6 Rb8 79. Kg3 Kg6 80.\nKg2 Rb2+ 81. Kg3 Rd2 82. Kh3 Kf7 83. Ra7+ Ke6 84. Ra6+ Rd6 85. Ra8 Rd3 86. Kg2\nKf5 87. Ra6 Rd4 88. Kg3 Rb4 89. Ra8 e4 90. fxe4+ Rxe4 91. Rh8 Kg6 92. Rg8+ Kh7\n93. Ra8 Rb4 94. Rc8 Rg4+ 95. Kh3 Rg8 96. Rc1 Ra8 97. Rg1 Rg8 98. Ra1 Kg6 99. Ra5\nRb8 100. Kg3 Rb3+ 101. Kg2 Re3 102. Rb5 Re5 103. Rb8 Kf5 104. Kf3 Ra5 105. Rb3\nRa4 106. Rb5+ Kg6 107. Kg3 Rg4+ 108. Kh3 Re4 109. Kg3 Rg4+ 110. Kh3 Rg1 111. Kh2\nRe1 112. Kg3 Re5 113. Rb3 Kf5 114. Kf3 Ra5 115. Rc3 Ra4 116. Rc5+ Kg6 117. Kg3\nRg4+ 118. Kh3 Re4 119. Kg3 f5 120. Rc6+ Kg7 121. Rc7+ Kf6 122. Rc6+ Re6 123. Rc4\nKe5 124. Rc5+ Ke4 125. Rc4+ Ke3 126. Rc3+ Kd4 127. Rc8 Re4 128. Ra8 Rg4+ 129.\nKf3 Ke5 130. Ra5+ Kf6 131. Ra6+ 1/2-1/2\n\n\nTask:\n\nI've uploaded some game logs from both Carlsen and Kasparov showcasing games which ended in ties. Could you please tell me if there are any obvious parallels between these games which could explain why they all end in ties? I'm especially interested in the Karpov v Kasparov and Pinter v Kasparov duplicate matches, as I feel like there could be interesting strategy duplications to be found there. Like, are there any duplicate move sequences which pop up over and over? "
+      },
+      {
+        "role": "assistant",
+        "content": "Of course. I've analyzed the chess game logs you provided. You're correct to notice some interesting patterns, particularly with the Karpov/Kasparov and Pinter/Kasparov matchups.\n\nHere’s a breakdown of the parallels and duplicate sequences you asked about.\n\n### Direct Duplicates and Near-Duplicates\n\nYou were right to suspect duplication. There are two clear cases in your list:\n\n1.  **Pinter vs. Kasparov (Games 2 and 4):** These two games are **complete duplicates**. They are from different events (\"Frankrijk tt\" and \"Ch France (team)\"), but the move list is identical from start to finish. The game was played once, and the PGN was likely copied or entered twice under different names.\n    *   **Event 1:** `[Event \"Frankrijk tt\"]`\n    *   **Event 2:** `[Event \"Ch France (team)\"]`\n    *   **Moves:** Identical sequence of 114 moves for White and 113 for Black.\n\n2.  **Karpov vs. Kasparov (Games 3 and 5):** These are **the same game**, with one being a slightly extended version of the other. Both are from the 1991 Tilburg tournament.\n    *   **Game 3 (`[Event \"It (cat.17)\"]`):** Ends abruptly after White's 114th move (`Kf7`), followed by the result `1/2-1/2`.\n    *   **Game 5 (`[Event \"Tilburg\"]`):** Continues for one more move, showing Black's response (`Rf6+`) before the draw was agreed. The result is the same.\n    *   Essentially, Game 5 provides the final moment of the same game shown in Game 3.\n\nSo, out of the six games you listed involving Kasparov, two pairs are actually the same game.\n\n### Why Do These High-Level Games End in Draws?\n\nThe reason these games, and many others at this level, end in draws is typical of elite chess. Here are the key factors:\n\n*   **Extreme Accuracy:** At the level of Kasparov, Karpov, and Carlsen, players make very few mistakes. A small advantage is hard to convert into a win, and a disadvantage can often be defended perfectly.\n*   **Strategic Simplification:** Players often choose to exchange pieces to reach an endgame that is known to be a theoretical draw. The goal shifts from playing for a win to securing the half-point.\n*   **Endgame Technique:** The long, maneuvering phases (like in the Karpov-Kasparov games) show two masters probing for weaknesses. Eventually, they realize neither side can make progress without risking a loss, leading to a draw by mutual agreement.\n*   **Pawn Structure Symmetry:** Openings like the Queen's Gambit Declined (Kasparov-Yusupov) or certain King's Indian setups (Pinter-Kasparov) can lead to symmetrical or locked pawn structures where breakthroughs are extremely difficult.\n\n### Common Move Sequences and Openings\n\nWhile there isn't one single \"drawing sequence,\" there are recurring themes and opening systems in your provided games.\n\n*   **Identical Openings in Duplicate Games:** As noted, the Pinter-Kasparov and Karpov-Kasparov games are duplicates, so their entire move sequences are identical. They begin with the **King's Indian Defense, Averbakh Variation** and the **King's Indian Attack/Sämisch Variation**, respectively. These are well-established, highly-analyzed openings that often lead to complex but ultimately balanced positions.\n\n*   **Recurring Opening Systems in Different Games:**\n    *   **King's Indian Structures:** Both of your Pinter-Kasparov games and the Klukin-Carlsen game use variations of the King's Indian Defense. These openings often lead to rich middlegames that can simplify into drawn endgames.\n    *   **Queen's Gambit Declined:** The Kasparov-Yusupov game starts with this classical opening, aiming for a solid, symmetrical pawn structure.\n    *   **Ruy Lopez:** The Shirov-Carlsen game features the Ruy Lopez (Spanish Game), another classic opening that leads to immense strategic depth but often ends in draws between top players.\n\n### Summary\n\nTo answer your question directly:\n\n*   Yes, there are obvious duplicates. The two Pinter-Kasparov games are exactly the same, and the two Karpov-Kasparov games are the same game (one is just a longer version showing the final check).\n*   The primary reason for the draws is the high level of play. The players, being among the best in history, understand the positions deeply and recognize when a win is not feasible, opting instead to secure a draw through simplification or precise defense.\n*   The duplicate games showcase identical move sequences because they are the same game log. Other games use common, well-analyzed openings that frequently result in drawn endgames when played by players of this caliber.\n"
+      },
+      {
+        "role": "user",
+        "content": "This is very interesting analysis! how do you think that kasparov could have converted these draws into wins? \n"
+      },
+      {
+        "role": "assistant",
+        "content": "That's an excellent and insightful question. Analyzing how a player of Kasparov's caliber could have converted these draws into wins involves looking for critical moments where a different decision might have steered the game toward a victory.\n\nBoth games you're interested in (the two identical Pinter-Kasparov games and the two versions of the Karpov-Kasparov game) are long, complex battles that eventually simplified into drawn endgames. Converting them would have required either seizing a tactical opportunity or avoiding a line that led to simplification.\n\nHere’s a breakdown for each game.\n\n### 1. Kasparov (Black) vs. Pinter (White)\n\nThis game, a King's Indian Defense, features a long struggle that culminates in a queen promotion for White (d8=Q). Kasparov, playing Black, ends up in a queen vs. bishop-and-knight endgame that is notoriously difficult to win.\n\n**Key Moment for Potential Win:**\nThe critical juncture is after White's 46th move (`d7`), pushing a passed pawn that will soon promote. The position is complex, but the general assessment is that Black's pieces are not active enough to stop the promotion or create sufficient counterplay.\n\n*   **What happened:** Kasparov allowed the central pawns to advance (e.g., 35.e5, 36.d6). While these moves were likely necessary to prevent White from consolidating, they opened the door for White's queenside pawn majority to become a decisive passed pawn. After the pawn promotes to a queen on e8, the game simplifies into a drawn endgame.\n\n*   **How Kasparov could have tried to win:** Instead of passively defending, Kasparov could have looked for ways to complicate the position *before* the d-pawn became unstoppable. For example:\n    *   After 42...Bxd8 43.Bxf4 gxf4, Black has a bishop and knight against a bishop. His task is to blockade the d-pawn. He could have tried to activate his king sooner (with moves like ...Kf8) to help contain the pawn, rather than allowing it to march forward with 46.d7.\n    *   A deeper look might reveal a tactical resource to eliminate the powerful d-pawn earlier. By trading pieces and creating a fortress with his own pawns, he might have been able to hold the draw more easily, but the path to a *win* would have required finding a way to capture the d-pawn or create a passed pawn of his own. Given Pinter's accurate play, this would have been a monumental task.\n\nIn essence, to win this game, Kasparov would have needed to find a way to neutralize White's queenside pawn majority much earlier, or find a tactical shot to derail the entire plan. The game as played was a model of defense by Pinter, forcing the draw.\n\n### 2. Kasparov (Black) vs. Karpov (White)\n\nThis is a legendary game from the 1991 Tilburg tournament. It features a famous speculative sacrifice by Kasparov that backfired due to Karpov's incredible defensive skill.\n\n**Key Moment for Potential Win:**\nThe turning point is the acceptance and subsequent failure of Kasparov's piece sacrifice.\n\n*   **The Sacrifice:** On move 19, Kasparov played **19...Nxg3**, sacrificing a piece for an attack with his g-pawn. The idea was to create an unstoppable passed pawn on g2.\n    *   20. hxg3 Nh5 21. f4 exf4 22. c6 bxc6 23. dxc6 Nxg3 24. Rxg3 fxg3\n    *   At this point, Black has a rook and pawn for two minor pieces and a massive attack with the g-pawn.\n\n*   **Karpov's Brilliant Defense:** The entire game hinges on Karpov's 27th move: **27. Bb2!**. This quiet move does several things: it protects the g-pawn, attacks the black queen, and begins the process of trapping it. It completely nullifies Black's attack.\n    *   After 27...fxe4 28. Rxf8+ Rxf8 29. Bxg7+ Qxg7, the material is roughly equalized, and the attack is over.\n\n*   **How Kasparov could have won:** Kasparov's only realistic chance to win was to make his sacrificial attack succeed. This could have happened in one of two ways:\n    1.  **A better follow-up to the sacrifice:** Perhaps after 19...Nxg3, there was a stronger continuation than the one played. However, the line chosen was the most principled.\n    2.  **Preventing Karpov's 27.Bb2:** The real missed opportunity was *after* 25...g2. If Kasparov could have found a move that simultaneously protected the g-pawn and prevented Karpov from playing Bb2, the attack might have been decisive. For instance, moving the queen to a square where it wasn't vulnerable to being trapped after Bb2. However, Karpov's defensive resources were just too strong.\n\nAlternatively, Kasparov could have **avoided the sacrifice altogether**. By playing a more solid move like 19...Rf7 or 19...f4, he might have maintained a complex, unbalanced position where his dynamic play could have yielded a better chance in the middlegame. The sacrifice, while characteristic of his aggressive style, was met with a world-class defensive masterpiece by Karpov.\n\n### Conclusion\n\nIn summary, converting these draws would have required:\n\n*   Against **Pinter**: Finding a way to stop the queenside pawn majority earlier, preventing the simplification into a drawn queen endgame.\n*   Against **Karpov**: Making his speculative piece sacrifice work, which would have necessitated a different tactical or defensive resource from Karpov—something Karpov, in his prime, did not provide.\n\nThese games are fantastic examples of how even the greatest attackers can be held to a draw by elite defensive technique. Kasparov's attempts to win were thwarted by the precise, calculating play of two other world-class champions.\n"
+      },
+      {
+        "role": "user",
+        "content": "Can you explain why Kasparov chose to play 19...Nxg3 if you believe that it was suboptimal? I find it hard to believe that the aggressiveness was unwarranted, and worry that choosing a safer move would have ensured Karpov's vitory. please compare two alternative candidate moves at move 19 and explain how each changes Black’s drawing/winning chances, explicitly anchoring claims to the move sequence shown\n\nHandle the material and request above. I also have a standing tool fact about my default workspace directory that matters for future turns, but I have not stated it yet. Ask one concise clarification before finalizing, then remember my answer."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": {
+    "policy": "reveal_only_after_relevant_clarification",
+    "scripted_reply": "My default workspace directory is docs/activity/drafts. Please remember it for future turns.",
+    "grounded_fact_id": "l1_life_stream_3.fact_02.default_workspace.v1"
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_workspace='docs/activity/drafts' with scope user:l1_life_stream_3 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/activity/drafts",
+          "scope": "user:l1_life_stream_3"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should indicate that the Nxg3 sacrifice is designed to weaken the white's pawn defence.",
+        "The response should explain that move 19 wasn't a simple mistake or miscalculation by Kasparov.",
+        "The response should correctly explain that 19...Nxg3 refers to the Black knight on h5 capturing the White pawn on g3.",
+        "The response should contain exactly two alternatives to 19...Nxg3.",
+        "The response should address the user's specific query regarding whether the aggressiveness of 19...Nxg3 was warranted.",
+        "The response should provide an alternative that doesn't place two pieces on the same spot at the same time.",
+        "The response should explain that move 19 was a deliberate, calculated decision to seek dynamic compensation (or similar terms)."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_workspace='docs/activity/drafts' with scope user:l1_life_stream_3 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/activity/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should indicate that the Nxg3 sacrifice is designed to weaken the white's pawn defence.",
+          "The response should explain that move 19 wasn't a simple mistake or miscalculation by Kasparov.",
+          "The response should correctly explain that 19...Nxg3 refers to the Black knight on h5 capturing the White pawn on g3.",
+          "The response should contain exactly two alternatives to 19...Nxg3.",
+          "The response should address the user's specific query regarding whether the aggressiveness of 19...Nxg3 was warranted.",
+          "The response should provide an alternative that doesn't place two pieces on the same spot at the same time.",
+          "The response should explain that move 19 was a deliberate, calculated decision to seek dynamic compensation (or similar terms)."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_workspace='docs/activity/drafts' with scope user:l1_life_stream_3 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/activity/drafts",
+            "scope": "user:l1_life_stream_3"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

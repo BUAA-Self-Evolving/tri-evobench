@@ -1,0 +1,127 @@
+{
+  "stream_id": "l1_life_stream_4",
+  "visibility": "evaluator_and_user_simulator_only",
+  "facts": [
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_01",
+      "key": "default_response_language",
+      "label": "default response language",
+      "kind": "preference",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_01.default_response_language.v1",
+        "value": "English",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_01.default_response_language.v2",
+        "value": "Simplified Chinese",
+        "supersedes": "l1_life_stream_4.fact_01.default_response_language.v1",
+        "status": "active"
+      },
+      "exposure_turn": 1,
+      "correction_turn": 27
+    },
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_02",
+      "key": "default_workspace",
+      "label": "default workspace directory",
+      "kind": "tool_fact",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_02.default_workspace.v1",
+        "value": "docs/daily/drafts",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_02.default_workspace.v2",
+        "value": "docs/daily/final",
+        "supersedes": "l1_life_stream_4.fact_02.default_workspace.v1",
+        "status": "active"
+      },
+      "exposure_turn": 3,
+      "correction_turn": 33
+    },
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_03",
+      "key": "project_label",
+      "label": "current project label",
+      "kind": "work_fact",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_03.project_label.v1",
+        "value": "Daily Context",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_03.project_label.v2",
+        "value": "Everyday Research",
+        "supersedes": "l1_life_stream_4.fact_03.project_label.v1",
+        "status": "active"
+      },
+      "exposure_turn": 6,
+      "correction_turn": 39
+    },
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_04",
+      "key": "default_structure",
+      "label": "default answer structure",
+      "kind": "preference",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_04.default_structure.v1",
+        "value": "numbered list",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_04.default_structure.v2",
+        "value": "Markdown table with a short conclusion",
+        "supersedes": "l1_life_stream_4.fact_04.default_structure.v1",
+        "status": "active"
+      },
+      "exposure_turn": 10,
+      "correction_turn": 45
+    },
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_05",
+      "key": "default_calendar_id",
+      "label": "default work calendar ID",
+      "kind": "tool_fact",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v1",
+        "value": "cal_daily_personal",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v2",
+        "value": "cal_daily_work",
+        "supersedes": "l1_life_stream_4.fact_05.default_calendar_id.v1",
+        "status": "active"
+      },
+      "exposure_turn": 14,
+      "correction_turn": 51
+    },
+    {
+      "fact_thread_id": "l1_life_stream_4.fact_06",
+      "key": "current_focus",
+      "label": "current review focus",
+      "kind": "work_fact",
+      "scope": "user:l1_life_stream_4",
+      "v1": {
+        "fact_id": "l1_life_stream_4.fact_06.current_focus.v1",
+        "value": "social context",
+        "status_after_correction": "superseded"
+      },
+      "v2": {
+        "fact_id": "l1_life_stream_4.fact_06.current_focus.v2",
+        "value": "evidence synthesis",
+        "supersedes": "l1_life_stream_4.fact_06.current_focus.v1",
+        "status": "active"
+      },
+      "exposure_turn": 18,
+      "correction_turn": 55
+    }
+  ],
+  "schema_version": "l1_life/2.0"
+}

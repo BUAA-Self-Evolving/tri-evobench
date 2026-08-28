@@ -1,0 +1,366 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_4",
+  "turn_id": "turn28",
+  "turn_index": 28,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "fe44b80a-8549-1b06-e39e-fecce3538cf9",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 3,
+    "source_sha256": "5d355d5f940b15547246a61f9a2b093fc164ecd926d7d3de525859477351bf97",
+    "source_metadata": {
+      "task_id": "fe44b80a-8549-1b06-e39e-fecce3538cf9",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Game Logs"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Super Bowl LX\n\nPlay-By-Play\n\n1st Quarter\n\nSeattle Seahawks\nField Goal\n8 plays, 51 yards, 3:02\n3\nSEA\n0\nNE\n\nKickoff\n15:00 - 1st\nA.Borregales kicks 65 yards from NE 35 to end zone, Touchback to the SEA 35.\n\n10-yd Run\n15:00 - 1st\nK.Walker left end pushed ob at SEA 45 for 10 yards (C.Davis).\n1st & 10 at SEA 35\n\n0-yd Run\n14:29 - 1st\nK.Walker right tackle to SEA 45 for no gain (C.Barmore).\n1st & 10 at SEA 45\n\n15-yd Pass\n13:50 - 1st\n(Shotgun) S.Darnold pass short left to A.Barner to NE 40 for 15 yards (C.Woodson).\n2nd & 10 at SEA 45\n\n23-yd Pass\n13:25 - 1st\n(No Huddle) S.Darnold pass deep left to C.Kupp pushed ob at NE 17 for 23 yards (M.Jones).\n1st & 10 at NE 40\n\nIncompletion\n12:58 - 1st\n(No Huddle, Shotgun) S.Darnold pass incomplete deep left.\n1st & 10 at NE 17\n\n3-yd Run\n12:51 - 1st\nK.Walker right tackle to NE 14 for 3 yards (A.Jennings).\n2nd & 10 at NE 17\n\nIncompletion\n12:06 - 1st\n(Shotgun) S.Darnold pass incomplete short left to R.Shaheed.\n3rd & 7 at NE 14\n\nField Goal Good\n11:58 - 1st\nJ.Myers 33 yard field goal is GOOD, Center-C.Stoll, Holder-M.Dickson.\n4th & 7 at NE 14\n\n(11:58 - 1st) Official Timeout at 11:58.\n\n\nNew England Patriots\nPunt\n8 plays, 28 yards, 4:47\n3\nSEA\n0\nNE\n\nKickoff\n11:58 - 1st\nJ.Myers kicks 65 yards from SEA 35 to NE 0. D.Johnson to NE 28 for 28 yards (D.Young).\n\n6-yd Run\n11:52 - 1st\nR.Stevenson up the middle to NE 34 for 6 yards (E.Jones).\n1st & 10 at NE 28\n\n2-yd Run\n11:21 - 1st\nR.Stevenson up the middle to NE 36 for 2 yards (E.Jones; D.Thomas).\n2nd & 4 at NE 34\n\n7-yd Pass\n10:40 - 1st\n(Shotgun) D.Maye pass short left to R.Stevenson ran ob at NE 43 for 7 yards (D.Thomas) [U.Nwosu].\n3rd & 2 at NE 36\n\n8-yd Pass\n10:04 - 1st\nD.Maye pass short left to D.Douglas to SEA 49 for 8 yards (E.Jones).\n1st & 10 at NE 43\n\n4-yd Run\n9:28 - 1st\nR.Stevenson right tackle to SEA 45 for 4 yards (C.Bryant).\n2nd & 2 at SEA 49\n\nSack\n8:51 - 1st\n(Shotgun) D.Maye sacked at NE 45 for -10 yards (D.Hall).\n1st & 10 at SEA 45\n\n11-yd Run\n8:09 - 1st\n(Shotgun) D.Maye scrambles right tackle to SEA 44 for 11 yards (N.Emmanwori).\n2nd & 20 at NE 45\n\nIncompletion\n7:23 - 1st\n(Shotgun) D.Maye pass incomplete deep right [D.Witherspoon].\n3rd & 9 at SEA 44\n\nPunt\n7:18 - 1st\nB.Baringer punts 34 yards to SEA 10, Center-J.Ashby, fair catch by R.Shaheed.\n4th & 9 at SEA 44\n\n(7:11 - 1st) Official Timeout at 07:11.\n\n\nSeattle Seahawks\nPunt\n3 plays, 4 yards, 1:04\n3\nSEA\n0\nNE\n\nIncompletion\n7:11 - 1st\n(Shotgun) S.Darnold pass incomplete short left to J.Smith-Njigba (C.Woodson) [A.Jennings].\n1st & 10 at SEA 10\n\n4-yd Pass\n7:06 - 1st\n(Shotgun) S.Darnold pass short left to J.Smith-Njigba to SEA 14 for 4 yards (C.Davis).\n2nd & 10 at SEA 10\n\nIncompletion\n6:22 - 1st\n(Shotgun) S.Darnold pass incomplete deep left to J.Smith-Njigba [J.Hawkins].\n3rd & 6 at SEA 14\n\nPunt\n6:15 - 1st\nM.Dickson punts 50 yards to NE 36, Center-C.Stoll, fair catch by M.Jones.\n4th & 6 at SEA 14\n\n(6:07 - 1st) Official Timeout at 06:07.\n\n\nNew England Patriots\nPunt\n4 plays, 6 yards, 2:38\n3\nSEA\n0\nNE\n\n21-yd Pass\n6:07 - 1st\nT.Munford reported in as eligible. D.Maye pass deep left to K.Boutte to SEA 43 for 21 yards (J.Love).\n1st & 10 at NE 36\n\n-3-yd Run\n5:33 - 1st\n(Shotgun) T.Henderson up the middle to SEA 46 for -3 yards (E.Jones).\n1st & 10 at SEA 43\n\n-2-yd Pass\n4:53 - 1st\n(Shotgun) D.Maye pass short left to T.Henderson to SEA 48 for -2 yards (J.Jobe).\n2nd & 13 at SEA 46\n\nSack\n4:15 - 1st\n(Shotgun) D.Maye sacked at NE 42 for -10 yards (D.Witherspoon).\n3rd & 15 at SEA 48\n\nPunt\n3:39 - 1st\nB.Baringer punts 51 yards to SEA 7, Center-J.Ashby. R.Shaheed to SEA 13 for 6 yards (D.Pettus).\n4th & 25 at NE 42\n\n(3:29 - 1st) Official Timeout at 03:29.\n\n\nSeattle Seahawks\nPunt\n6 plays, 10 yards, 3:10\n3\nSEA\n0\nNE\n\n2-yd Run\n3:29 - 1st\nK.Walker right tackle to SEA 15 for 2 yards (C.Barmore; J.Gibbens).\n1st & 10 at SEA 13\n\n1-yd Run\n2:51 - 1st\nK.Walker left tackle to SEA 16 for 1 yard (C.Barmore).\n2nd & 8 at SEA 15\n\n12-yd Pass\n2:07 - 1st\n(Shotgun) S.Darnold pass short right to A.Barner to SEA 28 for 12 yards (M.Jones).\n3rd & 7 at SEA 16\n\n-5-yd Run\n1:25 - 1st\nR.Shaheed left end to SEA 23 for -5 yards (C.Woodson).\n1st & 10 at SEA 28\n\nIncompletion\n0:40 - 1st\n(Shotgun) S.Darnold pass incomplete short left to J.Smith-Njigba (A.Jennings).\n2nd & 15 at SEA 23\n\nIncompletion\n0:37 - 1st\n(Shotgun) S.Darnold pass incomplete deep left to J.Smith-Njigba.\n3rd & 15 at SEA 23\n\nPunt\n0:32 - 1st\nM.Dickson punts 45 yards to NE 32, Center-C.Stoll. M.Jones to NE 32 for no gain (D.Thomas).\n4th & 15 at SEA 23\n\n2nd Quarter\n\nNew England Patriots\nPunt\n3 plays, 5 yards, 1:09\n3\nSEA\n0\nNE\n\n5-yd Run\n0:19 - 1st\nR.Stevenson right tackle to NE 37 for 5 yards (J.Reed; D.Thomas).\n1st & 10 at NE 32\n\nEND QUARTER 1\n\nIncompletion\n15:00 - 2nd\n(Shotgun) D.Maye pass incomplete short middle to H.Henry.\n2nd & 5 at NE 37\n\n0-yd Run\n14:55 - 2nd\n(Shotgun) R.Stevenson up the middle to NE 37 for no gain (J.Reed; L.Williams).\n3rd & 5 at NE 37\n\nPunt\n14:18 - 2nd\nB.Baringer punts 39 yards to SEA 24, Center-J.Ashby, fair catch by R.Shaheed.\n4th & 5 at NE 37\n\nSeattle Seahawks\nField Goal\n8 plays, 55 yards, 2:54\n6\nSEA\n0\nNE\n\nIncompletion\n14:10 - 2nd\n(Shotgun) S.Darnold pass incomplete deep middle to R.Shaheed (C.Gonzalez).\n1st & 10 at SEA 24\n\n30-yd Run\n14:04 - 2nd\n(Shotgun) K.Walker left end pushed ob at NE 46 for 30 yards (M.Jones).\n2nd & 10 at SEA 24\n\nIncompletion\n13:37 - 2nd\n(No Huddle, Shotgun) S.Darnold pass incomplete short middle to J.Smith-Njigba (M.Williams).\n1st & 10 at NE 46\n\n29-yd Run\n13:34 - 2nd\nK.Walker right guard pushed ob at NE 17 for 29 yards (C.Gonzalez).\n2nd & 10 at NE 46\n\n-2-yd Run\n12:52 - 2nd\nK.Walker right end to NE 19 for -2 yards (C.Woodson).\n1st & 10 at NE 17\n\nIncompletion\n12:09 - 2nd\n(Shotgun) S.Darnold pass incomplete short middle to C.Kupp [K.Chaisson].\n2nd & 12 at NE 19\n\n-2-yd Run\n12:04 - 2nd\n(Shotgun) K.Walker left end to NE 21 for -2 yards (C.Woodson).\n3rd & 12 at NE 19\n\nField Goal Good\n11:16 - 2nd\nJ.Myers 39 yard field goal is GOOD, Center-C.Stoll, Holder-M.Dickson.\n4th & 14 at NE 21\n\n(11:16 - 2nd) Official Timeout at 11:16.\n\n\nNew England Patriots\nPunt\n3 plays, -2 yards, 2:00\n6\nSEA\n0\nNE\n\nKickoff\n11:16 - 2nd\nJ.Myers kicks 65 yards from SEA 35 to end zone, Touchback to the NE 35. ** Injury Update: SEA-T.Okada has returned to the game.\n\n3-yd Run\n11:16 - 2nd\nT.Henderson right tackle to NE 38 for 3 yards (E.Jones).\n1st & 10 at NE 35\n\nSack\n10:44 - 2nd\n(Shotgun) D.Maye sacked at NE 28 for -10 yards (R.Mills).\n2nd & 7 at NE 38\n\n5-yd Pass\n10:03 - 2nd\n(Shotgun) D.Maye pass short left to S.Diggs pushed ob at NE 33 for 5 yards (T.Woolen).\n3rd & 17 at NE 28\n\nPunt\n9:23 - 2nd\nB.Baringer punts -12 yards to SEA 29, Center-J.Ashby, fair catch by R.Shaheed. ** Injury Update: NE-J.Tavai has returned to the game.\n4th & 12 at NE 33\n\n(9:16 - 2nd) Official Timeout at 09:16.\n\n\nSeattle Seahawks\nPunt\n8 plays, 29 yards, 4:18\n6\nSEA\n0\nNE\n\n9-yd Run\n9:16 - 2nd\nK.Walker right end pushed ob at SEA 38 for 9 yards (C.Gonzalez).\n1st & 10 at SEA 29\n\n2-yd Run\n8:41 - 2nd\nK.Walker right guard to SEA 40 for 2 yards (J.Gibbens).\n2nd & 1 at SEA 38\n\nIncompletion\n7:56 - 2nd\nS.Darnold pass incomplete short left to K.Walker.\n1st & 10 at SEA 40\n\n7-yd Pass\n7:51 - 2nd\n(Shotgun) S.Darnold pass short right to C.Kupp to SEA 47 for 7 yards (M.Jones).\n2nd & 10 at SEA 40\n\n6-yd Pass\n7:12 - 2nd\n(Shotgun) S.Darnold pass short right to K.Walker to NE 47 for 6 yards (C.Davis; D.Pettus).\n3rd & 3 at SEA 47\n\n4-yd Run\n6:29 - 2nd\nK.Walker up the middle to NE 43 for 4 yards (C.Elliss; R.Spillane).\n1st & 10 at NE 47\n\n1-yd Run\n5:50 - 2nd\nG.Holani right tackle to NE 42 for 1 yard (A.Jennings; C.Durden).\n2nd & 6 at NE 43\n\nIncompletion\n5:09 - 2nd\n(Shotgun) S.Darnold pass incomplete short left to K.Walker.\n3rd & 5 at NE 42\n\nPunt\n5:05 - 2nd\nM.Dickson punts 40 yards to NE 2, Center-C.Stoll, downed by SEA-V.Jones.\n4th & 5 at NE 42\n\n(4:58 - 2nd) Official Timeout at 04:58.\n\n\nNew England Patriots\nPunt\n6 plays, 10 yards, 2:08\n6\nSEA\n0\nNE\n\n3-yd Run\n4:58 - 2nd\nR.Stevenson right end to NE 5 for 3 yards (J.Jobe).\n1st & 10 at NE 2\n\n(4:21 - 2nd) Timeout #1 by SEA at 04:21.\n\nIncompletion\n4:21 - 2nd\n(Shotgun) D.Maye pass incomplete short middle to M.Hollins.\n2nd & 7 at NE 5\n\n9-yd Pass\n4:19 - 2nd\n(Shotgun) D.Maye pass short right to D.Douglas to NE 14 for 9 yards (J.Jobe).\n3rd & 7 at NE 5\n\n3-yd Run\n3:46 - 2nd\nR.Stevenson right end pushed ob at NE 17 for 3 yards (J.Jobe).\n1st & 10 at NE 14\n\nIncompletion\n3:14 - 2nd\nD.Maye pass incomplete short right.\n2nd & 7 at NE 17\n\n5-yd Penalty\n3:09 - 2nd\n(Shotgun) PENALTY on NE-W.Campbell, False Start, 5 yards, enforced at NE 17 - No Play.\n3rd & 7 at NE 17\n\nIncompletion\n3:09 - 2nd\n(Shotgun) D.Maye pass incomplete deep right to M.Hollins.\n3rd & 12 at NE 12\n\nPunt\n3:03 - 2nd\nB.Baringer punts 55 yards to SEA 33, Center-J.Ashby. R.Shaheed to SEA 43 for 10 yards (E.Ponder).\n4th & Goal at NE 12\n\n(2:50 - 2nd) Official Timeout at 02:50.\n\n\nSeattle Seahawks\nField Goal\n9 plays, 34 yards, 2:39\n9\nSEA\n0\nNE\n\n7-yd Pass\n2:50 - 2nd\nS.Darnold pass short middle to C.Kupp to 50 for 7 yards (J.Hawkins) [H.Landry].\n1st & 10 at SEA 43\n\n7-yd Run\n2:11 - 2nd\nK.Walker right tackle to NE 43 for 7 yards (R.Spillane; C.Woodson).\n2nd & 3 at 50\n\n(2:00 - 2nd) Two-Minute Warning\n\n1-yd Run\n2:00 - 2nd\n(Shotgun) K.Walker left end to NE 42 for 1 yard (C.Woodson).\n1st & 10 at NE 43\n\n7-yd Pass\n1:17 - 2nd\n(Shotgun) S.Darnold pass short middle to G.Holani to NE 35 for 7 yards (C.Elliss).\n2nd & 9 at NE 42\n\n5-yd Run\n0:39 - 2nd\n(Shotgun) G.Holani left guard to NE 30 for 5 yards (C.Woodson).\n3rd & 2 at NE 35\n\n(0:32 - 2nd) Timeout #2 by SEA at 00:32.\n\n7-yd Pass\n0:32 - 2nd\n(Shotgun) S.Darnold pass short right to C.Kupp to NE 23 for 7 yards (C.Davis).\n1st & 10 at NE 30\n\n(0:23 - 2nd) Timeout #3 by SEA at 00:23.\n\nIncompletion\n0:23 - 2nd\n(Shotgun) S.Darnold pass incomplete short right to C.Kupp.The Replay Official reviewed the incomplete pass ruling, and the play was Upheld. The ruling on the field stands.\n2nd & 3 at NE 23\n\n(0:20 - 2nd) Timeout #1 by NE at 00:20.\n\nIncompletion\n0:20 - 2nd\n(Shotgun) S.Darnold pass incomplete deep middle to J.Smith-Njigba (C.Gonzalez).\n3rd & 3 at NE 23\n\nField Goal Good\n0:11 - 2nd\nJ.Myers 41 yard field goal is GOOD, Center-C.Stoll, Holder-M.Dickson.\n4th & 3 at NE 23\n\nNew England Patriots\nEnd of Half\n1 play, -1 yard, 0:11\n9\nSEA\n0\nNE\n\nKickoff\n0:11 - 2nd\nJ.Myers kicks 61 yards from SEA 35 to NE 4. D.Johnson to NE 29 for 25 yards (B.Russell; P.O'Connell).\n\n-1-yd Run\n0:06 - 2nd\nD.Maye kneels to NE 28 for -1 yards.\n1st & 10 at NE 29\n\nEND QUARTER 2\n\n3rd Quarter\n\nNew England Patriots\nPunt\n3 plays, 7 yards, 0:58\n9\nSEA\n0\nNE\n\nKickoff\n15:00 - 3rd\nJ.Myers kicks 55 yards from SEA 35 to NE 10. D.Johnson to NE 32 for 22 yards (B.Russell; J.Bobo).\n\nIncompletion\n14:54 - 3rd\n(Shotgun) D.Maye pass incomplete deep left to D.Douglas.\n1st & 10 at NE 32\n\n7-yd Run\n14:49 - 3rd\n(Shotgun) T.Henderson left end ran ob at NE 39 for 7 yards (C.Bryant).\n2nd & 10 at NE 32\n\nIncompletion\n14:13 - 3rd\n(Shotgun) D.Maye pass incomplete short left to K.Boutte (J.Jobe).\n3rd & 3 at NE 39\n\nPunt\n14:08 - 3rd\nB.Baringer punts 52 yards to SEA 9, Center-J.Ashby, fair catch by R.Shaheed.\n4th & 3 at NE 39\n\nSeattle Seahawks\nField Goal\n10 plays, 69 yards, 4:50\n12\nSEA\n0\nNE\n\n2-yd Run\n14:02 - 3rd\nK.Walker right end to SEA 11 for 2 yards (J.Gibbens).\n1st & 10 at SEA 9\n\n16-yd Pass\n13:21 - 3rd\n(Shotgun) S.Darnold pass short middle to R.Shaheed to SEA 27 for 16 yards (C.Davis) [C.Elliss].\n2nd & 8 at SEA 11\n\n16-yd Pass\n12:37 - 3rd\n(Shotgun) S.Darnold pass short middle to J.Smith-Njigba to SEA 43 for 16 yards (J.Hawkins).\n1st & 10 at SEA 27\n\n11-yd Run\n12:11 - 3rd\n(No Huddle) S.Darnold scrambles right tackle to NE 46 for 11 yards (R.Spillane).\n1st & 10 at SEA 43\n\n3-yd Run\n11:30 - 3rd\nK.Walker right tackle to NE 43 for 3 yards (C.Woodson; R.Spillane).\n1st & 10 at NE 46\n\n20-yd Pass\n10:47 - 3rd\n(Shotgun) S.Darnold pass short right to K.Walker pushed ob at NE 23 for 20 yards (M.Jones).\n2nd & 7 at NE 43\n\n1-yd Run\n10:05 - 3rd\nK.Walker right end pushed ob at NE 22 for 1 yard (C.Woodson).\n1st & 10 at NE 23\n\n(9:23 - 3rd) Timeout #1 by SEA at 09:23.\n\nIncompletion\n9:23 - 3rd\n(Shotgun) S.Darnold pass incomplete short right to C.Kupp.\n2nd & 9 at NE 22\n\nIncompletion\n9:20 - 3rd\n(Shotgun) S.Darnold pass incomplete short right to C.Kupp.\n3rd & 9 at NE 22\n\nField Goal Good\n9:12 - 3rd\nJ.Myers 41 yard field goal is GOOD, Center-C.Stoll, Holder-M.Dickson.\n4th & 9 at NE 22\n\n(9:12 - 3rd) Official Timeout at 09:12.\n\n\nNew England Patriots\nPunt\n3 plays, 9 yards, 1:38\n12\nSEA\n0\nNE\n\nKickoff\n9:12 - 3rd\nJ.Myers kicks 61 yards from SEA 35 to NE 4. D.Johnson to NE 32 for 28 yards (T.Knight).\n\n9-yd Run\n9:07 - 3rd\nT.Henderson left end to NE 41 for 9 yards (C.Bryant; J.Love).\n1st & 10 at NE 32\n\n0-yd Run\n8:30 - 3rd\nT.Henderson up the middle to NE 41 for no gain (D.Thomas; D.Lawrence).\n2nd & 1 at NE 41\n\nIncompletion\n7:46 - 3rd\n(Shotgun) D.Maye pass incomplete deep left to D.Douglas.\n3rd & 1 at NE 41\n\nPunt\n7:41 - 3rd\nB.Baringer punts 41 yards to SEA 18, Center-J.Ashby, fair catch by R.Shaheed.\n4th & 1 at NE 41\n\n(7:34 - 3rd) Official Timeout at 07:34.\n\n\nSeattle Seahawks\nPunt\n3 plays, 2 yards, 2:24\n12\nSEA\n0\nNE\n\nSack\n7:34 - 3rd\nS.Darnold sacked at SEA 10 for -8 yards (M.Williams).\n1st & 10 at SEA 18\n\n4-yd Pass\n6:50 - 3rd\n(Shotgun) S.Darnold pass short left to J.Smith-Njigba to SEA 14 for 4 yards (M.Jones).\n2nd & 18 at SEA 10\n\n6-yd Run\n6:06 - 3rd\n(Shotgun) K.Walker right guard to SEA 20 for 6 yards (J.Tavai; C.Elliss).\n3rd & 14 at SEA 14\n\n10-yd Penalty\n5:24 - 3rd\nM.Dickson punts 47 yards to NE 33, Center-C.Stoll. M.Jones pushed ob at SEA 48 for 19 yards (M.Dickson). ** Injury Update: SEA-T.Knight has returned to the game. PENALTY on NE-D.Pettus, Illegal Block Above the Waist, 10 yards, enforced at NE 37.\n4th & 8 at SEA 20\n\n(5:10 - 3rd) Official Timeout at 05:10.\n\n\nNew England Patriots\nPunt\n3 plays, 6 yards, 1:32\n12\nSEA\n0\nNE\n\nSack\n5:10 - 3rd\n(Shotgun) D.Maye sacked at NE 25 for -2 yards (B.Murphy).\n1st & 10 at NE 27\n\n8-yd Pass\n4:30 - 3rd\n(Shotgun) D.Maye pass short right to M.Hollins to NE 33 for 8 yards (E.Jones).\n2nd & 12 at NE 25\n\nIncompletion\n3:49 - 3rd\n(Shotgun) D.Maye pass incomplete short middle to K.Boutte.\n3rd & 4 at NE 33\n\nPunt\n3:45 - 3rd\nB.Baringer punts 46 yards to SEA 21, Center-J.Ashby, fair catch by R.Shaheed.\n4th & 4 at NE 33\n\n(3:38 - 3rd) Official Timeout at 03:38.\n\n\nSeattle Seahawks\nPunt\n3 plays, 6 yards, 1:43\n12\nSEA\n0\nNE\n\n-2-yd Run\n3:38 - 3rd\nK.Walker up the middle to SEA 19 for -2 yards (A.Jennings, L.Taylor).\n1st & 10 at SEA 21\n\nIncompletion\n2:53 - 3rd\n(Shotgun) S.Darnold pass incomplete short middle to C.Kupp (C.Gonzalez).\n2nd & 12 at SEA 19\n\n8-yd Pass\n2:48 - 3rd\n(Shotgun) S.Darnold pass short middle to C.Kupp to SEA 27 for 8 yards (J.Hawkins).\n3rd & 12 at SEA 19\n\nPunt\n2:08 - 3rd\nM.Dickson punts 46 yards to NE 27, Center-C.Stoll, downed by SEA-N.Pritchett.\n4th & 4 at SEA 27\n\nNew England Patriots\nFumble\n5 plays, 10 yards, 1:45\n12\nSEA\n0\nNE\n\n3-yd Run\n1:55 - 3rd\n(Shotgun) T.Henderson up the middle to NE 30 for 3 yards (D.Lawrence).\n1st & 10 at NE 27\n\n5-yd Run\n1:23 - 3rd\n(Shotgun) D.Maye scrambles right tackle pushed ob at NE 35 for 5 yards (E.Jones).PENALTY on SEA-D.Witherspoon, Defensive Holding, 5 yards, enforced at NE 35.\n2nd & 7 at NE 30\n\nIncompletion\n0:58 - 3rd\nD.Maye pass incomplete short right to H.Henry (D.Lawrence) [D.Lawrence].\n1st & 10 at NE 40\n\n4-yd Pass\n0:52 - 3rd\n(Shotgun) D.Maye pass short right to T.Henderson pushed ob at NE 44 for 4 yards (N.Emmanwori).\n2nd & 10 at NE 40\n\nSack Opp Fumble Recovery\n0:16 - 3rd\n(Shotgun) D.Maye sacked at NE 37 for -7 yards (D.Hall). FUMBLES (D.Hall) [D.Hall], RECOVERED by SEA-B.Murphy at NE 37.\n3rd & 6 at NE 44\n\n4th Quarter\n\nSeattle Seahawks\nTouchdown\n5 plays, 37 yards, 1:46\n19\nSEA\n0\nNE\n\n11-yd Pass\n0:10 - 3rd\nS.Darnold pass short right to A.Barner to NE 26 for 11 yards (A.Jennings).\n1st & 10 at NE 37\n\nEND QUARTER 3\n\n1-yd Run\n15:00 - 4th\nK.Walker right tackle to NE 25 for 1 yard (J.Gibbens).\n1st & 10 at NE 26\n\nIncompletion\n14:20 - 4th\nS.Darnold pass incomplete deep right to C.Kupp (C.Woodson).\n2nd & 9 at NE 25\n\n9-yd Pass\n14:14 - 4th\n(Shotgun) S.Darnold pass short left to C.Kupp to NE 16 for 9 yards (C.Gonzalez).\n3rd & 9 at NE 25\n\n16-yd Touchdown Pass\n13:24 - 4th\nS.Darnold pass deep right to A.Barner for 16 yards, TOUCHDOWN. J.Myers extra point is GOOD, Center-C.Stoll, Holder-M.Dickson.\n1st & 10 at NE 16\n\n(13:24 - 4th) Official Timeout at 13:24.\n\n\nNew England Patriots\nTouchdown\n3 plays, 65 yards, 0:57\n19\nSEA\n7\nNE\n\nKickoff\n13:24 - 4th\nJ.Myers kicks 65 yards from SEA 35 to end zone, Touchback to the NE 35.\n\n6-yd Run\n13:24 - 4th\n(Shotgun) D.Maye scrambles right end ran ob at NE 41 for 6 yards (D.Thomas).\n1st & 10 at NE 35\n\n24-yd Pass\n12:56 - 4th\n(Shotgun) D.Maye pass deep middle to M.Hollins to SEA 35 for 24 yards (T.Woolen) [B.Mafe].\n2nd & 4 at NE 41\n\n35-yd Touchdown Pass\n12:27 - 4th\n(No Huddle, Shotgun) D.Maye pass deep left to M.Hollins for 35 yards, TOUCHDOWN. A.Borregales extra point is GOOD, Center-J.Ashby, Holder-B.Baringer.\n1st & 10 at SEA 35\n\n(12:27 - 4th) Official Timeout at 12:27.\n\n\nSeattle Seahawks\nPunt\n4 plays, 10 yards, 1:47\n19\nSEA\n7\nNE\n\nKickoff\n12:27 - 4th\nA.Borregales kicks 54 yards from NE 35 to SEA 11. R.Shaheed to SEA 31 for 20 yards (C.Muma).\n\n11-yd Pass\n12:22 - 4th\nS.Darnold pass short right to R.Shaheed pushed ob at SEA 42 for 11 yards (C.Gonzalez).\n1st & 10 at SEA 31\n\n-1-yd Run\n11:41 - 4th\nK.Walker up the middle to SEA 41 for -1 yards (K.Chaisson). ** Injury Update: SEA-J.Smith-Njigba has returned to the game.\n1st & 10 at SEA 42\n\nIncompletion\n11:04 - 4th\n(Shotgun) S.Darnold pass incomplete short right.\n2nd & 11 at SEA 41\n\nIncompletion\n11:00 - 4th\n(Shotgun) S.Darnold pass incomplete deep right to R.Shaheed.\n3rd & 11 at SEA 41\n\nPunt\n10:55 - 4th\nM.Dickson punts 55 yards to NE 4, Center-C.Stoll, downed by SEA-V.Jones.\n4th & 11 at SEA 41\n\nNew England Patriots\nInterception\n7 plays, 40 yards, 2:03\n19\nSEA\n7\nNE\n\nIncompletion\n10:40 - 4th\n(Shotgun) D.Maye pass incomplete deep left to A.Hooper.\n1st & 10 at NE 4\n\n13-yd Pass\n10:35 - 4th\n(Shotgun) D.Maye pass short left to R.Stevenson ran ob at NE 17 for 13 yards (J.Jobe).\n2nd & 10 at NE 4\n\nIncompletion\n10:11 - 4th\n(No Huddle, Shotgun) D.Maye pass incomplete deep left to M.Hollins (C.Bryant).\n1st & 10 at NE 17\n\n4-yd Pass\n10:02 - 4th\n(Shotgun) D.Maye pass short left to H.Henry to NE 21 for 4 yards (N.Emmanwori).\n2nd & 10 at NE 17\n\n16-yd Run\n9:35 - 4th\n(No Huddle, Shotgun) D.Maye scrambles up the middle to NE 37 for 16 yards (T.Woolen).\n3rd & 6 at NE 21\n\n7-yd Pass\n9:07 - 4th\n(No Huddle, Shotgun) D.Maye pass short left to K.Williams ran ob at NE 44 for 7 yards (J.Jobe).\n1st & 10 at NE 37\n\nInterception\n8:49 - 4th\n(No Huddle, Shotgun) D.Maye pass deep middle intended for K.Williams INTERCEPTED by J.Love at SEA 27. J.Love pushed ob at NE 38 for 35 yards (T.Henderson).\n2nd & 3 at NE 44\n\nSeattle Seahawks\nField Goal\n6 plays, 30 yards, 3:02\n22\nSEA\n7\nNE\n\n14-yd Run\n8:37 - 4th\nK.Walker right end pushed ob at NE 24 for 14 yards (J.Hawkins).\n1st & 10 at NE 38\n\n10-yd Run\n7:59 - 4th\nK.Walker right guard to NE 14 for 10 yards (C.Woodson; J.Hawkins).\n1st & 10 at NE 24\n\n2-yd Run\n7:11 - 4th\nK.Walker right end to NE 12 for 2 yards (H.Landry).\n1st & 10 at NE 14\n\n1-yd Run\n6:28 - 4th\nK.Walker right end to NE 11 for 1 yard (C.Davis).\n2nd & 8 at NE 12\n\n3-yd Pass\n5:43 - 4th\n(Shotgun) S.Darnold pass short left to J.Smith-Njigba to NE 8 for 3 yards (M.Jones).\n3rd & 7 at NE 11\n\n(5:38 - 4th) Timeout #1 by NE at 05:38.\n\nField Goal Good\n5:35 - 4th\nJ.Myers 26 yard field goal is GOOD, Center-C.Stoll, Holder-M.Dickson.\n4th & 4 at NE 8\n\n(5:35 - 4th) Official Timeout at 05:35.\n\n\nNew England Patriots\nInterception\n4 plays, 18 yards, 1:08\n29\nSEA\n7\nNE\n\nKickoff\n5:35 - 4th\nJ.Myers kicks 65 yards from SEA 35 to NE 0. T.Henderson ran ob at NE 38 for 38 yards (J.Myers).\n\nSack\n5:29 - 4th\n(Shotgun) D.Maye sacked at NE 34 for -4 yards (B.Murphy).\n1st & 10 at NE 38\n\n6-yd Pass\n5:04 - 4th\n(No Huddle, Shotgun) D.Maye pass short right to R.Stevenson ran ob at NE 40 for 6 yards (N.Emmanwori; J.Jobe).\n2nd & 14 at NE 34\n\n16-yd Pass\n4:57 - 4th\n(Shotgun) D.Maye pass short middle to H.Henry to SEA 44 for 16 yards (E.Jones).\n3rd & 8 at NE 40\n\nInterception Return Touchdown\n4:27 - 4th\n(No Huddle, Shotgun) D.Maye pass short middle intended for K.Boutte INTERCEPTED by U.Nwosu (D.Witherspoon) [D.Witherspoon] at NE 45. U.Nwosu for 45 yards, TOUCHDOWN. J.Myers extra point is GOOD, Center-C.Stoll, Holder-M.Dickson.\n1st & 10 at SEA 44\n\nNew England Patriots\nTouchdown\n8 plays, 65 yards, 2:06\n29\nSEA\n13\nNE\n\nKickoff\n4:27 - 4th\nJ.Myers kicks 65 yards from SEA 35 to end zone, Touchback to the NE 35.\n\n11-yd Pass\n4:27 - 4th\n(Shotgun) D.Maye pass short middle to D.Douglas to NE 46 for 11 yards (E.Jones).\n1st & 10 at NE 35\n\n8-yd Pass\n4:08 - 4th\n(No Huddle, Shotgun) D.Maye pass short middle to D.Douglas to SEA 46 for 8 yards (B.Mafe).\n1st & 10 at NE 46\n\n5-yd Pass\n3:48 - 4th\n(No Huddle, Shotgun) D.Maye pass short left to A.Hooper pushed ob at SEA 41 for 5 yards (D.Witherspoon).\n2nd & 2 at SEA 46\n\n10-yd Penalty\n3:42 - 4th\n(No Huddle, Shotgun) D.Maye scrambles left guard to SEA 37 for 4 yards (N.Emmanwori).PENALTY on NE-G.Bradbury, Offensive Holding, 10 yards, enforced at SEA 41 - No Play.\n1st & 10 at SEA 41\n\n7-yd Pass\n3:36 - 4th\n(Shotgun) D.Maye pass short right to R.Stevenson pushed ob at SEA 44 for 7 yards (D.Witherspoon).\n1st & 20 at NE 49\n\n11-yd Pass\n3:28 - 4th\n(No Huddle, Shotgun) D.Maye pass short middle to H.Henry to SEA 33 for 11 yards (D.Witherspoon).\n2nd & 13 at SEA 44\n\n26-yd Pass\n2:58 - 4th\n(No Huddle, Shotgun) D.Maye pass deep middle to S.Diggs to SEA 7 for 26 yards (C.Bryant).\n3rd & 2 at SEA 33\n\n(2:32 - 4th) Timeout #2 by SEA at 02:32.\n\nIncompletion\n2:32 - 4th\n(Shotgun) D.Maye pass incomplete short left to M.Hollins.\n1st & Goal at SEA 7\n\n7-yd Touchdown Pass\n2:21 - 4th\n(Shotgun) D.Maye pass short left to R.Stevenson for 7 yards, TOUCHDOWN. TWO-POINT CONVERSION ATTEMPT. D.Maye pass to H.Henry is incomplete. ATTEMPT FAILS. SEA-C.Bryant was injured during the play.\n2nd & Goal at SEA 7\n\n(2:21 - 4th) Timeout #3 by SEA at 02:21.\n\n\nSeattle Seahawks\nPunt\n3 plays, -12 yards, 0:32\n29\nSEA\n13\nNE\n\nKickoff\n2:21 - 4th\nA.Borregales kicks onside 11 yards from NE 35 to NE 46. G.Holani (didn't try to advance) to NE 46 for no gain.\n\n3-yd Run\n2:20 - 4th\nK.Walker right end to NE 43 for 3 yards (A.Jennings).\n1st & 10 at NE 46\n\n(2:14 - 4th) Timeout #2 by NE at 02:14.\n\n-6-yd Run\n2:14 - 4th\nO.Oluwatimi and J.Jones reported in as eligible. S.Darnold right tackle to NE 49 for -6 yards (M.Williams).\n2nd & 7 at NE 43\n\n(2:10 - 4th) Timeout #3 by NE at 02:10.\n\n10-yd Penalty\n2:10 - 4th\nO.Oluwatimi and J.Jones reported in as eligible. K.Walker up the middle for 49 yards, TOUCHDOWN NULLIFIED by Penalty.PENALTY on SEA-J.Sundell, Offensive Holding, 10 yards, enforced at NE 49 - No Play.\n3rd & 13 at NE 49\n\n1-yd Run\n2:01 - 4th\nO.Oluwatimi and J.Jones reported in as eligible. K.Walker right guard to SEA 42 for 1 yard (A.Jennings; K.Tonga).\n3rd & 23 at SEA 41\n\n(1:57 - 4th) Two-Minute Warning\n\nPunt\n1:57 - 4th\nM.Dickson punts 52 yards to NE 6, Center-C.Stoll, out of bounds.\n4th & 22 at SEA 42\n\nNew England Patriots\nEnd of Game\n6 plays, 65 yards, 1:49\n29\nSEA\n13\nNE\n\n6-yd Pass\n1:49 - 4th\n(Shotgun) D.Maye pass short middle to S.Diggs to NE 12 for 6 yards (E.Jones). ** Injury Update: SEA-C.Bryant has returned to the game.\n1st & 10 at NE 6\n\n5-yd Pass\n1:30 - 4th\n(No Huddle, Shotgun) D.Maye pass short left to A.Hooper to NE 17 for 5 yards (N.Emmanwori).\n2nd & 4 at NE 12\n\n11-yd Pass\n1:12 - 4th\n(No Huddle, Shotgun) D.Maye pass short left to M.Hollins to NE 28 for 11 yards (T.Woolen).\n1st & 10 at NE 17\n\n5-yd Penalty\n0:53 - 4th\n(No Huddle, Shotgun) D.Maye sacked at NE 27 for -1 yards (L.Williams).PENALTY on SEA-U.Nwosu, Defensive Offside, 5 yards, enforced at NE 28 - No Play.\n1st & 10 at NE 28\n\n5-yd Penalty\n0:47 - 4th\n(No Huddle, Shotgun) D.Maye pass incomplete deep right [B.Mafe].PENALTY on SEA-T.Woolen, Illegal Use of Hands, 5 yards, enforced at NE 33 - No Play.\n1st & 5 at NE 33\n\n9-yd Pass\n0:39 - 4th\n(No Huddle, Shotgun) D.Maye pass short middle to D.Douglas to NE 47 for 9 yards (E.Jones).\n1st & 10 at NE 38\n\nIncompletion\n0:20 - 4th\n(No Huddle, Shotgun) D.Maye pass incomplete deep right to K.Boutte.\n2nd & 1 at NE 47\n\n24-yd Pass\n0:12 - 4th\n(No Huddle, Shotgun) D.Maye pass short right to T.Henderson to SEA 29 for 24 yards (J.Love).\n3rd & 1 at NE 47\n\nEND GAME\n\n\n\nTask:\n\nYou are a seasoned football analyst that analyzes play-by-play match logs to help beginners understand a deeper knowledge level of football. Always refer back to the logs and state the specific play including the time, quarter, players, and field position when making claims about casual reasoning, strategic analysis, anomaly detection, pattern finding, and when talking about a play. Be analytical and informative and use a friendly and casual tone. \n\nSummarize the events of the super bowl game from the play by play logs given. Give 3–5 “turning point” plays and include the exact game state (score, down & distance, and field position) as evidenced in the log."
+      },
+      {
+        "role": "assistant",
+        "content": "Hey there, football fan! Let's dive into the action of Super Bowl LX using the play-by-play log you provided. It was a classic tale of a team controlling the ball and capitalizing on turnovers to build a lead, and then weathering a late comeback attempt. Seattle's defense came up huge when it mattered most.\n\n### Game Summary\n\nThe Seattle Seahawks put on a clinic in field position and timely plays. They marched down the field for three first-half field goals, taking a 9-0 lead into halftime. The game dramatically shifted late in the third quarter when Seattle's defense forced a fumble and recovered the ball deep in New England territory. This turnover sparked a dominant fourth quarter where Seattle scored a touchdown, then later returned an interception for another touchdown. Although New England managed to score two quick touchdowns in response, the hole was too deep. The game ended with a final score of **Seattle 29, New England 13**.\n\n---\n\n### Three Key Turning Points\n\nHere are three plays from the log that were absolute game-changers:\n\n#### 1. The Fumble Recovery (End of the 3rd Quarter)\n\nThis was the moment the floodgates began to open.\n\n*   **Time & Quarter:** 0:16 - 3rd Quarter\n*   **Game State:** The score was **SEA 12, NE 0**. Seattle had just punted. New England was facing **3rd & 6 at their own 44-yard line**.\n*   **The Play:** As the log details: \"(Shotgun) D.Maye sacked at NE 37 for -7 yards (D.Hall). **FUMBLES (D.Hall) [D.Hall], RECOVERED by SEA-B.Murphy at NE 37.**\" Defensive end Dre Hall absolutely wrecked the play, sacking Patriots QB Drake Maye and jarring the ball loose. Linebacker Bobby Murphy was Johnny-on-the-spot for the recovery, giving Seattle the ball on the New England 37-yard line. This single play completely flipped the field position and momentum.\n\n#### 2. Seattle's First Touchdown Drive (Start of the 4th Quarter)\n\nCapitalizing on the turnover, Seattle poured it on.\n\n*   **Time & Quarter:** Starting at 15:00 - 4th Quarter\n*   **Game State:** The score was still **SEA 12, NE 0**. Seattle took over possession at the **NE 37-yard line** after the fumble recovery. Their first play was a 1-yard run by K. Walker to the NE 25.\n*   **The Play:** Over the next five plays, the Seahawks marched into the end zone. The drive was capped by a brilliant throw: \"S.Darnold pass deep right to A.Barner for 16 yards, **TOUCHDOWN**.\" The log shows the final sequence was a 9-yard pass to C. Kupp to the NE 16, followed by the 16-yard touchdown strike. This score pushed the lead to **SEA 19, NE 0** and signaled that the game was likely over.\n\n#### 3. The Pick-Six (Mid 4th Quarter)\n\nWith New England trying to mount a comeback, Seattle's defense delivered the knockout blow.\n\n*   **Time & Quarter:** 4:27 - 4th Quarter\n*   **Game State:** The score was **SEA 22, NE 7**. Seattle had just kicked a field goal. New England was driving, facing **3rd & 8 at their own 40-yard line**.\n*   **The Play:** The log captures it perfectly: \"(No Huddle, Shotgun) D.Maye pass short middle intended for K.Boutte **INTERCEPTED by U.Nwosu** (D.Witherspoon) [D.Witherspoon] at NE 45. **U.Nwosu for 45 yards, TOUCHDOWN.**\" Linebacker Uchenna Nwosu read the play perfectly, jumped the route, and took the interception all the way for a touchdown. This play extended Seattle's lead to **SEA 29, NE 7**, making a New England comeback nearly impossible.\n\nThese three moments—the forced fumble, the immediate touchdown, and the pick-six—tell the story of Seattle's dominance in the decisive fourth quarter. Great game!\n"
+      },
+      {
+        "role": "user",
+        "content": "It seemed as if D. Maye struggled a lot in this game. Was Maye or the offensive line more responsible—use 3 specific plays to back up your claim. To add on to Maye's struggles, compare Maye pressure outcomes in 1st half vs 4th quarter using sacks/turnovers from the log. Would you say the game was mostly defensive since the first touchdown wasn't until the 4th quarter. What were the contributing factors to why the game lacked a lot of touchdowns. Who was the biggest player for the Seahawks on the Offensive side. List all their biggest plays and why they show impact on the game to back up your claim.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review fe44b80a' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_daily_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_daily_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_daily_personal",
+        "title": "Review fe44b80a",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_daily_personal",
+      "title": "Review fe44b80a",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should include exactly three specific plays from the play-by-play log to support the argument regarding whether the quarterback or the offensive line was responsible for the team's struggles.",
+        "The response should identify B.Murphy as Byron Murphy.",
+        "The response should identify D.Hall as Derick Hall",
+        "The response should identify R.Mills as Rylie Mills.",
+        "The response should correctly state that D. Maye was sacked exactly twice in the first half of the game: once at 8:51 in the 1st quarter and once at 10:44 in the 2nd quarter.",
+        "The response should correctly identify that D. Maye was sacked exactly once in the 4th quarter, which occurred at the 5:29 mark.",
+        "The response should correctly identify that D. Maye had one turnover in the 4th quarter, which was the interception at the 4:27 mark returned for a Seattle touchdown.",
+        "The response should not claim that the number of sacks represents the total number of \"pressures,\" as the log only explicitly tracks sacks, hits, and turnovers.",
+        "The response should confirm the game was defensive by correctly identifying that the first touchdown occurred with 13:24 remaining in the 4th quarter.",
+        "The response should identify contributing factors for the lack of touchdowns, such as Seattle settling for field goals on three separate occasions in the first half (11:58 1Q, 14:00 2Q, and 1:55 2Q).",
+        "The response should identify Kenneth Walker III as the biggest offensive player for the Seahawks based on the provided log.",
+        "The response should list the 30-yard run by Kenneth Walker III at 14:04 in the 2nd quarter as one of his biggest plays.",
+        "The response should list the 29-yard run by Kenneth Walker III at 13:34 in the 2nd quarter as one of his biggest plays.",
+        "The response should be organized using clear headers or bullet points to address each distinct part of the user's multi-part prompt.",
+        "The response should explicitly choose a side on responsibility (“Maye” or “offensive line” being more responsible)",
+        "The response should justify its choice of side of responsibility using the three cited plays.",
+        "The response should include a first-half vs 4th-quarter comparison that reports the counts of sacks and turnovers in each segment (first half: 2 sacks; fourth quarter: 1 sack, 1 INT) rather than only listing timestamps.",
+        "The response should answer the user’s question about whether the game was “mostly defensive” with a clear yes/no (or qualified stance) tied to evidence beyond just the first TD timing (e.g., sustained red-zone failures/FGs/turnovers).",
+        "The response should explain, for each listed “biggest” Seahawks offensive play, why it shows impact (e.g., set up scoring drive, flipped field position), not merely restate the gain.",
+        "The response should avoid inventing plays or stats not present in the log; if information is missing, it should explicitly say it is not in the log rather than guessing.",
+        "The response should include, for each of the three cited plays used to assign responsibility, the quarter and game clock time for that play (as written in the log).",
+        "The response should list all sacks and turnovers attributed to D. Maye with their quarter/time (not just totals).",
+        "The response should list every play in the log involving  K. Walker that gained ≥20 yards (or another explicit threshold); otherwise “list all their biggest plays” is underspecified and hard to score consistently."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_daily_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_daily_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should include exactly three specific plays from the play-by-play log to support the argument regarding whether the quarterback or the offensive line was responsible for the team's struggles.",
+          "The response should identify B.Murphy as Byron Murphy.",
+          "The response should identify D.Hall as Derick Hall",
+          "The response should identify R.Mills as Rylie Mills.",
+          "The response should correctly state that D. Maye was sacked exactly twice in the first half of the game: once at 8:51 in the 1st quarter and once at 10:44 in the 2nd quarter.",
+          "The response should correctly identify that D. Maye was sacked exactly once in the 4th quarter, which occurred at the 5:29 mark.",
+          "The response should correctly identify that D. Maye had one turnover in the 4th quarter, which was the interception at the 4:27 mark returned for a Seattle touchdown.",
+          "The response should not claim that the number of sacks represents the total number of \"pressures,\" as the log only explicitly tracks sacks, hits, and turnovers.",
+          "The response should confirm the game was defensive by correctly identifying that the first touchdown occurred with 13:24 remaining in the 4th quarter.",
+          "The response should identify contributing factors for the lack of touchdowns, such as Seattle settling for field goals on three separate occasions in the first half (11:58 1Q, 14:00 2Q, and 1:55 2Q).",
+          "The response should identify Kenneth Walker III as the biggest offensive player for the Seahawks based on the provided log.",
+          "The response should list the 30-yard run by Kenneth Walker III at 14:04 in the 2nd quarter as one of his biggest plays.",
+          "The response should list the 29-yard run by Kenneth Walker III at 13:34 in the 2nd quarter as one of his biggest plays.",
+          "The response should be organized using clear headers or bullet points to address each distinct part of the user's multi-part prompt.",
+          "The response should explicitly choose a side on responsibility (“Maye” or “offensive line” being more responsible)",
+          "The response should justify its choice of side of responsibility using the three cited plays.",
+          "The response should include a first-half vs 4th-quarter comparison that reports the counts of sacks and turnovers in each segment (first half: 2 sacks; fourth quarter: 1 sack, 1 INT) rather than only listing timestamps.",
+          "The response should answer the user’s question about whether the game was “mostly defensive” with a clear yes/no (or qualified stance) tied to evidence beyond just the first TD timing (e.g., sustained red-zone failures/FGs/turnovers).",
+          "The response should explain, for each listed “biggest” Seahawks offensive play, why it shows impact (e.g., set up scoring drive, flipped field position), not merely restate the gain.",
+          "The response should avoid inventing plays or stats not present in the log; if information is missing, it should explicitly say it is not in the log rather than guessing.",
+          "The response should include, for each of the three cited plays used to assign responsibility, the quarter and game clock time for that play (as written in the log).",
+          "The response should list all sacks and turnovers attributed to D. Maye with their quarter/time (not just totals).",
+          "The response should list every play in the log involving  K. Walker that gained ≥20 yards (or another explicit threshold); otherwise “list all their biggest plays” is underspecified and hard to score consistently."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_daily_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_daily_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_daily_personal",
+          "title": "Review fe44b80a",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_daily_personal",
+        "title": "Review fe44b80a",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

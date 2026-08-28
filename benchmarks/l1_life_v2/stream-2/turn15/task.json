@@ -1,0 +1,386 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn15",
+  "turn_index": 15,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "a592df45-0d93-f296-29be-1b9ddd8a36ae",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 126,
+    "source_sha256": "49469684c1af43823d1426d71e4c1837ec9771e5e8c89f7006aa901ee43036cb",
+    "source_metadata": {
+      "task_id": "a592df45-0d93-f296-29be-1b9ddd8a36ae",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Active Training Checklist\nNote: A minimum of three days of training is required for each new driver.\nDaily Communication\n•\t☐ Check in with the trainer daily for updates.\n•\t☐ Communicate terminal carding needs with dispatch.\nFuel Card Requests\n•\t☐ Request new fuel cards for the driver.\n•\t☐ Fuel Stop A – emailforcards@emailforcards.com\n•\t☐ Energy Hub – emailforcards@emailforcards.com  and emailforcards@emailforcards.com emailforcards@emailforcards.com\n•\t☐ You can request a PIN or have them issue a random PIN to provide to the driver.\nTraining Pay\n•\t☐ Record training pay for both trainer and trainee daily.\n•\t☐ Trainee: to be determined\n•\t☐ Trainer: to be determined\n\nDriver Application Review Checklist\nPurpose\nTo ensure a thorough and consistent review process for DOT applications and compliance\nchecks.\nProcedure\nStep 1: Application Review\no Verify completion of DOT Application.\no Review for accidents and prior issues at places of employment.\no Check for gaps in employment history.\nStep 2: Background Verification\no Run Data Q File in specific system.\no Review Background check for any criminal record etc\no Review PSP for DOT Inspection results.\no Review CDLIS for verification of CSL status and history.\no Check Motor Vehicle Record (MVR) for:\n Recent accidents.\n Validity of CDL.\n Hazmat endorsement expiration for ID.\nNotes\nEnsure all records are up-to-date and discrepancies are flagged for further investigation and\nreview with the applicant.\n\nPurpose:\nTo ensure all required documentation is collected, reviewed, and verified before the driver's training start date.\n✅ Checklist\n1. Driver’s License (DL) – Front &amp; Back\n• Copy of DL (front and back)\n• Verify Endorsements (e.g., Hazmat, Tanker)\n• Verify CDL Expiration Date\n• Verify Hazmat Expiration Date\n• Check for Restrictions listed\n2. Medical Card\n• Copy of current Medical Card\n• Confirm Expiration Date\n• Review any Restrictions\n• Ensure information matches MVR\n3. VOEs (Verification of Employment)\n• Submit VOEs for all CDL employment in the past 3 years\n• Make 3 contact attempts within 30 days of hire\n• Document all attempts with date/method (phone/email/etc.)\n• Contact past employers for termination details and accident history\n4. FMCSA Clearinghouse\n• Signed Consent Form (from ATS Provider )\n• Run Full FMCSA Query\n5. Pre-Employment Drug Screen\n• Schedule through GHI Labs\n• Confirm Results Received\n6. Social Security Card\n• SS Card must be sent to Sarah when training begins\nNotes:\n• All documentation must be collected and verified before training. To include items from pre-interview checklist\n• Missing or incomplete documentation should be flagged and followed up on immediately.\n• Maintain all documents in the driver’s DQ file.\n\n. Systems Access\n•\tTelematics System Login\n☐\tEnsure the driver receives login credentials.\n•\tCE Login\n☐\tEnsure the driver has access to CE.\n☐\tSend an email to CE Support to request device approval for the driver.\n2. Terminal Carding and Portal Access\n•\tRecord and Document Cards\n☐\tCollect a list of the driver’s current fuel cards.\n☐\tUpload the list to the Driver’s CE Profile.\n•\tTerminal Access\n•\tIf currently carded:\n☐\tEmail the following to email@email.com:\n☐\tPhoto of driver’s current card.\n☐\tDriver’s full name.\n☐\tPrevious fuel carrier.\n☐\tDriver’s PIN.\n☐\tDriver’s phone number.\n•\tIf not currently carded:\n☐\tCreate a training account for the driver.\n☐\tAdd the driver to the portal.\n•\tFuel Terminal Portal Access\n☐\tIf currently carded, update the driver’s company to ours in the portal. If not, create a\n\ntraining account for the driver. \n•\tLetters of Authorization\n☐\tAttach the General Letter of Authorization.\n☐\tAttach the Refinery C Letter of Authorization (if applicable).\n3. Training Documents (All via Adobe)\nImportant: The Trainer must sign first. The driver signs second. Please email these from Adobe for e-signature. All documents must be completed before the driver is released from training. \n•\t☐ Training Checklist\n•\t☐ Hazmat Training Document\n•\t☐ Road Test\n\n. Systems Access\n•\tTelematics System Login\n☐\tEnsure the driver receives login credentials.\n•\tCE Login\n☐\tEnsure the driver has access to CE.\n☐\tSend an email to CE Support to request device approval for the driver.\n2. Terminal Carding and Portal Access\n•\tRecord and Document Cards\n☐\tCollect a list of the driver’s current fuel cards.\n☐\tUpload the list to the Driver’s CE Profile.\n•\tRefinery B Access\n•\tIf currently carded:\n☐\tEmail the following to email@email.com:\n☐\tPhoto of driver’s current card.\n☐\tDriver’s full name.\n☐\tPrevious fuel carrier.\n☐\tDriver’s PIN.\n☐\tDriver’s phone number.\n•\tIf not currently carded:\n☐\tCreate a  training account for the driver.\n☐\tAdd the driver to the portal.\n•\tPortal Access\n☐\tIf currently carded, update the driver’s company to ours in the portal. If not, create a\n\ntraining account for the driver. \n•\tLetters of Authorization\n☐\tAttach the General Letter of Authorization.\n☐\tAttach the Refinery C Letter of Authorization (if applicable).\n3. Training Documents (All via Adobe)\nImportant: The Trainer must sign first. The driver signs second. Please email these from Adobe for e-signature. All documents must be completed before the driver is released from training. \n•\t☐ Training Checklist\n•\t☐ Hazmat Training Document\n•\t☐ Road Test\n\nVerification of Employment (VOE) Process\nPurpose\nTo ensure compliance with DOT regulations and company standards, our company requires timely and\ndocumented verification of employment (VOE) for all newly hired drivers. This document outlines the VOE process\nand recordkeeping expectations.\nVOE Procedure\n1. Required Attempts\nA minimum of three (3) attempts must be made within 30 days of the driver’s start date.\nAll attempts must be clearly documented using the VOE Attempt Log located on Page 2 of this document.\nCompleted logs, along with any supporting documentation, must be filed in the driver’s DQ file within the specific system.\n2. Types of Contact Attempts\nUse different methods of outreach for each attempt:\n• Phone call\n• Fax\n• Email\n• Online contact form\nAttempt to obtain clarification on any terminations or accidents reported by previous employers.\n3. Using ATS Provider Xchange\nThe primary method for submitting VOEs should be through the ATS Provider Xchange platform.\nIf a carrier is not listed, enter additional information such as:\n- Fax number\n- Email address\n- Phone number\n4. When No Response Is Received\nIf you receive no response after submitting a VOE:\n• Search online for the previous employer’s contact number. Call and ask for the correct department or contact\nto receive VOE requests. Record the name, phone number, and result of the conversation.\n• If no phone number is found, use the employer’s 'Contact Us' form on their website. Take a screenshot of the\nmessage before submission and save it for the record.\n• If an email address is found, send an inquiry email asking where to submit the VOE. Save a copy of the sent\nemail and log the attempt.\n• If a VOE request must be emailed, use the form found on Page 3. You will need to attach the driver’s prior\nauthorization letter found in ATS Provider under forms.\n5. Documentation\nEnsure all outreach attempts are logged using the VOE Attempt document on Page 3.\nMaintain a copy of all communications (emails, faxes, screenshots) for compliance.\nSubmit completed logs to the DQ file for proper recordkeeping.\n\nPAST EMPLOYER CONTACT ATTEMPT LOG\nThis form is used to record all attempts made to contact a driver's previous employers in compliance with FMCSA\nregulations (49 CFR Part 391.23).\nDriver Name: __________________________________________\nDate of Birth: ___________\nPosition Applied For: __________________________________\nNotes / Follow-Up Actions:\n____________________________________________________________________________________\n____________________________________________________________________________________\n____________________________________________________________________________________\nCompleted By: __________________________________\nDate: _______________\nDate of Attempt Time Contact Method\n(Phone/Email/Fax)\nContact Name Company\nContacted\nResult\n(Left Message, No Answer,\n\nTRUCKING INDUSTRY - VERIFICATION OF EMPLOYMENT (VOE) FORM\nSECTION 1: DRIVER INFORMATION\nName: ___________________________________________\nDate of Birth: ___________ Last 4 of SSN: ________\nPhone Number: ___________________________________\nEmail Address: ___________________________________\nSECTION 2: REQUESTING EMPLOYER INFORMATION\nCompany Name: ____________________________________\nContact Person: ___________________________________\nPhone Number: ____________________________________\nFax or Email: _____________________________________\nRequest Date: _______________\nSECTION 3: DRIVER'S CONSENT\nI hereby authorize the release of my employment and safety history to the company listed above in Section 2.\nSignature of Driver: __________________________ Date: _______________\nSECTION 4: PREVIOUS EMPLOYER VERIFICATION\nCompany Name: ____________________________________\nAddress: _________________________________________\nCity/State/ZIP: ___________________________________\nPhone Number: ____________________________________\nFax or Email: _____________________________________\nPosition Held: ____________________________________\nEmployment Start Date: ___________ End Date: ___________\nWas driver subject to FMCSR while employed? ☐ Yes ☐ No\nWas this a safety-sensitive function subject to drug/alcohol testing per DOT? ☐ Yes ☐ No\nReason for Leaving: ________________________________\nWould you rehire this driver? ☐ Yes ☐ No ☐ Upon Review\nAccidents during employment (if any):\n- Date: __________ Description: ___________________________ Preventable? ☐ Yes ☐ No\n- Date: __________ Description: ___________________________ Preventable? ☐ Yes ☐ No\nDrug/Alcohol Testing History (as required by 49 CFR 40.25):\n1. Any alcohol test with a result of 0.04 or higher? ☐ Yes ☐ No\n2. Any verified positive drug test? ☐ Yes ☐ No\n3. Any refusals to be tested? ☐ Yes ☐ No\n4. Any other violations of DOT drug/alcohol testing regulations? ☐ Yes ☐ No\n5. Did this driver complete a return-to-duty process? ☐ Yes ☐ No\nCompleted By (Previous Employer):\nName: ____________________________________________\nTitle: ____________________________________________\nSignature: ________________________________________\nDate Completed: _______________\nPlease return this form by:\n▶ Fax: _________________________ or\n▶ Email: _________________________\nNOTE: This information is being requested in compliance with 49 CFR Part 391.23 and 40.25 and will be used for\nemployment verification purposes only.\n\nTrainer and Trainee must review each section. Initial each box upon completion. Signatures required at the end.\nContact Protocols\n• □ Dispatch contact for time off, allocation, loading issues, late starts, spills, accidents, cross-drops, and\nequipment issues (before 0600 and after 1800).\n• □ Jessica contact for equipment, maneuvers, safety/compliance issues (0600-1800 call; after hours, text).\nPre-Trip Procedures\n• □ Clock into Telematics System and CE Connect.\n• □ Select the correct truck and trailer in both systems.\n• □ Perform DVIR walk-around and inspect for DOT compliance issues (e.g., brakes, tires, lighting).\n• □ Bang on the tanks to ensure they are empty.\n• □ Ensure all paperwork is in the truck or trailer.\n• □ Review DOT Inspection checklist with trainee.\n• □ Call Dispatch with any concerns before leaving the yard.\nPost-Trip Procedures\n• □ Complete post-trip DVIR and walk-around.\n• □ Report issues to Dispatch and Jessica.\n• □ Log out of CE Connect and Telematics System.\nCE Connect Training\n• □ Understand how to select a truck and trailer (see image below).\n• □ Know when to select: 'at rack', 'left rack', 'en route', 'at location', 'left location'.\n• □ Review app notes and where to upload BO Ls and meter readings.\n• □ Upload BEFORE and AFTER readings every time if available.\nLoading Procedures\n• □ No phone usage during loading.\n• □ Bang on the tanks to ensure they are empty.\n• □ Load diesel in the same compartment if possible.\n• □ Label compartments and review CE Connect notes.\n• □ Verify loading number matches BOL. Contact dispatch if not.\nPre-Unloading Instructions\n• □ No phone usage during unloading prep.\n• □ Verify store address with CE Connect before unloading. If any doubt, contact dispatch.\n• □ Collect veeder tapes and inspect for water if the store is open.\n• □ Place safety cones and connect vapor recovery.\n• □ Place green cone on DSL drop if applicable.\n• □ Cross-check BOL with compartment labels.\n• □ Stick tanks and inspect for water using paste.\n• □ Note stick readings to record in CE.\n• □ Diesel must be dropped first\n• □ Contact dispatch if there is any water present in the tank. Do not drop.\nWhile Dropping\n• □ No phone usage.\n• □ Use CE to enter expected gallons, stick readings, and veeder values.\n• □ Water inches should default to zero.\nAfter Offloading\n• □ Bang outside of trailer to confirm empty compartments.\n• □ Use site glass and bucket check each compartment.\n• □ Check PSI (must be&gt; 60).\n• □ Stick tanks for after readings.\n• □ Record after stick readings in CE app.\n• □ Retrieve After Veeder tape.\n• □ Finalize load in CE and verify Over /Short field is clear.\n• □ Upload clear pictures of BOL and veeder tapes.\nZero Tolerance Safety Items\n• □ Seat belt use required while driving.\n• □ No distracted driving or excessive speeding.\n• □ No phone use while driving, loading, or unloading.\nTruck Onboarding Checklist\nBasic Truck Information (All Trucks)\n☐ Unit Number Assigned\n☐ VIN Verified\n☐ Year / Make / Model\n☐ License Plate Number\n☐ Registered Owner Confirmed\nOwner Operator (OO) Requirements\n☐ Email insurance request to David Ross – Summit Insurance (dross@summitins.com)\n☐ Cab Card Issued \n☐ COI Received\n☐ Current Federal DOT Inspection (Recent)\n☐ Recent Maintenance Documentation\n☐ Registration Copy\n☐ OO Provided Unit Number\n☐ Logo Installed via Omega Signs (555-019-2834 | omegasigns@email.net | 123 Maple Ave, Springfield, IL 62704)\n☐ Photos Filed – Left, Front, Right\n☐ Gateway Inventory Checked\n☐ Gateway Ordered (if needed)\n☐ OO Coordinated Gateway Installation with Michael\n☐ Gateway Activated &amp; Tested\nCompany Truck Requirements\n☐ Email insurance request to David Ross – Summit Insurance (dross@summitins.com)\n☐ Cab Card Issued\n☐ COI Received\n☐ Current Federal DOT Inspection (Recent)\n☐ Recent Maintenance Documentation\n☐ Registration Copy Filed\n☐ Unit Number Assigned\n☐ Truck Color Provided to Omega Signs\n☐ Logo Scheduled with Omega Signs &amp; Michael\n☐ Logo Installed &amp; Verified\n☐ Photos Filed – Left, Front, Right\n☐ Gateway Inventory Checked\n☐ Gateway Ordered (if needed)\n☐ Gateway Installation Coordinated with Michael\n☐ Gateway Activated &amp; Tested\nInternal Admin Completion Check\n☐ Truck Added to Dispatch System\n☐ Truck Added to Samsara with appropriate tags added\n☐ Added to Maintenance Tracker\n☐ Added to Insurance Schedule\n☐ Added to Driver Assignment Sheet\n☐ Digital Folder Created &amp; Filed\n☐ Shared with Ops &amp; Maintenance Team\nFinal Approval\nOnboarding Complete Date: __________________________\nApproved By: __________________________\nEquipment Onboarding Review-20260315_090000-Meeting Recording\nMarch 15, 2026, 9:00AM\n23m 9s\n\nSarah Jenkins   0:07\nYeah.\n\nMegan Roth   0:20\nlike away from her, and some of these will require like tasking Michael. I I want it to be basically coming from you. And she's onboarding an owner-operator right now. She's going to handle his stuff all the way through. We don't have anybody else in the pipeline. So it's not like something you have to\non right now. I just wanted to review the process and basically what is needed. Umm It's, I think, pretty self-explanatory. You get there, you know, we'll assign them a unit number and I'll show you where to find the next unit number. It's just the next one down\nbasically on this spreadsheet, or if you go into the equipment folders, you know how they're sorted by by number. Basically, it's the next even number, which is the next the next available truck number. A lot of the responsibility is going to be put on the owner-operator, so nothing that you would have to specifically schedule\n\nSarah Jenkins   1:10\nYeah.\n\nMegan Roth   1:18\nfor the gateway installation, and that would be scheduling that with Michael. Um But basically you would assign them their unit number, you would verify or have them send you the VIN, your make and model, their license plate number, and just confirm that they're the registered owner, which\nYou can obviously confirm through their registration and add it to insurance, which is going to be David Ross here at Summit Insurance. Just ask him to add it to the insurance and the CAF card and then he will issue you both. Send them to your e-mail.\nThe driver's recent dot inspection report, if they don't have a recent federal inspection because you may get pushed back and say I have a state inspection, you know, but I'm not required to do federal because they don't have IFTAC. But either way we require it because.\nWe want to make sure that they're dot compliant. They can get those done wherever they see fit. It could be Lowe's TDI. As long as we have that dot inspection report on file, we're OK of course with no dot violation like issues and if if there were violations that we need to get this fixed.\nAny recent maintenance documentation that they have, like the last PM or last service records they have, if anything's been repaired, some of them not tell you they don't have this, which is OK, we'll start getting it from them in the future.\nAnd then copy of the registration, their unit number that you've already have this and then you'll you'll give them this information and tell them to give. They'll need just their unit number which you've already assigned and they can contact Omega Signs.\nto have their decals put on. Umm And then photos, they'll have to send a left, front and right photo of their truck. That's just to ensure that if they start working for us and then they say, hey, I\ndamage my bumper or somebody hit something at the yard, like we can confirm like, no, this this was, you know, that was already there when we onboarded your vehicle. And we want to make sure that they're, yeah.\n\nSarah Jenkins   3:26\nSorry, sorry to interrupt you Megan. So what is this gateway gate? What is gateway?\n\nMegan Roth   3:32\nSo Gateway is is the same Sara unit and that has to be installed before they can run like on their own.\nAnd so sometimes we have to order them. So we do have some that are in inventory, especially if we are, if we let somebody go and we get the unit out of their truck. Like sometimes I know you'll see this e-mail like, hey, Thomas hasn't, we haven't gotten your gateway like hold the escrow.\nThose things can be a little pricey, so we try to get those obviously back from the owner operators and then we'll have them in inventory so we won't have to order one. I'm going to send a separate second document on like how to order these and also how to like.\n\nSarah Jenkins   4:10\nMhm.\n\nMegan Roth   4:16\nAdd the information into Samsar, etcetera. This is just like a general checklist and I will. I don't anticipate you the first go around being like, oh, I've got a down pat, you know, and that's where we can go through it together and then the coordinated gateway installation.\nOnce the gateway comes in, because you'll have them.\nWe used to have him delivered to Kevin's address. I'll confirm with him if that's how he still wants it, because maybe he want he'll want it just delivered to Michael's, which would make the most sense. But then the owner operator, once you tell them it's in like they need to coordinate with Michael to get it installed.\nAnd let you know when it's completed. That's not something you'll have to do. And then the gateway will have to be activated and tested. You'll be able to see once Arathan tells you, hey, it's it's it's ready to go. You'll be able to see it in Samsara, so you'll know that it's working.\nAnd if for some reason you're not seeing it, well, that means that it's not working. Um\nCompany trucks is basically it's the same. The only thing that's going to be different is that we will be the ones who coordinate like you'll get with Michael and say, hey you, I need you to go get this, the logo put on and then you'll tell him like, hey, I need, I've ordered the gateway. I need you to put the gateway, you know, in these units.\nThat's really the only difference is that we're we're the ones who are.\nyou know, coordinating that stuff instead of putting some of that responsibility on the owner-operator. And then we'd have to add the truck to the dispatch system, Samsara, the maintenance tracker, goodness gracious, the insurance schedule, which is basically when it expires, but all of them expire\nSame time. So I don't really think that you have to document that. I'll take that off there driver assignment sheet.\nThis is, I believe.\nThis is basically the same as updating the tracker. So let me take this off. And I'll take this off too, because they all are renewed at the same time. And then\nShare with OPS and maintenance team.\nMichael's already gonna be aware and.\nIt's going to be in the tracker with the driver's name and Jessica will inform people that they have a new driver in training and coming out of training. So I don't think you need to really inform anybody. And then you can just type in the completion date and approved. You'll create the.\nYou know, I think it's already in here. Hold on.\nPhotos filed.\nLet's not be added to this right here. Oh yeah, digital folder created in files. So that's just the folder for the unit in teams and then just putting all of those that documentation into that particular folder.\nThis checklist I'll I'll I'll put together a template for you that you'll send to the driver and I'll basically tell them everything that's needed with that information. So you can just save it to your templates and send it, send it to them, just add their e-mail address and their you know their name.\n\nSarah Jenkins   7:29\nOK.\n\nMegan Roth   7:31\nAnd that's.\nI say that's pretty much it, but of course when you when you do it, because there's other pieces to it, like knowing how to order the gateway, knowing how to add it to the appropriate systems and how to tag it. I know, I know we need to review the tracker and going through that process, so.\nWe will do this together and then I'll also have those documents created for future reference. And then at any point in time, if you're going through this and you have any questions or you're having trouble getting anything from the driver, reach out to Jessica and she'll jump on them as far as since she's doing onboarding and just she'll tell them like, hey, I can't throw you into training.\nuntil you get her this information or whatever, you know, heat she needs to put on them, she can.\nAnd so that is pretty much that piece of it. I I know as far as like the systems and things like that, there's going to be questions there. But as far as like the general, like I would say macro overview, do you have any questions?\nHave any questions?\n\nSarah Jenkins   8:30\nNo. Yeah, I think let's do we have any drivers coming in or no?\n\nMegan Roth   8:36\nWe just have the one that she's currently onboarding, but she is talking to another one that she thinks she's going to hire. The one that she's currently onboarding, she's got I think almost all of this information already. So he's not a good one to start with. I do have the two units, the freight liners at the yard and while.\n\nSarah Jenkins   8:39\nOK.\nOK.\nOK.\n\nMegan Roth   8:54\nWe don't have to contact drivers. We could still kind of go through that process of like adding to the dispatch system, adding to Samsara, ordering a gateway and there's not a huge rush on those. So we could use that as kind of like a test for those systems and then the next owner operator she onboards.\nHopefully you'll be a little bit more comfortable with it.\n\nSarah Jenkins   9:14\nOK, yeah, we can do that.\n\nMegan Roth   9:17\nAnd then, um, no, you're okay.\n\nSarah Jenkins   9:18\nSo when you sorry, so whenever we get new, whenever we get new vehicles and in units, we already like Add all the like gateway and all that stuff in before we even have a driver.\n\nMegan Roth   9:32\nUm, like for our new units?\n\nSarah Jenkins   9:35\nYeah, new units like you said that there are two vehicles. We have two units available, right? So we do all, we add all the stuff, you know, gateway and everything, add them to the maintenance tracker and all that stuff. And then we whenever we have a new driver, we just assign that to them. Is that how?\n\nMegan Roth   9:37\nYes, yeah, we'll...\nYes.\nYes, that's that's exactly how we do it. So when we're entering it like in the dispatch system, the tracker in Samsara, we just won't add that driver's tag, which is and I'll show you what that looks like, but we basically assign that unit to a driver.\n\nSarah Jenkins   9:55\nWe do be off.\nOK.\n\nMegan Roth   10:11\nNow, if there's no driver assigned to the unit, those whoever takes it, because they'll be available as like a spare unit, right? Whoever ends up taking it, they will temporarily sign into it, but they'll never be like permanently assigned to it, if that makes sense.\n\nSarah Jenkins   10:18\nYeah.\nYeah.\n\nMegan Roth   10:26\nAnd so once we do have someone permanently assigned, like if Jessica is hiring and she says I have this unit available or she said, hey, I'm going to give Charles this newer unit and put this driver in Charles's old unit, she would like communicate that to you and then you would go about making the changes assigning.\nCharles's unit to the new driver and taking that.\nnew unit that you have and assigning it to Charles, which would all pretty much be the same process, just changing who you, who's the primary, you know, like owner of that unit, which is pretty, that's a simple process. But But yeah, we're still going to add them and onboard them so that if a truck\n\nSarah Jenkins   11:00\nYeah, OK.\n\nMegan Roth   11:09\ngoes down or we need it, or even an owner operator wants to rent it, that it's available.\n\nSarah Jenkins   11:14\nOK, OK, got it.\n\nMegan Roth   11:16\nAnd and then the so the next part of what I wanted to discuss was about the payroll for the upcoming like owner operators and for company owners. I don't know if we'll be able to touch both.\nbefore, because I know payroll is due next week. But I think what we want to try to do, and this Tariq guy over there who's you know just providing some guidance of like how to set it up in bill.com, is going to let me know the overall timeline of how quickly those things are going to process so\n\nSarah Jenkins   11:35\nYeah.\n\nMegan Roth   11:52\nknow when to run it for the owner operators, but the first piece of that is getting all of their their basically like their account set up in build.com.\n\nSarah Jenkins   12:01\nYeah.\n\nMegan Roth   12:03\nSo I was going to see if you could put though at least that piece into Bill.com before the upcoming payroll, and then we can jump on a call on Monday. Umm I'm going to go. All you'll have to do is just put you don't have to put the\nI guess like accounts in it for them that's associated, but just their general. I don't know if there's a way to do an alias or a name like like say for like James or which I know his stuff's already been put in, so we use it as an example, but.\nAnd some of them may already be in there, but I don't know if there's a way to put like a an alternative like description, or you know that doesn't associate to QBO. But it's still like you could. You could identify it as like this is.\n\nSarah Jenkins   12:40\nOh dear.\n\nMegan Roth   12:47\nThis is, you know, Frank, instead of like, swag, you know what I mean?\n\nSarah Jenkins   12:49\nOh, it's already in there. I mean, it's already in there. bill.com and QuickBooks is all synced together. So all the information in QuickBooks is already in bill.com. So all those vendors are already in there. Now we just need to put the banking information for all of them in there.\n\nMegan Roth   13:05\nOh, perfect. OK, so the the drivers are already in there then, so it's just, oh wow, that that makes it a little easier. So. So then you just need to go in and add their ACH stuff. So I guess that's the only pieces.\n\nSarah Jenkins   13:05\nUh, yeah.\nYeah, they're all in there, yeah.\nAdd all the, yeah, banking, yeah, banking information, but that needs to be done manually. So yeah, all the for all those owner operators, I'll have to enter the routing and then you know all that stuff in there.\n\nMegan Roth   13:27\nOkay. Can you, is that something that you could do before before we run payroll?\n\nSarah Jenkins   13:34\nOK. So when are we, when are we going to have the files available? So maybe 16th or 15th is the Sunday. So I think usually on Tuesday, I think B bills Sunday.\nUm.\nSo usually when like when I used to run the payroll, I used to do it on the 19th for the 20th, but I I'm not sure of how Robert and Linda are doing now. Yeah, how long it's gonna take for them. I I'm sure that they have already entered all this stuff, but we do not want to, you know, send those emails to the drivers up until I guess.\n\nMegan Roth   13:58\nOK.\nLike how long it's going to take. Okay.\n\nSarah Jenkins   14:11\nEverything has been built. Yeah, yeah, we all build. So that's why usually I always conform with everybody before I even, you know, start working on the files. So yeah, yeah, before the files is ready. And then once the file is ready, that's when.\n\nMegan Roth   14:12\nUntil we're ready.\nOK, OK.\n\nSarah Jenkins   14:27\nAgain in bill.com. If we are using bill.com then all that information will need to be also entered in bill.com in order to create the ACH. So all the you know bills will need to be created in bill.com.\n\nMegan Roth   14:36\nYes.\nOK.\nYeah, that's kind of what we were looking at today trying to figure out with him like because you know with like the escrow because it's because it's going into QBO like what it needed to look like for the entry portion. So that's why I wanted to see if you can. I guess the ACH part isn't super important until we get ready to actually like run the payroll. So it gives you a little bit of time, but the other.\n\nSarah Jenkins   14:53\nYeah. Yeah.\nYeah.\n\nMegan Roth   15:04\nPart like the how we're gonna enter it. I I'm gonna.\nI'm going to look at it again today and send it over to this guy to make sure that the way it's transferring over is right. And then I wanted to see if we could kind of jump on a call to make sure that one that she understands and that we're not missing anything and then.\n\nSarah Jenkins   15:23\nThis the person Tariq.\n\nMegan Roth   15:26\nNo, like you like, like have you, me and Jessica, and I was. I'm not sure about her going ahead and doing the the company guys payroll. I don't know if you'll have time to review it with her before then, because it's kind of a I know it's kind of a lot. So\n\nSarah Jenkins   15:33\nOK.\n\nMegan Roth   15:42\nUm.\nYeah, this is.\n\nSarah Jenkins   15:47\nYeah, this one. So because now, yeah, yeah, bill.com like entering all that banking information. I can do that before the payroll next week, but it's just that once the file is ready.\n\nMegan Roth   16:02\nMhm.\n\nSarah Jenkins   16:03\nWe'll have to 1st put all that information for right now. Currently what I'm doing is after all the, you know, payments are done, I usually do it like whenever I can like it because there's no rush. I have to just do it within, you know, in that month, right?\nSo I just go to QuickBooks and make all that entries for all the owner operators. So I also make the entries for escrow and all that stuff while I'm doing the, you know, entering the bills for the drivers. So like for example if you are paying 2000 to the owner operator, that 2000 will include a lot of stuff.\n\nMegan Roth   16:19\nUhuh.\n\nSarah Jenkins   16:38\nRight. So we have deducted escrow. So all that entries are made while I'm doing, you know, while I'm entering all that information in QuickBooks. So and then later on, sorry, later on whenever it comes out from our bank. So I just assign those invoices to that payments. So it has to be assigned, you know, reconciled. So that's.\nWhat we do currently, but if you are using bill.com, so bill.com will need the bill before we even pay the driver. So it has to be done right. Currently I'm doing it later, but now we have to do it, you know, before we even make the payments, so.\n\nMegan Roth   17:07\nBefore.\nYes, and\n\nSarah Jenkins   17:13\nOnce the file is reviewed, all that needs to be entered in bill.com and then only or either in QuickBooks it's all synced. So Bill.com will receive whatever is entered in QuickBooks and then after that we have to make the payments to all those. So here the only thing that we are not doing is instead.\nInstead of manually entering the amount in banking in the bank, we are just paying it through bill.com. That's the only change.\n\nMegan Roth   17:41\nYeah, yes, so that so that info would need to be put in before, and i'm I think what i'm going to do is um i'm going to finish putting up the filling in the\nI guess like you know accounts or subsections that he needs underneath that owner operator each one and then I'll have a template that will populate exactly what needs to go in there and it should be as simple as just uploading it and then from there we can issue the payment. I'm looking at that today to see how I can make it.\n\nSarah Jenkins   18:06\nYeah.\nOK.\n\nMegan Roth   18:12\nmake that portion work. And then probably going to touch base again on Monday just to like hash out like what that process looks like. And then because I leave on Tuesday, so I just want to, you know, make sure that I get it that part squared away. And then in the future she'll be the like I'll have her\n\nSarah Jenkins   18:28\nOK.\nYeah.\n\nMegan Roth   18:40\nTo to issue the payment. Um.\n\nSarah Jenkins   18:40\nYeah.\nBut so Jessica is doing that in bill.com.\n\nMegan Roth   18:47\nYes, Bill.com. Yeah, instead of and then it that should put in the journal entry right into QuickBooks.\n\nSarah Jenkins   18:48\nOK. Yeah, we have.\nYeah, if all the entries are done to the correct account, then it should.\n\nMegan Roth   18:59\nOK, perfect. And then for the, I guess upcoming payrolls, I don't know if there'll be time, but I do eventually want to show her what she needs to do for the the pay core section for the company guys and then.\n\nSarah Jenkins   19:13\nYeah.\n\nMegan Roth   19:14\nFor corporate, we're trying to figure out.\n\nSarah Jenkins   19:19\nCorporate is already in there. You don't have to touch anything. So corporate is very simple. It just it's all in there because we are only changing whenever, yeah, whenever we have any salary changes, that's the only time we are touching it. Otherwise we don't have to touch that unless you are adding any, you know, overtime or something like that.\n\nMegan Roth   19:24\nOkay, for the upcoming.\nOK, but.\n\nSarah Jenkins   19:35\nYeah. Company drivers is the one that you are entering all that stuff. I mean, I can show her the company driver one on Thursday when I do the payroll, I can show it to her. Yeah, yeah.\n\nMegan Roth   19:36\nOK.\nOh, that would be perfect. Yeah. Okay. That's yeah, that would be great if you if you don't mind and then, you know, maybe have it recorded and whatnot and then she can take some notes and kind of maybe she does it the following payroll.\n\nSarah Jenkins   19:51\nYeah, that's mine.\n\nMegan Roth   20:00\nShe can drive and you can watch her and make sure that you know nothing's being put in like incorrectly, just so everyone's comfortable.\n\nSarah Jenkins   20:01\nYeah.\nYeah, yeah, I can. Yeah, I can show her that the payroll side and then yeah, just let him know about this. Yeah, because if we do not have that template ready, then we have to like again manually enter all that stuff before the payroll and then ACH also.\n\nMegan Roth   20:13\nOkay, perfect.\n\nSarah Jenkins   20:24\nI think the ACS, they will receive it within within the next day. They should unless.\n\nMegan Roth   20:31\nOK, that's what Kevin was thinking too. He wanted me to ask you just to to see if you know, and I know if there's like a holiday or something, it might be a little different, but.\n\nSarah Jenkins   20:33\nYeah.\nYeah. So for them it's like if you do it like before 10:00 in the morning, then only the the process date is gonna be the next day. Otherwise the process date is gonna be the day after that. So yeah, yeah. So I'm sure it's not gonna be before 10, so.\n\nMegan Roth   20:46\nUhuh.\nOK, that's good to know.\n\nSarah Jenkins   21:00\nWe have to do it. If you are paying on 20th, then at least uh, maybe we have to submit it by 18th.\n\nMegan Roth   21:07\nOkay, okay, perfect. All right, well, I'll, I'm going to work on this template real quick and then say real quick, it's going to take me a hot minute. Um\n\nSarah Jenkins   21:08\nOK.\n\nMegan Roth   21:18\nAnd then when we've got time to start on like the onboarding of these trucks on the yard, I'll get back with you. I I say we get through. I'm going to be out most of the week next week. I mean, I'll be somewhat available. I'll be at that WPMA, but.\nSo maybe the following week we can kind of, after we get through payroll, et cetera, look into that.\n\nSarah Jenkins   21:37\nOK, that's fine.\n\nMegan Roth   21:39\nAlrighty, ma'am. Um.\n\nSarah Jenkins   21:41\nAlso, is Robert working on the AR stuff? Because that's the main one, the AR.\nI know that he I had already showed him that last month. I think he was working on some template to, you know, put all that in quick.\n\nMegan Roth   21:51\nYeah.\nI.\nYes, I for the same reason I feel like that he he got it done. I'll have him touch. I know he's out today, so I'll have him touch base with you on Monday. Let me make a note real quick so I don't forget what that is. Here we go.\nI feel like you got it.\n\nSarah Jenkins   22:25\nBecause we receive payments every day, so that's like an everyday entry that needs to be done. Um.\n\nMegan Roth   22:30\nOK, I'll if he was, I'm sorry that he's out today. I will find. I will send him a message and maybe he'll he'll be able to to get back to me. But if not, I'll ask him first thing Monday morning.\n\nSarah Jenkins   22:43\nOh yeah, that's fine.\n\nMegan Roth   22:46\nAlrighty, um, you got anything else for me?\n\nSarah Jenkins   22:49\nNo, I'm good. Thanks.\n\nMegan Roth   22:51\nAlrighty then, I'll try to have a good rest of your day. I'm gonna work on this template and we'll go from there.\n\nSarah Jenkins   22:56\nAll right. Thank you.\n\nMegan Roth   22:58\nYou're welcome. Bye.\n\n\nTask:\n\nAnalyze the recent onboarding documents and transcript. Identify items that were discussed in the transcript regarding equipment onboarding, and identify items discussed in the transcript that are not present on the truck onboarding checklist. For missing items, create a short one-line addition that can be applied to the onboarding checklist.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the existing analysis-journal.md in place: replace only its first Markdown heading with my current project label and preserve the rest of the file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/revision/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Life Notes"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/revision/drafts/analysis-journal.md",
+      "expected_heading": "# Life Notes",
+      "prior_body_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify that assigning a unit number was discussed in the transcript.",
+        "The response should identify that VIN verification was discussed in the transcript.",
+        "The response should identify that truck Make/Model verification was discussed in the transcript.",
+        "The response should not claim that verifying a truck's Year was discussed in the transcript.",
+        "The response should identify that verifying a license plate number was discussed in the transcript.",
+        "The response should identify that confirming the truck's registered owner was discussed in the transcript.",
+        "The response should note that the transcript discussed verifying a truck's owner through their registration.",
+        "The response should identify that requesting a truck to be added to the insurance was mentioned in the transcript.",
+        "The response should identify that the transcript mentioned the insurance request be sent to David Ross.",
+        "The response should note that the transcript ties David Ross to Summit Insurance.",
+        "The response should identify that requesting a Cab Card was discussed in the transcript.",
+        "The response should note that recent federal/DOT inspection report requirement was discussed in the transcript.",
+        "The response should identify that obtaining \"recent maintenance documentation\" was discussed in the transcript.",
+        "The response should identify that obtaining a copy of the truck's registration was discussed in the transcript.",
+        "The response should note that contacting Omega Signs for decal/logo installation was discussed in the transcript.",
+        "The response should note that obtaining photos of the left, front, and right of the truck was mentioned in the transcript.",
+        "The response should mention that the purpose of obtaining photos of the truck is to confirm the condition/any damages.",
+        "The response should identify that checking Gateway inventory was discussed in the transcript.",
+        "The response should identify that ordering a Gateway unit was discussed in the transcript.",
+        "The response should identify that coordinating a Gateway installation with Michael was discussed.",
+        "The response should identify that activating and testing Gateway was discussed in the transcript.",
+        "The response should identify that the transcript discussed how company truck requirements are coordinated by the company.",
+        "The response should identify that adding trucks to Samsara was discussed in the transcript.",
+        "The response should note that the Gateway delivery location (Kevin's or Michael's address) is missing from the checklist.",
+        "The response should suggest a one-line addition to the onboarding checklist regarding the gateway delivery address. For example, confirming the gateway delivery address.",
+        "The response should note that the transcript discussed how new vehicles without drivers should still go through the onboarding checklist.",
+        "The response should suggest an addition to the checklist regarding new vehicles without assigned drivers, such as \"onboard vehicles without assigned drivers; add driver tags later.\"",
+        "The response should identify that the transcript discussed changing the primary/driver tag in systems when moving a driver to a newer unit.",
+        "The response should identify that the transcript discussed creating a digital folder for onboarding documentation.",
+        "The response should include a one-line addition for file management, such as: \"Add all documents to the digital folder/file.\"",
+        "The response should explicitly separate (a) items discussed in the transcript regarding truck onboarding from (b) items discussed in the transcript that are missing from the onboarding checklist.",
+        "The response should note that the digital folder is in Teams.",
+        "The response should identify the use of an \"onboarding template\" as being discussed in the transcript.",
+        "The response should add a one-line addition regarding reviewing violations on DOT inspection, such as \"Review DOT inspection report for violations.\"",
+        "The response should add a one-line addition regarding resolving violations, if any, on DOT inspection, such as \"If applicable, fix any violations on DOT inspection report.\"",
+        "The response should note that resolving violations on DOT inspection was mentioned in the transcript.",
+        "The response should identify that the rule for assigning unit numbers (using the \"next available even number\") is discussed in the transcript."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/revision/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify that assigning a unit number was discussed in the transcript.",
+          "The response should identify that VIN verification was discussed in the transcript.",
+          "The response should identify that truck Make/Model verification was discussed in the transcript.",
+          "The response should not claim that verifying a truck's Year was discussed in the transcript.",
+          "The response should identify that verifying a license plate number was discussed in the transcript.",
+          "The response should identify that confirming the truck's registered owner was discussed in the transcript.",
+          "The response should note that the transcript discussed verifying a truck's owner through their registration.",
+          "The response should identify that requesting a truck to be added to the insurance was mentioned in the transcript.",
+          "The response should identify that the transcript mentioned the insurance request be sent to David Ross.",
+          "The response should note that the transcript ties David Ross to Summit Insurance.",
+          "The response should identify that requesting a Cab Card was discussed in the transcript.",
+          "The response should note that recent federal/DOT inspection report requirement was discussed in the transcript.",
+          "The response should identify that obtaining \"recent maintenance documentation\" was discussed in the transcript.",
+          "The response should identify that obtaining a copy of the truck's registration was discussed in the transcript.",
+          "The response should note that contacting Omega Signs for decal/logo installation was discussed in the transcript.",
+          "The response should note that obtaining photos of the left, front, and right of the truck was mentioned in the transcript.",
+          "The response should mention that the purpose of obtaining photos of the truck is to confirm the condition/any damages.",
+          "The response should identify that checking Gateway inventory was discussed in the transcript.",
+          "The response should identify that ordering a Gateway unit was discussed in the transcript.",
+          "The response should identify that coordinating a Gateway installation with Michael was discussed.",
+          "The response should identify that activating and testing Gateway was discussed in the transcript.",
+          "The response should identify that the transcript discussed how company truck requirements are coordinated by the company.",
+          "The response should identify that adding trucks to Samsara was discussed in the transcript.",
+          "The response should note that the Gateway delivery location (Kevin's or Michael's address) is missing from the checklist.",
+          "The response should suggest a one-line addition to the onboarding checklist regarding the gateway delivery address. For example, confirming the gateway delivery address.",
+          "The response should note that the transcript discussed how new vehicles without drivers should still go through the onboarding checklist.",
+          "The response should suggest an addition to the checklist regarding new vehicles without assigned drivers, such as \"onboard vehicles without assigned drivers; add driver tags later.\"",
+          "The response should identify that the transcript discussed changing the primary/driver tag in systems when moving a driver to a newer unit.",
+          "The response should identify that the transcript discussed creating a digital folder for onboarding documentation.",
+          "The response should include a one-line addition for file management, such as: \"Add all documents to the digital folder/file.\"",
+          "The response should explicitly separate (a) items discussed in the transcript regarding truck onboarding from (b) items discussed in the transcript that are missing from the onboarding checklist.",
+          "The response should note that the digital folder is in Teams.",
+          "The response should identify the use of an \"onboarding template\" as being discussed in the transcript.",
+          "The response should add a one-line addition regarding reviewing violations on DOT inspection, such as \"Review DOT inspection report for violations.\"",
+          "The response should add a one-line addition regarding resolving violations, if any, on DOT inspection, such as \"If applicable, fix any violations on DOT inspection report.\"",
+          "The response should note that resolving violations on DOT inspection was mentioned in the transcript.",
+          "The response should identify that the rule for assigning unit numbers (using the \"next available even number\") is discussed in the transcript."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/revision/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/revision/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/revision/drafts/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Life Notes"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/revision/drafts/analysis-journal.md",
+        "expected_heading": "# Life Notes",
+        "prior_body_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

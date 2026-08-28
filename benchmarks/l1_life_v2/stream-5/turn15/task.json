@@ -1,0 +1,338 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_5",
+  "turn_id": "turn15",
+  "turn_index": 15,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "e61ff0b7-8d16-0d2b-4afb-966654c8d77a",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 98,
+    "source_sha256": "467b513626904e7efbae931058c721d2be5d3ba2824f47b5225649cf6585e990",
+    "source_metadata": {
+      "task_id": "e61ff0b7-8d16-0d2b-4afb-966654c8d77a",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "02/27/2026\tSavannah Bee Company\tBBQ sauce\tFood & Beverages, Allergens\tUndeclared wheat and soy\tSavannah Bee Company\t\n02/27/2026\tRHINO CHOCO VIP 10X\tChocolate\tFood & Beverages\tUndeclared Tadalafil\tUSA LESS Co.\t\n02/26/2026\tQuest\tCat Food Chicken Recipe Frozen\tAnimal & Veterinary, Pet Food, Food & Beverages, Pet Food\tMay contain low levels of thiamine (Vitamin B1)\tGo Raw LLC.\t\n02/25/2026\tBoner Bears\tChocolate syrup\tFood & Beverages\tUndeclared Sildenafil\tLockout Supplements\t\n02/25/2026\tGreat Value\tCottage Cheese\tFood & Beverages, Cheese/Cheese Product\tNot fully pasteurized.\tSaputo Cheese USA, Inc.\t\n02/24/2026\tElite Treats\tChicken dog treats\tAnimal & Veterinary, Foodborne Illness, Pet Food, Food & Beverages, Foodborne Illness, Pet Food\tMay be contaminated with Salmonella\tElite Treats, LLC.\t\n02/20/2026\tMade Fresh Salad\tVarious Cream Cheeses and Tofu Spread\tFood & Beverages, Foodborne Illness\tListeria monocytogenes\tMade Fresh Salads, Inc.\t\n02/17/2026\tAdvanced Alkaloids\tAlkaloids Chewable Tablets—White Vein\tDietary Supplements\tProduct contains 7-Hydroxymitragynine (7-OH) in an amount more than the declared value of 7.5 mg/tablet.\tShaman Botanicals, LLC\t\n02/17/2026\tQuest\tQuest Cat Food Chicken Recipe Freeze Dried Nuggets, 10oz bag\tAnimal & Veterinary, Pet Food, Food & Beverages, Pet Food\tMay contain low levels of thiamine (Vitamin B1)\tGo Raw LLC\t\n02/13/2026\tTippy Toes\tBaby Food\tFood & Beverages\tElevated levels of patulin\tIF Copack, LLC. d.b.a. Initiative Foods\t\nDate\tBrand Name(s)\tProduct Description\tProduct Type\tRecall Reason Description\tCompany Name\tTerminated Recall\n02/13/2026\tGreen Lumber\tDietary Supplement\tDietary Supplements\tUndeclared prescription drug-Tadalafil\tGreen Lumber Holding, LLC.\t\n02/13/2026\tTippy Toes\tBaby Food\tFood & Beverages\tElevated levels of patulin\tIF Copack, LLC. d.b.a. Initiative Foods\t\n02/12/2026\tJunebar\tSnack Bars\tFood & Beverages\tUndeclared milk and soy\tJuniper Granola, LLC.\t\n02/12/2026\tWellsley Farms\tSalmon\tFood & Beverages\tListeria monocytogenes\tSlade Gorton & Co., Inc.\t\n02/06/2026\tTRUE METRIX\tBlood Glucose Monitoring Systems\tMedical Devices\tAs currently written, the Owner’s Booklets/System Instructions for Use fails to emphasize that users must seek medical attention immediately if they receive an E-5 error code and are experiencing symptoms of high glucose.\tTrividia Health, Inc.\t\n02/05/2026\tNo Brand\tDried Croaker Fish\tFood & Beverages, Foodborne Illness\tProduct was not adequately eviscerated and may harbor harmful bacteria or toxins\tPrime Food Processing LLC\t\n02/04/2026\tCHIPS AHOY\tBaked brownie bites\tFood & Beverages\tProduct Safety – choking threats\tMondelez Global\t\n02/03/2026\tAshfiat Alharamain\tHoney Product for Energy Support\tFood & Beverages\tProduct contains tadalafil\tAkkarco LLC\t\n01/29/2026\tNeogen\tVet HYCOAT® Hyaluronate Sodium Sterile Solution\tAnimal & Veterinary\tMicrobial Contamination\tNeogen Corporation\t\n01/28/2026\tGerber\tArrowroot biscuits\tFood & Beverages\tpotential presence of soft plastic and/or paper pieces\tGerber Products Company\n01/28/2026\tWhy Not Natural\tOrganic Moringa – Green Superfood\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Salmonella\tWhy Not Natural\t\n01/28/2026\tFu Zhou\tFish balls\tFood & Beverages, Allergens\tUndeclared Allergen – Sesame, Wheat\tKoikoi Trading Inc.\t\n01/23/2026\tIKM\tMetal Cookware Items\tFood & Beverages, Contaminants, Foodborne Illness\tPotential Foodborne Illness – Lead contamination\tIKM\t\n01/23/2026\tNavitas Organice\tOrganic Chia Seeds\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Salmonella\tNavitas Organics\t\n01/20/2026\tLive it Up\tSuper Greens Original and Wild Berry Flavored pouches and packs\tDietary Supplements\tPotential Foodborne Illness - Salmonella\tSuperfoods, Inc. DBA as Live it Up\t\n01/19/2026\tGenova\tYellowfin Tuna\tFood & Beverages, Foodborne Illness\tPotential contamination with Clostridium botulinum\tTri-Union Seafoods\t\n01/16/2026\tOlympus\tViziShot 2 FLEX (19G) EBUS -TBNA needles\tMedical Devices\tDevice & Drug Safety - Defect\tOlympus Corporation\t\n01/15/2026\tSpring & Mulberry\tMultiple Flavors of Chocolate Bars\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Salmonella\tSpring & Mulberry\t\n01/15/2026\tFreeStyle Libre\tFreeStyle Libre 3 and 3 Plus Glucose monitoring sensors\tMedical Devices\tInternal testing determined that some sensors may provide incorrect low glucose readings.\tAbbott\t\n01/15/2026\tAmbriola, Locatelli, Member’s Mark, Pinna, and Boar’s Head\tCheese\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Listeria monocytogenes\tThe Ambriola Company\n01/12/2026\tKarison\tPanjiri, pinni, and laddoo\tFood & Beverages, Allergens\tPotential or Undeclared Allergen – Milk\tKarison Foods & Snacks Inc\t\n01/12/2026\tTrue Sea Moss\tSea Moss Gel Superfood in various flavors (16 FL OZ glass jars)\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Botulism\tDiva Fam Inc.\t\n01/12/2026\tOutside the Breadbox\tBread Crumbs\tFood & Beverages, Allergens\tPotential or Undeclared Allergen – Egg and Milk\tVH Foods Inc. DBA Outside The Breadbox\t\n01/12/2026\tSpring & Mulberry\tMint Leaf Date Sweetened Chocolate Bar\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Salmonella\tSpring & Mulberry\t\n01/09/2026\tSilintan\tDietary supplement capsules marketed for relief of joint and body aches\tDietary Supplements, Drugs\tUnapproved new drug found to contain undeclared meloxicam\tAnthony Trinh, 123Herbals LLC\t\n01/09/2026\tHerbsForever LLC\tGastro Care capsule and Hingwastika powder and capsule dietary supplements\tFood & Beverages\tPotential or Undeclared Allergen – Wheat\tHerbsForever LLC\t\n01/09/2026\tModern Warrior\tDietary supplement capsules marketed for metabolism moosting, improving brain function, and reducing cravings\tDietary Supplements, Drugs\tUnapproved new drug found to contain undeclared 1,4-DMAA and aniracetam, and tianeptine\tModern Warrior\t\n01/08/2026\tKlong Kone\tKlong Kone Shrimp Paste\tFood & Beverages\tPotential Metal Contaminant - Lead\tGusto Group Inc.\t\n01/07/2026\tPrimavera\tTamales\tFood & Beverages, Foodborne Illness\tPotential presence of Listeria monocytogenes\tPrimavera Nueva Inc.\t\n01/07/2026\tCarrot Top Kitchens\tHummus Varieties\tFood & Beverages\tPotential or Undeclared Allergen – Sesame\tCarrot Top Kitchens\tTerminated\n01/05/2026\tNewway Import\tPreserved mustard in soybean oil\tFood & Beverages, Allergens\tUndeclared wheat\tNewway Import Inc.\t\n12/26/2025\tMultiple brand names\tAll FDA-regulated products held at facility including drugs, medical devices, cosmetics, dietary supplements, human food, and pet food\tAnimal & Veterinary, Foodborne Illness, Cosmetics, Foodborne Illness, Dietary Supplements, Foodborne Illness, Drugs, Foodborne Illness, Food & Beverages, Foodborne Illness, Medical Devices, Foodborne Illness\tPotential Salmonella contamination, presence of rodent and avian contamination and insanitary conditions during the storage process.\tGold Star Distribution, Inc.\t\n12/24/2025\tCountry Vet, Heartland Harvest\tDog Biscuits\tAnimal & Veterinary, Foodborne Illness, Pet Food, Food & Beverages, Foodborne Illness, Pet Food\tPotential to be contaminated with Salmonella\tConsumers Supply Distributing, LLC\tTerminated\n12/23/2025\tWilly Pete’s Chocolates\tAlmond Despair chocolate bar\tFood & Beverages, Allergens\tPotential or Undeclared Allergen - Almond\tWilly Pete’s Chocolate Company LLC\t\n12/23/2025\tAtwater's\tCookie tins\tFood & Beverages, Allergens\tUndeclared tree nut allergens, almonds, pecans, and walnuts.\tAtwater's\t\n12/23/2025\tGregory's Foods\tBag Full of Cookies White Chocolate Macadamia Nut Frozen Cookie Dough\tFood & Beverages, Allergens\tUndeclared peanuts\tGregory's Foods, Inc.\t\n12/23/2025\tChoceur\tHoliday Bark\tFood & Beverages, Allergens\tUndeclared pecans and wheat\tSilvestri Sweet, Inc.\tTerminated\n12/22/2025\tVirgo\tRheumacare Capsules\tDrugs\tElevated levels of lead\tHandelnine Global Limited d/b/a Navafresh\t\n12/22/2025\tTroemner Family Farm\tPfeffernusse Cookies\tFood & Beverages, Allergens\tUndeclared milk, wheat, and soy allergens\tTroemner Farm\tTerminated\n12/20/2025\tFran’s\tAlmondmilk Chocolate 46% Madagascar Plant-Based\tFood & Beverages, Allergens\tContains undeclared hazelnut\tContains undeclared hazelnut\tTerminated\n12/19/2025\tMarket 32 and Waterfront Bistro\tFrozen Raw Shrimp\tFood & Beverages, Contaminants, Shellfish\tProduct may have been prepared, packed, or held under conditions whereby they may have become exposed to very low levels of cesium-137 (Cs-137)\tDirect Source Seafood LLC\n12/18/2025\tOlympus\tSingle use ligating device\tMedical Devices\tPolyLoop device may fail to detach as expected and become anchored to patient anatomy\tOlympus Corporation\n12/18/2025\tPublix\tPublix Rice & Pigeon Peas\tFood & Beverages, Allergens\tContains undeclared soy\tA.S.K. Foods, LLC\n12/18/2025\tCharlevoix Cheese Company\tMilk Cheddar Cheese\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tPotential to be contaminated with Listeria monocytogenes.\tBoss Dairy Farms\n12/17/2025\tNo Brand\tTamales\tFood & Beverages, Foodborne Illness\tPotential presence of Listeria monocytogenes.\tPrimavera Nueva Inc.\n12/16/2025\tMR7 Super 700000\tDietary supplement for male enhancement\tDietary Supplements, Drugs\tUndeclared Sildenafil and Tadalafil\tStuffbyNainax LLC\n12/16/2025\tReBoost, ClearLife\tNasal spray, 0.68 fl oz\tDrugs\tProduct has been found to contain yeast/mold and microbial contamination with one species identified as Achromobacter, at levels above specifications.\tMediNatura New Mexico Inc.\n12/16/2025\tPublix\tPublix Raspberry Coffee Cake\tFood & Beverages, Allergens\tLabel does not declare walnuts in the ingredient list.\tThe James Skinner LLC\n12/15/2025\tUkrop’s\tDecorated pound cakes\tFood & Beverages\tUndeclared soy\tUkrop;s Homestyle Foods, LLC\n12/15/2025\tSo Delicious\tNon-dairy frozen dessert\tFood & Beverages\tPotential presence of foreign materials such as stones and other hard objects.\tDanone U.S.\n12/12/2025\tWhite Castle\tOriginal Sliders, frozen, 4 count carton\tFood & Beverages\tMay contain undeclared milk and soy allergens\tWhite Castle Food Products LLC\n12/12/2025\tBengal King\tJhal Chanachur food treats\tFood & Beverages\tMay contain undeclared peanut allergen\tSouth Asian Food Inc\n12/12/2025\tTown Food Service Equipment Co.\t4 sizes of aluminum saucepans with capacities ranging from 1 quart to 3 quarts\tFood & Beverages\tAluminum saucepans recalled because they have the potential to be contaminated with lead (Pb) which may leach into food.\tTown Food Service Equipment Co., Inc.\n12/10/2025\tLunds & Byerlys\tMonster cookies\tFood & Beverages\tMay contain undeclared peanut, egg, and soy allergens\tLunds & Byerlys\n12/10/2025\tReBoost\tNasal spray, 0.68 fl oz\tDrugs\tProduct has been found to contain yeast/mold and microbial contamination with one species identified as Achromobacter, at levels above specifications.\tMediNatura New Mexico Inc.\n12/10/2025\tMeal Simple\tRed Lentil Dal Soup\tFood & Beverages\tMay contain undeclared milk allergens\tBakkavor USA\n12/10/2025\tNutrena® Country Feeds®\tNutrena® Country Feeds® Cracked Corn for livestock, 50 lb. bag\tAnimal & Veterinary, Animal Feed\tProduct may contain aflatoxin levels that exceed the Food and Drug Administration (FDA) action level for immature animals, wildlife, equines, small ruminants, and dairy animals.\tCargill Animal Nutrition & Health\n12/09/2025\tGrandma Belle’s\tTomato Basil Soup\tFood & Beverages\tPotential or Undeclared Allergen – Undeclared Milk\tLil’ Turtles\n12/09/2025\tLucky Foods\tLucky Foods brand Cinnamon Powder 40g, best before date 15.09.2027, packaged in a vacuum or modified atmosphere 40g pouch with a brown label\tFood & Beverages\tPotential to be contaminated with elevated levels of lead\tTBC Distribution Corporate\n12/05/2025\tWegmans\tDeluxe Mixed Nuts Unsalted (34 oz tubs and 11.5 oz bags)\tFood & Beverages\tProduct may be contaminated with Salmonella\tMellace Family Brands California, Inc.\n12/03/2025\tBonnihill Farms\tBeefiBowls Beef Recipe gently cooked frozen dog food, 16 oz. chubs\tAnimal & Veterinary, Contaminants, Animal Feed, Food & Beverages, Contaminants, Animal Feed\tPotential foreign plastic contamination\tFromm Family Foods\n12/02/2025\tVetoquinol\tFOLLTROPIN Injectable Kits for Cattle\tAnimal & Veterinary\tPresence of particulate matter\tVetoquinol USA\n12/02/2025\tRitz\tPeanut Butter Cracker Sandwiches\tFood & Beverages, Allergens\tPotential or Undeclared Allergen – Undeclared Peanut\tMondelez Global LLC\n11/26/2025\tPrairie Farms\tFat Free Milk\tFood & Beverages, Contaminants\tMay contain food-grade cleaning agents\tPrairie Farms\n11/26/2025\tLocatelli\tGrated Pecorino Romano Cheese\tFood & Beverages, Foodborne Illness\tPotential presence of Listeria monocytogenes.\tWegmans Food Markets, Inc.\n11/26/2025\tChoceur\tBark candy with nuts and fruit\tFood & Beverages, Allergens\tUndeclared pecans and wheat\tSilvestri Sweet, Inc.\n11/26/2025\tAnthony’s\tBarbecue Sauce\t\tMay contain undeclared Anchovy (fish).\tAnthony’s BBQ Sauce\n11/25/2025\tBelevini\tDried Whole Salted Smelt, Mullet, Goby\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Clostridium botulinum.\tMamtakim, Inc.\n11/24/2025\tBoar’s Head\tChicken Caesar Salad and Wrap\tFood & Beverages\tDue to the potential presence of Listeria monocytogenes\tSupreme Service Solutions, LLC.\n11/20/2025\tPrime Food\tLava Buns\tFood & Beverages, Allergens\tUndeclared milk allergen\tPrime Food Processing LLC\n11/19/2025\tMajestic Chef Pan\tMilk Pan 24cm\tFood & Beverages\tProduct has the potential to be contaminated with significant levels of lead (Pb) which may leach into food\tSHATA TRADERS INC\n11/18/2025\tJeni’s\tPassion Fruit Dreamsicle Ice Cream Bars\tFood & Beverages, Allergens\tUndeclared allergen - soy, wheat.\tJeni’s Splendid Ice Cream\n11/18/2025\tTops\tMixed Fruit Jam and Strawberry Jam\tFood & Beverages, Allergens\tUndeclared Carmoisine\tMANGALM LLC\n11/15/2025\tFace Rock Creamery\tVampire Slayer Garlic Cheddar cheese\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Listeria monocytogenes\tFace Rock Creamery LLC\n11/13/2025\tFood To Live\tOrganic Supergreens Powder Mix and Organic Moringa Leaf Powder\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Salmonella\tFood To Live\n11/12/2025\tAfrica Imports\tOrganic Moringa Leaf Powder\tFood & Beverages\tPotential to be contaminated with Salmonella\tAfrica Imports\n11/11/2025\tByHeart\tWhole Nutrition Infant formula 24 oz cans and 0.6oz packets\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Clostridium botulinum\tByHeart Inc.\n11/09/2025\tMoonlight/Kroger\tYellow and white peaches\tFood & Beverages\tPotential to be contaminated with Listeria monocytogenes.\tMoonlight Companies\n11/08/2025\tByHeart\tWhole Nutrition Infant formula\tFood & Beverages\tPotential Foodborne Illness – Clostridium botulinum\tByHeart Inc.\n11/07/2025\tFresenius Kabi\tFamotidine Injection, USP 20 mg per 2 mL\tDrugs\tOut-of-specification endotoxin results\tFresenius Kabi USA, LLC\n11/06/2025\tAfrican Food on Wheels Inc.\tOven Dried Fish (Scomberomorus cavalla)\tFood & Beverages\tPotential to be contaminated with Clostridium botulinum\tAfrican Food on Wheels Inc.\n11/06/2025\tBlue Oven Bakery, Inc.\tEnglish muffin\tFood & Beverages\tUndeclared milk\tBlue Oven Bakery, Inc.\n11/04/2025\tHaagen-Dazs\tIce Cream Bars\tFood & Beverages\tMay contain undeclared wheat\tDreyer’s Grand Ice Cream, Inc.\n11/04/2025\tSiluetaYa\tTejocote Root dietary supplement\tDietary Supplements\tProduct contains yellow oleander\tSiluetaYa\n11/04/2025\tSnow Fruit\tPeach Salsa\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Listeria monocytogenes.\tJFE Franchising Inc.\n11/03/2025\tFirst & Last\tMarinara Sauce, Puttanesca Sauce, and Meat Flavored Pasta Sauce\tFood & Beverages\tPotential for Clostridium botulinum hazard as the product is manufactured without an approved schedule\tFirst and Last Bakery LLC\n11/03/2025\tICU Medical\t20 mEq Potassium Chloride Injection\tDrugs\tPotential for Potassium chloride overdose: 20 mEq Potassium Chloride Injection is Mislabeled As 10 mEq Potassium Chloride Injection\tOtsuka ICU Medical LLC\n11/03/2025\tOlympus\tBronchofiberscopes and bronchovideoscopes\tMedical Devices\tPotential for endobronchial combustion\tOlympus Corporation\n11/03/2025\tSupreme Produce\tPeach Salsa\tFood & Beverages\tPotential to be contaminated with Listeria monocytogenes.\tSupreme Produce\n10/31/2025\tMonarch Premium\tBali Gold, Red Bali, Green Maeng Da, and White Elephant Kratom powder\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Salmonella\tVanguard Enterprises, LLC. DBA Bedrock MFG\t\n10/29/2025\tHoque\tDry Ghoinnya Fish\tFood & Beverages\tProduct was found to be uneviscerated. Uneviscerated fish have been linked to outbreaks of botulism poisoning.\tNew Hoque & Sons Inc.\t\n10/28/2025\tPurity Products\tDietary Supplement for bladder support\tDietary Supplements\tPotential contamination with Escherichia coli O7:K1 and 1303\tDwater\t\n10/28/2025\tMartin’s and Giant/Casa Mamita\tTaco Dinner Kits\tFood & Beverages\tMay contain undeclared milk.\tTeasdale Foods, Inc.\t\n10/28/2025\tHampton Farms\tMixed Nuts\tFood & Beverages\tUndeclared hazelnut allergen\tHampton Farms\t\n10/28/2025\tPacific\tItalian Parsley\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Salmonella contamination\tPacific International Marketing\t\n10/28/2025\tDEVI\tGround Cinnamon\tFood & Beverages, Contaminants\tPotential Metal Contaminant - Lead\tHomeneeds Inc.\tTerminated\n10/27/2025\tTwin Sisters Creamery\tWhatcom Blue, Farmhouse, Peppercorn and Mustard Seed cheese products\tFood & Beverages\tPotential Foodborne Illness - Shiga toxin-producing Escherichia coli (STEC) and Escherichia coli O103\tTwin Sisters Creamery, Inc.\t\n10/27/2025\tTwin Sisters Creamery\tWhatcom Blue and Farmhouse cheese products\tFood & Beverages\tPotential Foodborne Illness - Shiga toxin-producing Escherichia coli (STEC) and Escherichia coli O103\tPeterson Company\t\n10/27/2025\tDeli Express\tBBQ Pulled Pork Sandwich\tFood & Beverages\tDue to the potential presence of foreign particles (plastic).\tE. A. Sween Company\t\n10/27/2025\tZingerman’s Candy\tPeanut Butter Crush and Ca$hew Cow candy bars\tFood & Beverages\tPotential or Undeclared Allergen – Undeclared Cashew and Peanut\tZingerman’s Candy Manufactory\tTerminated\n10/17/2025\tHaetae\tGround cinnamon\tFood & Beverages\tPotential Metal Contaminant - Lead\tHaitai, Inc\t\n10/17/2025\tNat’s Nuts\tCinnamon Whiskey Pecans\tFood & Beverages\tUndeclared cashews\tNat’s Nuts\t\n10/17/2025\tCabot Creamery\tSea Salt Caramel Cheddar Popcorn\tFood & Beverages, Allergens\tDue to presence of undeclared peanuts\tJody's Inc.\t\n10/17/2025\tKenz Henz\tGrade AA Large Pasture Raised Eggs\tFood & Beverages\tPotential to be contaminated with Salmonella\tKenz Henz\t\n10/17/2025\tPublix\tRich & Creamy Vanilla Ice Cream\tFood & Beverages, Allergens\tMay contain undeclared egg allergen\tPublix\tTerminated\n10/17/2025\tAquaStar, Best Yet, Waterfront Bistro, Publix\tFrozen Raw Shrimp\tFood & Beverages, Foodborne Illness, Shellfish\tProduct may have been prepared, packed, or held under conditions whereby they may have become exposed to very low levels of cesium-137 (Cs-137)\tAquaStar Corp\t\n10/14/2025\tBen’s Original\tLong Grain White, Whole Grain Brown, and Long Grain & Wild Ready Rice\tFood & Beverages, Contaminants\tPotential Foreign Body Contaminant – Small Stones\tBen’s Original\t\n10/10/2025\tRaw Bistro\tFrozen Beef Dog Food\tAnimal & Veterinary, Foodborne Illness, Pet Food, Food & Beverages, Foodborne Illness, Pet Food\tPotential Foodborne Illness - Salmonella\tRaw Bistro Pet Fare\tTerminated\n10/09/2025\tFoodynamics\tFreeze Dried Pet Treats\tAnimal & Veterinary, Foodborne Illness, Food & Beverages, Foodborne Illness\tPotential Foodborne Illness – Salmonella\tFoodynamics\t\n10/09/2025\tSprouts\tSmoked Mozzarella Pasta Salad\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tSprouts Farmers Market\tTerminated\n10/08/2025\tFusia Asian Inspirations\tVeggie Spring Rolls\tFood & Beverages, Allergens\tUndeclared shrimp allergen\tTAI FOONG USA\t\n10/07/2025\tTRUE METRIX\tBlood Glucose Meters\tMedical Devices\tPotential for defective LCD displays that can affect product performance\tTrividia Health, Inc.\t\n10/07/2025\tDurra\tGround cinnamon\tFood & Beverages, Contaminants, Spices, Flavors &  Salts\tPotential Metal Contaminant - Lead\tEureka Inc.\t\n10/07/2025\tSno Pac/Del Mar\tFrozen Spinach\tFood & Beverages, Foodborne Illness\tPotential to be contaminated with Listeria monocytogenes\tSno Pac Foods, Inc.\tTerminated\n10/04/2025\tKroger, Baker’s, City Market, Dillons, Fred Meyer, Fry’s, Gerbes, King Soopers, Payless, Ralphs and Smith’s\tBasil Pesto Bowtie Salad and Smoked Mozzarella Penne Salad\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tThe Kroger Co.\t\n10/04/2025\tTwin Marquis\tThick Shanghai Style Plain Noodles\tFood & Beverages, Allergens\tPotential or Undeclared Allergen - Egg\tTwin Marquis LLC\tTerminated\n10/03/2025\tGiant Eagle\tSmoked Mozzarella Pasta Salad\tFood & Beverages, Foodborne Illness\tPotential listeria monocytogenes contamination\tGiant Eagle, Inc.\t\n10/03/2025\tNature’s Own\tPet Chews Bully Bites Treats\tAnimal & Veterinary, Food & Beverages\tPotential Foodborne illness - Salmonella\tBest Buy Bones, Inc.\t\n10/02/2025\tMultiple brand names\tBowtie Pasta Salads and Meals\tFood & Beverages, Foodborne Illness\tPossible Listeria monocytogenes contamination\tAlbertsons Companies\t\n10/02/2025\tScott & Jon's\tShrimp Scampi with Linguini\tFood & Beverages, Foodborne Illness\tPotential Listeria monocytogenes contamination.\tDemers Food Group\t\n10/01/2025\tSignature\tEnoki Mushrooms\tFood & Beverages, Foodborne Illness\tProduct may be contaminated with Listeria monocytogenes\tNew Age International Inc\t\n10/01/2025\tSea Port\tRaw Frozen Easy Peel White Shrimp Jumbo size 16/20\tFood & Beverages, Contaminants\tProduct May Have Become Contaminated with Cesium-137 (Cs-137)\tSea Port Products Corp\t\n10/01/2025\tDoan's Bakery\tWhite Chocolate Coconut & Carrot Bundt Cakes\tFood & Beverages, Allergens\tUndeclared allergens, wheat and milk\tDoan's Bakery\tTerminated\n09/30/2025\tAlbertsons Companies\tBowtie Pasta Salads and Meals\tFood & Beverages, Foodborne Illness\tPossible Listeria monocytogenes contamination\tAlbertsons Companies\t\n09/30/2025\tLunds & Byerlys\tChocolate candy with nuts.\tFood & Beverages, Allergens\tDue to a mislabeled allergen, cashews\tAbdallah Inc.\tTerminated\n09/29/2025\tTru Fru\tFreeze Dried Fruit snacks\tFood & Beverages, Contaminants\tDue to potential presence of metal in the product.\tGeorgia Nut Company\t\n09/29/2025\tWholesale Produce Supply, LLC.\tFresh Cut Cantaloupe\tFood & Beverages, Foodborne Illness, Fruit/Fruit Product\tPotential to be contaminated with Listeria monocytogenes\tWholesale Produce Supply, LLC.\t\n09/27/2025\tG&L Food\tDried Bean Curd\tFood & Beverages\tUndeclared wheat allergen\tGansu Zhaofeng Agricultural Development Co., Ltd.\t\n09/26/2025\tWise Wife\tCinnamon powder\tFood & Beverages, Contaminants, Spices, Flavors &  Salts\tPotential to be contaminated with elevated levels of lead\tSLR Food Distribution\t\n09/25/2025\tAquaStar\tShrimp Skewers, Raw Peeled Tail-on\tFood & Beverages, Contaminants, Shellfish\tPotential Foodborne Illness - possible radionuclide (Cesium-137) contamination\tAquastar Corp\t\n09/25/2025\tGoot Essa\tDer Mutterschaf Cheese\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tPotential contamination with Listeria monocytogenes\tGoot Essa LLC\t\n09/23/2025\tSprout Organics\tSweet Potato Apple and Spinach, 3.5-ounce pouch\tFood & Beverages, Contaminants\tPotential Metal Contaminant - Lead\tSprout Organics\t\n09/23/2025\tPinocchio\tStewed Aged Kimchi w/ Mackerel\tFood & Beverages, Allergens\tPotential or Undeclared Allergen – Milk and Shrimp\tLee K of NY INC\tTerminated\n09/23/2025\tKroger\tFrozen shrimp\tFood & Beverages, Contaminants, Shellfish\tDue to possible radionuclide (Cesium-137) contamination.\tLAWRENCE WHOLESALE LLC\tTerminated\n09/23/2025\tSand Bar/Arctic Shores/Best Yet/Great American/First Street\tFrozen Shrimp\tFood & Beverages, Contaminants, Shellfish\tPotential Foodborne Illness - possible radionuclide (Cesium-137) contamination\tSouthwind Foods, LLC\t\n09/22/2025\tOlympus\tViziShot 2 FLEX (19G) EBUS -TBNA needles\tMedical Devices\tDevice Components May Detach During Procedures\tOlympus Corporation\t\n09/21/2025\tKroger, Kroger Mercado, AquaStar\tRaw Shrimp, Cooked Shrimp, Shrimp Skewers\tFood & Beverages, Contaminants, Shellfish\tDue to possible radionuclide (Cesium-137) contamination\tAquastar Corp\t\n09/20/2025\tKirkland Signature\tAhi Tuna Wasabi Poke\tFood & Beverages, Foodborne Illness\tProduct has the potential to be contaminated with Listeria monocytogenes\tWestern United Fish Company dba Annasea Foods Group\tTerminated\n09/17/2025\tHaifa\tCold Smoked Salmon and Cold Smoked Seabass\tFood & Beverages, Foodborne Illness\tPotential contamination with Listeria monocytogenes\tHaifa Smoked Fish\t\n09/16/2025\tSprout Organics\tSweet Potato Apple and Spinach, 3.5-ounce pouch\tFood & Beverages, Contaminants\tProduct may contain elevated levels of lead\tSprout Organics\t\n09/15/2025\tBD Alaris\tBD Alaris Pump Module model 8100 used with a subset of compatible pump infusion sets\tMedical Devices\tPump performance variations compared to the performance described in the user manual could impact infusion delivery\tBD\t\n09/11/2025\tGoodles\tFlavored pasta\tFood & Beverages, Allergens\tUndeclared milk and cashews\tGooder Foods, Inc\t\n09/10/2025\tNo Brand\tCookies\tFood & Beverages, Allergens\tUndeclared almonds, sesame, Red 40, Red 3, Blue 1, Yellow 5, Red 40, Yellow 6\tGina Marie Bakery\t\n09/10/2025\tGood & Gather\tFrozen Burrito Bowl\tFood & Beverages, Allergens\tUndeclared shrimp (shellfish)\tOne Frozen, LLC\tTerminated\n09/10/2025\tDeep\tFrozen fruits and vegetables\tFood & Beverages, Foodborne Illness\tSalmonella\tCHETAK LLC GROUP\t\n09/08/2025\tMiddlefield Original Cheese Co-op, Sunrise Creamery\tCheese\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tPotential contamination with-Listeria monocytogenes\tMiddlefield Original Cheese Co-op\t\n09/04/2025\tEndico\tFrozen Peas and Carrots, Mixed Vegetables\tFood & Beverages, Foodborne Illness\tPotential contamination with Listeria monocytogenes\tEndico Potatoes Inc.\tTerminated\n09/02/2025\tG.Nutt\tVanilla G.Nutt Ice Cream\tFood & Beverages, Allergens\tUndeclared almond allergen\tIce Cream Factory\t\n08/29/2025\tHans Kissle\tRed Bliss Potato Salad\tFood & Beverages, Allergens\tUndeclared wheat\tHans Kissle\t\n08/29/2025\tSand Bar/Arctic Shores/Best Yet/Great American/First Street\tFrozen shrimp\tFood & Beverages, Contaminants, Shellfish\tDue to possible radionuclide (Cesium-137) contamination.\tSouthwind Foods, LLC.\t\n08/29/2025\tGreen Lumber\tDietary Supplement\tDrugs\tUndeclared prescription drug-Tadalafil\tGreen Lumber Holding, LLC.\t\n08/28/2025\tDermaRite\tHand Sanitizers, Cleansers, Skin Protectants, Deodorant\tDrugs\tDevice & Drug Safety - Potential Burkholderia cepacian contamination\tDermaRite Industries\t\n08/28/2025\tAqua Star\tCocktail Shrimp\tFood & Beverages, Contaminants, Shellfish\tPotential Contaminant – cesium-137 (Cs-137)\tAquastar Corp\t\n08/28/2025\tKroger\tMercado Frozen Cooked Shrimp\tFood & Beverages, Contaminants, Shellfish\tPotential Contaminant – cesium-137 (Cs-137)\tAquastar Corp\t\n08/27/2025\tCountry Eggs, NIJIYA, GOLDEN YOLK\tLarge Brown Cage Free Eggs\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness - Salmonella\tCountry Eggs, LLC\t\n08/27/2025\tUnichem Pharmaceuticals\tCyclobenzaprine Hydrochloride Tablets USP 10 mg\tDrugs\tDevice & Drug Safety – Mislabel\tUnichem Pharmaceuticals\t\n08/26/2025\tTaylor Farms\tHoney Balsamic Salad Kit\tFood & Beverages, Allergens\tUndeclared Allergen – Sesame and Soy\tTaylor Fresh Foods\tTerminated\n08/25/2025\tViva\tGround Beef for Dogs and Ground Chicken for Dogs and Cats\tAnimal & Veterinary, Foodborne Illness, Food & Beverages, Foodborne Illness\tSalmonella and Listeria monocytogenes contamination\tViva Raw LLC.\t\n08/22/2025\tBlue Bell\tIce Cream\tFood & Beverages, Allergens\tUndeclared almond, walnut, and pecan\tBlue Bell Creameries, L.P.\tTerminated\n08/22/2025\tGreat Value\tFrozen Raw Shrimp\tFood & Beverages, Contaminants, Shellfish\tPossible contamination with radionuclide (Cesium-137)\tBeaver Street Fisheries, LLC\tTerminated\n08/21/2025\tSand Bar/Arctic Shores/Best Yet/Great American/First Street\tFrozen shrimp\tFood & Beverages, Contaminants, Shellfish\tDue to possible radionuclide (Cesium-137) contamination.\tSouthwind Foods, LLC.\t\n08/19/2025\tB. Braun\tLactated Ringer’s Injection USP 1000 mL/0.9% Sodium Chloride Injection USP 1000 mL\tDrugs\tDue to the presence of particulate matter.\tB. Braun Medical, Inc.\t\n08/18/2025\tMiddlefield Original Cheese Co-op/Copia Collective/Farmers Cheese\tCheese\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tPotential contamination with Listeria monocytogenes\tMiddlefield Original Cheese Co-op\t\n08/14/2025\tBrie Royal Faucon\tBrie Royal Faucon Cheese\tFood & Beverages\tPotential contamination with Listeria monocytogenes\tFromi USA\tTerminated\n08/13/2025\tQuesito El Establo\tSpanish Cheese (Quesito Colombiano)\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tDue to the presence of rodent, rodent activity, and other insanitary conditions during the manufacturing and storage process\tQuesito El Establo\t\n08/12/2025\tTandem Diabetes Care, Inc.\tt:slim X2 insulin pumps\tMedical Devices\tPotential speaker-related issue that can trigger an error resulting in a discontinuation of insulin delivery\tTandem Diabetes Care, Inc.\t\n08/12/2025\tClover Valley\tInstant coffee\tFood & Beverages\tPotential presence of glass\tDollar General Corporation\t\n08/12/2025\tMax Mobility/Permobil\tSpeed Control Dial Component\tMedical Devices\tDue to potential safety and performance concerns\tMax Mobility, LLC.\t\n08/12/2025\tQuesito El Establo\tSpanish Cheese (Quesito Colombiano)\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tDue to the presence of rodent, rodent activity, and other insanitary conditions during the manufacturing and storage process\tQuesito El Establo\t\n08/12/2025\tWegmans\tCheeses\tFood & Beverages, Foodborne Illness, Cheese/Cheese Product\tPotential Foodborne Illness - Listeria monocytogenes\tWegmans New York\tTerminated\n08/10/2025\tNeuhaus\tBelgian Chocolate Moments Smurfs Popping Milk Chocolates with Cookies\tFood & Beverages, Allergens\tUndeclared wheat allergen\tNeuhaus Chocolates NV\tTerminated\n08/09/2025\tDermaKleen, Dermasarra, Kleenfoam, and Perigiene\tOTC antiseptic lotion soaps, external analgesics, antimicrobial foam soaps, and antiseptic cleansers\tDrugs\tContamination with Burkholderia cepacia\tDermaRite Industries, LL\t\n08/06/2025\tFriendly’s\tCookies and Cream Ice Cream\tFood & Beverages, Allergens\tUndeclared wheat and soy allergens\tDFA Dairy Brands, LLC\tTerminated\n08/05/2025\tHans Kissle\tRed Bliss Potato Salad\tFood & Beverages, Allergens\tUndeclared wheat\tHans Kissle\t\n07/31/2025\tMember’s Mark\tFreeze dried fruit\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tDoehler Dry Ingredient Solutions, LLC\t\n07/30/2025\tHigh Noon, Celsius\tEnergy Drink\tFood & Beverages\tCans contain alcohol\tHigh Noon\t\n07/28/2025\tRandalls, Albertsons, Tom Thumb\tAdditional Tuna Salad products\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tAlbertsons\t\n07/28/2025\tHillside Orchard Farms\tFruit Bread and Fritters\tFood & Beverages, Allergens\tUndeclared Allergen – Egg\tHillside Orchard Farms\t\n07/26/2025\tLa Michoacana, Helados Mexico\tIce cream products\tFood & Beverages, Allergens\tUndeclared milk\tTropicale Foods\t\n07/23/2025\tParashore\tCanned Sliced Pears\tFood & Beverages, Contaminants\tPotential Metal Contaminant – Lead and Cadmium\tWW Industrial Group\tTerminated\n07/21/2025\tJewel Osco\tTuna Salad Products\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tJewel Osco\t\n07/21/2025\tRandalls, Albertsons\tTuna Salad products\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Listeria monocytogenes\tAlbertsons\t\n07/18/2025\tNirwana Foods\tGolden Raisins\tFood & Beverages, Allergens\tUndeclared sulfites\tNirwana Foods LLC\t\n07/17/2025\tAlaris™ and BD Alaris™\tPump Modules\tMedical Devices\tMay have been serviced with previously recalled bezel kit assemblies\tBecton, Dickinson and Company\t\n07/17/2025\tL'espoir\tL’espoir and Drycapot cookies,\tFood & Beverages, Allergens\tUndeclared milk and tree nuts (almonds and macadamia nuts)\tJalux Americas, Inc.(dba J.sweets)\t\n07/16/2025\tDeep\tSprouted Moong (sprouted mung beans)\tFood & Beverages, Foodborne Illness\tSalmonella\tCHETAK LLC GROUP\t\n07/15/2025\tSandoz\tCefazolin for Injection, USP, 1 gm vial\t\tVials incorrectly labelled as Penicillin G Potassium for Injection contain Cefazolin for Injection\tSandoz, Inc.\t\n07/15/2025\tARAL SILVER VOBLA\tEVISCERATE DRY SALTED VOBLA ARAL SILVER\tFood & Beverages, Foodborne Illness\tPotential Foodborne Illness – Clostridium botulinum\tKRASNIY OKTYABR INC. USA\t\n07/14/2025\tNostrum Laboratories\tSucralfate Tablets USP 1 gram\tDrugs\tCompany closure and discontinuation of quality activities.\tNostrum Laboratories, Inc.\n\nMeals I ate Within the Last 3 Days:\nCheerios with oat milk\n Veggie burger with lettuce and tomato\nStuffed peppers\nPancakes with syrup\nQuinoa and kale salad\nRamen with tofu\nCookies\nVegan yogurt with berries\nBlack bean burger and sweet potato fries\n\n\nTask:\n I am a vegan who is allergic to all types of nuts. Just to be safe, I would like to check to make sure that none of the items I have cooked with recently have been recalled due to possible cross contamination with some kind of nut. Using the list of meals I have eaten recently and the current list of recalled foods, give me a list of anything that I may have used that would be within my vegan dietary restriction as well as is on the recall list for some type of nut cross contamination.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the existing analysis-journal.md in place: replace only its first Markdown heading with my current project label and preserve the rest of the file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/mixed/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_5.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/mixed/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/mixed/drafts/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Mixed Queue"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/mixed/drafts/analysis-journal.md",
+      "expected_heading": "# Mixed Queue",
+      "prior_body_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should use the user’s meal list (Cheerios with oat milk, Veggie burger with lettuce and tomato, Stuffed peppers, Pancakes with syrup, Quinoa and kale salad, Ramen with tofu, Cookies, Vegan yogurt with berries, Black bean burger and sweet potato fries) as the source for identifying “may have used” items.",
+        "The response should not treat an item as a “match” unless it explains the connection to at least one meal item. For example, it should be a direct match like “cookies,” or a plausible ingredient used in a listed meal such as bread crumbs in stuffed peppers.",
+        "The response should only include recalled items that are vegan (i.e., it should not list items that clearly contain milk, eggs, or other animal-derived ingredients).",
+        "The response should include any items specifically recalled due to cross contamination with nuts. For example, the recall reason should mention peanut or a tree nut such as almond, pecan, walnut, cashew, hazelnut, macadamia or “tree nut allergens.”",
+        "The response should not map recalled items from unrelated product categories to the user’s “cookies” meal item. For example, it should not include items such as coffee cake, bark, candy bars in the \"cookies\" category.",
+        "The response should state whether or not any flagged items could have been used in the user's meals. For example, if no products meet all three criteria, the response should include a qualifying sentence such as, \"There are no matches found that are both vegan and nut-related from this recall list”.",
+        "The response should not list Atwater’s Cookie tins (12/23/2025) as a match because it is not confirmed to be vegan in the product recall list.",
+        "The response should not list Gregory’s Foods “Bag Full of Cookies White Chocolate Macadamia Nut Frozen Cookie Dough” (12/23/2025) as a match because it is not vegan.",
+        "The response should not list non-cookie items like Publix Raspberry Coffee Cake (12/16/2025) as matches for the user’s “cookies” meal item.",
+        "The response should not list non-cookie items like Choceur Holiday Bark (12/23/2025) as matches for the user’s “cookies” meal item.",
+        "The response should exclude nut-specific items like Nat’s Nuts Cinnamon Whiskey Pecans (10/17/2025) as matches, focusing on potential cross-contamination.",
+        "The response should not list Lunds & Byerlys Monster cookies (12/10/2025) as a match because the recall entry includes egg so is not vegan.",
+        "The response should not list L’espoir / Drycapot cookies (07/17/2025) as a match because the recall entry includes milk so is not vegan."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/mixed/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/mixed/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should use the user’s meal list (Cheerios with oat milk, Veggie burger with lettuce and tomato, Stuffed peppers, Pancakes with syrup, Quinoa and kale salad, Ramen with tofu, Cookies, Vegan yogurt with berries, Black bean burger and sweet potato fries) as the source for identifying “may have used” items.",
+          "The response should not treat an item as a “match” unless it explains the connection to at least one meal item. For example, it should be a direct match like “cookies,” or a plausible ingredient used in a listed meal such as bread crumbs in stuffed peppers.",
+          "The response should only include recalled items that are vegan (i.e., it should not list items that clearly contain milk, eggs, or other animal-derived ingredients).",
+          "The response should include any items specifically recalled due to cross contamination with nuts. For example, the recall reason should mention peanut or a tree nut such as almond, pecan, walnut, cashew, hazelnut, macadamia or “tree nut allergens.”",
+          "The response should not map recalled items from unrelated product categories to the user’s “cookies” meal item. For example, it should not include items such as coffee cake, bark, candy bars in the \"cookies\" category.",
+          "The response should state whether or not any flagged items could have been used in the user's meals. For example, if no products meet all three criteria, the response should include a qualifying sentence such as, \"There are no matches found that are both vegan and nut-related from this recall list”.",
+          "The response should not list Atwater’s Cookie tins (12/23/2025) as a match because it is not confirmed to be vegan in the product recall list.",
+          "The response should not list Gregory’s Foods “Bag Full of Cookies White Chocolate Macadamia Nut Frozen Cookie Dough” (12/23/2025) as a match because it is not vegan.",
+          "The response should not list non-cookie items like Publix Raspberry Coffee Cake (12/16/2025) as matches for the user’s “cookies” meal item.",
+          "The response should not list non-cookie items like Choceur Holiday Bark (12/23/2025) as matches for the user’s “cookies” meal item.",
+          "The response should exclude nut-specific items like Nat’s Nuts Cinnamon Whiskey Pecans (10/17/2025) as matches, focusing on potential cross-contamination.",
+          "The response should not list Lunds & Byerlys Monster cookies (12/10/2025) as a match because the recall entry includes egg so is not vegan.",
+          "The response should not list L’espoir / Drycapot cookies (07/17/2025) as a match because the recall entry includes milk so is not vegan."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/mixed/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_5.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/mixed/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/mixed/drafts/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Mixed Queue"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/mixed/drafts/analysis-journal.md",
+        "expected_heading": "# Mixed Queue",
+        "prior_body_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

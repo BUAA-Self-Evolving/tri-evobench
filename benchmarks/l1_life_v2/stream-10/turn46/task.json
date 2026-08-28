@@ -1,0 +1,330 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_10",
+  "turn_id": "turn46",
+  "turn_index": 46,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "56145aed-0071-1267-6d77-4b23ee27fbfb",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 313,
+    "source_sha256": "dedb883331b248b465e09d640dd88acb0954ef88c8bbd3ca7e2c6c85a4c8e2f9",
+    "source_metadata": {
+      "task_id": "56145aed-0071-1267-6d77-4b23ee27fbfb",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Workout Timestamp\tLive/On-Demand\tInstructor Name\tLength (minutes)\tFitness Discipline\tType\tTitle\tClass Timestamp\tTotal Output\tAvg. Watts\tAvg. Resistance\tAvg. Cadence (RPM)\tAvg. Speed (mph)\tDistance (mi)\tCalories Burned\tAvg. Heartrate\tAvg. Incline\tAvg. Pace (min/mi)\n2024-01-02 07:24 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-01-03 07:55 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-12-04 05:00 (-10)\t41\t69\t34%\t77\t13.79\t2.30\t54\t\t\t\n2024-01-04 07:22 (-10)\tOn Demand\tBradley Rose\t10\tCycling\tWarm Up\t10 min blink-182 Warm Up Ride\t2023-11-16 13:45 (-10)\t35\t57\t30%\t82\t12.65\t2.11\t45\t\t\t\n2024-01-05 08:56 (MDT)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 09:00 (MDT)\t\t\t\t\t\t\t30\t\t\t\n2024-01-07 19:17 (CDT)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 09:00 (CDT)\t\t\t\t\t\t\t63\t\t\t\n2024-01-14 15:17 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-11-17 05:00 (HST)\t\t\t\t\t\t\t70\t\t\t\n2024-01-15 07:15 (-10)\tOn Demand\tCody Rigsby\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-05-30 04:00 (-10)\t39\t65\t33%\t77\t13.40\t2.24\t51\t\t\t\n2024-01-16 07:06 (-10)\tOn Demand\tCody Rigsby\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-10-16 04:00 (-10)\t38\t64\t34%\t72\t13.17\t2.20\t50\t\t\t\n2024-01-16 17:41 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-01-17 06:22 (-10)\tOn Demand\tDenis Morton\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-10-02 04:00 (-10)\t36\t59\t30%\t81\t12.97\t2.16\t47\t\t\t\n2024-01-18 05:22 (-10)\tOn Demand\tMatt Wilpers\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-09-25 04:00 (-10)\t33\t56\t28%\t85\t12.53\t2.09\t44\t\t\t\n2024-01-19 06:44 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-09-18 04:00 (-10)\t35\t59\t33%\t73\t12.78\t2.13\t46\t\t\t\n2024-01-20 06:19 (-10)\tOn Demand\tDenis Morton\t10\tCycling\tWarm Up\t10 min Warm Up Ride\t2023-08-15 05:00 (-10)\t39\t64\t29%\t86\t13.14\t2.19\t51\t\t\t\n2024-01-21 06:55 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2024-01-22 05:59 (-10)\tOn Demand\tDenis Morton\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2024-01-22 05:00 (-10)\t33\t54\t28%\t83\t12.39\t2.07\t43\t\t\t\n2024-01-23 06:20 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-06-26 04:00 (-10)\t35\t58\t29%\t84\t12.75\t2.13\t46\t\t\t\n2024-01-24 06:21 (-10)\tOn Demand\tMatt Wilpers\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-04-24 04:00 (-10)\t30\t51\t26%\t88\t11.89\t1.98\t40\t\t\t\n2024-01-30 18:11 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t63\t\t\t\n2024-01-31 06:40 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2024-01-29 05:00 (-10)\t43\t72\t37%\t68\t13.88\t2.32\t57\t\t\t\n2024-02-06 02:59 (HST)\tOn Demand\tAditi Shah\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2023-12-21 06:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-02-08 06:34 (-10)\tOn Demand\tDenis Morton\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-06-05 04:00 (-10)\t35\t58\t30%\t79\t12.85\t2.14\t46\t\t\t\n2024-02-12 06:19 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2024-02-13 21:54 (HST)\tOn Demand\tChelsea Jackson Roberts\t20\tMeditation\tRelaxation\t20 min Deep Relaxation Meditation\t2024-01-18 06:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-02-14 01:45 (HST)\tOn Demand\tKirra Michel\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2024-01-10 06:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-02-14 03:28 (HST)\tOn Demand\tRoss Rayburn\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2024-01-31 06:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-02-20 11:59 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-02-22 13:21 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2024-02-22 19:27 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-02-25 11:06 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tLow Impact\tExtra 10: Low Impact Ride\t2023-12-04 05:00 (-10)\t37\t61\t35%\t71\t13.05\t2.17\t48\t\t\t\n2024-03-01 10:38 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tWarm Up\t10 min Warm Up Ride\t2024-02-20 06:00 (-10)\t34\t56\t26%\t91\t12.61\t2.10\t45\t\t\t\n2024-03-01 10:58 (-10)\tOn Demand\tChristine D'Ercole\t20\tCycling\tIntervals\t20 min HIIT Ride\t2023-05-01 04:25 (-10)\t68\t57\t30%\t78\t12.28\t4.09\t90\t\t\t\n2024-03-03 10:43 (-10)\tOn Demand\tDenis Morton\t5\tCycling\tWarm Up\t5 min Warm Up Ride\t2023-12-12 06:00 (-10)\t17\t56\t27%\t89\t12.53\t1.04\t22\t\t\t\n2024-03-03 11:04 (-10)\tOn Demand\tChristine D'Ercole\t20\tCycling\tIntervals\t20 min HIIT Ride\t2021-10-21 05:00 (-10)\t67\t56\t35%\t64\t11.57\t3.85\t88\t\t\t\n2024-03-06 20:00 (-10)\tOn Demand\tMatt Wilpers\t5\tCycling\tWarm Up\t5 min Warm Up Ride\t2024-02-13 06:00 (-10)\t14\t48\t23%\t96\t11.66\t0.97\t19\t\t\t\n2024-03-06 20:06 (-10)\tOn Demand\tChristine D'Ercole\t20\tCycling\tIntervals\t20 min HIIT Ride\t2021-11-22 04:23 (-10)\t69\t58\t37%\t60\t11.68\t3.89\t91\t\t\t\n2024-03-10 08:03 (-10)\tOn Demand\tDenis Morton\t20\tCycling\tIntervals\t20 min HIIT Ride\t2023-10-06 04:25 (-10)\t70\t58\t34%\t66\t11.82\t3.94\t92\t\t\t\n2024-03-12 13:39 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tMorning\t10 min Morning Meditation\t2024-02-26 02:24 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-03-13 18:08 (HST)\t\t\t23\tCycling\t\t23 min Entertainment Ride\t\t76\t54\t31%\t74\t12.39\t4.78\t100\t\t\t\n2024-03-17 09:51 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-12-22 05:00 (HST)\t\t\t\t\t\t\t68\t\t\t\n2024-03-17 11:54 (-10)\tOn Demand\tCody Rigsby\t10\tCycling\tWarm Up\t10 min Warm Up Ride\t2023-04-11 05:00 (-10)\t36\t60\t31%\t78\t12.67\t2.11\t47\t\t\t\n2024-03-17 12:07 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min HIIT Ride\t2023-01-10 14:31 (-10)\t73\t61\t46%\t49\t11.92\t3.97\t96\t\t\t\n2024-03-26 20:22 (-10)\tOn Demand\tDenis Morton\t30\tCycling\tPower Zone\t30 min Power Zone Endurance Ride\t2024-03-21 11:26 (-10)\t101\t56\t29%\t81\t12.60\t6.30\t133\t\t\t\n2024-03-28 13:30 (-10)\tOn Demand\tCody Rigsby\t30\tCycling\tIntervals\t30 min HIIT & Hills Ride\t2024-02-27 13:55 (-10)\t105\t59\t42%\t54\t11.97\t5.99\t138\t\t\t\n2024-04-03 22:06 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tEmotions\t10 min Peace Meditation\t2024-03-27 05:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-04-06 06:24 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-04-07 20:45 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2024-04-14 19:25 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-11-17 05:00 (HST)\t\t\t\t\t\t\t70\t\t\t\n2024-04-14 19:54 (HST)\tOn Demand\tRebecca Kennedy\t5\tCardio\tDance Cardio\t5 min Dance Cardio Warm Up\t2024-03-25 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2024-04-15 08:06 (-10)\tOn Demand\tCody Rigsby\t15\tCycling\tLow Impact\t15 min Low Impact Ride\t2024-04-02 13:36 (-10)\t59\t65\t35%\t70\t13.31\t3.33\t77\t\t\t\n2024-04-15 12:44 (HST)\tOn Demand\tAditi Shah\t15\tMeditation\tRelaxation\t15 min Deep Relaxation Meditation\t2024-04-11 05:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-05-02 19:05 (-10)\tOn Demand\tDenis Morton\t30\tCycling\tPower Zone\t30 min Power Zone Endurance Ride\t2024-03-21 11:26 (-10)\t101\t56\t32%\t78\t12.53\t6.27\t132\t\t\t\n2024-05-05 21:42 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-05-05 21:57 (HST)\tOn Demand\tAnna Greenberg\t20\tStrength\tMusic\t20 min 90s Pilates\t2024-01-04 04:25 (HST)\t\t\t\t\t\t\t99\t\t\t\n2024-05-08 19:00 (HST)\tOn Demand\tAnna Greenberg\t10\tMeditation\tEmotions\t10 min Peace Meditation\t2024-05-07 05:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-05-08 19:12 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2024-05-08 19:36 (HST)\tOn Demand\tAditi Shah\t15\tStrength\tMusic\t15 min 2010s Pilates\t2024-04-02 03:24 (HST)\t\t\t\t\t\t\t74\t\t\t\n2024-05-08 19:55 (-10)\tOn Demand\tHannah Corbin\t10\tCycling\tIntervals\tExtra 10: HIIT Ride\t2024-02-05 05:00 (-10)\t44\t74\t47%\t52\t13.95\t2.32\t58\t\t\t\n2024-05-11 14:19 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2024-05-02 04:00 (HST)\t\t\t\t\t\t\t45\t\t\t\n2024-05-11 14:21 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2024-05-02 04:00 (HST)\t\t\t\t\t\t\t44\t\t\t\n2024-05-11 14:38 (HST)\tOn Demand\tKirra Michel\t15\tYoga\tYoga Anywhere\t15 min Standing Yoga\t2022-02-04 05:00 (HST)\t\t\t\t\t\t\t53\t\t\t\n2024-06-02 15:14 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-06-02 15:47 (-10)\tOn Demand\tDenis Morton\t30\tCycling\tLow Impact\t30 min Low Impact Ride\t2024-03-27 05:00 (-10)\t98\t54\t33%\t70\t12.14\t6.07\t128\t\t\t\n2024-06-03 07:38 (HST)\tOn Demand\tRoss Rayburn\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-12-20 05:00 (HST)\t\t\t\t\t\t\t40\t\t\t\n2024-06-09 23:49 (HST)\tOn Demand\tKirra Michel\t10\tMeditation\tEmotions\t10 min Meditation for Anxiety\t2024-03-06 06:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-06-23 21:47 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t63\t\t\t\n2024-06-25 06:33 (HST)\t\t\t30\tCycling\t\t30 min Just Ride\t\t101\t56\t32%\t74\t12.54\t6.27\t133\t\t\t\n2024-06-26 06:41 (HST)\t\t\t30\tCycling\t\t30 min Just Ride\t\t93\t52\t29%\t77\t12.12\t6.06\t122\t\t\t\n2024-06-27 06:54 (HST)\t\t\t30\tCycling\t\t30 min Just Ride\t\t94\t52\t30%\t74\t12.14\t6.07\t124\t\t\t\n2024-06-28 04:26 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-06-28 04:38 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-12-22 05:00 (HST)\t\t\t\t\t\t\t68\t\t\t\n2024-07-09 22:53 (HST)\tOn Demand\tAditi Shah\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-03-26 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-07-09 23:04 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-03-09 05:00 (HST)\t\t\t\t\t\t\t35\t\t\t\n2024-07-10 19:17 (HST)\t\t\t30\tCycling\t\t30 min Entertainment Ride\t\t89\t49\t34%\t64\t11.83\t5.93\t117\t\t\t\n2024-07-11 13:35 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-02-23 05:00 (HST)\t\t\t\t\t\t\t71\t\t\t\n2024-07-11 16:26 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-08-27 04:00 (HST)\t\t\t\t\t\t\t70\t\t\t\n2024-07-11 19:02 (HST)\t\t\t30\tCycling\t\t30 min Entertainment Ride\t\t95\t53\t31%\t73\t12.12\t6.08\t125\t\t\t\n2024-07-12 11:37 (HST)\t\t\t30\tCycling\t\t30 min Entertainment Ride\t\t100\t55\t33%\t71\t12.32\t6.17\t131\t\t\t\n2024-07-18 20:40 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-07-18 20:51 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-11-17 05:00 (HST)\t\t\t\t\t\t\t69\t\t\t\n2024-08-02 22:42 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-08-10 15:12 (-10)\tOn Demand\tJess King\t20\tCycling\tLow Impact\t20 min Sweat Steady: Low Impact Ride\t2024-06-06 04:25 (-10)\t68\t56\t37%\t61\t12.30\t4.10\t89\t\t\t\n2024-08-11 07:59 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2024-08-11 08:21 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t62\t\t\t\n2024-08-14 21:51 (HST)\t\t\t31\tCycling\t\t32 min Entertainment Ride\t\t95\t52\t33%\t69\t11.87\t6.02\t125\t\t\t\n2024-08-19 21:04 (HST)\t\t\t33\tCycling\t\t33 min Entertainment Ride\t\t98\t49\t29%\t75\t11.51\t6.41\t129\t\t\t\n2024-08-20 07:25 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min HIIT Ride\t2024-06-25 13:26 (-10)\t78\t65\t40%\t58\t12.54\t4.18\t102\t\t\t\n2024-08-31 19:51 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t63\t\t\t\n2024-09-03 18:38 (HST)\t\t\t26\tCycling\t\t26 min Entertainment Ride\t\t76\t49\t30%\t71\t11.42\t4.99\t100\t\t\t\n2024-09-04 07:06 (HST)\t\t\t30\tCycling\t\t30 min Entertainment Ride\t\t100\t55\t31%\t77\t12.38\t6.23\t132\t\t\t\n2024-09-09 06:40 (HST)\t\t\t23\tCycling\t\t23 min Entertainment Ride\t\t76\t54\t36%\t64\t11.92\t4.67\t100\t\t\t\n2024-09-11 19:48 (HST)\t\t\t27\tCycling\t\t28 min Entertainment Ride\t\t76\t46\t33%\t66\t11.21\t5.21\t100\t\t\t\n2024-09-14 23:43 (HST)\t\t\t33\tCycling\t\t33 min Entertainment Ride\t\t87\t44\t35%\t57\t11.11\t6.16\t115\t\t\t\n2024-09-20 06:29 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-12-22 05:00 (HST)\t\t\t\t\t\t\t68\t\t\t\n2024-09-28 05:53 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-03-09 05:00 (HST)\t\t\t\t\t\t\t36\t\t\t\n2024-09-28 06:05 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t63\t\t\t\n2024-09-30 18:59 (HST)\t\t\t30\tCycling\t\t30 min Entertainment Ride\t\t94\t52\t31%\t71\t11.91\t6.03\t123\t\t\t\n2024-10-02 06:42 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min Intervals Ride\t2024-10-01 11:55 (-10)\t72\t60\t42%\t51\t12.07\t4.02\t95\t\t\t\n2024-10-08 07:20 (PDT)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 08:00 (PDT)\t\t\t\t\t\t\t30\t\t\t\n2024-10-08 07:32 (PDT)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 07:00 (PDT)\t\t\t\t\t\t\t61\t\t\t\n2024-10-09 23:54 (PDT)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 08:00 (PDT)\t\t\t\t\t\t\t27\t\t\t\n2024-10-13 17:06 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t27\t\t\t\n2024-10-16 07:54 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-08-27 04:00 (HST)\t\t\t\t\t\t\t70\t\t\t\n2024-10-20 22:46 (HST)\t\t\t26\tCycling\t\t26 min Entertainment Ride\t\t76\t48\t33%\t65\t11.61\t5.08\t100\t\t\t\n2024-10-22 06:25 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2022-05-04 04:00 (HST)\t\t\t\t\t\t\t44\t\t\t\n2024-10-30 05:46 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2024-11-02 10:21 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2024-11-03 20:21 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2024-11-03 20:43 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-11-10 08:54 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2022-05-04 04:00 (HST)\t\t\t\t\t\t\t45\t\t\t\n2024-11-19 06:58 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-11-24 06:19 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-02-23 05:00 (HST)\t\t\t\t\t\t\t71\t\t\t\n2024-11-25 09:40 (EDT)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-02-23 10:00 (EDT)\t\t\t\t\t\t\t71\t\t\t\n2024-12-02 04:45 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-12-02 04:57 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-11-17 05:00 (HST)\t\t\t\t\t\t\t70\t\t\t\n2024-12-12 21:17 (HST)\tOn Demand\tKirra Michel\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2024-12-08 17:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-12-22 07:09 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2024-12-22 07:24 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-05-28 04:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2024-12-25 23:38 (PDT)\tOn Demand\tAditi Shah\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2024-12-01 19:00 (PDT)\t\t\t\t\t\t\t\t\t\t\n2024-12-29 13:25 (PDT)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 04:30 (PDT)\t\t\t\t\t\t\t59\t\t\t\n2025-01-06 19:50 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-01-06 20:03 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-02-23 05:00 (HST)\t\t\t\t\t\t\t71\t\t\t\n2025-01-06 20:25 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-03-09 05:00 (HST)\t\t\t\t\t\t\t36\t\t\t\n2025-01-06 20:39 (HST)\tOn Demand\tAnna Greenberg\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-04-08 04:00 (HST)\t\t\t\t\t\t\t72\t\t\t\n2025-01-07 17:45 (-10)\tOn Demand\tChristine D'Ercole\t30\tCycling\tIntervals\t30 min Intervals Ride\t2025-01-06 15:27 (-10)\t87\t48\t34%\t60\t10.79\t5.39\t114\t\t\t\n2025-01-07 18:16 (-10)\tOn Demand\tChristine D'Ercole\t10\tCycling\tCool Down\t10 min P!nk Cool Down Ride\t2024-01-25 14:35 (-10)\t24\t40\t30%\t61\t10.56\t1.76\t31\t\t\t\n2025-01-07 18:30 (HST)\tOn Demand\tMatty Maggiacomo\t20\tStretching\tFull Body Stretch\t20 min New Year's Day Full Body Stretch\t2024-12-30 19:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-01-09 08:38 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-01-09 08:51 (HST)\tOn Demand\tKirra Michel\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-03 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-01-14 09:22 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tMorning\t10 min Morning Meditation\t2025-01-14 02:24 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-01-14 09:48 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-01-16 15:30 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2025-01-16 18:28 (-10)\tOn Demand\tChristine D'Ercole\t30\tCycling\tIntervals\t30 min Intervals Ride\t2025-01-06 15:27 (-10)\t91\t51\t32%\t66\t11.16\t5.58\t120\t\t\t\n2025-01-22 21:06 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min HIIT Ride\t2024-11-05 12:54 (-10)\t68\t57\t37%\t63\t11.78\t3.93\t89\t\t\t\n2025-01-23 06:30 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-01-28 20:01 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tEmotions\t10 min Metta Meditation\t2025-01-03 05:06 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-02-04 07:00 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2022-05-04 04:00 (HST)\t\t\t\t\t\t\t45\t\t\t\n2025-02-04 17:02 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-04 17:12 (HST)\tOn Demand\tDenis Morton\t5\tYoga\tYoga Anywhere\t5 min Standing Yoga\t2021-03-30 04:00 (HST)\t\t\t\t\t\t\t15\t\t\t\n2025-02-04 17:19 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-03-09 05:00 (HST)\t\t\t\t\t\t\t36\t\t\t\n2025-02-04 17:35 (HST)\tOn Demand\tChelsea Jackson Roberts\t10\tMeditation\tDaily Meditation\t10 min Daily Meditation\t2025-02-02 19:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-02-11 15:33 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2021-10-01 04:00 (HST)\t\t\t\t\t\t\t47\t\t\t\n2025-02-12 21:41 (-10)\tOn Demand\tChristine D'Ercole\t20\tCycling\tIntervals\t20 min HIIT Ride\t2022-06-30 05:00 (-10)\t66\t55\t39%\t57\t11.99\t4.00\t87\t\t\t\n2025-02-13 17:55 (HST)\tOn Demand\tKristin McGee\t20\tStrength\tFull Body\t20 min Pilates\t2020-12-16 04:00 (HST)\t\t\t\t\t\t\t98\t\t\t\n2025-02-14 08:47 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-14 08:59 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-14 09:12 (HST)\tOn Demand\tSam Yo\t30\tStrength\tFull Body\t30 min Pilates\t2020-12-16 04:00 (HST)\t\t\t\t\t\t\t148\t\t\t\n2025-02-14 09:46 (HST)\tOn Demand\tAditi Shah\t30\tStrength\tFull Body\t30 min Pilates\t2020-12-16 04:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-02-16 06:03 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-16 06:15 (HST)\tOn Demand\tAditi Shah\t30\tStrength\tFull Body\t30 min Pilates\t2020-12-16 04:00 (HST)\t\t\t\t\t\t\t148\t\t\t\n2025-02-16 06:50 (HST)\tOn Demand\tMatty Maggiacomo\t10\tStrength\tUpper Body\t10 min Chest & Back Strength\t2024-06-07 04:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-02-18 08:28 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2021-10-01 04:00 (HST)\t\t\t\t\t\t\t47\t\t\t\n2025-02-20 17:47 (HST)\tOn Demand\tEmma Lovewell\t20\tStrength\tFull Body\t20 min Pilates\t2020-12-16 04:00 (HST)\t\t\t\t\t\t\t99\t\t\t\n2025-02-21 22:12 (HST)\tOn Demand\tDenis Morton\t5\tYoga\tYoga Anywhere\t5 min Standing Yoga\t2021-03-30 04:00 (HST)\t\t\t\t\t\t\t15\t\t\t\n2025-02-21 22:21 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-21 23:43 (HST)\tOn Demand\tAditi Shah\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2025-02-08 19:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-02-25 11:26 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tTheme\t10 min Flow & Let Go Meditation\t2025-01-24 19:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-02-26 11:31 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-26 11:44 (HST)\tOn Demand\tKristin McGee\t45\tStrength\tFull Body\t45 min Pilates\t2023-11-17 04:25 (HST)\t\t\t\t\t\t\t81\t\t\t\n2025-02-27 17:34 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-02-27 17:47 (HST)\tOn Demand\tAnna Greenberg\t20\tStrength\tFull Body\t20 min Pilates\t2021-04-06 03:00 (HST)\t\t\t\t\t\t\t99\t\t\t\n2025-03-10 17:43 (HST)\tOn Demand\tAndy Speer\t10\tStrength\tWarm Up\t10 min Strength-Focus Warm Up\t2019-12-10 06:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-03-10 17:58 (HST)\tOn Demand\tAndy Speer\t30\tStrength\tUpper Body\t30 min Upper Body Strength\t2019-12-10 06:00 (HST)\t\t\t\t\t\t\t150\t\t\t\n2025-03-10 18:34 (HST)\tOn Demand\tAndy Speer\t10\tStretching\tFull Body Stretch\t10 min Post-Strength Stretch\t2019-12-10 06:10 (HST)\t\t\t\t\t\t\t25\t\t\t\n2025-03-12 09:30 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-03-12 09:43 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2025-03-12 10:05 (HST)\tOn Demand\tAndy Speer\t10\tStrength\tWarm Up\t10 min Strength-Focus Warm Up\t2019-12-10 06:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-03-12 10:20 (HST)\tOn Demand\tAndy Speer\t30\tStrength\tLower Body\t30 min Lower Body Strength\t2019-12-10 06:10 (HST)\t\t\t\t\t\t\t147\t\t\t\n2025-03-12 10:57 (HST)\tOn Demand\tAndy Speer\t10\tStretching\tFull Body Stretch\t10 min Post-Strength Stretch\t2019-12-10 06:10 (HST)\t\t\t\t\t\t\t25\t\t\t\n2025-03-12 11:10 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tTheme\t10 min Flow & Let Go Meditation\t2025-02-22 05:10 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-03-14 08:50 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2025-03-17 00:06 (HST)\tOn Demand\tChelsea Jackson Roberts\t30\tMeditation\tSleep\t30 min Sleep Meditation\t2025-03-02 18:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-04-10 16:44 (HST)\t\t\t30\tCycling\t\t30 min Just Ride\t\t179\t100\t37%\t84\t16.07\t8.03\t234\t\t\t\n2025-04-13 00:53 (HST)\tOn Demand\tAditi Shah\t20\tMeditation\tRelaxation\t20 min Deep Relaxation Meditation\t2025-04-06 16:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-04-14 08:54 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t28\t\t\t\n2025-04-14 09:05 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-04-15 18:26 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-04-21 22:39 (-10)\tOn Demand\tCody Rigsby\t30\tCycling\tIntervals\t30 min Intervals Ride\t2025-04-08 01:55 (-10)\t98\t55\t39%\t56\t11.63\t5.82\t129\t\t\t\n2025-04-22 22:49 (HST)\tOn Demand\tMatty Maggiacomo\t10\tStrength\tStrength Basics\t10 min Basics: Push-Up\t2024-07-19 04:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-04-22 23:02 (HST)\tOn Demand\tMatty Maggiacomo\t10\tStrength\tStrength Basics\t10 min Basics: Overhead Press\t2024-07-19 04:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-04-22 23:23 (HST)\tOn Demand\tMatty Maggiacomo\t10\tStrength\tStrength Basics\t10 min Basics: Bicep Curl\t2024-07-19 04:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-04-23 13:05 (-10)\tOn Demand\tCody Rigsby\t30\tCycling\tIntervals\t30 min HIIT & Hills Ride\t2025-04-17 00:24 (-10)\t99\t55\t36%\t62\t11.89\t5.96\t130\t\t\t\n2025-04-26 10:40 (HST)\tOn Demand\tAditi Shah\t10\tMeditation\tTheme\t10 min Flow & Let Go Meditation\t2025-04-26 04:06 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-04-26 10:52 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-04-26 11:04 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-04-26 12:02 (HST)\tOn Demand\tBen Alldis\t30\tStrength\tBodyweight\t30 min Bodyweight Strength\t2025-03-16 01:55 (HST)\t\t\t\t\t\t\t147\t\t\t\n2025-05-02 15:20 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2021-03-09 05:00 (HST)\t\t\t\t\t\t\t35\t\t\t\n2025-05-02 15:32 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-05-02 15:45 (HST)\tOn Demand\tRebecca Kennedy\t30\tStrength\tFull Body\t30 min Full Body Strength\t2025-03-16 08:27 (HST)\t\t\t\t\t\t\t147\t\t\t\n2025-05-10 07:19 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-05-14 06:44 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-05-15 13:13 (-10)\tOn Demand\tChristine D'Ercole\t5\tCycling\tWarm Up\t5 min Get To Know Me Warm Up Ride\t2025-02-09 19:00 (-10)\t11\t38\t23%\t86\t10.43\t0.87\t15\t\t\t\n2025-05-15 13:20 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min Intervals Ride\t2025-04-22 11:56 (-10)\t67\t56\t39%\t56\t11.74\t3.92\t88\t\t\t\n2025-05-17 15:47 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2025-05-18 07:06 (HST)\tOn Demand\tCallie Gullickson\t10\tStrength\tCore\t10 min Core Strength\t2025-05-15 18:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-05-18 07:19 (HST)\tOn Demand\tKatie Wang\t10\tStrength\tCore\t10 min Core Strength\t2025-05-14 18:00 (HST)\t\t\t\t\t\t\t49\t\t\t\n2025-05-18 18:51 (-10)\tOn Demand\tChristine D'Ercole\t20\tCycling\tIntervals\t20 min HIIT Ride\t2022-04-25 04:29 (-10)\t65\t54\t34%\t64\t11.41\t3.80\t85\t\t\t\n2025-06-03 09:30 (HST)\tOn Demand\tDenis Morton\t5\tYoga\tYoga Anywhere\t5 min Standing Yoga\t2021-03-30 04:00 (HST)\t\t\t\t\t\t\t15\t\t\t\n2025-06-03 09:36 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-06-03 09:48 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2024-05-02 04:00 (HST)\t\t\t\t\t\t\t44\t\t\t\n2025-06-16 15:17 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-08-27 04:00 (HST)\t\t\t\t\t\t\t69\t\t\t\n2025-06-19 06:01 (-10)\tOn Demand\tCody Rigsby\t15\tCycling\tIntervals\t15 min HIIT Ride\t2024-10-19 04:34 (-10)\t52\t58\t42%\t54\t11.54\t2.89\t68\t\t\t\n2025-06-23 11:15 (-10)\tOn Demand\tBradley Rose\t15\tCycling\tIntervals\t15 min Tabata Ride\t2025-03-14 08:25 (-10)\t47\t53\t31%\t77\t11.70\t2.93\t62\t\t\t\n2025-06-26 06:24 (-10)\tOn Demand\tBradley Rose\t15\tCycling\tIntervals\t15 min HIIT Ride\t2025-06-17 07:24 (-10)\t55\t61\t38%\t66\t12.38\t3.10\t72\t\t\t\n2025-07-01 08:46 (-10)\tOn Demand\tBen Alldis\t20\tCycling\tIntervals\t20 min HIIT Ride\t2025-06-01 02:55 (-10)\t77\t64\t41%\t54\t11.95\t3.98\t100\t\t\t\n2025-07-01 09:10 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-12-22 05:00 (HST)\t\t\t\t\t\t\t67\t\t\t\n2025-07-01 09:36 (HST)\tOn Demand\tCallie Gullickson\t20\tStrength\tCore\t20 min Strength Roll Call: Core\t2023-07-12 01:23 (HST)\t\t\t\t\t\t\t98\t\t\t\n2025-07-04 09:51 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-07-04 10:03 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-07-04 10:27 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min HIIT Ride\t2025-06-03 11:55 (-10)\t64\t54\t38%\t58\t11.13\t3.71\t84\t\t\t\n2025-07-06 11:34 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tIntervals\t20 min HIIT Ride\t2025-03-25 11:54 (-10)\t77\t64\t45%\t51\t12.37\t4.12\t100\t\t\t\n2025-07-17 19:08 (HST)\t\t\t60\tCycling\t\t61 min Entertainment Ride\t\t156\t43\t34%\t59\t10.31\t10.45\t204\t\t\t\n2025-07-21 11:52 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-07-21 13:04 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-07-21 13:46 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-08-27 04:00 (HST)\t\t\t\t\t\t\t69\t\t\t\n2025-08-04 13:51 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2024-05-02 04:00 (HST)\t\t\t\t\t\t\t44\t\t\t\n2025-08-06 22:49 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-08-06 23:01 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-08-07 08:36 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-08-07 08:49 (HST)\tOn Demand\tAditi Shah\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-03-26 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-08-18 08:47 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-08-18 14:12 (-10)\tOn Demand\tDenis Morton\t20\tCycling\tIntervals\t20 min HIIT Ride\t2024-06-17 01:24 (-10)\t69\t58\t35%\t66\t11.95\t3.99\t90\t\t\t\n2025-08-19 09:23 (HST)\tOn Demand\tAditi Shah\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-03-26 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-08-19 11:10 (HST)\tOn Demand\tRebecca Kennedy\t5\tStrength\tWarm Up\t5 min Full Body Strength Warm Up\t2025-08-01 04:00 (HST)\t\t\t\t\t\t\t25\t\t\t\n2025-08-19 17:32 (HST)\tOn Demand\tRebecca Kennedy\t20\tStrength\tFull Body\t20 min Full Body Strength\t2025-08-01 04:00 (HST)\t\t\t\t\t\t\t99\t\t\t\n2025-08-20 23:08 (HST)\tOn Demand\tAditi Shah\t15\tYoga\tYoga Anywhere\t15 min Chair Yoga\t2021-10-01 04:00 (HST)\t\t\t\t\t\t\t47\t\t\t\n2025-08-20 23:26 (HST)\tOn Demand\tRebecca Kennedy\t20\tStrength\tFull Body\t20 min Full Body Strength\t2025-08-01 04:00 (HST)\t\t\t\t\t\t\t46\t\t\t\n2025-09-04 12:35 (HST)\tOn Demand\tAditi Shah\t5\tMeditation\tBreath\t5 min Breathing Meditation\t2025-09-02 18:00 (HST)\t\t\t\t\t\t\t\t\t\t\n2025-09-16 12:15 (HST)\tOn Demand\tDenis Morton\t5\tYoga\tYoga Anywhere\t5 min Standing Yoga\t2021-03-30 04:00 (HST)\t\t\t\t\t\t\t15\t\t\t\n2025-09-26 17:41 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t59\t\t\t\n2025-09-27 20:03 (-10)\tOn Demand\tDenis Morton\t20\tCycling\tIntervals\t20 min HIIT Ride\t2025-04-01 14:26 (-10)\t64\t53\t34%\t66\t11.39\t3.79\t83\t\t\t\n2025-10-01 07:09 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2025-10-02 11:11 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-06-18 04:00 (HST)\t\t\t\t\t\t\t60\t\t\t\n2025-10-06 20:53 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t68\t57\t40%\t56\t11.89\t3.96\t89\t\t\t\n2025-10-14 09:47 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t74\t61\t41%\t58\t12.39\t4.13\t96\t\t\t\n2025-10-16 11:06 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t84\t70\t40%\t61\t13.39\t4.46\t110\t\t\t\n2025-10-21 09:38 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t88\t74\t38%\t67\t13.81\t4.60\t115\t\t\t\n2025-10-23 09:50 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t83\t69\t44%\t55\t13.19\t4.40\t109\t\t\t\n2025-11-04 08:51 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2024-02-15 02:30 (HST)\t\t\t\t\t\t\t58\t\t\t\n2025-11-06 11:49 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t74\t61\t40%\t58\t12.39\t4.13\t96\t\t\t\n2025-11-07 23:10 (HST)\t\t\t26\tCycling\t\t26 min Entertainment Ride\t\t82\t51\t36%\t59\t11.90\t5.26\t107\t\t\t\n2025-11-09 08:41 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t77\t64\t42%\t55\t12.55\t4.18\t100\t\t\t\n2025-11-11 08:30 (-10)\tOn Demand\tCody Rigsby\t20\tCycling\tMusic\t20 min KPop Demon Hunters Ride\t2025-10-03 08:54 (-10)\t84\t70\t39%\t62\t13.25\t4.42\t109\t\t\t\n2025-12-05 18:37 (-10)\tOn Demand\tBen Alldis\t15\tCycling\tIntervals\t15 min HIIT Ride\t2025-11-23 04:24 (-10)\t53\t59\t43%\t53\t11.88\t2.97\t70\t\t\t\n2025-12-09 05:47 (-10)\tOn Demand\tDenis Morton\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-10-14 08:54 (-10)\t216\t60\t33%\t73\t12.87\t12.87\t282\t\t\t\n2025-12-11 06:58 (HST)\t\t\t60\tCycling\t\t60 min Entertainment Ride\t\t188\t52\t32%\t70\t12.10\t12.13\t246\t\t\t\n2025-12-13 07:49 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2025-12-16 06:48 (-10)\tOn Demand\tDenis Morton\t45\tCycling\tPower Zone\t45 min Power Zone Endurance Rock Ride\t2025-11-21 09:25 (-10)\t162\t60\t33%\t75\t12.94\t9.70\t212\t\t\t\n2025-12-17 22:11 (-10)\tOn Demand\tChristine D'Ercole\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-11-13 12:25 (-10)\t206\t57\t30%\t80\t12.64\t12.64\t270\t\t\t\n2025-12-21 10:45 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-10-04 01:55 (-10)\t186\t52\t30%\t79\t12.07\t12.07\t244\t\t\t\n2026-01-01 12:10 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t30\t\t\t\n2026-01-01 16:31 (HST)\tOn Demand\tDenis Morton\t5\tYoga\tYoga Anywhere\t5 min Standing Yoga\t2021-03-30 04:00 (HST)\t\t\t\t\t\t\t15\t\t\t\n2026-01-01 16:38 (HST)\tOn Demand\tAditi Shah\t20\tYoga\tYoga Anywhere\t20 min Chair Yoga\t2021-11-17 05:00 (HST)\t\t\t\t\t\t\t69\t\t\t\n2026-01-01 16:59 (HST)\tOn Demand\tBen Alldis\t15\tStretching\tFull Body Stretch\t15 min Full Body Stretch\t2025-10-30 18:00 (HST)\t\t\t\t\t\t\t37\t\t\t\n2026-01-08 14:41 (-10)\tOn Demand\tDenis Morton\t20\tCycling\tIntervals\t20 min HIIT Ride\t2025-12-29 19:00 (-10)\t66\t55\t33%\t65\t11.45\t3.82\t86\t\t\t\n2026-01-11 10:19 (-10)\tOn Demand\tChristine D'Ercole\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-11-13 12:25 (-10)\t211\t58\t30%\t80\t12.75\t12.75\t275\t\t\t\n2026-01-12 10:44 (-10)\tOn Demand\tChristine D'Ercole\t60\tCycling\tClimb\t60 min Climb Ride\t2025-02-09 10:54 (-10)\t201\t56\t42%\t52\t12.08\t12.08\t263\t\t\t\n2026-01-17 12:07 (-10)\tOn Demand\tSam Yo\t15\tCycling\tIntervals\t15 min HIIT Ride\t2025-12-22 19:00 (-10)\t54\t61\t36%\t62\t11.75\t2.94\t71\t\t\t\n2026-01-23 10:47 (-10)\tOn Demand\tDenis Morton\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-09-11 00:25 (-10)\t203\t57\t33%\t71\t12.48\t12.48\t266\t\t\t\n2026-01-27 16:00 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2026-01-17 02:56 (-10)\t186\t52\t30%\t77\t12.00\t12.00\t243\t\t\t\n2026-02-03 09:36 (-10)\tOn Demand\tChristine D'Ercole\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-11-13 12:25 (-10)\t197\t55\t32%\t73\t12.26\t12.25\t257\t\t\t\n2026-02-07 15:22 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Ride\t2026-02-07 02:55 (-10)\t206\t57\t33%\t70\t12.40\t12.40\t269\t\t\t\n2026-02-11 08:37 (-10)\tOn Demand\tCody Rigsby\t15\tCycling\tIntervals\t15 min HIIT Ride\t2026-02-01 03:35 (-10)\t55\t61\t39%\t59\t11.99\t3.00\t72\t\t\t\n2026-02-14 11:47 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2026-01-31 02:55 (-10)\t181\t50\t29%\t81\t11.86\t11.86\t237\t\t\t\n2026-02-17 18:34 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Ride\t2026-01-10 02:56 (-10)\t196\t54\t33%\t66\t11.73\t11.73\t256\t\t\t\n2026-02-19 08:47 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2026-01-17 02:56 (-10)\t194\t54\t31%\t77\t12.25\t12.25\t253\t\t\t\n2026-02-24 22:36 (-10)\tOn Demand\tMatt Wilpers\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-04-19 01:55 (-10)\t232\t65\t35%\t70\t13.36\t13.36\t304\t\t\t\n2026-02-27 12:11 (-10)\tOn Demand\tChristine D'Ercole\t45\tCycling\tPower Zone\t45 min Power Zone Ride\t2026-02-24 15:24 (-10)\t91\t34\t28%\t52\t7.83\t5.87\t119\t\t\t\n2026-03-06 10:57 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Chair Yoga\t2023-05-04 05:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2026-03-06 11:09 (HST)\tOn Demand\tDenis Morton\t10\tYoga\tYoga Anywhere\t10 min Standing Yoga\t2021-06-11 04:00 (HST)\t\t\t\t\t\t\t29\t\t\t\n2026-03-07 09:12 (-10)\tOn Demand\tDenis Morton\t60\tCycling\tPower Zone\t60 min Power Zone Endurance Ride\t2025-11-29 02:56 (-10)\t212\t59\t33%\t73\t12.77\n\n\n\nTask:\n\n\nI know my consistency fluctuates. To investigate how I might be more consistent with exercising, analyze my workout history to identify the specific periods where my routine falls apart (e.g., gaps of 5+ days) and periods where I'm consistent. Determine if there is a correlation between the specific types of workouts, instructors, or exertion levels (Output/Calories Burned) I do before I typically lose/gain consistency. Consider which exercises I seem to be most interested in/least interested in. Based on your findings, build a 2-week schedule that maximizes my calorie burn but strictly avoids the exact workout patterns that trigger my usual drop-offs and amplifies workout patterns that keep me engaged.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 56145aed' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_switch_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_10.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_switch_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_switch_personal",
+        "title": "Review 56145aed",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_switch_personal",
+      "title": "Review 56145aed",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify long gaps of 5 or more days in the workout history. For example, it should explain the 24-day period from March 17, 2025 to April 10, 2025 is the longest gap on record.",
+        "The response should provide a 2-week workout schedule.",
+        "The response should recognize the user's high interest and consistency in the 60-minute Power Zone Endurance Ride. For example, it could note that the user clocked an average of 1-2 times per week from mid-December 2025 to mid-March 2026 on this exercise.",
+        "The response should not describe the 60-minute Power Zone Endurance ride as a primary \"burnout trigger.\" For example, it should describe it as a workout the user is \"most interested in\" given the sustained adherence to this exercise between December 2025 and March 2026.",
+        "The response should identify the exercises the user seems least interested in. For example, it could mention that Dance Cardio or lower body strength workouts appear very rarely in the data.",
+        "The response should identify specific periods where the user is highly consistent. For example, it could highlight the period from December 2025 to March 2026 as a consistent phase.",
+        "The response should exclude the workout patterns identified by the response as triggers for the user's drop-offs in the proposed 2-week schedule.",
+        "The response should amplify the workout patterns identified by the response as keeping the user engaged in the proposed 2-week schedule.",
+        "The response should prioritize workouts that maximize calorie burn in the proposed 2-week schedule. For example, it could emphasize the user's high-calorie burning sessions like 60-minute Power Zone Endurance rides."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_switch_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_switch_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify long gaps of 5 or more days in the workout history. For example, it should explain the 24-day period from March 17, 2025 to April 10, 2025 is the longest gap on record.",
+          "The response should provide a 2-week workout schedule.",
+          "The response should recognize the user's high interest and consistency in the 60-minute Power Zone Endurance Ride. For example, it could note that the user clocked an average of 1-2 times per week from mid-December 2025 to mid-March 2026 on this exercise.",
+          "The response should not describe the 60-minute Power Zone Endurance ride as a primary \"burnout trigger.\" For example, it should describe it as a workout the user is \"most interested in\" given the sustained adherence to this exercise between December 2025 and March 2026.",
+          "The response should identify the exercises the user seems least interested in. For example, it could mention that Dance Cardio or lower body strength workouts appear very rarely in the data.",
+          "The response should identify specific periods where the user is highly consistent. For example, it could highlight the period from December 2025 to March 2026 as a consistent phase.",
+          "The response should exclude the workout patterns identified by the response as triggers for the user's drop-offs in the proposed 2-week schedule.",
+          "The response should amplify the workout patterns identified by the response as keeping the user engaged in the proposed 2-week schedule.",
+          "The response should prioritize workouts that maximize calorie burn in the proposed 2-week schedule. For example, it could emphasize the user's high-calorie burning sessions like 60-minute Power Zone Endurance rides."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_switch_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_10.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_switch_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_switch_personal",
+          "title": "Review 56145aed",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_switch_personal",
+        "title": "Review 56145aed",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

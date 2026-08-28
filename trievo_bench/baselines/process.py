@@ -265,6 +265,10 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 "request": context.request,
                 "max_interactions": context.max_interactions,
                 "metadata": context.metadata,
+                # Semantic state is public baseline state, not evaluator
+                # feedback.  L1 adapters use it to restore facts after their
+                # required fresh per-turn session is created.
+                "semantic_state": self._semantic_state,
             },
         )
         self._current_turn = context.turn_id

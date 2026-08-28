@@ -1,0 +1,502 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_10",
+  "directory": "stream-10",
+  "profile": "High-interference user alternating unrelated life tasks",
+  "theme": "Balanced stress stream with frequent task-surface shifts",
+  "turn_count": 60,
+  "task_layout": "turn{1..60}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "fact_disclosure": 6,
+    "fact_correction": 6,
+    "preference_application": 12,
+    "fact_qa": 12,
+    "fact_dependent_tool": 12,
+    "distractor": 8,
+    "long_delay_replay": 4
+  },
+  "fact_thread_count": 6,
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "51d08a9a-042b-077d-cf1d-0675f4cc8404"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "215f698c-3e69-7e7f-e784-f07ef81892a0"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "c3894252-8cfb-9071-27c1-14cdce777d8f"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bb4a41f1-0738-c2b7-cc43-e7bc0a0ed68b"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "135b1b39-4198-b9c3-03cc-62665cab0c6c"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "dd577558-de3e-d7b2-8e8b-ad925b10bb9d"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "4acbd261-ab73-7e2a-0e54-4ceaa7c5eb65"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "653a96d6-a3e9-9a23-1f2e-2aa4e2b6a760"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "487d889a-1110-1e9b-5d9c-974afbdb94db"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "7f33a033-93db-ecec-8a4f-1667b3f3e6a6"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "551d6214-2ced-3a66-12a4-61a45079612e"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "3c2b8f8c-02f9-653d-7fea-2ba49411b9ca"
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "8bbd151b-4684-c504-cb14-2f82728b0b3e"
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "9f1c8534-b87e-dace-aefd-b8090f065b0b"
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "fact_disclosure",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "fcf6390b-1204-2362-853d-1fc9aa0a42de"
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn20",
+      "turn_index": 20,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "9ca41622-88f3-a693-efa3-bed2d849d976"
+    },
+    {
+      "turn_id": "turn21",
+      "turn_index": 21,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "af72a6e2-b8fd-3e8a-fde9-9ff84d95ba24"
+    },
+    {
+      "turn_id": "turn22",
+      "turn_index": 22,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "7c4e0ba5-d5f3-1611-60c6-d92b2a202271"
+    },
+    {
+      "turn_id": "turn23",
+      "turn_index": 23,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn24",
+      "turn_index": 24,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "34d1b85c-45d1-6503-dd42-58cfbca4aff8"
+    },
+    {
+      "turn_id": "turn25",
+      "turn_index": 25,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "f0a74562-ea4d-db8c-30bc-ad2cea1d9038"
+    },
+    {
+      "turn_id": "turn26",
+      "turn_index": 26,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn27",
+      "turn_index": 27,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn28",
+      "turn_index": 28,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "90c7150c-7578-edc9-8b2f-95aee5c71909"
+    },
+    {
+      "turn_id": "turn29",
+      "turn_index": 29,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "c53c1fdc-99a4-286c-14c6-f560ba8fe803"
+    },
+    {
+      "turn_id": "turn30",
+      "turn_index": 30,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "a91db6c5-3b1e-14b1-13c8-a1f06d0aa667"
+    },
+    {
+      "turn_id": "turn31",
+      "turn_index": 31,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn32",
+      "turn_index": 32,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eac65e1d-ba2d-24cd-a3a5-91169903d362"
+    },
+    {
+      "turn_id": "turn33",
+      "turn_index": 33,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn34",
+      "turn_index": 34,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "02c9c5f9-c1a2-fee8-2913-d22283f01c56"
+    },
+    {
+      "turn_id": "turn35",
+      "turn_index": 35,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "037f586b-42e1-e0bf-9caa-436f47a16f31"
+    },
+    {
+      "turn_id": "turn36",
+      "turn_index": 36,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn37",
+      "turn_index": 37,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "48b36673-2d23-8ef3-2244-930514b041eb"
+    },
+    {
+      "turn_id": "turn38",
+      "turn_index": 38,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "537c226c-b9c3-7d13-19ce-e518123099fc"
+    },
+    {
+      "turn_id": "turn39",
+      "turn_index": 39,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn40",
+      "turn_index": 40,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn41",
+      "turn_index": 41,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "170bafc1-4fc1-c844-2ee4-e216d577a557"
+    },
+    {
+      "turn_id": "turn42",
+      "turn_index": 42,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "e70c2bb5-d18c-7ef0-f3a8-b18765d05a68"
+    },
+    {
+      "turn_id": "turn43",
+      "turn_index": 43,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "5b8cf413-c2cd-a40c-4fa9-26a486e08f7a"
+    },
+    {
+      "turn_id": "turn44",
+      "turn_index": 44,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn45",
+      "turn_index": 45,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn46",
+      "turn_index": 46,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "56145aed-0071-1267-6d77-4b23ee27fbfb"
+    },
+    {
+      "turn_id": "turn47",
+      "turn_index": 47,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "27211ddd-1def-e614-7739-71ffc3d74fb3"
+    },
+    {
+      "turn_id": "turn48",
+      "turn_index": 48,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "93201e7b-bec1-9138-e41f-aefafb15bab5"
+    },
+    {
+      "turn_id": "turn49",
+      "turn_index": 49,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn50",
+      "turn_index": 50,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "a52ab736-79b4-3fcd-bb50-181646565b8a"
+    },
+    {
+      "turn_id": "turn51",
+      "turn_index": 51,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn52",
+      "turn_index": 52,
+      "turn_type": "preference_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "5b42dfa1-6236-7c8a-1bda-cae305526666"
+    },
+    {
+      "turn_id": "turn53",
+      "turn_index": 53,
+      "turn_type": "long_delay_replay",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "replay",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn54",
+      "turn_index": 54,
+      "turn_type": "fact_qa",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn55",
+      "turn_index": 55,
+      "turn_type": "fact_correction",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn56",
+      "turn_index": 56,
+      "turn_type": "fact_dependent_tool",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "ef600388-8231-3e18-b634-98f1cddb90fa"
+    },
+    {
+      "turn_id": "turn57",
+      "turn_index": 57,
+      "turn_type": "long_delay_replay",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "replay",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn58",
+      "turn_index": 58,
+      "turn_type": "distractor",
+      "turn_origin": "source_task",
+      "sequence_role": "noise",
+      "source_task_id": "7067e8de-5996-7ac0-57be-6e67c9887dbe"
+    },
+    {
+      "turn_id": "turn59",
+      "turn_index": 59,
+      "turn_type": "long_delay_replay",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "replay",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn60",
+      "turn_index": 60,
+      "turn_type": "long_delay_replay",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "replay",
+      "source_task_id": null
+    }
+  ]
+}

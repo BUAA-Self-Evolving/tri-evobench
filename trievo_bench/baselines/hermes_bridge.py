@@ -32,6 +32,7 @@ class HermesBridge:
         self._limit_state: dict[str, Any] = {}
         self._l1_tools: list[str] = []
         self._is_l1_turn = False
+        self._is_l1_life_turn = False
         self._l1_state: dict[str, Any] = {}
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -105,6 +106,9 @@ class HermesBridge:
         metadata = params.get("metadata")
         self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
         self._is_l1_turn = _is_l1_metadata(metadata)
+        self._is_l1_life_turn = _is_l1_life_metadata(metadata)
+        semantic_state = params.get("semantic_state", {})
+        self._l1_state = dict(semantic_state) if self._is_l1_turn and isinstance(semantic_state, dict) else {}
         if self._is_l1_turn:
             # L1 already controls retries through max_interactions.  Give the
             # framework exactly one foreground decision per Interaction: an
@@ -155,7 +159,7 @@ class HermesBridge:
         self._tool_calls = []
         if self._is_l1_turn:
             request = (
-                _l1_protocol_prompt(self._l1_tools)
+                _l1_protocol_prompt(self._l1_tools, self._is_l1_life_turn)
                 + _l1_readonly_workspace_context(Path(self._workspace or state.cwd))
                 + _l1_persistent_state_context(self._l1_state)
                 + "\n\n"
@@ -329,6 +333,7 @@ class HermesBridge:
         self._limit_state = {}
         self._l1_tools = []
         self._is_l1_turn = False
+        self._is_l1_life_turn = False
         self._l1_state = {}
 
     def _install_callbacks(self, agent: Any) -> None:
@@ -547,7 +552,7 @@ class HermesBridge:
         )
 
 
-def _l1_protocol_prompt(available_tools: list[str]) -> str:
+def _l1_protocol_prompt(available_tools: list[str], l1_life: bool = False) -> str:
     tools = ", ".join(available_tools)
     return (
         "L1 SIMULATED-TOOL PROTOCOL: these evaluator tools are available and must not be described as missing: "
@@ -566,15 +571,24 @@ def _l1_protocol_prompt(available_tools: list[str]) -> str:
         "Keep visible replies within any requested sentence limit (otherwise at most three concise sentences), and never repeat a simulated call that succeeded earlier in the conversation. "
         "For calendar timestamps include the requested +08:00 offset, for example 2026-08-24T10:00:00+08:00. "
         "Benchmark task literals are authoritative: use an explicitly stated absolute date exactly; do not replace it using the host date. "
-        "Use fact keys default_output_language=zh-CN or en-US, aurora.technical_owner, default_delivery_calendar_id, aurora.delivery_group_id, and aurora.go_live_date when applicable. "
-        "Each fact must be {\"value\": \"...\"}; replacing a fact must also retain its old value in fact_history with status=superseded."
+        + (
+            "For a lasting user fact explicitly disclosed or corrected in this conversation, use its semantic key in facts and a value object, for example {\"facts\": {\"default_workspace\": {\"value\": \"docs/project/drafts\"}}}. "
+            "Never save a one-turn formatting request as a fact; when correcting a fact, keep the previous value in fact_history with status=superseded."
+            if l1_life
+            else "Use fact keys default_output_language=zh-CN or en-US, aurora.technical_owner, default_delivery_calendar_id, aurora.delivery_group_id, and aurora.go_live_date when applicable. "
+            "Each fact must be {\"value\": \"...\"}; replacing a fact must also retain its old value in fact_history with status=superseded."
+        )
     )
 
 
 def _is_l1_metadata(metadata: Any) -> bool:
     """Identify L1 explicitly, including read-only turns without any tools."""
 
-    return isinstance(metadata, dict) and metadata.get("source_format") == "l1_demo_task_json"
+    return isinstance(metadata, dict) and metadata.get("source_format") in {"l1_demo_task_json", "l1_life_v2_task_json"}
+
+
+def _is_l1_life_metadata(metadata: Any) -> bool:
+    return isinstance(metadata, dict) and metadata.get("source_format") == "l1_life_v2_task_json"
 
 
 def _l1_readonly_workspace_context(workspace: Path) -> str:

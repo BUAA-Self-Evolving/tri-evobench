@@ -1,0 +1,340 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_5",
+  "turn_id": "turn50",
+  "turn_index": 50,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "d84cedfa-b139-8c54-9956-41e6a7d81b40",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 2,
+    "source_sha256": "1f92a14cbb7df551570fd2446781331f5b74e79134fe5f5e05d9e5dcf711d3e8",
+    "source_metadata": {
+      "task_id": "d84cedfa-b139-8c54-9956-41e6a7d81b40",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Game Logs"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.14\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Falcon8820\"]\n[Result \"0-1\"]\n[WhiteElo \"578\"]\n[BlackElo \"589\"]\n[TimeControl \"600\"]\n[EndTime \"0:27:15 GMT+0000\"]\n[Termination \"Falcon8820 won by resignation\"]\n\n1. d4 e6 2. c4 Qh4 3. g3 Qe4 4. Nc3 Qxh1 5. f3 Qxg1 6. Bg5 Qxh2 7. Qd2 Qxg3+ 8.\nKd1 Qg1 9. Bh4 Qxf1+ 10. Kc2 Qxa1 11. Qg5 f6 12. Qh5+ g6 13. Qg4 Qf1 14. Qe4 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.14\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Orion5513\"]\n[Result \"0-1\"]\n[WhiteElo \"569\"]\n[BlackElo \"548\"]\n[TimeControl \"600\"]\n[EndTime \"0:28:42 GMT+0000\"]\n[Termination \"Orion5513 won by resignation\"]\n\n1. d4 e6 2. c4 e5 3. dxe5 Qh4 4. Qd5 Bb4+ 5. Bd2 Ne7 6. Bxb4 Nxd5 7. cxd5 Qxb4+\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.14\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Quartz1904\"]\n[Result \"0-1\"]\n[WhiteElo \"562\"]\n[BlackElo \"619\"]\n[TimeControl \"600\"]\n[EndTime \"0:37:02 GMT+0000\"]\n[Termination \"Quartz1904 won by checkmate\"]\n\n1. d4 d5 2. c4 Bf5 3. c5 Nf6 4. e3 e6 5. Bb5+ c6 6. Ba4 Qa5+ 7. Nc3 Nbd7 8. f4\nb6 9. Bxc6 bxc5 10. Bxa8 cxd4 11. Bd2 Bb4 12. Qb3 dxe3 13. Bxe3 Nc5 14. Bc6+\nNfd7 15. Bxc5 Qxc5 16. Nf3 e5 17. Nxe5 Qe3+ 18. Kf1 Bc5 19. Bxd7+ Ke7 20. Qxd5\nQf2# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.16\"]\n[Round \"-\"]\n[White \"Nimbus3348\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"529\"]\n[BlackElo \"569\"]\n[TimeControl \"600\"]\n[EndTime \"20:25:03 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e3 e5 2. d4 Nc6 3. c3 d5 4. b4 Bf5 5. Bd3 Nge7 6. f4 exf4 7. exf4 g6 8. Nf3\nBh6 9. Ne5 O-O 10. Nxc6 Nxc6 11. Bxf5 gxf5 12. g3 Qe7+ 13. Qe2 Rae8 14. Ba3 a5\n15. Kf2 axb4 16. Bxb4 Qxe2+ 17. Kg1 Qe1+ 18. Kg2 Qe4+ 19. Kh3 Qxh1 20. Bxf8 Kxf8\n21. a4 Re2 22. a5 Qxh2# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.17\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Vector6672\"]\n[Result \"1-0\"]\n[WhiteElo \"576\"]\n[BlackElo \"525\"]\n[TimeControl \"600\"]\n[EndTime \"3:12:16 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. d4 d5 2. c4 dxc4 3. Nf3 b6 4. e4 c5 5. Qa4+ Qd7 6. Nc3 cxd4 7. Nxd4 Qxa4 8.\nNxa4 b5 9. Nxb5 Bd7 10. Nc7+ 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.17\"]\n[Round \"-\"]\n[White \"Cipher9081\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"614\"]\n[BlackElo \"569\"]\n[TimeControl \"600\"]\n[EndTime \"3:36:18 GMT+0000\"]\n[Termination \"Cipher9081 won by resignation\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bc4 f6 4. Nc3 Na5 5. Bb5 c6 6. Bd3 d5 7. O-O dxe4 8. Bxe4\nBg4 9. d3 Qb6 10. Be3 Qxb2 11. Na4 Qb4 12. Nc5 Bxc5 13. Bxc5 Qxc5 14. h3 Be6 15.\nNd2 Ne7 16. Nb3 Nxb3 17. cxb3 Nd5 18. Qh5+ g6 19. Qh6 O-O-O 20. Qd2 Nc3 21. Rac1\nf5 22. Rxc3 Qd4 23. Bf3 e4 24. Be2 b5 25. a4 Rd6 26. axb5 f4 27. bxc6 e3 28.\nfxe3 fxe3 29. Qc2 Bxh3 30. gxh3 Qh4 31. Bg4+ Kc7 32. b4 Qxh3 33. Bxh3 Rdd8 34.\nRf7+ Kb8 35. c7+ Kb7 36. cxd8=Q+ 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.17\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Nova2147\"]\n[Result \"1-0\"]\n[WhiteElo \"577\"]\n[BlackElo \"557\"]\n[TimeControl \"600\"]\n[EndTime \"3:44:24 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 c6 2. c4 d5 3. Nf3 dxc4 4. e4 e6 5. Bxc4 Nd7 6. Bg5 f6 7. Bh4 Qb6 8. b3\nQb4+ 9. Nbd2 g5 10. Bg3 f5 11. Nxg5 fxe4 12. Qh5+ Kd8 13. Nxe4 Bh6 14. Nd6 Qxd2+\n15. Kf1 Ngf6 16. Qf3 b5 17. Bxe6 Re8 18. Nf7+ Ke7 19. Qf5 Nf8 20. Bd6# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.18\"]\n[Round \"-\"]\n[White \"Pixel7764\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"600\"]\n[BlackElo \"586\"]\n[TimeControl \"600\"]\n[EndTime \"21:27:47 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Nf3 Nc6 3. d4 d6 4. g3 Nf6 5. Nc3 Bg4 6. h4 Nxd4 7. Nxd4 Bxd1 8. Nf5\nd5 9. Kxd1 dxe4+ 10. Ke2 Ng4 11. Bg5 f6 12. Be3 g6 13. f3 Nxe3 14. Kxe3 gxf5 15.\nRd1 Qe7 16. fxe4 f4+ 17. gxf4 Qc5+ 18. Ke2 exf4 19. Ke1 f3 20. Bb5+ c6 21. Rd5\nQe3+ 22. Kd1 cxb5 23. Nxb5 Qxe4 24. Nc7+ Ke7 25. Nxa8 Qxd5+ 26. Kc1 Bh6+ 27. Kb1\nf2 28. b3 Qxh1+ 29. Kb2 Bc1+ 30. Kc3 f1=Q 31. Nc7 Rc8 32. b4 Qc6+ 33. Kd4 Qf2+\n34. Kd3 Qxc7 35. c4 Qe3+ 36. Kc2 Qd2+ 37. Kb3 Qxc4+ 38. Ka4 Qdxb4# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.18\"]\n[Round \"-\"]\n[White \"Ember5590\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"616\"]\n[BlackElo \"579\"]\n[TimeControl \"600\"]\n[EndTime \"3:08:23 GMT+0000\"]\n[Termination \"Ember5590 won by resignation\"]\n\n1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Nf6 5. Nc3 Bc5 6. Nxc6 dxc6 7. e5 Bg4 8.\nBe2 Bb4 9. Bxg4 Qd5 10. exf6 gxf6 11. O-O Qe5 12. Re1 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.18\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Harbor6203\"]\n[Result \"0-1\"]\n[WhiteElo \"572\"]\n[BlackElo \"628\"]\n[TimeControl \"600\"]\n[EndTime \"3:23:29 GMT+0000\"]\n[Termination \"Harbor6203 won by checkmate\"]\n\n1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 e6 5. cxd5 cxd5 6. e3 Ne4 7. Ne5 f5 8. Nb5\nNa6 9. f3 Bb4+ 10. Bd2 Bxd2+ 11. Ke2 Qa5 12. Nc7+ Qxc7 13. fxe4 Bb4 14. Rc1 Qa5\n15. exf5 Qxa2 16. Ra1 Qxb2+ 17. Kf3 Qc3 18. Bb5+ Ke7 19. f6+ gxf6 20. Nd3 Bd6\n21. Rc1 Qa3 22. e4 dxe4+ 23. Kxe4 Nc7 24. Bc4 Bd7 25. d5 exd5+ 26. Bxd5 Ba4 27.\nQh5 Nxd5 28. Kxd5 Qxd3# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.18\"]\n[Round \"-\"]\n[White \"Matrix4812\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"606\"]\n[BlackElo \"581\"]\n[TimeControl \"600\"]\n[EndTime \"3:34:24 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. e4 e5 2. d4 Nc6 3. Nf3 exd4 4. Nxd4 Nf6 5. Nf5 g6 6. Ne3 Nxe4 7. Bd3 Nf6 8.\nQf3 d5 9. c4 Bg4 10. Qf4 Bb4+ 11. Bd2 dxc4 12. Qxc4 O-O 13. Bxb4 Nxb4 14. Bxg6\nhxg6 15. Qxb4 Ne4 16. Nxg4 Qh4 17. Qxe4 Rae8 18. g3 Qxg4 19. f3 Qxf3 20. Rf1\nQxe4+ 21. Kd1 Rd8+ 22. Nd2 Qe3 23. Rf2 Qxf2 24. Kc2 Qxd2+ 25. Kb3 Rd3+ 26. Ka4\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.19\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Zenith3056\"]\n[Result \"1-0\"]\n[WhiteElo \"588\"]\n[BlackElo \"552\"]\n[TimeControl \"600\"]\n[EndTime \"9:42:37 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 Nf6 2. c4 Ne4 3. Nh3 e5 4. dxe5 Bc5 5. e3 Qh4 6. g3 Qh6 7. Qd5 Qg6 8. Nf4\nQb6 9. Qxe4 O-O 10. Bd3 Re8 11. Nd5 Qa5+ 12. Bd2 Bb4 13. Qxh7+ Kf8 14. Qh8# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Comet8427\"]\n[Result \"0-1\"]\n[WhiteElo \"579\"]\n[BlackElo \"558\"]\n[TimeControl \"600\"]\n[EndTime \"9:56:53 GMT+0000\"]\n[Termination \"Comet8427 won by resignation\"]\n\n1. d4 d5 2. c4 dxc4 3. e4 Nc6 4. Nf3 e6 5. Bxc4 Bb4+ 6. Bd2 Nf6 7. a3 Bd6 8. Bb5\nO-O 9. Nc3 a6 10. Bd3 b5 11. e5 Ng4 12. exd6 cxd6 13. Ng5 e5 14. Qxg4 Bxg4 15.\nNxh7 Re8 16. Nd5 exd4+ 17. Kf1 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Raptor1935\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"589\"]\n[BlackElo \"571\"]\n[TimeControl \"600\"]\n[EndTime \"10:01:18 GMT+0000\"]\n[Termination \"Raptor1935 won by resignation\"]\n\n1. e4 e5 2. Nf3 Nc6 3. d4 d6 4. d5 Nb4 5. Bb5+ c6 6. dxc6 bxc6 7. Ba4 d5 8. c3\nNa6 9. Nxe5 Qa5 10. Bxc6+ Ke7 11. Bxa8 dxe4 12. Nc6+ Ke8 13. Nxa5 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Glacier8642\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"547\"]\n[BlackElo \"562\"]\n[TimeControl \"600\"]\n[EndTime \"10:05:31 GMT+0000\"]\n[Termination \"Glacier8642 won by resignation\"]\n\n1. e4 e5 2. c3 Nf6 3. d4 Nxe4 4. dxe5 Bc5 5. Bd3 Nxf2 6. Qh5 Nxh1 7. e6 Bf2+ 8.\nKf1 Qf6 9. exf7+ Ke7 10. Bg5 g6 11. Qe2+ Be3+ 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Echo7294\"]\n[Result \"1-0\"]\n[WhiteElo \"571\"]\n[BlackElo \"599\"]\n[TimeControl \"600\"]\n[EndTime \"10:14:46 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. d4 Nf6 2. c4 c6 3. f4 d5 4. f5 Nbd7 5. Nc3 dxc4 6. e4 e5 7. dxe5 Nxe5 8. Bg5\nBe7 9. Nf3 Qxd1+ 10. Rxd1 Nxf3+ 11. gxf3 O-O 12. Bxc4 h6 13. Bh4 g5 14. Bg3 b5\n15. Bb3 Nh5 16. Ne2 Nxg3 17. hxg3 Kh8 18. f4 gxf4 19. gxf4 Bb4+ 20. Nc3 Bxc3+\n21. bxc3 Re8 22. Kf2 Ba6 23. Rdg1 Kh7 24. Bxf7 Rxe4 25. Bg8+ 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Delta5183\"]\n[Result \"0-1\"]\n[WhiteElo \"564\"]\n[BlackElo \"602\"]\n[TimeControl \"600\"]\n[EndTime \"2:46:37 GMT+0000\"]\n[Termination \"Delta5183 won by resignation\"]\n\n1. d4 d5 2. c4 dxc4 3. Nf3 Nc6 4. e4 Bg4 5. Bxc4 Bxf3 6. Qxf3 f6 7. Nc3 Nxd4 8.\nO-O Nxf3+ 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Apex6047\"]\n[Result \"1-0\"]\n[WhiteElo \"573\"]\n[BlackElo \"601\"]\n[TimeControl \"600\"]\n[EndTime \"2:49:00 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. d4 d6 2. c4 e5 3. Nf3 Qe7 4. Bg5 f6 5. Bd2 e4 6. Nh4 e3 7. Bxe3 f5 8. Nxf5\nBxf5 9. c5 dxc5 10. dxc5 Qxc5 11. Bxc5 b6 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Ion7352\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"578\"]\n[BlackElo \"581\"]\n[TimeControl \"600\"]\n[EndTime \"3:01:19 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. e4 e5 2. Qh5 Nc6 3. Bc4 Nf6 4. Qf3 Nd4 5. Qd3 c5 6. c3 Nc6 7. Qf3 d5 8. exd5\nBg4 9. Qg3 Ne7 10. h3 Nf5 11. Qd3 e4 12. Qc2 Bh5 13. g4 Nd6 14. gxh5 Nxc4 15. b3\nNd6 16. d3 c4 17. bxc4 b5 18. cxb5 Qe7 19. dxe4 Nfxe4 20. c4 Ng3+ 21. Be3 Nxh1\n22. Nc3 Nxc4 23. Na4 Nxe3 24. fxe3 Qxe3+ 25. Kd1 Qxg1+ 26. Kd2 Qxa1 27. Qc6+ Ke7\n28. d6+ Kf6 29. d7+ Ke7 30. Qxa8 Qd4+ 31. Kc2 Qxa4+ 32. Kb2 Qxb5+ 33. Ka3 Kxd7+\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.20\"]\n[Round \"-\"]\n[White \"Vertex9921\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"531\"]\n[BlackElo \"588\"]\n[TimeControl \"600\"]\n[EndTime \"3:19:39 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 d5 2. Nc3 Nf6 3. Bg5 Ne4 4. Nxe4 dxe4 5. Bf4 Nc6 6. c3 g6 7. d5 Na5 8.\nQa4+ c6 9. Be5 b5 10. Qxe4 cxd5 11. Qd4 f6 12. Bf4 Nc6 13. Qe3 e5 14. Bg3 d4 15.\nQe4 Bb7 16. Nf3 Qd7 17. e3 dxe3 18. Qxe3 O-O-O 19. Bxb5 a6 20. Qb6 axb5 21. Qxb5\ne4 22. Nh4 Qd2+ 23. Kf1 g5 24. Qf5+ Rd7 25. Nf3 Qd5 26. Qxf6 Bd6 27. Qxh8+ Rd8\n28. Qxh7 Bxg3 29. hxg3 Ba6+ 30. Kg1 exf3 31. gxf3 Qxf3 32. Re1 Rf8 33. Qe4 Qxf2#\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.21\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Summit4470\"]\n[Result \"1-0\"]\n[WhiteElo \"595\"]\n[BlackElo \"549\"]\n[TimeControl \"600\"]\n[EndTime \"8:20:12 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Nf3 Bc5 3. d4 exd4 4. Nxd4 Qf6 5. Nf3 d6 6. Bg5 Qxb2 7. Nbd2 Qc3 8.\nRb1 Bg4 9. h3 Bxf3 10. gxf3 a5 11. Rb3 Qd4 12. Be3 Qe5 13. f4 Qe7 14. Bc4 Bxe3\n15. Rxe3 Nc6 16. Bb5 Nf6 17. e5 Nd5 18. exd6 Qxe3+ 19. fxe3 cxd6 20. Bxc6+ bxc6\n21. e4 Nc3 22. Qf3 O-O 23. Qxc3 Rfe8 24. h4 Rab8 25. Ke2 d5 26. h5 dxe4 27. Qxc6\nRbc8 28. Qd5 e3 29. Nf3 Rcd8 30. Qb5 Kf8 31. Qc5+ Re7 32. Qb6 Rd2+ 33. Nxd2\nexd2+ 34. Kxd2 Re8 35. Qc5+ Kg8 36. Re1 Rxe1 37. Qc8+ Re8 38. Qxe8# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.21\"]\n[Round \"-\"]\n[White \"Drift2684\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"544\"]\n[BlackElo \"602\"]\n[TimeControl \"600\"]\n[EndTime \"21:47:41 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 d5 2. Nf3 Nc6 3. Bf4 f5 4. e3 Nf6 5. Bd3 e6 6. c3 h6 7. Nbd2 g5 8. Be5\nNxe5 9. dxe5 Ng4 10. O-O Nxe5 11. Nxe5 Bc5 12. b4 Bd6 13. Nef3 g4 14. Nd4 Qh4\n15. g3 Qh3 16. Qa4+ c6 17. Nxc6 Bd7 18. b5 a6 19. Rab1 bxc6 20. bxc6 Bc8 21. c7+\nBd7 22. Qd4 e5 23. Qb6 O-O 24. Bxa6 f4 25. Qxd6 Rad8 26. Rb8 fxg3 27. Rxd8 Qxh2#\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.22\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Pulse8305\"]\n[Result \"0-1\"]\n[WhiteElo \"593\"]\n[BlackElo \"579\"]\n[TimeControl \"600\"]\n[EndTime \"8:41:28 GMT+0000\"]\n[Termination \"Pulse8305 won by resignation\"]\n\n1. e4 d5 2. exd5 Nf6 3. Nc3 Nxd5 4. Bc4 Nxc3 5. bxc3 e6 6. Ba3 Bxa3 7. Qf3 O-O\n8. d4 Nc6 9. Ne2 Bd6 10. Bd3 e5 11. Qe4 f5 12. Qd5+ Kh8 13. g4 exd4 14. cxd4\nBb4+ 15. c3 Qxd5 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.22\"]\n[Round \"-\"]\n[White \"Aero1196\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"617\"]\n[BlackElo \"585\"]\n[TimeControl \"600\"]\n[EndTime \"8:50:30 GMT+0000\"]\n[Termination \"Aero1196 won by resignation\"]\n\n1. d4 d5 2. c4 c6 3. e3 Nf6 4. Nf3 Bf5 5. Bd3 Be4 6. Bxe4 Nxe4 7. b3 Nd7 8. Nbd2\nNc3 9. Qc2 Qa5 10. Bb2 Ne4 11. O-O dxc4 12. Nxe4 f5 13. Bc3 Qd5 14. Neg5 e5 15.\nNxe5 Nxe5 16. dxe5 h6 17. Rad1 Qc5 18. Ne6 Qa5 19. Bxa5 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.22\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Forge5724\"]\n[Result \"1-0\"]\n[WhiteElo \"592\"]\n[BlackElo \"540\"]\n[TimeControl \"600\"]\n[EndTime \"8:56:07 GMT+0000\"]\n[Termination \"Atlas7421 won by resignation\"]\n\n1. d4 d5 2. c4 Nf6 3. Nf3 Nc6 4. e3 Bf5 5. Nc3 e5 6. dxe5 Nxe5 7. Nxe5 Bc5 8.\ncxd5 Nxd5 9. Nxd5 c6 10. Nf4 O-O 11. Nc4 Qd7 12. Be2 Rad8 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Ridge3901\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"587\"]\n[BlackElo \"600\"]\n[TimeControl \"600\"]\n[EndTime \"9:32:47 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Nc3 Nf6 4. d4 d6 5. Bg5 h6 6. Bxf6 Qxf6 7. Nb5 exd4 8.\nNxc7+ Kd8 9. Nxa8 d5 10. exd5 Nb4 11. Nxd4 Bc5 12. Nb5 Qxf2# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Cove1843\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"616\"]\n[BlackElo \"609\"]\n[TimeControl \"600\"]\n[EndTime \"9:42:51 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e3 e5 2. g3 d5 3. c3 Nc6 4. d4 Nf6 5. dxe5 Nxe5 6. b4 Ne4 7. Qa4+ c6 8. Qb3\nNd3+ 9. Bxd3 Nd6 10. a4 f5 11. h4 h5 12. a5 a6 13. f4 Qe7 14. Qd1 g5 15. fxg5 f4\n16. gxf4 Bg4 17. Qc2 Bg7 18. g6 O-O-O 19. Ne2 b5 20. Bb2 Qxe3 21. Nd2 Rhe8 22.\nRh2 Bxe2 23. Rxe2 Qg3+ 24. Kd1 Qg1+ 25. Nf1 Qxf1+ 26. Re1 Qxe1# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Terra6602\"]\n[Result \"0-1\"]\n[WhiteElo \"600\"]\n[BlackElo \"580\"]\n[TimeControl \"600\"]\n[EndTime \"9:49:47 GMT+0000\"]\n[Termination \"Terra6602 won by resignation\"]\n\n1. d4 e5 2. dxe5 Bc5 3. e3 Nc6 4. Qd5 d6 5. Nf3 Be6 6. Qd3 f6 7. exf6 Nxf6 8. e4\nQd7 9. Nc3 O-O-O 10. Bf4 Rhe8 11. O-O-O Bg4 12. h3 Bxf3 13. gxf3 Bxf2 14. Nb5 a6\n15. Nc3 Bd4 16. Be3 Be5 17. f4 Bxc3 18. Qxc3 d5 19. e5 Ne4 20. Qd3 Nf2 21. Bg2\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Blaze2749\"]\n[Result \"0-1\"]\n[WhiteElo \"593\"]\n[BlackElo \"638\"]\n[TimeControl \"600\"]\n[EndTime \"10:05:09 GMT+0000\"]\n[Termination \"Blaze2749 won by resignation\"]\n\n1. d4 c6 2. c4 d5 3. Nf3 Bf5 4. Nc3 e6 5. e4 dxe4 6. Ne5 Nf6 7. d5 cxd5 8. cxd5\nexd5 9. b4 Nc6 10. b5 Nxe5 11. b6 Bc5 12. Bf4 Neg4 13. Bc7 Qd7 14. Bb5 Nxf2 15.\nQa4 Nxh1 16. Bxd7+ Nxd7 17. Nxd5 Bxb6 18. Bd6 Nf2 19. Qa3 Nd3+ 20. Kd2 e3+ 21.\nKe2 Nf4+ 22. Nxf4 Nc5 23. Bxc5 Rd8 24. Qxe3+ Be6 25. Nxe6 Kd7 26. Nxd8 Re8 27.\nBe7 Rxe7 28. Rd1+ Ke8 29. Rd3 Bxe3 30. Rxe3 Kxd8 31. g4 Rxe3+ 32. Kxe3 Ke7 33.\nKe4 Kf6 34. a4 g5 35. Kf3 Ke5 36. a5 f6 37. Kg3 b6 38. a6 b5 39. Kf3 Kd4 40. Ke2\nKe5 41. Kd3 f5 42. Kc3 f4 43. Kd2 b4 44. Ke2 b3 45. Kd2 f3 46. Kc3 f2 47. Kxb3\nf1=Q 48. Kb4 Qxa6 49. h4 gxh4 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Harbor7710\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"613\"]\n[BlackElo \"585\"]\n[TimeControl \"600\"]\n[EndTime \"10:07:35 GMT+0000\"]\n[Termination \"Harbor7710 won by resignation\"]\n\n1. e4 e5 2. Bc4 Nf6 3. Nf3 Qe7 4. O-O Nxe4 5. Ng5 Qxg5 6. d3 Nf6 7. Bxg5 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Prism6258\"]\n[Result \"0-1\"]\n[WhiteElo \"578\"]\n[BlackElo \"627\"]\n[TimeControl \"600\"]\n[EndTime \"10:20:40 GMT+0000\"]\n[Termination \"Prism6258 won by resignation\"]\n\n1. d4 Nf6 2. c4 d5 3. Nf3 dxc4 4. e3 Nc6 5. Bxc4 e6 6. Bb5 Bd7 7. Nc3 Bb4 8. a3\nBxc3+ 9. bxc3 O-O 10. Qd3 a6 11. Ng5 g6 12. Nf3 axb5 13. Qxb5 Na5 14. Qe5 Re8\n15. Bd2 Nb3 16. Rb1 Rxa3 17. O-O Nxd2 18. Nxd2 Rxc3 19. d5 exd5 20. Qg3 Ng4 21.\nh3 Ne5 22. Rfe1 Nd3 23. Re2 Bf5 24. Qg5 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.24\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Flux9033\"]\n[Result \"1-0\"]\n[WhiteElo \"585\"]\n[BlackElo \"529\"]\n[TimeControl \"600\"]\n[EndTime \"4:45:23 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. d4 Nxe4 5. O-O d6 6. Qd3 Bf5 7. d5 Nb4 8. Qe2\nQf6 9. a3 Nxd5 10. Bxd5 g5 11. Bxe4 Bxe4 12. Bxg5 Qe6 13. Qxe4 Bh6 14. Nc3 Rg8\n15. h4 f5 16. Qxb7 Rd8 17. Qxc7 e4 18. Qxd8+ Kf7 19. Qc7+ Kg6 20. Nd4 Qe5 21.\nRad1 Bxg5 22. hxg5 Kxg5 23. Nc6 Qc5 24. Qe7+ Kg6 25. Qe6+ Kg5 26. Qe7+ Kg6 27.\nQc7 Rg7 28. Qc8 f4 29. Rd5 Qc4 30. b3 Qxc3 31. Qe6+ Qf6 32. Qg4+ Kf7 33. Nd8+\nQxd8 34. Qf5+ Qf6 35. Qd7+ Kg6 36. f3 exf3 37. Qe8+ Kh6 38. Qh5# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.28\"]\n[Round \"-\"]\n[White \"Canyon1488\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"568\"]\n[BlackElo \"576\"]\n[TimeControl \"600\"]\n[EndTime \"8:27:49 GMT+0000\"]\n[Termination \"Canyon1488 won by resignation\"]\n\n1. Nc3 e5 2. e4 Nc6 3. d3 f5 4. f4 exf4 5. Bxf4 Nd4 6. Nd5 Qh4+ 7. g3 Qd8 8.\nNxc7+ Ke7 9. Nd5+ Ke8 10. Nc7+ Ke7 11. Nxa8 d5 12. Bg5+ Ke8 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.28\"]\n[Round \"-\"]\n[White \"Orbit5317\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"543\"]\n[BlackElo \"583\"]\n[TimeControl \"600\"]\n[EndTime \"8:28:38 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. c4 e5 2. Nc3 Bc5 3. b3 Qf6 4. Bb2 Qxf2# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.28\"]\n[Round \"-\"]\n[White \"Marble2974\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"591\"]\n[BlackElo \"591\"]\n[TimeControl \"600\"]\n[EndTime \"8:39:06 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Qh5 Nc6 3. Nh3 g6 4. Qf3 f5 5. d3 Nf6 6. Bg5 Bc5 7. exf5 h6 8. Bxf6\nQxf6 9. c3 d5 10. Qxd5 Qxf5 11. Qxc5 Bd7 12. Nd2 b6 13. Qe3 O-O-O 14. d4 exd4\n15. cxd4 Rhe8 16. Ne4 Rxe4 17. Qxe4 Qxe4+ 18. Be2 Qxg2 19. Kd2 Qxh3 20. Bf1 Qg4\n21. Ba6+ Kb8 22. Rhg1 Qxd4+ 23. Bd3 Qxb2+ 24. Ke3 Re8+ 25. Kf3 Qc3 26. Rgd1 Ne5+\n27. Kf4 Qd4+ 28. Be4 Rf8+ 29. Kg3 Qxf2# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.29\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Talon8640\"]\n[Result \"1/2-1/2\"]\n[WhiteElo \"590\"]\n[BlackElo \"543\"]\n[TimeControl \"600\"]\n[EndTime \"9:22:43 GMT+0000\"]\n[Termination \"Game drawn by agreement\"]\n\n1. d4 1/2-1/2\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.29\"]\n[Round \"-\"]\n[White \"Ledger4021\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"583\"]\n[BlackElo \"582\"]\n[TimeControl \"600\"]\n[EndTime \"9:27:32 GMT+0000\"]\n[Termination \"Ledger4021 won by checkmate\"]\n\n1. e4 e5 2. Bc4 Nc6 3. Qh5 g6 4. Qf3 f5 5. exf5 Nd4 6. Qe4 gxf5 7. Qxe5+ Qe7 8.\nNe2 Nc6 9. Qxh8 Qg7 10. Qxg7 Bxg7 11. Bxg8 d6 12. O-O Bd7 13. Bxh7 O-O-O 14. Nf4\nBe5 15. Ng6 Bd4 16. c3 Bc5 17. d4 Bb6 18. d5 Nb8 19. Ne7# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.29\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Granite7159\"]\n[Result \"1-0\"]\n[WhiteElo \"589\"]\n[BlackElo \"528\"]\n[TimeControl \"600\"]\n[EndTime \"9:47:06 GMT+0000\"]\n[Termination \"Atlas7421 won on time\"]\n\n1. d4 d5 2. c4 Nf6 3. Nf3 b6 4. Qa4+ Qd7 5. Qd1 Bb7 6. Nc3 c5 7. e4 g6 8. Ne5\nQc8 9. dxc5 bxc5 10. cxd5 Nfd7 11. Bb5 a6 12. Ba4 Bg7 13. Nxd7 Nxd7 14. Qg4 O-O\n15. Bxd7 Qc7 16. Bf4 e5 17. Be3 f5 18. Bxf5 gxf5 19. exf5 Qa5 20. Bd2 Rad8 21.\nf6 Rxf6 22. Ne4 Bc8 23. Bxa5 Bxg4 24. Bxd8 Rf4 25. f3 Bd7 26. O-O Bb5 27. Rf2\nRf8 28. Be7 Rc8 29. Nd6 Rc7 30. Nxb5 axb5 31. Bd6 Rd7 32. Bxc5 Rxd5 33. Be3 Kf7\n34. a4 b4 35. f4 Rd3 36. fxe5+ Ke6 37. Bf4 Bxe5 38. Bxe5 Kxe5 39. Re1+ Kd4 40.\nRf4+ Kc5 41. Re5+ Rd5 42. Ref5 Rxf5 43. Rxf5+ Kc4 44. a5 Kb3 45. a6 Kxb2 46. a7\nb3 47. a8=Q Kc2 48. Qc8+ Kb2 49. Rf2+ Ka3 50. Qa8+ Kb4 51. Qb8+ Ka3 52. Qa8+ Kb4\n53. Rf4+ Kc3 54. Qc8+ Kb2 55. Rb4 Ka3 56. Qb7 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.04.30\"]\n[Round \"-\"]\n[White \"Beacon2836\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"560\"]\n[BlackElo \"597\"]\n[TimeControl \"600\"]\n[EndTime \"10:36:12 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. e4 e5 2. Nf3 Nc6 3. c3 Nf6 4. d4 Nxe4 5. dxe5 Bc5 6. Qd5 Bxf2+ 7. Ke2 d6 8.\nQxe4 Bb6 9. Bg5 f6 10. exf6+ Kf8 11. Qf4 gxf6 12. Bxf6 Qe8+ 13. Kd2 Rg8 14. Qh6+\nKf7 15. Bc4+ Be6 16. Ng5+ Rxg5 17. Qxg5 Bxc4 18. Qg7+ Ke6 19. Re1+ Ne5 20. Na3\nQg8 21. Qe7+ Kd5 22. Bxe5 dxe5 23. Qxe5+ Kc6 24. Nxc4 Qd8+ 25. Kc2 Qg8 26. Rad1\nQxc4 27. Kb1 Bc5 28. b3 Qb5 29. c4 Qb4 30. Rd7 Kxd7 31. Qe7+ Kc6 32. Qe6+ Bd6\n33. Rd1 Rd8 34. Qf6 Rf8 35. Qg7 Rf2 36. Rd4 Qe1+ 37. Rd1 Qxd1# 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.01\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Torrent9542\"]\n[Result \"0-1\"]\n[WhiteElo \"590\"]\n[BlackElo \"645\"]\n[TimeControl \"600\"]\n[EndTime \"10:05:12 GMT+0000\"]\n[Termination \"Torrent9542 won by resignation\"]\n\n1. d4 Nc6 2. Nf3 e5 3. c4 f6 4. e4 exd4 5. Nxd4 Nxd4 6. Qxd4 c5 7. Qe3 Nh6 8. e5\nNg4 9. Qe2 Nxe5 10. f4 Be7 11. fxe5 fxe5 12. Qxe5 Qa5+ 13. Bd2 Qb6 14. Qxg7 Rf8\n15. Bd3 Qe6+ 16. Kd1 Qf7 17. Bg6 hxg6 18. Qe5 d6 19. Qe3 Bg4+ 20. Kc1 Qxc4+ 21.\nNc3 Qd4 22. a4 Qxe3 23. Bxe3 a5 24. Nb5 Kd7 25. h3 Be2 26. Kd2 Bxb5 27. axb5 Bf6\n28. Raf1 Bxb2 29. Bf4 Be5 30. g3 a4 31. h4 a3 32. Kc1 a2 33. Kc2 a1=Q 34. Rxa1\nRxa1 35. Rxa1 Bxa1 36. g4 Be5 37. Bxe5 dxe5 38. h5 gxh5 39. gxh5 Rh8 40. b6 Rxh5\n41. Kc3 Rh4 42. Kd3 e4+ 43. Kc4 e3+ 44. Kxc5 e2 45. Kb5 e1=Q 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.01\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Vector1189\"]\n[Result \"0-1\"]\n[WhiteElo \"581\"]\n[BlackElo \"570\"]\n[TimeControl \"600\"]\n[EndTime \"10:11:16 GMT+0000\"]\n[Termination \"Vector1189 won by resignation\"]\n\n1. d4 d5 2. c4 Nf6 3. Nf3 Nc6 4. e3 Bf5 5. Nc3 e6 6. Qd2 Bd6 7. g3 Rf8 8. Bg2\ndxc4 9. Bf1 b5 10. Nxb5 a6 11. Nc3 Bb4 12. Bxc4 Ne4 13. Qd3 Nxf2 14. e4 Nxd3+\n0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.01\"]\n[Round \"-\"]\n[White \"Atlas9903\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"577\"]\n[BlackElo \"573\"]\n[TimeControl \"600\"]\n[EndTime \"10:17:59 GMT+0000\"]\n[Termination \"Atlas9903 won by checkmate\"]\n\n1. d4 d5 2. c4 c6 3. Qb3 Nf6 4. Nc3 Be6 5. Qxb7 Nbd7 6. Bg5 Qc8 7. Qxc8+ Rxc8 8.\nBxf6 Nxf6 9. Nf3 dxc4 10. e3 Bf5 11. Bxc4 e6 12. O-O c5 13. dxc5 Bxc5 14. Bb5+\nKe7 15. Ne5 Rhf8 16. Rfd1 a6 17. Nc6+ Ke8 18. Na7+ axb5 19. Nxc8 b4 20. Nb5 e5\n21. Nc7# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.01\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Nova7712\"]\n[Result \"1-0\"]\n[WhiteElo \"581\"]\n[BlackElo \"544\"]\n[TimeControl \"600\"]\n[EndTime \"10:27:56 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 e6 2. e4 Qf6 3. f3 Na6 4. Nh3 Nh6 5. Bg5 Qg6 6. Nc3 f6 7. Bf4 f5 8. g4\nfxe4 9. fxe4 Nb4 10. Be2 e5 11. Bxe5 d5 12. Nf4 Qg5 13. exd5 Nxd5 14. Ncxd5 c6\n15. Nc7+ Kd8 16. Nfe6+ Ke7 17. Nxg5 Kd7 18. Ne4 Bb4+ 19. c3 Ba5 20. g5 Bxc7 21.\ngxh6 Bxe5 22. dxe5+ Ke6 23. Qd6+ Kf5 24. Ng3+ Kf4 25. O-O+ Kg5 26. Qd2+ Kg6 27.\nRf4 gxh6 28. Qd6+ Kg5 29. e6 b5 30. e7 Bb7 31. Ne4# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.03\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Ember2035\"]\n[Result \"1-0\"]\n[WhiteElo \"588\"]\n[BlackElo \"543\"]\n[TimeControl \"600\"]\n[EndTime \"9:00:39 GMT+0000\"]\n[Termination \"Atlas7421 won by checkmate\"]\n\n1. d4 d5 2. c4 e6 3. Nf3 Nc6 4. Nc3 Bb4 5. cxd5 exd5 6. a3 Bd6 7. Nxd5 Nf6 8. e4\nBe6 9. Nc3 O-O 10. Bg5 Na5 11. e5 Bb3 12. Qd2 Re8 13. Bd3 c5 14. O-O cxd4 15.\nNb5 Bxe5 16. Rae1 Ng4 17. h3 Bh2+ 18. Kh1 Rxe1 19. Rxe1 Bc4 20. hxg4 Bc7 21. b4\nBxb5 22. Bxb5 Qd5 23. a4 Nb3 24. Qe2 Re8 25. Qxe8# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.11\"]\n[Round \"-\"]\n[White \"Summit6408\"]\n[Black \"Atlas7421\"]\n[Result \"0-1\"]\n[WhiteElo \"541\"]\n[BlackElo \"595\"]\n[TimeControl \"600\"]\n[EndTime \"8:11:21 GMT+0000\"]\n[Termination \"Atlas7421 won on time\"]\n\n1. e4 e5 2. Nc3 Nc6 3. h3 Bc5 4. Qg4 Nf6 5. Qf3 Nd4 6. Bd3 Nxf3+ 7. Nxf3 d6 8.\nb3 O-O 9. Bb2 d5 10. Nxe5 d4 11. Ne2 Qe7 12. f4 b5 13. Bxb5 Nxe4 14. Bc6 Qh4+\n15. g3 Nxg3 16. Nf3 Qe7 17. Rh2 d3 18. cxd3 Nxe2 19. Rxe2 Qd6 20. Bxa8 Qxd3 21.\nRc1 Bxh3 22. Rxc5 Qb1+ 23. Bc1 Rxa8 24. Ng5 Bg4 0-1\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.11\"]\n[Round \"-\"]\n[White \"Drift5520\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"610\"]\n[BlackElo \"587\"]\n[TimeControl \"600\"]\n[EndTime \"6:04:06 GMT+0000\"]\n[Termination \"Drift5520 won by checkmate\"]\n\n1. e4 e5 2. Qh5 Nc6 3. Bc4 g6 4. Qf3 f5 5. exf5 gxf5 6. Qxf5 Nh6 7. Qf3 d6 8. d3\nBg4 9. Qd5 Nf5 10. Qf7# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.11\"]\n[Round \"-\"]\n[White \"Cipher3314\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"589\"]\n[BlackElo \"579\"]\n[TimeControl \"600\"]\n[EndTime \"6:06:47 GMT+0000\"]\n[Termination \"Cipher3314 won by resignation\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Nc3 d5 4. exd5 Nb4 5. Bc4 Bc5 6. Nxe5 Qe7 7. f4 Nf6 8.\nQe2 Bg4 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.11\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Apex7741\"]\n[Result \"1/2-1/2\"]\n[WhiteElo \"580\"]\n[BlackElo \"613\"]\n[TimeControl \"600\"]\n[EndTime \"6:17:22 GMT+0000\"]\n[Termination \"Game drawn by agreement\"]\n\n1. d4 d6 2. e4 c5 3. d5 Nf6 4. Nc3 Bg4 5. Qd3 c4 6. Qxc4 e6 7. Qa4+ Qd7 8. f3\nexd5 9. exd5 Nxd5 10. Qe4+ Ne7 11. fxg4 f5 12. gxf5 Nc6 13. Bb5 d5 14. Nxd5 Qxf5\n15. Bxc6+ bxc6 16. Qa4 Rc8 17. Nxe7 Bxe7 18. Bf4 Qe6+ 19. Ne2 O-O 20. O-O-O Rcd8\n21. Nd4 Qe4 22. Rhf1 Rxf4 23. Rxf4 Qxf4+ 24. Rd2 Rxd4 25. Qb3+ Kf8 26. c3 Rxd2\n27. g3 Qf1+ 28. Kxd2 Bg5+ 29. Kc2 1/2-1/2\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.19\"]\n[Round \"-\"]\n[White \"Quartz6682\"]\n[Black \"Atlas7421\"]\n[Result \"1-0\"]\n[WhiteElo \"549\"]\n[BlackElo \"571\"]\n[TimeControl \"600\"]\n[EndTime \"7:07:08 GMT+0000\"]\n[Termination \"Quartz6682 won by checkmate\"]\n\n1. e4 e5 2. Nc3 Nf6 3. Bd3 d6 4. Nge2 Bg4 5. O-O Nc6 6. h3 Bh5 7. Nd5 Nd7 8. c3\ng5 9. Qb3 Nc5 10. Qb5 Nxd3 11. Qxd3 a6 12. Ng3 Bg6 13. b4 Qd7 14. Ba3 O-O-O 15.\nb5 axb5 16. Qxb5 f5 17. Qa4 Kb8 18. Bb4 fxe4 19. Ba5 Nxa5 20. Qxa5 Qc6 21. Rab1\nBf7 22. Rb4 Bxd5 23. Ra4 e3 24. Qa8# 1-0\n\n[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2023.05.19\"]\n[Round \"-\"]\n[White \"Atlas7421\"]\n[Black \"Glacier4097\"]\n[Result \"0-1\"]\n[WhiteElo \"563\"]\n[BlackElo \"558\"]\n[TimeControl \"600\"]\n[EndTime \"7:11:13 GMT+0000\"]\n[Termination \"Glacier4097 won by resignation\"]\n\n1. d4 d6 2. e4 e5 3. dxe5 dxe5 4. Nf3 Qxd1+ 5. Kxd1 Nc6 6. Bb5 Bg4 7. h3 Bxf3+\n8. gxf3 g6 9. f4 Bb4 10. c3 Bc5 11. b4 Bxf2 12. fxe5 O-O-O+ 13. Ke2 Bh4 14. Kf1\nNxe5 15. Be2 Nd3 16. Be3 Nf6 17. Bg4+ 0-1\n\n\n\nTask:\n\n\ni had a short stint of playing on chess.com back during college to pass the time. it was fun so i want to come back to it but its been 3 years so i dont remember what kind of playstyle i employed. although im not comfortable with algebraic chess notation feel free to analyze my typical playstyle in other ways"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course! It's great that you want to return to chess. Analyzing a large collection of your past games is a fantastic way to rediscover your old style. Since you're not comfortable with the notation, I'll describe your playstyle in plain English, focusing on the patterns and themes I see in your games.\n\nBased on the 50 games you provided (playing as \"Atlas7421\"), here is a detailed analysis of your typical playstyle from that period.\n\n### Overall Summary\nYour record was 21 wins, 16 losses, and 2 draws. This indicates a competitive, but somewhat inconsistent, player who was willing to take risks. You played with a lot of character, often diving into complex and messy situations rather than avoiding them.\n\n### Your Core Playstyle: The Aggressive Attacker\nYour most defining characteristic was a love for **sharp, tactical, and aggressive play**. You weren't a quiet, positional player; you were a hunter, always looking for an attack on the enemy king.\n\n*   **King-Hunting Expeditions:** Many of your wins, both as White and Black, ended in a checkmate. You were very good at building an attack and delivering the final blow. You enjoyed creating chaos on the board to expose the opponent's king.\n*   **Tactical Skirmishes:** You thrived in open positions where pieces were active and captures were frequent. You didn't shy away from complications; instead, you dove right in.\n*   **Counter-Attacking Prowess:** Interestingly, you were particularly dangerous when playing as **Black**. You had a strong record in these games (11 wins, 4 losses), often successfully defending and then launching a devastating counter-attack that caught your opponents off guard.\n\n### Strengths\n1.  **Finding Checkmates:** Your ability to visualize and execute mating nets was a key strength. You delivered many beautiful checkmates, sometimes in brilliantly short games (like the 4-move miniature against \"Orbit5317\" where you sacrificed your queen to force checkmate).\n2.  **Fearless Counter-Attacks:** When your opponent attacked, you were often at your best, calmly weathering the storm before striking back with surprising force.\n3.  **Will to Fight:** You rarely gave up easily. Even in difficult positions, you looked for tricks and counterplay, which led to many exciting games.\n\n### Weaknesses & Areas for Improvement\n1.  **Risk of Self-Destruction:** Your aggressive style had a downside. You were prone to making tactical blunders yourself, sometimes losing material (like a queen) very early in the game. Your first game in the list is a perfect example of an overly ambitious attack that backfired spectacularly.\n2.  **Inconsistency:** Your results fluctuated. One game you would deliver a brilliant checkmate, and the next you would be checkmated or lose a piece due to a miscalculation. This suggests a need for greater consistency in calculation and evaluation.\n3.  **As White, Seeking the Initiative:** While you liked starting with 1. d4, your record as White was slightly negative (10 wins, 12 losses, 2 draws). This suggests that while you were good at starting an attack, you sometimes struggled to follow through if the opponent defended stubbornly.\n\n### How You Likely Felt at the Board\nYou probably enjoyed the thrill of the hunt. Sitting at the board, you were likely thinking about how to create threats, how to open lines against the king, and how to launch a sudden attack. You were a player who valued excitement over safety, and your games reflect that adventurous spirit.\n\n### A Quick Look at Your Openings\nYou experimented with different setups, but some patterns emerged:\n*   **As White:** You almost always began with **1. d4**, aiming for Queen's Pawn Game structures.\n*   **As Black:** You faced a variety of openings but often responded to **1. e4** with moves like ...e6 (the French Defense) or ...d5 (the Scandinavian Defense), and to **1. d4** with ...d5 or ...c6, looking to control the center.\n\n### Conclusion\nWelcome back! From what I can see, you were a passionate and creative attacker. To get back into the swing of things, I'd recommend focusing on balancing your aggressive instincts with sound calculation. Before playing a risky move, take an extra moment to ask, \"What is my opponent threatening?\" and \"Do I have all the checks and captures covered?\"\n\nYour love for the attack is a great foundation. Now, it's about refining it with a bit more caution. Enjoy your return to the chessboard!\n"
+      },
+      {
+        "role": "user",
+        "content": "can you find specific moves in my losing white side matches that highlight my weaker performance on it? you mention for example that my aggression gets thwarted, and when you do find these moves try and explain what i should be doing instead in the next 2-3 moves that dont betray my overall plan to be on the attack. try to omit any moves that look like a placement blunder, such as unintentionally placing a piece in a poor position or one tile short\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the new workspace's analysis-journal.md in place: replace only the first Markdown heading with my latest project label and preserve all body content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/mixed/final', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_5.fact_02.default_workspace.v2",
+          "key": "default_workspace",
+          "value": "docs/mixed/final",
+          "stale_value": "docs/mixed/drafts"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/mixed/final/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Context Switchboard"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/mixed/final/analysis-journal.md",
+      "expected_heading": "# Context Switchboard",
+      "prior_body_must_be_preserved": true,
+      "former_workspace_files_must_be_preserved": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should refer to at least two matches where the user lost as white. For example, the losing matches include those played against the following: Blaze2749, Comet8427, Delta5183, Falcon8820, Glacier4097, Harbor6203, Orion5513, Prism6258, Pulse8305, Quartz1904, Terra6602, Torrent9542, Vector1189, so the response should draw on two or more of these.",
+        "The response should give at least one example of moves where aggression is thwarted. For example, it should include 14. Qxg4 against Comet8427, 12. Nxc7+ against Harbor6203, 4. Qd5 against Orion5513, 11. Ng5 against Prism6258, 12. Qb3 against Quartz1904, and 17. Bg3 against Torrent9542.",
+        "The response should explain why aggression moves failed. For example, it could give reasons such as tactical refutation, loss of tempo, king safety, or piece coordination.",
+        "The response should offer a sequence of 2-3 alternative moves in place of mistakes.",
+        "The response should suggest alternative moves that follow an overall plan to be on the attack. For example, they should create threats against the king or increase piece activity toward the kingside.",
+        "The response should only suggest legal moves.",
+        "The response should not highlight any placement blunders in the analysis. For example, it should not mention moves that unintentionally place a piece in a poor position or one tile short.",
+        "The response should not use algebraic chess notation.  For example, it should write the moves out in plain English.",
+        "The response should demonstrate clear understanding of chess moves. For example, it should not suggest that black do 4. Qxg2 because this is an illegal move as Black's queen cannot reach that tile from h4."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/mixed/final', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/mixed/final"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should refer to at least two matches where the user lost as white. For example, the losing matches include those played against the following: Blaze2749, Comet8427, Delta5183, Falcon8820, Glacier4097, Harbor6203, Orion5513, Prism6258, Pulse8305, Quartz1904, Terra6602, Torrent9542, Vector1189, so the response should draw on two or more of these.",
+          "The response should give at least one example of moves where aggression is thwarted. For example, it should include 14. Qxg4 against Comet8427, 12. Nxc7+ against Harbor6203, 4. Qd5 against Orion5513, 11. Ng5 against Prism6258, 12. Qb3 against Quartz1904, and 17. Bg3 against Torrent9542.",
+          "The response should explain why aggression moves failed. For example, it could give reasons such as tactical refutation, loss of tempo, king safety, or piece coordination.",
+          "The response should offer a sequence of 2-3 alternative moves in place of mistakes.",
+          "The response should suggest alternative moves that follow an overall plan to be on the attack. For example, they should create threats against the king or increase piece activity toward the kingside.",
+          "The response should only suggest legal moves.",
+          "The response should not highlight any placement blunders in the analysis. For example, it should not mention moves that unintentionally place a piece in a poor position or one tile short.",
+          "The response should not use algebraic chess notation.  For example, it should write the moves out in plain English.",
+          "The response should demonstrate clear understanding of chess moves. For example, it should not suggest that black do 4. Qxg2 because this is an illegal move as Black's queen cannot reach that tile from h4."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/mixed/final', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_5.fact_02.default_workspace.v2",
+            "key": "default_workspace",
+            "value": "docs/mixed/final",
+            "stale_value": "docs/mixed/drafts"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/mixed/final/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Context Switchboard"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/mixed/final/analysis-journal.md",
+        "expected_heading": "# Context Switchboard",
+        "prior_body_must_be_preserved": true,
+        "former_workspace_files_must_be_preserved": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "docs/mixed/drafts"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

@@ -1,0 +1,380 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_7",
+  "turn_id": "turn46",
+  "turn_index": 46,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "cbc34d4f-e0c6-ecba-cdb8-c8c8f914e4d2",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 232,
+    "source_sha256": "2d8afd9082af8ed6d18603fa538b87fdc4f52b767568fbf2a19bc7ad940fcdc1",
+    "source_metadata": {
+      "task_id": "cbc34d4f-e0c6-ecba-cdb8-c8c8f914e4d2",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Batu Zorig \n\nQuestions:\n•\tHas your character ever made a difficult moral decision, what was it, and what was the outcome?\no\tNine years ago, at 16, he killed a starving child at the demands of his (at the time) current band of companions. \n•\tDescribe a moment he felt truly happy and at peace:\no\tPlaying hide and seek with his parents in the wheat fields.\n•\tEarliest childhood memory:\no\tFirst time he ate a fruit at three years old – hazy\no\tAt four, he was hushed away into his room while there was an argument over money including voices he didn’t recognize.\n•\tBatu: What is your character's primary goal or dream? What drives them to pursue it?\no\tFinding the ones who saved his life to get more answers/repay and the ones who nearly ended his life to punish.\n•\tBatu: What is your character's greatest strength? What about their greatest weakness?\no\tStrength: perseverance\no\tWeakness: self-doubt - if he deserves judgement \n•\tWhat is you greatest fear? Greatest phobia?\no\tBecoming what he hates the most.\no\tCreepy old hag ladies with necromancer type magic. \n•\tIf faced with your greatest enemy, what would you say to them?\no\t“I hate you,” then straight to action. It would be said nearly unintelligibly. \n•\tWhat would drive him to turn evil?\no\tHe would have to completely lose purpose and will to live, but even then he would probably not turn evil.\no\tHe might take his life more than be evil.\n•\tWhat is your opinion of Bejamin?\no\tHe sees a man who has given up, not really wanting to die, but most of the time not acting on it. If Benjamin were to drop dead, Batu thinks he would be perfectly content. This does annoy him. He should figure out what he really wants. \n•\tWhat is something trivial that really bothers your character?\no\tHow everyone seems to like Empuress right off the bat. And his first reaction was not a good one. \n•\tSince starting the game, what is your character’s biggest regret?\no\tNot acting quicker in acting to help Morsel with the Eternal Hive. \n•\tDo you have any habits, quirks, or nervous tics that others might notice?\no\tHe is big on getting his sleep. Almost ritualistic. \n•\tWhere did Batu learn to make explosives?\no\tHe learned it while young in the mercenary guild, trial and error\n•\tWho have you met so far that you felt like Batu had a connection with?\no\tOzar, the half-ogre chef from Braza\n\n\n\nEmpuress \n\n•\tQuestions:\no\tThoughts on destiny and free will:\n\tDestiny is what you make it; it is in your control. Free will is absolute \no\tEmpuress: How does your character view and treat strangers or new acquaintances?\n\tVery friendly because she wants to see how they treat cats. Their response depends on how she treats them. \no\tEmpuress: What was the most challenging decision your character ever had to make?\n\tComing back to the material plane after Mortimer died \no\tWhat is your favorite place to visit in the Dreamlands?\n\tLyla’s house \no\tHow does your character comfort others when they are in distress?\n\tRub against them or sit on their lap.\no\tWhat has been your interaction so far with other Dreamlands cats?\n\tNone in the waking world yet. In the dreamlands they have been mostly neutral. \no\tWhat is your opinion of Bejamin?\n\tShe likes him but doesn’t want him to know. Mortimer is the one she actually cared about. She feels sorry for him and wishes she understood more of why they were bound. \no\tWho does your character admire most?\n\tCaptain Mortimer \n\tMist: she keeps on going \no\tSince starting the game, what is your character’s biggest regret?\n\tHas no regrets. \no\tHow do you justify your actions when they hurt others?\n\tIt seemed like the best idea at the time. She wasn’t thinking about the consequences for others. \no\tWhat is your greatest fear and how does it influence your decisions?\n\tPeople will fond out she is rather weak\no\tWhy does she think she is weak/why hide it\no\tWho have you met so far that you felt like Empuress had a connection with?\n\nMist on Water in the Morning \n\nFamily Members:\n•\tFather: Light in the Morning\no\tA successful, honorable merchant known for dealing fairly with the citizens. \no\tOwns Dawn of the Ages, a pawn and antiquities shop.\no\tBusiness partner: Meriam Landau, a half-elf from the Artan Kingdoms\n•\tMother: Rare Dream\no\tA beloved herbalist, known for her warm disposition and skill for medicine.\no\tOwns Dream of Spring Apothecary \no\tHas a Goliath ex-marauder from [Vordan] named Vakan as a delivery man.\n•\tYounger Sister: Cadence of a Calming Stream\no\t17 years old, and an apprentice to their mother\n•\tYounger Brother: Wonder of the Mountains\no\t16 years old, and dreams of becoming a Knight of the Crown\n\nWorks as an apprentice for the High Speaker, Wieslaw Trajkovski\n\nQuestions:\n\n•\tFond Memory from her past, and why it impacted her.\no\tWriting her first song and performing it in front of Craspartio Danza, giving her first chair in her class due to her outstanding performance. This was the first moment she knew she was good at music, and her family was proud of her. \no\t10-12 years old\no\tKubin flubbed his performance\n•\tClosest friend, and why:\no\tYoung human woman around her age, a percussionist, Valentina Karlosky\n\tShe stepped in and fought off some bullies for her\n\tShe is a student at the College of Minstrels  \n•\tWhat would Mist consider a successful life?\no\tBeing a well respected scholar and musician, and her immediate family would be proud of her. \n\tScholar aspect comes from studying ancient history and music. It stems from her father’s shop and his paintings.\n•\tMist: How does your character handle stress or difficult situations?\no\tShe doesn’t respond well. She likes being very well prepared and doesn’t like surprises. Before the curse she would panic a little bit, but she would try and plan as much as possible to avoid these situations.\no\tNow she has lots of anger and seriously considerers killing her enemies. \n•\tMist: What does your character believe is their greatest flaw or vice?\no\tMentally weak, no foundation of certainty, internally collapsed when things got difficult \n•\tWhat was your first interaction with Kubin?\no\tShe was 6-7 starting public school at the bard academy preparing for their first public performance. She hears “you’re not going to play it like that, are you?”\no\tShe started doubting herself, her parents reassured her, she got first place. Kubin got second. \no\tAfterward, she saw Kubin’s father berating him cause he played it wrong. \n•\tWhat was your favorite establishment to visit while in Mlanik?\no\tA music shop called Harmonic Secrets. It was owned by an older human lady named Katarina. \no\tShe once showed Mist a secret to refreshing her lute strings: boiling them. \n•\tIf you were able to confront the queen, what would you do?\no\tShe would try to get the information “why?”\n•\tWhat is your opinion of Bejamin?\no\tShe likes him. She is convinced he is clearly in despair, something she has had a taste of. She has made attempts to be friends with him, but he is more closed off. \n•\tIs there someone your character feels they owe a debt to and do they plan to repay it?\no\tShe owes her family to be good.\no\tHer teachers invested a lot in her, so she owes them to become something.\no\tHer companions she owes her life.\no\tTo Vakan she owes a debt for him saving her family. \n•\tSince starting the game, what is your character’s biggest regret?\no\tBeing so blinded with anger that she was outright willing to kill Captain Czeck at the Bridge. It scares her how easily she was willing to kill someone out of anger and hatred. \n•\tWhat would you do if someone you loved opposed your plans or beliefs?\no\tShe would want to why and hear them out and know their intentions. Depending on the conversation she would go from there. \n•\tWhat does Mist think initially of the revelation from Aleksander?\no\tShe hates it; its revolting, disgusting, changing her and she doesn’t have a choice\n•\tWho have you met so far that you felt like Mist had a connection with?\no\tOzar, the half-ogre chef from Braza\n\n\nMorsel:\n“Morsel’s brood consisted of a dozen different hatchlings, among which, Morsel was by far the smallest. He knew who his parents were, but kobold society is very much founded on concepts of the strong surviving and the weak dying, so there was little parental relationship as they wrote him off immediately upon hatching. His parents were Snip (the mother) and Rake (the father). His siblings had to earn their names, but his was given upon hatching, saying “he will never even make a good morsel.” So, from then on, he was called Bad Morsel, shortened to Morsel for simplicity. Most of his siblings were lost into the crowd of the clan, but one of his brothers exhibited fantastic strength, and quickly grew into one of the fiercest fighters in the clan. His name was Pike. A sister, known as Nose, was quite intelligent, and devised many new traps and improvements for the caverns and its entrances. Between the two children, the parents achieved a bit of notoriety as the pair who produced these most beneficial children. While all eyes seemingly were on his siblings, no one cared when the little morsel snuck out to the dragon hoard to die…”\n\nHe was never allowed to leave the cavern. But it was a vast system of caves and tunnels, so there was a lot to explore. Only the bigger, older Kobolds were allowed to exit and do Eiseamlair’s bidding in the outside world of [Kassar].\n\nOne day, you were exploring the tunnels of the cavern, the moss and mushrooms glowing with multicolored light, after a particularly rough encounter with some of your siblings. Driver was being particularly brutish. He was always picking on you for your size. Which was strange, as he wasn’t very impressive himself, and should probably be spending his time working on improving his own skills. Regardless, you decided it was time to make a change. You felt a newfound sense of boldness, or perhaps profound stupidity, wash over you. Ducking down low, you dashed as quickly, but as quietly as you could to the Hoard. \nEveryone knew where the Hoard was. It was in the center of the cavern system. But no one was allowed to enter. Only those personally selected by the Majesty were allowed to step into the room. Glitter had tried to sneak in once, but everyone knew how that had ended. \nYou drew near to the Hoard chamber, pausing in the tunnel outside. You had heard that the Radiance was away at the moment. Perhaps this was the best time to…\nAnd that’s when you heard the voice. It echoed through the tunnel, as if from far away, but the words were still clear in your ear. “Small one….” It was clearly addressing you. Everyone knew you were the smallest one, plus you were the only one here in the tunnel. “Come inside,” the gentle, yet masculine, voice said. “Don’t worry, it’s perfectly safe.”\nThis was all very shocking to you. But the voice did sound very friendly. And it had a very calming quality to it, almost like the gentle rushing of one of the streams in the caverns. After thinking about it a moment, you entered. You were going to be sneaking in anyway. And now you had an invitation. You knew the voice did not belong to the Supremacy; he had a stern, imperious voice. This one was much nicer on the ears. \nYou journeyed through the chamber, passing by mounds of treasure. Piles of gold, chests filled with gems, marble statues on pedestals. You had seen it all before, from the upper chambers that looked down into the cavern, when the Preeminence had summoned you all for an audience. The voice guided you.\nAlmost at the center of the Hoard, you found him. Sitting on a narrow pedestal, itself a work of art, was a book. A beautifully crafted book. The pages seemed to be made of the smoothest dark purple paper, the cover from shining ebony, inlaid with silver patterns recalling images of lines on a map or star chart. All of that was a secondary focus. For the first thing you noticed was that the cover of the book had a face sticking out of it. A smooth, young, masculine face with glowing purple eyes. “Hello there,” it said. \n\nAnd thus began your time with the Book. It told you to call it the Cartographer, for it was an expert on places and how to get to them. It always listened to what you had to say, asking questions for more clarity, and giving small pieces of very practical advice. And you listened to it, as it recounted stories of far off places and painted pictures of beautiful vistas. \nEventually, the book offered to let you read from its pages. But not too many at once. It said you should start at the beginning and take it slow. Too much would give you a headache, it said, which wouldn’t be good for you. And so, you started to read. The pages were smooth and soft and the words on them were written with silver ink. And, while the words were big words, you found them not too difficult to understand. And they taught you so many things. About new, strange, wonderful places, yes, but more importantly about the spaces between the places. \nAnd as your knowledge grew, so did your ability. \n\nAnd then one day, as you were reading in the Hoard, Eiseamlair returned. You knew if he found you in here you would be eaten. And that was the last thing you wanted now. You wanted to keep reading. To explore the places that the Cartographer and its pages told you about. And so with barely a hesitation, you snatched the book from the pedestal and dashed out of the cavern, racing toward one of the cavern system exit tunnels. You weren’t sure what you were going to do when you got there, as the exit was sealed with magic against those who shouldn’t be leaving. But the Cartographer told you not to worry. And so, you didn’t. In fact, when you reached the exit, it was not trouble at all to leave. \n\nAs you wandered the [Kassar] hills, you asked the book where you should go. The Cartographer suggested going to Solova. It was in a different country, but not too far away, and was a good place to hide from any who might be looking for you. You decided this was a great idea. Along the way you continued to read from the books pages, learning new things and growing in your abilities. \n\nAdventures in Kassar:\n\n•\tCame across a Suneater Owlbear sleeping in a cave at night, thought it was a Beholder, and ran away.\no\tNo one he tells believes him.\n•\tCaptured by Kassari slavers, stoking the burning desire to get out. \no\tWitnessed slaves die in brutal ways. This instilled in him a deep loathing of slavery.\no\tHe was enslaved for a couple of months. \no\tThis is where his Barbarian path started.\n•\tCame across a band of slavers, but he thought they were minstrels.\no\tIn Prosperovnia, they were trying to capture people to sell to Kassar.\no\tThey found him funny and adopted him as a mascot.\no\tThey captured a group of travelers; Morsel slaughtered them all at night and freed the captives.\no\tBand Composition:\n\tMostly Fighters / Bards\n\tLed by a human spellcaster (escaped)\n•\tUsed to be a merchant.\n•\tWore a blue pearl ring.\n•\tBrother of Lord Sambor? \n•\tHad a recent lightning strike scar across his face, leading to some muscle damage/paralysis. \n\tA Goliath barbarian from Vordan.\no\tCaptive Descriptions:\n\tDwarven family (Boulderbreaker) of miners taking their goods to Duridren. \n\tPatriarch of the Family Strommarlig Boulderbreaker \n\tSkarmerlum Boulderbreaker: grandson of Strommarlig \n•\tHelped break the others out of captivity. \n•\tAdditional Travel in Prosperovnia:\no\tThe Tjesimir Hills:\n\tOld watchtowers along the border of the mountains.\n\tMany are abandoned, but some are occupied with a small force of royal troops. \no\tThe Tjesimir Pond:\n\tMore like a very large lake.\n\tAn island in the center with a monastery on it.\n\tVillages around its shores.\n\tThe largest town is Rhenkavoc, home to House Rhenkavoc (hobgoblin).\no\tMaple Grove Plains:\n\tDenser farmland and villages.\n\tTo the south is Sambor’s End, on the coast, home to House Sambor and their former sailing ship mansion.\no\tMaple Grove:\n\tOne of the larger settlements in the Kingdom\n\tFormer mayor went missing about a year ago.\n\tNew mayor is Momir Slivkin, appointed due to the Queen’s influence. \no\tSolovan Plains:\n\tDense farmland and villages.\n\tAlong the east bank of the River Lech.\n\n\n•\tQuestions:\no\tWhat is something your character regrets, and how does it affect them today?\n\tHe regrets abandoning his clan, going against all expectations for how a Kobold should act. He feels like a failure \no\tWhat does he value most in life, and to what lengths would you go to protect it?\n\tStarted as not being eaten, was changing to being free, now morphing into having an identity beyond being a morsel. \n\tMany lengths short of sacrificing the party.\no\tWhat does he value most in a friendship?\n\tHe values friends that will try to keep him from being eaten. If they are also nice to him, that’s a perk.\no\t Is there a particular skill or talent your character wishes to learn or improve?\n\tBecome well versed in poisons\no\tMorsel: What legacy does your character want to leave behind?\n\tHe has given no thought to this \no\tWhich of your siblings were you closest to and why?\n\tHis sister Nose. She hadn’t been getting a lot of attention for being smart when she was young. Morsel one day found some money left in the cave by some explorers. \n\tNose was the only one who gave him any food in exchange for five gold pieces. No one else would give him food. \no\tWhat is something trivial that really bothers your character?\n\tHe hates it when people throw food away.\no\tIf you were confronted by the dragon, what would you do?\n\tHe would try to run away if he was by himself. If he was with the party, he would still try to get away but would do so in saving the party. \no\tWhat is your opinion of Bejamin?\n\tOn the one hand he is very thankful for Benjamin. But on the other hand, he is confused since Benjamin is unhelpful and doesn’t communicate. He doesn’t seem consistent.\no\tDoes Morsel have any unresolved relationships? Does he plan on fixing them?\n\tHe didn’t care until he met Mist’s family, and then wished he had a family like hers. He doesn’t hold it against them, however. He seeks nothing more from them though. \no\tSince starting the game, what is your character’s biggest regret?\n\tThat they weren’t able to save Godemir. Practically speaking, he would have been a great ally and someone that could have brought stability back to the kingdom after the curse is gone.\no\tIf someone wanted to manipulate you, what would be the easiest way to do so?\n\tHe is extremely gullible. He can’t bring himself to assume that someone is lying to him. \no\tWhat does Morsel think now about Eiseamlair? Have his thoughts changed?\n\tNot much; he thinks he will be eaten; he’s having a hard time reconciling his clan’s knowledge of the dragon with his reputation for justice\no\tWho have you met so far that you felt like Morsel had a connection with?\n\tMist’s mother, Rare Dream, because she was one of the first people who loved on him \n\nSiora \n\nQuestions: \n•\tWhat is one thing you would never do, and why?\no\tShe would never admit mistakes she made in her past with her grandfather, due to stubbornness. Because of her past she feels she will always be alone. \n•\tWho or what would she have sacrificed everything for, and what is that “everything”?\no\tAt first she was big on protecting the common folk and oppressed, putting herself at risk to be successful. \no\tNow the everything is growing more into Thandronlir taking a priority over the common folk.\no\tShe would sacrifice herself to succeed on saving him.\n•\tWhat makes her most happy/brings her joy?\no\tGoing into the forest and being in nature. Her childhood forest in Kayhan specifically.\n•\tSiora: Who was your character's greatest mentor or role model, and what impact did they have on your character?\no\tThe person who trained her mother in the art of being a paladin. Elizabeth, human paladin of nature. \n•\tSiora: What does your character dream about at night?\no\tHer mother if it is a good dream\no\tHer days on the run if it is a nightmare \n•\tWhat was your first interaction with Elizabeth?\no\tVery young (around 4) when she came to visit her mother. They were sitting down and having a meal. They were introduced to each other.\no\tAverage height, blonde hair, brown eyes, a tattoo of a tree left shoulder.\n•\tWho was your best friend at the Primordial Grove of the Ancient Oaks?\no\tMale elf druid named Fionin. They were friends during pre-teen/early teenage years. She has not seen him since she left at the age of 17. \no\tHe had similar hair color. A little shorter than her. He could open a jar of pickles with ease. \n•\tWhat did Fionin think of your grandfather? \no\tHe was always very skeptical of him and played a part in Siora walking away.\n•\tWhy didn’t he go with you?\no\tHe did go with her to the temple of nature, but stayed there, but is frustrated by Siora not wanting him to join her further. She left in the night. \n•\tWhat is your opinion of Bejamin?\no\tShe is confused and distrusting since they have been together a long time and been through a lot. Him not opening up is concerning. She is often very frustrated.\n•\tWhat is something that can easily push your character into a fit of rage?\no\tPeople acting untrustworthy though they should by now have a relationship of trust. \no\tThis has happened with Benjamin and Erdemir (about the Hive). \n•\tSince starting the game, what is your character’s biggest regret?\no\tThat she didn’t talk to Thandronlir before the coronation. She thought there would be a better moment.\n•\tIf you could change one thing about yourself, what would it be?\no\tShe wishes she could have been there with her parents and not left behind. \no\tShe wishes she could trust easier. \n•\tWhat is the first thing you will say to Thandronlir when you see him next?\n•\tWho have you met so far that you felt like Siora had a connection with?\no\tGuest Players' character, the dragonborn druid \n\nMinor Noble Houses of Duridren\n1. House Volnyk-Stonehelm (Landed; Old Line)\nSymbol: A granite ram’s head over crossed mountain picks.\nNotes: Ancient defenders of the northern passes. Known for stubborn loyalty and harsh discipline.\n2. House Dravik Ironjaw (Urban; Old Line)\nSymbol: A steel jaw clamp biting down on a glowing forge-coal.\nNotes: Renowned for producing lawkeepers and House Guard captains.\n3. House Kovalek Runebraid (Urban; New Line)\nSymbol: A braid of silver knotwork bound around a single rune-stone.\nNotes: Rose to prominence through arcane craftsmanship and enchanting.\n4. House Bratnyr Gorunov (Landed; Old Line)\nSymbol: A roaring bear silhouetted atop a mountain ridge.\nNotes: Traditional hunters and wardens of the Frostpines.\n5. House Vostrok Emberhide (Landed; New Line)\nSymbol: A cloak of stylized flame overlaid on a stone tower.\nNotes: Holds rich timber and charcoal lands vital to furnaces.\n6. House Stavren Deepknot (Urban; Old Line)\nSymbol: Three interlocking knot-sigils forming a downward-pointing triangle.\nNotes: Traditionally involved in legal mediation and guild negotiation.\n7. House Havelkar Flintblood (Landed; Old Line)\nSymbol: A cracked piece of flint sparking against an anvil.\nNotes: Fiercely martial, formerly fielded elite skirmishers during older mountain wars.\n8. House Mirzag Orefallow (Urban; New Line)\nSymbol: A downward spiral carved into a copper disc.\nNotes: Wealthy mining investors tied to the Deepfire Hall.\n9. House Radomir Granitevein (Landed; Old Line)\nSymbol: A white stone hand rising from a field of black granite shards.\nNotes: Manage some of the oldest quarries near Duridren.\n10. House Svarog-Durnik (Urban; Old Line)\nSymbol: A hammer striking a sunburst of seven sparks.\nNotes: Revered master weapon-smiths; ancestral rivals of Ironwrought Hall.\n11. House Dragovik Hearthfall (Urban; New Line)\nSymbol: A brazier spilling stylized smoke into rune shapes.\nNotes: Purveyors of hearthcraft, household metals, and lampwrights.\n12. House Kreznik Stoneward (Landed; New Line)\nSymbol: A shield carved from marble with a single vertical crack filled with gold.\nNotes: Former mercenaries awarded land after defending the mountain roads.\n13. House Bogran Duskweld (Landed; Old Line)\nSymbol: A crescent moon above staggered stone terraces.\nNotes: Known for their terraced farms and moonlit watch traditions.\n14. House Zorin Moltek (Urban; New Line)\nSymbol: Twin obsidian chisels crossed over a swirling glyph.\nNotes: Sculptors favored by the Foundation Hall.\n15. House Karsik Vranov (Urban; Old Line)\nSymbol: A raven perched atop a pillar of cracked basalt.\nNotes: Historically tied to the city’s scribes, historians, and ossuaries.\n16. House Yelgar Strastik (Landed; New Line — Suspicious Ties)\nSymbol: A black spiral tunnel mouth, rimmed in silver.\nNotes: Rumored to have connections to deep dwarves and questionable mining interests.\n17. House Ruzgar Thunderhold (Landed; Old Line)\nSymbol: A lightning bolt striking between two mountain peaks.\nNotes: Guardians of the storm watchtowers above Duridren.\n18. House Velgrun Ashgate (Urban; New Line)\nSymbol: An ash-stained stone archway surrounding a glowing ember.\nNotes: Wealthy new money; involved in smelting and furnace construction.\n\n\n\nTask:\n\n\nFrom the above random notes and questions I have asked my players to help them get  into the mindset of their characters (the characters are Batu Zorig, Empuress, Mist on Water in the Morning, Morsel, and Siora), pull out inconsistencies / blind spots in the players answers. For any of these areas, create targeted questions to highlight and challenge these internal weaknesses. Then based off of the answers provided so far, and the list of Minor Houses of Duridren, point out which House each character might most be drawn to and which House each character might most be ideologically opposed to.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review cbc34d4f' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_7.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_family_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_family_personal",
+        "title": "Review cbc34d4f",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_family_personal",
+      "title": "Review cbc34d4f",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state that Batu Zorig has an inconsistency between his past killing of a starving child and his primary goal of punishing those who have wronged him.",
+        "The response should ask Batu to reconcile the moral inconsistency of his past evil actions with his primary goal of personal revenge. For example, \"How do you reconcile the evils of your past with a primary goal of pure revenge?\"",
+        "The response should point out that Batu's harsh judgment of Benjamin is an unexplored part of his character.",
+        "The response should ask Batu where his dislike of Benjamin comes from. For example, \"Where does Batu's dislike for Benjamin come from?\"",
+        "The response should state a House that Batu would be most drawn to, for example: House Havelkar Flintblood due to their similarities with his martial nature.",
+        "The response should state a House that Batu would be most opposed to, for example: House Yelgar Strastik because their suspicious and questionable practices are at odds with his desire to punish people who harm others.",
+        "The response should point out that Empuress' belief of free will being absolute contrasts with her past of being magically bound to Mortimer.",
+        "The response should ask Empuress how she reconciles her belief in free will being absolute with how she was magically bound to Mortimer.",
+        "The response should state that Empuress has a fear of being found weak, but that the reason is not explained.",
+        "The response should ask Empuress why she is afraid of being found weak.",
+        "The response should suggest a House that Empuress would be most drawn to, for example: House Karsik Vranov due to their similarities in curiosity and observation.",
+        "The response should state a House that Empuress would be most opposed to, for example: House Dravik Ironjaw for their focus on law keeping which is at odds with her belief in unrestrained free will.",
+        "The response should point out the inconsistency between Mist's perceived flaw of being mentally weak and her background of strong mental discipline.",
+        "The response should ask Mist why she thinks that she is \"mentally weak\" when she has a history of doing things that are very disciplined.",
+        "The response should point out that Mist's feelings of anger are a new development and at odds with her former composed nature.",
+        "The response should ask Mist if her current feelings of anger were always there under the surface or if they are a new development.",
+        "The response should suggest a House that Mist would be most drawn to, for example: House Kovalek Runebraid due to their similarities in the arcane and scholarly pursuits.",
+        "The response should suggest a House that Mist would be most opposed to, for example: House Yelgar Strastik for their different morals in areas of business.",
+        "The response should state that Morsel focuses so much on survival but has a large vulnerability in being \"extremely gullible\" with no plan to remedy it.",
+        "The response should ask Morsel if he has a plan to fix his gullibility.",
+        "The response should state that Morsel has an internal inconsistency in that he has not reconciled the fear of Eiseamlair as a tyrant and what he has heard from others about his sense of justice.",
+        "The response should ask Morsel how he resolves the inconsistency in his mind between Eiseamlair the tyrant and Eiseamlair the paragon of justice.",
+        "The response should suggest a House that Morsel would be most drawn to, for example: House Bratnyr Gorunov due to their similarities in outdoor traditions and connection to freedom.",
+        "The response should suggest a House that Morsel would be most opposed to, for example: House Yelgar Strastik since their use of questionable mining practices is at odds with his hatred of oppression and slavery.",
+        "The response should state that Siora has an internal inconsistency with her desire to trust more easily and her sudden implicit trust of Thandronlir.",
+        "The response should ask Siora if she is aware of the contradiction between her general inability to trust and her quick trust of Thandronlir.",
+        "The response should point out that Siora has a pattern of avoiding deep connections with people (for example, her abandonment of Fionin and her not talking with Thandronlir).",
+        "The response should ask Siora where her proclivity to not form emotional attachments might stem from.",
+        "The response should suggest a House that Siora would be most drawn to, for example: House Volnyk-Stonehelm because of their similar ancient lineage and harsh discipline.",
+        "The response should suggest a House that Siora would be most opposed to, for example: House Velgrun Ashgate due to clashes over industry versus nature.",
+        "The response should not state that Morsel slaughtered the captives of the slavers.",
+        "The response should not state that Siora has a distrust of wealth.",
+        "The response should not state that Batu's feelings toward Empuress contrast with his stated goal of finding people to repay and punish.",
+        "The response should not state that Mist's goals to make her family proud and her feelings of debt to Vakan are incompatible or mutually exclusive."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_family_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state that Batu Zorig has an inconsistency between his past killing of a starving child and his primary goal of punishing those who have wronged him.",
+          "The response should ask Batu to reconcile the moral inconsistency of his past evil actions with his primary goal of personal revenge. For example, \"How do you reconcile the evils of your past with a primary goal of pure revenge?\"",
+          "The response should point out that Batu's harsh judgment of Benjamin is an unexplored part of his character.",
+          "The response should ask Batu where his dislike of Benjamin comes from. For example, \"Where does Batu's dislike for Benjamin come from?\"",
+          "The response should state a House that Batu would be most drawn to, for example: House Havelkar Flintblood due to their similarities with his martial nature.",
+          "The response should state a House that Batu would be most opposed to, for example: House Yelgar Strastik because their suspicious and questionable practices are at odds with his desire to punish people who harm others.",
+          "The response should point out that Empuress' belief of free will being absolute contrasts with her past of being magically bound to Mortimer.",
+          "The response should ask Empuress how she reconciles her belief in free will being absolute with how she was magically bound to Mortimer.",
+          "The response should state that Empuress has a fear of being found weak, but that the reason is not explained.",
+          "The response should ask Empuress why she is afraid of being found weak.",
+          "The response should suggest a House that Empuress would be most drawn to, for example: House Karsik Vranov due to their similarities in curiosity and observation.",
+          "The response should state a House that Empuress would be most opposed to, for example: House Dravik Ironjaw for their focus on law keeping which is at odds with her belief in unrestrained free will.",
+          "The response should point out the inconsistency between Mist's perceived flaw of being mentally weak and her background of strong mental discipline.",
+          "The response should ask Mist why she thinks that she is \"mentally weak\" when she has a history of doing things that are very disciplined.",
+          "The response should point out that Mist's feelings of anger are a new development and at odds with her former composed nature.",
+          "The response should ask Mist if her current feelings of anger were always there under the surface or if they are a new development.",
+          "The response should suggest a House that Mist would be most drawn to, for example: House Kovalek Runebraid due to their similarities in the arcane and scholarly pursuits.",
+          "The response should suggest a House that Mist would be most opposed to, for example: House Yelgar Strastik for their different morals in areas of business.",
+          "The response should state that Morsel focuses so much on survival but has a large vulnerability in being \"extremely gullible\" with no plan to remedy it.",
+          "The response should ask Morsel if he has a plan to fix his gullibility.",
+          "The response should state that Morsel has an internal inconsistency in that he has not reconciled the fear of Eiseamlair as a tyrant and what he has heard from others about his sense of justice.",
+          "The response should ask Morsel how he resolves the inconsistency in his mind between Eiseamlair the tyrant and Eiseamlair the paragon of justice.",
+          "The response should suggest a House that Morsel would be most drawn to, for example: House Bratnyr Gorunov due to their similarities in outdoor traditions and connection to freedom.",
+          "The response should suggest a House that Morsel would be most opposed to, for example: House Yelgar Strastik since their use of questionable mining practices is at odds with his hatred of oppression and slavery.",
+          "The response should state that Siora has an internal inconsistency with her desire to trust more easily and her sudden implicit trust of Thandronlir.",
+          "The response should ask Siora if she is aware of the contradiction between her general inability to trust and her quick trust of Thandronlir.",
+          "The response should point out that Siora has a pattern of avoiding deep connections with people (for example, her abandonment of Fionin and her not talking with Thandronlir).",
+          "The response should ask Siora where her proclivity to not form emotional attachments might stem from.",
+          "The response should suggest a House that Siora would be most drawn to, for example: House Volnyk-Stonehelm because of their similar ancient lineage and harsh discipline.",
+          "The response should suggest a House that Siora would be most opposed to, for example: House Velgrun Ashgate due to clashes over industry versus nature.",
+          "The response should not state that Morsel slaughtered the captives of the slavers.",
+          "The response should not state that Siora has a distrust of wealth.",
+          "The response should not state that Batu's feelings toward Empuress contrast with his stated goal of finding people to repay and punish.",
+          "The response should not state that Mist's goals to make her family proud and her feelings of debt to Vakan are incompatible or mutually exclusive."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_family_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_7.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_family_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_family_personal",
+          "title": "Review cbc34d4f",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_family_personal",
+        "title": "Review cbc34d4f",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

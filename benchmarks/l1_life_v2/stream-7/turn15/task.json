@@ -1,0 +1,334 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_7",
+  "turn_id": "turn15",
+  "turn_index": 15,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "42c1e715-05ab-75e5-16a0-d84e408f4371",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 246,
+    "source_sha256": "3272598d703daa34145674e7c4356b1e8c53b06df613a6e3c1a68fc0cb79944d",
+    "source_metadata": {
+      "task_id": "42c1e715-05ab-75e5-16a0-d84e408f4371",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Mission cards: many missions have you draw a card. Some cards give choices.  \nMissions cost energy equal to tier\n\nCards are worth points per Tier.\n\nReplace “faceup Tier I card” with Tier I field.  \nCapitalize “Spacecat” and “Spaceship”  \nCard assignment tokens  \nCards that avoid attacks: Deploy: discard to avoid an attack  \nTake energy costs into account  \nMischief cards in Operations\n\nGame ends when Tier III cards are gone?\n\nMaybe symbols before each deployment effect that determines if it is one use (X), upon deployment (down arrow), or ongoing (infinity)\n\nPlay Order:  \nPlay cards for effect, income, or deployment (up to one)  \nPurchase up to one card  \nComplete up to one mission\n\nAbilities from missions?  \nMissions require a Spaceship for completion  \nThree Spaceship deployment slots  \nCard effects that say “Deploy” are an additional deployment.  \nDepletion Tokens for “One Use” effects\n\nMake missions easier. Maybe they require a total strength, and tier II cards contribute to that.  \nMaybe you don’t start with useless cats, unless you do?  \nSeparate spaceships, permanent piles?  \nSpaceships can be deployed once purchased, or go into your discard for drawing.  \nGet rid of energy?  \nCards that double other incomes  \nPerhaps you can only spend income you get that round. Won’t be indecisive saving up for later.\n\nSimplify, maybe get rid of energy, simplify temporary credits\n\n\\-less reserve cards, less deployed cards\n\nReserve Credits: credits you can save up\n\n\\-Tier 1 Focus Operations: change to \"Choose a color, gain 2 credits per card played\"   \n\\-Recall Deployed cards abilities or action\n\nDismissing cards is too powerful: minimize, put them in only Tier II?   \n\\-Increase mission rewards\n\n\\-Event deck you draw before a mission?\n\n\\-Get rid of energy or make it easier to get. Discard cards for energy? \n\nBoost Mission VP\n\nRemove many Operations\n\nLower costs\n\nAdd starter operation that refreshes cards\n\nOnly deal out a few missions per game\n\n**Rules:**  \n\\-No limit on buys each turn  \n\\-Deploy only 1 card per turn\n\nCard Size Info: 2.32”x3.58”  Export jpg at 7” wide, size to page at 32% size     ∞   ✓   ⬇  Card back is 4.3% larger  \nMission cards: export at 10” tall, size to page at 26%  \nPlayer board: print at 50% size\n\n|  | Starter Cards | Tier I (3-10) | Tier II (11-19) | Tier III (20-35) |\n| ----- | ----- | ----- | ----- | ----- |\n| Exploration | *Scout:* Look at the top card of the Tier I deck / Inc 1 / Cost 0 | 1\\. *Sector Patroller* Look at the top card of your deck: you may discard it or put it back. / Inc 1 / Cost 5 Deploy: Vigilance: You may discard this card to avoid a Tier I Mischief effect. 2\\. *Astronavigator* Look at the top two cards of your deck: put them back in any order / Inc 1 / Cost 4 3\\. *Assistant Wayfinder* Look at the top card of your deck: you may dismiss it or discard it / Inc 1 / Cost 6 Deploy: Look at the top card of the mission deck. 4\\. *Surveyor*  Look at the top three cards of the Tier 1 deck: you may purchase one. This does not count as your purchase this turn. / Inc 1 / Cost 8 5\\. *Mission Planner* Look at the top three cards of your deck: you may discard any and rearrange the rest / Inc 2 / Cost 9 Deploy: Look at the top card of your deck when an opponent completes a mission.  | 1\\. *Senior Wayfinder* Look at the top two cards of your deck: you may dismiss or discard each of them / Inc 1 / Cost 11 2\\. *Recon Expert* Name a card faction, then look at the top card of your deck: if it is the faction you named, add it to your hand. / Inc 2 / Cost 13 Deploy: When an opponent deploys, look at the top card of your deck. 3\\. *System Specialist* Name a card type, then reveal the top card of the Tier I or Tier II deck: if it is the faction you named, you may purchase it for half cost (rounded up) / Inc 2 / Cost 15 4\\. *Head Explorer* Look at the top card of the Tier I or Tier II deck, then you may deploy this card / Inc 1 / Cost 17 Deploy: Draw a card 5\\. *Intelligence Agent* Look at the top two cards of the mission deck / Inc 2 / Cost 18 Deploy: Vigilance: You may discard this card to avoid a Tier I or II Mischief effect. | 1\\. *Commander Curious* Look at the top three cards of your deck: you may dismiss or discard any of them / Inc 2 / Cost 24 Deploy: Vigilance: You may discard this card to avoid any single Mischief effect. 2\\. *Commander Chowder* Look at the top three cards of any single Tier deck. You may purchase any of them / Inc 3 / Cost 25 Deploy: Gain 2 credits 3\\. *Commander Taco* Look at the top three cards of the mission deck: you may reserve one of them / Inc 4 / Cost 30 Deploy: When an opponent completes a mission, reserve a card from any Tier. 4\\. *Commander Pebbles* Look at the top three cards of your deck: choose a card faction, then add all cards of that faction to your hand / Inc 3 / Cost 34 Deploy: You may shuffle your discard pile into your deck. 5\\. *Commander Milo* Name a Tier, then look at the top three cards of your deck: add all cards of the chosen Tier to your hand / Inc 2 / Cost 32 Deploy: Whenever an ability tells you to look at the top cards of a deck, you may look at an additional card. \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ 6\\. *Captain Paddy* At the end of the game, this is worth 1 VP for every 3 Exploration cards you have / Inc 3 / Cost 35 7\\. *Captain Shadow* At the end of the game, this is worth 1 VP for each mission you completed. / Inc 2 / Cost 32 |\n| Spaceship |  | 1\\. *Exploration Pod* Look at the top card of your deck. Deploy: After this card completes a mission, look at the top card of the mission deck. / Inc 1 / Cost 6 2\\. *Probe Launcher* Deploy: When you deploy another card, gain 1 credit. / Inc 1 / Cost 7 3\\. *Scout Ship* Look at the top two cards of your deck. Deploy: When this card completes a mission, gain 2 credits and reserve a card from the Tier I or II fields. / Inc 1 / Cost 10 | 1\\. *Deep Space Vessel* Deploy: Gain 1 credit each time a new card enters a field. When this card completes a mission, you may leave this and an Exploration Spacecat deployed. / Inc 2 / Cost 18, 1 2\\. *Comms Ship* Recall a deployed Spacecat to your hand. Deploy: Each time you deploy a card (including this one), you may look at the top three cards of your deck, discard up to one of them, and then put them back in any order. / Inc 1 / Cost 19, 1 | 1\\. U.S.G. *Intrepid* Deploy: Gain 5 credits, then look at the top two cards of the mission deck: you may complete one of them by paying 10 credits as a substitute for any card. You may deploy an additional card each turn. / Inc 4 / Cost 35, 2 2\\. U.S.G. *Pathfinder* Deploy: Reserve a mission card, then look at the top three cards of your deck: you may immediately deploy up to two of them. / Inc 3 / Cost 34, 2 |\n| Engineering | *Handycat:* No Effect / Inc 2 / Cost 0 | 1\\. *Cargo Cat* Gain 2 credits / Inc 2 / Cost 3 2\\. *Reactor Tech* No Effect / Inc \\-4, 1 / Cost 6 Deploy: Gain 1 energy when an opponent purchases a Tier III card. 3\\. Gain 2 credits. You may purchase an additional card this turn / Inc 3 / Cost 7 4\\. *Radar Tech* Gain 2 credits, then you may deploy this card / Inc 3 / Cost 8 Deploy: Vigilance: You may discard this card to avoid a Tier I Mischief effect. 5\\. *Lead Mechanic* Gain 1 credit and draw a card / Inc 2 / Cost 9 Deploy: One Use: Gain 5 credits when an opponent completes a mission | 1\\. *Maintenance Cat* Gain 3 credits / Inc \\-3, 1 / Cost 11 Deploy: Gain 2 credits 2\\. *Quartermaster* Gain 2 temporary credits. You may make an additional purchase this turn. / Inc 3 / Cost 14 3\\. No Effect / \\-2, 1 / Cost 15 Deploy: Gain 1 energy when an opponent purchases a Tier III card. 4\\. *Flight Engineer* You may make one additional purchase of a Spaceship this turn at a discount of 5 credits/ Inc 4 / Cost 17 Deploy: You may also deploy a Spaceship this turn. 5\\. *Chief Engineer* Gain 6 credits / Inc 6 / cost 19 | 1\\. *Commander Blaze* Gain 5 credits / Inc \\-2, 1 / Cost 23 Deploy: Vigilance: You may discard this card to avoid any single Mischief effect: gain 3 credits if you do. 2\\. *Commander Nova* Dismiss this card to gain 30 credits / Inc 4 / Cost 25 Deploy: Gain 3 credits whenever you dismiss a card. 3\\. *Commander Tea Roll* Dismiss a card to gain credits and energy both equal to its Tier / Inc 4 / Cost 27 Deploy: Whenever you draw a card due to a  card effect, gain 2 credits for each card drawn. 4\\. *Commander Forge* Gain 10 credits / Inc 10 / Cost 32 Deploy: Gain 4 credits 5\\. *Commander Scotch* Gain 5 temporary credits. You may make two additional purchases this turn. Gain 2 credits for each purchase you make this turn / Inc 4 or 1 / Cost 35 Deploy: Gain 1 credit each time an opponent purchases a card. \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ 6\\. *Captain Tinker* At the end of the game, this card is worth one additional VP for every 3 Engineering cards you have / Inc 3 / Cost 35 7\\. *Captain Zelds* At the end of the game, this card is worth one additional VP for every 10 credits in your supply / Inc 2 / Cost 32 |\n| Spaceship | ∞   ✓   ⬇ | 1\\. *Repair Pod* Play a Spaceship from your discard pile for its income / Inc 2 / Cost 5 Deploy: One use: Gain 4 credits when an opponent purchases a Spaceship. 2\\. *Tug Ship* Deploy: Gain 2 credits each time an opponent purchases a Spaceship / Inc 3 / Cost 7 3\\. *Munitions Craft* Deploy: Gain 2 credits whenever you play or deploy a Combat card / Inc 3 / Cost 10 | 1\\. *Supply Ship* Gain 2 energy / Inc 4 / Cost 19, 1 Deploy: When this card completes a mission, gain 1 energy or 3 credits 2\\. *Repair Ship*  Deploy a Spaceship from your discard pile / Inc 3 / Cost 19, 1 Deploy: Gain 1 credit for each Spaceship in your discard pile | 1\\. U.S.G. *Toolshed* Deploy: Draw up to two Spaceships from your discard pile and add them to your hand. You may deploy an additional card this turn / Inc 4, 1 / Cost 30, 2 2\\. U.S.G. *Seabee* Deploy: Gain 10 credits. Whenever you deploy a card, gain its income. / Inc 5 / Cost 33, 2 |\n| Science | *Junior Scientist:* Discard a card to gain 2 credits / Inc 1 / Cost 0 | 1\\. *Lab Cat* Discard a card to gain 3 temporary credits / Inc 1 / Cost 4 2\\. *Chemist* Discard a card to gain 2 credits / Inc 1 / Cost 5 3\\. Discard a card, draw a replacement, and gain 1 temporary credit / Inc 1 / Cost 6 4\\. *Mad Scientist* Dismiss a card from your hand and gain its income / Inc 1 / Cost 8 Deploy: If this card replaces another deployed card, gain 3 credits 5\\. *Astrophysicist* Dismiss a card from your hand or discard pile and then gain 1 energy / Inc 1 / Cost 10 Deploy: You may make an additional purchase this turn. Dismiss cards Discard for credits Additional Purchases Additional Missions? Dismiss a card for its cost?  | 1\\. *Propulsion Specialist* Spaceships cost 3 credits less to purchase this turn. You may make an additional purchase this turn / Inc 2 / Cost 12 2\\. *Nuclear Physicist* Discard a card and gain energy equal to its Tier / Inc \\-4, 1 / Cost 15 Deploy: This card also counts for 1 energy when used to complete a mission. 3\\. *BIoengineer* The next card you play can be played for both its effect and income / Inc 2 / Cost 17 Deploy: When this card is used to complete a mission, you may pay 1 energy to treat it as a Tier III card. 4\\. *Head Scientist* Gain 2 temporary credits for each Science card you play this turn (including this one) / Inc 2 / Cost 18 Deploy: When this card completes a mission, gain 2 credits and 1 energy. 5\\. Dismiss a card from your hand or discard pile and gain credits equal to its cost / Inc \\-2, 1 / Cost 19 | 1\\. *Dr. Patch* Pay 1 energy to draw 2 cards. / Inc 5\\. \\-1 / Cost 23 2\\. *Dr. Sylvester* No Effect / Inc 0, 1 / Cost 25 Deploy: When you gain energy for any reason, you may choose to gain 5 credits instead. 3\\. *Dr. Van Speigel* Dismiss or discard a card from your hand and gain credits equal to its cost, then deploy this card. / Inc 3 / Cost 27 Deploy: You may deploy an additional card this turn. 4\\. *Dr. Flask* Discard a card and gain energy equal to its Tier, then draw a card. / Inc 2, 1 / Cost 30 Deploy: One use: Gain 2 energy when an opponent purchases a Tier III card. 5\\. *Dr. Whom* You may spend 4 credits to gain 2 energy. You may purchase an additional card this turn. / Inc 7, \\-1 / Cost 35 Deploy: Gain 1 energy \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ 6\\. *CSO Cas* At the end of the game, this is worth one additional VP for every 3 Science cards you have/ Inc 3 / Cost 35 7\\. *CSO Appa* At the end of the game, this is worth one additional VP for every 3 Tier III cards you have / Inc 2 / Cost 28 |\n| Spaceship | ∞   ✓   ⬇ | 1\\. *Scavenger Craft* Gain the income of a Tier I or Tier II card in your discard pile. Deploy: Place Token 1/2 on a card in any draft field: gain 2 credits when that card is purchased by any player. / Inc 2 / Cost 6 2\\. *Retrieval Ship* Reserve a Tier I or Tier II card. Deploy: When you complete a mission without this card, you may discard this card to keep a Tier I or Tier II card from that mission deployed. / Inc 2 / Cost 8 3\\. *Power Vessel* Spend 1 energy to play a card from your hand for both its income and effect. Deploy: You may spend 3 credits to gain 1 energy. / Inc 0, 1 / Cost 10 | 1\\. *Observation Ship* You may look at the top card of the mission deck and each Tier deck. Deploy: Place Token 3/4 on a card in the mission field: if an opponent completes that mission, gain 5 credits. / Inc 2 / Cost 13, 1 2\\. *Lab Ship* Convert 1 energy to 7 credits OR 3 credits to 1 energy, Deploy: You may also deploy a Science Spacecat this turn. / Inc 2 / Cost 16, 1 | 1\\. U.S.G. *Experiment* Deploy: You may deploy two additional Science cards this turn and gain the income of each. Gain 2 energy. / Inc 3, 2 / Cost 35, 2 2\\. U.S.G. *Eureka* Deploy: Whenever you deploy a Science card, gain 1 energy and you may dismiss a card from your hand or discard pile. / Inc 3, 1 / Cost 35, 2 |\n| Combat | *Eager Recruit*: None / Inc 1 / Cost 0 Deploy: This card counts as a Tier I Combat Spacecat when completing a mission. | 1\\. Dismiss this card to gain 5 temporary credits. / Inc 1 / Cost 3 2\\. *Trooper* Discard a card from your hand to gain 4 temporary credits. / Inc 1 / Cost 5 3\\. *Pilot* Mischief: Choose an opponent: they gain 1 Distraction. / Inc 1 / Cost 7 Deploy: Vigilance: You may discard this card to avoid a Tier I Mischief effect. 4\\. *Squad Leader* Refresh a card in the Tier I field. / Inc 2 / Cost 8 Deploy: Gain 1 credit for each Combat card you have deployed (including this one). 5\\. *Marksman* Mischief: Each opponent gains 1 Distraction. Gain 1 credit for each opponent that uses Vigilance to avoid this.. / Inc 1 / Cost 10 Deploy: Gain 2 temporary credits | 1\\. *Saboteur* Mischief: Choose an opponent: they gain 2 Distractions. If they use Vigilance to avoid this, gain 3 credits. / Inc 2 / Cost 13 2\\. *CQB Specialist* No effect. / Inc 2 / Cost 15 Deploy: Whenever you discard a card due to a card effect, gain 2 credits. 3\\. *Heavy Gunner* Spend 1 energy to gain 10 temporary credits. / Inc 2 / Cost 17 Deploy: Gain 1 credit each time you deploy a Command card. 4\\. Refresh a card in the Tier I or II fields and gain its income. / Inc 2 / Cost 18 5\\. *Operative* Mischief: Each opponent gains 2 Distraction cards. Each opponent that uses Vigilance to avoid this must still gain 1 Distraction. Deploy: You may deploy an additional Combat card this turn. / Inc 1 / Cost 20 | 1\\. *Commander Scar* Refresh up to a total of three cards in the Tier I and II fields. / Inc 3 / Cost 20 Deploy: Smirk confidently and gain 1 credit. 2\\. *Commander Puma* Mischief: Each opponent must discard two cards from their hand.. / Inc 3 / Cost 23 Deploy: Gain 1 credit each time an opponent uses Vigilance against you. 3\\. *Commander Roosevelt* Discard any number of cards from your hand: gain 4 credits for each discarded card. / Inc 3 / Cost 27 Deploy: Place Token 5 on a mission card in the field: gain 1 energy when any player completes that mission. 4\\. *Commander Suduko* Mischief: Each opponent must discard a deployed card. Gain 4 credits for each opponent that cannot do this. / Inc 3 / Cost 30 Deploy: Gain 2 credits for each Combat card you have deployed (including this one). 5\\. *Commander Tux* If a player uses a Vigilance effect against you, reveal this card after that effect is resolved: that player must dismiss the card they used for the effect. / Inc 3 / Cost 35 Deploy: Mischief: Each opponent must discard two cards and gain a Distraction. \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ 6\\. *Captain Meeko* At the end of the game, this is worth one additional VP for every 3 Combat cards you have/ Inc 3 / Cost 35 7\\. *Captain Lizzie* At the end of the game, this is worth one additional VP for each mercenary card you have / Inc 2 / Cost 32 |\n| Spaceship | ∞   ✓   ⬇ | 1\\. *Escort Fighter* You may deploy this card immediately after you deploy another Spaceship. Deploy: Vigilance: You may discard this card to avoid a Tier I Mischief effect. / Inc 1 / Cost 7 2\\. *Interceptor* Reserve a Tier I or II card. / Inc 1 / Cost 8 Deploy: Place Token 6/7 on a card in any draft field: gain 4 credits when that card is purchased. 3\\. *Gunboat* Mischief: Choose an opponent: they must discard a deployed Tier I or II Spaceship of your choice. / Inc 1 / Cost 10 Deploy: When this card completes a mission, gain 3 credits. | 1\\. *Corvette* Refresh up to a total of two cards in the Tier I and II fields. / Inc 2 / Cost 16, 1 Deploy: Mischief: Choose an opponent: they gain 1 Distraction. 2\\. *Frigate* You may make an additional purchase this turn. Combat cards cost 3 less to purchase this turn. / Inc 2 / Cost 19, 1 Deploy: Mischief: Each opponent loses 4 credits or gains 1 Distraction if they cannot. | 1\\. U.S.G. *War Wagon* Mischief: Each opponent either loses 7 credits or gains 2 Distractions. Gain 1 energy for each opponent that uses Vigilance to avoid this. Deploy: You may deploy up to two other Combat cards this turn. / Inc 3 / Cost 33, 2 2\\. U.S.G. *Overkill* Choose a card in your hand that has a Mischief effect: apply that effect twice and then discard that card. Then deploy this card. Deploy: Mischief: Each opponent must discard a Spaceship of your choice. / Inc 1 / Cost 35, 2  |\n| Command | *Petty Officer:* Reserve a Tier I card / Inc 1 / Cost 0 | 1\\. *Ensign* Draw a card. / Inc 1 / Cost 4 2\\. *Recruiting Officer* No effect. / Inc 1 / Cost 5 Deploy: Place Token 8/9/10 on a card in the Tier I or II fields. Gain 3 credits if you purchase that card. 3\\. *Platoon Leader* You may deploy an additional card this turn. / Inc 1 / Cost 7 Deploy: Draw a card. 4\\. Draw two cards, then place a card from your hand on the top of your deck. / Inc 1 / Cost 8 5\\. *Battle Captain* Draw two cards. / Inc 1 / Cost 10  | 1\\. *Bridge Officer* Use a deployed card for its play effect or income and then discard it. / Inc 2 / Cost 11 2\\. *Brigade Commander* Draw two cards. / Inc 2 / Cost 14 Deploy: Gain 1 credit each time you draw a card due to a card effect. 3\\. Draw a card. You may deploy an additional card this turn. / Inc 2 / Cost 16 4\\. *Shipmaster* Draw a card. / Inc 2 / Cost 17 Deploy: You may deploy up to three additional Tier I Spacecats this turn. 5\\. *Division Commander* Draw two cards and gain 2 credits. / Inc 2 / Cost 19 Deploy: Draw a card. You may dismiss a card from your hand.  | 1\\. *Vice Admiral Fuzz* You may deploy two additional cards this turn. / Inc 3 / Cost 21 Deploy: Draw a card. 2\\. *Vice Admiral Earl Grey* Discard a card: draw a number of cards and gain a number of credits equal to its Tier. If you discard a Distraction this way, draw 2 cards. / Inc 3 / Cost 22 3\\. *Vice Admiral Ash* Return a deployed card to your hand. / Inc 3 / Cost 26 Deploy: When you complete a mission with this card, gain the mission reward twice. 4\\. *Vice Admiral Hodge* Draw three cards. / Inc 3 / Cost 28 Deploy: Whenever an opponent deploys a Tier III card, draw a card and gain 2 credits. 5\\. *Vice Admiral Storm* Reserve a card from any field, then draw two cards. / Inc 3 / Cost 33 Deploy: Draw a card. You may make an additional purchase and deploy two additional cards this turn. \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ 6\\. *Admiral Indy* At the end of the game, this is worth one additional VP for every 3 Command cards you have/ Inc 3 / Cost 35 7\\. *Admiral Herb* At the end of the game, this is worth one additional VP for every 3 Operation cards you have / Inc 2 / Cost 31 |\n| Spaceship | ∞   ✓   ⬇ | 1\\. *Shuttle* Name a card type: reveal cards from your deck until you find a card of that type, then add it to your hand. Discard the other revealed cards.  Deploy: If you replace another deployed Spaceship with this card, draw a card. / Inc 1 / Cost 6 2\\. *Operations Craft* You may complete an additional mission this turn. Deploy: Missions cost you one less Tier I Spacecat of your choice to complete. / Inc 1 / Cost 8 3\\. *Mobile Command Center* Draw a card. You may deploy an additional card this turn. Deploy: Place Token 11/12 on a mission card. Draw 2 cards when that mission is completed. / Inc 1 / Cost 10  | 1\\. *Command Ship* Discard a deployed Spaceship and gain its income, then deploy this card. / Inc 2 / Cost 15, 1 Deploy: You may deploy an additional Spaceship this turn. 2\\. *Light Carrier* You may make any number of additional deployments this turn by paying one energy per deployment. / Inc 2 / Cost 18, 1 Deploy: Draw a card each time you deploy a card, including this one. | 1\\.  U.S.G. *Dauntless* Draw one card per vacant deployment slot you have. If you have no vacant deployment slots, gain 2 energy and 5 credits. Deploy: Draw two  cards. You may complete an additional mission this turn. / Inc 3 / Cost 32, 2 2\\. U.S.G. *Audacious* Discard any number of cards, then draw that many cards. You may then add any two cards from your discard pile to your hand.  Deploy: You may deploy an additional card each turn, including this one. / Inc 3 / Cost 35, 2 |\n| Colorless | \\-3 X Cadet (Does Nothing) (Just use 3 Distractions) |  |  |  |\n| Mercenary (1x each) |  ∞   ✓   ⬇ | 1\\. *Smoky* Discard a Distraction from your hand to gain 2 credits. / Inc 1 / Cost 7 2\\. *Lucca* Pay 2 credits to draw 1 card. / Inc 1 / Cost 6 Deploy: You must gain 1 Distraction. 3\\. *Gander* Draw a card, then put a card from your hand on the top of your deck. / Inc 1 / Cost 8 4\\. *Stubby*  Spend 6 credits to gain 1 energy. / Inc 1 / Cost 9 Deploy: Gain 2 credits per Mercenary you have deployed, including this one. 5\\. *Nemo* Pay 6 credits to claim any Spaceship in the Tier I field. You may still make a purchase this turn. / Inc 1 / Cost 10 | 1\\. *Belka* Draw a card, then put a card from your hand on the top of your deck. / Inc 2 / Cost 16 2\\. *Strelka* Spend 1 energy to draw 2 cards. / Inc 2 / Cost 17 3\\. *Strider* Dismiss this card to claim any Spacecat in the Tier I or II fields. / Inc 2 / Cost 18 Deploy: Gain 2 credits when this card completes a mission. 4\\. *Trakr* Mischief: Each opponent that has at least one Mercenary deployed must gain 2 Distractions. / Inc 3 / Cost 20 | 1\\. *Laika* Spend 1 energy to draw three cards. / Inc 3 / Cost 30 Deploy: Vigilance: You may discard this card to avoid any single Mischief effect. If you do, gain 5 credits. 2\\. *Chips* Mischief: Dismiss one of an opponent’s deployed Tier I or II Spacecats. / Inc 3 / Cost 31 3\\. *Queenie* No effect. / Inc 3 / Cost 35 Deploy: One use: When this card completes a mission, you may retain this and one Spacecat to complete one additional mission this turn.  |\n| Operation | 2x *Supply:* Gain 1 credit. / Inc 1  | 1\\. *Secure Assets* You may make an additional purchase this turn. / Inc 1 / Cost 4 2\\. *Focus: Intel* Gain 1 credit per Exploration card you play or have played this turn. / Inc 1 / Cost 5 3\\. *Focus: Technology* Gain 1 credit per Engineering card you play or have played this turn. / Inc 1 / Cost 5 4\\. *Focus: Research* Gain 1 credit per Science card you play or have played this turn. / Inc 1 / Cost 5 5\\. *Focus: Control* Gain 1 credit per Combat card you play or have played this turn. / Inc 1 / Cost 5 6\\. *Focus: Leadership* Gain 1 credit per Command card you play or have played this turn. / Inc 1 / Cost 5 7\\. *Better Prospects* Refresh up to three cards in the Tier I field. / Inc 2 / Cost 7 8\\. *Reinforcements* Draw 2 cards. / Inc 2 / Cost 8 | 1\\. *Stake a Claim* Reserve a card from any field. / Inc 2 / Cost 12 2\\. *Regroup* Return a deployed card to your hand. / Inc 2 / Cost 13 3\\. *Restructuring* Dismiss up to two cards from your hand or discard pile. / Inc 2 / Cost 13 4\\. *Power Surge* Gain 2 energy. / Inc 2 / Cost 14 5\\. *Even Better Prospects* Refresh up to a total of three cards in the Tier I and/or II fields. / Inc 3 / Cost 14 6\\. *Reassignment* Discard any number of cards from your hand: gain 3 credits per card discarded. / Inc 2 / Cost 15 7\\. *Tight Security* Vigilance: discard this card from your hand to avoid any single Mischief effect. Draw a card if you do. / Inc 3 / Cost 16 | 1\\. *Energy Rush* Discard any number of cards from your hand: gain 1 energy per card discarded. / Inc 4 / Cost 22 2\\. *Call Reserves* Spend any amount of energy to draw an equal number of cards. If you draw a Distraction this way, you may dismiss it. / Inc 4 / Cost 23 3\\. *Resupply* Reactivate the “⬇” effect of one of your currently deployed cards. / Inc 4 / Cost 23 4\\. *Special Assignment* Any cards you purchase this turn may be placed on the top of your deck. / Inc 3 / Cost 25 5\\. *Orbital Defenses* Vigilance: discard this card from your hand to avoid any single Mischief effect, and then reapply that effect as though you had played it. / Inc 3 / Cost 30 6\\. *Rainy Day* Gain 1 energy, 10 temporary credits, and draw 2 cards. / Inc 5 / Cost 33 |\n| Mission | 2.32 x 3.58 | 2-4 Points Each, Cost 1 Energy 1\\. *Scouting Mission 2* 1x White 1, Green 1, Yellow 1, White Ship 1 Reward: 3 Credits 2\\. *Scouting Mission 3* 2x White 1, Blue 1, White Ship 1 Reward: 3 Credits 3\\. *Scouting Mission 3* 2x White 1, White 2, Yellow 1, Any Ship 1 Reward: You may claim any card with a cost of 6 or less from the field. 4\\. *Engineering Mission 2* 1x Yellow 1, Green 1, Blue 1, Yellow Ship 1 Reward: You may pay 4 credits to keep one card deployed that you used for this mission. 5\\. *Engineering Mission 4* 3x Yellow 1, Red 1, Yellow Ship 1 Reward: 3 Credits 6\\. *Engineering Mission 4* 3x Yellow 1, Green 1, Any Ship 1 Reward: 3 Credits 7\\. *Science Mission 2* 1x Green 1, Yellow 1, White 1, Any Ship 2 Reward: 3 Credits 8\\. *Science Mission 2* 2x Green 1, Blue 1, Yellow 1, Green Ship 1 Reward: 1 Energy 9\\. *Science Mission 4* 3x Green 1, White 1, White Ship 1 Reward: You may claim any card with a cost of 5 or less from the field. 10\\. *Combat Mission 2* 1x Red 1, Blue 1, White 1, Red Ship 1 Reward: Gain 4 credits 11\\. *Combat Mission 3* 2x Red 1, Red 2, Blue 1, Red Ship 1 Reward: You may spend 2 credits to gain 1 energy 12\\. *Combat Mission 4* 3x Red 1, Yellow 1, Yellow Ship 1 Reward: You may search your discard pile and activate a single Mischief effect. 13\\. *Tech Field Test 3* 2x Yellow 1, 2x Green 1, Green Ship 1 Reward: You may immediately purchase a Spaceship with a discount of 5 credits. 14\\. *Diplomatic Mission 3* Each Color 1, Any Ship 2 Reward: Gain any Tier II Spacecat from the field. 15\\. *Surprise Inspection 4* 2x Any Color 1, Blue 1, Blue 2, Blue Ship 1 Reward: Ongoing: At the start of your turn, you may look at the top card of your deck.  | 5-7 Points Each, Cost 2 Energy 1\\. *Spec Ops Mission 7* 3x Red 2, Red Ship 2 Reward: Choose one opponent: they must gain 1 Distraction into their discard pile.  2\\. *Deep Space Mission 5* 2x White 2, White 1, Blue 2, White Ship 2 Reward: 5 Credits  3\\. *Repair Operation 5* 2x Yellow 2, Green 2, Blue 2, Yellow Ship 2 Reward: Ongoing: You have a discount of 2 credits when purchasing Spaceships.  4\\. *Hypothesis Test 5* 2x Green 2, White 2, Green Ship 2 Reward: Ongoing: Whenever you would gain an energy, you may choose to instead gain 4 credits.  5\\. *Relieve Command 6* Blue 2, Blue 1, Red 1, White 1, Blue Ship 2 Reward: Ongoing: You have a discount of 2 credits when purchasing Operations.  6\\. *Special Diplomatic Mission 6* Each Color 2, Any ship 2 Reward: Ongoing: You have a discount of 1 credit when purchasing Spacecats.  7\\. *Escort Mission 5* 2x Red 2, Red 1, Blue 2, Red Ship 2 Reward: Ongoing: Gain 2 credits every time you deploy a Combat card.  8\\. *Maiden Voyage 7* Blue 3, Blue 2, Red 2, Any Ship 3 Reward: Keep in deployment the ship you used to complete this mission.  9\\. *Sector Mapping 5* 2x White 2, 2x White 1, White Ship 2 Reward: After refilling the Mission field this turn, you may look at the top 3 cards of the Mission deck.  10\\. *Special Experiment 7* 3x Green 2, Blue 2, Any Ship 2 Reward: Ongoing: Once per turn, you may convert 1 energy into 4 credits, or vice versa. | 8-10 Points Each, Cost 3 Energy 1\\. *Extraction Mission 10* Red 3, Red 2, 2x White 2, Blue 3, Red Ship 2 Reward: Gain any Tier II Spacecat from the field.  2\\. *Urgent Supply Mission 8* 2x Yellow 3, Blue 3, Yellow Ship 2 Reward: Ongoing: Whenever you draw a card due to a card effect, gain 2 credits.  3\\. *Secret Mission 9* White 2, Yellow 2, Red 2, Green 1, Blue 3, Any Ship 3 Reward: Each opponent must gain 1 Distraction into their discard pile.  4\\. *Scientific Breakthrough 8* Green 3, White 3, Blue 3, Any Ship 3 Reward: Ongoing: Gain 1 energy each turn. 5\\. *The Great Voyage 9* White 3, 2x White 2, White 1, Blue 2, White Ship 3 Reward: After refilling the Mission field this turn, you may look at the top 3 cards of the Mission deck and reserve 1 of them.  6\\. *Alien Contact 10* Each Color 2, Blue 3, Blue Ship 3 Reward: Ongoing: You have a 3 credit discount when purchasing Mercenaries.  |\n\n\n\nTask:\n\n\nHere are some scattered game prototyping notes followed by a table with initial card designs. Take my notes and synthesize them into four categories: Decided Elements/Concepts (for me to remember), Items For Review (for undecided elements), Action Items (changes I need to implement), and Other (anything that doesn't fit). Within each category, group the notes by common topics if applicable, eliminating redundant ones. Make sure you have categorized every note, aside from redundant ones that are removed. Then, indicate which cards in the table need to be revised according to the Decided Elements/Concepts and Action Items, and indicate which might be affected if I adopt the Decision Items.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the existing analysis-journal.md in place: replace only its first Markdown heading with my current project label and preserve the rest of the file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/family/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_7.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/family/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/family/drafts/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Family Context"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/family/drafts/analysis-journal.md",
+      "expected_heading": "# Family Context",
+      "prior_body_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should categorize the scattered notes into exactly four categories: Decided Elements/Concepts, Items For Review, Action Items, and Other.",
+        "The response should consolidate the multiple notes about getting rid of energy (\"Get rid of energy?\", \"-Get rid of energy or make it easier to get. Discard cards for energy?\", \"Simplify, maybe get rid of energy, simplify temporary credits\") into a single point.",
+        "The response should categorize each note exactly once (i.e. the same note should not appear in multiple categories).",
+        "The response should group the categorized notes by common topics within each category. For example, notes about energy or credits could be grouped under an \"Economy\" or \"Resources\" topic.",
+        "The response should identify specific cards from the provided table that need to be revised based on the notes categorized under \"Decided Elements/Concepts\", instead of vaguely alluding to cards with language such as \"potentially others if they have similar effects.\"",
+        "The response should identify specific cards from the provided table that need to be revised based on the notes categorized under \"Action Items\", instead of vaguely alluding to cards with language such as \"Lower the costs of many cards\".",
+        "The response should identify all three cards that would be affected if implementing the note of restricting the \"Dismiss\" ability to Tier II cards and higher: Assistant Wayfinder, Mad Scientist, and \"Astrophysicist\".",
+        "The response should not include a note that states Mission cards are worth victory points (VP) equal to their tier.",
+        "The response should include the note about implementing standardized symbols for deployment effects under the \"Items For Review\" section.",
+        "The response should not state that card drawing is a common effect of Missions.",
+        "The response should include the notes detailing the specific printing and exporting specifications, which are as follows:\r\nCard Size Info: 2.32”x3.58” Export jpg at 7” wide, size to page at 32% size ∞ ✓ ⬇ Card back is 4.3% larger\r\nMission cards: export at 10” tall, size to page at 26%\r\nPlayer board: print at 50% size"
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/family/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/family/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should categorize the scattered notes into exactly four categories: Decided Elements/Concepts, Items For Review, Action Items, and Other.",
+          "The response should consolidate the multiple notes about getting rid of energy (\"Get rid of energy?\", \"-Get rid of energy or make it easier to get. Discard cards for energy?\", \"Simplify, maybe get rid of energy, simplify temporary credits\") into a single point.",
+          "The response should categorize each note exactly once (i.e. the same note should not appear in multiple categories).",
+          "The response should group the categorized notes by common topics within each category. For example, notes about energy or credits could be grouped under an \"Economy\" or \"Resources\" topic.",
+          "The response should identify specific cards from the provided table that need to be revised based on the notes categorized under \"Decided Elements/Concepts\", instead of vaguely alluding to cards with language such as \"potentially others if they have similar effects.\"",
+          "The response should identify specific cards from the provided table that need to be revised based on the notes categorized under \"Action Items\", instead of vaguely alluding to cards with language such as \"Lower the costs of many cards\".",
+          "The response should identify all three cards that would be affected if implementing the note of restricting the \"Dismiss\" ability to Tier II cards and higher: Assistant Wayfinder, Mad Scientist, and \"Astrophysicist\".",
+          "The response should not include a note that states Mission cards are worth victory points (VP) equal to their tier.",
+          "The response should include the note about implementing standardized symbols for deployment effects under the \"Items For Review\" section.",
+          "The response should not state that card drawing is a common effect of Missions.",
+          "The response should include the notes detailing the specific printing and exporting specifications, which are as follows:\r\nCard Size Info: 2.32”x3.58” Export jpg at 7” wide, size to page at 32% size ∞ ✓ ⬇ Card back is 4.3% larger\r\nMission cards: export at 10” tall, size to page at 26%\r\nPlayer board: print at 50% size"
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/family/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_7.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/family/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/family/drafts/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Family Context"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/family/drafts/analysis-journal.md",
+        "expected_heading": "# Family Context",
+        "prior_body_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

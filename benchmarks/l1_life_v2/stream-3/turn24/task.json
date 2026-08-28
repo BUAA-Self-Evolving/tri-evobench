@@ -1,0 +1,342 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn24",
+  "turn_index": 24,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "0cce67d1-6919-b146-7622-955dbb75f4c3",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 185,
+    "source_sha256": "bfa21b856920e833dbbef616a3b5469227ce4867cd21eb04412ac404118d7014",
+    "source_metadata": {
+      "task_id": "0cce67d1-6919-b146-7622-955dbb75f4c3",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Digital Footprints & Daily-Life Records"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Whole Foods past purchases\n\nWaterloo Sparkling Water, Summer Berry Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Summer Berry Naturally Flav…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nWaterloo Sparkling Water, Raspberry Nectarine Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Raspberry Nectarine Naturall…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWaterloo Sparkling Water, Peach Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Peach Naturally Flavored, 12…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nHakubaku Organic Udon Wheat Noodle (1 x 9.5 OZ)Hakubaku Organic Udon Wheat Noodle (1 x 9.5 OZ)\n$4.59( $0.48/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWaterloo Sparkling Water, Ruby Red Tangerine Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Ruby Red Tangerine Naturally Flav…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Stevia Liquid Extract, 8 Fl Oz365 by Whole Foods Market, Organic Stevia Liquid Extract,…\n$20.49( $2.56/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWaterloo Sparkling Water, Blackberry Lemonade Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Blackberry Lemonade Natural…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nBanza Rotini Pasta from Chickpeas - Gluten Free, High Protein, and Lower Carb Protein Rotini Chickpea Pasta - 8ozBanza Rotini Pasta from Chickpeas - Gluten Free, High…\n$3.99( $0.50/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Banana, 1 EachOrganic Banana, 1 Each\nest. $0.29/each( $0.79/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Cream Cheese, 8 oz365 by Whole Foods Market, Organic Cream Cheese, 8 oz\n$3.99( $0.50/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nPotato Sweet Orange OrganicPotato Sweet Orange Organic\nest. $2.42/each( $2.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWaterloo Sparkling Water, Tropical Fruit Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Tropical Fruit Naturally Flavor…\n$7.49( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\n365 By Whole Foods Market, Organic Extra Firm Tofu, 14 Ounce365 By Whole Foods Market, Organic Extra Firm Tofu, 14 O…\n$2.29( $0.16/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nVital Farms, Large Grade A Eggs, 12 CountVital Farms, Large Grade A Eggs, 12 Count\n$8.49( $0.71/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKochs Turkey Farm, Turkey Ground Tray Pack Organic Step 1, 16 OunceKochs Turkey Farm, Turkey Ground Tray Pack Organic Ste…\n$8.49( $8.49/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Grape Tomatoes, 12 OzOrganic Grape Tomatoes, 12 Oz\n$3.99( $5.32/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nCooked Perfect, Organic Turkey Meatball Step 2, 12 OunceCooked Perfect, Organic Turkey Meatball Step 2, 12 Ounce\n-25%$8.99\nTypical: $11.99( $11.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKiwi Organic, 1 EachKiwi Organic, 1 Each\n$1.25( $1.25/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Valley, Organic Eggs Grade A Large Brown, 18 CountOrganic Valley, Organic Eggs Grade A Large Brown, 18 Count\n$10.99( $0.61/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWhole Foods 365 Everyday Value, Sparkling Water Pure, 12 CountWhole Foods 365 Everyday Value, Sparkling Water Pure,…\n$5.19( $0.43/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Green Peas, 32 oz365 by Whole Foods Market, Green Peas, 32 oz\n$3.59( $1.80/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Low Fat Cottage Cheese, 16 oz365 by Whole Foods Market, Organic Low Fat Cottage Che…\n$4.29( $0.27/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nBLUE DIAMOND Unsweetened Vanilla Almondmilk, 0.5 GLBLUE DIAMOND Unsweetened Vanilla Almondmilk, 0.5 GL\n-18%$3.50\nTypical: $4.29( $0.05/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKoch's Turkey Farm, Ground Turkey Breast, 16 ozKoch's Turkey Farm, Ground Turkey Breast, 16 oz\n$8.99( $8.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKerrygold Grass-fed Aged Irish Cheddar Cheese Sticks, 6 OZKerrygold Grass-fed Aged Irish Cheddar Cheese Sticks, 6 OZ\n$8.49( $1.42/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Green Kiwi, 16 OzOrganic Green Kiwi, 16 Oz\n-25%$4.49\nTypical: $5.99( $4.49/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Eggs Free Range Large Brown, 12 CountOrganic Eggs Free Range Large Brown, 12 Count\n-15%$6.79\nTypical: $7.99( $0.57/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nGreen Valley Lactose Free Organic Cream Cheese, 8 Ounce tubGreen Valley Lactose Free Organic Cream Cheese, 8 Oun…\n$5.99( $0.75/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKids Propolis Throat Spray - Natural Immune Support & Sore Throat Relief - by BEEKEEPER'S NATURALS - Has Antioxidants & Gluten-Free (1.06 oz) Pack of 1 (Kids)Kids Propolis Throat Spray - Natural Immune Support & S…\n$14.99( $14.14/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nApplegate Naturals Gluten-Free Chicken Nuggets- Family SizeApplegate Naturals Gluten-Free Chicken Nuggets- Family Size\n$13.99( $13.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nKerrygold Pure Irish Butter, Unsalted, 8 ozKerrygold Pure Irish Butter, Unsalted, 8 oz\n$5.89( $0.74/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Baby Bella Whole Mushrooms, 8 Ounce365 by Whole Foods Market, Organic Baby Bella Whole Mu…\n$3.79( $7.58/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Broccoli Florets, 32 Ounce365 by Whole Foods Market, Organic Broccoli Florets, 32 O…\n$5.99( $3.00/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nChobani® Non-Fat Plain Greek Yogurt 32ozChobani® Non-Fat Plain Greek Yogurt 32oz\n-30%$4.88\nTypical: $6.99( $0.15/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nLightlife Original Organic Tempeh, 8 OzLightlife Original Organic Tempeh, 8 Oz\n$4.59( $0.57/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Valley Ricotta Cheese in Tub, Whole Milk, Italian Flavor, Cow's Milk, Non GMO, Kosher, 15 Ounces (Pack of 6)Organic Valley Ricotta Cheese in Tub, Whole Milk, Italian Fl…\n$8.99( $0.10/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nNancy's Yogurt, Cottage Cheese Organic, 16 OunceNancy's Yogurt, Cottage Cheese Organic, 16 Ounce\n$6.49( $0.41/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nForward Greens, Micro Broccoli, 2 OunceForward Greens, Micro Broccoli, 2 Ounce\n$4.79( $38.32/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Greek Nonfat Yogurt, Plain, 32 oz365 by Whole Foods Market, Organic Greek Nonfat Yogurt,…\n$6.79( $0.21/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nPete & Gerry's Organic Free Range Grade A Large Eggs, 12 ctPete & Gerry's Organic Free Range Grade A Large Eggs, 1…\n$7.79( $0.65/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market Mozzarella Bar, 16 OZ365 by Whole Foods Market Mozzarella Bar, 16 OZ\n$5.39( $0.34/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 By Whole Foods Market, Chicken Breast Boneless Skinless Value Pack Step 2365 By Whole Foods Market, Chicken Breast Boneless Skinl…\nest. $20.09/each( $5.49/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nLesserEvil Popcorn, Himalayan Pink Salt, 4.6 OzLesserEvil Popcorn, Himalayan Pink Salt, 4.6 Oz\n$3.99( $0.87/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nAvocados, 4 CountAvocados, 4 Count\n$4.49( $0.23/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nNixie Sparkling Water, Water Sparkling Strawberry Hibiscus Organic, 12 Fl Oz, 8 PackNixie Sparkling Water, Water Sparkling Strawberry Hibiscus…\n$7.29( $0.61/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nWasa Light Rye Crispbread, 9.5 oz, Rye Crackers, Non-GMO Ingredients, Good Source of FiberWasa Light Rye Crispbread, 9.5 oz, Rye Crackers, Non-GMO In…\n$3.69( $0.39/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganic Japanese Sweet PotatoOrganic Japanese Sweet Potato\nest. $2.63/each( $2.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nMaria & Ricardo's Carbbueno™ Whole Wheat Tortillas 8 Count, 6 Inch, 4 Net-Carbs, 7.9 OunceMaria & Ricardo's Carbbueno™ Whole Wheat Tortillas 8 Coun…\n-30%$2.64\nTypical: $3.79( $0.33/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nKerrygold Grass-fed Dubliner Irish Cheese Sticks, 6 OZKerrygold Grass-fed Dubliner Irish Cheese Sticks, 6 OZ\n$8.49( $1.42/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Pumpkin Puree, 15 Ounce365 by Whole Foods Market, Pumpkin Puree, 15 Ounce\n$1.89( $0.13/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nCalabro Cheese Part Skim Milk Fresh Ricotta, 16 OZCalabro Cheese Part Skim Milk Fresh Ricotta, 16 OZ\n$6.99( $0.44/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWasa Multi Grain Crispbread, 9.7 oz, Crackers, Non-GMO Ingredients, Good Source of FiberWasa Multi Grain Crispbread, 9.7 oz, Crackers, Non-GMO In…\n$3.69( $0.38/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, All Purpose Flour, 80 Ounce365 by Whole Foods Market, All Purpose Flour, 80 Ounce\n$4.29( $0.05/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Organic Creamy Peanut Butter, Unsweetened & Unsalted, Stir and Enjoy, 26 Ounce365 by Whole Foods Market, Organic Creamy Peanut Butte…\n$7.79( $0.30/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nCAULIPOWER Cauliflower Pizza Crusts, 11 Oz (Pack of 2)CAULIPOWER Cauliflower Pizza Crusts, 11 Oz (Pack of 2)\n-23%$7.54\nTypical: $9.79( $3.77/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 By Whole Foods Market, Organic Miso Base, Original, 16 Ounce365 By Whole Foods Market, Organic Miso Base, Original, 1…\n$5.99( $0.37/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nBragg Premium Nutritional Yeast Seasoning 4.5 Ounce (Packaging May Vary)Bragg Premium Nutritional Yeast Seasoning 4.5 Ounce (P…\n$7.29( $1.62/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nCeltic Sea Salt, Fine Ground Mineral Sea Salt, 1 lb Resealable Bag, Unrefined Hydration, Vital Minerals, Family Founded Since 1976Celtic Sea Salt, Fine Ground Mineral Sea Salt, 1 lb Reseal…\n$18.79( $1.17/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nBell & Evans Chicken Breast TenderloinBell & Evans Chicken Breast Tenderloin\nest. $12.86/each( $7.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nEdward & Sons, Rice Snaps Plain Unsalted Organic, 3.5 OunceEdward & Sons, Rice Snaps Plain Unsalted Organic, 3.5 O…\n$3.99( $1.14/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Petite Brussel Sprouts, 16 oz365 by Whole Foods Market, Petite Brussel Sprouts, 16 oz\n$1.99( $1.99/lb)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nMighty Patch Original Patch from Hero Cosmetics - #1 Hydrocolloid Acne Pimple Patches for Face, Shrinking Zits & Whiteheads in 1 Use, Nighttime Spot Pimple Stickers for Face, 36 CountMighty Patch Original Patch from Hero Cosmetics - #1 Hy…\n$18.29( $0.51/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Whole Wheat English Muffins, 15 oz365 by Whole Foods Market, Whole Wheat English Muffins…\n$2.79( $0.19/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nOrganicville Stone Ground Mustard - Organic Mustard, 0g Added Sugar, Mustard Stone Ground Organic, Vegan, Gluten Free, USDA Organic, Non-GMO, Whole 30, Paleo, Keto-Friendly - 12 OzOrganicville Stone Ground Mustard - Organic Mustard, 0…\n-25%$3.37\nTypical: $4.49( $0.28/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nBragg Liquid Aminos Seasoning, 16 ozBragg Liquid Aminos Seasoning, 16 oz\n-22%$5.05\nTypical: $6.49( $0.23/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Baking Powder, 10 OZ365 by Whole Foods Market, Baking Powder, 10 OZ\n$3.09( $0.31/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nORGANICVILLE Organic Salt Free Mustard, 12 OZORGANICVILLE Organic Salt Free Mustard, 12 OZ\n-25%$3.37\nTypical: $4.49( $0.28/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nWyman's Wild Blueberries, 3 lb (frozen)Wyman's Wild Blueberries, 3 lb (frozen)\n$14.49( $0.30/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\n365 by Whole Foods Market, Sparkling Ginger Water 12Pk Cans, 12 Fl Oz365 by Whole Foods Market, Sparkling Ginger Water 12Pk…\n$5.19( $0.04/fl oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nLow stock – order soon\nAdd to cart\n\nPeet's Coffee, Dark Roast Ground Coffee, 100% Arabica Coffee - French Roast 18 Ounce BagPeet's Coffee, Dark Roast Ground Coffee, 100% Arabic…\n$18.29( $1.02/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nRW GARCIA Organic Sweet Potato Crackers, 5.5 OZRW GARCIA Organic Sweet Potato Crackers, 5.5 OZ\n-27%$3.99\nTypical: $5.49( $0.73/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nSir Kensington's Mayonnaise Avocado Oil Mayo Keto Diet & Paleo Diet Certified Gluten Free & Non-GMO Project Verified Condiment 12 ozSir Kensington's Mayonnaise Avocado Oil Mayo Keto Diet…\n$11.49\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nPrimal Kitchen Sauce BBQ Classic, 8.5 ozPrimal Kitchen Sauce BBQ Classic, 8.5 oz\n$6.49( $0.76/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nTraditional Medicinals Organic, Hibiscus Tea - Supports Normal Heart Health & Cardiovascular Wellness - Kosher, Non-GMO, Caffeine-Free, Compostable - 16 Tea BagsTraditional Medicinals Organic, Hibiscus Tea - Supports Nor…\n$6.79( $0.42/count)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nBob's Red Mill Organic Coconut Flour, 16oz (Pack of 1) - Non GMO, Fair Trade Certified, Vegan, Keto Friendly, Paleo Friendly, KosherBob's Red Mill Organic Coconut Flour, 16oz (Pack of 1) - Non…\n$6.09( $0.38/oz)\nWhole Foods Market\nFREE delivery Today 5 PM - 7 PM on orders over $25\nAdd to cart\n\nAlmond Breeze Almondmilk Unsweetened Vanilla Almond Milk, 32 oz (Pack of 6), Non Dairy, Gluten Free, Lactose Free, Shelf StableAlmond Breeze Almondmilk Unsweetened Vanilla Almond…\n$19.54( $0.10/fl oz)\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nNISHIKI Premium Brown Rice, 5-PoundNISHIKI Premium Brown Rice, 5-Pound\n$16.82( $0.21/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nAmazon Brand - Presto! Ultra-Strong Premium Paper Towels, 158 Sheet Huge Roll - Flex-a-Size, 12 Rolls (2 Packs of 6), Equivalent to 38 Regular Rolls, WhiteAmazon Brand - Presto! Ultra-Strong Premium Paper Towel…\n$29.99( $1.58/100 Sheets)\nSave 5% at checkout\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\nSubscribed\n\nNo Cow Vegan Protein Bars, Upgraded Key Lime Pie | 20g Plant Based Protein, Gluten Free, Dairy Free, Soy Free, Keto Friendly, Low Sugar, High Fiber Snack Bars | Pack of 12No Cow Vegan Protein Bars, Upgraded Key Lime Pie | 20g…\n$32.99( $1.30/oz)\nSave 10% with brand promotion\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nbubly Sparkling Water, Bellini Bliss, 12 Fl Oz Cans (Pack of 8)bubly Sparkling Water, Bellini Bliss, 12 Fl Oz Cans (Pack of 8)\n$3.97( $0.04/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nBanza Gluten-Free Chickpea Pasta, Variety Pack 20g Protein | Lower Carb | High Fiber | High Protein | Plant Based Pasta | 8oz (Pack of 6)Banza Gluten-Free Chickpea Pasta, Variety Pack 20g Protei…\n$23.08( $0.48/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nScott 1000 Trusted Clean Toilet Paper, 32 Rolls, Septic-Safe, 1-Ply Toilet TissueScott 1000 Trusted Clean Toilet Paper, 32 Rolls, Septic-Safe, 1…\n$32.99( $0.10/100 Sheets)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\n\nTabasco Original Red Flavor Hot Sauce (12 Ounce)Tabasco Original Red Flavor Hot Sauce (12 Ounce)\n$6.24( $0.52/oz)\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nMielle Organics Rosemary & Mint Light Hair Oil, Split Ends & Dry Scalp Treatment - Infused with Biotin & Essential Oils for Strengthening, Soothing, Moisturizing & Encouraging Longer Hair (2 Oz)Mielle Organics Rosemary & Mint Light Hair Oil, Split Ends…\n-15%$8.49\nList: $9.99( $4.25/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nWaterloo Sparkling Water, Summer Berry Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Summer Berry Naturally Flav…\n$6.26( $0.04/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\n\nNo Cow Vegan Protein Bars, Upgraded Peanut Butter Chocolate Chip | 20g Plant Based Protein, Gluten Free, Dairy Free, Soy Free, Keto Friendly, Low Sugar, High Fiber Snack Bars | Pack of 12No Cow Vegan Protein Bars, Upgraded Peanut Butter Choc…\n$32.99( $1.30/oz)\nSave 10% with brand promotion\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nWaterloo Sparkling Water, Raspberry Nectarine Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Raspberry Nectarine Naturall…\n$6.26( $0.04/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nWaterloo Sparkling Water, Peach Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Peach Naturally Flavored, 12…\n$6.26( $0.04/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nbubly Sparkling Water, Blueberry Pomegranate, 12 Fl Oz Cans (Pack of 8)bubly Sparkling Water, Blueberry Pomegranate, 12 Fl…\n$3.97( $0.04/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\n\nHP 67 Black Ink Cartridge | Works with DeskJet 1255, 2700, 4100 and Envy 6000, 6400 Series, Eligible for Instant Ink, 3YM56AN | Packaging May VaryHP 67 Black Ink Cartridge | Works with DeskJet 1255, 27…\n$22.89\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nDon Francisco's Hawaiian Hazelnut Ground Flavored Coffee: Rich, Aromatic 100% Arabica Beans - (3 x 12 oz Recyclable Cans)Don Francisco's Hawaiian Hazelnut Ground Flavored Co…\n$26.25( $0.73/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nSeapoint Farms Dry Roasted Crunchy Edamame, Plant Based Snack, 20g Protein, 3 Ingredients, 0 Added Oils, Vegan, Gluten Free, Kosher, Keto Friendly, Non-GMO, On-the-Go Snacking, Wasabi, 1.58 oz (Pack of 12)Seapoint Farms Dry Roasted Crunchy Edamame, Plant Bas…\n$14.95( $0.79/oz)\nSave 5% at checkout\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\nSubscribed\n\nDon Francisco's Cinnamon Hazelnut Ground Flavored Coffee: Rich, Aromatic 100% Arabica Blend - Medium Roast for a Delightful Morning Brew (3 x 12 oz Cans)Don Francisco's Cinnamon Hazelnut Ground Flavored Co…\n$27.65( $0.77/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nDaechun(Choi's1) Roasted Seaweed, GIM (100+100 Full Sheets), Value Pack, Resealable, Gold Grade, Product of KoreaDaechun(Choi's1) Roasted Seaweed, GIM (100+100 Full…\n$50.00( $0.25/count)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nLysol Laundry Sanitizer Additive, Bacteria-Causing Laundry Odor Eliminator, Detergent Additive, Crisp Linen, 90ozLysol Laundry Sanitizer Additive, Bacteria-Causing L…\n$12.97( $0.14/fl oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nHakubaku Organic Udon Wheat Noodle (1 x 9.5 OZ)Hakubaku Organic Udon Wheat Noodle (1 x 9.5 OZ)\n$4.38( $0.46/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\n\nNo Cow Vegan Protein Bars, Upgraded Chocolate Chip Cookie Dough | 20g Plant Based Protein, Gluten Free, Dairy Free, Soy Free, Keto Friendly, Low Sugar, High Fiber Snack Bars | Pack of 12No Cow Vegan Protein Bars, Upgraded Chocolate Chip Co…\n$29.99( $2.50/count)\nSave 10% with brand promotion\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\n\nMaud's Decaf Coffee Pods Variety Pack, 80 ct, 9 Assorted Roasts & Flavors, Decaffeinated Medium Roast Coffee in Single Serve Pods - 100% Arabica Coffee, Compatible with Keurig K Cups MakerMaud's Decaf Coffee Pods Variety Pack, 80 ct, 9 Assorte…\n$40.95( $0.51/count)\nExtra 30% off when you subscribe\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\n\nDon Francisco's Premium Vanilla Nut Ground Flavored Coffee: Rich, Aromatic 100% Arabica Beans - Family Crafted for a Delightful Morning Brew (3 x 12 oz Cans)Don Francisco's Premium Vanilla Nut Ground Flavored…\n$26.37( $0.73/oz)\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nNutricost EAA Powder 30 Servings (Unflavored) - Essential Amino Acids - Non-GMO, Gluten Free, Vegetarian FriendlyNutricost EAA Powder 30 Servings (Unflavored) - Essen…\n$17.95( $2.04/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\n\nKurakon commercial salt kelp 500gKurakon commercial salt kelp 500g\n$26.00( $1.47/oz)\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\nSubscribed\n\nPBfit 24 Ounce Simply Peanut Powdered Peanut Powder, No Added Sugar or Salt, Non-GMO, Plant-Based, Gluten-Free Protein Powder, 9g of Protein 9% DVPBfit 24 Ounce Simply Peanut Powdered Peanut Powder, No…\n-13%$12.47\nTypical: $14.26( $0.52/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nL'Oreal Paris Makeup Brow Stylist Definer Waterproof Eyebrow Pencil, Ultra-Fine Mechanical Pencil, Draws Tiny Brow Hairs and Fills in Sparse Areas and Gaps, Blonde, 0.003 Ounce (Pack of 1)L'Oreal Paris Makeup Brow Stylist Definer Waterproof Ey…\n-31%$8.97\nList: $12.99\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nDoctor's Best High Absorption Magnesium Glycinate Lysinate Supplement for Sleep Support - Chelated Magnesium Tablets for Women & Men, 200mg per Serving, Supports Calm & Relaxation, Vegan - 240 CountDoctor's Best High Absorption Magnesium Glycinate Lysinat…\n$20.99( $0.09/count)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\n\nWaterloo Sparkling Water, Ruby Red Tangerine Naturally Flavored, 12 Fl Oz Cans (Pack of 12) – Zero Calories and Zero Sugar or SweetenersWaterloo Sparkling Water, Ruby Red Tangerine Naturally Flav…\n$6.26( $0.04/fl oz)\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\n\nMielle Organics Rosemary & Mint Hair Oil - Strengthening Biotin Oil Infused Frizzy & Damaged Hair Care - Split Ends & Dry Scalp Treatment to Support Longer, Healthier Strands, 2ozMielle Organics Rosemary & Mint Hair Oil - Strengthening…\n-13%$8.72\nList: $9.99( $4.36/fl oz)\nExtra 5% off when you subscribe\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\n365 by Whole Foods Market, Organic Stevia Liquid Extract, 8 Fl Oz365 by Whole Foods Market, Organic Stevia Liquid Extract,…\n$19.98( $2.50/fl oz)\nSave 5% at checkout\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\n\nAmazon Basics 2-Ply Flex-Sheets Paper Towels, 12 Basics Rolls = 40 Regular Rolls, Everyday Value with 150 Sheets per Roll, Packaging May VaryAmazon Basics 2-Ply Flex-Sheets Paper Towels, 12 Basic…\n$22.86( $1.27/100 Sheets)\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\n\nQuest Nutrition Chocolate Brownie Protein Bar, 20g Protein, 1g Sugar, 4g Net Carb, High Fiber, Gluten Free, Gluten Free, 12 CountQuest Nutrition Chocolate Brownie Protein Bar, 20g Prot…\n-18%$26.24\nList: $31.96( $2.19/count)\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nAmazon Basics Double-Tipped Cotton Swabs for Personal Hygiene and Baby Care, 100% Cotton, Versatile, Baby Safe, 500 CountAmazon Basics Double-Tipped Cotton Swabs for Personal Hy…\n$2.91( $0.01/count)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM on $25 of qualifying items\nAdd to cart\nSubscribed\n\nSan Francisco Bay Coffee - Decaf Medium-Dark Roast Whole Bean Coffee - Decaf Gourmet Blend (2 lb bag) - Swiss Water ProcessedSan Francisco Bay Coffee - Decaf Medium-Dark Roast W…\n$26.99( $0.84/oz)\nSave 5% at checkout\nOvernight\nFREE delivery Overnight 4 AM - 8 AM\nAdd to cart\nSubscribed\n\nOrganic Cacao Powder, Unsweetened, 1 lb (454 g) – Rich Dark Chocolate Flavor, Perfect for Baking, Smoothies & Hot Chocolate – Vegan, Keto, Paleo, Non-GMO & Gluten-Free Cocoa PowderOrganic Cacao Powder, Unsweetened, 1 lb (454 g) – R…\n$18.42( $1.15/oz)\nSave 5% at checkout\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\nSubscribed\n\nThe Bean Organic Coffee Company Water Processed DECAF Le Bean, Dark French Roast, Whole Bean Coffee, 16-Ounce BagThe Bean Organic Coffee Company Water Processed DE…\n$23.92( $1.50/oz)\nSave 5% at checkout\nTomorrow\nFREE delivery Tomorrow, Mar 9\nAdd to cart\nSubscribed\n\n\n\nTask:\n\n\nI urgently need some sparkling but don't have time to shop. Analyze my preferences from my purchase history and tell me the exact items to choose in terms of speed and price? I need at least like 24 cans."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your purchase history, you have a clear preference for sparkling water, particularly the **Waterloo** brand in various flavors and the **365 by Whole Foods Market** brand. You frequently purchase 12-packs of 12 Fl Oz cans.\n\nTo meet your urgent need for at least 24 cans with a focus on **speed** (fastest delivery) and **price**, here are the exact recommendations:\n\n### Fastest & Most Cost-Effective Option\nYour purchase history shows you've bought the unflavored **365 Everyday Value Sparkling Water**. This is the cheapest per-fl-ounce option with the fastest delivery (\"Today 5 PM - 7 PM\").\n\n*   **Item:** [Whole Foods 365 Everyday Value, Sparkling Water Pure, 12 Count](https://www.amazon.com/dp/B000...link)\n*   **Action:** Add **two** of these to your cart.\n*   **Total Quantity:** 24 cans (288 Fl Oz)\n*   **Total Price:** $10.38 ($5.19 x 2)\n*   **Delivery:** FREE delivery Today 5 PM - 7 PM on orders over $25 (you will need to add other items to qualify, or pay a fee. Your cart total is currently below $25).\n*   **Why:** This is the cheapest option per fl oz ($0.04/fl oz) and delivers today.\n\n---\n\n### If You Prefer a Flavored Option (Like Your Waterloo Purchases)\nYou have bought multiple flavors of **Waterloo Sparkling Water**. While slightly more expensive, it aligns with your established flavor preferences.\n\n*   **Item:** Choose any flavor you like. For example, [Waterloo Sparkling Water, Summer Berry Naturally Flavored, 12 Fl Oz Cans (Pack of 12)](https://www.amazon.com/dp/B07...link)\n*   **Action:** Add **two** of these to your cart.\n*   **Total Quantity:** 24 cans (288 Fl Oz)\n*   **Total Price:** $14.98 ($7.49 x 2)\n*   **Delivery:** FREE delivery Today 5 PM - 7 PM on orders over $25.\n*   **Why:** Matches your preference for the Waterloo brand and its variety of natural flavors. Delivery is still today.\n\n**Summary:** For the absolute best price and speed, order **two 365 Everyday Value Sparkling Water Pure 12-packs**. If you strongly prefer a flavored sparkling water like you've bought before, order **two 12-packs of your favorite Waterloo flavor**.\n"
+      },
+      {
+        "role": "user",
+        "content": "I'm thinking of switching my primary sparkling water brand, but I need to make sure I don't run out. Assuming the adults in the house drink 9 cans of flavored water a day total during the week and increases by 4 on the weekends, design a restocking schedule for 30 days prioritizing price. Analyze my flavor rotation habits of the most frequently ordered brands from my past order history and apply those exact habits to how you schedule the new brand flavors.  Make sure to indicate when to order which item. Finally, provide a total cost and item-count comparison between this new 30-day plan and a 30-day plan using my current favorite brand. Keep in mind all subscriptions are set to arrive on the 7th and only choose from the brands in my purchase history.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/activity/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/activity/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 24"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/activity/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should indicate that the total consumption for the 30-day period requires 302 cans.",
+        "The response should select Bubly as the flavored sparkling water brand to switch to for the new 30-day plan.",
+        "The response should explicitly list the flavor rotation habit of the most frequently ordered brand Waterloo. For example, 1. Summer Berry, 2. Raspberry Nectarine, 3. Peach, 4. Ruby Red Tangerine, 5. Blackberry Lemonade, and 6. Tropical Fruit.",
+        "The response should apply the identified 6 flavors of Waterloo (1. Summer Berry, 2. Raspberry Nectarine, 3. Peach, 4. Ruby Red Tangerine, 5. Blackberry Lemonade, and 6. Tropical Fruit) to the scheduling of the Bubly's flavors by ordering both Bubly Sparkling Water, Bellini Bliss and Bubly Sparkling Water, Blueberry Pomegranate.",
+        "The response should indicate the total item count for the new 30-day plan for Bubly as 38 packs.",
+        "The response should indicate that 1 pack or 8 cans of Bubly Sparkling Water, Bellini Bliss is scheduled to arrive through subscription on the 7th.",
+        "The response should indicate when to order the Bubly waters, giving exactly one of these two schedules: 1. ordering all 37 packs at once one day prior to the first day of the month or 2. ordering 9 boxes of both Bubly Sparkling Water, Bellini Bliss and Bubly Sparkling Water, Blueberry Pomegranate on a weekly basis.",
+        "The response should state that new orders should consist of 294 cans or 37 packs.",
+        "The response should calculate the total cost for the waters purchased for the new 30-day plan as $150.86 (based on 38 packs of Bubly at $3.97 each).",
+        "The response should indicate the total item count required for 30 days for the current favorite brand Waterloo as 26 packs.",
+        "The response should calculate the total cost of the current favorite brand Waterloo for 30 days as $191.05 (3 subscribed packs at $6.26 each + 23 packs at $7.49 each).",
+        "The response should state that starting the new plan is $40.19 cheaper than the existing plan.",
+        "The response should state that starting the new plan requires 12 more packs compared to the Current Favorite Plan."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/activity/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should indicate that the total consumption for the 30-day period requires 302 cans.",
+          "The response should select Bubly as the flavored sparkling water brand to switch to for the new 30-day plan.",
+          "The response should explicitly list the flavor rotation habit of the most frequently ordered brand Waterloo. For example, 1. Summer Berry, 2. Raspberry Nectarine, 3. Peach, 4. Ruby Red Tangerine, 5. Blackberry Lemonade, and 6. Tropical Fruit.",
+          "The response should apply the identified 6 flavors of Waterloo (1. Summer Berry, 2. Raspberry Nectarine, 3. Peach, 4. Ruby Red Tangerine, 5. Blackberry Lemonade, and 6. Tropical Fruit) to the scheduling of the Bubly's flavors by ordering both Bubly Sparkling Water, Bellini Bliss and Bubly Sparkling Water, Blueberry Pomegranate.",
+          "The response should indicate the total item count for the new 30-day plan for Bubly as 38 packs.",
+          "The response should indicate that 1 pack or 8 cans of Bubly Sparkling Water, Bellini Bliss is scheduled to arrive through subscription on the 7th.",
+          "The response should indicate when to order the Bubly waters, giving exactly one of these two schedules: 1. ordering all 37 packs at once one day prior to the first day of the month or 2. ordering 9 boxes of both Bubly Sparkling Water, Bellini Bliss and Bubly Sparkling Water, Blueberry Pomegranate on a weekly basis.",
+          "The response should state that new orders should consist of 294 cans or 37 packs.",
+          "The response should calculate the total cost for the waters purchased for the new 30-day plan as $150.86 (based on 38 packs of Bubly at $3.97 each).",
+          "The response should indicate the total item count required for 30 days for the current favorite brand Waterloo as 26 packs.",
+          "The response should calculate the total cost of the current favorite brand Waterloo for 30 days as $191.05 (3 subscribed packs at $6.26 each + 23 packs at $7.49 each).",
+          "The response should state that starting the new plan is $40.19 cheaper than the existing plan.",
+          "The response should state that starting the new plan requires 12 more packs compared to the Current Favorite Plan."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/activity/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/activity/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 24"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/activity/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

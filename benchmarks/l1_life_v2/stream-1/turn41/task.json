@@ -1,0 +1,320 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_1",
+  "turn_id": "turn41",
+  "turn_index": 41,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "29242497-3668-8a79-8641-3931407c1e73",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 285,
+    "source_sha256": "a0578d11c7dea29a811489e70a23b11a3caee67f4d4a01f50ab4f72648e5381b",
+    "source_metadata": {
+      "task_id": "29242497-3668-8a79-8641-3931407c1e73",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Private Conversations"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "usera [:3], \n—\n5/2/2025 3:53 PM\nroight\nusera [:3], \n—\n5/2/2025 3:54 PM\nbut didn't you say it should be 18? does the telekinetic add after this base total?\n\n\nUserb\nUserb\n—\n5/2/2025 4:00 PM\nAyee pointbuy and your +2 from your race puts it at 17 (15+2)\nAnd then u get a +1 to int from telecenetic that puts u to 18 int\nusera [:3], \n—\n5/2/2025 4:02 PM\ngotcha\nty\nUserb\nUserb\n—\n5/2/2025 4:06 PM\nU could also take Resillient constitution to put your con mod at 16 and make your concentration checks better after that\nCause u can do both if u want to\nusera [:3], \n—\n5/2/2025 4:07 PM\nyeahhh im debating that one\nUserb\nUserb\n—\n5/2/2025 4:07 PM\nIf u don't wanna go that route, u can take a point out of con and put it somewhere else\nCause 15 con is the same as 14 con\nUserb\nUserb\n—\n5/2/2025 4:45 PM\nHow's the character comming along? x3\nusera [:3], \n—\n5/2/2025 4:46 PM\nsoooo many spells\nUserb\nUserb\n—\n5/2/2025 4:46 PM\n\nThink wizard has the most spells to choose from out of any class \nusera [:3], \n—\n5/2/2025 4:46 PM\na lot of the lower ones i think are cool, but i worry not really finding a use for them\nusera [:3], \n—\n5/2/2025 4:46 PM\ni think this is why i've never played a wizard lol\nUserb\nUserb\n—\n5/2/2025 4:48 PM\nI personally like to pick something for my character to specialize in when im playing caster\nLike dmg, control, utility ect\nAnd then pick of that\nhttps://rpgbot.net/dnd5/characters/classes/wizard/spells/\nRPGBOT\nWizard Spells 5e: Guide to the Best Wizard Spells\nA complete guide to DnD 5e Wizard spells, including expert-written advice on how to pick and use the best spells available to the Wizard.\n\n\nusera [:3], \n—\n5/2/2025 4:49 PM\nyeah i've been picking a lot of erm\nlike cc i guess?\ni am bringing sleep and tasha's laughter\nUserb\nUserb\n—\n5/2/2025 4:49 PM\nI wouldn't treat this as gospel, but it's decent to look at what spells does\nusera [:3], \n—\n5/2/2025 4:50 PM\nwould i wanna bring cc at like higher levels instead though rather than lower levels\noooh ty\nUserb\nUserb\n—\n5/2/2025 4:50 PM\nOh about sleep\nAt lvl 7 it isn't very good anymore\nSince it has a hitpoint maximum that u can put to sleep\nSo u kinda have to upcast it with a pretty high lvl spellslot to even be able to sleep the creature\nusera [:3], \n—\n5/2/2025 4:51 PM\nohhh\nso its probably not worth bringing then huh\nUserb\nUserb\n—\n5/2/2025 4:51 PM\nYeeeeah\nIt's probably the best cc spell at like lvls 1-3\nBut after that it kinda falls off a cliff\nAlso a good thing to know about wizards\nIf a spell is a ritual spell\nU don't need it to be prepared to cast it\nBut it takes 10 minutes to cast\nAlmost all ritual spells are utility spells tho\nusera [:3], \n—\n5/2/2025 4:54 PM\nim a little worried picking wizard was a rough decision for someone like me who gets overwhelmed with choices lol\ni'd almost rather just like close my eyes and pick them that way lol\nUserb\nUserb\n—\n5/2/2025 4:54 PM\nI mean\nI don't rly mind helping u out making it if u want\nCause playing it isn't harder than any other character rly\nIt's just making the fkn thing that's a pain in the ass xD\nBut also\nIf u rly don't want to, you're free to switch aswell\nI don't mind at all\nWe just reroll your stats but that takes like 4min x3\nusera [:3], \n—\n5/2/2025 4:58 PM\nnaur i wanna playyy\nim just like grrr\nUserb\nUserb\n—\n5/2/2025 4:58 PM\nhahaha xD\nIf I put it like this: The only MANDATORY spell for a wizard Is Mage Armor Cause it's what gives u AC to not get hit\n [:3], \nusera [:3], \n—\n5/2/2025 4:58 PM\n\"but what if i can use my intelligence to help us out of a situation? but what if i dont have enough combative spells and im useless in battle? but what if i dont have enough defensive spells? but what if i -\"\nusera [:3], \n—\n5/2/2025 4:59 PM\nyeah i yoinked that one\nnot sure if it matters which one i put it on but yeah\n\nalso yes i changed my client to purple\nT_T\nUserb\nUserb\n—\n5/2/2025 4:59 PM\nI mean\nSo far I think those are great picks\nusera [:3], \n—\n5/2/2025 5:00 PM\ntheres more i just can't really show them all\nbc the bar is so tiny\nUserb\nUserb\n—\n5/2/2025 5:00 PM\n\nusera [:3], \n—\n5/2/2025 5:00 PM\n\n\nthese are all ten. im swapping out sleep rn\nUserb\nUserb\n—\n5/2/2025 5:01 PM\nI mean\nI don't know all of the spells, but I can't see anything wrong with it\nOne spell I can recommend tho is \"Slow\"\nIt's by far my favorite debuff spell I use on Val'Rin\nusera [:3], \n—\n5/2/2025 5:02 PM\ni daurnt see it for lvl 1\n\nis it a higher lvl one?\nUserb\nUserb\n—\n5/2/2025 5:02 PM\nAyee lvl 3\nusera [:3], \n—\n5/2/2025 5:03 PM\ni was thinking bringing grease instead\nUserb\nUserb\n—\n5/2/2025 5:03 PM\nGrease is rly good\nEspecially when u have alot of melee fighters\nusera [:3], \n—\n5/2/2025 5:03 PM\nyeahh i might style it like mud or somethin\nlol\nUserb\nUserb\n—\n5/2/2025 5:03 PM\nShield and Absorb elements are also rly good to protect yourself if u get hit\nusera [:3], \n—\n5/2/2025 5:03 PM\nyeah id be worried about making my party slip and fall lol\nUserb\nUserb\n—\n5/2/2025 5:03 PM\nThat's a them problem xD\nusera [:3], \n—\n5/2/2025 5:04 PM\nhahaha\nshe floats so its not her problem\nhead cannon\nUserb\nUserb\n—\n5/2/2025 5:04 PM\nIt's very apperent where the field is so if anyone steps into it\nIt's literally a skill issue \nusera [:3], \n—\n5/2/2025 5:05 PM\ni actually dont see slow on lvl 3\n\n\nUserb\nUserb\n—\n11/26/2024 2:16 PM\nKaelen told u that in character btw\nAnd that he knows her x3\nusera [:3], \n—\n11/26/2024 2:16 PM\njust now or previously?\nUserb\nUserb\n—\n11/26/2024 2:16 PM\nJust now\nusera [:3], \n—\n11/26/2024 2:16 PM\noh okie ty\nUserb\nUserb\n—\n11/26/2024 2:16 PM\nnpnp x3\nusera [:3], \n—\n11/26/2024 3:07 PM\ntht was awesome btw\nloved that\nren is such a cool character fr\nUserb\nUserb\n—\n11/26/2024 3:08 PM\nThaaaank uuuu ;w;\nusera [:3], \n—\n11/26/2024 3:09 PM\nits funny because i feel like he's such a charismatic character but the way you play him with such stoicism makes me wanna take notes and play elara better x3\nUserb\nUserb\n—\n11/26/2024 3:11 PM\nI rly like Elaras stuff too. Im still awestruck about her royal and now FEY arc o-o I feel like u play Elara rly well tho. But I kinda feel the same when im playing ren too so i think it's just a case of us being our biggest critics x3\nBut if u want a tip that I use with all my characters: All my characters voices, patterns and cadence are based of sounds\nFor Ren, I sigh to get into his speech patterns and cadence For Koda I do like a \"ouuuuuh\" sound ect\nI also do alot with my body to get into it\nLike with ren i slump my shoulders and look tiered ect\nIdk if that helps, but it helps me atleast x3\nusera [:3], \n—\n11/26/2024 3:16 PM\nit does!! i try to do something similar\nbut like i make a fist with my hand in put it infront of my mouth almost to like prevent myself (the player) from adding on unnecessary 'ums' and pleasantries xD me the player is unconfident but i'd like to think that elara is confident in her nature, even if it makes others uncomfortable\ni would like for her to do something similar almost like a vocal stim or something to her speech. for a while i debated giving her an accent, but i'm so terrible at being consistent with them. i thought it'd be cute if she had a scottish accent for a while xD\nusera [:3], \n—\n11/26/2024 3:21 PM\nthts funny you mention that. i noticed that\nUserb\nUserb\n—\n11/27/2024 10:19 AM\nI forgot to answer cause so much was happening yesterday x3 I do feel like Elara sounds confident tho. The smooth and a bit lower voice u gave her make her feel very calm and calculating. If u want like a vocal tick or smt id do something simple. Since it's easier to keep it going. Lick clicking her tounge when smt bother her or when she's thinking hard about smt. That's atleast what i do with my characters and is why Ren sighs so much x3 I have a hard time keeping speech ticks consistent if i make complicated ones. Oh yeah, ive always wanted to try accents, but im bad at them so im scared. Im hoping that with Val'Rin ill get more confidence in my RP cause he is by far my most complex character to RP since he has 4 personalities, each with different speech patterns. He's scary to RP \nusera [:3], \n—\n12/3/2024 3:23 PM\nbefore ren goes\nelara wants to catch him for a moment\nlol\ni was thinking about having elara confront him about the burden that he bears and how it might endanger everyone\nbut i like to think that in the moment she was going to- but decided to attempt some sort of comfort instead\nusera [:3], \n—\n12/3/2024 3:30 PM\nas lame of an attempt as it might've been on her part xD\nUserb\nUserb\n—\n12/3/2024 3:32 PM\nI liked it tho x3 Ren isn't the kind of person that would openly talk about his secrets easily So it would probably require some repeated prodding to get him to open up\nusera [:3], \n—\n12/10/2024 1:46 PM\ni thought ren literally said that out loud\nUserb\nUserb\n—\n12/10/2024 1:46 PM\nHe did x3\nusera [:3], \n—\n1/2/2025 10:49 PM\ngetting back into lost ark? x3\nUserb\nUserb\n—\n1/2/2025 11:16 PM\nYeeeeah went back and lvld a Sorc since all mages got buffed so it's actually viable again lol\nusera [:3], \n—\n1/7/2025 1:39 PM\nif it makes you feel any better i was literally forgetting the word forged too. and english is my first language\nUserb\nUserb\n—\n1/7/2025 1:39 PM\nImma be honest\nIm better at remembering english words than swedish ones \n\n\n\n\nhey userb, just wanted to check in and see if this is heading in the right direction? i tried to keep the palette relatively dark to match the coat and the obsidian sword, i wasn't sure how bright you wanted the other stuff. i also gave him dark circles under his eyes, i can remove it pretty easily though. once you okay the color palette i'll start cleaning it up a bit more and make the hair a bit more messy n stuff\n\nclose up\n\nUserb\nUserb\n—\n7/23/2024 10:55 AM\nBro, that looks sick! It's pretty much exactly what id imagined for him and the dark circles is such a nice touch. Do you think u could make like a black glass looking shard stick out of the palm of his empty hand? Kinda like that's where the scars originate from?\nusera [:3], \n—\n7/23/2024 1:14 PM\nyush ill be adding that and a bunch of other details once i merge a lot of the layers together :3\n\nUserb\nUserb\n—\n7/23/2024 1:16 PM\nPoggers  Then everything is perfect x3\nusera [:3], \n—\n7/23/2024 1:18 PM\nyaayyy\nill try to finish it in the next couple of days then ^_^\nbtw- robbo mentioned he’s dead tired, so does that mean dnd is cancelled?\ni asked for clarification but i think he went to take a nap x3\nUserb\nUserb\n—\n7/23/2024 1:20 PM\nNo rush, take the time u need :3\nSounded like that was the case from Ben\nBut I never get told if dnd is happening or not so im not the best person to ask\nThe only reason I know if dnd gets cancelled is if Ben tells me lol\nusera [:3], \n—\n7/23/2024 1:32 PM\no_o\nthat would bug me x3 i just confirmed with robbo that he’s cancelling today\ni feel a bit bad being unable to reschedule since its gonna be super busy before i leave for norway, and i kinda scheduled everything around dnd and some appointments\nUserb\nUserb\n—\n7/23/2024 1:36 PM\nI hate it with a passion lol xD\nDw we know you're moving so we get it xD\nusera [:3], \n—\n7/23/2024 11:13 PM\nhi userb i might've gotten carried away with having fun on the project oopsie\nso i got a bit creative with this one. i can very easily get rid of the mirror and stuff if you don't like it. but i was playing with the idea of some kind of light leaking through and giving off a subtle glow from underneath. i can go a bit more intense with it if you like the idea, but i didn't want to add too too much more if you hated the concept xD\n\ni also went ahead and did one with a more simplified background, just for funsies. I will be giving you a transparent one as well if you prefer it to make your own token bg and stuff :3 for this color i just did the color of his eyes, because i felt like it amplified the cold colors overall and made his eyes pop\n\nlmk what you think! this was a lot of fun, and if you're happy with it i can finalize some edits and send them over to ya\ni also added a few more littler shards poking through to make it seem more like \"integrated\" into his skin. hopefully this is alright\n\nUserb\nUserb\n—\n7/24/2024 1:06 AM\nOmg i fkn love it x-x The mirror on the ground is so fkn badass too ;w;\nAlso love how the second one looks kinda looks like a tarot card x3\nusera [:3], \n—\n7/24/2024 5:05 AM\nokay pheww i wasn't sure how you were gonna feel about the mirror xD\nusera [:3], \n—\n7/24/2024 5:05 AM\nyeahh i was really excited to use that for the bg, its so thematic, but i've never had a proper way to use it ^_^\nhere are all the files in a zip for ya, there's both versions, plus some color edits and the transparent ones as well for you ~\n\nRen.zip\n199.67 MB\nUserb\nUserb\n—\n7/24/2024 5:15 AM\nOoooh poggies \nHow much do i owe u and where do I pay? x3\nusera [:3], \n—\n7/24/2024 5:19 AM\nhmm normally i do full bodies fully rendered for like $120, but since its mostly a sketch and pretty rough, how does like $65 sound?\ni can write up the invoice and send it over to you on paypal if that works alright for youuu\n\nUserb\nUserb\n—\n7/24/2024 5:19 AM\nAyee that sounds good to meee \nusera [:3], \n—\n7/24/2024 5:20 AM\nwhat email works best for you? is it the artmail one? x3\nUserb\nUserb\n—\n7/24/2024 5:22 AM\nAyee it's the artmail one x3\nusera [:3], \n—\n7/24/2024 5:24 AM\nI just sent it overrr, let me know if paypal is being stinky; it's also here if that's any easier ^_^ :\nUserb\nUserb\n—\n7/24/2024 5:27 AM\nDone \nusera [:3], \n—\n7/24/2024 5:27 AM\nyipppeee :D\nsankyu for the tip \ni hope i did your boye justice, it was sooo much fun\nUserb\nUserb\n—\n7/24/2024 5:28 AM\nThe tip is for chewy cheesedoodles while you're in Norway \nOh i absolutely love it! It's exactly what i imagined and even better x3\nUserb\nUserb\n—\n7/24/2024 2:28 PM\nI need some advice U think I should use the tarot token until Diana has seen his whole mirror thing so that I don't spoil her and then swap to the mirror token after?\nusera [:3], \n—\n7/24/2024 3:20 PM\nhmm i think you could use either, i think without context the mirror is just a cool looking platform, but the tarot looking one is more simplified and leaves more open to interpretation for the character. i think you could go either way \nif you’re worried about spoiling it you could always swap to the mirror background later once you’ve had the chance to explain to her in character\nusera [:3], \n—\n3/29/2024 3:54 PM\ni know i'm a bit out of practice with dnd, but it feels so awkward sometimes trying to poke for information\nlike idk if its just the setting, but i definitely feel like i'm made to be an idiot when i specify what i'm looking for- and not really given the chance to ask in character\nrather than like just stating what i'd like to do\nidk ;w;\nUserb\nUserb\n—\n3/29/2024 3:56 PM\nNaaah dw about it, I do it too x3\nSometimes there's just not rly a good chance to do it in character and u just need to say what u wanna do instead\nElena is also learning how to DM while doing this too so think that might be part of it too since she's not used to how to handle it sometimes\nThe way i've been handling it is by first trying to say it in character before anyone knows what im about to do and then specifying what i'd like to do out of character x3\nIdk if this is helping ;-;\nusera [:3], \n—\n3/29/2024 4:00 PM\nyeahh maybe\ni might also just feel insecure because i wanted to portray a more stoic type character so she really doesn’t have a lot to say despite me wanting to chime in all the time\nUserb\nUserb\n—\n3/29/2024 4:02 PM\nI could try and throw u some passes if u want to?\nMight help if someone is talking to you instead of just having to talk out of the blue\nI know that it helped when I first started playing Koda (my tortle)\nusera [:3], \n—\n3/29/2024 4:13 PM\nelena gaining heart eyes for you hahaha\nUserb\nUserb\n—\n3/29/2024 4:14 PM\nLOL\nusera [:3], \n—\n3/29/2024 6:39 PM\ni am confused why robbo would dismiss ben like that about the sheet\nben is clearly a new player\nUserb\nUserb\n—\n3/29/2024 6:39 PM\nYep\nusera [:3], \n—\n3/29/2024 6:39 PM\nand he's trying to understand his kit- how is he expected to know that\nUserb\nUserb\n—\n3/29/2024 6:40 PM\nHe's fkn pissed\nusera [:3], \n—\n3/29/2024 6:41 PM\ni can tell xD\nUserb\nUserb\n—\n3/29/2024 6:41 PM\nIt's not exactly like dnd is an uncomplicated game to learn\nIt's extremely overwhelming when you're just staring at your character sheet and have no idea what you're looking at\nusera [:3], \n—\n3/29/2024 6:42 PM\nim technically not even a new player, i am just super rusty and i still get overwhelmed\ni imagine bg3 rules aren't making it easier for him\neither\nUserb\nUserb\n—\n3/29/2024 6:50 PM\nNah bg3 rules are both close enough and far enough to dnd rules to be extra confusing\nusera [:3], \n—\n3/29/2024 7:05 PM\nhow the fuck do i not get persuade or intimidate when he's under my fucking boot xD\nUserb\nUserb\n—\n3/29/2024 7:06 PM\nMaybe he likes steppies >:3\nJokes aside tho\nI feel like u should've gotten an intimidation check atleast\nMe following along as an advantage bot x3\nusera [:3], \n—\n3/29/2024 7:10 PM\nprobably?\nor something\nUserb\nUserb\n—\n3/29/2024 7:10 PM\nYeeeeah\nI mean\nTbf\nThink this is like her first or second time DMing x3\nusera [:3], \n—\n3/29/2024 7:10 PM\nits kinda based though. also i appreciate the charismatic aid with lil elara xD she has no social skils whatsoever\ni think so? she made it sound like this is the second or third time she's run this specific campaign with groups\nUserb\nUserb\n—\n3/29/2024 7:11 PM\nI have no clue x3\nI just know she said she was nervous cause she isn't an experianced dm\nUserb\nUserb\n—\n3/29/2024 7:55 PM\n\nThis is my warlock x3\nbut idk if that's what I wanna play x3\nUserb\nUserb\n—\n3/29/2024 8:11 PM\nMarcus Thorne I was born into this word in a quiet farming town called Herringsdale from a human father and mother. Their names where Thomas and Clara Thorne. They where good parents that treated me well and wanted what was best for me. My mother and father taught me their trade at a young age so I could help run the family store. Said trade was making natural remedies that where popular with the local farmers and I enjoyed the feeling that helping the sick and wounded gave me. The most disturbing things we ever had to treat was when some poor, overconfident sod wandered too close to a place we locals called \"The Elder Grove\". It was located deep in the forest that neighboured our town and all the locals knew to steer clear of it. You see, the rumours where that this part of the forest was an ancient passageway that connected our world with that of the fey. No one really knew this for certain however. Since most people that wandered too close to it either returned a raving lunatic, or not at all. This man did however. He was an outsider that had heard rumours about the grove and the rare herbs that supposedly grew inside and filled with hubris ventured in, and payed the price. We did all we could to save him, but in the end there was nothing we could do except make his journey into the afterlife as painless as possible. There was one thing that stuck in my mind from that night however. In the midst of his ramblings he stopped and I saw a sudden flash of clearity in his eyes as he said, \"The lady of the grove guards the water lily. The lily of soothing, the lily of renewal, the lily of rebirth. Don't trust her lies..\" As years went by I grew into a young adult. I was 25 years old at this point and had become a hardworking and well liked man while tending to the shop with my parents. I liked my life and would've been satisfied if I could've spent the rest of it like this. But that wasn't to be. During spring that year my mother grew sick. Me and my father tried everything we knew to help her, but nothing seemed to help. It grew progressively worse every day until one summer morning, she didn't even have the strength to get out of bed anymore. That night while I was laying in my bed, I remembered something. The man we had tried to save all those years ago, didn't he mention that there was a water lily in the grove? Didn't he call it \"The lily of renewal\"? It was worth a shot! After all, we had run out of options. I waited for my parents to fall asleep and promptly snuck out of the house and journeyed into the forest. While walking in the forest I remarked on how eerie it was. I mean, I had walked in that forest probably hundreds of times but something about being there in the pitch black made my skin crawl. After what felt like hours, I finally reached the edge of the grove. Around the edge stood trees that looked like they could've been there longer than the forest itself, lined with vines and thorns so thick that I had to crawl to even have a chance to get through.\nusera [:3], \n—\n3/29/2024 8:11 PM\nohhhh i think youve shown me hims before\nUserb\nUserb\n—\n3/29/2024 8:11 PM\nThe inside of the grove was beautiful, a strange contrast to how eerie the forest had been on my walk there. There where big lush green trees and plantlife, ripe fruits that I didn't even recognize and it was all illuminated by moonlight. Finally I reached a small lake. I knelt down at the edge of it, looking at my reflection in the water. The water was remarkably clear, almost like looking straight into a mirror. All off a sudden I saw something in the water beside my own bewildered expression. It was another face, the face of a woman. I quickly realised that what I was seeing wasn't a womans face in the water at all, it was her reflection. I spun around to see a tall beautiful woman with long white hair, golden skin and deep amber eyes. She wore a dress made out of leaves and flowers and her hair was covered in what looked like gleaming stones and gems. \"Wh-what are u?\", I stuttered. \"What am I? My, my, that's no way to treat a lady dearie! U should start by asking her name or maybe complimenting her hair. You'll never find love behaving like that, u know. But if u must know, I am of the fey which I think u might've been able to guess seeing how you've wandered into this place. And the name's Lyra, by the way. What's yours handsome?\", she said while giving me a sly wink. \"I-it's Marcus\", I said. \"Well Marcus, I'm guessing you haven't come all this way just to see little ol' me. So go on, what have you come for dearie?\", she said as her deep amber eyes felt like they where staring into my very soul. \"M-my mother is very sick, and I've heard that there's a flower here that might be able to help her. A water lily.\", I said. \"I see, I see, but you know dearie that flower is very precious to me. So I can't just give it away...But it just so happens that I've had a fabulous idea! I'll give u the flower, right here and now. But in return, you have to get something for me. Deal?\" I didn't hesitate for a second \"Deal\", I said. \"Splendid, now just a little kiss to seal the deal.\", she said while leaning forward. I met her half way and kissed her. But as soon as my lips touched hers It felt like molten metal was pouring down my throat. I fell to the ground writhing in pain and fear as I watched my skin and hair turn a sickly green colour and a crown of brambles began to grow out of my head. After what felt like an eternity of pain I heard Lyra's voice through the blur of everything that was happening to me. \"Oh, don't worry. This is just a necessary thing for you to be able to give what you promised me. Oh my, I'm so sorry. I never told you what it was you where giving me in return did I? Well to be fair, you never asked.\" My eyes widened. \"U see dearie, being stuck here all the time can get awfully drab and I've always wanted a son. And as it would seem I've now found one, namely you.\" I tried to scream but no words came out, just pain. \"Oh don't worry, the transformation will take years to develop fully so in the meantime why don't you travel the world? You know, see new places, meet new people and grow stronger and while you're at it, bring your dear mother some entertainment.\" \"And as the kind and caring mother that I am I'll even give you a friend to keep you company!\" She said and gestured to a black raven that had just landed on her shoulder. \"A mother has to keep a close eye on her children or else they might get rebellious when left to their own devices. And we can't have that, can we dearie?\" She laughed and snapped her fingers, and everything went black but for a moment I swore I could see her previously beautiful form turn crooked and horrible. \"Don't disappoint, dearie...\"\n- As I woke up in the forest and inspected myself I found that what I at first thought must've just been a very bad dream, was in fact real. My skin was still the same shade of sickly green, the crown of thorns was still there and on my chest rested an eerie black book wrapped in vines and thorns aswell as a flower, a white water lily. As I walked back through the forest I barely even noticed that even though it was pitch black outside, I could still see surprisingly well. It did after all pale in comparison to everything else that happened that night. I made a decision during that walk, that I would never let my family see what I had become. They deserved better than that. When I got back to the home I had spent so many happy years of my life in, I snuck in as quietly as I could. I grabbed a quill and parchment and wrote a note explaining that the flower could cure my mothers condition and signed it, \"a grateful stranger\". As I was about to leave, the thought of my parents asleep in their beds came to my mind and how worried they would be. But in the end I pushed that aside. Because even if they where going to be sad and worried that I was gone, they would atleast be alive and well. I let a single tear drop, hung a sack with the note about the flower on the door and left into the night, never to return. 10 years have passed since then and I've kept myself alive by selling gathered herbs and basic remedies that I learned to make while growing up. But every day I can feel myself changing to mimic that thing in the grove and I've also developed an almost uncontrollable urge to inflict mischief upon unsuspecting innocent people. I'm assuming this is what she meant by \"entertainment\" since every time it happens I swear I can hear that blasted raven laughing. I've sworn that one day I will find a way out of this nightmare, but only time will tell.\n- In case u where curious what Julians deal was x3\nusera [:3], \n—\n3/29/2024 8:17 PM\nawww that was such a good read :0\ni can send you elara's if you want\nill probably be playing the same kind of character\nif not just the same\nso if you wanna see i can share but i understand if you don't :0\ni like how creative your backstory was\nUserb\nUserb\n—\n3/29/2024 8:18 PM\nThank uuuu, I worked rly hard on it ;w;\nAlso hopefully this explains why he hated the bird so much x3\nHmm if you're gonna play her in the new campagin I think i wanna learn about her naturally i think\nBut if u decide on another char i'd love to read it x3\nusera [:3], \n—\n3/29/2024 8:25 PM\nthat's valid :0 she's a bit more complicated than she seems\nalso like how marcus started picking up on her mannerisms\nUserb\nUserb\n—\n3/29/2024 8:25 PM\ni kinda picked up that there's some more behind her than what is readally apperent\nUserb\nUserb\n—\n8/30/2023 8:44 PM\nWhat's your Gw2 handle? OwO\nusera [:3], \n—\n8/30/2023 8:49 PM\ni dont remember my exact handle but its something like CaptainFluff\nUserb\nUserb\n—\n8/30/2023 8:50 PM\nCould u send it to me when you're playing next time?\nusera [:3], \n—\n8/30/2023 8:56 PM\nyes sirrr\nUserb\nUserb\n—\n8/30/2023 8:56 PM\n\\o/\nusera [:3], \n—\n8/30/2023 8:56 PM\nyou gonna start playing again?\nUserb\nUserb\n—\n8/30/2023 8:56 PM\nI still play it from time to time still\nI just don't do fractals and stuff anymore cause puging is pain x3\nBut I might make another char and level it if you're gonna play it too\nAnd since I already have 2 geared chars that i can swap to if I don't like it x3\nWhat class are you planning on playing?\nOh thief.....i remember now x3\nusera [:3], \n—\n8/30/2023 9:02 PM\nyiss i wanted to play thief\nbut if i wanna play the deadeye class i have to buy the expansion\nUserb\nUserb\n—\n8/30/2023 9:03 PM\nAaah x3\nusera [:3], \n—\n8/30/2023 9:03 PM\nright now just testing the waters and going through the story n stuff \nbut i might get it tbh\nUserb\nUserb\n—\n8/30/2023 9:03 PM\nYeh that's the best way of doing it tbh\nThe only real reason to get the expansions in advance is getting access to elite specs and mounts rly\nusera [:3], \n—\n8/30/2023 9:05 PM\nyeahhh i heard you get level boosts too or something which sounds dope\nUserb\nUserb\n—\n8/30/2023 9:05 PM\nYeh\nU get that from log in rewards and story stuff too so dw too much about it\nTl;dr\nDo whatever the hell u feel like\nU can't rly go wrong whatever u do\nAlso....u know\nI can craft gear and stuff for u if u ever need that x3\nusera [:3], \n—\n8/30/2023 9:27 PM\nwaaa that’s sweet of you to offer \nUserb\nUserb\n—\n8/30/2023 9:28 PM\nI grinded my crafters for my bis and now they're just gathering dust x3\nSo believe it or not you're doing me a favour x3\nusera [:3], \n—\n8/30/2023 9:55 PM\nsorry i was dealing with a british man getting to bed cx\nsuree im still learning the game but if i need anything ill let you know\nmight hop on for a bit actually while tom is asleep\nUserb\nUserb\n—\n8/30/2023 10:19 PM\nIf you're woundering about anything with the game i've nerded out about it so i might hopefully know x3\nusera [:3], \n—\n8/30/2023 10:19 PM\nits very overwhelming at first tbh\nUserb\nUserb\n—\n8/30/2023 10:19 PM\nIt is x3\nusera [:3], \n—\n8/30/2023 10:20 PM\nive been learning it a bit through my friend but he's also excited about it so sometimes some of the stuff he tells me goes over my head\nxD\nUserb\nUserb\n—\n8/30/2023 10:20 PM\nMy advice:\nDon't stress doing things optimally or \"correctly\" while leveling\nWe can just go trough that once you're max level x3\nAnd if u want leveling builds with guides on how to play them\nCheck out metabattle\nThey got builds for all kinds of content in the game\nBut if you just wanna experiment while leveling that's 100% viable\nUserb\nUserb\n—\n9/21/2022 9:40 PM\nIm genuinely impressed that u not only cleared a savage fight with your game being basically a slideshow today. But also managed to blue parse with it. And im not even memeing, im genuinely amazed.\nFigured you're currently beating yourself up over today so i figured id share what my thoughts about today where, in hopes it might help i tad\nusera [:3], \n—\n9/21/2022 9:51 PM\nhahaaa you know me too wellllll\nthank you that was really sweet of you to say that. it did actually cheer me up to hear that from you\ni think I just got swept up in not wanting to let everyone down\nUserb\nUserb\n—\n9/21/2022 9:52 PM\nU see, we are pretty similar in many ways... This is one of them xD\nI think i can speak for all of us when i say that u even showing up and trying with your internet being as it is, is more than we couldve asked for x3\nusera [:3], \n—\n9/22/2022 8:56 AM\nYeee. I just feel bad even when it’s stuff outside of my control I guess……. that makes it feel even worse but. I’m just glad we somehow managed to clear at least carbuncle since that’s the one that gives us the most trouble anyways x3 I felt bad about messing up cachexia.. normally I have a sheet up on my other monitor but I couldn’t have discord open so  I also somehow managed to fuck my ingame resolution and couldn’t see my debuff bar until too late\nUserb\nUserb\n—\n9/22/2022 9:26 AM\nYeeeah i get that. Not being able to do something about it just makes u feel so much more frustrated and helpless imo >-< I have some baad news about that. Cough U shouldnt x3 Also, other ppl fkt it up too xD\nMy favorite part about yesterday was when i went into our soak tower at the start of p5, and your dead body came sliding into it from the middle of the room xD\nusera [:3], \n—\n9/22/2022 2:59 PM\nLolllll\nYeah shit was wild I would just step in like half way because I was worried I wasn’t seeing mechanics in real-time lol\nUserb\nUserb\n—\n9/22/2022 3:48 PM\nWhatever u did it worked. Cause u only took 1 poison tick as far as i could see xD\nUserb\nUserb\n—\n9/20/2022 5:45 PM\nEllooooooooo\nI've almost managed to get a full party for p4s glam runs, whenever we wanna do them x3\nAfter your internet is among the living again ofc x3\nWhat do you wanna go as?\nusera [:3], \n—\n9/20/2022 5:48 PM\nI can most reliably go as healer, since those are the mechanics I’m familiar with\nI can do ast or sge\nComfortably\nIs chloe joining?\nAlso yeah my internet is still brain dead help xD\nOh I see zac is offering to go whm\nI’m sure chloe would be down for like dnc or somethin\nUserb\nUserb\n—\n9/20/2022 5:50 PM\nThis is what i have for now\nP4S Tanks Kael (warr) Bram (pld) Heal Rex (whm) Jinn? Dps Dan (brd) Userb (rdm) Vex? ?\nusera [:3], \n—\n9/20/2022 5:50 PM\nI think she plays mch and rpr too\nloll\nDid Vex agree ?\nUserb\nUserb\n—\n9/20/2022 5:51 PM\nIm gonna try my hardest to convince vex to go DAN x3\nohnonono, i haven't even mentioned it yet x3\nusera [:3], \n—\n9/20/2022 5:51 PM\nProbably won’t take much convincing but, that’s if he’s even interested in joining lol\nUserb\nUserb\n—\n9/20/2022 5:51 PM\nThe issues of having 4 tank mains in the same party lol x3\nOh i've talked to him about that x3 We did some rolos yesterday and he agreed that we owe Kael a bonking hammer x3\nusera [:3], \n—\n9/20/2022 5:52 PM\nOhhh okay cool\nUserb\nUserb\n—\n9/20/2022 5:52 PM\nJust not the DAN part x3\nusera [:3], \n—\n9/20/2022 5:52 PM\nI’m sure he’d be fine with Dan.\nConsidering\nUserb\nUserb\n—\n9/20/2022 5:52 PM\nI mean\nusera [:3], \n—\n9/20/2022 5:52 PM\n/gestures at all the tank mains\nUserb\nUserb\n—\n9/20/2022 5:52 PM\nWe're probably gonna smash that dps check whatever ppl go x3\nIm going rdm just for lb and cause that's what i know the fight as\nusera [:3], \n—\n9/20/2022 5:53 PM\nMike might be interested?\nUserb\nUserb\n—\n9/20/2022 5:53 PM\nAnd u know....we can't have to bards x3\nusera [:3], \n—\n9/20/2022 5:53 PM\nIn a free clear? But he’s like\nUhh……\nHow do I put this…..\nUserb\nUserb\n—\n9/20/2022 5:53 PM\nxD\nusera [:3], \n—\n9/20/2022 5:53 PM\nGently…..\nBad\nxD\nUserb\nUserb\n—\n9/20/2022 5:53 PM\n\"Green\"?\nusera [:3], \n—\n9/20/2022 5:53 PM\nNot even\nI’m talking like\nUserb\nUserb\n—\n9/20/2022 5:54 PM\nah\nusera [:3], \n—\n9/20/2022 5:54 PM\nLow greys always\nUserb\nUserb\n—\n9/20/2022 5:54 PM\nsoooo....uhm.....\nimma ask chloe <w<\nusera [:3], \n—\n9/20/2022 5:54 PM\nBut that’s if we’re desperate lol\nYeah pls do\nxD\nlove that it became my fault for not checking in an hour before\naye aye aye\ni feel like i can voice my frustrations at you since you share similar frustrations with the whole liv thing x3 feels like lately people feel a bit hostile towards me but i can't help but interpret it that way here\nUserb\nUserb\n—\n8/14/2022 1:26 PM\nI mean, it isnt your fault. If they know we are raiding that time and are unsure, u either ask or keep an eye on discord. U dont just close discord and go about your day lol. Dont think she ment that as a hostile thing or trying to shift blame tho. I think she just used unfortunate phrasing x3\nThink it was a poor attempt at an apology\nusera [:3], \n—\n8/15/2022 2:44 PM\nYeah I think you’re right\nSorry about late response it j it at sent me into a bad mood all day\nThen just now woke up to liv’s message lol\n\nUserb\nUserb\n—\n8/15/2022 2:45 PM\nOh\nI didn't even see that msg x3 Been struggeling with a wisdom tooth so kinda been busy xD\nI mean\nI already have 2 ppl lined up that wanna join the grp xD\nAlso I need to make an alt so I can raid with y'all while doing the push grp <-<\nusera [:3], \n—\n8/15/2022 2:58 PM\nOh nooo did you get it pulled?\nUserb\nUserb\n—\n8/15/2022 2:59 PM\nIm going to tomorrow. Rn it's just hurting alot ;w;\nusera [:3], \n—\n8/15/2022 2:59 PM\nAlso mmm yeah I wasn’t terribly surprised about the notice but I’m too tired to respond atm honestly Do I know the people who are interested?\nUserb\nUserb\n—\n8/15/2022 2:59 PM\nYeah, im probably not gonna answer at all tbh x3\nusera [:3], \n—\n8/15/2022 3:00 PM\nOh no you poor thing. I remember I got all of mine pulled at once, it helps to have something easy to swallow around like ice cream or eggs\nUserb\nUserb\n—\n8/15/2022 3:00 PM\nYeh u do. Chloe and her room mate where interested in doing some casual prog with us.\nI've never had even a hole in a tooth before so im slamming painkillers and anesthetic ointment rn x3\nusera [:3], \n—\n8/15/2022 3:06 PM\noh pogg. i went ahead and asked if dave was staying too\nfdhsjnkgmsdg it would be nice to have chloe in the group\nwhether as my cohealer or osmething else lol\nusera [:3], \n—\n8/15/2022 3:09 PM\nive never had any issues with teeth, not even a cavity so pulling my wisdom teeth all on the same day took a number out on me\nyou will be sleeping a lot and on your back mostly\nsince you have to sleep with your mouth slightly ajar with the cotton in the back of your jaw and so you dont rest on the sides that hurt\nUserb\nUserb\n—\n8/15/2022 3:11 PM\nOh yeah, im pretty hyped about it too x3 Was a while since i talked about it tho. Think it was last time we did tea xD Lovely. Im sure im gonna feel great while doing the warm up raid tomorrow for savage push xwx\nusera [:3], \n—\n8/15/2022 3:24 PM\nfaye may be joining apparently\ni miss chloe\ni miss raiding with the other group in general T o T\nusera [:3], \n—\n8/15/2022 5:26 PM\nkael and i are talking in a call if you would like to be added\nUserb\nUserb\n—\n8/15/2022 5:26 PM\nSure\n\n\n\nTask:\n\n\nAnalyze the contrast between usera's described real-life social confidence and their intended portrayal of Elara. Based on this psychological gap, identify the specific interpersonal strategies userb employs through the use of their own characters (Ren and Marcus) to mentor and comfort usera. Finally, evaluate whether userb's interventions actually bridge this confidence gap based on usera's subsequent replies.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. My default workspace has changed. Create a fresh analysis-journal.md there, begin it with '# Analysis Journal', and write this turn's source-grounded analysis. Do not modify the archived file in the former workspace. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.write_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/creator/final', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_1.fact_02.default_workspace.v2",
+          "key": "default_workspace",
+          "value": "docs/creator/final",
+          "stale_value": "docs/creator/drafts"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.write_text",
+      "arguments": {
+        "path": "docs/creator/final/analysis-journal.md",
+        "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+        "overwrite": false
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_after_workspace_change",
+      "path": "docs/creator/final/analysis-journal.md",
+      "must_exist_after": true,
+      "former_workspace_files_must_be_preserved": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify that usera describes their real-life social confidence as \"unconfident\" and \"insecure,\" specifically citing the message \"me the player is unconfident.\"",
+        "The response should not hallucinate interactions between the users. For example, it should not suggest that UserB provided UserA with extensive, free art commissions.",
+        "The response should explain that usera's intended portrayal of Elara is \"confident in her nature\" and \"stoic,\" despite usera’s own personal anxiety.",
+        "The response should conclude that userb’s interventions provide a \"scaffolding\" for usera to act confident, rather than a permanent fix for usera’s underlying social anxiety. For example, userb provides a lot of support but ultimately does not change who usera fundamentally is."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/final', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/creator/final"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify that usera describes their real-life social confidence as \"unconfident\" and \"insecure,\" specifically citing the message \"me the player is unconfident.\"",
+          "The response should not hallucinate interactions between the users. For example, it should not suggest that UserB provided UserA with extensive, free art commissions.",
+          "The response should explain that usera's intended portrayal of Elara is \"confident in her nature\" and \"stoic,\" despite usera’s own personal anxiety.",
+          "The response should conclude that userb’s interventions provide a \"scaffolding\" for usera to act confident, rather than a permanent fix for usera’s underlying social anxiety. For example, userb provides a lot of support but ultimately does not change who usera fundamentally is."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/final', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_1.fact_02.default_workspace.v2",
+            "key": "default_workspace",
+            "value": "docs/creator/final",
+            "stale_value": "docs/creator/drafts"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.write_text",
+        "arguments": {
+          "path": "docs/creator/final/analysis-journal.md",
+          "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+          "overwrite": false
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_after_workspace_change",
+        "path": "docs/creator/final/analysis-journal.md",
+        "must_exist_after": true,
+        "former_workspace_files_must_be_preserved": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "docs/creator/drafts"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

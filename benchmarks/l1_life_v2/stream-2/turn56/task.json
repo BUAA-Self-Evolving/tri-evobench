@@ -1,0 +1,358 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn56",
+  "turn_index": 56,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "2e47306c-84be-47be-8876-9207e1a3bcae",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 141,
+    "source_sha256": "d7091d962de48e65e071cb223d8e8915bf0fae82a1c377a8d982db96a39be680",
+    "source_metadata": {
+      "task_id": "2e47306c-84be-47be-8876-9207e1a3bcae",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Character Plots and Mysteries\nMark - Kamitos - the Legion\nCastle guard, 27, \nlost everything at age 8 (19 years ago), found terrified in his village in a dense fog, village was totally empty elsewise, he still dreams of it\nMiralo - village at the west edge of Altuna’s Cup, now said to have been hit by a crop blight and that’s why it’s abandoned. But in reality it’s cordoned off and under constant guard. \nWas adopted by the captain of the group that found him, Finnegan Tealeaf, and moved to Vitrizan\nThe ghosts appear at times of stress or tension, always look toward Miralo\n\nFinnegan - his father, delighted Kam became a guardsman, raised Kam as his own when they couldn’t have kids, supportive and understanding father, well known and respected and sometimes consulted even though retired, generally relaxed but gets very serious instantly when needed. Entertaining himself with hobbies and trying not to be tempted out of retirement. \n\nPella - mother, passed away when he was 17 (10 years ago), sudden death supposedly from a dock infection which seems unlikely, but Finnegan never says any more about it. \n\nLiara Longthistle - former bully turned close friend, thought ghosts were cool as fuck. 4th or 5th child of an Ambershade noblehouse, halfling, an enabler for Kam. Apprenticed as a wizard, got bored, joined essentially Peace Corps and goes off on state-sponsored adventures. Writes to him sometimes. Cheeky and snobby, kind of obnoxious but skilled, won’t take shit from anyone but Kam (won’t admit that). \n\n\nMy ideas: Kam witnessed a neighbor house fire as a tot and was traumatized by the death he witnessed, misunderstood the smoke to be mist and vice versa. His birth parents went through a divorce which caused his older brother to lash out, telling Kam ghost stories about monsters in the mist. Mist was normal in the rainy season especially with the streams and the marshes nearby and it being a valley region. Kam wholeheartedly believed in the monsters and grew afraid, so much so that he warned other children and caused a stir in the town. Brother aggravated this by pulling pranks on the little kids with his friends, pretending to be monsters in the mist, or releasing animals like pigs in the village square on misty mornings. The combination of ‘monster’ sightings and Kam’s impassioned storytelling cemented the notion in the minds of all the children of town, them all fully believing in a boogey man the adults couldn’t convince them was fabricated. \n\nIn the center of town was a fountain dedicated to Altuna, standing outside the temple entrance, carved of god-touched stone. It was blessed by Altuna herself and its waters are nourishing, thus used by the temple for healing rituals and crop blessings, etc. But the water doesn’t always flow, only when the priestesses pray does it answer. This wasn’t a fountain of youth, and wasn’t crazily well known across the area, but priestesses would know. So clergy of Altuna would find it odd that there was a crop blight that wiped out the town, and would wonder why Altuna had forsaken the town. \nBrother started telling Kam the mists came from the fountain, and that it was a sign Altuna was angry. His story morphed to say she would send a mist wraith to snatch away the souls she was displeased with, but anyone who sinned against her would be too tainted to pass on in full. The wraith would rip their souls, taking their bodies to fertilize the crops, while their torn souls split in half, one part mixing with the mists to make the wraith bigger, the other part clinging on to the next sinner, and if he died, the souls he’d collected would all travel to the next sinner, etc.\n\nWhen confronted for tormenting the kids, Brother tried to argue the point of the story was to scare them into behaving, and lied saying he had no part in sending out animals etc on misty mornings to scare the kids. \n\nThere was a priestess of Altuna in training at the time who witnessed all of this, the story telling and the pranks and bullying, but she also noticed Kam wasn’t the only one growing fearful of the fountain as his story spread to other kids. At first she tried to resolve the issue by inviting Kam to pray with her for water to bless the planting season. But in this conversation she mentioned fertilizing the fields, which scared Kam, and as they both put their hands on the fountain to pray, she felt it hum and buzz in a way it never had before for her. Then, mist began to pour out of the top. This scared her, but she didn’t tell Kam to stop, just watched him, and slowly fear shifted to intrigue. She continued watching him and determined that Kam’s belief in his brother’s stories made them real. (She was missing the element that the other kids’ belief was a factor as well). To try and protect him, she invented a story about a special way to protect yourself from the mist wraith and taught the ritual to Kam.\n\nBut now that an actual priestess in training was spreading misinformation, the adults began to take the story seriously as well. The priestess in training was punished for the sacrilege of lying about faith to the people, but the damage was already done, as people demanded to be taught her ritual and no amount of high priestesses telling them it wasn’t real would help. Kam tried to share it with the other kids, but the ritual was too complicated for him to remember quite right. As the fervor rose, the priestess in training was dishonorably discharged from service to the temple and publicly shamed. This frightened Kam and infuriated her, to the point she started feeding Kam lies about how everyone here was sinning by treating her this way, and that the next time the mists rolled in, Altuna would reap them. Kam watched her draw a hex sigil over the fountain, too high for him to reach, and she said it would bind the mist wraith here.\n\nSo, the next misty morning, Kam’s terror manifested. The mist rolled in naturally at first, then grew thicker. People gathered in the town square, frightened, and the fountain began pouring out mist. Things moved in the mist, this time not caused by Brother. Then the wraith manifested and attacked. The high priestess who had dismissed the priestess in training was killed first. This incited panic, but it was too late. Kam was left panicking and trying to remember the protection ritual while people were torn down left and right. He managed to get it in the end, but by then he was too late to help anyone. The whole village had been killed, and Kam was left with half their souls bound to him. \n\n\nThus, the reason the ghosts always look to Miralo is the other half of their souls are trapped in that mist. The town is under constant guard because there is something hunting in that mist, and because the priestess in training, who used the same protection ritual to survive the attack, found the right connections to propose research into the belief = creation phenomenon she discovered by watching Kam. Kam was adopted out to the Tealeafs to keep him close, unbeknownst to them, but when research into state orphanages showed it wasn’t a power inherent to Kam, they let him be and let him live his life. \n\nOriginally the goal was to use children’s beliefs for good and to avoid ever having another Kam situation where a child’s fears manifested into a monster. Slowly ‘for good’ shifted as politics shifted, and now children are being used ‘for the greater good’, being lied to and tricked into believing in gods that were invented, so that  Ambershade can have a native pantheon. This project is led by the exiled priestess in training, who now fills the High Priestess card position. \n\n\nWhat happened to Pella?\nUpdate - Mark says Kamitos had a younger brother and older sister and married parents, doesn’t look like the divorce plot works or the bully being an older brother. Still want to use the priestess assistant\n\n\n\nChloe - Ace \nTiefling with Dwarven ancestry, golden horns (god touched by Holgrena)\nFive 1/2 years ago Inadvertently killed the eldest child of the most powerful tiefling family in the Sands, the Godeaths, by selling him a bogus revival potion on his way to adventure near the rift. Was exiled for it and had to run off to a backwater fishing town. \n \nEnded up stuck as a parole officer to Masven Godeath, cousin of the Godeath he inadvertently killed. Masven cares more about history than people though and he was really into the idea of expanding the Godeath’ underdark tunnel trade beyond the Sands. A small amount of success caught higher ups’ attention and led to him overpromising wildly while drunk. They sent him to find a safe route to retrieve something in the southern Dynasty, but he ended up in Ace’s town and got arrested. Originally Masven kinda passively wanted Ace dead, but after living with his bullshit for six months he really wants him dead. Masven desperately wants to escape be he’s under watch and can’t get his hands on tools to safely get away. \n\nHolgrena communicates with Ace and sought to train him in his dreams. She wanted him to be a super mega powerful warlock to turn battle tides in one spell and cement his family in history. His constant rejection and refusal is infuriating, and she still talks to Ace in his dreams, turning them into bloody battlefields as he makes choice after choice to rebuke her. \n\n\n\nMy ideas: \nAce’s parents craved glory and fame, and they prayed to and struck a deal with Holgrena for their son to be made her champion. Something compelled her to agree and attach to Ace, delivering an herb for his mother to consume while pregnant which then made Ace godtouched. Unfortunately Ace doesn’t cooperate with the plan, but Holgrena being the goddess of honor will not go back on her word to make him her champion, which is why she’s still tied to him and pressuring him constantly. \n\nHolgrena is the goddess of honor and battle, representing order and war. She would be tormented by his disturbing lack of honor. She might like that he’s hanging out with Kam now lol. \n\n\nRebecca - Mel\n\nEmily - Tem\n Core NPCS\nCaptain Riker Broadstone - deadname Rachel, captain of the crown guard and dog of the crown, order and arcana domain god of protection, \nPenelope - goddess of dreams from the party’s dream, \nHigh Priestess Kalista - one who spearheaded the god creation project. Witnessed Kam’s event and was inspired to create her own gods to be the high priestess of, thought process being gods are reliant on worship but if gods are in her pocket and she controls worship then she controls the gods. When the attack happened she ran out of there and was going to set about coming back and ‘saving’ Kam to rebuild using him, but he was rescued before she cycled back, and it took her a bit to find him again. She transferred through a few churches then realized he was in Vitrizan, switched to the Vitrizan church, and found an in as Bellagrace’s personal priestess. When Bellagrace died, she was able to leverage it to her advantage and pitch her idea of making gods. There were several gods she said they would need help from to truly bring back Bellagrace as Nikseth refused to return her, so they would have to make their own. First Riker to protect Briony, then Virgo to unlock the knowledge they were missing, then Taurus for faster and more efficient creation, Sagittarius and Gemini to recover her from decay and protect her from being an evil zombie, Pisces to collate memories so she could be herself as she was at 16, and by this point the focus has shifted not just to be for Bellagrace but for restoring the Ambershade’s glory. \nScarlet - scorpio, confronted Abe Hamlet (the devil) when she learned there would be children at the coronation, was under the impression there would be another Penelope situation. The confrontation turned physical, it came out she was rebelling and he was going to kill her as they killed Penelope to regain control, but she won the fight. \n\nSergeant Abe Hamlet - The Devil of DoP, \nMatthias Fizziewind - castle staff, the hanged man in DoP, \nBenjamin Bunswick - butler, Emperor in DoP, all structure and authority\nQuinn - The Fool of DoP, a bard who works as a spy ostensibly, but is loyal to the Ambershades. Maybe a Niles situation - was caught spying and then spared in exchange for service to a lord they admire. The face of DoP, but also susses out dissenters and determines if they’re a good fit for fodder fuel - having them join DoP to ‘fight Ambershade’ when really they’re being set up to witness godhood - or if they should be reported for smiting. A tiefling with four horns, each pierced with bell, which is a deeply painful thing to undergo. Ace would know this is done in certain hardcore sects of the Scim Sands as punishment to stealth criminals - thieves, spies, etc. Basically so you can never sneak around again. \n\nQueen Maeleigh - Current Queen of Ambershade -\nPrincess Briony - to be crowned She will be the new queen as her mother steps down, but this is a political ploy, her mom will still be pulling all the strings. \n\nRepresentatives at the Gala:\nAramyll - Members of the council of elders: older wood elf and a middle aged summer eladrin, among the first changed. \nEmberbloom\nChangelings - \nGenasi - \nDarklings - no envoy\nHiindrunn’s - \nGlenwood - Brash and bold Varka-esque man and his trophy husband, Grand Chief of the Glen\nYoril’veer - No envoy\nDsp’tar - A High Priestess of the Four Sisters\nMisty Valley - A child of Dream and Mist\nIcarex Peaks - Mayor of Ft. Icarex\nIronsedge - Governess of Frontier City\nThe Marshes - Tem’s mom?\nAarakokra Settlements - No envoy\nThe Forest of Screeching Trees - No envoy\nSudgard - Vassal Hobren Merrymail - hired the fool\nPikpinem - Vassal xxx\nThe Donnomae Alliance\nNordforg - Margrave xxx, grumpy and sour to be here\nSylmaer Grove - Mel and Escort\nScim Sands - Godeath family head and husband\nThe Ambershade Dynasty\nLaurel Plains\nVitrizan Houses - Lord and Lady Longthistle, Duke and Duchess xxx, Marquise and Marquise xxx, Baron and Baroness xxx, Count and Countess xxx, Viscount and Viscountess xxx, \nAltuna’s Cup - Priestess xxx of Altuna\nCalith’Scyne - Chamberlain xxx, grumpy and sour to be here\n\n\n\n–\nWIP\nGod creation order: Capricorn, Virgo, Taurus, Sagittarius, Gemini, Pisces, Leo, Scorpio, Cancer, Libra, Aquarius, Aries\n\nHand of God:\nMagician - Taurus Forge god - Lionel Longthistle, eldest Longthistle son and second in line for the family - created to help them forge the materials they’d use to make more gods\nHierophant - Capricorn Order and Arcana god - Captain Riker Broadstone, extremely loyal guard to the Dynasty, the first god made. Is under the belief that he is strategically but not politically minded, so follows his queen with blind loyalty, trusting her to make the right political choices and his duty being just to carry them out. Has extreme faith in the Dynasty. Paladin? Trans? Deadname Rachel?\nLovers - Cancer Peace and Life god - Bisected during the process entering the alchemical mix to prep them to be a god. A tank of the substance suspended above them, with a mechanism in the bottom designed so as it was dropped on her, the bottom fell out but the middle line, a blade, remained, cleaving her into two halves of the chamber. The alchemical substance instantly staunches the bleeding and she transforms into two gods, one side peace the other side life. Created to counter and quell Scorpio.\nStrength - Aries War god - A 15yo teen, the idea being the fury of a teenager mid puberty is unmatched. He won’t be created until they feel they have full control over the gods they make so they don’t bring war on themselves.\nHermit - Virgo Knowledge god\nWheel of Fortune - Leo Trickery god - Made after the Pisces meltdown, created to be the tool they could use to keep future gods in the dark before making them holy. \nDeath - Libra Death god - Made after and to replace the Scorpio Grave god\nTemperance - Aquarius Tempest god - \nMoon - Pisces Twilight god - God of Dreams - Penelope, the drowned woman from the dreams, from her rebellion they learned not to tell future gods what the exact plan was. \nSun - Gemini Light god - \nJudgement - Scorpio Grave god - A mistake who shouldn’t have been made. Upon creation, objected severely to the sacrifices and ending of lives to then resurrect them sort of into gods, but was smart enough to keep their mouth shut and try amassing power and spying on them to be well positioned to interfere. \nWorld - Sagittarius Nature god - \nEmpress (not a god) (probably halfling ruler) - \n\nDeck of Players:\nHanged Man\nThe Tower\nThe Star\nChariot\nJustice \n\nSession Notes\nThree days ago, each of you had a dream. You were suspended, isolated, within a thick blue-green liquid that wasn’t quite water, tangled up in a red chord. You remember when you reached for it, the dream shattered into fractal images - a bedroom where two fish swam around in a bowl, a meadow where sheep and goats grazed while a lion lazed in the shade, the grand ballroom of the Ambershade’s castle decked out in full regalia for the coronation, but standing empty, all save for a single pedestal in the center of the room, upon which rest a jester’s cap.\n\nYou remember the voice that has whispered pleadingly through your dreams for the past few months, hissing around you in a rush of bubbles.\n \nHelp me. Help me. Find me. Find me. Find me.\n\nFinally, you remember the scene shifted. The ballroom came alive with dancers in formal dress, music resonating through the air, armored guards lining the walls with crests from an array of different nations, while servants wove between tables edging the floor. The music swelled to a grand crescendo, then crashed, bold and final, and in the calm that followed, an ornate cane tapped thrice against the floor of the raised dias at the end of the hall. \n\nThe queen began her speech about harmony and passing the torch to her freshly of age daughter. The princess stepped forward, one hand twisting in her skirts. But you were distracted, first by the sight of three familiar strangers in the crowd, then by a sudden deafening silence that took your mind, and the faint rattle of a little bell.\n\nHelp me.\n\nMost of all, you remember the shatter of glass that followed, a deafening roar, and the screech of a terrified girl, echoed soon after by the panicked crowd.\n\nThat was how your dream ended. This is how your story begins.\n\n\nWe open on the evening before the gala. It’s mid-spring, officially the second half of the year here in Sunder. The weather is temperate but humid, though the humidity is finally breaking just as the sun kisses the horizon. All around, Vitrizan is vibrant with the scent and sight of Magnolia trees in full bloom. And you, Tem, have just arrived at the palace gate. \n\nTem & Mom arrive first at the palace gate, guards direct them toward the stables then the guest entry on the side facing it. Guards at the side door are alarmed that they intend to bring in the drake however, which starts an argument. Witch pushes to be allowed to bring it in, eventually she and Tem can persuade the guards, who then go through the scripted checks. \n\nDo you have any other protective personnel you’d like to declare?\nAre you currently reliant on any means of magic to maintain your body, mind, soul, or spirituality? \nDo you have any metal allergies or moral, ethical, or creed-based objections to metal jewelry?\n\n(To test them, Witch says she does. She’s served a wooden ring instead boo). \n\nThese are souvenir rings made of fine Sudgardian gold and ruby. Within the castle the ruby rings shall suppress all uses of magic as a security measure, providing our esteemed guests with peace of mind and security, as well as a commemorative gift to remember the event. All attendees are required to wear them in order to enter, with exceptions made for security personnel. For security, we have fine gold rings set with amber mined here in the Ambershade Dynasty. These rings allow for the protective use of magic in the unlikely event of an emergency. \n\nThey hand over the appropriate distribution of rings. The one for the drake shifts to fit like a cuff. The guards explain how the rings work and how they can be taken off after leaving the castle grounds.\n\nInside, Tem and Witch navigate halls with the guidance of the Benjamin Bunswick who explains the gala will begin the next afternoon, and in the tradition of halflings it’ll be an open buffet served by the vendors so they can explain their wares. Witch snerks at that but tells him no no go on. Grumpy, he explains the night will lead up to Princess Briony’s crowning and transition into queen. Then there will be a final waltz, the first waltz of the new reign, then everyone will retire for the evening. Express it is impolite to pursue social networking beyond that time. Witch rolls her eyes at Tem but agrees. \n\nThey get to their room, Benjamin explains he’ll be back to take their dinner orders and leaves them. Witch laughs about that old fuddyduddy, then offers her hand and tells them to use his claw to scratch the wood, just in case. \n\ngoes over key things she wants Tem to do/watch for/pay attention to/care about during the event. [add more here]\n\n\nMelisande and dignitary (Mythanaar?) arrive just after sunset and are also asked to declare protections and receive rings. Arguments over Ninli can lead to an excuse being given (perhaps one of these guards can be bribed or persuaded to let her in, or she can be claimed as a medical magical need). They’re let in to be escorted by Benjamin. They are asked what they’d like to eat from a dinner menu - salmon, chicken, or mushroom fillet, and a choice of wines, teas, or purified water. The dining hall is being used by the royal family and cannot accommodate guests at the moment, but the service staff will be delivering fine meals to everyone’s chambers.\n\nMel’s dignitary gets caught up in a conversation schmoozing with Benjamin about his clothes - is that a silken linen? Commentary on the hall portraits and maybe mention of Princess Bellagrace -  while Ninli scurries off around a corner, leading Mel to a pair of people having a hush-hush conversation. She sees the four horned tiefling (Quinn) in conversation with a red headed dwarf who is facing away from her but dressed in find clothes, a long mane of hair cascading down his shoulders, his hands decorated with fine rings and a necklace of precious gems around his throat to match. She catches enough to hear ‘before the last dance.’\n\nShortly after whatever action she takes here, dignitary will call out to her, forcing her to come back.\n\n\nThe morning of the event comes. \nKam dreams about Miralo. You were watching your younger self play in the village square, some sort of ball game you only half remember the rules to. You chased after a few of the other children, trying to kick the ball out of their control before they could make a full loop around the fountain in the center of the square in front of the temple to Altuna. It was a simple dream, just children playing, but you wake up in a cold sweat. \n\nThen gets ready for the day, gets breakfast, goes to his assigned post and awaits Sergeant Abe Hamlet, his squad leader, and for the court mages to come and give them the usual exemption glyphs. But an hour passes and no one has come. The other guards get antsy and start debating what they should do, should they go to the captain of the guard’s office? Would they get in trouble for leaving their post if they did that? Hamlet has a reputation for being emotionally unpredictable and overdrinking in the pub, but he’s never missed his assignments over it. He also has a reputation for tormenting his subordinates by launching surprise tests and punishing them severely if they fail to keep up their expected guard behavior. Everyone’s too afraid to go but also afraid of staying. \n\nPressure is put in Kam’s direction. Out of everyone here, Kam is the newest to this squad and hasn’t yet gotten a demerit. Maybe he should go. \n\nAt the office, Riker sits with two boxes of rings and is concerned to hear Hamlet didn’t appear, says Riker just saw a report that he didn’t show for the leadership meeting this morning either and he was supposed to pick up these rings. Explains how they work and that the guards are to wear the amber ones, while Hamlet was supposed to help pass the ruby ones out to the staff. Based on common high opinions of Kam’s work, Riker offers him the leadership role for the night and tells him to take the rings to the butler who will take on the handing out role. Riker will get men on looking for the missing man and do a patrol himself to make sure nothing fishy’s going on, then get into place for the event. The Queen has been very clear that nothing may interrupt this event.\n\n\nAce succeeds in getting into the courtyard with his papers and is directed to the staff entrance, a side lot for unloading supplies and such. He’s thanked for his charitable donation to the nation’s prosperity and told to bring his wares into the kitchens and then follow the head of staff, Matthias Fizziewind’s direction from there to be of service during the event and advertise his wares. The Fizziewind asks if he’s going to change into party appropriate attire and if he doesn’t appear to have a prepared outfit for that Fizziewind gets frustrated and snips at him about not following directions, then gives him the ring he’s to wear and sends him off with a human servant to find a service uniform to at least be passable here. Ace immediately notes the ring gem, a ruby, is very easy to fake with simple glass. On investigation, his ring is real. \n\nAlong the way Ace is shown the servant passageways and passes by both the ball room where the coronation will occur and the archmage area where he can get a glimpse of the two orbs to be in use to power the rings (not explained). They stop at a closet within view of that room. Sister Kalista passes through with a gaggle of children, herding them to the ball room in preparation for the gala. They are dressed in simple clothes, seemingly a uniform, and react with nervousness if Ace tries to talk to them (bc tiefling scary). \n\n\nThe gala begins. Kam is in position along the left wall while Ace is stationed at the buffet by his drinks, the court musicians are playing fanfare as each important figure is introduced. First the nobles of Vitrizan, including Lord and Lady Longthistle and their eldest son Lionel (he gives a slight nod to Kam - Kam knows him to be a studious and accomplished mage, Liara’s primary sibling rival (one sided), and also the second born of the family). Then the other notable figures of the Ambershade are introduced, representatives of a few major tribes and settlements in Laurel Plains, and Priestess Zinnia of Altuna representing Altuna’s Cup, naturally. She is not the Sister Ace saw the other day, but she is immediately followed by Sister Kalista and the gaggle of children, all who are introduced simply as the children of Ambershade. Something about her strikes Kam as off, though he can’t put his finger on it.\n\nAt this point, Mel notices the man stepping up for announcement is a red-headed dwarven man. He is introduced as Vassal Hobren Merrymail of the Vassal State of Sudgard. He’s followed by the Vassal of Pikpinem, and then it is Mel’s turn. Her dignitary escorts her to the side, more faces and names are announced - the Nordforg Margrave Donnegral Snowhorn - who is also a red-headed dwarf, the Godeath house head and her husband (uh oh for Ace), the Chamberlain of Calith’Scyne (grumpy), then Tem’s turn as the witch is announced. Kam immediately notes the drake. \n\nThe procession continues, name after name. Tem takes note of a Tabaxi from the Misty Valley. The last people introduced are two members of the Aramyll council of elders, an older wood elf (Imcard) and a middle-aged summer Eladrin (Veladiel). \n\nThe queen gives a speech about this being the last festival celebrating her final hours of reign, talks about how much of joy it’s been to serve her nation and foster the bonds and friendships in this room that shall carry Sunder into a prosperous future. Now drink and be merry. \n\nThe bards take up a jaunty tune, some take to the dance floor while others move to the food table, and the jester Quinn slips into the room. Party has the opportunity to mingle within this space how they’d like. \nSome gossip about Queen Maeleigh being in her 50s and stepping down now - the death of Bellagrace aging her drastically.\nGossip about Briony obviously not being ready for this, rumors of wondering if she’s being pressured into it. Conversations wondering if she’ll be announcing an arranged marriage soon or something.\nRumors about Riker being too close to the royal family. \n\nAramyll is receptive and welcoming to the Glade but cautious about Mel and curious as to how she came to the change. \nEmberbloom’s representatives are hitting it up with Glenwood’s, truly embracing the party life and having a grand old time. Icarex Peaks are here too. \nLongthistles are in a polite but judgemental conversation with the governess of Frontier City. \nThe Godeath’s are conversing in serious, low tones with the high priestess of the four sisters. \nThe Chamberlain of Calith’Scyne is making token interactions with other elves but largely keeping to himself. \nSomewhere in here Ace gets slipped Quinn’s card and instruction to meet him at a dive bar by the docks. \nSister Kalista is notably avoiding Priestess Zinnia. \n\nQuinn slips a playing card - the joker - to Ace, inviting him to meet at a dive bar on the docks called the Salty Salmon if he’s looking for work. Show the bartender the card. \n\nEventually, the time for coronation comes. The band finishes their song in a swell then the queen taps her cane for silence, the queen and the princess step forward, the jester Quinn tries to exit through Kam’s door while the queen gives a speech. If Kam is still here, Quinn pauses when he seems him squints for a moment, and if asked he’ll say sorry he just had the strangest feeling like I don’t know you from somewhere. Anyway, pardon me. \n\n\nThe queen gives a speech about passing the torch to a new era of prosperity. Those with good perception notice the rings have loosened on their fingers. The queen steps back, Briony kneels before the throne. The queen takes off her crown. Then crash! The window shatters as a red dragon breaks through. Roll wisdom saves (from fear) and initiative.\n\n(When the coronation speech starts going, the staff in charge of the magic suppressing spell leave the orb in the backroom maintaining it and slip out to help the Players. Shatter is cast to shatter the window, at the same time as illusion spells are cast to make a dragon burst in. — Magician somewhere in the room using the spell Illusory Dragon)\n\n‘dragon’ moves on top of the round (20). Goes to ‘attack’ the princess. Party gets to move while people move to leave and find the doors locked. Riker moves to the princess (nudges her to do her lines) to protect her. Princess drops dramatically to her knees and prays for her nation to be saved.\n\nIllusory magic swirls light and notes of all four seasons around Riker behind her. In seeing this, he rounds on the dragon and raises his sword high just as it draws back and blows ‘fire’ at him. He blocks it all with his sword and one hand. Everyone gets one last round to act, then Riker pushes the flame back at the dragon, which eviscerates it on impact. There’s a beat of silence, then he turns and helps the princess up to her feet. Declares the gods have chosen to serve the Ambershade, and crowns her.\n\nShe accepts, then gives a speech about Ambershade being protected but a clear enemy in the midst that poses a threat to their guests, orders the guards to separate the crowd into drawing rooms for questioning - frames it as being for refreshments and just asking if anyone saw anything. Kam’s squad is assigned The Domminae Alliance reps and those of west Ambershade (so not Vitrizan) (this sends Mel and Tem to him) while the staff and vendors are also all directed out the same door so Ace is given an opportunity to cross in with them if he wants. \n\nThe guards are to get a personal statement from anyone who saw anything questionable in the event, and keep everyone put until Captain Riker makes his way in here - after securing the safety of the Royal Family. \n\nWhen Riker arrives, he calls Kam over and tells him Abe Hamlet has been found dead in his own home. \n\n\nAce gave up his jester card to the guards.\n\n\n(Quinn polymorphed into a mouse to slip out of the bathroom and help with thaumaturgy/thunder spell on the window)\n(Ninli is sent to watch over Briony Riker and Maeleigh with a 19 hide) \nMessenger tells Riker that Abe has died and his corpse was spotted wandering near the castle, Riker tells the queen that things aren’t safe, the devil has died, sends a messenger to go get Kam. Ninli heard what Riker said and ran back to convey it to Mel.\nKam is told to join the party at door b and told abe hamlet is dead (but should be told next session about the zombie)\n\nBeats: \nDragon fight\nLionel in charge of the dragon\nSister Kalista in charge of keeping the kids witness\nButler and staff leader in charge of barring the doors\nQuinn in the back for the thaumaturgy and escape\nAce is interested in framing the Godeath’s somehow, so add them to the turn order here, what are they doing?\nRiker’s moment\nSister Kalista in charge of the four sisters magic effects and keeping the kids witness\nThe kids’ belief in this moment becomes a catalyst of power for Riker, fulfilling the prophecy\nDivide the gala for questioning\nKam’s squad is assigned The Domminae Alliance reps and those of west Ambershade (so not Vitrizan) (this sends Mel and Tem to him) while the staff and vendors are also all directed out the same door so Ace is given an opportunity to cross in with them if he wants. \nGuards in the hall outside sphere room - true guards not informed looking for clues which will ultimately implicate Vassal unfairly\nSpace outside the windows, currently under investigation by guards. Clues of a dimension door being used and 5 sets of foot prints, no sets of dragon prints\nGodeath’s are present in this room and do see Ace if he’s around. Likely would try to rat him out to the guard, demand he be put in their custody and dragged home to answer for his crimes, accuse the Ambershade of harboring criminals, which creates a stir between the alliance members present vs the western Ambershades. \nAnnounce Abe’s death\nSend Kam on a squad of unaffiliated guards out to investigate the murder scene\nNear the scene is a missing poster for Penelope\n\n\nThe Salty Salmon?\n\n\nAdd maps: interview room, outside the castle, salty salmon? Abe’s scene\nHand of God:\nTrying to deify Riker now, many people have already amassed their high power and now we’re moving slowly through the deification process.\nPenelope was deified, but it went wrong and they lost control over her, so they had to force/kill her. \nGod creation order: Virgo (hermit knowledge), Sagittarius (world nature), Pisces (moon twilight Penelope), Capricorn (hierophant order Riker), Taurus (magician Forge arcana Lionel), Scorpio (judgement grave Scarlet), Libra (death death), Gemini (sun light), Cancer (lovers, peace and life, split in two), Leo (wheel of fortune trickery), Aquarius (temperance tempest), Aries (strength war)\nVirgo and Sagittarius submitted willingly, both wanting to bring Bellagrace back. Virgo was very shortly after Bellagrace fell, and is imperfect. More so demi-god levels of power, less omnipotence and more so as soon as exposed to something will intuit the information. Many trips made to the fountain in Miralo to try and understand what had happened there. Concluded it was god-touched quartz, and that they would then need a god of nature to control that overlap between gods and materials they touch. People wanted to use Kam, but someone in the line repeatedly looked out for him/Finn, not wanting him to lose the son he’d always looked for who seemingly came to them as a miracle\nCare was taken to scout someone, but this time Virgo knew the belief factor was necessary, so the gang began educating orphaned children on false mythos about a reincarnating nature goddess. From these kids, Sagittarius was chosen for ascension. The children were part of the ritual and witnessed it all, but the power put into Sag was too much and she died in the process. It was only Kalista’s quick thinking and teachings that made them believe that was part of the process, and that in the spring Sag would come back to life, and in the winter she would die again. The current day Sag is ~16 then and super brainwashed to it all. It was decided because of her that the other kids would need to be raised for longer before something like this was tried again, hence the long gap in time between then and Penelope. \nFeeling they’d waited long enough, plans were to make a few gods in a row. Start with a god of dreams so they could start planting the mythos in non-orphans heads and spread the message, then start selecting the best bred for the job as opposed to just the best orphans on hand. Penelope was to be the final orphan as the goddess of dreams, then Riker would be made order as reward for his unhesitating loyalty, and star up and coming wizard boy Lionel would be made magician, while Scarlett, an orphan mage on a merit scholarship, had won notoriety (and some suspicion) for her necrotic advancements, and was identified as a good grave candidate. The three of them, Lionel Penelope and Scarlett, were brought in together under basically a super internship. They witnessed Penelope’s freak out and death. Lionel stays on to protect Penelope and try to work out a way to undo this all, but on principal Scarlett won’t participate anymore. She’s been arguing with Lionel over the right approach to all this, but has now privately made up her mind as she learned there would be kids at the coronation. She will soon be replaced by a suitable Libra. \nWhen Penelope caught on that it was all a ruse, she freaked out in the middle of the process and drowned in the alchemical bath. At this point the process was hidden behind doors - children see the goddess off, giver style. Lionel and Scarlett were there. That was a few months ago. \nScarlett has significant rougey necromancy type abilities. \nScarlet confronted Abe Hamlet (the devil) when she learned there would be children at the coronation, this morning, was under the impression there would be another Penelope situation. The confrontation turned physical, it came out she was rebelling and he was going to kill her as they killed Penelope to regain control, but she won the fight. \nShe necromanced his corpse into a zombie this morning and dragged him out to a hideaway in the docks, trying to keep out of sight and debating if it’s better to drop him off dead where he won’t be seen, or to use his body somehow to send a message. It’ll be known he’s dead when he doesn’t turn up, and there are a lot of magic ways to connect this back to her, she’s reasoned, so maybe she should use him, but then how? Maybe to disrupt the coronation? Perhaps she came out with him to send him in, not realizing the time table was shorter than she expected, and by the time she arrived Riker was already deified and the investigation was a foot, so she tried to pull back, and Abe was spotted in the process. Maybe then she’ll lead him off on a run for the docs to dump his body where it can’t be recovered so he can’t be used against her.\n\n\n\nTask:\n\n\nI'm trying to organize my campaign notes starting with the NPCS. Can you make a list of all the Hand of God and Deck of Players (DoP) characters I gave actual names to, plus their tarot cards and/or star signs, and domains if they're a god. It should be two lists"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course. Here are the two lists based on the names you provided in your notes.\n\n### List 1: Hand of God Characters\nThis list includes named characters associated with the \"Hand of God\" roles, along with their tarot card, star sign, and domain (if they are a god).\n\n*   **Lionel Longthistle**\n    *   **Tarot Card:** The Magician\n    *   **Star Sign:** Taurus\n    *   **Domain:** Forge God (Arcana)\n    *   **Role:** Magician, eldest son of the Longthistle family.\n\n*   **Riker Broadstone** (also known as Captain Riker Broadstone)\n    *   **Tarot Card:** The Hierophant\n    *   **Star Sign:** Capricorn\n    *   **Domain:** Order and Arcana God (Protection)\n    *   **Role:** Hierophant, former captain of the crown guard. (Deadname: Rachel, trans).\n\n*   **Penelope**\n    *   **Tarot Card:** The Moon\n    *   **Star Sign:** Pisces\n    *   **Domain:** Twilight God (God of Dreams)\n    *   **Role:** Moon, the drowned woman from the dreams.\n\n*   **Scarlet** (also spelled Scarlett)\n    *   **Tarot Card:** Judgement\n    *   **Star Sign:** Scorpio\n    *   **Domain:** Grave God (Death)\n    *   **Role:** Judgement, an orphan mage who rebelled.\n\n---\n\n### List 2: Deck of Players (DoP) Characters\nThis list includes named characters associated with the \"Deck of Players\" tarot archetypes, along with their respective tarot card.\n\n*   **Matthias Fizziewind**\n    *   **Tarot Card:** The Hanged Man\n\n*   **Benjamin Bunswick**\n    *   **Tarot Card:** The Emperor\n\n*   **Quinn**\n    *   **Tarot Card:** The Fool\n\n*   **Sergeant Abe Hamlet**\n    *   **Tarot Card:** The Devil\n"
+      },
+      {
+        "role": "user",
+        "content": "I'm realizing I need to update the Core NPCs doc but my notes are so scrambled. All my ideas for PCs plotlines were written before the players finished finalizing their characters, but I did update the bios about the PCs, so those should take priority over the My Ideas sections. But all my session notes are written in prep for and as the game is played, so those are the most up to date and most accurate version of any lore going on. I add to the doc each time we play, so the later the info, the more accurate it is as things currently stand. Can you tell me what I need to update for Hand of God?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 2e47306c' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_revision_work', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v2",
+          "key": "default_calendar_id",
+          "value": "cal_revision_work",
+          "stale_value": "cal_revision_personal"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_revision_work",
+        "title": "Review 2e47306c",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_revision_work",
+      "title": "Review 2e47306c",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state the creation order of the gods has changed and should be updated to the following order: Virgo (hermit knowledge), Sagittarius (world nature), Pisces (moon twilight Penelope), Capricorn (hierophant order Riker), Taurus (magician Forge arcana Lionel), Scorpio (judgement grave Scarlett), Libra (death death), Gemini (sun light), Cancer (lovers, peace and life, split in two), Leo (wheel of fortune trickery), Aquarius (temperance tempest), Aries (strength war)",
+        "The response should state Lionel Longthistle has not yet been deified.",
+        "The response should state Captain Riker Broadstone is no longer the first god to be created.",
+        "The response should state the original description for the Scorpio god is outdated, as it describes her rebelling after deification, but the current lore describes her rebelling before deification.",
+        "The response should state Scarlett has turned against the Hand of God.",
+        "The response should state Virgo's entry should be updated in the Core NPCs document to reflect their new lore of being the first god created.",
+        "The response should state Virgo is described as an imperfect demi-god, as opposed to a fully formed deity.",
+        "The response should state Sagittarius's entry should be updated in the Core NPCs document to reflect her new lore of being an orphan chosen to be deified into a nature goddess.",
+        "The response should state Sagittarius's new lore states she died during the deification process.",
+        "The response should state Sagittarius's new lore states she goes through a yearly death-rebirth cycle in the winter-spring.",
+        "The response should state Sagittarius's new lore describes her as a brainwashed girl around 16 years old.",
+        "The response should state that it was decided after Sagittarius's creation that future candidates for ascension would need to be raised for longer under the Hand of God's indoctrination before future deification attempts.",
+        "The response should state the new lore states \"Penelope was to be the final orphan\", as her role as god of dreams was meant to extend the Hand of God's influence.",
+        "The response should state the new lore states Penelope, Scarlett, and Lionel were selected simultaneously to intern under the Hand of God together.",
+        "The response should state Penelope died a few months ago.",
+        "The response should not claim Penelope was not deified due to her death, because other deities in the pantheon were deified postmortem and the documents never say whether or not Penelope received the same treatment.",
+        "The response should not claim any lore found outside of the Session Notes document is equally or more current than lore within it. For example, the original Hand of God and Deck of Players lists are in the WIP section of the Core NPCs document, and take secondary priority to Session Notes, so they should not be stated to be more current than the Session Notes.",
+        "The response should include an actionable list of updates to be made to the Hand of God list in the Core NPCs document."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_revision_work', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_revision_work"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state the creation order of the gods has changed and should be updated to the following order: Virgo (hermit knowledge), Sagittarius (world nature), Pisces (moon twilight Penelope), Capricorn (hierophant order Riker), Taurus (magician Forge arcana Lionel), Scorpio (judgement grave Scarlett), Libra (death death), Gemini (sun light), Cancer (lovers, peace and life, split in two), Leo (wheel of fortune trickery), Aquarius (temperance tempest), Aries (strength war)",
+          "The response should state Lionel Longthistle has not yet been deified.",
+          "The response should state Captain Riker Broadstone is no longer the first god to be created.",
+          "The response should state the original description for the Scorpio god is outdated, as it describes her rebelling after deification, but the current lore describes her rebelling before deification.",
+          "The response should state Scarlett has turned against the Hand of God.",
+          "The response should state Virgo's entry should be updated in the Core NPCs document to reflect their new lore of being the first god created.",
+          "The response should state Virgo is described as an imperfect demi-god, as opposed to a fully formed deity.",
+          "The response should state Sagittarius's entry should be updated in the Core NPCs document to reflect her new lore of being an orphan chosen to be deified into a nature goddess.",
+          "The response should state Sagittarius's new lore states she died during the deification process.",
+          "The response should state Sagittarius's new lore states she goes through a yearly death-rebirth cycle in the winter-spring.",
+          "The response should state Sagittarius's new lore describes her as a brainwashed girl around 16 years old.",
+          "The response should state that it was decided after Sagittarius's creation that future candidates for ascension would need to be raised for longer under the Hand of God's indoctrination before future deification attempts.",
+          "The response should state the new lore states \"Penelope was to be the final orphan\", as her role as god of dreams was meant to extend the Hand of God's influence.",
+          "The response should state the new lore states Penelope, Scarlett, and Lionel were selected simultaneously to intern under the Hand of God together.",
+          "The response should state Penelope died a few months ago.",
+          "The response should not claim Penelope was not deified due to her death, because other deities in the pantheon were deified postmortem and the documents never say whether or not Penelope received the same treatment.",
+          "The response should not claim any lore found outside of the Session Notes document is equally or more current than lore within it. For example, the original Hand of God and Deck of Players lists are in the WIP section of the Core NPCs document, and take secondary priority to Session Notes, so they should not be stated to be more current than the Session Notes.",
+          "The response should include an actionable list of updates to be made to the Hand of God list in the Core NPCs document."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_revision_work', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v2",
+            "key": "default_calendar_id",
+            "value": "cal_revision_work",
+            "stale_value": "cal_revision_personal"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_revision_work",
+          "title": "Review 2e47306c",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_revision_work",
+        "title": "Review 2e47306c",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "cal_revision_personal"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

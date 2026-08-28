@@ -1,0 +1,338 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_8",
+  "turn_id": "turn28",
+  "turn_index": 28,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "623b66d1-8524-9785-d9ab-bc51a52390aa",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 105,
+    "source_sha256": "09d79c5e9f2df4bf11d8904eb465f09467020ce9e542c3ded5127be055aec130",
+    "source_metadata": {
+      "task_id": "623b66d1-8524-9785-d9ab-bc51a52390aa",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Community Interactions"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "**Thread 1:**\nKeplerLife -\n\nLavaroller: When you destroy an item, this gains +50/100 Burn for the fight.\n\nPreach!!!\n\nTornTownHHH -\n\nomg they took it out back and blew its head off lmao\n\nKineticMage456 -\n\nHuge change, still sounds good with both bombs and the small repair item.\n\nallbreaker -\n\nNah not really, repair drone, parts picker, nitro all got cd nerfs, launch tower is gone, ice bomb doesn't start till gold tier. It needed to happen but this is the heaviest I've seen a build get hit with the nerf hammer.\n\nSomehow seeker drone got off scot free though? That one's a headscratcher\n\n**Thread 2:**\n\nBouncysquish -\n\nWhoa. Clamera and Holsters finally nerfed to no longer be start of combat.\n\nSuper_Truffle_9821 -\n\nHuge nerfs for both of those items. Holsters is thrown into nearly every Vanessa build right now, so it was definitely too good.\n\nfouriersdemon\n\nHell I've had Holsters on several non-Vanessa runs because it's a mobster drop (Elite Duelist I think?) and the apparel vendor.\n\nSuper_Truffle_9821\n\nTrue! If I find it randomly I often squeeze it in to whatever build I'm making at the moment on any character.\n\n**Thread 3:**\n\nSuper_Truffle_9821 -\n\nOrange Julian\n\nRedesigned\n\nYour Weapons gain Damage equal to half the Gold you have gained this run.\n\nSo basically, it's half as effective as it was, but it's retroactive to all the money you've made the entire run, so you don't have to build it up. Orange Julian actually a viable buy in later days as opposed to now when if you don't get him by day 3-4 you almost never buy him.\n\nveggie_blast -\n\nThank god! Weapons build felt like the lives or died on whether you found Julian/Figurehead early or not. At least now the item ain’t a dead draw.\n\nallbreaker -\n\nYeah looks like they did this with all cash scaling items, cash cannon and monocle do the same\n\nSmudgyo -\n\nSeems like a straight up buff to cash cannon, and it was decent last patch too.\n\n**Thread 4:**\n\ntopconfidential -\n\nMid to late game\n\nThe \"gold you have gained this run\" changes to Pyg items (cash cannon, monocle, oinkment) seem potentially really nuts, especially the changes to cash cannon. Granted, they did nerf Pyg's econ a bit this patch.\n\nBees might be a viable archetype again? The major bummer is that the redesign forces you to wait 2 days to get to 3 bees so you're basically holding 5 stash slots hostage until you can make the switch and then you have to have a big day of buying/selling property to make the switch worth it and you're still matchup dependent.\n\nNotably beehive also can charge Beast of Burden and Cargo Shorts now.\n\nFreeze got nerfed again? any property + diamond Snowglobe + diamond yo-yo + diamond piggles board now almost goes infinite. Booby Trap might be quite good in igloo builds - it solves the startup time issue that build has. The nerf to cold room hits heavy though. Snowmobile now fully charges in 2 freezes at every tier which might just make it good enough.\nEarly game\n\nCrook and regal blade look dead to me. Dog looks viable again, though the chocolate event is gold now, so you'll rely on pitchfork. Maybe we see more dog/scarf builds again.\n\nThe tea set buff makes it so there's actually a reason to play burn Pyg again and so does the burn buff. Vanessa burn will still be far superior to it but at least it's a buff.\n\nMy prediction: weights are still going to be the premier early game line for Pyg. They were already very good and getting yo-yo down to silver makes it a lot stronger.\nMisc\n\nMy favorite change is that shipment now gives non-Pyg items only. Yes ofc duping a yo-yo was fun but this is imho a better design. I just wish they removed loot items from the random small item pool. It feels so bad to get an event or shipment and get a loot item that sells for 2 regen.\n\n456broom -\n\nI see 5-6 buffs to pyg's eco and 3 nerfs. Overall I think his eco will be improved, and that with the persistent money gain mechanic to optimizing eco will be quite important even in runs where you haven't seen those sorts of items yet.\n\nCrook looks terrible, regal blade looks okay. It's much less of a hard commit but you don't instantly win your early fights with it anymore.\n\nI'm not convinced tea set changes are a buff. It certainly makes it work quite differently, but taking the burn off the item itself means you need either a matchbox or two other burn items to get a meaningfully better effect than before. I predict the item will still be mediocre and very niche, which is a terrible place for an item to be at - they really need to be somewhere on the range from broad and mediocre to niche and strong, where the more niche the item is the more powerful it can be.\n\ntopconfidential -\n\nWait which 5-6 econ buffs do you see? I just see business card and maybe dagger. Safe doesn't seem like a big buff - that item was money tree fodder and occasionally free money at Barkun. Pinata also isn't really econ, it's still net negative unless you have a pawnshop or dagger?\nLandscraper, dagger, pawnshop, vineyard, gym all got nerfed for econ. I guess you can argue dagger to silver is a bigger buff than the nerf to its value scaling at diamond.\n\nI think regal blade is properly dead. It winning you early fights was the main reason to pick it up early on and complete the quest. If it can't do that you're not picking it up early and that means you don't already have its quests somewhat completed by the time that hp and value scaling become relevant.\n\nThe major issue with tea set was that you needed to get it to gold for it to do anything - now it gives double the burn buff at silver. Yes you need the other burn items but you did before, too. I'm very positive this is a buff. It will play well with the redesigned Vineyard as well bc slow is really valuable for burn comps.\n\n456broom -\n\nBusiness card, safe, pinata, pawn shop, jabalian dagger, and crystal bonsai (this is the sketchy one that makes it 5-6 not just 6, the item is reliably better and that improves eco since it's an eco item, but not by much).\n\nI think the gym change is not a big eco nerf since gym wasn't an eco item in the sense that you use it to net gain gold. You used it to gain max HP then cashed it in for some gold refund when you pivot off it. So it kinda matches up to the tiny bonsai eco buff.\n\nRegal blade is just fine. It's less all in on that first quest, but the quest is easier to achieve and still provides a solid boost to winning early fights. Weaker than before but reasonably so.\n\nTea set only gives a better buff than before at silver if you have two other burn items or a matchbox, or another max HP gain item. I can't really see it boosting the other max HP gain items into a proper burn build synergy either since actually acquiring a tea set is difficult to target due to its typing. I will say hogwash at silver does present a potentially strong option for this though, and obviously it's quite good if you get hot stones and matchbox alongside it specifically. Tea set hogwash uwashiwali matchbox would be a pretty dirty lineup.\n\ntopconfidential -\n\nGotcha, so you're counting pawn shop being moved to bronze as a buff (the value scaling was nerfed). Pinata and safe are hardly making up for the nerf to top end econ scaling on pawn shop, land scraper and vineyard. They're hardly econ to begin with. I think this is an overall nerf to econ. For the purposes of the \"gold you've gained this run\" Pyg's gym nerf is pretty big. It allowed you to both gain a lot of HP while also making reasonable gold gains back. At gold it made every silver small effectively trade evenly. I guess you could make the same argument with dagger and the buff to pinata except that's not giving you HP on top. I do think you'll often buy dagger on day 2 or three now once you've set up most of your build.\n\nI'm not going to convince you on regal blade it sounds like. We'll see.\n\nYou weren't playing tea set without at least two other burn items before anyways. If you were, you weren't winning many fights. You play tea set + hot stones + ladle &amp;/ match box &amp;/ fiery small item + succulent. That's the early build. I don't think you take this past the early mid game but you def have some more lines available now with hogwash + bird like you said and vineyard + heal/slow spam like I said.\n\nFastMage207 -\n\n“Heat Shield (New) Spawns on Dooley, Jules, and Stelle Your Burn items have +[--/2/3/4] Burn for each Shield item you have”\n\nI wonder why they didn’t give this to Pyg as well?\n\ntopconfidential -\n\nyeah that skill seems insane, especially on Dooley and Jules. **Thread 5:**\nhoopdreams88 -\n\nStelle lost a lot of good tools, not only lava roller but early game essential stuff like flycyle being a rare non-adjacent targeted start fly, all the regen items and targetting drone my beloved. Curious to see how it affects her\n\nLochNessKing -\n\nStelle was already less consistent after the addition of destroy items. Just too many builds without overlap making it harder to transition from mid to late game. Now some of the builds are also nerfed pretty hard, Stelle becomes probably one of the weaker heroes unfortunately. I have to find a new main.\n\nmegashatter -\n\nYeah the flycycle nerf is a damn tragedy. What have they done to my boy\n\nTargeting drone too, that one hurt\n\n**Thread 6:**\n\nPageTurner -\n\nLol Jules has truly become the build burn and have as many medium payoffs to flex as possible in the early game, now we even have crit burn spice rack pivot. Haste burn, slow burn, we just need a silver medium that unlocks burn scaling on freeze at this point lol.\n\naria92 -\n\nTime to hold half burn item for jules on dooley\n\n**Thread 7:**\n\nWhatWouldJackShephardDo -\n\nHmmm, I am confused, how is the cash cannon a redesign? I thought it already scaled that way?\n\nmedicallynice -\n\nKind of reads like it would work retroactively now (a day 7 cannon counts gold you’ve gained to that point)\n\nTroggy -\n\nIt's now retroactive, so if you find one on day 6, instead of starting at 50 damage, it will be fully scaled based on your previous days.\n\nfantasticfib -\n\nNo, right now both cannom and dagger scale only with the money you get after you have them. The change make them very viable pivot options for rich pygs.\n\ncrdstk -\n\nnow items like this and orange julian will buff based on the entire game, including before you bought them. instead of now only buffing based on what you do after purchasing them\n\n**Thread 8:**\n\nSweet_Truffle_5829 -\n\nOk, is Beehive insane now or am I tripping? And Pawn Shop starting at bronze is going to make a lot of giant Pygs.\n\n456broom -\n\nPawn shop starting at bronze with less value per sold item at higher ranks is going to make the item purely an eco item. It'll be too hard to stack high if you pick it up later, and early on you can't actually make enough sales for it to get big enough to be useful on board.\n\nFor it to match a mediocre bronze per slot value of 4 per slot second by the time the sandstorm arrives it would need 36 value. Even by the end of day two this would be exceptionally difficult to achieve.\n\nThe item will be purchased so that you get +1 gold per item sold until you have to cash it in, which will be good, but you won't see it on any boards unless the pyg screwed up finding a proper item to hold that slot.\n\nMajor-Impression-404\n\nIt's nerfed. \nPatch Preview: March 4\nPatch 12.0: Enter the Hunter\nSEASONAL UPDATES\n\n    Prize Pass has been updated with the following free cosmetics:\n        Level 20: Timerbline Glyph's Card Back\n        Level 40: Talon Talent Karnok\n    Chests\n        The cosmetic chest graphics have been updated to be generic instead of Stelle themed\n        The cosmetics from the previous Prize Pass has been added to the Chest\n        Chests additions\n            Boreal Guardian (Carpet)\n            Owl and Squirrel (Carpet)\n            30 Karnok item skins\n    Store\n        New Karnok cosmetics are now available for Gems in the Store\n\nLEADERBOARD REWARDS\n\n    Leaderboard Rewards have been given out to the following 1000 Players:\n        Crash Site Champion (Top 10)\n        Crash Site Paragon (Top 100)\n        Crash Site Elite (Top 1000)\n\nQUALITY OF LIFE CHANGES\n\n    Enchantments have been separated from item titles in tooltips\n    While in windowed mode, players can now resize their window by dragging the edges or corners\n    Videos can now be skipped by any keyboard input\n\nGAMEPLAY CHANGES\n\n    While not playing as Jules, you can now get Heated and Chilled Slots during Level Up, if you have an item that requires Heated or Chilled\n        You can get a maximum of 1 of each of these\n    While not playing as Karnok, you can now get Karnok’s basic Rage Skill during Level Up, if you have an item that requires Rage to function\n    Slightly increased the Max HP Gained in the first 8 Levels (+50 each)\n    Adjusted the way “Doubling” and other percentage-based triggered effects work so they no longer double dip with persistent percentage-based bonuses, for example:\n        Obsidian Atlas Stone would more than double its damage on use, rather than double, because it’d take the buffed value to calculate the “double” buff, and when applied, this buff would then also be buffed by Obsidian’s doubling effect\n        Similarly, Dishwasher and Fruit Press will no longer cause Fruit Press' damage to scale much higher than expected\n    Persistent Percentage Max Health Gains now function additively\n        Two Silver Belts (+50% Max Health) previously would give 125% more Health and now gives 100% more Health\n    Reduced the Burn Decay rate\n\nNEW ENCOUNTERS\n\n    Anaconda (New)\n        Day 9 Monster\n        Skill: Honed In\n            When you use a Weapon, give your leftmost Weapon +[5/10] Damage for the fight\n    Outlands Terror (New)\n        Day 10 Monster\n        Skill: Beast Unleashed\n            Your leftmost Weapon has +Damage equal to its Crit Chance\n            Your rightmost Weapon has +Damage equal to your Rage\n    Wildman (New)\n        Day 7 Monster\n        Skill: Frontier Living\n            At the start of each day, get a Rage item\n    Unibou\n        Day 7 Monster\n        Skill: Lone Charge\n            When you Enrage, deal Damage equal to 50/100% of the Shield of your highest Shield item\n    Wild Boar\n        Day 4 Monster\n        Skill: Feeding Frenzy\n            When you use a Food, gain 15 Rage\n            When you Enrage, Haste your Food for 1/2/3 second(s)\n    Wolverine\n        Day 8 Monster\n        Skill: Ferocious Bite\n            Your slowest Weapon has +Damage equal to its Crit Chance\n    Worry Wart\n        Day 4 Monster\n        Skill: Slippery Fella\n            Your Slowed items have their Cooldown reduced by 5/10/15%\n\nEXPEDITION CHANGES\n\n    Expeditions\n        Expeditions now consume the Ticket upon entering\n    Eating Contest\n        Starts at Gold-tier (was Bronze-tier)\n    Jules' Cafe\n        No longer offers Heated and Chilled slot options, as these are now part of Level Up\n    Tinker\n        Can now spawn for Vanessa\n\nDOOLEY\n\n    Atomic Clock\n        Gains the Tool type\n    First Aiden\n        Heal to 10/20/40/80 (was 20/40/60/80)\n    Flint Stones\n        Redesigned\n        Starts at Bronze-tier\n        Cooldown to 6\n        Burn to 4/6/8/10\n        When you use another Relic or Tool, Charge this 1 second\n    Forklift\n        This has +[125/250] Damage for each unique Type on your other items\n        (was the specific tag-counting version)\n    Hydraulic Press\n        At the end of each fight, permanently destroy the item to the left of this, gain [2/4/6] Gold, and this gains that item’s Types\n        (was At the end of each fight, permanently destroy the item to the left of this, and this gains that item’s Types)\n    Kinetic Cannon\n        Corrected an issue where this would not Charge itself if it gained the Core tag\n    Propeller Hat (Redesign)\n        Gains the Weapon type\n        Cooldown to 4\n        Deal 10/20/30 Damage\n        When you use a Core, an item starts Flying\n        (was At the start of each fight, your Cores start Flying)\n        When you use a Flying item, Haste an item for [1/2/3] second(s)\n\nJULES\n\n    Apron\n        Shield to 40 (was 20)\n    Azakan Stew\n        Heated: Burn to 4 (was 3)\n    Banu Leaves\n        Shield to 20/30/40/50 (was 10/20/30/40)\n    Basket\n        Quest 1: 8 Food Required (was 12)\n        Quest 2: 15 Food Required (was 24)\n        Quest 3: 30 Food Required (was 48)\n    Corkscrew\n        Starts at Gold-tier\n        Cooldown to 4/3 (was 5/4/3)\n    Decanter\n        Starts at Silver-tier\n        Charge a Food item for 2/3/4 seconds (was 1/2/3/4 seconds)\n    Dragon Steak\n        Cooldown to 7/5 (was 8/6)\n        Burn to 10 (was 5)\n    Fruit Press\n        Damage gain from Food use to 10/15/20 (was 5/10/15)\n    Giant Sub\n        Cooldown to 8/6 seconds (was 6 seconds)\n        When you use a Tool, Charge this 2 seconds (was 1/2 seconds)\n        Heated: Burn equal to this item's Regen (was Heated: Burn equal to your highest Burn Food)\n    Imu\n        Burn to 4/6/8 (was 2/4/6)\n        Heated: When you Slow, Burn to 4/6/8 (was 2/4/6)\n    Meat Tenderizer\n        Starts at Gold-tier\n        Cooldown to 4/3 (was 5)\n        Deal 10/20 Damage (was 10/20/30)\n        Reduce the Cooldown of adjacent Food by 10% for the fight (was 5/10/15%)\n    Mouse Trap\n        Gains the Trap type\n    Saffron\n        Starts at Gold-tier\n        Shield to 25/50 (was 5/10/15)\n    Spice Rack\n        Crit Chance Scaling to 5/10/15 (was 10/15/20)\n        When you Crit with an adjacent item, your Burn items gain +5/10/15 Burn for the fight\n        (was When you Crit with an adjacent item, Charge another item 1 second)\n    Trail Mix\n        Quest 1: 10 Food Required (was 15)\n        Quest 2: 20 Food Required (was 30)\n    Zarlic\n        Burn to 2\n        Haste 1/2/3 Food for 2 seconds (was 1/2/3 for 1 second)\n\nMAK\n\n    Athanor\n        Starts at Silver-tier\n        When you use a Potion, Burn [--/8/16/24] (was 15/25)\n        At the start of each day, upgrade a lower-tier Potion and get a Catalyst\n        (replaces Get a Catalyst)\n    Black Rose\n        Regen to 2 (was 1)\n    Cellar\n        Starts at Bronze-tier\n        Regen to 1/2/4/8 (was 2/4/6/8)\n        No longer upgrades Potions\n    Floor Spike\n        Gains the Trap type\n        Cooldown to 9/8/7/6 (was 7)\n        Damage to 20 (was 20/40/60/80)\n        Poison to 2 (was 2/4/6/8)\n    Potion Potion\n        Can transform into a Potion from any Hero\n    Recycling Bin\n        Can transform Potions into Potions from any Hero\n    Show Globe\n        Starts at Bronze-tier\n        Burn to 6 (was 4)\n        Gain 6 Regen for the fight (was 4)\n        When you use a Potion, this gains +[3/6/9/12] Burn and Regen for the fight\n        (was 4/8/12)\n    Tome of Yyahan\n        Corrected an issue where Shiny was not working properly\n\nPYGMALIEN\n\n    No longer starts with an additional 50 Max Health compared to other Heroes\n    Beehive\n        Now gives a Bee when you buy it and at the start of each day\n        Now Charges all Drones\n        Now Buffs all Small Drones\n    Booby Trap\n        Reworked\n        Gains the Trap type\n        The first time an enemy uses an item each fight, Freeze it and [2/3/4] other items for 2 seconds\n    Business Card\n        Starts at Bronze-tier\n        Value gain to 1/2/3/4 (was 1/2/3)\n    Caltrops\n        Gains the Trap type\n    Cash Cannon\n        Redesigned\n        Deals Damage equal to twice the amount of Gold you have gained this run\n    Cold Room\n        Cooldown to 8 (was 6)\n        Freeze duration to 1 second (was 0.5 seconds)\n    Crook\n        Now passive only\n        Buff to 5/10/15/20 (was 4/8/16/24)\n    Crystal Bonsai\n        Cooldown to 3 (was 4)\n        Heals 1/2/3 times (was 2/3/4 times)\n    Dog\n        Quest 1: 15 Food or Toys Required (was 20)\n        Quest 2: 30 Food or Toys Required (was 40)\n        Quest 3: 45 Food or Toys Required (was 60)\n    Fort\n        Starts at Diamond-tier\n    Hogwash\n        Starts at Silver-tier\n        Cooldown to 6/5/4 (was 6/5)\n        Heals for 10/15/20% of Max Health\n        Max Health gain to 30/90/150 (was 100/150)\n    Jabalian Dagger\n        Starts at Silver-tier\n        Deal Damage equal to [--/1/2/3] times this item’s Value\n        When you sell an item, this gains +1 Value\n    Landscraper\n        Gains: This gains +[10/15/20] Value for the fight\n        (replaces out-of-combat scaling)\n    Monocle\n        Redesigned\n        Cooldown to 6/5/4\n        Shields equal to the amount of Gold you have gained this run\n    Oinkment\n        Redesigned\n        Cooldown to 6/5/4\n        Heals equal to the amount of Gold you have gained this run\n    Pawn Shop\n        Starts at Bronze-tier\n        You have +Max Health equal to [10/15/20/25] times this item’s Value\n        (was --/10/15/20)\n        When you sell an item, this gains +1 Value\n        (was 1/2/3)\n    Pinata\n        Now gives a Chocolate Bar, a Gumball, and a Small Toy\n    Pyg’s Gym\n        Redesigned\n        Cooldown to 8\n        (Active) Your Weapons gain +[3/6/9] Damage for each Weapon you have bought this run\n    Regal Blade\n        Damage to 50/100/150/200 (was 50)\n        Quest 1 now gives 150 Damage and requires 8 Weapons\n        (was 250 Damage and 10 Weapons)\n        Quest 2 now requires 7 Apparel (was 8)\n    Safe\n        Now has a rare chance to drop a Bar of Gold or Bag of Jewels\n    Shipment\n        Now only spawns items not from Pyg\n    Snow Globe\n        Cooldown to 7/6/5 (was 7)\n        Freeze to 1 (was 1/1.5/2)\n    Snowmobile\n        Cooldown to 6 (was 8/7/6)\n    Tea Set\n        No longer Burns\n        Burn buff to 2/4/6 (was 1/3/5)\n    Vineyard\n        Redesigned\n        Cooldown to 5\n        Multicast to 2\n        Heal for [5/10/15]% of your Max Health\n        When you Heal, Slow an item for 1 second(s)\n    Yetarian Club\n        Damage to 750/1500\n    Yo-yo\n        Starts at Silver-tier\n        Charge to 2/3/4 (was 3/4)\n\nSTELLE\n\n    Airplane Glue\n        Starts at Bronze-tier\n        10/20/30/40 (was 20/30/40)\n    Battle Balloon\n        Shield to 25/50/75 (was 20/30/40)\n    Boosted Saucer\n        Cooldown to 14/13/12 (was 12)\n    Darts\n        Cooldown to 2 seconds (was 4 seconds)\n        This deals half Damage\n        Every third hit deals triple Damage\n        (was every third hit Crits)\n    Firecrackers\n        Cooldown to 3\n        Ammo to 3 (was 5)\n        Damage to 20/40/60 (was 20/30/40)\n        3× Damage on Destroy (was 5×)\n    Flycycle\n        Redesigned\n        Your Shield items have +5/10/15/20 Shield\n        If they are Flying, double this\n    Hangar\n        When you use a Vehicle or Drone, your Flying Weapons and Shield items gain +[8/16/24] Damage and Shield for the fight\n    Hang Glider\n        Your Flying Weapons and this gain +[35/70] Damage for the fight\n        (was your Flying Weapons gain this bonus)\n    Hydrogen Tank\n        Cooldown to 6 (was 5)\n        When you use an adjacent Vehicle, Charge this 2 seconds\n        (was If you have a Vehicle, use this at the start of each fight)\n    Ice Bomb\n        Starts at Gold-tier (was Silver-tier)\n        Cooldown to 4 seconds (was 3 seconds)\n        Freeze 1/2 items for 1 second\n        (was 1/2/3 items)\n    Kite (Redesign)\n        Starts at Bronze-tier\n        Cooldown to 5 seconds\n        2/3/4/5 Small items start Flying\n        When a Small item starts or stops Flying, Charge it 1 second\n    Launch Tower\n        Starts at Silver-tier (was Gold-tier)\n        Cooldown to 6 seconds (was 8/7)\n        Charge your Vehicles and Drones 1/2/3 seconds\n        (was use another Vehicle)\n        Your Flying Weapons have +50/100/150 Damage\n        (was 50/100)\n    Lavaroller\n        Cooldown to 8/6 (was 10/8)\n        Destroy an adjacent item for the fight\n        Burn to 50/100 (was 40/80)\n        When you destroy an item, this gains +50/100 Burn for the fight\n        (was When you destroy an adjacent item, double this item’s Burn for the fight)\n    Oblivion Cannon\n        When an item is destroyed, this gains +200/400 Damage for the fight\n        (was Damage equal to 50/75 times the destroyed item’s Cooldown)\n    Oxygen Mask\n        Shield to 20 (was 10/20/30/40)\n        When you use another Tool or Vehicle, this gains +5/10/15/20 Shield for the fight\n        (was When you Shield, gain 3/6/9/12 Regen for the fight)\n    Parts Picker\n        Cooldown to 10/8 (was 8/7)\n        When this destroys an item, reduce the Cooldowns of your other items by 1 second for the fight\n        (was 0.5/1 second)\n    Pressure Heater\n        Cooldown to 6 seconds (was 5 seconds)\n        When you use another Tool or Vehicle, Charge this 2 seconds\n        (was 1 second)\n    Recycler Bot\n        Now also Shields for 20\n    Red Lantern\n        Starts at Silver-tier\n    Repair Drone\n        Cooldown to 4 seconds (was 3 seconds)\n    Security Drone\n        Cooldown to 8 (was 5)\n        Shield to 20/40/60/80 (was 25/50/75/100)\n        When an enemy uses an item, Charge this 1 second\n        While this is Flying, reduce its Cooldown by 2 seconds\n    Sky Anchor\n        Damage to 75/150/300\n    Space Laser\n        Gains the Ray type\n    Stelle’s Workshop\n        When you use a Tool, Charge 1/2 Vehicles or Drones 1 second\n        (was Charge a Vehicle or Drone 1/2 seconds)\n    Targeting Drone\n        Haste the item to the left of this for 2 seconds\n        (was 1/2/3/4 seconds)\n        That item gains +[3/6/9/12]% Crit Chance for the fight\n        (was 5/10/15/20%)\n    The Big One\n        Cooldown to 14 seconds (was 14/12)\n        When this is destroyed, deal Damage equal to 20/30% of your enemy’s Max Health\n        (was 40/50%)\n    Vortex Cannon\n        Cooldown to 5 seconds (was 4 seconds)\n\nVANESSA\n\n    Bilge Worm\n        Renamed from Hate Leech\n        Redesigned\n        Gains the Aquatic and Weapon types\n        When your enemy uses their leftmost item, deal 10/20/30/40 Damage\n        Lifesteal\n    Bladed Hoverboard\n        Damage to 20/40/60 (was 30/50/80)\n    The Boulder\n        Gains the Trap type\n    Butterfly Swords\n        Cooldown to 6 (was 7/6/5)\n    Calico\n        Cooldown to 6 (was 7)\n        No longer deals double Crit Damage\n    Cannon Ball\n        Adjacent items have 2/3/4 Max Ammo (was 1/2/3)\n    Clamera\n        Starts at Silver-tier\n        Cooldown to 7/6/5 (was 7/6/5/4)\n        The first 2/3/4 times your enemy uses an item each fight, use this\n        (was At the start of each fight, use this)\n    Concealed Dagger\n        Starts at Bronze-tier\n        Cooldown to 4 seconds\n        Deal 10/20/30/40 Damage\n        Haste an item for 1/2/3/4 seconds\n        At the start of each fight with this, gain 1 Gold\n    Coral\n        Cooldown to 5 (was 6)\n    Crow’s Nest\n        If you have only one Weapon, it has Lifesteal and is affected by Slow for half as long\n        (was If you have exactly one Weapon, that Weapon has Lifesteal)\n    Cyber-sai\n        Starts at Silver-tier\n        Deal 10/20/30 Damage (was 10/20/30/40)\n        When you Crit, a Weapon gains +5/10/15% Crit Chance for the fight\n        (was The first 2/3/4/5 times you Crit with this each fight, you take no Damage for 1 second)\n        When a Weapon’s Crit Chance increases, it gains 5/10/15 Damage for the fight\n    Diving Helmet\n        Redesigned\n        Starts at Gold-tier\n        Cooldown to 8\n        Shield to 50/100\n        Charge adjacent items 1/2 second\n        When you use another Aquatic item, Charge this 1/2 second\n        Adjacent items are Aquatic in combat\n    Elemental Depth Charge\n        Gains the Trap type\n    Fishing Net\n        At the start of each day, get a Small Aquatic or Loot item from any Hero\n        (was At the start of each day, get a Piranha)\n    Flame Signal\n        Renamed to Bonfire\n    Holsters\n        The first time you use an item each fight, Haste your Small items for 2/3 seconds\n        (was At the start of each fight, Haste your Small items for 1/2 seconds)\n    Honing Steel\n        Cooldown to 3 (was 4)\n        Your leftmost and rightmost Weapons gain +5/10/15/20 Damage for the fight\n        (was The Weapon to the right of this gains +6/12/18/24 Damage)\n    Ice Pick\n        Cooldown to 4 (was 5)\n    Iceberg\n        Starts at Diamond-tier (was Gold-tier)\n        When an enemy uses an item, Freeze it for 1 second\n        (was 0.5/1 second)\n    Illusoray\n        Cooldown to 6 (was 7)\n    Javelin\n        Cooldown to 4 (was 5)\n        Deal 50/100/150 Damage (was 120/180/240)\n        When you Crit with this, Haste your other items for 2 seconds\n        When this is reloaded, it gains +50% Crit Chance for the fight\n        (was gains 40/60/80 Damage)\n    Kusarigama\n        Damage and Scaling to 4/8/12 (was 5/10/15)\n    Life Preserver\n        The first time you would be defeated each fight, Heal 200/500/1000/2000\n        (was 200/600/1200/2000)\n    Orange Julian\n        Redesigned\n        Your Weapons gain Damage equal to half the Gold you have gained this run\n    Piranha\n        Starts at Bronze-tier\n        Cooldown to 8/7/6/5 seconds (was 6)\n        Deal 20 Damage (was 6/12/18/24)\n        Base 20% Crit Chance was removed\n        When you use another Friend or Food, Charge this 1 second\n        (was this deals double Crit Damage)\n    Pistol Sword\n        Damage to 15/30 (was 24/32)\n    Rowboat\n        Now requires 7 Types (was 5)\n    Scimitar of the Deep\n        Damage to 20 (was 20/40/60)\n        When you Crit, Poison equal to half this item’s Damage\n        (was 20%)\n        When this is Hasted, your Poison items gain +3/6/9 Poison for the fight\n        (was 2/4/6)\n    Seadog Saloon\n        Starts at Silver-tier\n        Cooldown to 6/5/4 (was 5/4)\n    Sextant\n        When you Haste, an item gains 5% Crit Chance for the fight\n        (was Adjacent items have 15/30/50% Crit Chance)\n    Shark Claws\n        Your Weapons gain +10/20/30/40 Damage\n        (was Your other Weapons)\n    Sharkray\n        Starts at Silver-tier\n        Redesigned\n        Cooldown to 6\n        Damage to 20\n        When you Haste a Friend, your Friends gain +5/10/15 Damage and +1/2/3 Poison for the fight\n    Swash Buckle\n        Crit bonus to 15/30% (was 25/50%)\n    Spyglass\n        When you Slow, an item gains +10% Crit Chance for the fight\n        (was Adjacent items have 25/50% Crit Chance)\n    Submarine\n        Deal 60/120/240 Damage (was 50)\n        If this is your only Weapon, it is affected by Freeze and Slow for half as long\n    Submersible\n        Redesigned\n        Cooldown to 5\n        Your leftmost and rightmost Aquatic Weapon and Shield items gain +10/20/30 Damage and +10/20/30 Shield for the fight\n        If you have another Vehicle or Large item, this item’s Cooldown is reduced by 2 seconds\n    Tripwire\n        Gains the Trap type\n    Turtle Shell\n        Starts at Gold-tier\n        Shield to 20/40 (was 25)\n        Your Shield items gain +20/40 Shield for the fight\n        (was 10/15/20)\n\nSKILLS\n\n    We are reducing Max Health scaling and standardizing some numbers.\n    Arms Dealer\n        Max Health +10/20/30/40 (was 20/30/40/50)\n    Backroom Dealings\n        Max Health +10/20/30/40 (was 25/50/75)\n    Bloodhound\n        Charge to 1/2/3 (was 2/3/4)\n    Bloodthirst\n        Damage +10/20/30/40 (was 20/30/40/50)\n    Brawler\n        Max Health +50/100/150 (was 75/150/275)\n    Cherished Keepsake\n        Disabled, superseded by Special Exhibit\n        Will return later in a different form\n    Creeping Chill\n        Now spawns on Stelle\n    Deadly Waters\n        Damage +10/20/30/40 (was 20/25/30/35)\n    Endurance\n        Heal +3/6/9 (was 5/10/15)\n    Expert Pilot\n        Damage/Shield +10/20/30/40 (was 15/30/45/60)\n    Farm to Table\n        Max Health +50/100/150 (was 75/150/275)\n    First Responder\n        Heal +20/40/60/80 (was 20/35/50/65)\n    Follow-up Care\n        Heal +20/40/60/80 (was 20/35/50/65)\n    Hardened Shield\n        Redesigned\n        Your Shield items have +10/20/30 Shield for each Weapon your enemy has\n    Healthy Hoarder\n        Max Health +50/100/150 (was 75/150/275)\n    Heat Shield (New)\n        Spawns on Dooley, Jules, and Stelle\n        Your Burn items have +[--/2/3/4] Burn for each Shield item you have\n    I Would Eat That\n        Redesigned\n        Your leftmost item is a Food and has its Cooldown reduced by [3/6]%\n    Ice Bullets\n        Corrected an issue where this only worked on Weapons\n    Ice Smasher (New)\n        Your leftmost item is affected by Freeze for half as long\n        If you have exactly one Weapon, all your items are affected by Freeze for half as long\n    Inexorable\n        Bonus to 2/3/4% (was 2/4/6%)\n    Iron Sharpens Iron\n        Base Damage to 8 (was 3)\n        Scaling Damage to 1/2/3 (was 3/4/5)\n    It’s a Drone\n        Redesigned\n        Your leftmost item is a Drone and has its Cooldown reduced by [3/6]%\n    Like Clockwork\n        Redesigned\n        Your leftmost item is a Tech and has its Cooldown reduced by [3/6]%\n    Lifting\n        Disabled due to similarity with another Skill\n        Will return later\n    Makeshift Plate\n        Spawns on Dooley, Jules, and Stelle\n        Your Shield items have +[--/10/20/30] Shield for each Tool you have\n    Master Diver\n        Redesigned\n        Your leftmost item is Aquatic and has its Cooldown reduced by [3/6]%\n    Pack Infiltrator\n        Redesigned\n        Your leftmost item is a Dinosaur and has its Cooldown reduced by [3/6]%\n    Primal Rage\n        Renamed to Primal Energy\n        Damage +5/10/15/20 (was 10/15/20/25)\n    Protein Powder\n        Max Health +10/20/30/40 (was 20/30/40/50)\n    Pure Imagination\n        Redesigned\n        Your leftmost item is a Toy and has its Cooldown reduced by [3/6]%\n    Sharp Corners\n        When you use a Shield, your Weapons gain +[2/4/6] Damage for the fight\n    Sharpshooter (New)\n        Your leftmost and rightmost Weapon have +10% Crit Chance\n        If you only have one Weapon, it has double Crit Damage\n    Shatter\n        Damage +5/10/15 (was 15/20)\n    Slow Burn\n        Now spawns on Stelle\n    Special Exhibit\n        Now spawns on Mak (was only Dooley)\n        Redesigned\n        Your leftmost item is a Relic and has its Cooldown reduced by [3/6]%\n    Staying Power\n        Disabled due to similarity with another Skill\n        Will return later\n    Strength\n        Damage +5/10/15/20 (was 10/15/20/25)\n    Left-Handed and Right-Handed\n        Damage +10/20/30/40 (was 20/30/40/50)\n    Strong Arm\n        Damage 1/2/3 times Income (was 1/2/3/4 times)\n    Stop That\n        Slows all items for 1/2/3 seconds (was 2/4/6 items)\n    Streamline Weapon\n        Now spawns on Dooley and Jules (was only Vanessa)\n    Titanium Casing\n        Shield +5/10/15 (was 15/30)\n    Toughness\n        Shield +5/10/15/20 (was 10/15/20/25)\n    Frontal and Rear Shielding\n        Shield +10/20/30/40 (was 20/30/40/50)\n    Toxicity\n        Damage +2/4/6 (was 3/6/9)\n\n\n\nTask:\n According to these comment threads on a post about Patch 12.0 of The Bazaar, what is the general community reaction? Give me a sentiment breakdown per character (Pyg, Stelle, etc.) and provide a couple of quotes as evidence for each. Note if comments are consistent with the patch notes or are fueled by speculation and theory crafting.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 623b66d1' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_8.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_planner_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_planner_personal",
+        "title": "Review 623b66d1",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_planner_personal",
+      "title": "Review 623b66d1",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should include character-specific data for the characters: Pyg, Stelle, Jules, Dooley, Vanessa, and Mak.",
+        "The response should explicitly state that there is no community sentiment available for Mak in the provided threads, as he is not mentioned in the discussion logs.",
+        "The response should provide two quotes for Pyg (Pygmalien). For example, it could use such quotes as veggie_blast's comment on Orange Julian (\"Thank god! Weapons build felt like the lives or died on whether you found Julian/Figurehead early or not. At least now the item ain’t a dead draw.\") and topconfidential's comment on Cash Cannon (\"The \"gold you have gained this run\" changes to Pyg items (cash cannon, monocle, oinkment) seem potentially really nuts, especially the changes to cash cannon.\").",
+        "The response should provide two quotes for Stelle. For example, it could use such quotes as hoopdreams88's list of lost tools (\"Stelle lost a lot of good tools, not only lava roller but early game essential stuff like flycyle being a rare non-adjacent targeted start fly, all the regen items and targetting drone my beloved.\") and megashatter's comment on the flycycle (\"Yeah the flycycle nerf is a damn tragedy.\").",
+        "The response should provide two quotes for Vanessa. For example, it could use such quotes as Super_Truffle_9821's comment on Holsters (\"Holsters is thrown into nearly every Vanessa build right now, so it was definitely too good.\") and topconfidential's comparison to Pyg's burn (\"Vanessa burn will still be far superior to it but at least it's a buff.\").",
+        "The response should only provide one quote for Dooley. For example, it should use topconfidential's reaction (\"yeah that skill seems insane, especially on Dooley and Jules.\") as there are limited quotes that can support any ideas of overall sentiment.",
+        "The response should provide two quotes for Jules. For example, it could use such quotes as opconfidential's comment (\"yeah that skill seems insane, especially on Dooley and Jules.\") and PageTurner’s comment (\"truly become the build burn\").",
+        "The response should correctly identify that community comments about Orange Julian and Cash Cannon being \"retroactive\" (Thread 7) are consistent with the patch notes under Monocle and Oinkment (\"...equal to the amount of Gold you have gained this run\").",
+        "The response should identify the debate between topconfidential and 456broom in regards to Pyg's economy buffs versus nerfs in Thread 4 as being an example of theory-crafting or speculation.",
+        "The response should characterize the community sentiment for Stelle as \"Negative\" or \"Disappointed.\" For example, it should recognize the removal of key early-game utility items as being negatively experienced by the users.",
+        "The response should point out that the community's excitement for Jules' new \"crit burn spice rack pivot\" in Thread 6 is consistent with the redesign of Spice Rack mentioned in the patch notes.",
+        "The response should identify statements about Stelle being weak as speculation.",
+        "The response should identify statements about Vanessa and Pyg’s Tea Set as being consistent with the patch notes about holsters and Tea Set changes."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_planner_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should include character-specific data for the characters: Pyg, Stelle, Jules, Dooley, Vanessa, and Mak.",
+          "The response should explicitly state that there is no community sentiment available for Mak in the provided threads, as he is not mentioned in the discussion logs.",
+          "The response should provide two quotes for Pyg (Pygmalien). For example, it could use such quotes as veggie_blast's comment on Orange Julian (\"Thank god! Weapons build felt like the lives or died on whether you found Julian/Figurehead early or not. At least now the item ain’t a dead draw.\") and topconfidential's comment on Cash Cannon (\"The \"gold you have gained this run\" changes to Pyg items (cash cannon, monocle, oinkment) seem potentially really nuts, especially the changes to cash cannon.\").",
+          "The response should provide two quotes for Stelle. For example, it could use such quotes as hoopdreams88's list of lost tools (\"Stelle lost a lot of good tools, not only lava roller but early game essential stuff like flycyle being a rare non-adjacent targeted start fly, all the regen items and targetting drone my beloved.\") and megashatter's comment on the flycycle (\"Yeah the flycycle nerf is a damn tragedy.\").",
+          "The response should provide two quotes for Vanessa. For example, it could use such quotes as Super_Truffle_9821's comment on Holsters (\"Holsters is thrown into nearly every Vanessa build right now, so it was definitely too good.\") and topconfidential's comparison to Pyg's burn (\"Vanessa burn will still be far superior to it but at least it's a buff.\").",
+          "The response should only provide one quote for Dooley. For example, it should use topconfidential's reaction (\"yeah that skill seems insane, especially on Dooley and Jules.\") as there are limited quotes that can support any ideas of overall sentiment.",
+          "The response should provide two quotes for Jules. For example, it could use such quotes as opconfidential's comment (\"yeah that skill seems insane, especially on Dooley and Jules.\") and PageTurner’s comment (\"truly become the build burn\").",
+          "The response should correctly identify that community comments about Orange Julian and Cash Cannon being \"retroactive\" (Thread 7) are consistent with the patch notes under Monocle and Oinkment (\"...equal to the amount of Gold you have gained this run\").",
+          "The response should identify the debate between topconfidential and 456broom in regards to Pyg's economy buffs versus nerfs in Thread 4 as being an example of theory-crafting or speculation.",
+          "The response should characterize the community sentiment for Stelle as \"Negative\" or \"Disappointed.\" For example, it should recognize the removal of key early-game utility items as being negatively experienced by the users.",
+          "The response should point out that the community's excitement for Jules' new \"crit burn spice rack pivot\" in Thread 6 is consistent with the redesign of Spice Rack mentioned in the patch notes.",
+          "The response should identify statements about Stelle being weak as speculation.",
+          "The response should identify statements about Vanessa and Pyg’s Tea Set as being consistent with the patch notes about holsters and Tea Set changes."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_8.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_planner_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_planner_personal",
+          "title": "Review 623b66d1",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_planner_personal",
+        "title": "Review 623b66d1",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

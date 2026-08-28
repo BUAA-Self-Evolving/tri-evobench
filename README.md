@@ -107,6 +107,28 @@ python -m trievo_bench.l1_compat `
   --output runs/l1
 ```
 
+### L1-Life v2
+
+完整 L1-Life v2 数据包存放在 `benchmarks/l1_life_v2/`。适配器只将每回合的
+Agent-visible messages、可用工具 schema 和当前 stream 工作区传给 baseline；rubrics、GT 和 judge
+模板始终留在评测端。先检查数据包，再运行一条 stream 的指定回合：
+
+```powershell
+python -m trievo_bench.l1_life_compat --package benchmarks/l1_life_v2 --inspect
+
+python -m trievo_bench.l1_life_compat `
+  --package benchmarks/l1_life_v2 `
+  --stream stream-1 `
+  --turns 'turn1,turn2,turn3' `
+  --backend docker `
+  --image trievo-ubuntu:22.04 `
+  --baseline hermes `
+  --baseline-config tmp_hermes_l1_merged.override.json `
+  --output runs/l1-life-smoke
+```
+
+不指定 `--turns` 时只运行 `turn1`，避免误触发整条 60-turn stream。
+
 ## L2
 
 L2 adapter 用于检查和运行带私有 evaluator 边界的 Stream/Episode 数据包。

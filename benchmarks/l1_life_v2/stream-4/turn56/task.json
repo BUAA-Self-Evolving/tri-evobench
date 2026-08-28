@@ -1,0 +1,346 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_4",
+  "turn_id": "turn56",
+  "turn_index": 56,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "624fdb9b-11a5-5d17-e63d-1249bb0b4dc4",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 130,
+    "source_sha256": "2d711ddb7b3d4329a5654be660a4b44eee0a12f3c5ee66704307171da01f9fad",
+    "source_metadata": {
+      "task_id": "624fdb9b-11a5-5d17-e63d-1249bb0b4dc4",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "BBC\nAnimal testing\n11 Nov 2025\nThe picture shows a group of six white rabbits huddled closely together inside a wire enclosure. Their fur is very clean and soft-looking, and their ears are upright and pinkish on the inside. The rabbits are gathered around, eating a pile of green grass. They appear calm and are surrounded by a mesh fence, which forms the background of the image.\nGovernment sets out plan to phase out animal experiments\nThe plan follows up on a manifesto promise to work towards the phasing out the practice.\n\n12 Dec 2024\nFemale lab worker\nWhy 'digital twins' could speed up drug discovery\nAI can create digital humans and digital organs that can be used in clinical trials.\n\n5 Jun 2024\nA laboratory rat\nCould AI put an end to animal testing?\nArtificial intelligence systems are increasingly being used to help test new drugs and chemicals.\n\n3 Jun 2024\nA dog in a carrier on a tarmac\nUS dog breeder fined $35m after 4,000 beagles rescued\nThe fine is the largest ever issued under the US Animal Welfare Act, according to US prosecutors.\n\n27 Jun 2023\nChimp\nTouching moment chimp sees outdoors for first time\nVanilla, a 28-year-old chimpanzee, had never been outside of a cage or enclosure.\n\n17 May 2023\nA women with makeup being put on her face\nAnimal testing licences for makeup banned\nHome Secretary Suella Braverman says she recognises the concern around the testing on animals.\n\n11 May 2023\nA rat\nStop all animal cosmetic testing, government urged\nThe government insists testing remains banned in the UK but campaigners disagree.\n\n10 May 2023\nWoman applying concealer under eyes in front of hand held mirror\nAnimal tests for makeup ingredients allowed\nThe High court dismisses case brought by animal activists against a government change in policy.\n\n29 Apr 2023\nCamp Beagle\nDog centre worker terrified by protests - trial\nA dog breeding facility in Cambridgeshire wants a High Court injunction to stop animal rights protests.\n\nScience\nResearch Article\nGeneration of functionally competent testicular somatic cells from pluripotent stem cells\nAdd to reading list\nby Samuel Kim, Tashiko Aiko, Justin Bond Vol. 12, NO. 926 Feb 2026Open Access\nCellular interactions between germ cells and gonadal somatic cells are essential for the progression of gametogenesis. Here, we report a culture method for generating fetal testicular somatic cell–like cells (fTeSLCs) from embryonic stem cells. These ...\n\nResearch Article\nSTING–NF-κB signaling builds an influenza spillover barrier\nAdd to reading list\nby Ying Xioa, Freddie Trent, Maria Vasquez Vol. 391, NO. 678826 Feb 2026NO ACCESS\nInfluenza pandemics are often traced back to the spillover of avian influenza A viruses (IAVs) to humans. However, barriers against IAV transmission remain elusive. We demonstrated human stimulator of interferon genes (STING) as a transmission barrier ...\n\nResearch Article\nConvergent and lineage-specific genomic changes shape adaptations in sugar-consuming birds\nAdd to reading list\nby Pippa Matthews, Abdul Ali, Nathan Gerard Vol. 391, NO. 678826 Feb 2026NO ACCESS\nHigh-sugar diets cause human metabolic diseases, yet several bird lineages convergently adapted to feeding on sugar-rich nectar or fruits. We investigated the underlying molecular mechanisms in hummingbirds, parrots, honeyeaters, and sunbirds by ...\n\nResearch Article\nSensitive CAR T cells redefine targetable CD70 expression in solid tumors\nAdd to reading list\nby Hannah George, Mike Longwood, Catherine Sanders Vol. 391, NO. 678826 Feb 2026 : 896-905NO ACCESS\nSolid tumor antigen heterogeneity is a major challenge for cancer immunotherapies, including chimeric antigen receptor (CAR) T cells. Unlike CD19 for B cell malignancies, no target with pan-cellular expression in solid tumors and absence in normal vital ...\n\nResearch Article\nOrganism-wide cellular dynamics and epigenomic remodeling in mammalian aging\nAdd to reading list\nby Chen Ting, Feng Yun, Jiang Long ScienceVol. 391, NO. 678826 Feb 2026NO ACCESS\nTo investigate organism-wide cellular alterations and epigenomic dynamics during aging, we constructed a single-cell chromatin accessibility atlas spanning 21 mouse tissues across three age groups and both sexes. We found that around one-quarter of 536 ...\n\nResearch Article\nA cellular basis for the mammalian nocturnal-diurnal switch\nAdd to reading list\nby Beatrice O'Neil, Orion Jackson, Xavier Johnson ScienceVol. 391, NO. 678826 Feb 2026NO ACCESS\nEarly mammals were nocturnal while dinosaurs dominated the daytime. Mammalian transition to daytime activity accelerated after the Cretaceous-Paleogene extinction, but the underlying mechanisms remain unclear. We identified a conserved cell-intrinsic, ...\n\nResearch Article\nDifferent DNA repair pathways support intact or truncated insertions by R2 retrotransposon protein\nAdd to reading list\nby Collin Morris, Isaac Oldtown, Tracey Baron ScienceVol. 391, NO. 678826 Feb 2026NO ACCESS\nNon–long terminal repeat (non-LTR) retrotransposon proteins copy their RNA template into a genome through coordinated nicking and reverse transcriptase activities of target-primed reverse transcription. Mechanisms by which the first-strand complementary ...\n\nResearch Article\nReconstitution of sex determination and the testicular niche using mouse pluripotent stem cells\nAdd to reading list\nby Yumi Chiko, Ryota Jin, Daiki Kaiju ScienceVol. 391, NO. 678826 Feb 2026NO ACCESS\nProper differentiation of gonadal somatic cells is crucial for sex determination and the production of sex hormones and gametes, and reconstituting this process in culture would both deepen our understanding of this process and enable the generation of ...\n\nResearch Article\nInterbreeding between Neanderthals and modern humans was strongly sex biased\nAdd to reading list\nby Wendy Simms, Leslie Kreiger, Donald Sweeney ScienceVol. 391, NO. 678826 Feb 2026 : 922-925NO ACCESS\nSex biases in admixture and other demographic processes are recurrent features throughout human evolution. For admixture between Neanderthals and anatomically modern humans (AMHs), sex bias has been proposed as an explanation for the relative lack of ...\n\nScienceAdviser\nScienceAdviser: Rhapsody in blue? Color alters the perception of music\nAdd to reading list\nBy Carrie Trooper 25 Feb 2026\nToday in Science and science: Cyborgs tackle diabetes, why ice ages lost their cool, and more\n\nResearch Article\nBees flexibly adjust decision strategies to information content in a foraging task\nAdd to reading list\nby Selena Morrez, Carlos Rodriguez, John Hickory Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nWhen making decisions, animals often rely on multiple cues simultaneously. These provide complementary sources of information, which can increase the accuracy of decisions. In this study, we tested the decision and learning strategies of insects faced ...\n\nResearch Article\nDeciding for others alters metacognition leading to responsibility aversion\nAdd to reading list\nby Polly Stevens, Larry Bennett, Kevin Fields Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nPeople are often faced with choices whose outcomes will affect other individuals in addition to themselves. Being responsible for deciding on behalf of others alters choice behavior and increases delegation rates in decisions involving risk and ...\n\nResearch Article\nKIT supports small intestinal tuft cell hyperplasia\nAdd to reading list\nby Jill O'Hare, Michael Dennon Vol. 12, NO. 925 Feb 2026Open Access\nThe small intestine balances the competing tasks of nutrient absorption, immune tolerance, and defense through dynamic differentiation of short-lived epithelial cells. During helminth infection, interleukin-13 (IL-13) or IL-4 drive a 10-fold expansion of ...\n\nResearch Article\nEnteric botulinum neurotoxins facilitate infection by Salmonella and Shigella\nAdd to reading list\nby Adrian Mark, Anthony Perez, Jose Ignacio Vol. 12, NO. 925 Feb 2026Open Access\nBotulism is a life-threatening disease caused by botulinum neurotoxins (BoNTs) released by Clostridium bacteria. BoNTs induce a flaccid paralysis by blocking neurotransmitter release from peripheral cholinergic neurons via soluble N-ethylmaleimide–...\n\nResearch Article\nThe thermodynamic opportunities hypothesis: Metabolic temperature insensitivity across flatfish species\nAdd to reading list\nby Barbara Steele Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nThis study challenges widely held metabolic theory, which suggests that whole-animal metabolic rates increase with temperature because of its universal effects on the kinetics of the underlying biochemical reactions. Here, we show that metabolic rates ...\n\nResearch Article\nThe conserved noncoding sequence CNS11 is a master control region for Rorc transcription in type 17 immune cells\nAdd to reading list\nby Xiao Chang, Huang Zhao, Ming Wu Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nRetinoic acid receptor–related orphan receptor γt (RORγt) is the master transcription factor for type 17 immune cells, including T helper 17 (TH17) cells, group 3 innate lymphoid cells (ILC3s), RORγt+ regulatory T (Treg) cells, and RORγt+ γδT cells. ...\n\nResearch Article\nPlanar cell polarity emerges through polarized accumulation of Wnt11\nAdd to reading list\nby Oscar Trap, Jenifer Reed, Victor Mosaic Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nPlanar cell polarity (PCP) is established by asymmetric localization of core PCP components in each cell. Because some Wnt proteins can induce PCP in vertebrates, it has been proposed that Wnt concentration gradients provide spatial cues for ...\n\nResearch Article\nInflamed vessel–anchored release of H2 across the blood-brain barrier for ischemic stroke neuroprotection\nAdd to reading list\nby Fanny Hardy, Ethan Boggle, Richard Corn Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nIschemic stroke followed by reperfusion urgently requires safe and efficient cytoprotective strategies, a need still unmet by current pharmacotherapies. Nanotechnology holds promise for improved drug delivery to the brain, yet the efficacy of ...\n\nResearch Article\nPreclinical development of a well-defined semisynthetic glycoconjugate vaccine against Haemophilus influenzae type b\nAdd to reading list\nby Qin Yin, Xiu Yang, Mei Lin Qing Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nVaccines are the most effective method for preventing bacterial infections. Identification of the best hapten is an essential step in the development of third-generation Haemophilus influenzae type b (Hib) conjugate vaccines. A comprehensive ...\n\nResearch Article\nCoupled geomorphic and climate-driven biogeochemical processes regulate soil organic carbon stocks in agricultural terraces\nAdd to reading list\nby Vander Tull, Mickey Bridges, Nolan Cracker Science AdvancesVol. 12, NO. 925 Feb 2026Open Access\nAgricultural terraces are among the most widespread human-made landforms. They profoundly reshape soil landscapes and influence the carbon cycle, yet the extent and drivers of their impact remain highly uncertain. By integrating field observations from ...\n\nAnimal Welfare, Testing and Research of FDA-Regulated Products\nhttps://www.fda.gov/consumers/consumer-updates/animal-welfare-testing-and-research-fda-regulated-products\n… The U.S. Food and Drug Administration regulates human and animal medical products to ensure they are safe and effective. Products undergo different types of testing to determine their safety and effectiveness. These tests may include animal testing, and they almost always include other types of …\n\nAnimal Testing & Cosmetics\nhttps://www.fda.gov/cosmetics/product-testing-cosmetics/animal-testing-cosmetics\n… manufacturers sometimes ask about the use of animals for testing cosmetics. The following information addresses the … and finished cosmetic products prior to marketing. Animal testing by manufacturers seeking to market new … available alternatives, companies may determine that animal testing is necessary to assure the safety of a product …\n\nCosmetics Safety Q&A: Animal Testing\nhttps://www.fda.gov/cosmetics/resources-consumers-cosmetics/cosmetics-safety-qa-animal-testing\n… FAQs Main Page Does FDA require animal testing for cosmetics? The Federal Food, Drug, and Cosmetic … and finished cosmetic products prior to marketing. Animal testing by manufacturers seeking to market new …\n\nWith Broad Appeal, FDA’s Workshop on Reducing Animal Testing Hears from Experts on More Humane and Human-Relevant Testing Methods\nhttps://www.fda.gov/about-fda/regulatory-news-stories-and-features/broad-appeal-fdas-workshop-reducing-animal-testing-hears-experts-more-humane-and-human-relevant\n… on its earlier announced plan and roadmap to phase out the animal testing requirement for monoclonal antibodies and other … begin work on a roadmap whose goal, he says, is to “reduce animal testing in a way that’s meaningful and continues to …\n\nFDA-NIH Workshop: Reducing Animal Testing - 07/07/2025\nhttps://www.fda.gov/news-events/fda-meetings-conferences-and-workshops/fda-nih-workshop-reducing-animal-testing-07072025\n… July 7, 2025, the FDA hosted a hybrid workshop on reducing animal testing. The agenda focused on implementing novel … methodologies and other strategies to reduce the use of animal testing. Featured speakers from the FDA, NIH and …\n\nFDA Announces Plan to Phase Out Animal Testing Requirement for Monoclonal Antibodies and Other Drugs\nhttps://www.fda.gov/news-events/press-announcements/fda-announces-plan-phase-out-animal-testing-requirement-monoclonal-antibodies-and-other-drugs\n… groundbreaking step to advance public health by replacing animal testing in the development of monoclonal antibody therapies … and accelerate the evaluation process, while reducing animal experimentation, lowering research and development …\n\nFDA Encourages Development of New, Reliable Alternatives to Animal Testing in Sunscreen\nhttps://www.fda.gov/news-events/fda-voices/fda-encourages-development-new-reliable-alternatives-animal-testing-sunscreen\n… doses, routes of administration, labeling, and testing, under which an OTC drug in a given therapeutic … development, the FDA is committed to reducing reliance on animal testing. This commitment includes active collaboration … The FDA has taken a number of steps to reduce and minimize animal testing for sunscreens. For example, the FDA does not …\n\nFocus Area: Novel Technologies to Improve Predictivity of Non-clinical Studies and Replace, Reduce, and Refine Reliance on Animal Testing\nhttps://www.fda.gov/science-research/focus-areas-regulatory-science-report/focus-area-novel-technologies-improve-predictivity-non-clinical-studies-and-replace-reduce-and\n… Importance to FDA Animal studies are frequently used to assess certain aspects … to replace, reduce, and refine (the 3 Rs) dependence on animal studies by advancing development of, and evaluating … it regulates. The predictive value of current non-clinical testing approaches varies. Sometimes clinical evaluations …\n\nGuidance for Industry: Testing for Salmonella Species in Human Foods and Direct-Human-Contact Animal Foods\nhttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/guidance-industry-testing-salmonella-species-human-foods-and-direct-human-contact-animal-foods\n… process, pack or hold human foods or direct-human-contact animal foods intended for distribution to consumers, … guidances that in part, address environmental and egg testing for Salmonella Enteritidis as required by this final … (Salmonella spp.) in human foods and direct-human-contact animal foods, and the interpretation of test results, when …\n\nS4A Duration of Chronic Toxicity Testing in Animals (Rodent and Nonrodent Toxicity Testing)\nhttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/s4a-duration-chronic-toxicity-testing-animals-rodent-and-nonrodent-toxicity-testing\n… Guidance on the Duration of Chronic Toxicity Testing in Animals (Rodent and Nonrodent Toxicity Testing); Availability … Center for Drug Evaluation and … and Research … Drugs … S4A Duration of Chronic Toxicity Testing in Animals (Rodent and Nonrodent Toxicity Testing) …\n\nIntegrated Non-animal Testing Methods for Skin Sensitization Characterization of Chemicals\nhttps://www.fda.gov/science-research/fda-science-forum/integrated-non-animal-testing-methods-skin-sensitization-characterization-chemicals\n… the key events in skin sensitization, w … Integrated Non-animal Testing Methods for Skin Sensitization Characterization of …\n\nCVM GFI #149 (VICH GL33) Studies to Evaluate the Safety of Residues of Veterinary Drugs in Human Food: General Approach to Testing\nhttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/cvm-gfi-149-vich-gl33-studies-evaluate-safety-residues-veterinary-drugs-human-food-general-approach\n… treated with the drugs. International harmonization of testing requirements aims to assure that the development and registration of valuable animal drugs is achieved with maximum efficiency. The … guidance includes: 1) basic tests recommended for all new animal drugs used in food-producing animals in order to …\n\nDevelopment of Thrombogenicity Testing Methods for Medical Devices with Large Blood-Contacting Surfaces\nhttps://www.fda.gov/science-research/advancing-regulatory-science/development-thrombogenicity-testing-methods-medical-devices-large-blood-contacting-surfaces\n… current blood compatibility evaluations often rely on testing the devices in animals , which are costly, … in a less expensive and quicker manner as compared to animal testing. A better understanding and standardization of … in a less expensive and quicker manner as compared to animal testing. … Development of Thrombogenicity Testing …\n\nNew Approach Methods (NAMs)\nhttps://www.fda.gov/food/toxicology-research/new-approach-methods-nams\n… about the toxicity of a substance through rodent and other animal studies in which a substance in question was … effects to arise.  Given the limitations associated with animal testing, in recent years there has been interest in …\n\nPlatform and Reagent Extensions of a Salmonella Loop-Mediated Isothermal Amplification (LAMP) Method in Animal Food\nhttps://www.fda.gov/science-research/fda-science-forum/platform-and-reagent-extensions-salmonella-loop-mediated-isothermal-amplification-lamp-method-animal\n… … Scientific Poster … This study improves Salmonella testing capabilities in human and animal food by expanding the types of reagents and platforms … All tested combinations performed equally in animal food and will greatly enhance the efficiency of FDA’s …\n\nFDA Issues Warning Letters to Two Chinese Firms Regarding Data Quality and Integrity Concerns, Violative Lab Practices\nhttps://www.fda.gov/news-events/press-announcements/fda-issues-warning-letters-two-chinese-firms-regarding-data-quality-and-integrity-concerns-violative\n… issued warning letters to two Chinese nonclinical testing laboratories, citing both for laboratory oversight failures and animal care violations that raise concerns about the quality … citing both for laboratory oversight failures and animal care violations that raise concerns about the quality …\n\nCDER/Office of New Drugs Streamlined Nonclinical Studies and Acceptable New Approach Methodologies (NAMs)\nhttps://www.fda.gov/about-fda/center-drug-evaluation-and-research-cder/cderoffice-new-drugs-streamlined-nonclinical-studies-and-acceptable-new-approach-methodologies-nams\n… goal more effectively and efficiently than traditional animal testing. Furthermore, NAMs support CDER’s long-standing … the 3Rs (Replacement, Reduction, and Refinement) of animal testing in drug development, aligning with both FDA's …\n\nContainer and Closure System Integrity Testing in Lieu of Sterility Testing as a Component of the Stability Protocol for Sterile Products\nhttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/container-and-closure-system-integrity-testing-lieu-sterility-testing-component-stability-protocol\n… Device Evaluation at 240-276-3747; or CVM’s Office of New Animal Drug Evaluation at 301-827-6963. Additional copies of … you, manufacturers, for using methods other than sterility testing to confirm container and closure system integrity as … protocol for sterile biological products, human and animal drugs, and medical devices. This guidance document …\n\nEstablishment and validation of an in vitro cell-based assay to assess the biological activity of insulin products\nhttps://www.fda.gov/drugs/regulatory-science-action/establishment-and-validation-in-vitro-cell-based-assay-assess-biological-activity-insulin-products\n… insulin analogs that will support the transition away from animal testing of these important medical products. Why move away from animal testing methods for drugs? In vivo testing during …\n\n2018 NARMS Update: Integrated Report Summary\nhttps://www.fda.gov/animal-veterinary/national-antimicrobial-resistance-monitoring-system/2018-narms-update-integrated-report-summary\n… system that monitors enteric bacteria and select animal pathogens to determine if they are resistant to … on a case-by-case basis.  What has changed? Resistance in animal pathogens  The previous 2016–2017 Integrated Summary … 2018, NARMS began using a new antimicrobial susceptibility testing panel (CMV4AGP) for Enterococcus which has the …\n\nImplementing Alternative Methods\nhttps://www.fda.gov/science-research/advancing-alternative-methods-fda/implementing-alternative-methods\n… for regulatory use that can replace, reduce, and refine animal testing (the 3Rs), help prevent products with increased … regulatory use that can: 1) Replace, reduce, and refine animal testing (i.e., the 3Rs); and 2) Improve predictivity …\n\nFDA Releases FY 2022 Pesticide Residue Monitoring Report\nhttps://www.fda.gov/food/hfp-constituent-updates/fda-releases-fy-2022-pesticide-residue-monitoring-report\n… Fiscal Year 2022 (FY 2022) , summarizing findings from FDA testing of human and animal foods for 757 different pesticides and selected … Approximately 35% fewer human food samples and 37% fewer animal food samples were collected in FY 2022 compared with …\n\nMOU 225-25-012\nhttps://www.fda.gov/about-fda/domestic-mous/mou-225-25-012\n… Novel Alternative Methods, New Alternative Methods, or Non-Animal Models. These Parties share common interests and goals in developing NAMs to complement animal research in experimentation and catalyze the … which authorizes the use of certain alternatives to animal testing to obtain an exemption from the FDA to investigate …\n\nHuman organ chips for radiation countermeasure development\nhttps://www.fda.gov/emergency-preparedness-and-response/preparedness-research/human-organ-chips-radiation-countermeasure-development\n… the radiation effects on one specific organ system in animal models. Thus, there is a crucial need for more … qualification criteria, helping to reduce the reliance on testing in small animals and nonhuman primates (NHPs).   2021 … qualification criteria, helping to reduce the reliance on testing in small animals and nonhuman primates. … Human organ …\n\nImmunotoxicity Testing Guidance\nhttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/immunotoxicity-testing-guidance\n… identify the guidance you are requesting. Immunotoxicity Testing Guidance 1 Background In May 1995, the Office of … immune function. For this reason, tests in appropriate animal models may provide a more accurate picture of immune … increased reactivity to an antigen to which a person (or animal) has been previously exposed, with an adverse rather …\n\nNEWS FEATURE\n25 February 2026\nThe age of animal experiments is waning. Where will science go next?\nAdvances in organ and computer models are raising the prospect that some animal experiments could be eliminated. But there are still huge hurdles to overcome.\nBy Emily Park\nEmail Bluesky Facebook LinkedIn Reddit Whatsapp X\nOverhead view of three white mice in a plastic bowl being weighed in a lab. A small syringe lies on a pink vial holder on the right.\nGovernments have announced plans to reduce the number of animals, such as mice, used in experimental procedures. Credit: Michael Tran for The Washington Post/Getty\n\nLast November, the UK government announced a bold plan to phase out animal testing in some areas of research. Animal tests for skin irritation are scheduled for elimination this year, and some studies on dogs should be slashed by 2030. The long-term vision is “a world where the use of animals in science is eliminated in all but exceptional circumstances”, the government policy reads.\n\n\nWhy simply ending animal testing isn’t the answer in biomedical research\n\nOther nations are making similar moves. Last April, the US Food and Drug Administration (FDA) announced plans to make animal studies the “exception rather than the norm” in drug safety and toxicity testing in 3–5 years. The same month, the US National Institutes of Health (NIH) revealed an initiative to reduce the use of animals in research that it funds. This year, the European Commission plans to publish a road map to end animal testing in chemical safety assessments.\n\nEthical and animal-welfare concerns have long fuelled efforts to curb animal use in research — and now rapid advances in alternative scientific methods are accelerating the shift. These ‘new approach methodologies’ (NAMs) include devices known as organs-on-chips, 3D tissue cultures called organoids and computational models, such as artificial-intelligence systems. The number of biomedical publications using only NAMs grew from around 25,000 to 100,000 between 2006 and 2022, according to an analysis of studies on seven diseases by Animal Free Research UK, an organization that promotes the replacement of animal experiments1 (see ‘Alternatives on the up’). And China is investing heavily in this area: in 2024, it launched the Human Organ Physiopathology Emulation System, an infrastructure project dedicated to developing NAMs, backed with an investment of 2,640 million yuan (US$382 million).\n\nALTERNATIVES ON THE UP: chart showing that the number of publications reporting the use of new approach methodologies has risen to over 100,000 between 2003 and 2022.\nSource: Ref. 1\n\nProponents say that NAMs can be better than animals at mimicking human biology and predicting whether new drugs are safe and effective. Organs-on-chips and organoids are often created with human cells, and computational models can be designed using human data. The shift towards alternative models is “long overdue”, says Robery Hayes, a bioengineer at the Franklin Institute for Biomedical Innovation in Boston, Massachusetts, and a co-founder of BioSims Lab, a biotechnology company in Boston focused on organs-on-chips.\n\nBut NAMs are a long way from ousting all animal procedures in research, scientists say. Some biological systems are too complex and unpredictable to study without animals. And many of the alternative methods have yet to be validated — to show that they represent the system they are modelling accurately and reproducibly enough to satisfy drug and chemical regulators. “Not all of these [alternative] models are ready for prime time,” Hayes says.\n\nOn the decline\nEfforts to replace, reduce and refine the use of animals in research (known as the 3Rs) have been ramping up for decades; in some places, use of animals is already falling. Data from the United Kingdom show that the number of scientific procedures on animals fell from 4.14 million in 2015 to 2.64 million in 2024 (see ‘Falling numbers’). The total number of animals used in research and testing in the European Union and Norway dropped by 5% between 2018 and 2022. (The number used in the United States is hard to pin down because the law does not require reporting on rats, mice and fish.)\n\nFALLING NUMBERS: line chart showing the number of scientific procedures involving animals in the UK falling from more than 4 million in 2015 to 2.64 million in 2024.\nSource: Annual Statistics of Scientific Procedures on Living Animals, Great Britain 2024 (Home Office, 2025).\n\nIn the United Kingdom, around 76% of experimental animal procedures are for basic and applied research: understanding organisms, modelling disease and developing new therapies (see ‘What animals are used for’). Another 22% are part of regulatory procedures — mostly testing the toxicity and safety of new medicines and other chemicals before they can be used. Some 67% of all procedures involve mice or rats (see go.nature.com/3mzfkgw).\n\nWHAT ANIMALS ARE USED FOR: Pie bar showing how animals are used in scientific testing in the United Kingdom — 52% in basic research, 24% in applied research, 22% in regulatory work and 2% other.\nSource: Annual Statistics of Scientific Procedures on Living Animals, Great Britain 2024 (Home Office, 2025).\n\nBut these and other animals have limitations, especially when it comes to understanding and intervening in human diseases. Medicines that work in animal models during preclinical testing often prove ineffective in humans. This is one major reason that around 86% of investigational drugs fail in clinical trials, and why many researchers are focused on developing alternatives.\n\nTake sepsis, for instance, a severe reaction to infection. Researchers have developed more than 100 therapies for sepsis that looked promising in rodent models but that were ineffective in clinical trials. That’s partly because of differences in human and rodent immune systems and the difficulty of mimicking a complex condition that varies from one person to the next in inbred mice that are genetically similar and raised in uniform conditions.\n\nIncreasingly, researchers see NAMs as a way to help. Daniel Kim, a cardiologist and researcher at Pacific Coast University, California, and his team have been developing an approach that they dubbed “clinical trials in a dish”. This involves generating induced pluripotent stem cells (iPSCs) from a range of people with a medical condition, using these to grow cells or organoids and then testing whether potential drugs improve how the ‘diseased’ models function.\n\n\nAlternatives to animal testing are the future — it’s time that journals, funders and scientists embrace them\n\nIn one 2020 study, Kim and his team grew iPSCs and then endothelial cells — which line blood vessels — from members of a family carrying a mutated gene that can cause a common form of heart failure. Using these cells, the researchers were able to screen possible drugs and pinpoint one that helped to improve cardiovascular function in two members of the family with the mutation, and that might be used more widely. Integrating this method into a drug-development pipeline, says Kim, could help to reveal whether a drug works before animal testing, reduce the number of animals used and increase the success of clinical trials.\n\nStudies suggest that some NAMs are as good as, or better than, animal tests. BioSims Lab has developed an organ-on-a-chip system called Liver-Chip, a USB-stick-sized device in which human liver cells are grown in tiny fluid-filled channels and used to test whether potential drugs might cause liver damage. A 2022 study by the firm suggested that the chips could correctly identify compounds known to have caused liver injury with 87% accuracy, without falsely flagging harmless compounds as toxic. The chips also detected 12 of 15 liver-harming drugs that were previously, using animal models, deemed safe enough to proceed to clinical trials.\n\n\nAnimal research is not always king: researchers should explore the alternatives\n\nIn 2024, Liver-Chip was accepted in the FDA’s Innovative Science and Technology Approaches for New Drugs (ISTAND) pilot programme, which supports the advancement of tools for drug development. If approved, pharmaceutical firms could use the chip to test for toxicity in place of animal models and submit the data as part of a drug-approval application.\n\nSuch chips are highly specialized, however. Thomas Reed, a toxicologist at the NorthWest University in Seattle, and his colleagues developed a kidney chip that can reproduce aspects of acute kidney injury in humans6 and that is being considered for the ISTAND programme. But the device includes only one of the kidney’s more than two dozen cell types, he says. “It’s a reductionist approach, which allows us to study those cells in greater detail. But understanding what happens in the whole human kidney still requires animal studies,” he says.\n\nOrganoid options\nAnother popular alternative to animal testing is organoids — 3D living systems that capture many of the features of real tissues or organs.\n\nOver the past decade or so, researchers have created a wide array of organoids that can model human diseases, including cancers and genetic disorders such as cystic fibrosis — and used those to screen for possible drugs and test for toxicity. In a 2021 study, researchers generated human liver organoids using iPSCs. They used these to create a toxicity screening tool that detected substances that curbed the organoids’ bile transport and mitochondrial function. The assay was highly accurate when tested on 238 marketed drugs.\n\nCollage of six brain organoids in green, blue, purple and lilac.\nHuman brain models and other organoids could reduce the use of animals in research.Credit: Nancy Cumos, Irma Fravalovi, Randie Lab\n\nAnd a third alternative is computational models, in which researchers test how a drug behaves in silico. In 2021, a team developed a tool for testing whether a compound causes skin sensitization — an allergic reaction in people. This is a standard part of safety testing for chemicals in industrial and household products and medicines, and conventionally requires animal tests. The team built a virtual test using data on around 430 chemicals from previous human, mouse and laboratory studies, and showed that it could accurately identify chemicals with a 1% chance of causing a skin reaction. The tool was accepted as an approach for skin-allergy testing last year by the Organization for Economic Co-operation and Development, which sets internationally recognized guidelines for safety testing chemicals.\n\nResearchers hope that AI can help too. Several regulatory agencies, including the FDA and the European Medicines Agency (EMA), are working on integrating AI tools into their chemical or drug safety-assessment pipelines.\n\n\nIn 2023, researchers at the FDA’s National Center for Toxicological Research in Jefferson, Arkansas, and their colleagues used clinical data on more than 8,000 rats treated with 138 compounds to build a generative AI model called AnimalGAN. In a simulated experiment involving 100,000 virtual rats, the team showed that the model could correctly rank the liver toxicity of three drugs with similar chemical structures9. This approach is now part of a broader programme at the agency to advance the use of AI tools in toxicology.\n\nThe pharmaceutical industry is increasingly investing in NAMs. Laura Bennet, global head of pharmaceutical sciences at the multinational drug company NovaMedica in Basel, Switzerland, says that the firm has a growing number of studies using NAMs to test drug candidates in areas such as oncology and immunology. In 2023, the company launched the Institute of Human Biology, which is developing human model systems, including organoids, to speed up drug development. Animal data are still mandatory for most new drug applications for marketing approval in the United States and Europe, but the company has waivers to use NAMs data for 12 submissions to regulatory authorities, including the FDA and EMA, Bennet says. “There is much more openness to considering these alternative approaches.”\n\n\n\nTask:\nI want to learn more about why people test drugs on animals for my bio class. Do you think i could use these articles for it?"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course. Based on the collection of articles, news reports, and official documents you've provided, I think they are an excellent resource for your bio class assignment on why people test drugs on animals.\n\nHere’s a breakdown of why these materials are useful and a summary of the key points they make on your topic.\n\n### Can you use these articles?\n**Yes, absolutely.** This collection gives you a multi-faceted view of animal testing, covering:\n*   The historical and current reasons for using animals in drug testing.\n*   The ethical debates and animal welfare concerns.\n*   The scientific limitations of animal models.\n*   The rise of new alternatives (like organs-on-chips and AI) that are changing the landscape.\n\nYou can use them to build a comprehensive argument, presenting both the rationale for animal testing and the movement to find other methods.\n\n---\n\n### Summary of Key Points: Why Test Drugs on Animals?\n\nWhile the articles don't have a single section titled \"Reasons for Animal Testing,\" they clearly outline the motivations behind it. Here are the main reasons, synthesized from the text:\n\n**1. To Assess Safety and Effectiveness**\nThis is the primary reason. Before a new drug can be given to humans, its developers must demonstrate that it is safe and likely to work.\n*   An FDA document states: \"Products undergo different types of testing to determine their safety and effectiveness. These tests may include animal testing...\"\n*   A news feature explains that a significant portion of animal testing (22% in the UK) is for \"regulatory procedures — mostly testing the toxicity and safety of new medicines and other chemicals before they can be used.\"\n\n**2. To Understand Complex Biological Systems**\nAnimals, as living organisms, provide a complete biological system where researchers can observe how a drug affects multiple organs and systems at once.\n*   One scientist quoted in the news feature explains that while simplified models (like organ chips) are useful, understanding a whole organ like the kidney, which has over two dozen cell types, \"still requires animal studies.\"\n*   Animal models allow scientists to study the progression of diseases in a living system, which is difficult to replicate otherwise.\n\n**3. Historical Regulatory Requirements**\nFor decades, regulatory agencies like the U.S. Food and Drug Administration (FDA) have required data from animal studies to approve new drugs.\n*   The news feature notes that \"animal data are still mandatory for most new drug applications for marketing approval in the United States and Europe.\"\n*   This created a system where animal testing was the standard, default step in the drug development pipeline.\n\n**4. Limitations of Older Methods**\nBefore the development of advanced computer models and human tissue cultures, animal testing was the most reliable method available to predict how a substance might affect a human. The articles frame the current shift as a move towards more modern, human-relevant methods.\n\n---\n\n### How You Can Use This for Your Class\n\nYou can structure your assignment around the central conflict presented in these articles: the historical necessity of animal testing versus the emerging ethical and scientific push for alternatives.\n\n*   **Introduction:** Briefly introduce animal testing as a historical cornerstone of drug development.\n*   **Body Paragraph 1 (The \"Why\"):** Explain the reasons listed above—safety, efficacy, regulatory requirements, and the need for whole-system models. You can cite the FDA documents and the \"NEWS FEATURE\" article.\n*   **Body Paragraph 2 (The Problems):** Discuss the limitations. The articles provide powerful statistics, like the fact that **86% of investigational drugs that pass animal tests fail in human clinical trials**. This highlights the poor predictability of animal models. You can also bring in the ethical arguments from the BBC articles (e.g., the story of the 4,000 beagles).\n*   **Body Paragraph 3 (The Future):** Describe the alternatives being developed. The articles are rich with examples:\n    *   **Organs-on-chips:** Tiny devices with human cells that mimic organ function (like the Liver-Chip).\n    *   **Organoids:** 3D mini-organs grown from human stem cells.\n    *   **Computational models & AI:** Computer programs that predict drug effects based on vast datasets.\n*   **Conclusion:** Summarize the shift described in the articles—that the \"age of animal experiments is waning\" as science seeks more humane and human-relevant methods. You can argue about the pace of this change and the challenges that remain.\n\nIn short, you have a wealth of information here to write a nuanced and well-supported paper for your class. Good luck!\n"
+      },
+      {
+        "role": "user",
+        "content": "Okay can you provide more specifics on the alternative ways we could do drug testing? Which method is the most comprehensive and promising, based on the articles? Provide me with two examples of each to describe what they can or can't do instead of animals."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the collection of articles you provided, several alternative methods to animal testing are discussed. While no single article declares one method as the definitive \"most comprehensive\" replacement, they collectively paint a picture of a multi-faceted future where different tools are used for different purposes.\n\nThe articles highlight **organs-on-chips** and **organoids** as particularly promising because they use human cells to mimic the function of real organs, offering a more human-relevant prediction of drug effects than animal models. **Computational models and AI** are also shown to be extremely powerful for analyzing vast amounts of data to predict outcomes.\n\nHere are two examples of each primary alternative method, describing what they can and can't do, based on the articles.\n\n### 1. Organs-on-Chips\nThese are microfluidic devices, often the size of a USB stick, that contain living human cells arranged to mimic the structure and function of a human organ.\n\n*   **Example 1: The Liver-Chip (developed by BioSims Lab)**\n    *   **What it can do:** It can test whether a potential drug might cause liver damage. According to a 2022 study cited in the articles, the chip correctly identified compounds known to cause liver injury with **87% accuracy**, without falsely flagging harmless ones. It even detected 12 of 15 liver-harming drugs that animal models had previously deemed safe. It has been accepted into the FDA's ISTAND pilot program, a step towards regulatory approval.\n    *   **What it can't do:** The article describes it as a \"highly specialized\" tool. Like other organ chips, it models one organ in isolation and cannot replicate the complex interactions a drug has throughout an entire living system (which is a key reason animals are used).\n\n*   **Example 2: The Kidney Chip (developed by Thomas Reed et al.)**\n    *   **What it can do:** It can reproduce aspects of acute kidney injury in humans, allowing researchers to study the effects of drugs on this specific organ.\n    *   **What it can't do:** The device is a \"reductionist approach\" that includes only **one of the kidney's more than two dozen cell types**. The article quotes the developer as saying, \"understanding what happens in the whole human kidney still requires animal studies.\"\n\n### 2. Organoids\nThese are 3D living structures grown from human stem cells that capture many of the features of real tissues or organs.\n\n*   **Example 1: Human Liver Organoids (generated from iPSCs)**\n    *   **What it can do:** A 2021 study cited in the articles used these organoids to create a toxicity screening tool. It successfully detected substances that harmed bile transport and mitochondrial function, proving to be highly accurate when tested on 238 marketed drugs.\n    *   **What it can't do:** As a model of a single organ, it cannot simulate the systemic effects of a drug or the crosstalk between different organs in the body, a critical aspect of safety testing that animal models provide.\n\n*   **Example 2: Human Brain Organoids**\n    *   **What it can do:** The articles mention these as a way to model human brain tissue for research, which could reduce the use of animals in neuroscience. They can capture some of the complexity of brain cells in a 3D structure.\n    *   **What it can't do:** The articles don't detail limitations, but generally, organoids are simplified models. They lack the full complexity, blood supply (vascularization), and immune components of a real brain, and cannot model how a drug affects the entire body.\n\n### 3. Computational Models & Artificial Intelligence (AI)\nThese are computer-based systems that use algorithms and vast datasets to predict biological outcomes.\n\n*   **Example 1: Virtual Skin Sensitization Test**\n    *   **What it can do:** This AI tool predicts whether a chemical will cause an allergic skin reaction. Built using data from 430 chemicals, it was accepted by the international Organization for Economic Co-operation and Development (OECD) as a valid testing method. It offers a non-animal alternative for this specific type of safety test.\n    *   **What it can't do:** Its accuracy is dependent on the quality and breadth of the data it was trained on. It may not be able to predict entirely novel biological reactions that weren't represented in its training data.\n\n*   **Example 2: AnimalGAN (an AI model developed by the FDA)**\n    *   **What it can do:** This generative AI model was trained on data from over 8,000 real rats. In a simulation of 100,000 virtual rats, it could correctly rank the liver toxicity of drugs with similar chemical structures. It represents a powerful tool for predicting outcomes and prioritizing drug candidates.\n    *   **What it can't do:** It is a simulation that needs to be validated against real-world data. Currently, it focuses on a single organ (the liver) and a single species (rats), and cannot model the complexity of a whole living organism.\n\nIn summary, these articles suggest that the future of drug testing lies in combining these **New Approach Methodologies (NAMs)** to reduce and refine the use of animals, with the ultimate goal of replacing them where possible. Each method has strengths but also clear limitations in replicating a whole, living system.\n"
+      },
+      {
+        "role": "user",
+        "content": "Its hard to cross reference all this research. How does the the information from the FDA align with or contradict the News Feature article? I need at least two direct quotes, one from FDA and one from the news feature to support claims I'll be writing. Include two quotes from each source that show how their goals align and how they don't.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 624fdb9b' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_daily_work', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v2",
+          "key": "default_calendar_id",
+          "value": "cal_daily_work",
+          "stale_value": "cal_daily_personal"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_daily_work",
+        "title": "Review 624fdb9b",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_daily_work",
+      "title": "Review 624fdb9b",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should explicitly state at least one alignment point and at least one contradiction point between the FDA information and the news feature (i.e., a comparison claim), not only provide quotes.",
+        "The response should include exactly four quotes total: two from FDA and two from the news feature (since the user says “Include two quotes from each source”).",
+        "The response should include one FDA quote that supports a contradiction/non-alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+        "The response should include one news-feature quote that supports a contradiction/non-alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+        "The response should include at least one FDA quote that supports an alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+        "The response should include at least one news-feature quote that supports an alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+        "The response should not include any paraphrased quotes given that the user has explicitly requested direct quotes only.",
+        "The response should identify the specific FDA document being quoted (not just “FDA” broadly), since the user asks about “information from the FDA” and FDA has many publications. For example, include the section heading, page number, or URL."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_daily_work', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_daily_work"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should explicitly state at least one alignment point and at least one contradiction point between the FDA information and the news feature (i.e., a comparison claim), not only provide quotes.",
+          "The response should include exactly four quotes total: two from FDA and two from the news feature (since the user says “Include two quotes from each source”).",
+          "The response should include one FDA quote that supports a contradiction/non-alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+          "The response should include one news-feature quote that supports a contradiction/non-alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+          "The response should include at least one FDA quote that supports an alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+          "The response should include at least one news-feature quote that supports an alignment claim, since the user explicitly asks for quotes showing how goals “align and how they don't.”",
+          "The response should not include any paraphrased quotes given that the user has explicitly requested direct quotes only.",
+          "The response should identify the specific FDA document being quoted (not just “FDA” broadly), since the user asks about “information from the FDA” and FDA has many publications. For example, include the section heading, page number, or URL."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_daily_work', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_4.fact_05.default_calendar_id.v2",
+            "key": "default_calendar_id",
+            "value": "cal_daily_work",
+            "stale_value": "cal_daily_personal"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_daily_work",
+          "title": "Review 624fdb9b",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_daily_work",
+        "title": "Review 624fdb9b",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "cal_daily_personal"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

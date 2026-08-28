@@ -1,0 +1,296 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_5",
+  "turn_id": "turn59",
+  "turn_index": 59,
+  "turn_type": "long_delay_replay",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "replay",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "809aae04-a5da-0241-6a83-e81442f45646"
+    ],
+    "mapping_rule": "This turn derives from an earlier source_task turn and does not consume another source task.",
+    "source_jsonl_line": 66,
+    "source_sha256": "1aa13098467f93eeae9c16aa520abc7e6ddecfa4669bbfd661bbf1381fc15851",
+    "source_metadata": {
+      "task_id": "809aae04-a5da-0241-6a83-e81442f45646",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Public Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Long-delay replay: revisit the context-rich task first seen at turn 14 without reopening its source context. Re-answer its original request, then state my default work calendar ID now. Use the latest correction and do not present superseded information as current."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_replay",
+        "dimension": "replay_retention",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+      },
+      {
+        "check_id": "fact_retention",
+        "dimension": "replay_retention",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response states the latest value 'cal_mixed_work' for default work calendar ID."
+      },
+      {
+        "check_id": "no_stale_value",
+        "dimension": "stale_control",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response does not treat 'cal_mixed_personal' as current."
+      },
+      {
+        "check_id": "state_integrity",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Replay does not create a duplicate fact or corrupt unrelated active state."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_5.fact_05.default_calendar_id.v2",
+          "key": "default_calendar_id",
+          "value": "cal_mixed_work",
+          "stale_value": "cal_mixed_personal"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state that Article 2 discusses owning physical commodities briefly, in a few sentences. Answer key: \"Owning physical commodities mainly applies to precious metals. Gold and silver are two of the best-known commodities that are used as physical stores of value. Investors can purchase these metals formed into bullion, with standard size and purity. Bullion bars are the closest in value to the melt price (the market price for the metal if you melted it down).\"",
+        "The response should not describe the section in Article 2 on owning physical commodities as \"significant\" or a major part of the text, as it is only a few sentences of a larger document.",
+        "The response should state that Article 1 has an educational tone. For example, the article is structured as informative rather than persuasive and includes key points.",
+        "The response should state that Article 2 is a guide for investors. Answer key: Sections include: \"Setting Up Your Brokerage Account for Commodities\", \"Essentials for Your Commodity Investing Account\", \"Personal Information\".",
+        "The response should state that Article 2 includes a specific set of criteria for opening an investment account for commodities trading. Answer key: Section headings: \"Customer support\", \"fees\", Available Assets\", \"Security\", \"Minimum Deposit\", and \"Research Tools\"",
+        "The response should state that Article 1 includes a \"Quick Tip\" which includes practical advice.",
+        "The response should include a supporting quote for every difference found between Article 1 and Article 2. For example, a sentence in quotation marks.",
+        "The response should include an explanation of the reasoning for every difference found between Article 1 and Article 2.  For example, “Therefore, Article X emphasizes Y whereas Article Z emphasizes W”",
+        "The response should list at least 4 differences between Article 1 and Article 2.",
+        "The response should state that Article 2 includes a specific guide on establishing a \"Gold IRA\".",
+        "The response should state that Article 1 does not include any specific guides on opening investment accounts, but the focus is on explaining commodities, risks, and investment vehicles rather than account-opening procedures.",
+        "The response should state that Article 2 explicitly lists \"external risks\".",
+        "The response should state that Article 1 includes risk factors in a broader explanation of price volatility."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_replay",
+          "dimension": "replay_retention",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+        },
+        {
+          "rubric_id": "fact_retention",
+          "dimension": "replay_retention",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response states the latest value 'cal_mixed_work' for default work calendar ID."
+        },
+        {
+          "rubric_id": "no_stale_value",
+          "dimension": "stale_control",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response does not treat 'cal_mixed_personal' as current."
+        },
+        {
+          "rubric_id": "state_integrity",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": [
+        {
+          "role": "user",
+          "content": "ARTICLE 1\n\n\nBecause commodities are raw materials — such as grain, oil, or precious metals — the price of commodities fluctuates constantly owing to changes in supply and demand, which are in turn influenced by climate and weather patterns, workforce issues, global economic trends, and more.\nWhile this can make it risky to invest in commodities, the volatility of this market also creates opportunities for traders, who try to take advantage of price swings. In addition, although commodities can be traded on the spot market, they’re often bought and sold via derivatives like futures and options contracts, which can add to the higher risk level of this market.\nKey Points\n•   Investing in commodities is inherently risky due to price volatility influenced by supply and demand, climate factors, and global economic trends.\n•   Futures contracts, commonly used for trading commodities, create high risk for investors as prices can fluctuate significantly, impacting potential profits or losses.\n•   Commodities offer diversification benefits, often performing inversely to traditional stock market assets, which can help mitigate overall investment risk.\n•   The lack of dividends or interest payments from commodities means returns are solely dependent on buying low and selling high, adding to investment complexity.\n•   Strategies for investing in commodities include trading stocks related to commodities, futures contracts, ETFs, mutual funds, and participating in commodity pools.\nWhat Are Commodities?\nCommodities are basic materials like agricultural products (meat, grains); energy sources (coal, oil, natural gas); and precious metals (copper, gold, nickel), which can be traded between producers and buyers.\nIn other words, commodities are the raw materials from which countless products are made: e.g. corn is a key ingredient in consumer staples; nickel is required for many technology products.\nCommodities are differentiated from other types of securities by the fact that they’re basically interchangeable. One stock is clearly quite different from another, and is valued differently based on the company, the product, the market, and so on. But one barrel of oil is essentially the same as any other barrel of oil.\nIn addition, there are certain minimum standards, or basis grades, that ensure a common level of quality for most commodities. Basis grades may change from year to year, but once in place, all traded commodities must meet them.\nExamples of commodities include:\n•   Metals like gold, silver, platinum, and copper\n•   Petroleum products\n•   Meat (e.g. pork, beef)\n•   Grains and other agricultural products, including: corn, wheat, rice, coffee, cocoa, cotton and sugar\nTechnological advances have arguably added other commodities, such as internet bandwidth and cell phone minutes. Foreign currencies, indexes, and other financial products are also sometimes considered commodities.\nWho Invests in Commodities?\nThere are two types of commodities investors, generally speaking.\n•   Producers who sell the raw goods on the spot market of a commodity, and buyers who need it to produce or manufacture certain goods. These trades typically involve futures contracts for specific quantities of the commodity involved for an agreed-upon price (e.g., an airline buying 500,000 barrels of oil for $90 a barrel).\n•   Traders who buy and sell commodities contracts, or options on underlying commodities, but don’t take delivery of the actual raw material. They are simply trying to profit from the volatility in different commodities markets, adding to commodity risk.\nCommodity Risk\nThese are some of the reasons investors wonder whether investing in commodities is high risk.\nUnlike other stock market assets, commodities are generally traded on futures markets. Futures are pre-arranged agreements between traders who promise to buy or sell a given commodity for a specific price at a specific time in the future — hence the name.\nFutures offer both the buyer and seller the opportunity to earn money, if the conditions are right. If the overall value of a commodity rises, the buyer makes money because they get it at the agreed-upon price, which may be lower than market value.\nIf the value of the commodity falls, the seller makes money because they’re still selling the commodity at the agreed-upon price, which is likely higher than market value.\nHowever, because commodity prices are so volatile, changing on a weekly, and sometimes even daily basis, futures trading is highly risky to both parties involved.\nExample of Commodities Risk\nIn many cases one trading party is going to lose money on the deal — though the set price of futures does allow traders some level of guarantee as to how much the seller or producer stands to lose.\nFor instance, let’s say a farmer negotiates a futures contract to sell her harvest of wheat. The buyer agrees to buy a specified amount of wheat at a specific price point.\nIf the value of wheat rises by the time the farmer harvests the crop, the buyer will get a good deal since he’s paying the price they’d already agreed upon (which was set based on the value of the wheat at the time of the negotiation). The buyer can then turn around and sell the wheat at a higher price, earning a profit.\nOn the other hand, if the value of wheat has fallen by the time the farmer sets out to harvest her yield, she is spared financial devastation by the guaranteed price bottom. Rather than losing out on her profits entirely, she’ll earn whatever the agreed-upon price was.\nMeanwhile, the buyer is on the losing end of the contract, and now has a quantity of wheat that is worth less than what they must pay for it, per the agreement.\n💡 Quick Tip: When people talk about investment risk, they mean the risk of losing money. Some investments are higher risk, some are lower. Be sure to bear this in mind when investing online.\nWhy Invest in Commodities?\nGiven the risk involved with investing in commodities, what motivates investors to trade them?\nFor one thing, investing in commodities gives investors the opportunity to diversify their portfolio with a whole new class of assets — one that generally performs in opposition to the stock market itself. (That is, when the stock market is bearish, commodities tend to increase in value.)\nFurthermore, diversification can be a useful risk-management tactic, and investing in commodities may be a way to round out a portfolio based on more traditional investments like stocks and bonds.\nCommodities do also have some characteristics that give them a unique advantage in the world of investments. Because they’re often traded via futures contracts, there’s a guaranteed sale price and date. For those willing to take on the risk of being on the losing end of the contract, the potential to gain a specified amount can be appealing.\nBenefits of Investing in Commodities\nCommodities can add diversification to a portfolio which can help with risk management. Since commodities have low correlation to the price movements of traditional asset classes like stocks and bonds they may be more insulated from the stock volatility that can affect those markets.\nSupply and demand, not market conditions, drive commodities prices which can help make them resilient throughout a changing business cycle.\nTrading commodities can also help investors hedge against rising inflation. Commodity prices and inflation move together. So if consumer prices are rising commodity prices follow suit. If you invest in commodities, that can help your returns keep pace with inflation so there’s less erosion of your purchasing power.\nHowever, none of these benefits negates the risks involved with investing in or trading commodities.\n💡 Quick Tip: Newbie investors may be tempted to buy into the market based on recent news headlines or other types of hype. That’s rarely a good idea. Making good choices shouldn’t stem from strong emotions, but a solid investment strategy.\nDisadvantages of Investing in Commodities\nThe biggest downside associated with commodities trading is that changes in supply and demand can dramatically affect commodity pricing, which can directly impact your returns. Commodities that seem to go up and up in price can also come crashing down in a relatively short time.\nThere is also a risk inherent to commodities trading, which is the possibility of ending up with a delivery of the physical commodity itself if you don’t close out the position. You could then be on the hook to sell the commodity.\nIn addition, commodities don’t offer any benefits in terms of dividend or interest payments. While you could generate dividend income with stocks or interest income from bonds, your ability to make money with commodities is based solely on buying them low and selling high.\nHow to Invest in Commodities\nIf you’re interested in how to trade commodities, there are different strategies to consider.\nTrading Commodities Stocks\nIf you’re already familiar with stock trading, purchasing shares of companies that have a commodities connection could be a relatively easy first step. Trading commodities stocks is the same as trading shares of any other stock. The difference is that you’re specifically targeting companies that are related to the commodities markets in some way. This requires understanding both the potential of the company, as well as the potential impact of fluctuations in the underlying commodity.\nFor example, if you’re interested in gaining exposure to agricultural commodities, you might buy shares in companies that belong to the biotech, pesticide, or consumer staples industries.\nOr, you might consider purchasing energy stocks or mining stocks if you’re more interested in those commodities markets.\nAs you would with any other stock, you need to consider your portfolio’s current asset allocation, and whether adding certain commodity stocks to the equity portion is in line with your goals.\nRecommended: What Is Asset Allocation?\nFutures Trading in Commodities\nAs noted above, a futures contract represents an agreement to buy or sell a certain commodity at a specific price at a future date.\nSo, for example, an orange grower might sell a futures contract agreeing to sell a certain amount of their crop for a set price. A company that sells orange juice could then buy that contract to purchase those oranges for production at that price.\nThis type of futures trading involves the exchange of physical commodities or raw materials. For the everyday investor, futures trading in commodities typically doesn’t mean you plan to take delivery of two tons of coffee beans or 4,000 bushels of corn. Instead, you buy a futures contract with the intention of selling it before it expires.\nFutures trading in commodities is speculative, as investors are making educated guesses about which way a commodity’s price will move at some point in the future.\nTrading Commodities ETFs\nCommodity ETFs (or exchange-traded funds) can simplify commodities trading. When you purchase a commodity ETF you’re buying a basket of securities, as you would when buying any type of ETF. These can target certain types of commodities, such as metals or energy, or offer exposure to a broad cross-section of the commodities market.\nA commodity ETF can offer basic diversification, though it’s important to understand what you own. For example, a commodities ETF that includes options or commodities futures contracts may carry a higher degree of risk compared to an ETF that includes commodities companies, such as oil and gas companies, or food producers.\nRecommended: How to Trade ETFs\nInvesting in Mutual and Index Funds in Commodities\nMutual funds and index funds offer another entry point to commodities investing. So investing in a commodities mutual fund that’s focused on water or corn, for example, could give you exposure to different companies that build technologies or equipment related to water sustainability or corn production.\nEven though these funds allow you to invest in a portfolio of different securities, remember that commodities mutual funds and index funds are still speculative, so it’s important to understand the risk profile of the fund’s underlying holdings.\nCommodity Pools\nA commodity pool is a private pool of money contributed by multiple investors for the purpose of speculating in futures trading, swaps, or options trading. A commodity pool operator (CPO) is the gatekeeper: The CPO is responsible for soliciting investors to join the pool and managing the money that’s invested.\nTrading through a commodity pool could give you more purchasing power since multiple investors contribute funds. Investors share in both the profits and the losses, so your ability to make money this way can hinge on the skills and expertise of the CPO. For that reason, it’s important to do the appropriate due diligence.\nMost CPOs should be registered with the National Futures Association (NFA). You can check a CPO’s registration status and background using the NFA website.\nStock Market Risks\nWhile commodity risk is a factor when considering investing in commodity futures, it’s important to understand that all investments carry risk. For instance, stocks can gain and lose value as the companies that issue them perform well or poorly. It is always a possibility to lose all of the money put into a stock market investment in the case of a serious market decline or recession.\nOf course, some market volatility is totally normal — and even healthy. And while nobody can predict the market perfectly, some tendencies can be seen over time.\nFor instance, while there’s no direct correlation between interest rates and stock market performance, in the past when interest rates go up, stock market performance tends to decline. That’s because companies, like individuals, can be priced out of taking loans they need for the continued growth and performance of their businesses, which may mean they have less money left over to reinvest or count as profit.\nAnd during major global crises, like the recent outbreak of the novel coronavirus, markets can sometimes experience major turbulence and downturns.\nThe reality of risk is no reason to forego investing entirely, as investing is still one of the most powerful ways to grow wealth.\nManaging Commodity Risk Through Diversification\nDiversification means maintaining a variety of different asset types and classes — e.g., stocks, bonds, commodities, and other securities — and also ensuring that the investments within a given class come from different companies and industries.\nThat way if (and when) market volatility comes calling, investors will have their eggs in a variety of baskets, which may help mitigate the risk of steep losses if a single sector becomes too volatile.\nKeeping a diverse portfolio can mean investing in stocks from a wide range of different companies with different attributes.\nFor instance, investors might choose small-cap, mid-cap, or large-cap stocks, which define companies based on the overall value of their market capitalization (the total cash value of outstanding stock the company has on the market). Investors may also choose to invest in companies from different industries, such as technology, renewable energy, communication or healthcare.\nAlong with including a multiplicity of company and stock types, investors can also pad out their portfolios with additional asset types, like government bonds or — you guessed it — commodities.\nBecause these assets sometimes perform in opposition to the market, they can be a good way to balance stock investments.\nOne easy way to get a lot of diversification with a relatively small amount of effort is to invest in ETFs and mutual funds.\nDiversifying With ETFs and Mutual Funds\nETFs and mutual funds are slightly different, but operate in largely the same way: they’re baskets of assets, like stocks and bonds, that allow the investor to purchase a small piece of a wide swath of the market with a single buy.\nETFs, or exchange-traded funds, can be bought and sold just like shares of stock, and may track a well-known existing index like the S&P 500. ETFs can contain a range of different asset types, including commodities as well as stocks and bonds, and generally offer low expense ratios, since they may not be actively managed and don’t require as many trade or brokerage fees.\nMutual funds are similar to ETFs in their diversity of assets, but unlike ETFs, mutual funds are only bought and sold once per day, at the end of trading. Mutual funds are also often actively managed by a third party, which may offer some comfort to investors, but does tend to carry a higher expense ratio than would be found on a similar ETF.\nThe Takeaway\nCommodities trading is a high-risk strategy that may work better for investors who have a greater comfort with risk, versus those who are more conservative. Thinking through your risk tolerance, risk capacity, and timeline for investing can help you decide whether it makes sense to invest in commodities.\nFortunately, there are a number of ways to invest in commodities, including futures and options (which are a bit more complex), as well as stocks, ETFs, mutual and index funds — securities that may be more familiar.\nInvest in what matters most to you with SoFi Active Invest. In a self-directed account provided by SoFi Securities, you can trade stocks, exchange-traded funds (ETFs), mutual funds, alternative funds, options, and more — all while paying $0 commission on every trade. Other fees may apply. Whether you want to trade after-hours or manage your portfolio using real-time stock insights and analyst ratings, you can invest your way in SoFi's easy-to-use mobile app.\n\n\nARTICLE 2\n\n\nAdding commodities to a portfolio, either through physical ownership or investment brokers, provides diversification and can even offer a hedge against price exposure further up the value chain of certain industries. Energy products like oil, gas, and coal; agricultural products like corn, soy, canola, pork, and beef; and metals like gold, silver, copper, and platinum all have well understood market dynamics and relatively simple financial instruments to act as trading vehicles.\nMany commodities are priced according to the market demand and the need for further processing. In a world where many financial assets are derivatives, trackers, and derivatives of derivatives, with layers of market sentiment influencing their performance, commodities can offer a more direct experience, as well as portfolio diversification and potential inflation hedging.\nWe will take a look at the major commodities and how you can use them to fit your investment needs. You have various investment options, such as physical ownership, futures contracts, and commodity-based funds.\nKEY TAKEAWAYS\nInvesting in commodities can diversify a portfolio and provide a hedge against inflation.  \nYou can invest in commodities through physical ownership, futures contracts, individual securities, or exchange-traded funds (ETFs).  \nPhysical ownership of commodities like gold and silver requires considerations for storage, insurance, and liquidity.  \nFutures contracts allow investors to speculate on commodity prices using leveraged margin accounts.  \nInvesting in commodities carries risks, including high volatility and lack of income generation.\nExploring Commodity Investment Strategies\nInvestors can access commodities in a few different ways.\nOwning Physical Commodities: A Guide\nOwning physical commodities mainly applies to precious metals. Gold and silver are two of the best-known commodities that are used as physical stores of value. Investors can purchase these metals formed into bullion, with standard size and purity. Bullion bars are the closest in value to the melt price (the market price for the metal if you melted it down).\nTake the Next Step to Invest\nAdvertiser Disclosure\nOwning precious metals in physical form comes with issues of storage, insurance, and liquidity. Commodities beyond precious metals have further storage issues in that the quantities are often larger and there is a shelf life, so they must be sold within a given timeframe. This is why most commodities investors do not pursue physical ownership. To trade physical commodities, you need to find a reputable dealer and, most likely, a storage facility for your holdings. \nNavigating Commodity Futures Contracts\nFutures contracts are direct plays on commodity prices. They're an agreement to buy or sell a specified amount of a commodity at a specified price and date in the future. Investors use leveraged margin accounts to allow them to take larger positions with their existing capital.\nIn the vast majority of trades, the contracts are cash settled. This saves an investor from having to take delivery of hundreds of thousands of pounds of sugar or figure out how to market a thousand head of cattle. Opening an account to trade futures contracts will often require some additional paperwork to enable margin trading as well as a higher account minimum. The specific maintenance margin needed in an account varies with the value of the contract being traded. \nInvesting in Commodity-Related Securities\nIndividual securities related to commodity processing or production can be accessed through a regular brokerage account. You can find the companies using a stock screener and looking for basic materials or energy sector companies. Investors looking for commodity exposure through company shares generally have to gain some industry-specific knowledge to be successful.\nFor example, extraction companies in mining and energy have well-developed systems for feasibility studies on reserves that, in turn, drive the stock value. Larger companies will have reserves in different parts of the world and in different stages of development, meaning the impact of any one feasibility study is not a big deal as long as overall operations are profitable. A smaller company, however, may experience heightened price volatility based on the findings of a single feasibility study.  \nInvesting in Commodities Through Funds and Notes\nProducts traded on exchanges include commodity-based mutual funds, ETFs, and exchange-traded notes, which can provide exposure to commodities. There are exchange-traded products that are specific to individual commodities. These pool investor funds to combine capital in a commodity pool.\nThe actual mechanism for investment depends on what is outlined by the fund. The fund managers could buy futures, options on futures, shares in companies in the sector, or even purchase and store physical goods. Some funds are leveraged, meaning they are attempting to provide double or triple the price movement of the commodity they are tracking. This is why it is important to read the fund disclosures prior to investing to ensure the exposure being offered matches your investment needs.  \nExploring Alternatives in Commodity Investments\nCommodities are considered an alternative investment, along with things like real estate, that don’t trade in the conventional style of stocks and bonds. Within precious metals, however, there is a subcategory of alternative investments that are closer to collectibles than they are to investments.\nBullion coins and jewelry have an aesthetic and historical value that generally sees them trade at a premium compared to the melt price of the metals they contain. While these are still physical investments that can appreciate in value, their prices are less connected to market prices. You can buy jewelry from stores and coins directly from the Mint or from dealers, but they are more of a collectible than they are a commodity investment.    \nEssentials for Your Commodity Investing Account\nOpening a commodities investing account is the same process as opening a regular brokerage account. If you are just looking to invest in commodities through companies and funds, it literally is a regular brokerage account as these two investment classes do not require anything special. If you will be trading futures and options, however, you first need to confirm your broker provides these options. Then you will usually have to make some additional disclosures to ensure you understand the risks and have enough capital so that it will not be wiped out in a single trade. \nSetting Up Your Brokerage Account for Commodities\nTo open a brokerage account, you need to provide some personal and financial information and  answer some basic questions. \nPersonal Information\nThe personal and financial information includes:\nName, address, and telephone number\nTax identification number (usually your Social Security number)\nDate of birth and government ID \nBanking information for funding the account\nLevel of investment experience and risk tolerance (the know your client (KYC) questions)\nWith online brokerages, the first step is usually to set up an account (email and password) with the broker and then provide these further details as part of the onboarding process. \nMinimum Deposits\nWhile there are many brokerage accounts with zero account minimums, enabling futures trading in a margin account will generally require that at least a few thousand dollars be held with the broker. Depending on the contracts you are looking to trade, the actual amount of capital required to trade will be more than whatever the minimum deposit is to enable the account.\nBoth the initial margin and the maintenance margin for futures accounts may be influenced by the account type (individual retirement account vs. non-IRA account). \nHow to Establish a Gold IRA for Commodities\nGold individual retirement accounts (gold IRAs) are a type of commodity investing for retirement purposes. Unlike a regular IRA, you will have to find a custodian to hold the physical assets. You set up a gold IRA by first establishing a self-directed IRA, selecting a custodian to administer the account, selecting an approved depository to hold the gold, and then choosing a broker/dealer to buy the gold through.\nSome gold IRA providers have these services integrated or will refer clients to providers in their network.\nPersonal Information\nThe documents and information required are the same as those for investment accounts:\nName, address, and telephone number\nTax identification number (usually your Social Security number)\nDate of birth and government ID \nAdditional KYC questions \nMinimum Deposits\nMinimum deposits for a gold IRA are high. This is partially owing to the fact that an ounce of gold is worth over $1000 and even smaller coins are worth several hundred dollars. The IRS rules state that only approved coins and bars of gold can be used for a gold IRA, but they do not set a minimum. While not all gold IRAs advertise a minimum, a practical amount would be at least $2000. Other gold IRAs have minimums of $10,000, $25,000, and even $60,000. \nEvaluating the Pros and Cons of Commodity Investments\nCommodity investing, like any other type of investing, comes with advantages and disadvantages. \nPros\nInvestors are attracted to commodity investing for its ability to provide an inflation hedge, diversify a portfolio, and unlock potentially large returns. \nInflation hedge: The prices of commodities tend to rise with inflation. In fact, commodity prices are often watched as indicators of an inflationary environment. While there can be commodity-specific market conditions that counter overall inflation, such as a bumper crop, in general commodities move with inflation and can balance out the dampening effect that inflation may have on other assets in an investor’s portfolio. \nDiversification: Even outside of an inflationary environment, commodities provide portfolio diversification due to a low correlation with financial assets. Commodities are influenced more by basic factors like supply and demand rather than employment numbers or central bank policies.\nPotential for large returns: Commodities like oil, gold, and soft commodities with cyclical production can experience large price movements. Commodities are sensitive to production forecasts and global events that impact supply chains. These opportunities for profit are what attracts investors to the commodities market. \nCons\nThe downsides to commodity investing are a lack of income, high volatility, and external risks. \nLack of income: Investing in commodities doesn’t generate yield income like a bond or a dividend-paying stock. All of the return on a commodities investment depends on correctly predicting the price movements. \nHigh volatility: Commodities can see their market dynamics shift wildly based on global events. Wheat prices, for example, shot up in 2022 due to the Russian invasion of Ukraine, and this price movement impacted the futures and options market around wheat. There were similar impacts in the oil and gas markets due to Russia’s position as a major supplier, but these were not quite as sharp. \nExternal risks: When it comes to commodities, there are many risks that an investor simply has no control over. In addition to regional conflicts taking supply offline, there are climate risks with the wrong weather at the wrong time, regulatory risks and political risks that can hinder the flow of goods, supply chain risks, and so on. All of these risks are, of course, the main reason for the volatility and the opportunity for large returns. \nKey Considerations for Opening a Commodity Investment Account\nCommodities investing is not available through every broker. This is especially true for digital investment managers that limit their investing to ETFs and stocks. Larger brokers and trading-focused platforms generally do offer futures trading. This includes brokers like Schwab, Interactive Brokers, and E*TRADE, as well as more focused platforms like NinjaTrader and TradeStation. Below are the main factors to consider when opening an investment account for commodities trading. \nCustomer Support\nCustomer support can vary widely between brokers. Most brokers still offer phone and email support, while some have added in-platform chat and social media channels for customers to reach them. A handful of brokers have gone the other way, with digital-only customer service offerings via FAQs and email contact forms. When it comes to customer service, you want to make sure the broker can be reached via your preferred method. \nFees\nFees have become much more competitive for stocks and ETFs, with most brokers charging nothing at all. When it comes to futures, however, fees are calculated on a per-contract basis and can vary from mere cents to a few dollars. While the temptation is to find the lowest fee broker for futures, it is important to consider it in the context of the quality of the overall trading platform. \nAvailable Assets\nWhile most brokers offer both ETFs and stocks, futures is more of a niche offering. If you are looking to invest in commodities, you are probably going to want access to the major futures exchanges unless you plan on solely working through ETFs. \nSecurity and Reputation\nGenerally speaking, you want to know that your broker is keeping your portfolio safe and has your best interests at heart. At a minimum, you want to see security protocols that are up to industry standards with two-factor authentication and plans in place to prevent outages and data breaches. \nMinimum Deposit\nOverall we like to see brokers with low minimum deposits to encourage people to invest. When it comes to futures, however, an investor should have a sizable amount of capital both to enable the margin account and ensure they can handle potential swings without devastating their portfolios. Commodities investing is definitely a risk capital activity and shouldn’t make up the majority of your investment portfolio. \nResearch Tools\nResearch tools can be important in helping you understand and visualize market dynamics when investing in commodities. Robust trading platforms can help by pulling quotes into charts and analyzing volume and volatility along with other important information like headlines and calendar events. Some brokers charge for extra data feeds, but this is another area where competition has lowered the overall costs. \nWhat Are Commodities?\nCommodities are the raw, or simplest, form of inputs that go into processing that turns them into energy, food, consumer products, and so on. Metals are an example of a commodity and encompasses a group of commodities with more complicated dynamics.\nAlthough many commodities travel the globe, like metals and sugar, the actual volume of trading will vary significantly and may also have seasonal trends. The volume on copper commodity contracts, for example, is often many times that of an agricultural soft commodity like soybean oil.\nCommodities that are less widely traded often require a bit more work to understand in terms of the market dynamics and pricing pressures, but acquiring this specialized knowledge can make a big difference for investors and traders looking to profit from the global trade of inputs.\nWhat Is Commodities Investing?\nCommodities investing is simply adding exposure to commodities as an asset class. This could be directly, as with physical assets like gold or silver bullion, or through financial derivatives that trade on exchanges. Financial derivatives include options and futures, as well as commodity tracking funds and shares in companies that are directly involved in producing or processing a commodity.\nThe main reasons for commodity investing are the potential for large returns, the inflation hedge, and the diversity it brings to a portfolio due to a low correlation with the rest of the financial markets. \nWhat Are Some of the Most Popular Commodities to Invest In?\nSome of the most widely traded commodities include:\nPrecious metals (gold, silver, platinum, etc.)\nOil\nNatural gas\nGasoline\nCorn\nWheat\nSoybeans\nCattle\nHogs\nSugar\nLumber\nIt is noteworthy that the actual volume of futures trading is dominated by futures on financial assets rather than raw commodities. Equity index, interest rates, and currencies all generate more contract volume than agriculture, energy, or metals.1\nHow Do Leveraged Commodity ETFs Work?\nCommodities are also traded by leveraged commodity funds that, in turn, trade as fund shares. These are often split into bull and bear funds, making it clear which market position they are taking. Unlike a direct futures or options position, an investor in a bear or bull fund is buying shares in the fund that is using its available capital to make direct and indirect trades related to the underlying commodity.\nThe Bottom Line\nCommodities can provide portfolio diversification, an inflation hedge, and potential for significant returns. The main methods of investing in commodities include physical ownership, futures contracts, individual securities, mutual funds, ETFs, and ETNs.\nCertain commodities, like precious metals, can be held physically, but they involve storage and insurance considerations. Futures contracts allow leveraged positions but require understanding risks and additional margin account requirements. Investing in commodities through company shares or funds requires industry-specific knowledge and careful review of disclosures.\nBe aware of the risks such as high volatility, lack of income generation, and external factors like geopolitical events affecting commodity prices. Opening a commodity investing account may involve providing personal information, undergoing risk assessment, and meeting minimum deposit requirements.\n\n\nTask:\n\nThese are two articles that both contain an explanation of what commodities are and the pros and cons associated with trading them. I would like you to look at their overall perspectives on commodities, and list some main differences between them. For each difference you find, provide a supporting quote and reasoning.\n"
+        }
+      ],
+      "message_source": "embedded sealed messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_current_fact",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_mixed_work"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state that Article 2 discusses owning physical commodities briefly, in a few sentences. Answer key: \"Owning physical commodities mainly applies to precious metals. Gold and silver are two of the best-known commodities that are used as physical stores of value. Investors can purchase these metals formed into bullion, with standard size and purity. Bullion bars are the closest in value to the melt price (the market price for the metal if you melted it down).\"",
+          "The response should not describe the section in Article 2 on owning physical commodities as \"significant\" or a major part of the text, as it is only a few sentences of a larger document.",
+          "The response should state that Article 1 has an educational tone. For example, the article is structured as informative rather than persuasive and includes key points.",
+          "The response should state that Article 2 is a guide for investors. Answer key: Sections include: \"Setting Up Your Brokerage Account for Commodities\", \"Essentials for Your Commodity Investing Account\", \"Personal Information\".",
+          "The response should state that Article 2 includes a specific set of criteria for opening an investment account for commodities trading. Answer key: Section headings: \"Customer support\", \"fees\", Available Assets\", \"Security\", \"Minimum Deposit\", and \"Research Tools\"",
+          "The response should state that Article 1 includes a \"Quick Tip\" which includes practical advice.",
+          "The response should include a supporting quote for every difference found between Article 1 and Article 2. For example, a sentence in quotation marks.",
+          "The response should include an explanation of the reasoning for every difference found between Article 1 and Article 2.  For example, “Therefore, Article X emphasizes Y whereas Article Z emphasizes W”",
+          "The response should list at least 4 differences between Article 1 and Article 2.",
+          "The response should state that Article 2 includes a specific guide on establishing a \"Gold IRA\".",
+          "The response should state that Article 1 does not include any specific guides on opening investment accounts, but the focus is on explaining commodities, risks, and investment vehicles rather than account-opening procedures.",
+          "The response should state that Article 2 explicitly lists \"external risks\".",
+          "The response should state that Article 1 includes risk factors in a broader explanation of price volatility."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_replay",
+            "dimension": "replay_retention",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+          },
+          {
+            "rubric_id": "fact_retention",
+            "dimension": "replay_retention",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response states the latest value 'cal_mixed_work' for default work calendar ID."
+          },
+          {
+            "rubric_id": "no_stale_value",
+            "dimension": "stale_control",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response does not treat 'cal_mixed_personal' as current."
+          },
+          {
+            "rubric_id": "state_integrity",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_5.fact_05.default_calendar_id.v2",
+            "key": "default_calendar_id",
+            "value": "cal_mixed_work",
+            "stale_value": "cal_mixed_personal"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "cal_mixed_personal"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_8",
+  "turn_id": "turn20",
+  "turn_index": 20,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "4f9bfb43-0b4a-2df0-5166-afcfbfccc15a",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 298,
+    "source_sha256": "180812e34926e0426a47f11f18c3a5306b8555bf1f319dd0f280278477864fae",
+    "source_metadata": {
+      "task_id": "4f9bfb43-0b4a-2df0-5166-afcfbfccc15a",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Course\nASL 101: American Sign Language I (202X Term A)\nArrange By\nDue Date\n\nYou can view your grades based on What-If scores so that you know how grades will be affected by upcoming or resubmitted assignments. You can test scores for an assignment that already includes a score, or an assignment that has yet to be graded.\nName\tDue\tSubmitted\tStatus\tScore\t\tDetails\tSubmission Progress Status\n0.0 Syllabus Quiz & Academic Integrity Agreement + Webcam - Requires Respondus LockDown Browser + Webcam\nWorkbook & GoReact Discussions\nAug 25, 2024 by 11:59pm\tAug 25, 2024 at 11:23pm\t\t\nClick to test a different score15 / 15 \n \n0.0 Say hello on GoReact! (5:00)\nWorkbook & GoReact Discussions\nAug 25, 2024 by 11:59pm\tAug 25, 2024 at 10:42pm\t\t\nClick to test a different score5 / 5\n \n0.0 Start Here: Student Enrollment\nTRUE+WAY ASL Student Registration (do not delete or rename )\nAug 25, 2024 by 11:59pm\tAug 25, 2024 at 9:01pm\t\t\nClick to test a different score1 / 1 \n \n \n1.1 & 1.2 Quiz (~32:00)\nQuizzes & Tests\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 9:45pm\t\t\nClick to test a different score41 / 41 \n \n1.1 Conversation Starter Discussion (> 5:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 5:21pm\t\t\nClick to test a different score1 / 1 \n \n1.1 GoReact Fingerspelling Drill\nWorkbook & GoReact Discussions\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 10:35pm\t\t\nClick to test a different score5 / 5 \n \n1.1 Lecture (18:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 4:34pm\t\t\nClick to test a different score10 / 10 \n \n1.1 Things to Know Lecture (12:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 27, 2024 at 3:55pm\t\t\nClick to test a different score12 / 12 \n \n1.1 Worksheet (~14:00)\nWorkbook & GoReact Discussions\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 6:04pm\t\t\nClick to test a different score10 / 10 \n \n1.2 Conversation Starter Discussion (> 5:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 5:14pm\t\t\nClick to test a different score1 / 1 \n \n1.2 Lecture (12:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 5:06pm\t\t\nClick to test a different score17 / 17 \n \n1.2 Mini Lecture Yes/No Questions (1:00)\nLectures & Conversation Starters\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 4:49pm\t\t\nClick to test a different score1 / 1 \n \n1.2 Worksheet: Part 1 & 2 (~4:45)\nWorkbook & GoReact Discussions\nAug 28, 2024 by 11:59pm\tAug 28, 2024 at 6:10pm\t\t\nClick to test a different score15 / 15 \n \n1.3 & 1.4 Quiz\nQuizzes & Tests\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 10:07pm\t\t\nClick to test a different score16 / 16 \n \n1.3 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 2:49pm\t\t\nClick to test a different score1 / 1 \n \n1.3 Lecture\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 6:06pm\t\t\nClick to test a different score12 / 12 \n \n1.3 Mini Lecture Topicalization\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 2:43pm\t\t\nClick to test a different score1 / 1 \n \n1.3 Sentence Types\nWorkbook & GoReact Discussions\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 7:23pm\t\t\nClick to test a different score18 / 20 \n \n1.3 Worksheet: Parts 1, 2, 3, & 4\nWorkbook & GoReact Discussions\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 8:23pm\t\t\nClick to test a different score27 / 28 \n \n1.4 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 2:57pm\t\t\nClick to test a different score1 / 1 \n \n1.4 GoReact Interactive Dialogue\nWorkbook & GoReact Discussions\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 9:23pm\t\t\nClick to test a different score5 / 5 \n \n1.4 Lecture\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 6:50pm\t\t\nClick to test a different score10 / 10 \n \n1.4 Mini Lecture Wh-Word Questions\nLectures & Conversation Starters\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 6:28pm\t\t\nClick to test a different score1 / 1 \n \n1.4 Same or Different\nWorkbook & GoReact Discussions\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 8:45pm\t\t\nClick to test a different score11 / 15 \n \n1.4 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 1, 2024 by 11:59pm\tSep 1, 2024 at 9:44pm\t\t\nClick to test a different score13 / 13 \n \n1.4 & 1.5 Quiz\nQuizzes & Tests\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 6:20pm\t\t\nClick to test a different score12 / 14 \n \n1.5 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 2:52pm\t\t\nClick to test a different score1 / 1 \n \n1.5 GoReact Conversation Starters\nWorkbook & GoReact Discussions\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 7:55pm\t\t\nClick to test a different score5 / 5 \n \n1.5 Lecture\nLectures & Conversation Starters\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 3:30pm\t\t\nClick to test a different score16 / 16 \n \n1.5 Numbers Activity\nWorkbook & GoReact Discussions\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 3:52pm\t\t\nClick to test a different score20 / 20 \n \n1.5 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 4, 2024 by 11:59pm\tSep 4, 2024 at 4pm\t\t\nClick to test a different score20 / 20 \n \n1. Unit 1 Comprehension Test - Requires Respondus LockDown Browser + Webcam\nQuizzes & Tests\nSep 8, 2024 by 11:59pm\tSep 8, 2024 at 9:50pm\t\t\nClick to test a different score77 / 81 \n \n1. Unit 1 Production Test\nQuizzes & Tests\nSep 8, 2024 by 11:59pm\tSep 8, 2024 at 10:21pm\t\t\nClick to test a different score99 / 100\n \n 1\t\n1. Unit 1 SignOn Connect Mtg\nSignOn Connect\nSep 8, 2024 by 11:59pm\tAug 31, 2024 at 9:53pm\t\t\nClick to test a different score20 / 20 \n \n2.1 & 2.2 Quiz\nQuizzes & Tests\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 9:12pm\t\nlate\nClick to test a different score20.85 / 23 \n \n2.1 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 1 \n \n2.1 How Many of What\nWorkbook & GoReact Discussions\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 5:39pm\t\nlate\nClick to test a different score15.2 / 16 \n \n2.1 Lecture\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 6:08pm\t\nlate\nClick to test a different score9.5 / 10 \n \n2.1 Mini Lecture Negation\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 5:51pm\t\nlate\nClick to test a different score0.95 / 1 \n \n2.1 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 8:44pm\t\nlate\nClick to test a different score9.5 / 10 \n \n2.2 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 1 \n \n2.2 GoReact Interactive Dialogue\nWorkbook & GoReact Discussions\nSep 11, 2024 by 11:59pm\t\t\t\nClick to test a different score0 / 5 \n \n2.2 Lecture\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 7:49pm\t\nlate\nClick to test a different score21.85 / 23 \n \n2.2 Mini Lecture Ordinal numbers\nLectures & Conversation Starters\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 6:12pm\t\nlate\nClick to test a different score0.95 / 1 \n \n2.2 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 11, 2024 by 11:59pm\tSep 12, 2024 at 8:53pm\t\nlate\nClick to test a different score16.15 / 17 \n \n2.3 - 2.5 Quiz\nQuizzes & Tests\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 9:13pm\t\t\nClick to test a different score57 / 57 \n \n2.3 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 2:12pm\t\t\nClick to test a different score1 / 1 \n \n2.3 Hallway\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 2:33pm\t\t\nClick to test a different score16 / 16 \n \n2.3 Lecture\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 12:15pm\t\t\nClick to test a different score20 / 20 \n \n2.3 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 2:37pm\t\t\nClick to test a different score17 / 17 \n \n2.4 Classroom picture\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 2:55pm\t\t\nClick to test a different score10 / 10 \n \n2.4 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 1:23pm\t\t\nClick to test a different score1 / 1 \n \n2.4 Lecture\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 12:43pm\t\t\nClick to test a different score5 / 5 \n \n2.4 Mini Lecture Conveying Distance\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 12:34pm\t\t\nClick to test a different score1 / 1 \n \n2.4 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 3:19pm\t\t\nClick to test a different score14 / 14\n \n2.5 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 2:01pm\t\t\nClick to test a different score1 / 1 \n \n2.5 GoReact Conversation Starters\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 11:10pm\t\t\nClick to test a different score5 / 5 \n \n2.5 How Long Does it take?\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 3:25pm\t\t\nClick to test a different score10 / 10 \n \n2.5 Lecture\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 1:03pm\t\t\nClick to test a different score10 / 10 \n \n2.5 Mini Lecture Giving Directions\nLectures & Conversation Starters\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 12:45pm\t\t\nClick to test a different score1 / 1 \n \n2.5 Worksheet: Part 1 & 2\nWorkbook & GoReact Discussions\nSep 15, 2024 by 11:59pm\tSep 15, 2024 at 4:20pm\t\t\nClick to test a different score30 / 30\n \n2. Unit 2 Comprehension Test - Requires Respondus LockDown Browser + Webcam\nQuizzes & Tests\nSep 18, 2024 by 11:59pm\tSep 18, 2024 at 10:47pm\t\t\nClick to test a different score91 / 98 \n \n2. Unit 2 Production Test\nQuizzes & Tests\nSep 18, 2024 by 11:59pm\tSep 18, 2024 at 11:42pm\t\t\nClick to test a different score99 / 100 \n \n2. Unit 2 SignOn Connect Mtg\nSignOn Connect\nSep 18, 2024 by 11:59pm\tSep 18, 2024 at 2:25pm\t\t\nClick to test a different score20 / 20 \n \n 1\t\n3.1 & 3.2 Quiz\nQuizzes & Tests\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 10:20pm\t\t\nClick to test a different score34 / 35 \n \n3.1 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 4:33pm\t\t\nClick to test a different score1 / 1 \n \n3.1 Info About Another Person\nWorkbook & GoReact Discussions\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 5:20pm\t\t\nClick to test a different score25 / 26 \n \n3.1 Lecture\nLectures & Conversation Starters\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 3:28pm\t\t\nClick to test a different score12 / 12 \n \n3.1 Mini Lecture Contrastive Structure\nLectures & Conversation Starters\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 3:06pm\t\t\nClick to test a different score1 / 1 \n \n3.1 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 5:28pm\t\t\nClick to test a different score15 / 15 \n \n3.2 Conversation Starter Discussions\nLectures & Conversation Starters\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 5:01pm\t\t\nClick to test a different score1 / 1 \n \n3.2 GoReact Interactive Dialogue\nWorkbook & GoReact Discussions\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 9:32pm\t\t\nClick to test a different score5 / 5 \n \n3.2 How Old?\nWorkbook & GoReact Discussions\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 7:34pm\t\t\nClick to test a different score12 / 12 \n \n3.2 Lecture\nLectures & Conversation Starters\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 4:10pm\t\t\nClick to test a different score11 / 11 \n \n3.2 Worksheet Part 1, 2, & 3\nWorkbook & GoReact Discussions\nSep 22, 2024 by 11:59pm\tSep 22, 2024 at 8:04pm\t\t\nClick to test a different score28 / 28 \n \n3.3 & 3.4 Quiz\nQuizzes & Tests\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 9:59pm\t\t\nClick to test a different score18 / 18 \n \n3.3 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 7:21pm\t\t\nClick to test a different score1 / 1 \n \n3.3 Keys\nWorkbook & GoReact Discussions\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 9:09pm\t\t\nClick to test a different score6 / 6 \n \n3.3 Lecture\nLectures & Conversation Starters\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 5:56pm\t\t\nClick to test a different score14 / 14 \n \n3.3 Mini Lecture Rocking Numbers\nLectures & Conversation Starters\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 4:43pm\t\t\nClick to test a different score2 / 2 \n \n3.3 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 9:18pm\t\t\nClick to test a different score20 / 20 \n \n3.4 Conversation Starter Discussion\nLectures & Conversation Starters\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 8:48pm\t\t\nClick to test a different score1 / 1 \n \n3.4 GoReact Conversation Starters\nWorkbook & GoReact Discussions\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 10:34pm\t\t\nClick to test a different score5 / 5 \n \n3.4 Lecture\nLectures & Conversation Starters\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 6:59pm\t\t\nClick to test a different score10 / 10 \n \n3.4 What is the Relationship\nWorkbook & GoReact Discussions\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 9:29pm\t\t\nClick to test a different score4 / 10 \n \n3.4 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nSep 25, 2024 by 11:59pm\tSep 25, 2024 at 9:48pm\t\t\nClick to test a different score23 / 24 \n \n3. Unit 3 Comprehension Test - Requires Respondus LockDown Browser + Webcam\nQuizzes & Tests\nSep 29, 2024 by 11:59pm\tSep 29, 2024 at 10:48pm\t\t\nClick to test a different score93 / 99 \n \n3. Unit 3 Production Test\nQuizzes & Tests\nSep 29, 2024 by 11:59pm\tSep 29, 2024 at 10:50pm\t\t\nClick to test a different score94 / 100 \n \n3. Unit 3 SignOn Connect Mtg\nSignOn Connect\nSep 29, 2024 by 11:59pm\tSep 29, 2024 at 9:38pm\t\t\nClick to test a different score20 / 20 \n \n4.1 & 4.2 Quiz\nQuizzes & Tests\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 9:37pm\t\t\nClick to test a different score8 / 8 \n \n4.1 Conversation Starter Discussion\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 8:22pm\t\t\nClick to test a different score1 / 1 \n \n4.1 Lecture\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 4:44pm\t\t\nClick to test a different score21 / 21 \n \n4.1 Mini Lecture Inflecting Verbs\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 4:20pm\t\t\nClick to test a different score1 / 1 \n \n4.1 Sentences\nWorkbook & GoReact Discussions\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 9:16pm\t\t\nClick to test a different score24 / 25 \n \n4.1 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 9:21pm\t\t\nClick to test a different score17 / 17 \n \n4.2 Conversation Starter Discussion\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 8:40pm\t\t\nClick to test a different score1 / 1 \n \n4.2 GoReact Interactive Dialogue\nWorkbook & GoReact Discussions\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 10:42pm\t\t\nClick to test a different score5 / 5 \n \n4.2 Lecture\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 6:55pm\t\t\nClick to test a different score9 / 9 \n \n4.2 Mini Lecture Tense\nLectures & Conversation Starters\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 5:56pm\t\t\nClick to test a different score1 / 1 \n \n4.2 Verbs\nWorkbook & GoReact Discussions\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 9:25pm\t\t\nClick to test a different score12 / 13 \n \n4.2 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nOct 2, 2024 by 11:59pm\tOct 2, 2024 at 9:33pm\t\t\nClick to test a different score13 / 13 \n \nUniversity Course Survey\nUniversity Course Survey\nOct 5, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 3 \n \n4.3 & 4.4 Quiz\nQuizzes & Tests\nOct 6, 2024 by 11:59pm\tOct 9, 2024 at 7:44pm\t\nlate\nClick to test a different score34 / 40 \n \n4.3 Conversation Starter Discussion\nLectures & Conversation Starters\nOct 6, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 1 \n \n4.3 Lecture\nLectures & Conversation Starters\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 9:38pm\t\t\nClick to test a different score6 / 6 \n \n4.3 Mini Lecture Rhetorical Questions\nLectures & Conversation Starters\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 9:29pm\t\t\nClick to test a different score1 / 1 \n \n4.3 Who What When\nWorkbook & GoReact Discussions\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 10:28pm\t\t\nClick to test a different score18 / 18 \n \n4.3 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 10:33pm\t\t\nClick to test a different score18 / 18 \n \n4.4 Conversation Starter Discussion\nLectures & Conversation Starters\nOct 6, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 1 \n \n4.4 GoReact Conversation Starters\nWorkbook & GoReact Discussions\nOct 6, 2024 by 11:59pm\t\t\t\nClick to test a different score0 / 5 \n \n4.4 Information About Three People\nWorkbook & GoReact Discussions\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 10:53pm\t\t\nClick to test a different score24 / 24 \n \n4.4 Lecture\nLectures & Conversation Starters\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 10:01pm\t\t\nClick to test a different score20 / 20 \n \n4.4 Worksheet Part 1 & 2\nWorkbook & GoReact Discussions\nOct 6, 2024 by 11:59pm\tOct 6, 2024 at 11:25pm\t\t\nClick to test a different score23 / 23 \n \n4. Unit 4 Comprehension Test - Requires Respondus LockDown Browser + Webcam\nQuizzes & Tests\nOct 9, 2024 by 11:59pm\tOct 10, 2024 at 7:07pm\t\nlate\nClick to test a different score77.7 / 96 \n \n4. Unit 4 Production Test\nQuizzes & Tests\nOct 9, 2024 by 11:59pm\t\t\t\nClick to test a different score0 / 100 \n \n4. Unit 4 SignOn Connect Mtg\nSignOn Connect\nOct 9, 2024 by 11:59pm\t\t\nmissing\nClick to test a different score0 / 20 \n \nASL 1 Final Exam - Requires Respondus LockDown Browser + Webcam\nFinal Exam\nOct 11, 2024 by 11:59pm\tOct 11, 2024 at 9:57pm\t\t\nClick to test a different score115 / 125 \n \nAssignments\t\t\t\t\nN/A\n0.00 / 0.00\t\nTRUE+WAY ASL Student Registration (do not delete or rename )\t\t\t\t\nN/A\n0.00 / 0.00\t\nMemrise\t\t\t\t\nN/A\n0.00 / 0.00\t\nLectures & Conversation Starters\t\t\t\t\n97.94%\n275.00 / 279.00\t\nWorkbook & GoReact Discussions\t\t\t\t\n95.43%\n610.00 / 638.00\t\nSignOn Connect\t\t\t\t\n100%\n60.00 / 60.00\t\nQuizzes & Tests\t\t\t\t\n84.95%\n875.00 / 1,026.00\t\nFinal Exam\t\t\t\t\n92%\n115.00 / 125.00\t\nUniversity Course Survey\t\t\t\t\n0%\n0.00 / 3.00\t\nNOT USING, KEEP HIDDEN\t\t\t\t\nN/A\n0.00 / 0.00\t\nTotal\t\t\t\t\n93%\n\nCourse Assignments\nCourse Grading System:\nYour comprehension and production skills will be evaluated regularly. You will also be evaluated on your preparation for class activities and your assignments outside of the class. All grades are calculated using weighted percentages. \n\nMemrise (ungraded)\nMemrise will be offered as a tool to help you learn vocabulary but will be ungraded. A minimum of 5 minutes daily reviewing vocabulary is recommended. Students who complete Memrise tend to score much higher on quizzes and tests. So, although this activity is not required, using this app for reviewing vocabulary will often improve performance overall. \n\nPlayPosit Lectures (10% of grade)\nLectures are pre-recorded with interactive elements like multiple choice questions, polls, fill-in short answers, discussions, and more. Because of the visual nature of ASL students will be asked to submit short videos in GoReact to practice principles outlined in the lectures.  \n\nWorkbook assignments & GoReact Discussion Participation (30% of grade)\nThis workbook is designed to retain and reinforce what is learned in the online lectures and the GoReact discussions give students opportunities to practice with peers.. Complete the assigned workbook assignments and GoReact discussions by the assigned due dates in Canvas. \n\nSign On Connect (Q=15% of grade)\nStudents will meet remotely with a native signer multiple times during the course to practice signing.  The instructor will provide suggestions for topics to cover.  The student may choose to cover other topics during the session, in addition to those suggested by the instructor.  Students will set appointments on their own to fit a flexible schedule.  Sessions will fill, so be sure to schedule early. These meetings are a key component of learning the language and are required.  Missing sessions cannot be substituted with other activities. The lowest grade in this category is dropped. If you miss a session, have technical difficulties, or an ambassador no-shows, it will not affect your grade. If an ambassador no-shows, contact SignOn Connect promptly to request a refund for the minutes. Reschedule at the earliest opportunity, and if the rescheduled date is after the due date, promptly contact your LEAD instructor so they are aware. Be sure to join the class in SignOn using the join code in module 0 so that the lead instructor can see your attendance. The lead instructor will manually update grades periodically throughout the course- typically after each assessment. You do not need to provide any documentation outside of joining the course in SignOn.  Cancelling within 48 hours or no showing for a session will result in forfeiture of your minutes. You can use your lowest dropped grade or you can purchase additional minutes directly from SignOn if you wish to reschedule. \n\nQuizzes & Tests (Q=35% of grade)\nQuizzes will be scheduled in Canvas. You may not make up any quizzes you miss – if you miss the quiz, you will get a zero. The quizzes will be based mainly on the ability to comprehend ASL and cultural information. Questions may also be drawn from the reading/viewing of the TRUE+WAY ASL e-workbook/video, video assignments, vocabulary, and class discussions.\n\nUnit tests will cover all material presented to that point of the class. They will include information from quizzes, TRUE+WAY ASL, class notes, handouts, lectures, vocabulary videos, as well as your comprehension and production skills. There will be no make-up of the tests except under circumstances I deem to be extreme or unique.\n\nFinal Receptive Exam (10% of grade)\nThe Final exam is cumulative and will cover topics from the entire course. The Exam will take place during the last week of class- finals week. An online review will be provided. The receptive exam will be in Canvas. The final will include comprehension information from the workbook, videos shown in and out of class, vocabulary videos, class assignments, and discussions. There will be no make-up of the final exam except under circumstances I deem to be extreme or unique. \nExtra Credit (Up to 5%)\nConversation Starters Quizzes\nYou can earn up to 5% extra credit in this course by completing optional Conversation Starter quizzes. These quizzes focus on comprehension of more challenging ASL dialogues and are designed to stretch your skills beyond the core material. While not required, they are strongly encouraged as a way to deepen your understanding and improve your grade.\nOne extra credit quiz is available per module, excluding review or test modules. These quizzes are due at the same time as the other module assignments and follow the standard late work policy. If you are interested in earning this extra credit, it’s important to complete each quiz on time as we move through the course—they cannot be made up at the end of the session.\nOn-Time Submission Bonus (5 Points per Module)\n Students who submit all assignments in a module on time or early will unlock a special Extra Credit Quiz worth 5 points. This quiz becomes available only after all required assignments in the module are submitted and will automatically lock after the module’s due date.\nNo late submissions will be accepted for this opportunity.\n\n\nIt is your responsibility to check and submit this quiz before the deadline.\n\n\nThe instructor will not reopen this quiz if you forget to submit on time.\nThis is a reward for consistent, timely work—plan ahead and stay on track to take advantage of this bonus!\n\n\nLate or Missed Assignments\n\nBecause of the quick pace and flexible schedule of online courses late assignments will only be accepted up to 10 days late for full credit. After 10 days, assignments will not be accepted late.  No assignments are accepted after the course end date. You do not need to email the instructor to take advantage of the 10-day grace period. Work submitted after the due date may be graded after the grace period ends. Published assignment due dates (Arizona time) are firm. If an extreme situation arises, preventing students from completing the course with a passing grade, they should reach out to their advisor about a medical/compassionate withdrawal if needed. \n\nSubmitting Assignments\nAll online assignments MUST be submitted via the associated assignment submission feature in Canvas. Do NOT submit an assignment via email.\n\nGrading Scale\nDiscuss with your section what the typical policy is for the grading scale. Be consistent throughout your section. The grading scale below is the default ASU grading scale usually already set in Canvas (note that it doesn’t have a C-).  If you have a different one from this, you will need to change the one in Canvas to match.\n \nA+\n100%\n-\n97%\nA\n<97%\n-\n94%\nA-\n<94%\n-\n90%\nB+\n<90%\n-\n87%\nB\n<87%\n-\n84%\nB-\n<84%\n-\n80%\nC+\n<80%\n-\n76%\nC\n<76%\n-\n70%\nD\n<70%\n-\n60%\nE\n<60%\n-\n0%\n\n\n\nTask:\n\n\nOne of my students took ASL 101 and received the following grades across four units and a final exam. Using the assignment data provided, analyze whether the student's learning improved, declined, or remained stable over time."
+      },
+      {
+        "role": "assistant",
+        "content": "**Short answer:**  \nThe student started the semester strong (Units 1‑3), maintained high comprehension scores, and earned near‑perfect marks on most quizzes and the SignOn‑Connect meetings. In Unit 4 the pattern breaks down – the production test and the SignOn‑Connect meeting were never submitted, the comprehension test was turned in late and scored much lower, and two workbook/GoReact items are still missing.  The final exam, however, was still respectable (92 %).  **Overall the evidence points to a decline in performance toward the end of the term, even though the student’s earlier work showed clear improvement.**  \n\nBelow is a step‑by‑step breakdown of the data that leads to this conclusion.\n\n---\n\n## 1.  How the course is organized\n\n| Category | Weight in final grade | What it measures |\n|----------|----------------------|------------------|\n| PlayPosit Lectures (incl. GoReact videos) | 10 % | Video‑lecture comprehension & short signed responses |\n| Workbook & GoReact Discussions | 30 % | Vocabulary, sentence‑type drills, interactive dialogues |\n| SignOn Connect (remote native‑signer meetings) | 15 % (lowest score dropped) | Live signed conversation practice |\n| Quizzes & Tests (including unit comprehension/production tests) | 35 % | Receptive (quizzes, unit comp.) and productive (unit prod., final) skills |\n| Final Receptive Exam | 10 % | Cumulative receptive knowledge |\n| University Survey, Memrise, “Hidden” items | 0 % (extra credit / admin) | Not part of the grade |\n\nEach **unit** (1‑4) contains a *Comprehension Test*, a *Production Test*, a *SignOn‑Connect meeting*, and several quizzes/worksheets.  The final exam covers everything.\n\n---\n\n## 2.  Scores by unit (raw → percent)\n\n| Unit | Assessment | Raw score | Max | Percent | Comments |\n|------|------------|-----------|-----|---------|----------|\n| **1** | Comp. Test | 77 | 81 | **95 %** | Submitted on time |\n|      | Prod. Test | 99 | 100 | **99 %** | |\n|      | SignOn‑Connect | 20 | 20 | **100 %** | |\n|      | Quiz 1.1‑1.2 | 41 | 41 | **100 %** | |\n|      | Quiz 1.3‑1.4 | 16 | 16 | **100 %** | |\n|      | Quiz 1.4‑1.5 | 12 | 14 | **86 %** | Slightly lower but still passing |\n| **2** | Comp. Test | 91 | 98 | **93 %** | Late submission |\n|      | Prod. Test | 99 | 100 | **99 %** | |\n|      | SignOn‑Connect | 20 | 20 | **100 %** | |\n|      | Quiz 2.1‑2.2 | 20.85 | 23 | **91 %** | Late |\n|      | Quiz 2.3‑2.5 | 57 | 57 | **100 %** | |\n|      | *Missing* 2.1 Conv. Starter (0/1) | – | – | **0 %** | |\n|      | *Missing* 2.2 Conv. Starter (0/1) | – | – | **0 %** | |\n| **3** | Comp. Test | 93 | 99 | **94 %** | |\n|      | Prod. Test | 94 | 100 | **94 %** | |\n|      | SignOn‑Connect | 20 | 20 | **100 %** | |\n|      | Quiz 3.1‑3.2 | 34 | 35 | **97 %** | |\n|      | Quiz 3.3‑3.4 | 18 | 18 | **100 %** | |\n|      | *Low* 3.4 “What is the Relationship” (4/10) | – | – | **40 %** | Only weak spot in Unit 3 |\n| **4** | Comp. Test | 77.7 | 96 | **81 %** | Late |\n|      | Prod. Test | 0 | 100 | **0 %** | **Not submitted** |\n|      | SignOn‑Connect | 0 | 20 | **0 %** | **Missing** |\n|      | Quiz 4.1‑4.2 | 8 | 8 | **100 %** | |\n|      | Quiz 4.3‑4.4 | 34 | 40 | **85 %** | Late |\n|      | *Missing* 4.3 Conv. Starter (0/1) | – | – | **0 %** | |\n|      | *Missing* 4.4 Conv. Starter (0/1) | – | – | **0 %** | |\n|      | *Missing* 4.4 GoReact Dialogue (0/5) | – | – | **0 %** | |\n| **Final Exam** | Receptive | 115 | 125 | **92 %** | Submitted on time |\n\n---\n\n## 3.  Trend analysis\n\n| Metric | Unit 1 | Unit 2 | Unit 3 | Unit 4 | Direction |\n|--------|--------|--------|--------|--------|-----------|\n| **Comprehension test %** | 95 % | 93 % | 94 % | 81 % | ↓ (sharp drop in U4) |\n| **Production test %** | 99 % | 99 % | 94 % | 0 % | ↓↓ (complete non‑submission) |\n| **SignOn‑Connect %** | 100 % | 100 % | 100 % | 0 % | ↓↓ (missed meeting) |\n| **Average quiz %** | 95 % (100,100,86) | 96 % (91,100) – ignoring missing | 98 % (97,100) | 93 % (100,85) – ignoring missing | Roughly stable, slight dip in U4 |\n| **Overall unit performance** (comp + prod + SignOn) | **~98 %** | **~97 %** (with lateness) | **~96 %** | **~27 %** (due to zeros) | **Decline** – especially in U4 |\n\n### What the numbers tell us\n\n* **Units 1‑3** – The student consistently scores **≥90 %** on every major assessment, submits everything on time (or only a day late), and earns perfect marks on the live SignOn‑Connect sessions.  This indicates solid, improving mastery of the material.\n* **Unit 4** – Two critical components (production test and SignOn‑Connect meeting) were never turned in, and the comprehension test was late and scored only 81 %.  Several workbook/GoReact items are still missing.  The drop from ~95 % to ~27 % in the “big three” assessments signals a **significant decline** in engagement and/or ability.\n* **Final exam** – Despite the poor showing in Unit 4, the student still managed a **92 %** on the cumulative receptive exam, suggesting that the underlying receptive knowledge remained relatively strong.\n\n---\n\n## 4.  Category‑level view (as reported in Canvas)\n\n| Category | Percent earned | Interpretation |\n|----------|----------------|----------------|\n| Lectures & Conversation Starters | **97.94 %** | Very strong – the student watched/listened attentively and completed the short signed responses. |\n| Workbook & GoReact Discussions | **95.43 %** | Excellent – most workbook drills and peer dialogues were done correctly. |\n| SignOn Connect | **100 %** (average of submitted meetings) | Perfect when the meetings were attended; the zero in Unit 4 drags the overall average down only because the meeting was missed. |\n| Quizzes & Tests | **84.95 %** | Lower than the other categories, largely because of the low‑scoring Unit 4 quiz (34/40) and the missed production test. |\n| Final Exam | **92 %** | Strong receptive performance despite the Unit 4 slump. |\n| **Overall course grade** | **93 %** (≈ A) | Still an “A” overall, but heavily propped up by the early units. |\n\n---\n\n## 5.  Bottom line – Did learning improve, decline, or stay stable?\n\n| Timeframe | Evidence | Verdict |\n|-----------|----------|---------|\n| **Early term (Units 1‑3)** | High, consistent scores; all assignments submitted; live practice sessions completed. | **Improvement / Stable high performance** |\n| **Late term (Unit 4)** | Production test and SignOn‑Connect meeting not submitted; comprehension test late and markedly lower; several workbook items missing. | **Decline** |\n| **Overall trajectory** | Starts strong, dips sharply in the final unit, but final exam still decent. | **Overall decline toward the end**, though the student retains a solid base of receptive knowledge. |\n\n**Take‑away for the instructor / advisor:**  \nThe student demonstrated competence through the first three units. The sharp drop in Unit 4 suggests a possible loss of motivation, time‑management issue, or external problem that prevented completion of the production‑focused assessments. Since the final exam was still strong, the student likely still possesses the receptive knowledge but needs support (or a reminder of the late‑work policy) to re‑engage with the productive components of the course. Offering a brief check‑in or remediation plan could help prevent a similar pattern in future terms.\n"
+      },
+      {
+        "role": "user",
+        "content": "What behavioral patterns (lateness, missed work, recovery) might explain the performance trend? Include a behavior analysis of the student's submission habits using the timestamps. How can I help this student manage their study habits better in the future?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 4f9bfb43' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_8.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_planner_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_planner_personal",
+        "title": "Review 4f9bfb43",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_planner_personal",
+      "title": "Review 4f9bfb43",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should categorize the behavioral patterns into distinct phases. For example, it could provide labels associated with the four units: initial diligence (Unit 1), emerging issues (Unit 2), recovery (Unit 3), and inconsistency (Unit 4).",
+        "The response should not assume the student made an effort to get back on track in Unit 3 because they recognized their slippage in Unit 2, as the log data only shows submission times and not intent.",
+        "The response should not speculate that the student's performance was due to acute personal issues, as this explanation is not supported by the provided context.",
+        "The response should not speculate that the student's performance was due to mental disconnect, as this explanation is not supported by the provided context.",
+        "The response should not speculate that the student's performance was due to burnout, as this explanation is not supported by the provided context.",
+        "The response should not state that Unit 2 was part of an early diligence stage.",
+        "The response should identify that Unit 2 contained the first major signs of academic struggle. For example, it could mention the 8 late assignments, 2 missing assignments, or the failed assignment which received a score of 0 out of 5.",
+        "The response should not claim that 9:57 PM is \"2 minutes before midnight,\" as it is 2 hours and 3 minutes before the midnight deadline.",
+        "The response should not state there is a significant decline and disengagement in Unit 4 because the student submitted 21 out of 26 assignments in Unit 4, which contradicts that narrative.",
+        "The response should analyze the student's submission habits using timestamps as evidence. For example, it should note that quizzes, comprehension tests, and productivity tests are regularly submitted within one or two hours of midnight (the deadline).",
+        "The response should identify the academic study habit of batch working based on the timestamp data, where the student submits multiple assignments in a single session, typically between 7:00 PM and 10:00 PM.",
+        "The response should recognize the academic behavior of deadline-driven productivity based on the timestamp data, which indicates that the majority of submissions occur on the actual due date.",
+        "The response should acknowledge the student's final exam score of 115/125 (92%) as evidence of strong knowledge retention despite inconsistent submission habits. For example, the model could state that the student retained a significant amount of knowledge.",
+        "The response should recommend positive study habits that the teacher could provide the student. For example, it could suggest a digital planner or spacing and anti-cramming strategies."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_planner_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should categorize the behavioral patterns into distinct phases. For example, it could provide labels associated with the four units: initial diligence (Unit 1), emerging issues (Unit 2), recovery (Unit 3), and inconsistency (Unit 4).",
+          "The response should not assume the student made an effort to get back on track in Unit 3 because they recognized their slippage in Unit 2, as the log data only shows submission times and not intent.",
+          "The response should not speculate that the student's performance was due to acute personal issues, as this explanation is not supported by the provided context.",
+          "The response should not speculate that the student's performance was due to mental disconnect, as this explanation is not supported by the provided context.",
+          "The response should not speculate that the student's performance was due to burnout, as this explanation is not supported by the provided context.",
+          "The response should not state that Unit 2 was part of an early diligence stage.",
+          "The response should identify that Unit 2 contained the first major signs of academic struggle. For example, it could mention the 8 late assignments, 2 missing assignments, or the failed assignment which received a score of 0 out of 5.",
+          "The response should not claim that 9:57 PM is \"2 minutes before midnight,\" as it is 2 hours and 3 minutes before the midnight deadline.",
+          "The response should not state there is a significant decline and disengagement in Unit 4 because the student submitted 21 out of 26 assignments in Unit 4, which contradicts that narrative.",
+          "The response should analyze the student's submission habits using timestamps as evidence. For example, it should note that quizzes, comprehension tests, and productivity tests are regularly submitted within one or two hours of midnight (the deadline).",
+          "The response should identify the academic study habit of batch working based on the timestamp data, where the student submits multiple assignments in a single session, typically between 7:00 PM and 10:00 PM.",
+          "The response should recognize the academic behavior of deadline-driven productivity based on the timestamp data, which indicates that the majority of submissions occur on the actual due date.",
+          "The response should acknowledge the student's final exam score of 115/125 (92%) as evidence of strong knowledge retention despite inconsistent submission habits. For example, the model could state that the student retained a significant amount of knowledge.",
+          "The response should recommend positive study habits that the teacher could provide the student. For example, it could suggest a digital planner or spacing and anti-cramming strategies."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_planner_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_8.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_planner_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_planner_personal",
+          "title": "Review 4f9bfb43",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_planner_personal",
+        "title": "Review 4f9bfb43",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

@@ -1,0 +1,330 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn11",
+  "turn_index": 11,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "7d84c9f4-bb76-cf4c-71e3-e1af3b1b11a1",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 208,
+    "source_sha256": "7aaa699f343c9bd3dcc80d0a00d75f6a83972ae64ed373ce873999f129ef7bf5",
+    "source_metadata": {
+      "task_id": "7d84c9f4-bb76-cf4c-71e3-e1af3b1b11a1",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "# Retail Incident Alert App - Development Plan\n\n## Project Overview\n\nThe Retail Incident Alert app is a community-based platform designed to help businesses share information about shoplifting incidents and receive real-time alerts about potential threats in their area. The app promotes business cooperation to enhance security and prevent shoplifting through timely information sharing.\n\n## Tech Stack\n\n- **Frontend**: Flutter (Cross-platform)\n- **Backend**: Firebase (Firestore, Authentication, Cloud Functions, Storage)\n- **Payment Processing**: Stripe\n- **Push Notifications**: Firebase Cloud Messaging (FCM)\n- **Maps & Location**: Google Maps SDK + Places API\n- **Platform Target**: Android (Google Play Store)\n\n## Core Features\n\n### 1. Authentication & User Management\n- User profile management\n- Subscription-based access control\n\n### 2. Real-time Alert System\n- Live feed of nearby incidents\n- Card-based layout with severity indicators\n- Distance-based filtering\n- Push notifications for geo-fenced alerts\n\n### 3. Incident Reporting\n- Camera integration for photo capture\n- Incident description and metadata\n- Real-time upload to shared database\n- Location tagging\n\n### 4. Incident Management\n- Detailed incident view with image carousel\n- Attribute classification system\n- Community comments and updates\n- Evidence packet export (PDF/ZIP)\n\n### 5. Map Visualization\n- Google Maps integration\n- Active incident markers\n- Business location display\n- Direction navigation\n\n### 6. Analytics & Reporting\n- Historical incident browsing\n- Heat map visualization\n- CSV export functionality\n- Filter and search capabilities\n\n### 7. Settings & Subscription\n- Notification radius configuration\n- Billing management\n- Team collaboration features\n- Subscription plans\n\n## Development Phases\n\n> **Approach**: Start with MVP (Minimum Viable Product) and iteratively add complexity. Build working features first, then enhance with advanced functionality.\n\n## 🎯 MVP Release (Weeks 1-2): Core Functionality\n\n### Phase 1: Project Setup & Basic Authentication\n\n#### 1.1 Project Structure Setup\n```\nlib/\n├── main.dart\n├── app/\n│   ├── app.dart\n│   └── router/\n├── core/\n│   ├── constants/\n│   ├── utils/\n│   ├── services/\n│   └── themes/\n├── features/\n│   ├── auth/\n│   ├── alerts/\n│   ├── incidents/\n│   └── profile/\n├── shared/\n│   ├── widgets/\n│   ├── models/\n│   └── repositories/\n└── firebase_options.dart\n```\n\n#### 1.2 MVP Dependencies Setup\n```yaml\ndependencies:\n  flutter: ^3.x.x\n  firebase_core: ^2.x.x\n  firebase_auth: ^4.x.x\n  cloud_firestore: ^4.x.x\n  firebase_storage: ^11.x.x\n  image_picker: ^1.x.x\n  geolocator: ^10.x.x\n  permission_handler: ^11.x.x\n  go_router: ^12.x.x\n  riverpod: ^2.x.x\n  freezed_annotation: ^2.x.x\n  json_annotation: ^4.x.x\n```\n\n#### 1.3 Basic Firebase Configuration\n- Setup Firebase project\n- Configure Email/Password Authentication (simple start)\n- Setup basic Firestore database\n- Configure Firebase Storage for images\n- Generate firebase_options.dart\n\n#### 1.4 Simple Authentication\n- **Basic Firebase Auth** (email/password)\n- Simple user registration\n- Basic profile creation\n- No subscription verification yet\n\n### Phase 2: Core Data Models & Basic UI\n\n#### 2.1 Simple Database Schema\n```firestore\nusers/\n├── {userId}/\n│   ├── email: string\n│   ├── businessName: string\n│   ├── createdAt: timestamp\n│   └── isActive: boolean\n\nincidents/\n├── {incidentId}/\n│   ├── reportedBy: string (userId)\n│   ├── description: string\n│   ├── images: array\n│   ├── timestamp: timestamp\n│   └── location: GeoPoint (basic)\n```\n\n#### 2.2 Basic Models & Repositories\n- User model (simple)\n- Incident model (basic fields)\n- Repository pattern setup\n- Basic error handling\n\n#### 2.3 Simple UI Framework\n- Basic app theme\n- Navigation setup\n- Loading states\n- Error states\n\n### Phase 3: Basic Incident Reporting\n\n#### 3.1 Simple Incident Form\n- Text description input\n- Single image capture\n- Basic form validation\n- Manual location input (address text)\n\n#### 3.2 Basic Image Upload\n- Image picker integration\n- Firebase Storage upload\n- Simple progress indicator\n- Basic error handling\n\n#### 3.3 Simple List View\n- Basic incident list\n- Show reporter name\n- Show timestamp\n- Simple card layout\n\n### Phase 4: Basic Alert Feed\n\n#### 4.1 Simple Home Screen\n- List all incidents (no filtering yet)\n- Basic card design\n- Show description and image\n- Simple refresh functionality\n\n#### 4.2 Basic Real-time Updates\n- Firestore listeners\n- Simple stream handling\n- Basic loading states\n\n#### 4.3 Simple Detail View\n- Show incident details\n- Display images\n- Basic information layout\n- No comments yet\n\n### Phase 5: Basic Location Integration\n\n#### 5.1 Simple Location Services\n- Get current location\n- Basic permission handling\n- Store location with incidents\n- Show approximate address\n\n#### 5.2 Distance Calculation\n- Calculate distance between user and incidents\n- Simple distance display\n- Basic sorting by distance\n\n### Phase 6: Testing & MVP Polish\n\n#### 6.1 Basic Testing\n- Unit tests for models\n- Basic widget tests\n- Simple integration tests\n\n#### 6.2 MVP Polish\n- UI improvements\n- Error handling refinement\n- Performance optimization\n- Basic user feedback\n\n---\n\n## 🚀 Enhanced Release (Weeks 3-4): Advanced Features\n\n### Phase 7: Advanced Authentication\n\n#### 7.1 Business Verification\n- Business information collection\n- Manual verification process\n- Verification status tracking\n\n### Phase 8: Advanced Incident Management\n\n#### 8.1 Enhanced Incident Form\n- Multiple image upload\n- Severity levels\n- Incident categories/attributes\n- Location auto-detection\n\n#### 8.2 Incident Comments System\n- Real-time comments\n- User identification\n- Comment moderation\n\n### Phase 9: Map Integration\n\n#### 9.1 Google Maps Integration\n```yaml\n# Add to dependencies:\ngoogle_maps_flutter: ^2.x.x\ngoogle_places_flutter: ^2.x.x\n```\n\n#### 9.2 Map Visualization\n- Incident markers\n- Current location\n- Custom markers\n- Basic clustering\n\n#### 9.3 Advanced Location Services\n- Places API integration\n- Address autocomplete\n- Location accuracy improvement\n\n### Phase 10: Push Notifications\n\n#### 10.1 Firebase Cloud Messaging\n```yaml\n# Add to dependencies:\nfirebase_messaging: ^14.x.x\n```\n\n#### 10.2 Basic Notifications\n- New incident alerts\n- Simple notification handling\n- Basic notification UI\n\n#### 10.3 Geo-fencing (Advanced)\n- Location-based alerts\n- Radius configuration\n- Cloud Functions for smart notifications\n\n### Phase 11: Subscription System\n\n#### 11.1 Stripe Integration\n```yaml\n# Add to dependencies:\nstripe_flutter: ^9.x.x\n```\n\n#### 11.2 Subscription Plans\n- Free tier (limited features)\n- Premium tier (full features)\n- Payment processing\n\n#### 11.3 Feature Gating\n- Subscription verification\n- Access control implementation\n- Grace period handling\n\n### Phase 12: Advanced Analytics\n\n#### 12.1 Reporting Features\n- Historical incident browsing\n- Advanced filtering\n- Search functionality\n\n#### 12.2 Data Export\n- CSV export\n- PDF report generation\n- Evidence packet creation\n\n#### 12.3 Heat Maps\n- Incident density visualization\n- Time-based analysis\n- Risk assessment\n\n### Phase 13: Team Management & Settings\n\n#### 13.1 Team Features\n- Team member invitations\n- Role-based permissions\n- Team notifications\n\n#### 13.2 Advanced Settings\n- Notification preferences\n- Privacy controls\n- App customization\n\n### Phase 14: Production Preparation\n\n#### 14.1 Security Hardening\n- Data encryption\n- API security\n- Privacy compliance\n\n#### 14.2 Performance Optimization\n- Image optimization\n- Caching strategies\n- Offline support\n\n---\n\n## 🌟 Future Enhancements (Post-Launch): Scale & Optimize\n\n### Phase 15: Advanced Features\n\n#### 15.1 AI/ML Integration\n- Automatic incident categorization\n- Risk prediction\n- Pattern recognition\n\n#### 15.2 Advanced Notifications\n- Smart alerting algorithms\n- Predictive notifications\n- Multi-channel alerts\n\n#### 15.3 Integration Features\n- Third-party integrations\n- API for external systems\n- Webhook support\n- Description input\n## Development Approach Benefits\n\n### 🎯 MVP-First Strategy\n- **Faster Time to Market**: Working app in 8 weeks\n- **Early User Feedback**: Test core concept before complexity\n- **Reduced Risk**: Validate business model early\n- **Iterative Improvement**: Build based on real usage data\n\n### 📈 Gradual Complexity Addition\n- **Stable Foundation**: Each phase builds on tested features\n- **Manageable Scope**: Teams can focus on specific features\n- **Easier Testing**: Less complex systems are easier to debug\n- **User Adoption**: Gradual feature rollout doesn't overwhelm users\n\n## Feature Evolution Timeline\n\n### MVP Features (Week 1-2)\n✅ **Basic Authentication** (Email/Password)  \n✅ **Simple Incident Reporting** (Text + Multiple Images)  \n✅ **Basic Alert Feed** (List all incidents)  \n✅ **Simple Location** (Manual address entry + GPS)  \n✅ **Basic Real-time Updates**  \n\n### Enhanced Features (Week 3-4)\n✅ **Google Maps Integration** (Completed - Business address selection & map visualization)  \n🔄 **Business Verification** (Add verification layer)  \n🆕 **Push Notifications**  \n🆕 **Subscription System**  \n🆕 **Advanced Analytics**  \n\n### Future Features (Week 4+)\n⭐ **AI-Powered Features**  \n⭐ **Advanced Geo-fencing**  \n⭐ **Third-party Integrations**  \n⭐ **Enterprise Features**  \n\n## Technical Debt Management\n\n### Phase 1-8: Accept Some Technical Debt\n- Use simple solutions for faster development\n- Focus on working features over perfect architecture\n- Document known limitations for future improvement\n\n### Phase 9-14: Address Technical Debt\n- Refactor authentication system\n- Improve database schema\n- Enhance error handling\n- Optimize performance\n\n### Phase 14+: Advanced Architecture\n- Implement microservices if needed\n- Add sophisticated caching\n- Implement advanced monitoring\n- Scale infrastructure\n\n## Deployment Strategy\n\n### MVP Deployment\n- **Development Environment**: Local Firebase\n- **Staging Environment**: Firebase staging project\n- **Basic CI/CD**: Manual builds and deployments\n- **Internal Testing**: Team testing only\n\n### Enhanced Deployment\n- **Production Environment**: Optimized Firebase project\n- **Automated CI/CD**: GitHub Actions or similar\n- **Alpha/Beta Testing**: External user testing\n- **Monitoring**: Basic crash reporting and analytics\n\n### Production Deployment\n- **Blue-Green Deployment**: Zero-downtime updates\n- **Feature Flags**: Gradual feature rollout\n- **Advanced Monitoring**: Performance and business metrics\n- **Disaster Recovery**: Backup and recovery procedures\n\n## Conclusion\n\nThis updated development plan follows an **MVP-first approach** that prioritizes getting a working product to market quickly, then iteratively adding complexity based on user feedback and business needs. \n\n### Success Depends On:\n- Rapid iteration based on user feedback\n- Strong focus on core value proposition in MVP\n- Gradual complexity addition without overwhelming users\n- Community building from day one\n- Maintaining security and privacy throughout all phases\n\nThe phased approach ensures each release builds upon a stable foundation while allowing for course corrections based on real-world usage and feedback. # Retail Incident Alert App - Development Plan\n\n## Project Overview\n\nThe Retail Incident Alert app is a community-based platform designed to help businesses share information about security incidents and receive real-time alerts about potential threats in their area. The app promotes business cooperation to enhance security and prevent shoplifting through timely information sharing.\n\n## Tech Stack\n\n- **Frontend**: Flutter (Cross-platform)\n- **Backend**: Firebase (Firestore, Authentication, Cloud Functions, Storage)\n- **Payment Processing**: Stripe\n- **Push Notifications**: Firebase Cloud Messaging (FCM)\n- **Maps & Location**: Google Maps SDK + Places API\n- **Platform Target**: Android (Google Play Store)\n\n## Core Features\n\n### 1. Authentication & User Management\n- User profile management\n- Subscription-based access control\n\n### 2. Real-time Alert System\n- Live feed of nearby incidents\n- Card-based layout with severity indicators\n- Distance-based filtering\n- Push notifications for geo-fenced alerts\n\n### 3. Incident Reporting\n- Camera integration for photo capture\n- Incident description and metadata\n- Real-time upload to shared database\n- Location tagging\n\n### 4. Incident Management\n- Detailed incident view with image carousel\n- Attribute classification system\n- Community comments and updates\n- Evidence packet export (PDF/ZIP)\n\n### 5. Map Visualization\n- Google Maps integration\n- Active incident markers\n- Business location display\n- Direction navigation\n\n### 6. Analytics & Reporting\n- Historical incident browsing\n- Heat map visualization\n- CSV export functionality\n- Filter and search capabilities\n\n### 7. Settings & Subscription\n- Notification radius configuration\n- Billing management\n- Team collaboration features\n- Subscription plans\n\n## Development Phases\n\n> **Approach**: Start with MVP (Minimum Viable Product) and iteratively add complexity. Build working features first, then enhance with advanced functionality.\n\n## 🎯 MVP Release (Weeks 1-2): Core Functionality\n\n### Phase 1: Project Setup & Basic Authentication\n\n#### 1.1 Project Structure Setup ✅ DONE\n```\nlib/\n├── main.dart\n├── app/\n│   ├── app.dart\n│   └── router/\n├── core/\n│   ├── constants/\n│   ├── utils/\n│   ├── services/\n│   └── themes/\n├── features/\n│   ├── auth/\n│   ├── alerts/\n│   ├── incidents/\n│   └── profile/\n├── shared/\n│   ├── widgets/\n│   ├── models/\n│   └── repositories/\n└── firebase_options.dart\n```\n\n#### 1.2 MVP Dependencies Setup ✅ DONE\n```yaml\ndependencies:\n  flutter: ^3.x.x\n  firebase_core: ^2.x.x\n  firebase_auth: ^4.x.x\n  cloud_firestore: ^4.x.x\n  firebase_storage: ^11.x.x\n  image_picker: ^1.x.x\n  geolocator: ^10.x.x\n  permission_handler: ^11.x.x\n  go_router: ^12.x.x\n  riverpod: ^2.x.x\n  freezed_annotation: ^2.x.x\n  json_annotation: ^4.x.x\n```\n\n#### 1.3 Basic Firebase Configuration ✅ DONE\n- Setup Firebase project\n- Configure Email/Password Authentication (simple start)\n- Setup basic Firestore database\n- Configure Firebase Storage for images\n- Generate firebase_options.dart\n\n#### 1.4 Simple Authentication ✅ DONE\n- **Basic Firebase Auth** (email/password)\n- Simple user registration\n- Basic profile creation\n- No subscription verification yet\n\n### Phase 2: Core Data Models & Basic UI ✅ DONE\n\n#### 2.1 Simple Database Schema ✅ DONE\n```firestore\nusers/\n├── {userId}/\n│   ├── email: string\n│   ├── businessName: string\n│   ├── createdAt: timestamp\n│   └── isActive: boolean\n\nincidents/\n├── {incidentId}/\n│   ├── reportedBy: string (userId)\n│   ├── description: string\n│   ├── images: array\n│   ├── timestamp: timestamp\n│   └── location: GeoPoint (basic)\n```\n\n#### 2.2 Basic Models & Repositories ✅ DONE\n- User model (simple)\n- Incident model (basic fields)\n- Repository pattern setup\n- Basic error handling\n\n#### 2.3 Simple UI Framework ✅ DONE\n- Basic app theme\n- Navigation setup\n- Loading states\n- Error states\n\n### Phase 3: Basic Incident Reporting ✅ DONE\n\n#### 3.1 Simple Incident Form ✅ DONE\n- Text description input\n- Single image capture (Enhanced: Multiple images)\n- Basic form validation\n- Manual location input (address text)\n\n#### 3.2 Basic Image Upload ✅ DONE\n- Image picker integration\n- Firebase Storage upload\n- Simple progress indicator\n- Basic error handling\n\n#### 3.3 Simple List View ✅ DONE\n- Basic incident list\n- Show reporter name\n- Show timestamp\n- Simple card layout\n\n### Phase 4: Basic Alert Feed ✅ DONE\n\n#### 4.1 Simple Home Screen ✅ DONE\n- List all incidents (Enhanced: 24-hour filtering)\n- Basic card design\n- Show description and image\n- Simple refresh functionality\n\n#### 4.2 Basic Real-time Updates ✅ DONE\n- Firestore listeners\n- Simple stream handling\n- Basic loading states\n\n#### 4.3 Simple Detail View ✅ DONE\n- Show incident details\n- Display images\n- Basic information layout\n- No comments yet\n\n### Phase 5: Basic Location Integration ✅ DONE\n\n#### 5.1 Simple Location Services ✅ DONE\n- Get current location\n- Basic permission handling\n- Store location with incidents\n- Show approximate address\n\n#### 5.2 Distance Calculation ✅ DONE\n- Calculate distance between user and incidents\n- Simple distance display\n- Basic sorting by distance\n\n### Phase 6: Testing & App Stability - COMPLETED\n\n#### 6.1 Unit Testing ✅ DONE\n- **Model Tests**: Unit tests for Incident & AppUser models (Freezed serialization + extensions)\n- **Utility Tests**: Location calculations, date formatting\n- **Service Tests**: AuthService (FakeFirebaseAuth/FakeFirestore), IncidentService, PreferencesService\n- **Repository Tests**: IncidentRepository CRUD + stream handling with FakeFirestore\n- **Provider Tests**: Riverpod auth and incident streams verified with ProviderScope overrides\n\n#### 6.2 Widget Testing ✅ DONE\n- **UI Component Tests**: CustomTextField, LoadingButton\n- **Form Validation Tests**: Incident form, registration form, settings forms\n- **Navigation Tests**: Route transitions, authentication guards\n- **State Management Tests**: Provider updates, loading states, error states\n\n#### 6.3 Integration Testing ✅ DONE\n- **Home Feed Stream**: Real-time incident updates rendered via provider overrides\n- **Settings Persistence**: Radius slider + SharedPreferences roundtrip with mocked dependencies\n- **Authentication Flow**: Login + Home + Protected routes\n- **Incident Creation**: Form + Upload + Database + Feed update\n- **Notification Flow**: Incident creation + Push notification + App response\n\n#### 6.4 Performance Testing - NOT IMPLEMENTED\n- **Load Testing**: Simulate multiple users creating incidents\n- **Memory Testing**: Monitor memory usage during image uploads\n- **Network Testing**: Test offline/online transitions, slow connections\n- **Battery Testing**: Monitor power consumption during GPS tracking\n\n#### 6.5 End-to-End Testing - NOT IMPLEMENTED\n- **User Journeys**: Complete user workflows from registration to incident reporting\n- **Cross-Platform Testing**: Android/iOS consistency\n- **Device Testing**: Various screen sizes, orientations\n- **Accessibility Testing**: Screen reader compatibility, touch targets\n\n#### 6.6 MVP Polish ✅ PARTIALLY DONE\n- UI/UX improvements based on testing feedback ✅ DONE\n- Error handling refinement with user-friendly messages ✅ PARTIALLY DONE\n- Performance optimization (image compression, caching) ✅ DONE\n- User feedback integration (surveys, crash reporting) - ✅ DONE\n  - Firebase Crashlytics wired into app boot sequence\n  - Settings screen offers in-app feedback submission to Firestore\n\n### Phase 6.7: Debugging & Monitoring Features - PARTIALLY IMPLEMENTED\n\n#### 6.7.1 Logging System ❌ NOT IMPLEMENTED\n- **Structured Logging**: Implement logging levels (debug, info, warning, error) ❌ NOT IMPLEMENTED\n- **Context Logging**: Include user ID, device info, and operation context ❌ NOT IMPLEMENTED\n- **Remote Logging**: Send logs to Firebase for production debugging ❌ NOT IMPLEMENTED\n- **Log Rotation**: Manage log file sizes and retention ❌ NOT IMPLEMENTED\n\n#### 6.7.2 Error Reporting ❌ NOT IMPLEMENTED\n- **Crash Reporting**: Firebase Crashlytics integration for automatic crash reports ❌ NOT IMPLEMENTED\n- **Error Boundaries**: Catch and report UI errors gracefully ❌ NOT IMPLEMENTED\n- **User Feedback**: In-app bug reporting with screenshot capture ❌ NOT IMPLEMENTED\n- **Performance Monitoring**: Track app performance metrics ❌ NOT IMPLEMENTED\n\n#### 6.7.3 Debug Tools ❌ NOT IMPLEMENTED\n- **Debug Menu**: Hidden developer menu for testing features ❌ NOT IMPLEMENTED\n- **Network Inspector**: Monitor API calls and responses ❌ NOT IMPLEMENTED\n- **State Inspector**: View current app state and provider values ❌ NOT IMPLEMENTED\n- **Device Info**: Display device and app version information ❌ NOT IMPLEMENTED\n\n#### 6.7.4 Systematic Debugging Approach ❌ NOT IMPLEMENTED\n- **Issue Reproduction**: Documented steps to reproduce common issues ❌ NOT IMPLEMENTED\n- **Debug Checklists**: Standardized debugging procedures ❌ NOT IMPLEMENTED\n- **Environment Simulation**: Tools to simulate different network conditions ❌ NOT IMPLEMENTED\n- **A/B Testing**: Framework for testing feature variations ❌ NOT IMPLEMENTED\n\n#### 6.7.5 Error Handling & Fallbacks ✅ PARTIALLY DONE\n- **Repository Exceptions**: Custom RepositoryException for data layer errors ✅ DONE\n- **User-Friendly Messages**: SnackBar notifications for user actions ✅ PARTIALLY DONE\n- **Graceful Degradation**: App continues functioning when non-critical features fail ✅ PARTIALLY DONE\n- **Offline Mode**: Cached data and offline incident reporting ❌ NOT IMPLEMENTED\n- **Retry Mechanisms**: Automatic retries for network failures ✅ PARTIALLY DONE\n- **Fallback UI**: Alternative layouts when data loading fails ✅ PARTIALLY DONE\n- **Loading States**: AsyncValue<T> for consistent loading/error/success states ✅ DONE\n- **Error Recovery**: Options to retry failed operations or use cached data ✅ PARTIALLY DONE\n\n### Phase 6.8: Testing & Debugging Roadmap - TODO\n\n#### Immediate Priorities (Next Sprint)\n- **Implement Service Unit Tests**: Add mock Firebase dependencies and test all core services ✅ DONE\n- **Add Provider Tests**: Test Riverpod providers with ProviderScope ✅ DONE\n- **Expand Integration Tests**: Create focused widget-level integration suites ✅ DONE\n- **Basic Logging System**: Implement structured logging with different levels\n\n#### Medium-term Goals (Phase 9-14)\n- **Performance Testing Framework**: Add load testing, memory monitoring, network simulation\n- **Crash Reporting**: Integrate Firebase Crashlytics\n- **Debug Tools**: Developer menu, network inspector, state inspector\n- **End-to-End Testing**: Complete user journey automation\n\n#### Long-term Enhancements (Post-Launch)\n- **Accessibility Testing**: Screen reader support, touch target validation\n- **Cross-platform Testing**: Automated Android/iOS testing\n- **Performance Monitoring**: Real-time performance tracking and alerting\n- **A/B Testing Framework**: Feature flag system for testing variations\n\n---\n\n## 🚀 Enhanced Release (Weeks 3-4): Advanced Features\n\n### Phase 7: Advanced Authentication ✅ DONE\n\n#### 7.1 Business Verification ✅ DONE\n- Business information collection (Enhanced: Business profile with location)\n- Manual verification process (Enhanced: Google Places integration)\n- Verification status tracking (Enhanced: Profile completion status)\n\n### Phase 8: Advanced Incident Management ✅ DONE\n\n#### 8.1 Enhanced Incident Form ✅ DONE\n- Multiple image upload (Enhanced: Up to multiple photos)\n- Severity levels (Enhanced: Color-coded by incident type)\n- Incident categories/attributes (Enhanced: Type selection with icons)\n- Location auto-detection (Enhanced: Business location integration)\n\n### Phase 9: Map Integration ✅ DONE\n\n#### 9.1 Google Maps Integration ✅ DONE\n```yaml\n# Add to dependencies:\ngoogle_maps_flutter: ^2.x.x\ngoogle_places_flutter: ^2.x.x\n```\n\n#### 9.2 Map Visualization ✅ DONE\n- Incident markers (with color coding by severity)\n- Current location (business location)\n- Custom markers\n- Basic clustering (grouped by business location)\n- Map tutorial popup with marker explanations\n\n#### 9.3 Advanced Location Services ✅ DONE\n- Places API integration (flutter_google_places_sdk)\n- Address autocomplete (business address selection)\n- Location accuracy improvement\n\n### Phase 10: Push Notifications ✅ DONE\n\n#### 10.1 Firebase Cloud Messaging ✅ DONE\n```yaml\n# Add to dependencies:\nfirebase_messaging: ^16.0.0\n```\n\n#### 10.2 Basic Notifications ✅ DONE\n- New incident alerts\n- Simple notification handling\n- Basic notification UI\n\n#### 10.3 Geo-fencing (Advanced) ✅ DONE\n- Location-based alerts\n- Radius configuration\n- Cloud Functions for smart notifications\n\n### Phase 11: Subscription System ✅ DONE\n\n#### 11.1 Stripe Integration ✅ DONE\n- Stripe payment processing integration\n- Cloud Functions for Stripe webhooks\n- Checkout session creation with saved payment methods\n- Customer portal for subscription management\n\n#### 11.2 Subscription Plans ✅ DONE\n- 7-day free trial implementation\n- Premium subscription tier ($9.99/month)\n- Subscription status tracking in Firestore\n- Real-time subscription access management\n\n#### 11.3 Feature Gating ✅ DONE\n- Subscription-based access control\n- Blocked screen for non-subscribers\n- WebView integration for Stripe checkout\n- Automatic subscription status updates\n\n#### 11.4 UI Components ✅ DONE\n- Subscription plans screen with pricing\n- Checkout WebView dialog with intelligent closing\n- Subscription status screen for management\n- Settings integration for subscription management\n\n### Phase 12: Advanced Analytics 🔄 TODO\n\n#### 12.1 Reporting Features 🔄 TODO\n- Historical incident browsing\n- Advanced filtering\n- Search functionality\n\n#### 12.2 Data Export 🔄 TODO\n- CSV export\n- PDF report generation\n- Evidence packet creation\n\n#### 12.3 Heat Maps 🔄 TODO\n- Incident density visualization\n- Time-based analysis\n- Risk assessment\n\n### Phase 13: Team Management & Settings 🔄 TODO\n\n#### 13.1 Team Features 🔄 TODO\n- Team member invitations\n- Role-based permissions\n- Team notifications\n\n#### 13.2 Advanced Settings 🔄 TODO\n- Notification preferences\n- Privacy controls\n- App customization\n\n### Phase 14: Production Preparation 🔄 TODO\n\n#### 14.1 Security Hardening 🔄 TODO\n- Data encryption\n- API security\n- Privacy compliance\n\n#### 14.2 Performance Optimization 🔄 TODO\n- Image optimization\n- Caching strategies\n- Offline support\n\n---\n\n## 🌟 Future Enhancements (Post-Launch): Scale & Optimize\n\n### Phase 15: Branding & User Experience ✅ DONE\n\n#### 15.1 Custom Logo Integration ✅ DONE\n- Custom logo implementation across all screens\n- Splash screen logo with transparent background\n- Login and register screen logo updates\n- Proper asset configuration and sizing\n\n#### 15.2 Android Icon Configuration ✅ DONE  \n- Android mipmap icon resources setup\n- AndroidManifest.xml icon reference fixes\n- Notification service icon updates\n- App launcher icon configuration\n\n#### 15.3 Subscription UX Improvements ✅ DONE\n- Intelligent WebView closure for Stripe checkout\n- Survey/feedback respect during cancellation\n- Timeout mechanisms with manual \"Done\" button\n- Widget lifecycle safety with mounted checks\n- Provider access protection after disposal\n\n### Phase 16: Advanced Features 🔄 TODO\n\n#### 16.1 AI/ML Integration 🔄 TODO\n- Automatic incident categorization\n- Risk prediction\n- Pattern recognition\n\n#### 16.2 Advanced Notifications 🔄 TODO\n- Smart alerting algorithms\n- Predictive notifications\n- Multi-channel alerts\n\n#### 16.3 Integration Features 🔄 TODO\n- Third-party integrations\n- API for external systems\n- Webhook support\n\n## Development Approach Benefits\n\n### 🎯 MVP-First Strategy\n- **Faster Time to Market**: Working app in 8 weeks\n- **Early User Feedback**: Test core concept before complexity\n- **Reduced Risk**: Validate business model early\n- **Iterative Improvement**: Build based on real usage data\n\n### 📈 Gradual Complexity Addition\n- **Stable Foundation**: Each phase builds on tested features\n- **Manageable Scope**: Teams can focus on specific features\n- **Easier Testing**: Less complex systems are easier to debug\n- **User Adoption**: Gradual feature rollout doesn't overwhelm users\n\n## Feature Evolution Timeline\n\n### MVP Features (Week 1-2)\n✅ **Basic Authentication** (Email/Password)  \n✅ **Simple Incident Reporting** (Text + Multiple Images)  \n✅ **Basic Alert Feed** (List all incidents)  \n✅ **Simple Location** (Manual address entry + GPS)  \n✅ **Basic Real-time Updates**  \n\n### Enhanced Features (Week 3-4)\n✅ **Google Maps Integration** (Completed - Business address selection & map visualization)  \n✅ **Business Verification** (Completed - Google Places integration for addresses)  \n✅ **Push Notifications** (Completed - Firebase Cloud Messaging with geo-fencing)  \n✅ **Subscription System** (Completed - Stripe integration with 7-day trial)  \n🔄 **Advanced Analytics** (Basic analytics in place, can be enhanced)  \n🆕 **Custom Logo Integration** (Completed - Brand logo across all screens)  \n\n### Future Features (Week 4+)\n⭐ **AI-Powered Features**  \n⭐ **Advanced Geo-fencing**  \n⭐ **Third-party Integrations**  \n⭐ **Enterprise Features**  \n\n## Technical Debt Management\n\n### Phase 1-8: Accept Some Technical Debt\n- Use simple solutions for faster development\n- Focus on working features over perfect architecture\n- Document known limitations for future improvement\n\n### Phase 9-14: Address Technical Debt\n- Refactor authentication system ✅ PARTIALLY DONE\n- Improve database schema ✅ PARTIALLY DONE\n- Enhance error handling and implement comprehensive fallback mechanisms ✅ PARTIALLY DONE\n- Optimize performance and add performance monitoring ✅ PARTIALLY DONE\n- **Expand test coverage with integration and end-to-end tests** ❌ HIGH PRIORITY\n- **Implement advanced debugging tools and logging systems** ❌ HIGH PRIORITY\n- **Add automated testing in CI/CD pipeline** ❌ HIGH PRIORITY\n- **Improve code quality with linting and static analysis** ✅ PARTIALLY DONE\n\n### Phase 14+: Advanced Architecture\n- Implement microservices if needed\n- Add sophisticated caching\n- Implement advanced monitoring\n- Scale infrastructure\n\n## Deployment Strategy\n\n### MVP Deployment\n- **Development Environment**: Local Firebase\n- **Staging Environment**: Firebase staging project\n- **Basic CI/CD**: Manual builds and deployments\n- **Internal Testing**: Team testing only\n\n### Enhanced Deployment\n- **Production Environment**: Optimized Firebase project\n- **Automated CI/CD**: GitHub Actions or similar\n- **Alpha/Beta Testing**: External user testing\n- **Monitoring**: Basic crash reporting and analytics\n\n### Production Deployment\n- **Blue-Green Deployment**: Zero-downtime updates\n- **Feature Flags**: Gradual feature rollout\n- **Advanced Monitoring**: Performance and business metrics\n- **Disaster Recovery**: Backup and recovery procedures\n\n## Conclusion\n\nThis updated development plan follows an **MVP-first approach** that prioritizes getting a working product to market quickly, then iteratively adding complexity based on user feedback and business needs. \n\n### Success Depends On:\n- Rapid iteration based on user feedback\n- Strong focus on core value proposition in MVP\n- Gradual complexity addition without overwhelming users\n- Community building from day one\n- Maintaining security and privacy throughout all phases\n\nThe phased approach ensures each release builds upon a stable foundation while allowing for course corrections based on real-world usage and feedback.\n\n---\n\n## 🎉 **RECENT ACCOMPLISHMENTS - September 2025**\n\n### ✅ **Phase 6.3 Integration Testing - COMPLETED**\nSuccessfully implemented comprehensive integration testing covering all major app flows:\n\n- **18 Integration Tests** - All passing ✅\n- **Authentication Flow**: Login → Home → Protected routes ✅\n- **Incident Creation**: Form → Upload → Database → Feed update ✅\n- **Real-time Updates**: Firestore listeners and stream handling ✅\n- **Notification Flow**: Incident creation → Push notification → App response ✅\n- **Settings Integration**: Settings screen and preferences management ✅\n\n**Technical Highlights**:\n- Mock generation with build_runner and Mockito\n- Provider overrides for isolated testing\n- Router testing with GoRouter integration\n- Async state management testing\n- Service integration verification\n\n### 📊 **Current Test Coverage**\n- **Unit Tests**: ✅ MOSTLY DONE (Models, Services, Repositories, Providers)\n- **Widget Tests**: ✅ COMPLETED (UI Components, Forms, Navigation, State Management)\n- **Integration Tests**: ✅ COMPLETED (End-to-end user flows and service integrations)\n- **Total Tests**: 92+ tests across all levels\n\n### 🎯 **Next Steps - Phase 7: Performance & Production Readiness**\n\n#### Immediate Priorities (Next Sprint)\n- **Performance Testing**: Load testing, memory monitoring, network simulation\n- **Code Obfuscation**: Implement Flutter obfuscation for production builds\n- **Error Monitoring**: Firebase Crashlytics integration\n- **Production Build Optimization**: APK size optimization, asset compression\n\n#### Medium-term Goals\n- **End-to-End Testing**: Complete user journey automation\n- **Cross-platform Testing**: Android/iOS consistency validation\n- **Accessibility Testing**: Screen reader support, touch target validation\n- **Advanced Debugging Tools**: Developer menu, network inspector, state inspector\n\n---\n\nIMPORTANT - Add obfuscation\n\n\n\nTask:\n\n\nI included 2 versions of the same development plan: an earlier draft and a revised draft with status updates. Based on those 2 documents, reconstruct how the project changed over time.\n\nCompare the 2 versions and make a table with these columns:\n1. Workstream\n2. Earlier draft status or plan\n3. Later document status or claim\n4. Interpretation of the change: true implementation progress, scope expansion, refinement, or contradiction\n\nAfter, list the 3 biggest contradictions you found across the 2 documents and explain them.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/activity/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/activity/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 11"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/activity/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should format the comparison as a table with these four columns: Workstream, Earlier draft status or plan, Later document status or claim, and Interpretation of the change.",
+        "The response should list and explain three contradictions after the table.",
+        "The response should not treat \"DONE\" labels from the second draft as proof that the work happened within the original schedule.",
+        "The response should recognize that the later document still places Phases 7–14 under the \"Enhanced Release (Weeks 3–4)\" and later roadmap structure.",
+        "The response should identify that Advanced Analytics is not simply \"true to plan\": the earlier draft places it in the Enhanced Release, while the later document still marks Phase 12 and its subfeatures as TODO.",
+        "The response should identify that Phase 6 is inconsistent because it is labeled completed, while some testing items under it are still not implemented.",
+        "The response should not treat \"September 2025\" vs the earlier \"4-week\" plan as a direct contradiction in duration, because the documents do not say when that 4-week plan started.",
+        "The response should identify monitoring as a later added workstream that remains mostly unimplemented.",
+        "The response should ground the analytics contradiction in the correct later-document sections: the Phase 12 TODO section and the later claim that basic analytics are already in place.",
+        "The response should ground the Crashlytics contradiction in the correct later-document sections: the Phase 6.7.2 error-reporting subsection and the later added note that Crashlytics was wired into app startup.",
+        "The response should classify the interpretation of change for each workstream using only these categories: true implementation progress, scope expansion, refinement, or contradiction."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/activity/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should format the comparison as a table with these four columns: Workstream, Earlier draft status or plan, Later document status or claim, and Interpretation of the change.",
+          "The response should list and explain three contradictions after the table.",
+          "The response should not treat \"DONE\" labels from the second draft as proof that the work happened within the original schedule.",
+          "The response should recognize that the later document still places Phases 7–14 under the \"Enhanced Release (Weeks 3–4)\" and later roadmap structure.",
+          "The response should identify that Advanced Analytics is not simply \"true to plan\": the earlier draft places it in the Enhanced Release, while the later document still marks Phase 12 and its subfeatures as TODO.",
+          "The response should identify that Phase 6 is inconsistent because it is labeled completed, while some testing items under it are still not implemented.",
+          "The response should not treat \"September 2025\" vs the earlier \"4-week\" plan as a direct contradiction in duration, because the documents do not say when that 4-week plan started.",
+          "The response should identify monitoring as a later added workstream that remains mostly unimplemented.",
+          "The response should ground the analytics contradiction in the correct later-document sections: the Phase 12 TODO section and the later claim that basic analytics are already in place.",
+          "The response should ground the Crashlytics contradiction in the correct later-document sections: the Phase 6.7.2 error-reporting subsection and the later added note that Crashlytics was wired into app startup.",
+          "The response should classify the interpretation of change for each workstream using only these categories: true implementation progress, scope expansion, refinement, or contradiction."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/activity/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_3.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/activity/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/activity/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 11"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/activity/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

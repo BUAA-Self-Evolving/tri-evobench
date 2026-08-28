@@ -1,0 +1,323 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_5",
+  "turn_id": "turn3",
+  "turn_index": 3,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "interactive",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "defa51ed-cb7f-caf7-0787-f58dd16b96c2",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 350,
+    "source_sha256": "2d75086b85fa10a444d1d125a02870c836856ef3022a8f291726f2b495401913",
+    "source_metadata": {
+      "task_id": "defa51ed-cb7f-caf7-0787-f58dd16b96c2",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "2026/03/05 10:50\n\nBanquet\nCutting David’s hair\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/03/04 10:41\n\nLate to homeroom\nWas late to homeroom and lost in a school that I did not know, Sarah Jenkins was there and helped me find the classroom. \n\nSeparate dream: Chris texted me and asked for no contact :(\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/03/03 09:58\n\nClassroom\nChloe and I were sitting next to each other in a college classroom I think the subject was math based and I talked to the girl next to me who said she made 91K but only worked for $11/hr. I wasn’t doing work for the class and wasn’t able to answer the teachers questions about the worksheet we had in front of us…the teacher didn’t ask me but I had a feeling I needed to study up\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/03/01 10:38\n\nOlympics\nChloe and Mary were there they won a medal, it was the Winter Olympics David and I were there trying to stick together in the crowds of people in the auditorium. Our group was supposed to speak on different topics but then it was over and we were walking out\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/28 16:25\n\nOcean\nWatched the ocean in my dream. Jordan was there again lol\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/25 09:56\n\nEnd of year bandquet\nHugged Jessica (not Thompson) she was wearing a cardigan. Saw aunt susan at the house and was trying to get her not to go whole family stepped and started screaming at me…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/24 11:40\n\nCamp\nWas a lifeguard? Swimming in wave pool area, had to duct tape people’s swim suits, saw Jordan, “cool kids” were off doing something else?\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/23 10:28\n\nDrum corps \nWe were doing a gym exhibition performance and i did not know the songs we were performing for the other band. Had to fake the music and then got back to the bus to start getting changed\n\nGetting cold pressed juice into prisons, schools, hospitals etc \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/22 11:54\n\nHighschool\nDreamt I was back in hs with familiar classmates about to take a test and then we were in a team competition with Mike? (Brian)? And others. Felt my teammate hug me and really felt that shit.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/07 09:55\n\nDream\nBanquet with large tables- bday party, had to change clothes, pack up tour spread and dance at the party\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/02 10:27\n\nParty\nMade amamends with Anna, again. Amanda Clark was there Lauren was there, my dad was there Mr davis was there and I copied and pasted something to a computer. It was after winter break in a classroom setting.\n\nAlso saw the mederma scar cream that I want lol\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/02/01 10:53\n\nGrammy Betty’s \nWe were getting ready to leave Grammy Betty’s I was making the bed with Penelope and I thought I forgot a couple binders\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/24 09:16\n\nDrum corps dream\nSection leader and in some sort of competition and I remember going to sleep in the gym and talking to people\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/23 09:25\n\ndinner party dream\nLots of people where there at thanksgiving dinner party, there was a lower level w kids and upper level where adults were eating I hugged Brittany happy birthday and was jealous o\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/21 10:03\n\nGrateful to be I AM\nBear/beast mix running directly towards me…monster from Alice and wonderland but brown\n\nIt’s really quiet when my love leaves :/ but I have to hold myself accountable if I want to be like who I say.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/19 11:15\n\nGrateful\nFight w Marcus, saw some people in passing.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/17 13:31\n\nSmall stones\nDavid was asking about a way of doing something? Not sure \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/16 12:45\n\nGrateful\nJessica Miller was pregnant, hugged smitty\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/15 19:01\n\nThe primary cause of unhappiness is never the situation but your thoughts about it \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/15 10:46\n\nBirthday eve\nHad a dream about the family and extended family who I didn’t know come to a house for Christmas I tried to hide but I was also taking care of a baby but I also was complaining that it wasn’t fun..? Idk\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/14 21:22\n\nSpirit animals\nHorse- how I see myself\nCat- how others see me\nSnake- my true essence \n\nEagle\nDolphin\nPolar bear \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/14 17:07\n\nWeird dreams\nWent to a drum corps thing in a crazy house where there was a slide and upstairs room. Hugged an old friend and led degligé\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/12 21:04\n\nPodcast\nWhere can you take accountability for the situation, even if that’s just the judgements being passed in your mind\n\nPeople on my podcast: Kelly Harper, Aaron Abke, cam waters, Lauren gibler, Jessica zweig, Michael beck width, Andre duqum, Laura celery, \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/09 09:26\n\nDidn’t journal at all yesterday\nI am committed to writing physic\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/07 13:44\n\nQuestions I’d ask you if you were on my podcast\n- call her daddy jennette mcurdy\n\n- where in life are you scared of showing up for yourself?\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/06 21:38\n\nEvil influencer”\nWay to label -others\nBut more importantly a catalyst for you to love someone who everyone else is shaming and condemning…the facade will always come crashing down with victims speaking up\nDoomsday prep, re-enactment of trauma\n\nRun at the first red flag, not the second\nActions vs words/belief\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/06 09:41\n\nFollow your bliss\nDreamed I was going to a softball game we let a kid drive the car and crashed into the field across that was filled with tractor equipment it was dark, the whole fam was there…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/05 11:44\n\nWeird dream at camp\nThe setting was camp-esque but kinda also like a shopping mall, David gave me 10 to give to a guy for a wristband then I was kinda rude to him saying give me the short and sweet answer and he walked away…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/04 09:53\n\nBlack panther dream\nWe were trying to get into my house when a giant blank panther ran up on us with this huge head that looked like the size of a lion. We were struggling to get into the garage cause I forgot the passcode but event\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/03 09:42\n\nDon’t stay up late editing photos\nWoke up extremely tired because I stayed up till after two but I curated the perfect pictures for 2025…weird dreams but I don’t remember them.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/02 09:45\n\nGrateful\nDreaming about all the peo\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/01 15:42\n\nMisogi\nRead ACIM\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2026/01/01 09:53\n\nWow…near year new me has a completely different definition\nI do feel lighter now that I’ve shed 2025 and everything that came with it. I feel like through the past month of prep I have already gotten a head start with my goals and a more natural routine like journaling flows so easily. I’m so excited for my ritual and I’ve been consistent with it. Had a weird dream about a house party? where I was/was watching Fiona be pregnant say goodbye to everyone and run from the cops abandoning her current baby…anyway. Super excited to be starting a course in miracles I’ve got a whole new vigor about it now that I did LTC for 5 days\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/31 09:10\n\nSuper weird dream\nDreamt I was at a barn watching someone else ride and the horse jumped straight into the spectator area (that was messy with kids toys) onto a person…had another dream where I was trying on wedding guest dresses for olivia's wedding with my mom…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/30 09:26\n\nStill shedding things that don’t serve me anymore\nYear of the snake is coming to an end and I can feel the change happening gradually. I’ve just about shed almost everything, except smoking and my avoidance of the present moment. Once I do that, I know my whole life will change. I want to study ACIM everyday for 2026!\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/29 20:02\n\nSpent all day doing\nDid a lot of stuff and I think I need to give myself permission to just be. But the budgets done, the house is clean, and I attended LTC, read and understood buying my HSA and hdhp.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/29 11:06\n\nWoke up super grateful\nI loveee waking up and realizing IAM!! I’m so grateful to be HER and to have an amazing partner. Some weird dreams that I forgot but I’m ready for the new year \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/28 09:47\n\nTj birthday\nBeing 25 & 24 is soooo weird but I’m happy that we are both so vibrant and blessed.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/27 19:26\n\nCredit cards\nAmex gold & platinum (dining)\nCapital 1 venture X (travel)\nChase ink business preferred (1099)\n\n\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/27 09:59\n\n48k\nWith a summer off and smoking weed everyday is pretty damn good and I’m super proud of myself for sticking with this opportunity the universe opened up for me ❤️ can’t wait to see what 2026 brings\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/26 09:50\n\nSlept great last night but super tired\nSlept in today and woke up pretty tired but excited for the new year. Glad I’ve got my journal and calendar and I’m ready to become her.\n\nManifesting my kitty shelter and being a content creator.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/25 09:30\n\nMERRY CHRISTMAS\nLast night felt weird but now I’m super excited to just enjoy the day with family ❤️ gotta remember the ezpass \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/24 09:46\n\nYoga flow\nLoveeeed my morning yoga flow w mama feeling good in my body and ready to tackle the day \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/23 20:00\n\nDriving\nBoutta drive up to my parents- deep breath!! Im emotionally regulated at all times. I am grateful and cool as a cucumber ❤️ I am keeping track of my breath and will find ways to release energy somatically. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/23 09:29\n\nThank you I love you\nHaving a good two day start at the anti rot agenda, I’ve been more conscious about turning the TV off and getting off my phone! In the morning too.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/22 10:09\n\nWeird dream & winter solstice\nYesterday we celebrated the first day of the winter solstice yay! \n\nI had a weird dream that was house-esque setting with carnival type killer rides…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/21 13:12\n\nThank you ily\nNew morning mantra and I am committing to noticing my breath & always being emotionally regulated. Cant wait oct o start my solstice ritual tonight 😇\n\n- voice training\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/20 08:59\n\nAnother wacky dream\nI dream I was in the middle of a soccer field playing w some girls and saw two gutted wild boar hanging from a tree. We were scared so we ran into the school building and that’s what I remember\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/19 09:08\n\nCrazy dream\nObviously my subconscious is worried about letting my parents down but it’s okay for someone else to be disappointed in me. I need to let that go. I’m whole as I am and grateful I have the diving spirit within that makes me complete. \n\nHad another dream we were rushing getting ready for a wedding.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/18 09:16\n\nCat dream\nAt the house w Cooper and other cats when a hawk flys in…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/17 09:11\n\nDrum corps dream\nI am always about to play a softball game or teach drum corps in my dreams. \n\n-LA 2028 tickets open janurary 14th\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/16 09:53\n\nThank you and I love you \nHad a weird school shooter dream. Was hot in the night. Gotta plan 2026 bc my baby is gonna be free!! Finish laundry today.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/15 09:06\n\nGrateful\nHad weird dream where I saw David’s puppies \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/14 15:18\n\nContent ideas\nPlaying around with the idea to strip the instagram down to just words on carousels. Reduces overthinking about content and introduces your real self.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/13 11:10\n\nHalf smile\nI will live in the present everyday from when I wake up until I rest my head again. I loved saying the mantra I will receive as much money as self love I give ❤️ bed time ritual is a must today!\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/12 10:43\n\nSlept in\nWanna start dream analysis and bed time ritual. Gotta finish to do list before year end. Hugged Karen in my dream\n\nDaily creative practice- music, cooking, painting, sculpting, drawing, dance\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/11 10:21\n\nTransmuting\nWoke up and cried but welcomed my feelings and now I feel so much better af\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/10 12:37\n\nFlustered\nLast night was dumb idk why I started an argument right before bed. This is why we need a bed time ritual and daily routine. I’d like to start working at the library more often and getting out. Setting boundaries w the insurance stuff is exhausting. \n\nHad a great mindfulness reading at the library and there’s a crochet event on Dec 18th.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/09 09:13\n\nPutting down old habits\nLeaving the things that no longer serve me:\n- weed\n- phone addiction\n- food addiction\n- blue light before bed\n- \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/08 11:24\n\nHappy holiday gift shopping \nStart recording dreams again, keep up w 2026 journal.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/07 09:36\n\nHappy Sunday\nGoing to start tracking all the wellness things I want to do daily. Gotta to the dump and Christmas shopping this weekend.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/06 09:13\n\nFinish end of year checklist\nSet yearly goals and habits. Buy xrp & cold storage wallet. Compost trash can. Build van layout and do mock podcasts.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/05 09:00\n\nSnow day \nGot like 3 inches of snow today. Did not have a good sleep I was cold and sweaty but alas the day goes on. I’m excited to plan next year and hopefully get the whole dci gang together.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/04 09:40\n\nRituals, planner, awaken summit\nYay awaken summit started yesterday and I’m so excited for the rest of the event. December is all about prepping for the new year so that aligned action can take over and I can find my path with ease. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/03 10:12\n\nGetting my shit together \nBought a planner for 2026 and I’m going to straighten out my goals. 2026 is the year of the horse and I will channel that energy.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/02 11:02\n\nWoke up sweaty\nDon’t go to sleep late. Start juice diet\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/12/01 09:00\n\nDon’t stay up all night\nMantras, incantations, breath work, mindfulness \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/30 11:16\n\nSoccer\nTired from the wedding and winter has arrived. Make it profitable to save animals rather than exploit them.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/29 09:25\n\nBlack tie wedding today\nA cold noverm\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/28 09:00\n\nGrateful\nStarting the day with nookie is rare for us but a good start esp since we got out of bed before 9!\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/27 09:56\n\nFoot hurty \nNeed my foot to heal so I don’t wake up in pain when I move it wrong\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/26 09:00\n\nNever eating sugary food again\nThe cost to my stomach outweighs the taste of the food and I’m committed to eating as my body is a temple.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/25 13:44\n\nBefore year end\n1. Load up on BTC & XRP\n2. Get into solana, eth\n3. Cold storage wallet\n4. Gifts\n5. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/25 09:40\n\nGrateful everyday\nTons of stuff runs through my mind but I am still able to be at rest with gratitude. I’m manifesting a family compound where our families can \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/24 20:29\n\nForgot to journal this morning for the first time! \nHad a rough convo with the fam but it’s my own fault. We got over it smoothly and quickly tho so all good ❤️\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/23 09:23\n\nMorning yoga flow\nGot me in a fantastic mood to start the day and my body feels so much more loose. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/22 09:43\n\nVision boards in free time\nIn an effort to create as much as I consume I want to do vision boards and some hobbies mid-day as a work break.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/21 09:31\n\nHappiness is the spiritual experience of living every minute with love, grace, and gratitude.\nThankful that IAM ❤️ continuing to work on only putting healthful living foods in my body \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/20 09:29\n\nGot to sleep late last night \nAm definitely feeling cold and tired but today is still the best day ever cause I’m alive. I am perfect as I am and everyday is a gift of life. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/19 09:01\n\nGetting my life together today\nGotta get back in the gym, eat right, and do a yearly week long fast. Should look at 26 before 26 and presents. Get a yearly calendar and some journals.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/18 20:01\n\nForgot an entry today\nHad a meditation outside today in the crisp weather. Got access to my cardano wallet yay.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/17 10:23\n\nSo grateful\nGod show me more resources more examples more proof that I love money and money loves me. Let me show love with my dollars and let love be shown to me. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/16 10:12\n\nStayed up too late\nThe pumpkin I ate was giving me cramps overnight and I went to bed too late last night. Had some weird dreams\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/15 09:18\n\nWoke up so grateful\nStarting trading today with my first faux trade in the books from yesterday. Had a nice cuddle this morning and now I’m ready for my dream day. Everyday is the best day. \n\nMoney affirmations: show me more resources more proof more opportunities that money comes to me effortlessly.\n\nBought xrp at three different lows today and my predictions were correct!\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/14 10:52\n\nDay trading day 2\nGetting familiar with Coinbase and doing more back testing. Practicing real time trades & decisions. Need trading notebook. Gotta roast the pumpkins too.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/13 10:10\n\nHealth insurance\n- premiums are tax write offs\n- cash pay\n- crowdhealth\n- health co-op\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/13 09:10\n\nYesterday went by too fast\nMissed the gym again, have to go to bed earlier. Got some good work done on investigating an LLC and a legitimate day trading business.Start trading with a grand and see where it goes. Gotta do some back testing today too.\n\n-American crypto association on phantom\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/12 09:08\n\nMissed the gym this morning\nSore from yesterday but ready to tackle today. The start of the rest of my life is today ❤️\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/11 09:44\n\nPodcast notes\nGot to the gym today in the morning yay!!\n\nFinancial feminist healthcare:\n￼private companies competing for my business\n￼SHIP phone line\n￼charity care @ non profit hospitals & for profit\n￼300%-600% of federal poverty line\n￼dollar for website\n￼appeal insurance denied claims\n￼pay a bill in full upfront but discounted\n￼ask doctor for samples\n￼mark Cubans cost plus drugs\n￼Canadian pharmacies- pharmacy checker\n￼goodrx \n￼bring list in writing\n￼”give me a minute”, get a second opinion\n￼uninsured: federally qualified health centers, community clinics\n￼armandalegshow.com\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/10 11:01\n\nI love money and money loves me!\nShow me more proof today that the universe is living through me and all I have to do is aligned action to make my wildest dreams come true. Feeling the love today.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/09 11:06\n\nGolfing today at a perfect fall 65\nBeautiful somewhat humid day we got up early to do a round of golf and then last soccer game at 3. Wearing my new sweater 🥰\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/08 09:10\n\nAnother gorgeous fall day\nRiding to work w hubby again. Got to see Mark Jr and have pizza at Ashley’s which was nice yesterday.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/07 20:13\n\nFeeling flustered\nWorked myself to death trying to rush criteria when I thought the project would disappear. It didn’t and now I’m still trying to breathe deeply…\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/07 09:57\n\nBest day ever\nThe sun is shining I woke up soooo grateful and I’m gonna have the best day ever today. Reading at the library, shopping at Marshall’s and hopefully finishing a zebra project.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/06 09:18\n\nGrateful and happy every single day.\nStill not following Jesus diet at night. Stay away from candy & processed shit!!!\n\nNeed to get cracking on this to do list before the year end. \n\nBuild trading LLC & algorithm\n\n\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/05 09:30\n\nWorking on morning routine\nGotta get to the gym in the morning which means we have to set our evening routine in place with strict bed time. Keep researching day trading and opening an LLC. Couldn’t stick to the Jesus diet for 40 days. Need to do a juice fast today. \n\nW’s: nookie, apple juice, clean up\nL’s: candy, too much apple cake, not enough dinner\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/04 10:01\n\nCan you kneel before the king and say I’m clean?\n- Working on manifesting my dream life\n- now that I have capital I need to get working on automating and accelerating\n- eventually going to have to open an LLC \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/03 09:23\n\nGroceries\nGotta go to Aldi to get a bunch of fruit to juice for the week. Meal prep too\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/02 09:00\n\nYearly plan starts today!\nIncludes: juicing, 26 tasks, one big thing for 2026, and side hustle\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/11/01 14:45\n\nNov 1! Wow\nCan’t believe it’s officially Christmas season. Gotta wrap up my end of year list and see what we can start doing with crypto trading. I’m so grateful for a chill Halloween and the beautiful sunshine with a pale blue sky. Starting life process and I will become a millionaire very soon.  Practiced my jazz improv and had so much fun. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/31 11:18\n\nIt’s Halloween!!\nIm so grateful for the beautiful crisp fall weather and a spooky day. Planning to carve pumpkins and watch a Halloween movie. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/30 09:13\n\nBest day ever\nEveryday is my best day ever and everyday is the start of something new ❤️ In order to start working for myself I need to create an LLC, learn how to safely day trade with the business. Tmrw’s Halloween 😻\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/29 11:26\n\nRituals\nNeed to go to gym in the morning. \n\nBe in the room with: E&B, Aaron Spivak F30U30, Lauren gibler, Kara and Nate, sharks, \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/28 09:36\n\nBack to work\nAfter a nice week vacation we’re both back to work today. Looking to start a side hustle that will provide an additional stream of income, potentially crypto trading. Will need to get an LLC for that and maybe trading software. Turning into my mom…recognizing I’m picking at David.\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/27 15:53\n\nPumpkin picking\nGrateful I have the privilege to go on cute dates and choose to eat whatever I want. Neck is still sore from driving and idk what to do with my injured foot. Need to plan out 30 days raw vegan. Instead of scrolling need to plan out ✨ dream avatar ✨ \n\nLong term Goals: Van life, raw vegan, nature immersion, eco village, podcast, sanctuary, \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/26 19:13\n\n26 tasks before Jan 1st\n1. Clean closet\n2. Buy presents\n3. Get ski equipment & tickets\n4. Plan out 18 months\n5. Build budget pie chart & calculator\n6. Build van vision board\n7. Taxes\n8. Dentist appt\n9. Photo shoot\n10. Pay off savor\n11. Start inbloom\n12. Tiki cat sub\n13. HSA/ health insurance\n14. Sanctuary vision board\n15. Raw vegan meal plan\n16. Journals- trading, dream avatar, travel plans\n17. Clear photo storage w photo books\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/25 10:15\n\nDay after\nGot up at 8:30 feeling strangely energized and ready for our travel day. Was overtired yesterday but I had a lot of fun dancing and meeting new people. Might need to sleep all next week though. Thank you to the Universe for granting my wish to find the tire’s cap before we left and for lifting the smoothie stain. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/24 10:06\n\nWedding day\nRehearsal dinner was a success and made new friends! Might go to the beach today and prepping for David’s long day w/ wedding pictures. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/23 10:02\n\nRose/bud/thorn\n- hellish 13hr drive\n- rehearsal dinner & getting ready!\n- \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/22 09:06\n\nRose/thorn/bud\n- cleaned up, pay out\n- screen time\n- road trip\n\n- facing death podcast- what must I do before my death bed\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/21 12:29\n\nGoals/habits intentions for 2026\n- jazz improv\n- singing\n- crochet\n- soccer\n- one big thing: ….? \n- ski trips\n- big holiday trip\n- dance\n- raw vegan diet high fruit\nHABITS\n- dishes\n- fridge\n- grocery\n- breathwork\n- gym\n- contemplative prayer\n- gratitude practice\n- sunlight\nINTENTIONS\n- skin care\n- gua sha\n- lymphatic drainage & fascia release\n- meal prep 1x a week\n- \n\n\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2025/10/21 12:27\n\nBeautiful fall day\nStart series of journals to set life goals and stick to them everyday\n\nBreakdown one year milestone into daily habits\n\nWatch life process podcast with eamon and bec\n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n2020/11/27 13:38\n\nLove when bubby visits me \nI also felt like I was a younger version of myself and Tj was there too. I remember running maybe in a competition of some sort, anna was there and I asked for forgiveness. \n\nPowered by MyDiary\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n\n\nTask:\n\n\nCreate a concise, dated habit tracker with journal dates and time periods for different hobbies and priorities noted. Map this with the progress updates presented in the text, if any and rank their overall importance according to the journal. "
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the provided diary entries, here is a concise, dated habit tracker mapping hobbies, priorities, and progress, ranked by overall importance as indicated by the journal's focus.\n\n### **Concise Dated Habit Tracker**\n\n---\n\n#### **Rank 1: Core Self-Reflection & Journaling**\n-   **Date Range:** Throughout (e.g., 2026/01/09, 2025/11/24, 2025/12/08)\n-   **Habit:** Daily Journaling & Dream Recording\n-   **Progress:** Committed to writing daily, but missed entries on 2025/11/24 and 2025/11/18. Started recording dreams again on 2025/12/08. Aims to begin dream analysis and establish a bedtime ritual (2025/12/12).\n-   **Importance:** **Highest.** The entire text is a journal, and self-reflection is the foundational practice.\n\n---\n\n#### **Rank 2: Health & Wellness Transformation**\n-   **Date Range:** Throughout (e.g., 2025/10/27, 2025/11/05, 2025/12/24)\n-   **Habit:** Holistic Health (Diet, Exercise, Mindfulness)\n    -   **Diet:** Transitioning to raw vegan/high-fruit (2025/10/27), juice fasting (2025/11/05, 2025/12/02), avoiding sugar/processed foods (2025/11/26).\n    -   **Exercise:** Establishing a gym routine (focus from 2025/11/05), morning yoga (2025/11/23, 2025/12/24).\n    -   **Mindfulness:** Breathwork, mantras, and gratitude practice (2025/12/01, 2025/12/29), emotional regulation (2025/12/23).\n-   **Progress:** Actively planning dietary shifts, setting gym goals, enjoying yoga, and integrating mindfulness into daily routines.\n-   **Importance:** **Very High.** Multiple detailed entries focus on transforming physical and mental health.\n\n---\n\n#### **Rank 3: Financial Independence (Crypto Trading)**\n-   **Date Range:** Primarily Nov-Dec 2025 (e.g., 2025/11/13, 2025/11/14, 2025/11/15)\n-   **Habit:** Day Trading & Crypto Investment\n-   **Progress:** Researched Coinbase, practiced backtesting, planned to open an LLC for trading (2025/11/13). Made first trades in XRP (2025/11/15). Outlined plans to expand into Solana/ETH and build a trading algorithm (2025/11/25, 2025/11/19).\n-   **Importance:** **High.** A major, actionable focus in late 2025 with clear steps toward automation.\n\n---\n\n#### **Rank 4: Spiritual Growth**\n-   **Date Range:** Throughout (e.g., 2026/01/01, 2025/12/30, 2025/12/21)\n-   **Habit:** Spiritual Practice (ACIM, Gratitude, Prayer)\n-   **Progress:** Began studying *A Course in Miracles* (ACIM) on 2026/01/01 with a goal for daily study (2025/12/30). Established gratitude mantras (2025/12/21, 2025/12/29). Listed contemplative prayer as a 2026 habit (2025/10/21).\n-   **Importance:** **High.** Viewed as essential for inner peace and overcoming unhappiness (\"primary cause of unhappiness is never the situation but your thoughts about it\" - 2026/01/15).\n\n---\n\n#### **Rank 5: Creative Expression & Content Creation**\n-   **Date Range:** Throughout (e.g., 2025/12/14, 2025/12/12, 2025/10/21)\n-   **Habit:** Podcasting & Creative Hobbies\n    -   **Podcast:** Planning episodes, listing guests (Kelly Harper, Aaron Abke, etc. on 2026/01/12), drafting questions (2026/01/07).\n    -   **Hobbies:** Jazz improv (practiced 2025/11/01), crochet (event on 2025/12/18), singing, dance, sculpting.\n-   **Progress:** In active planning stages. Hobbies are listed as key 2026 goals.\n-   **Importance:** **Medium.** An important emerging priority for 2026.\n\n---\n\n#### **Rank 6: Long-Term Life Projects**\n-   **Date Range:** Throughout (e.g., 2025/10/26, 2025/12/06, 2025/12/26)\n-   **Habit:** Visioning & Building (Van Life, Kitty Sanctuary)\n-   **Progress:** Created vision boards for van life and a kitty sanctuary (2025/10/26). Planned van layout (2025/12/06). Manifested a kitty shelter (2025/12/26). Envisioned a family compound (2025/11/25).\n-   **Importance:** **Medium.** These provide long-term direction but are less immediate than daily habits.\n"
+      },
+      {
+        "role": "user",
+        "content": "Review my diary and identify the top 3 habits I repeatedly tried and failed to maintain, as well as the root causes for those failures (e.g., staying up too late editing photos/phone use). Create a detailed 2026 lifestyle plan that specifically uses the somatic and mindfulness techniques I successfully employed elsewhere in the diary to build a routine that prevents those specific points of failure. Ensure the plan balances my 'big' 2026 goals (van life, kitty sanctuary, day trading) without relying on strict deadlines.\n\nHandle the material and request above. I also have a standing tool fact about my default workspace directory that matters for future turns, but I have not stated it yet. Ask one concise clarification before finalizing, then remember my answer."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": {
+    "policy": "reveal_only_after_relevant_clarification",
+    "scripted_reply": "My default workspace directory is docs/mixed/drafts. Please remember it for future turns.",
+    "grounded_fact_id": "l1_life_stream_5.fact_02.default_workspace.v1"
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_workspace='docs/mixed/drafts' with scope user:l1_life_stream_5 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_5.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/mixed/drafts",
+          "scope": "user:l1_life_stream_5"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify exactly three habits the user repeatedly failed to maintain: poor sleep hygiene (staying up late), dietary indiscipline (eating sugary/processed foods), and inconsistent exercise (missing the gym).",
+        "The response should identify that a specific root cause for staying up late was editing photos (mentioned on 2026/01/03).",
+        "The response should identify that emotional friction (arguments) with a sense of urgency were root causes for the user's sleep failures (as noted in entries like 2025/12/10 and 2025/11/07).",
+        "The response should identify that the user failed to avoid sugary foods like candy and apple cake (noted on 2025/11/05 and 2025/11/06).",
+        "The response should identify emotional eating or a lack of preparation/meal prepping (e.g., needing to shop at Aldi) as root causes for dietary failure.",
+        "The response should identify that missing the gym on 2025/11/12 and 2025/11/13 was a recurring failure.",
+        "The response should identify that fatigue resulting from poor sleep was a primary root cause for the failure to exercise in the morning.",
+        "The response should incorporate \"dream journaling\" into the morning routine as a mindfulness technique frequently mentioned in the diary context. For example, \"dream journaling\" should be stated as a goal.",
+        "The response should include the practice of \"gratitude journaling\" as a technique based on the user's previous positive experiences mentioned in the diary.",
+        "The response should integrate the three \"big\" 2026 goals (van life, kitty sanctuary, and day trading) directly into the phases of the daily or weekly routine (e.g., within the morning or afternoon blocks) rather than presenting them as a separate, isolated section.",
+        "The response should balance the day trading goal by suggesting it be performed during periods of \"deep work\".",
+        "The response should integrate the van life and kitty sanctuary goals by dedicating specific  \"visionary\" time blocks for planning (e.g., vision boarding as mentioned on 2025/10/26).",
+        "The response should not include any strict calendar deadlines (e.g., \"You must do this at 8:00 AM\") for the 2026 lifestyle plan.",
+        "The response should describe the 2026 plan as a \"lifestyle plan\" or \"rhythm\". For example, it should use a loose plan rather than a rigid schedule.",
+        "The response should explicitly link the proposed evening routine to the prevention of the \"staying up late\" failure.",
+        "The response should contain at least one step or technique that helps mitigate the specific root causes of poor sleep.",
+        "The response should contain at least one step or technique that helps mitigate the specific root causes of dietary indiscipline.",
+        "The response should contain at least one step or technique that helps mitigate the specific root causes of inconsistent exercise.",
+        "The response should suggest using meal preparation as a proactive strategy to address the \"lack of preparation\" root cause for dietary failure.",
+        "The response should maintain a supportive and encouraging tone. For example, one that reflects the user's own journaling style (e.g., using terms like \"manifesting\" or \"alignment\").",
+        "The response should reference dates when providing evidence for habits or techniques.",
+        "The response should identify that the user's gratitude practice (mentioned in the diary) should be used as a tool to disconnect from digital noise in the evening.",
+        "The response should suggest that the 2026 goals be treated as \"joyful exploration\" rather than tasks to be checked off. For example, the user's preference is avoiding pressure.",
+        "The response should provide a clear structure with headings for \"Failed Habits,\" \"Root Causes,\" and the \"2026 Lifestyle Plan.\"",
+        "The response should ensure that the \"Detailed 2026 lifestyle plan\" is the primary focus. For example, the longest section of the output."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_workspace='docs/mixed/drafts' with scope user:l1_life_stream_5 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/mixed/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify exactly three habits the user repeatedly failed to maintain: poor sleep hygiene (staying up late), dietary indiscipline (eating sugary/processed foods), and inconsistent exercise (missing the gym).",
+          "The response should identify that a specific root cause for staying up late was editing photos (mentioned on 2026/01/03).",
+          "The response should identify that emotional friction (arguments) with a sense of urgency were root causes for the user's sleep failures (as noted in entries like 2025/12/10 and 2025/11/07).",
+          "The response should identify that the user failed to avoid sugary foods like candy and apple cake (noted on 2025/11/05 and 2025/11/06).",
+          "The response should identify emotional eating or a lack of preparation/meal prepping (e.g., needing to shop at Aldi) as root causes for dietary failure.",
+          "The response should identify that missing the gym on 2025/11/12 and 2025/11/13 was a recurring failure.",
+          "The response should identify that fatigue resulting from poor sleep was a primary root cause for the failure to exercise in the morning.",
+          "The response should incorporate \"dream journaling\" into the morning routine as a mindfulness technique frequently mentioned in the diary context. For example, \"dream journaling\" should be stated as a goal.",
+          "The response should include the practice of \"gratitude journaling\" as a technique based on the user's previous positive experiences mentioned in the diary.",
+          "The response should integrate the three \"big\" 2026 goals (van life, kitty sanctuary, and day trading) directly into the phases of the daily or weekly routine (e.g., within the morning or afternoon blocks) rather than presenting them as a separate, isolated section.",
+          "The response should balance the day trading goal by suggesting it be performed during periods of \"deep work\".",
+          "The response should integrate the van life and kitty sanctuary goals by dedicating specific  \"visionary\" time blocks for planning (e.g., vision boarding as mentioned on 2025/10/26).",
+          "The response should not include any strict calendar deadlines (e.g., \"You must do this at 8:00 AM\") for the 2026 lifestyle plan.",
+          "The response should describe the 2026 plan as a \"lifestyle plan\" or \"rhythm\". For example, it should use a loose plan rather than a rigid schedule.",
+          "The response should explicitly link the proposed evening routine to the prevention of the \"staying up late\" failure.",
+          "The response should contain at least one step or technique that helps mitigate the specific root causes of poor sleep.",
+          "The response should contain at least one step or technique that helps mitigate the specific root causes of dietary indiscipline.",
+          "The response should contain at least one step or technique that helps mitigate the specific root causes of inconsistent exercise.",
+          "The response should suggest using meal preparation as a proactive strategy to address the \"lack of preparation\" root cause for dietary failure.",
+          "The response should maintain a supportive and encouraging tone. For example, one that reflects the user's own journaling style (e.g., using terms like \"manifesting\" or \"alignment\").",
+          "The response should reference dates when providing evidence for habits or techniques.",
+          "The response should identify that the user's gratitude practice (mentioned in the diary) should be used as a tool to disconnect from digital noise in the evening.",
+          "The response should suggest that the 2026 goals be treated as \"joyful exploration\" rather than tasks to be checked off. For example, the user's preference is avoiding pressure.",
+          "The response should provide a clear structure with headings for \"Failed Habits,\" \"Root Causes,\" and the \"2026 Lifestyle Plan.\"",
+          "The response should ensure that the \"Detailed 2026 lifestyle plan\" is the primary focus. For example, the longest section of the output."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_workspace='docs/mixed/drafts' with scope user:l1_life_stream_5 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_5.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/mixed/drafts",
+            "scope": "user:l1_life_stream_5"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

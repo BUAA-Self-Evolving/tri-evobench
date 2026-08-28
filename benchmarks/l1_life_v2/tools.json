@@ -1,0 +1,64 @@
+{
+  "schema_version": "l1_life/2.0",
+  "tools": {
+    "file.write_text": {
+      "description": "Create a UTF-8 text file. Refuse to overwrite an existing file unless overwrite=true.",
+      "arguments": {
+        "path": "string",
+        "content": "string",
+        "overwrite": "boolean"
+      }
+    },
+    "file.append_text": {
+      "description": "Append UTF-8 content to an existing text file without replacing prior content.",
+      "arguments": {
+        "path": "string",
+        "content": "string"
+      }
+    },
+    "file.edit_text": {
+      "description": "Apply one localized edit to an existing UTF-8 text file.",
+      "arguments": {
+        "path": "string",
+        "edit_instruction": "string",
+        "replacement": "string"
+      }
+    },
+    "file.rename": {
+      "description": "Rename one existing workspace file without changing its contents.",
+      "arguments": {
+        "old_path": "string",
+        "new_path": "string"
+      }
+    },
+    "file.read_text": {
+      "description": "Read an existing UTF-8 workspace file without modifying it.",
+      "arguments": {
+        "path": "string"
+      }
+    },
+    "calendar.create_reminder": {
+      "description": "Create a reminder in a named calendar.",
+      "arguments": {
+        "calendar_id": "string",
+        "title": "string",
+        "date": "YYYY-MM-DD"
+      }
+    },
+    "message.prepare_draft": {
+      "description": "Prepare, but do not send, a message draft.",
+      "arguments": {
+        "contact_id": "string",
+        "subject": "string",
+        "body_summary": "string"
+      }
+    },
+    "file.tag_artifact": {
+      "description": "Attach an archive tag to an analysis artifact.",
+      "arguments": {
+        "tag": "string",
+        "source_task_id": "string"
+      }
+    }
+  }
+}

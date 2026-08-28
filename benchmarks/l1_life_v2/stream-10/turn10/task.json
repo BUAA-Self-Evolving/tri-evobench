@@ -1,0 +1,325 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_10",
+  "turn_id": "turn10",
+  "turn_index": 10,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "disclosed",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "653a96d6-a3e9-9a23-1f2e-2aa4e2b6a760",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 203,
+    "source_sha256": "81cab1c2ba3eb0a260f2fd1b479fe5968c379a9c8e18808eef458971b0ec8c19",
+    "source_metadata": {
+      "task_id": "653a96d6-a3e9-9a23-1f2e-2aa4e2b6a760",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Game Log\nGames I’ve beaten:\nAA1 - Phoenix Wright: Ace Attorney - 2020\nAA2 - PW:AA - JFA- 7/21/21\nAA3 - PW:AA - T&T - 2/21/22\nAA4 - Apollo Justice: Ace Attorney - 4/8/22\nAA5 - PW:AA - Dual Destinies - 7/8/22\nAlan Wake - 6/12/23\nAssassin’s Creed IV: Black Flag - 6/20/22\nAssassin’s Creed Freedom Cry - 6/23/22\nAssassin’s Creed Unity - 10/16/22\nBioshock - 5/9/22\nBioshock 2 - 5/16/22\nBioshock Infinite - 5/21/22\nBlasphemous - 2021\nBlue Fire - 7/15/22\nBorderlands - 2021\nBowser’s Fury - 1/11/22\nBugsnax - 11/19/22\nCeleste (x2)\nControl - 7/2/21, 11/28/23\nCuphead - 8/23/22\nDark Souls: Remastered - 4/4/22\nThe Darkness II - 3/22/23\nDeath’s Door - 1/17/23\nDonkey Kong Country\nDonkey Kong Country 2\nDonkey Kong Country 3\nDoom (2016) - 3/4/25\nFirewatch - 2020\nGone Home - 4/20/25\nGuacamelee - 5/22/22\nGTA V - 12/27/22\nHitman (2016) - 4/14/21\nHitman 2 - 8/23/21\nHitman 3 - 12/14/23\nHollow Knight - 11/15/22\nInside - 4/24/22\nLaika: Aged Through Blood - 1/22/24\nTLoZ: A Link Between Worlds\nTLoZ: Breath of The Wild - 2021\nTLoZ: Minish Cap\nTLoZ: Ocarina of Time\nTLoZ: Skyward Sword HD - 7/29/21\nTLoZ: The Wind Waker - 4/15/23\nLego Star Wars: TCS\nLego Star Wars: TSS - 8/29/22\nMax Payne - 3/4/23\nMax Payne 2: TFoMP - 3/7/23\nMax Payne 3 - 3/27/23\nMetal Gear Solid - 4/5/25\nMetal Gear Solid 2 - 4/20/25\nMetroid: Zero Mission - 10/18/25\nMetroid: Dread - 10/14/21\nNieR: Automata - 5/3/23\nPortal - 6/29/22\nPortal 2 - 7/4/22\nPrey - 8/8/23, 3/5/24\nResident Evil 2 (Remake) - 10/9/23\nResident Evil 3 (Remake) - 10/11/23\nResident Evil 4 (Original) - 11/5/22, 6/20/23, 4/29/25, 5/13/25\nResident Evil 4 (Remake) - 11/14/23\nResident Evil 7 - 9/20/23\nResident Evil 8 - 10/2/23\nSubnautica - 2021\nSuper Mario Bros. Wonder - 10/27/23\nSuper Mario 3D World - 2021\nSuper Mario Land 2 - 2/11/23\nSuper Mario Odyssey - 2020\nSuper Mario World\nSuper Metroid - 5/11/22\nSuperhot - 10/3/22\nThimbleweed Park\nToodee & Topdee - 3/24/25\nToree 3D - 8/10/22\nYoku’s Island Express - 5/10/25\nZero Escape: 999 - 7/14/22\nZero Escape: VLR - 7/29/22\nGames I want to finish:\nAlien: Isolation\nBaba Is You\nCaptain Toad: Treasure Tracker\nCrash Bandicoot 4\nDonkey Kong Country Returns\nDonkey Kong Tropical Freeze\nHades\nHyrule Warriors: Age of Calamity\nLA Noire\nMario 64\nMario Galaxy\nMario Sunshine\nMetroid Samus Returns\nPokémon Lets Go, Eevee!\nThe Stanley Parable Ultra Deluxe\nWitcher 3\nYoshi’s Crafted World\n\nSwitch Game Collection:\nAnimal Crossing: New Horizons\nApollo Justice: Ace Attorney Trilogy\nAssassin’s Creed: The Rebel Collection\nBurnout Paradise Remastered\nCaptain Toad: Treasure Tracker\nCrash Bandicoot 4: It’s About Time\nDark Souls: Remastered\nDKC: Tropical Freeze\nThe Great Ace Attorney Chronicles\nLego Star Wars: The Skywalker Saga\nTLoZ: Breath of the Wild\nTLoZ: Link’s Awakening\nTLoZ: Skyward Sword HD\nTLoZ: Tears of the Kingdom\nMario 3D All-Stars\nMario Kart 8 Deluxe\nMetal Gear Solid Collection Vol. 1\nMetroid: Dread\nMetroid: Prime Remastered\nPikmin 4\nPokémon: Let’s Go, Eevee!\nSonic Mania\nSuper Mario 3D World + Bowser’s Fury\nSuper Mario Bros Wonder\nSuper Mario Odyssey\nSubnautica + Subnautica Below Zero\nTony Hawk’s Pro Skater 1+2\nXenoblade Chronicles Definitive Edition\nYoshi’s Crafted World\n\nXbox Game Collection:\nHitman 2\nHitman 3\nStar Wars Battlefront\nTony Hawk Pro Skater 1+2\nCyberpunk 2077\n\nGames I Used to have\nSuper Mario Advance 2 (GBA)\nLego Knights Kingdom Advance (GBA)\nLego Star Wars (GBA)\nMetroid 2 (Gameboy)\nTetris (Gameboy)\nPokémon Emerald (GBA)\nStar Wars Flight of the Falcon (GBA)\nGTA Liberty City Stories (PSP)\nLEGO Pirates of the Caribbean (PSP)\nBurnout Legends (PSP)\nAn original PSP\n\nGames I want to play:\nZero Escape: Last Time Dilemma\nAce Attorney Spirit of Justice\nAI: the Somnium Files\nSanitarium\nStasis\nBeautiful Desolation\nCitizen Sleeper\nThe Last of Us\nRed Dead Redemption\nResident Evil\nResident Evil 0\nResident Evil 5\nResident Evil 6\nJedi: Fallen Order\nLife is Strange\nSoma\nFacade\nTell Me Why\nJet Set Radio\nFaith\nNeon White\nDays Gone\nEver17\nHAAK\nIslets\nSzrot\nPolicenauts\nGrowth or devolution\nNarita Boy\nTLoZ: Twilight Princess\nTLoZ: A Link To The Past\nTLoZ: Oracle of Seasons\nTLoZ: Oracle of Ages\nTLoZ: Majora’s Mask\nTLoZ: Phantom Hourglass\nTLoZ: Spirit Tracks\n\nReading List\n\nCurrently Reading:\n\nNine Princes in Amber\nThe Chronicles of Amber, Book 1\nRoger Zelazny, 1970\nMarch 4 —\n\nThe Return of the King\nThe Lord of the Rings, Book 3\nJ. R. R. Tolkien, 1954\nSeptember 2 —\n\n2026\n\nDownward to the Earth\nRobert Silverberg, 1970\nMarch 2 — 4\n\nThe Gamesman\nBarry N. Malzberg, 1975\nFebruary 27 — March 3\n\nBeyond Apollo\nBarry N. Malzberg, 1972\nFebruary 27 — 28\n\nDawn\nXenogenesis, Book 1\nOctavia E. Butler, 1987\nFebruary 25 — 27\n\nIn The Enclosure\nBarry N. Malzberg, 1973\nFebruary 23 — 24\n\nThe Dead Mountaineer’s Inn\nArkady and Boris Strugatsky, 1970 (2015 translation)\nFebruary 21 — 23\n\nHard to be a God\nThe Noon Universe, Book 4\nArkady and Boris Strugatsky, 1964\nFebruary 19 — 21\n\nRoadside Picnic\nArkady and Boris Strugatsky, 1972\nFebruary 17 — 18\n\nInverted World\nChristopher Priest, 1974\nFebruary 16 — 17\n\nPlanet of Exile\nThe Hainish Cycle, Book 2\nUrsula K. Le Guin, 1966\nFebruary 14 — 15\n\nLive and Let Die\nJames Bond, Book 2\nIan Fleming, 1954\nFebruary 10 — 14\n\nCasino Royale\nJames Bond, Book 1\nIan Fleming, 1953\nFebruary 7 — 9\n\nThe Charm Offensive\nAlison Cochrun, 2021\nFebruary 2 — Febrary 7 (DNF at 81%)\n\nRocannon’s World\nThe Hainish Cycle, Book 1\nUrsula K. Le Guin, 1966\nFebruary 3 — 4\n\nLeviathan Wakes\nThe Expanse, Book 1\nJames S. A. Corey, 2011\n\nJanuary 27 — February 2\nThe Mercy of Gods\nThe Captive’s War, Book 1\nJames S. A. Corey, 2024\n\nJanuary 25 — 27\nThe Return\nRachel Harrison, 2020\n\nJanuary 22 — 24\nInterview With the Vampire\nThe Vampire Chronicles, Book 1\nAnne Rice, 1976\nJanuary 18 — 24\n\nDulhaniyaa\nTalia Bhatt, 2024\nJanuary 10 — DNF @ 15%\n\nLast Days\nAdam Nevill, 2012\nJanuary 3 — 23\n\nJust For the Summer\nPart of Your World, Book 3\nAbby Jiminez, 2024\nJanuary 16 — 18\n\nThe Hundred Year’s War on Palestine\nRashid Khalidi, 2017\nJanuary 10 — 16\n\nHide\nKiersten White, 2022\nJanuary 13 — 15\n\nThe Pumpkin Spice Café\nDream Harbor, Book 1\nLaurie Gilmore, 2023\nJanuary 12 — 13\n\nDeparture 37\nScott Carson, 2025\nJanuary 7 — 9\n\nThe Bell Jar\nSylvia Plath, 1963\nDecember 27 — January 8\n\nAmygdalatropolis\nB.R. Yeager, 2017\nDecember 30 — January 4\n\nThis World Is Not Yours\nKemi Ashing-Giwa, 2024\nJanuary 2 — 3\n\nMy Heart is a Chainsaw\nStephen Graham Jones, 2021\nThe Indian Lake Trilogy, Book 1\nDecember 23 — January 2\n\n2025\n\nThings Fall Apart\nChinua Achebe, 1958\nThe African Trilogy, Book 1\nDecember 22 — 27\n\nTrout Fishing in America\nRichard Brautigan, 1967\nDecember 19 — 24\n\nThe Second Death of Locke\nThe Hand and the Heart, Book 1\nV. L. Bovalino, 2025\nNovember 7 — December 22 (DNF @ 85%)\n\nPlay Nice\nRachel Harrison, 2025\nDecember 19 — 21\n\nCold Eternity\nS. A. Barnes, 2025\nDecember 15 — 18\n\nHill William\nScott McClanahan, 2013\nDecember 14 — 17\n\nThere Is No Antimemetics Division\nqntm, 2025\nDecember 12 — 14\n\nAlone on the Wall\nAlex Honnold & David Roberts, 2015\nDecember 1 — 11\n\nCoffin Moon\nKeith Rosson, 2025\nNovember 12 — December 1\n\nHeir to the Empire\nStar Wars: The Thrawn Trilogy, Book 1\nTimothy Zahn, 1992\nNovember 15 — 29\n\nCome Knocking\nMike Bockoven, 2025\nNovember 5 — 11\n\nSo The Wind Won’t Blow It All Away\nRichard Braugitan, 1982\nOctober 20 — November 5\n\nNight Film\nMarisha Pessl, 2014\nOctober 29 — November 4\n\nThe October Film Haunt\nMichael Wehunt, 2025\nOctober 25 — 29\n\nPride and Prejudice\nJane Austen, 1813\nOctober 8 — DNF at 7%\n\nThe Twisted Ones\nT. Kingfisher, 2019\nOctober 18 — 24\n\nSuture\nNic Brewer, 2021\nAugust 27 — DNF at 45%\n\nWolf at the Table\nAdam Rapp, 2024\nOctober 10 — 18\n\nBetween the World and Me\nTa-Nehisi Coates, 2015\nOctober 2 — 9\n\nSacrificial Animals\nKailee Pedersen, 2024\nSeptember 12 — October 2\n\nThe Long Walk\nStephen King, 1979\nSeptember 8 — 12\n\nGreat Big Beautiful Life\nEmily Henry, 2025\nAugust 22 — September 6\n\nThe Two Towers\nThe Lord of the Rings, Book 2\nJ. R. R. Tolkien, 1954\nJuly 23 — September 1\n\nNight and Day in Misery\nCatriona Ward, 2025\nAugust 22 — 31\n\nSmile for the Cameras\nMiranda Smith, 2025\nAugust 25 — 27\n\nDisappearance at Devil’s Rock\nPaul Tremblay, 2016\nAugust 22 — 25\n\nHorror Movie\nPaul Tremblay, 2024\nAugust 20 — 22\n\nLucky Day\nChuck Tingle, 2025\nAugust 14 — 20\n\nThe Pallbearers Club\nPaul Tremblay, 2022\nAugust 16 — 19\n\nMr. Mercedes\nBill Hodges Trilogy, Book 1\nStephen King, 2014\nAugust 9 — 14\n\nPond Water\nBrenda “FireEagle” Biddix & Rian Mileti, 2023\nJuly 14 — August 9\n\nThe Gunslinger\nStephen King, 1982 (Revised 2003)\nAugust 1 — 8\n\nTwilight\nStephanie Meyer, 2005\nJune 28 — July 30\n\nThe Body Is Not an Apology\nSonya Renee Taylor, 2018\nJuly 12 — DNF\n\nThe Fellowship of the Ring\nJ. R. R. Tolkien, 1954\nJuly 5 — 22\n\nThe Lost Virginity Tour\nCricket Daniel, 2024\nJuly 4 — 10\n\nThe Hobbit\nJ. R. R. Tolkien, 1937\nJune 22 — July 5\n\nGrieving While Black\nBreeshia Wade, 2021\nJune 4 — July 2\n\nBury Our Bones in the Midnight Soil\nV. E. Schwab, 2025\nJune 10 — 27\n\nGas Light (Angel Street)\nPatrick Hamilton, 1938\nJune 24\n\nA Christmas Carol\nCharles Dickens, 1843\nJune 23 — 24\n\nYou Can’t Take It With You\nMoss Hart & George S. Kaufman, 1936\nJune 22\n\nRumors: A Farce\nNeil Simon, 1988\nJune 20\n\nSurvivor\nChuck Palahniuk, 1999\nJune 6 — 10\n\nThe Importance of Being Earnest\nOscar Wilde, 1895\nJune 9\n\nFunny Story\nEmily Henry, 2024\nMay 30 — June 8\n\nI’ll Be Gone in the Dark\nMichelle McNamara, 2018\nMay 29 — June 5\n\nThe Remaking\nClay McCleod Chapman, 2019\nMay 25 — 30\n\nCastaways\nBrian Keene, 2009\nMay 21 — 25\n\nI Who Have Never Known Men\nJacqueline Harpman, 1995\nMay 19 — 23\n\nThe Running Man\nStephen King (as Richard Bachman), 1982\nMay 16 — 20\n\nRest Stop\nNat Cassidy, 2024\nMay 18 — 19\n\nThe Rising Storm\nStar Wars: The High Republic, Book 2\nCavan Scott, 2021\nMay 8 — 16\n\nTender is the Flesh\nAgustina Bazterrica, 2020\nMay 14 — 15\n\nSouth to America\nImani Perry, 2022\nMarch 20 — DNF at 42%\n\nWhite Rural Rage\nTom Schaller & Paul Waldman, 2024\nApril 23 — May 14\n\nDevil House\nJohn Darnielle, 2022\nMay 3 — 9\n\nThe Rising Force\nJedi Apprentice, Book 1\nSteve Wolverton, 1999\nApril 28 — May 9\n\nLight of the Jedi\nStar Wars: The High Republic, Book 1\nCharles Soule, 2021\nApril 30 — May 7\n\nFifty Shades of Grey\nFifty Shades, Book 1\nE. L. James, 2011\nJanuary 2 — May 1\n\nA House at the Bottom of a Lake\nJosh Malerman, 2016\nApril 28\n\nWe Used to Live Here\nMarcus Kliewer, 2024\nApril 21 — 24\n\nThe Buffalo Hunter Hunter\nStephen Graham Jones, 2025\nMarch 27 — April 16\n\nSunrise on the Reaping\nThe Hunger Games, Book 0.5\nSuzanne Collins, 2025\nMarch 20 — 27\n\nThe Ferryman\nJustin Cronin, 2023\nMarch 14 — 20\n\nPeople We Meet on Vacation\nEmily Henry, 2021\nMarch 11 — 14\n\nBreakfast of Champions\nKurt Vonnegut, 1973\nMarch 8 — 11\n\nRock Paper Scissors\nAlice Feeny, 2021\nMarch 8 — 10\n\nGraveyard Shift\nM. L. Rio, 2024\nMarch 6 — 7\n\nIncidents Around The House\nJosh Malerman, 2024\nFebruary 28 — March 6\n\nThe Vegetarian\nHan King, 2016\nFebruary 28 — March 3\n\nHome Is Where the Bodies Are\nJeneva Rose, 2024\nFebruary 26 — 28\n\nThe King of Video Poker\nPaolo Iacovelli, 2024\nJanuary 29 — February 26\n\nThe Other People\nC. J. Tudor, 2020\nFebruary 21 — 25\n\nTrust\nHernan Diaz, 2022\nFebruary 16 — 21\n\nFirst Lie Wins\nAshley Elston, 2024\nFebruary 11 — 15\n\nBlacktop Wasteland\nS. A. Cosby, 2020\nJanuary 29 — February 10\n\nThe Shining\nStephen King, 1977\nJanuary 7 — 29\n\nAll the Sinners Bleed\nS. A. Cosby, 2023\nDecember 26 — January 6\n\n2024\n\nYou Like It Darker\nStephen King, 2024\nOctober 15 — December 29\n\nRevival\nStephen King, 2014\nNovember 30 — December 8\n\nThe Wager\nDavid Grann, 2023\nNovember 14 — 23\n\nThe Fifth Season\nBroken Earth, Book 1\nN.K. Jemisin, 2015\n\nNovember 8 — 13\nSummer Water\nSarah Moss, 2020\n\nSeptember 27 — November 8\n\nHow High We Go In The Dark\nSequoia Nagamatsu, 2022\nSeptember 9 — DNF\n\nPet Sematary\nStephen King, 1983\nOctober 26 — November 2\n\nThe Bazaar of Bad Dreams\nStephen King, 2015\nOctober 1 — 24\n\nOn Writing: A Memoir of the Craft\nStephen King, 2000\nOctober 8 — 12\n\nI Was a Teenage Slasher\nStephen Graham Jones, 2024\nAugust 30 — September 13\n\nIron Gold\nRed Rising, Book 4\nPierce Brown, 2018\nAugust 3 — 27\n\nBury Your Gays\nChuck Tingle, 2024\nJuly 29 — August 3\n\nMorning Star\nRed Rising, Book 3\nPierce Brown, 2016\nJune 22 — July 29\n\nVelocity\nDean Koontz, 2005\nJune 3 — DNF\n\nRomancing Mr. Bridgerton\nThe Bridgertons, Book 4\nJulia Quinn, 2002\nMay 27 — DNF\n\nA Canticle for Leibowitz\nWalter M. Miller Jr., 1959\nMay 5 — DNF\n\nGolden Son\nRed Rising, Book 2\nPierce Brown, 2015\nMay 28 — June 19\n\nRed Rising\nRed Rising, Book 1\nPierce Brown, 2014\nMay 21 — 28\n\nThe Lost Metal\nMistborn, Book 7\nBrandon Sanderson, 2022\nApril 3 — May 20\n\nA House with Good Bones\nT. Kingfisher, 2023\nApril 18 — May 11\n\nUniversal Harvester\nJohn Darnielle, 2017\nApril 30 — May 4\n\nWe Sold Our Souls\nGrady Hendrix, 2018\nApril 22 — 30\n\nEdenville\nSam Rebelein, 2023\nApril 14 — 17\n\nDevolution\nMax Brooks, 2020\nApril 10 — DNF April 13 at 80%\n\nThe Emperor’s Soul\nBrandon Sanderson, 2012\nApril 2 — 3\n\nThe Angel of Indian Lake\nThe Indian Lake Trilogy, Book 3\nStephen Graham Jones, 2024\nMarch 27 — April 2\n\nThe Last House on Needless Street\nCatriona Ward, 2021\nMarch 24 — 27\n\nThe Bishop’s Wife\nLinda Wallheim Mystery, Book 1\nMette Ivie Harrison, 2015\nMarch 16 — DNF March 27 at 61% (way too boring and didn’t care about the mystery)\n\nTress of the Emerald Sea\nBrandon Sanderson, 2023\nMarch 16 — 24\n\nDon’t Fear the Reaper\nThe Indian Lake Trilogy, Book 2\nStephen Graham Jones, 2023\nMarch 12 — 16\n\nMy Heart Is a Chainsaw\nThe Indian Lake Trilogy, Book 1\nStephen Graham Jones, 2021\nMarch 7 — 12\n\nTell Me An Ending\nJo Harkin, 2022\nMarch 6 — DNF March 11 at 49% (Very boring)\n\nThe Man With The Getaway Face\nParker, Book 2\nRichard Stark, 1963\nMarch 5 — 6\n\nMy Government Means to Kill Me\nRasheed Newson, 2022\nMarch 3 — 6\n\nThe Hunter\nParker, Book 1\nRichard Stark, 1962\nMarch 2 — 3\n\nElantris\nBrandon Sanderson, 2005\nFebruary 23 — March 2\n\nA Psalm for the Wild-Built\nMonk and Robot, Book 1\nBecky Chambers, 2021\nFebruary 22 — 23\n\nThe Rithmatist\nBrandon Sanderson, 2014\nFebruary 19 — 22\n\nMistborn: Secret History\nMistborn, Book 3.5\nBrandon Sanderson, 2016\nFebruary 19 — 22\n\nThe Bands of Mourning\nMistborn, Book 6\nBrandon Sanderson, 2016\nFebruary 12 — 19\n\nShadows of Self\nMistborn, Book 5\nBrandon Sanderson, 2015\nFebruary 7 — 12\n\nThe Alloy of Law\nMistborn, Book 4\nBrandon Sanderson, 2011\nJanuary 31 — February 6\n\nThe Hero of Ages\nMistborn, Book 3\nBrandon Sanderson, 2008\nJanuary 23 — 31\n\nThe Well of Ascension\nMistborn, Book 2\nBrandon Sanderson, 2007\nJanuary 16 — 22\n\nMistborn: The Final Empire\nMistborn, Book 1\nBrandon Sanderson, 2006\nJanuary 7 — 16\n\nWaking Gods\nThemis Files, Book 2\nSylvain Neuvel, 2017\nJanuary 3 — 7\n\nVengeful\nVillains, Book 2\nV. E. Schwab, 2018\nDecember 22 — January 3\n\n2023\n\nSleeping Giants\nThemis Files, Book 1\nSylvain Neuvel, 2016\nDecember 6 — 10\n\nVicious\nVillains, Book 1\nV. E. Schwab, 2013\nNovember 30 — December 5\n\nWool\nSilo, Book 1\nHugh Howey, 2012\nNovember 22 — 28\n\nThe Duke and I\nThe Bridgertons, Book 1\nJulia Quinn, 2000\nNovember 5 — 22\n\nThe Only Good Indians\nStephen Graham Jones, 2020\nNovember 11 — 16\n\nCamp Damascus\nChuck Tingle, 2023\nOctober 30 — November 2\n\nThe Need\nHelen Philips, 2019\nOctober 28 — 30\n\nThe Foxhole Court\nAll For The Game, Book 1\nNora Sakavic, 2013\nOctober 20 — 24\n\nJesus and John Wayne\nKristin Kobes du Mez, 2020\nOctober 17 — 22\n\nThe Dark Tower\nThe Dark Tower, Book 7\nStephen King, 2004\nSeptember 30 — October 17\n\nSong of Susannah\nThe Dark Tower, Book 6\nStephen King, 2004\nSeptember 21 — 30\n\nWolves of the Calla\nThe Dark Tower, Book 5\nStephen King, 2003\nSeptember 11 — 20\n\nWizard and Glass\nThe Dark Tower, Book 4\nStephen King, 1997\nAugust 13 — September 11\n\nThe Waste Lands\nThe Dark Tower, Book 3\nStephen King, 1991\nAugust 4 — 11\n\nThe Drawing of The Three\nThe Dark Tower, Book 2\nStephen King, 1987\nAugust 1 — 3\n\nThe Gunslinger\nThe Dark Tower, Book 1\nStephen King, 1982\nJuly 25 — 27\n\nLies of the Beholder\nLegion, Book 3\nBrandon Sanderson, 2018\nJuly 22 — 23\n\nSkin Deep\nLegion, Book 2\nBrandon Sanderson, 2014\nJuly 19 — 22\n\nLegion\nLegion, Book 1\nBrandon Sanderson, 2012\nJuly 19\n\nThe Magician’s Nephew\nThe Chronicles of Narnia, Book 1\nC.S. Lewis, 1955\nJuly 16 — 19\n\nRecursion\nBlake Crouch, 2019\nJune 26 — 30\n\nPiranesi\nSusanna Clarke, 2020\nJune 20 — 24\n\nPageboy\nElliot Page, 2023\nJune 10 — July 6\n\nNever Let Me Go\nKazuo Ishiguro, 2005\nApril 10 — June 9\n\nPoint Blanc\nAlex Rider, Book 2\nAnthony Horowitz, 2001\nJanuary 17 — 24\n\nMickey7\nMickey7, Book 1\nEdward Ashton, 2022\nJanuary 5 — 8\n\nThe Stranger\nAlbert Camus, 1942\nJanuary 1 — 5\n\n2022\n\nRita Hayworth and the Shawshank Redemption\nStephen King, 1982\nDecember 26 — 29\n\nThe Guest List\nLucy Foley, 2020\nAugust 11 — 21\n\nFoundation\nFoundation, Book 1\nIsaac Asimov, 1951\nAugust 5 — 10\n\nParable of The Sower\nThe Parable Duology, Book 1\nOctavia E. Butler, 1993\nJuly 5 — August 4\n\nThe Perfect Wife\nJ.P. Delaney, 2019\nJuly 2 — July 5\n\nSword of Destiny\nThe Witcher, Book 2\nAndrzej Sapkowski, 1992\nMay 23 — DNF\n\nAnnihilation\nThe Southern Reach Trilogy, Book 1\nJeff Vandermeer, 2014\nMay 12 — 19\n\nAlex Rider: Stormbreaker\nAlex Rider, Book 1\nAnthony Horowitz, 2000\nMay 9 — 11\n\nThe Running Man\nStephen King, 1982\nMay 6 — DNF\n\nThe Breathing Method\nStephen King, 1982\nMay 5\n\nChildren of Time\nChildren of Time, Book 1\nAdrian Tchaikovsky, 2015\nFebruary 6 — DNF\n\nThe Last Wish\nThe Witcher, Book 1\nAndrzej Sapkowski, 1993\nJanuary 18 — February 4\n\nThe Psychopath Test\nJon Ronson, 2012\nJanuary 15 — 17\n\nDeath’s End\nRemembrance of Earth’s Past, Book 3\nCixin Liu, 2010\nDecember 27 — January 13\n\n2021\n\nThe Dark Forest\nRemembrance of Earth’s Past, Book 2\nCixin Liu, 2008\nDecember 10 — 27\n\nThe Three-Body Problem\nRemembrance of Earth’s Past, Book 1\nCixin Liu, 2006\nDecember 5 — 8\n\nBallad of Songbirds & Snakes\nThe Hunger Games, Book 0\nSuzanne Collins, 2020\nNovember 26 — December 5\n\nMockingjay\nThe Hunger Games, Book 3\nSuzanne Collins, 2010\nNovember 17 — 23\n\nCatching Fire\nThe Hunger Games, Book 2\nSuzanne Collins, 2009\nNovember 11 — 16\n\nThe Hunger Games\nThe Hunger Games, Book 1\nSuzanne Collins, 2008\nNovember 3 — 9\n\nThe Haunting of Hill House\nShirley Jackson, 1959\nSeptember 29 — November 2\n\nApt Pupil\nStephen King, 1983\nSeptember 27 — 28\n\nLittle Fires Everywhere\nCeleste Ng, 2020\nSept. 13 — 20\n\nA Christmas Carol\nSurvivor\nCastaways\nI Who Have Never Known Men\nRest Stop\nTender is the Flesh\nA House at the Bottom of a Lake\nBreakfast of Champions\nThe Vegetarian\nThe King of Video Poker\nThe Shining\nWolf at the Table\nChainsaw Man\nDelicious in Dungeon\nThe Climber\nDeath Note\nAttack on Titan\nBest Star Wars\nThe Rising Force\nLight of the Jedi\nThe Rising Storm\nHeir to the Empire\n\nBest Nonfiction\nWhite Rural Rage\nI’ll Be Gone in the Dark\nGrieving While Black\nBetween the World and Me\nAlone on the Wall\n\nBest horror book about a horror movie\nThe Remaking\nSmile for the Cameras\nHorror Movie\nNight Film\nThe October Film Haunt\n\nBest horror about returning home because of the death of a parent / grandparent\nThe Twisted Ones\nHome Is Where the Bodies Are\nSacrificial Animals\n\nBest book I didn’t finish\nSouth to America\nThe Body Is Not an Apology\nSuture\nPride and Prejudice\n\nBest romance book\nPeople We Meet on Vacation\nFifty Shades of Grey\nGreat Big Beautiful Life\nFunny Story\n\nBest book I read but barely remember\nNight and Day in Misery\nGraveyard Shift\n\nBest survival games book\nThe Long Walk\nSunrise on the Reaping\nThe Running Man\n\nBest vampire book\nCoffin Moon\nThe Buffalo Hunter Hunter\nBury Our Bones in the Midnight Soil\nTwilight\n\nBest sci fi horror\nLucky Day\nThere Is No Antimemetics Division\nCold Eternity\nThe Ferryman\n\nBest book-within-a-book\nTrust\nDevil House\nThe Pallbearers Club\nDisappearance at Devil’s Rock\n\nBest Play\nYou Can’t Take It With You\nRumors: A Farce\nThe Importance of Being Earnest\nGas Light (Angel Street)\nThe Lost Virginity Tour\n\nBest Thriller\nAll the Sinners Bleed\nBlacktop Wasteland\nMr. Mercedes\nRock Paper Scissors\nFirst Lie Wins\n\nBest book that includes forum posts as a main plot point\nCome Knocking\nWe Used to Live Here\nThe Other People\n\nBest book set in a fantasy setting that starts with “Mid-“\nThe Two Towers\nThe Gunslinger\nThe Fellowship of the Ring\nThe Hobbit\n\nBest book where something horrible happens to the main character when they are a kid\nHill William\nSo The Wind Won’t Blow It All Away\nIncidents Around The House DNF - A Canticle for Leibowitz — Post-apocalyptic science fiction\n\nNo rating - A Christmas Carol — Classic ghost story / literary fiction\n2.5 stars - A House at the Bottom of a Lake — Horror / weird fiction\n2 stars - A House with Good Bones — Gothic horror / dark comedy\n2 stars - A Psalm for the Wild-Built — Cozy science fiction / solarpunk\n2 stars - Alex Rider: Stormbreaker — YA spy thriller\n4 stars - All the Sinners Bleed — Crime thriller\n1 star - Alone on the Wall — Nonfiction / memoir (mountaineering)\n3 stars - Amygdalatropolis — Experimental horror / transgressive fiction\n4 stars - Annihilation — Weird science fiction / cosmic horror\n3.5 stars - Ballad of Songbirds & Snakes — YA dystopian fiction\n4 stars - Between the World and Me — Nonfiction / memoir / social commentary\n3.5 stars - Beyond Apollo — Psychological science fiction\n3.5 stars - Blacktop Wasteland — Crime thriller\n4 stars - Breakfast of Champions — Satirical literary fiction / science fiction\n3.5 stars - Bury Our Bones in the Midnight Soil — Gothic horror / dark fantasy\n4 stars - Bury Your Gays — Horror / satire\n4 stars - Camp Damascus — Horror\n2 stars - Casino Royale — Spy thriller\n2 stars - Castaways — Survival horror\n3.5 stars - Catching Fire — YA dystopian fiction\nDNF - Children of Time — Epic science fiction\n3 stars - Coffin Moon — Horror / vampire fiction\n1.5 stars - Cold Eternity — Science fiction horror\n1.5 stars - Come Knocking — Horror / thriller\n4.5 stars - Dawn — Science fiction (alien contact / dystopian)\n5 stars - Death’s End — Hard science fiction\n2 stars - Departure 37 — Science fiction thriller\n4 stars - Devil House — Literary horror / true-crime metafiction\n3 stars - Disappearance at Devil’s Rock — Psychological horror\n4.5 stars - Don’t Fear the Reaper — Slasher horror\n3 stars - Downward to the Earth — Philosophical science fiction\n2.5 stars - Elantris — Epic fantasy\n1.5 stars - First Lie Wins — Thriller\n4 stars - Foundation — Classic science fiction\n4 stars - Funny Story — Contemporary romance\n1 star - Fifty Shades of Grey — Erotic romance\nNo rating - Gas Light (Angel Street) — Thriller stage play\n3 stars - Golden Son — Science fiction / dystopian\n1.5 stars - Graveyard Shift — Thriller / horror\n3 stars - Great Big Beautiful Life — Contemporary romance\n3.5 stars - Grieving While Black — Nonfiction / social commentary\n3.5 stars - Hard to Be a God — Philosophical science fiction\n3 stars - Heir to the Empire — Science fiction / space opera\n1.5 stars - Hide — Horror thriller\n4 stars - Hill William — Literary fiction / coming-of-age\n2 stars - Home Is Where the Bodies Are — Thriller / horror\n4.5 stars - Horror Movie — Meta horror\nDNF - How High We Go in the Dark — Literary science fiction\n2 stars - I Who Have Never Known Men — Dystopian science fiction\n4 stars - I Was a Teenage Slasher — Slasher horror\n3.5 stars - I’ll Be Gone in the Dark — True crime nonfiction\n3.5 stars - Incidents Around the House — Supernatural horror\n2.5 stars - In the Enclosure — Literary science fiction\n4 stars - Interview With the Vampire — Gothic horror / vampire fiction\n4.5 stars - Inverted World — Hard science fiction\n3 stars - Iron Gold — Science fiction / space opera\n3 stars - Jesus and John Wayne — Nonfiction / political history\n2.5 stars - Just for the Summer — Romance\n2 stars - Last Days — Cult horror\n1.5 stars - Legion — Science fiction / psychological thriller\n1.5 stars - Leviathan Wakes — Space opera\n2 stars - Light of the Jedi — Space opera\n3 stars - Little Fires Everywhere — Literary fiction\n1 star - Live and Let Die — Spy thriller\n3 stars - Lucky Day — Science fiction horror\n2.5 stars - Mickey7 — Science fiction\n3.5 stars - Mistborn: The Final Empire — Epic fantasy\n3.5 stars - Morning Star — Science fiction / dystopian\n3 stars - Mr. Mercedes — Crime thriller\n3 stars - My Government Means to Kill Me — Historical fiction\n5 stars - My Heart Is a Chainsaw — Slasher horror\n2.5 stars -Never Let Me Go — Literary science fiction / dystopian\n1.5 stars - Night Film — Mystery thriller\n1.5 stars - Night and Day in Misery — Horror\nCurrently reading - Nine Princes in Amber — Fantasy\n3 stars - On Writing: A Memoir of the Craft — Nonfiction / writing memoir\n4 stars - Parable of the Sower — Dystopian science fiction\n3 stars - People We Meet on Vacation — Romance\n5 stars - Pet Sematary — Supernatural horror\n4 stars - Piranesi — Literary fantasy\n3 stars - Play Nice — Horror\n4 stars - Planet of Exile — Science fiction\n0 stars - Pond Water — Literary fiction\nDNF - Pride and Prejudice — Classic romance\n2 stars - Recursion — Science fiction thriller\n2.5 stars - Red Rising — Science fiction / dystopian\n2.5 stars - Rest Stop — Horror\n4 stars - Revival — Cosmic horror\n3.5 stars - Roadside Picnic — Science fiction / weird fiction\n1.5 stars - Rock Paper Scissors — Psychological thriller\n3.5 stars - Rocannon’s World — Science fiction / fantasy\nNo rating - Rumors: A Farce — Comedy stage play\n2 stars - Sacrificial Animals — Horror\n1.5 stars - Sleeping Giants — Science fiction thriller\n0.5 stars - Smile for the Cameras — Horror\n4 stars - So the Wind Won’t Blow It All Away — Literary fiction\nDNF - South to America — Nonfiction / cultural history\n2 stars - Summer Water — Literary fiction\n2 stars - Survivor — Satirical fiction\nDNF - Suture — Thriller\n3 stars - Tender Is the Flesh — Dystopian horror\nDNF - Tell Me an Ending — Science fiction / speculative\n4.5 stars - The Angel of Indian Lake — Slasher horror\n3 stars - The Bands of Mourning — Fantasy\n4 stars - The Bazaar of Bad Dreams — Horror short stories\n3.5 stars - The Bell Jar — Literary fiction\nDNF - The Bishop’s Wife — Mystery\nDNF - The Body Is Not an Apology — Nonfiction / social justice\n3 stars - The Breathing Method — Horror novella\n5 stars - The Buffalo Hunter Hunter — Horror / vampire fiction\n1.5 stars - The Charm Offensive — Romance\n2.5 stars - The Dead Mountaineer’s Inn — Mystery / science fiction\n4 stars - The Drawing of the Three — Dark fantasy / western\n2 stars - The Emperor’s Soul — Fantasy novella\n1.5 stars - The Ferryman — Science fiction dystopia\n5 stars - The Fellowship of the Ring — Epic fantasy\n3 stars - The Fifth Season — Epic fantasy\n2 stars - The Foxhole Court — Sports drama / new adult fiction\n1.5 stars - The Gamesman — Science fiction\n2 stars - The Guest List — Thriller\n3 stars - The Gunslinger — Dark fantasy / western\n3.5 stars - The Haunting of Hill House — Gothic horror\n3.5 stars - The Hero of Ages — Epic fantasy\n5 stars - The Hobbit — Fantasy\n2.5 stars - The Hunter — Crime fiction\n3 stars - The Hunger Games — YA dystopian fiction\nNo rating - The Importance of Being Earnest — Comedy stage play\n4 stars - The King of Video Poker — Literary fiction\n2 stars - The Last House on Needless Street — Psychological horror\n2 stars - The Last Wish — Fantasy short stories\n3 stars - The Long Walk — Dystopian horror\n3 stars - The Lost Metal — Fantasy\n3 stars - The Magician’s Nephew — Fantasy\n2.5 stars - The Man With the Getaway Face — Crime fiction\n3 stars - The Mercy of Gods — Space opera\n1.5 stars - The Need — Psychological horror\n2.5 stars - The October Film Haunt — Horror\n4 stars - The Only Good Indians — Horror\n1.5 stars - The Other People — Thriller\n4 stars - The Pallbearers Club — Horror / literary fiction\n1.5 stars - The Perfect Wife — Tech thriller\n1 star - The Pumpkin Spice Café — Cozy romance\n2.5 stars - The Remaking — Horror\n1.5 stars - The Return — Supernatural horror\n2 stars - The Rithmatist — Fantasy\n2 stars - The Rising Force — Science fiction / space opera\n2 stars - The Rising Storm — Space opera\n3 stars - The Running Man — Dystopian science fiction\n1.5 stars - The Second Death of Locke — Fantasy\n5 stars - The Shining — Supernatural horror\n3 stars - The Stranger — Existential literary fiction\n4 stars - The Three-Body Problem — Hard science fiction\n2 stars - The Twisted Ones — Folk horror\n5 stars - The Two Towers — Epic fantasy\n3 stars - The Vegetarian — Literary fiction / psychological horror\n3 stars - The Wager — Historical nonfiction\n4 stars - The Waste Lands — Dark fantasy / western\n3.5 stars - The Well of Ascension — Epic fantasy\n2 stars - The Witcher: Sword of Destiny — Fantasy\n2 stars - The Witcher: The Last Wish — Fantasy\n3 stars - There Is No Antimemetics Division — Science fiction horror\n5 stars - Things Fall Apart — Literary fiction\n2 stars - This World Is Not Yours — Science fiction\n3.5 stars - Trust — Literary fiction\n2.5 stars - Twilight — YA paranormal romance\n4 stars - Universal Harvester — Literary horror\n3 stars - Vengeful — Superhero / science fiction\nDNF - Velocity — Thriller\n3 stars - Vicious — Superhero / science fiction\n2.5 stars - We Sold Our Souls — Horror\n1 stars - We Used to Live Here — Horror\n2 stars - White Rural Rage — Political nonfiction\n4 stars - Wizard and Glass — Dark fantasy / western\n3 stars - Wolf at the Table — Literary fiction\n2 stars - Wool — Post-apocalyptic science fiction\nNo rating - You Can’t Take It With You — Comedy stage play\n\n\n\nTask:\n\n\nwhat book series have i left unfinished, and what would the next books in the series be? don't include series where I DNF'ed a book or am currently reading a book in the series. Rank based on number of books in the series I have read and the rating that I have given books in the series that I have read. Only include series with a direct sequel to the book I've read that I haven't read yet, ignore ones where there's a spin off or if I read book 3 and skipped book 2, for example. Make a list of 10 with all of the previously mentioned detail, but then add a shortened bullet point list of the other series that I have not finished to keep it brief.\n\nBefore handling the material and request above, remember this standing fact for future turns: my default answer structure is numbered list. Then complete the source task."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_10 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_10.fact_04.default_structure.v1",
+          "key": "default_structure",
+          "value": "numbered list",
+          "scope": "user:l1_life_stream_10"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should provide a list of ten book series.",
+        "The response should not include any book series that the user has DNF'ed a book from. For example, it should not include any of the following: Bridgerton, Children of Time, The Hand and the Heart, Linda Wallheim Mystery, or the Witcher.",
+        "The response should not refer to a book rating as \"perfect,\" since the prompt doesn't specify the highest possible star rating. For example, it should not refer to a book as having a \"perfect 4-star\" rating.",
+        "The response should not include any book series that the user is currently reading. For example, it should not include any of the following: The Lord of the Rings, The Chronicles of Amber.",
+        "The response should include each of the following book series: Xenogenesis, The Expanse, The Hainish Cycle, Dream Harbor, The African Trilogy, Star Wars: The Thrawn Trilogy, the Bill Hodges trilogy, The Twilight Saga, Star Wars: The High Republic, Star Wars: Jedi Apprentice, Fifty Shades, Broken Earth, Red Rising, Parker, Monk & Robot, The Themis Files, Silo, All for the Game, The Vampire Chronicles, The Chronicles of Narnia, Alex Rider, Foundation, The Parable Duology, James Bond, Mickey7, and The Southern Reach.",
+        "The response should state that since the user has read the first \"Xenogenesis\" book (\"Dawn\"), the next book in the series would be \"Adulthood Rites.\"",
+        "The response should state that since the user has read the first and second \"Hainish Cycle\" books (\"Rocannon's World\" and \"Planet of Exile\"), the next book in the series would be \"City of Illusions.\"",
+        "The response should state that since the user has read the first \"Dream Harbor\" book (\"The Pumpkin Spice Café\"), the next book in the series would be \"The Cinnamon Bun Book Store.\"",
+        "The response should state that since the user has read the first \"The African Trilogy\" book (\"Things Fall Apart\"), the next book in the series would be \"Arrow of God.\"",
+        "The response should state that since the user has read the first \"Star Wars: The Thrawn Trilogy\" book (\"Heir to the Empire\"), the next book in the series would be \"Dark Force Rising.\"",
+        "The response should state that since the user has read the first \"Bill Hodges Trilogy\" book (\"Mr. Mercedes\"), the next book in the series would be \"Finders Keepers.\"",
+        "The response should state that since the user has read the first \"The Twilight Saga\" book (\"Twilight\"), the next book in the series would be \"New Moon.\"",
+        "The response should state that since the user has read the first and second adult novels in the \"Star Wars: The High Republic\" series (\"Light of the Jedi\" and \"The Rising Storm\"), the next book in the series would be \"The Fallen Star.\"",
+        "The response should state that since the user has read the first \"Star Wars: Jedi Apprentice\" book (\"The Rising Force\"), the next book in the series would be \"The Dark Rival.\"",
+        "The response should state that since the user has read the first \"Fifty Shades\" book (\"Fifty Shades of Grey\"), the next book in the series would be \"Fifty Shades Darker.\"",
+        "The response should state that since the user has read the first \"Broken Earth\" book (\"The Fifth Season\"), the next book in the series would be \"The Obelisk Gate.\"",
+        "The response should state that since the user has read the first four \"Red Rising\" books (\"Red Rising,\" \"Golden Son,\" \"Morning Star,\" and \"Iron Gold\"), the next book in the series would be \"Dark Age.\"",
+        "The response should state that since the user has read \"The Shining,\" the book's sequel is \"Doctor Sleep.\"",
+        "The response should state that since the user has read the first two \"Parker\" books (\"The Hunter\" and \"The Man with the Getaway Face\"), the next book in the series would be \"The Outfit.\"",
+        "The response should state that since the user has read the first \"Monk & Robot\" book (\"A Psalm for the Wild-Built\"), the next book in the series would be \"A Prayer for the Crown-Shy.\"",
+        "The response should state that since the user has read the first two \"The Themis Files\" books (\"Sleeping Giants\" and \"Waking Gods\"), the next book in the series would be \"Only Human.\"",
+        "The response should state that since the user has read the first \"Silo\" book (\"Wool\"), the next book in the series would be \"Shift.\"",
+        "The response should state that since the user has read the first \"Vampire Chronicles\" book (\"Interview with the Vampire\"), the next book in the series would be \"The Vampire Lestat.\"",
+        "The response should state that since the user has read the first \"All for the Game\" book (\"The Foxhole Court\"), the next book in the series would be \"The Raven King.\"",
+        "The response should state that since the user has read the \"The Chronicles of Narnia\" book \"The Magician's Nephew,\" the next book in the series would be \"The Lion, the Witch, and the Wardrobe\" (chronological order) or \"The Last Battle\" (release order) — either answer is acceptable, both are not necessary.",
+        "The response should state that since the user has read \"Mickey7,\" the sequel to this book is \"Antimatter Blues.\"",
+        "The response should state that since the user has read the first two \"Alex Rider\" books (\"Stormbreaker\" and \"Point Blanc\"), the next book in the series would be \"Skeleton Key.\"",
+        "The response should state that since the user has read the first \"Foundation\" book (\"Foundation\"), the next book in the series would be \"Foundation and Empire.\"",
+        "The response should state that since the user has read the first \"The Parable Duology\" book (\"Parable of the Sower\"), the next book in the series would be \"Parable of the Talents.\"",
+        "The response should state that since the user has read the first two \"James Bond\" books (\"Casino Royale\" and \"Live and Let Die\"), the next book in the series would be \"Moonraker.\"",
+        "The response should state that since the user has read the first \"Southern Reach\" book (\"Annihilation\"), the next book in the series would be \"Authority.\"",
+        "The response should include ratings for the books it discusses ONLY if they are included in this list:\r\nWool - 2 stars\r\nVengeful - 3 stars\r\nTwilight - 2.5 stars\r\nThings Fall Apart - 5 stars\r\nThe Shining - 5 stars\r\nThe Rising Storm - 2 stars\r\nThe Rising Force - 2 stars\r\nThe Pumpkin Spice Café - 1 star\r\nThe Man with the Getaway Face - 2.5 stars\r\nThe Magician's Nephew - 3 stars\r\nThe Hunter - 2.5 stars\r\nThe Foxhole Court - 2 stars\r\nThe Fifth Season - 3 stars\r\nSleeping Giants - 1.5 stars\r\nRocannon's World - 3.5 stars\r\nRed Rising - 2.5 stars\r\nPlanet of Exile - 4 stars\r\nParable of the Sower - 4 stars\r\nMr. Mercedes - 3 stars\r\nMorning Star - 3.5 stars\r\nMickey7 - 2.5 stars\r\nLive and Let Die - 1 star\r\nLight of the Jedi - 2 stars\r\nIron Gold - 3 stars\r\nInterview With the Vampire - 4 stars\r\nHeir to the Empire - 3 stars\r\nGolden Son - 3 stars\r\nFifty Shades of Grey - 1 star\r\nFoundation - 4 stars\r\nDawn - 4.5 stars\r\nCasino Royale - 2 stars\r\nAnnihilation - 4 stars\r\nAlex Rider: Stormbreaker - 2 stars\r\nA Psalm for the Wild-Built - 2 stars"
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_10 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "numbered list"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should provide a list of ten book series.",
+          "The response should not include any book series that the user has DNF'ed a book from. For example, it should not include any of the following: Bridgerton, Children of Time, The Hand and the Heart, Linda Wallheim Mystery, or the Witcher.",
+          "The response should not refer to a book rating as \"perfect,\" since the prompt doesn't specify the highest possible star rating. For example, it should not refer to a book as having a \"perfect 4-star\" rating.",
+          "The response should not include any book series that the user is currently reading. For example, it should not include any of the following: The Lord of the Rings, The Chronicles of Amber.",
+          "The response should include each of the following book series: Xenogenesis, The Expanse, The Hainish Cycle, Dream Harbor, The African Trilogy, Star Wars: The Thrawn Trilogy, the Bill Hodges trilogy, The Twilight Saga, Star Wars: The High Republic, Star Wars: Jedi Apprentice, Fifty Shades, Broken Earth, Red Rising, Parker, Monk & Robot, The Themis Files, Silo, All for the Game, The Vampire Chronicles, The Chronicles of Narnia, Alex Rider, Foundation, The Parable Duology, James Bond, Mickey7, and The Southern Reach.",
+          "The response should state that since the user has read the first \"Xenogenesis\" book (\"Dawn\"), the next book in the series would be \"Adulthood Rites.\"",
+          "The response should state that since the user has read the first and second \"Hainish Cycle\" books (\"Rocannon's World\" and \"Planet of Exile\"), the next book in the series would be \"City of Illusions.\"",
+          "The response should state that since the user has read the first \"Dream Harbor\" book (\"The Pumpkin Spice Café\"), the next book in the series would be \"The Cinnamon Bun Book Store.\"",
+          "The response should state that since the user has read the first \"The African Trilogy\" book (\"Things Fall Apart\"), the next book in the series would be \"Arrow of God.\"",
+          "The response should state that since the user has read the first \"Star Wars: The Thrawn Trilogy\" book (\"Heir to the Empire\"), the next book in the series would be \"Dark Force Rising.\"",
+          "The response should state that since the user has read the first \"Bill Hodges Trilogy\" book (\"Mr. Mercedes\"), the next book in the series would be \"Finders Keepers.\"",
+          "The response should state that since the user has read the first \"The Twilight Saga\" book (\"Twilight\"), the next book in the series would be \"New Moon.\"",
+          "The response should state that since the user has read the first and second adult novels in the \"Star Wars: The High Republic\" series (\"Light of the Jedi\" and \"The Rising Storm\"), the next book in the series would be \"The Fallen Star.\"",
+          "The response should state that since the user has read the first \"Star Wars: Jedi Apprentice\" book (\"The Rising Force\"), the next book in the series would be \"The Dark Rival.\"",
+          "The response should state that since the user has read the first \"Fifty Shades\" book (\"Fifty Shades of Grey\"), the next book in the series would be \"Fifty Shades Darker.\"",
+          "The response should state that since the user has read the first \"Broken Earth\" book (\"The Fifth Season\"), the next book in the series would be \"The Obelisk Gate.\"",
+          "The response should state that since the user has read the first four \"Red Rising\" books (\"Red Rising,\" \"Golden Son,\" \"Morning Star,\" and \"Iron Gold\"), the next book in the series would be \"Dark Age.\"",
+          "The response should state that since the user has read \"The Shining,\" the book's sequel is \"Doctor Sleep.\"",
+          "The response should state that since the user has read the first two \"Parker\" books (\"The Hunter\" and \"The Man with the Getaway Face\"), the next book in the series would be \"The Outfit.\"",
+          "The response should state that since the user has read the first \"Monk & Robot\" book (\"A Psalm for the Wild-Built\"), the next book in the series would be \"A Prayer for the Crown-Shy.\"",
+          "The response should state that since the user has read the first two \"The Themis Files\" books (\"Sleeping Giants\" and \"Waking Gods\"), the next book in the series would be \"Only Human.\"",
+          "The response should state that since the user has read the first \"Silo\" book (\"Wool\"), the next book in the series would be \"Shift.\"",
+          "The response should state that since the user has read the first \"Vampire Chronicles\" book (\"Interview with the Vampire\"), the next book in the series would be \"The Vampire Lestat.\"",
+          "The response should state that since the user has read the first \"All for the Game\" book (\"The Foxhole Court\"), the next book in the series would be \"The Raven King.\"",
+          "The response should state that since the user has read the \"The Chronicles of Narnia\" book \"The Magician's Nephew,\" the next book in the series would be \"The Lion, the Witch, and the Wardrobe\" (chronological order) or \"The Last Battle\" (release order) — either answer is acceptable, both are not necessary.",
+          "The response should state that since the user has read \"Mickey7,\" the sequel to this book is \"Antimatter Blues.\"",
+          "The response should state that since the user has read the first two \"Alex Rider\" books (\"Stormbreaker\" and \"Point Blanc\"), the next book in the series would be \"Skeleton Key.\"",
+          "The response should state that since the user has read the first \"Foundation\" book (\"Foundation\"), the next book in the series would be \"Foundation and Empire.\"",
+          "The response should state that since the user has read the first \"The Parable Duology\" book (\"Parable of the Sower\"), the next book in the series would be \"Parable of the Talents.\"",
+          "The response should state that since the user has read the first two \"James Bond\" books (\"Casino Royale\" and \"Live and Let Die\"), the next book in the series would be \"Moonraker.\"",
+          "The response should state that since the user has read the first \"Southern Reach\" book (\"Annihilation\"), the next book in the series would be \"Authority.\"",
+          "The response should include ratings for the books it discusses ONLY if they are included in this list:\r\nWool - 2 stars\r\nVengeful - 3 stars\r\nTwilight - 2.5 stars\r\nThings Fall Apart - 5 stars\r\nThe Shining - 5 stars\r\nThe Rising Storm - 2 stars\r\nThe Rising Force - 2 stars\r\nThe Pumpkin Spice Café - 1 star\r\nThe Man with the Getaway Face - 2.5 stars\r\nThe Magician's Nephew - 3 stars\r\nThe Hunter - 2.5 stars\r\nThe Foxhole Court - 2 stars\r\nThe Fifth Season - 3 stars\r\nSleeping Giants - 1.5 stars\r\nRocannon's World - 3.5 stars\r\nRed Rising - 2.5 stars\r\nPlanet of Exile - 4 stars\r\nParable of the Sower - 4 stars\r\nMr. Mercedes - 3 stars\r\nMorning Star - 3.5 stars\r\nMickey7 - 2.5 stars\r\nLive and Let Die - 1 star\r\nLight of the Jedi - 2 stars\r\nIron Gold - 3 stars\r\nInterview With the Vampire - 4 stars\r\nHeir to the Empire - 3 stars\r\nGolden Son - 3 stars\r\nFifty Shades of Grey - 1 star\r\nFoundation - 4 stars\r\nDawn - 4.5 stars\r\nCasino Royale - 2 stars\r\nAnnihilation - 4 stars\r\nAlex Rider: Stormbreaker - 2 stars\r\nA Psalm for the Wild-Built - 2 stars"
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_10 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_10.fact_04.default_structure.v1",
+            "key": "default_structure",
+            "value": "numbered list",
+            "scope": "user:l1_life_stream_10"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

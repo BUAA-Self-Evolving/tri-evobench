@@ -1,0 +1,350 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_10",
+  "turn_id": "turn41",
+  "turn_index": 41,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "170bafc1-4fc1-c844-2ee4-e216d577a557",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 258,
+    "source_sha256": "fcf787a73f6e278f6bc0663e95079616733006024bece8ecc625cafe4f1ffffc",
+    "source_metadata": {
+      "task_id": "170bafc1-4fc1-c844-2ee4-e216d577a557",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Personal Information Fragments"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "1. What is an example of an experience-expectant development type?\na. Developing a food allergy\nb. Learning a language\nc. Producing low levels of vitamin D\nd. Learning to read\n\n\n2. What is an example of a risk factor to prenatal development?\na. Alcohol\nb. Malnutrition of the mother\nc. Stress\nd. All of the above\n\n\n\n\n3. What is the key difference between phenotype and genotype?\na. Genotype refers to the complete DNA sequence, while phenotype is the observable expression of the genotype.\nb. Phenotype refers to the complete DNA sequence, while genotype is the observable expression of the phenotype.\nc. Genotype refers to the process of transcription, while phenotype refers to the process of translation of DNA.\nd. Phenotype refers to the process of transcription, while genotype refers to the process of translation of DNA.\n\n\n\n\n4. What is an example of multifinality?\na. Twins growing up in the same environment having the same developmental outcomes\nb. Two children from different socioeconomic backgrounds having the same developmental outcomes\nc. Twins growing up in the same environment having different developmental outcomes\nd. Siblings raised in different environments having different developmental outcomes\n\n<html>, <head>, <meta>, <title>,\n• <body>, <header>, <main>, <footer>,\n• <h1>, <h2>, <section>, <p>,\n• <ol> (or <ul> if appropriate), <li>, and <img> with the value of the src attribute set to a web\naddress (so you do not need to download the image).\nHave the footer area provide some (made up) copyright information. You must use &copy;.\nYou could also try out <b>, <i>, <br>, and <hr> (optional).\n\nhttps://www.sublimetext.com/docs/minihtml.html\n\n\nhttps://codesandbox.io/dashboard/recent?workspace=12345678-abcd-1234-abcd-1234567890ab\n\nJavascript\n- Fixing Cache: add query string when we source our javascript file\n- Sourcing: <script src=\"hello.js\"></script>\n- Add query: <script src = \"hello.js?v=2\"></script>\n\n\nSix Primitive types:\n1. String\n2. Number\n3. BigInt\n4. Boolean\n5. Undefined\n6. Symbol\n\n\nNot Primitive = Object\n- array\n-\n\n\nPrinting on JS\n- console.log(\"Hello, World!\")\n- console.log(\"Bye, World!\")\n\n\nDefer\n- Defer: don't run js until it reads it all beforehand\n- It's a boolean\n-<script src=\"hello.js\" defer></script>\n\n\nStrings\n- single or double quotes\n-Ex:\n- let s0 = 'this is string';\n\n\nExample:\n\n\nlet x = 3\nconst y = 20\n\n\nif ( x < y){\nconsole.log(\"foo\");\n}\nelse {\nconsole.log(\"bar\");\n}\n\n\nwhile (x < y)\nconsole.log(x);\nx +=5;\n\n\nFor loop\n1. Initialization; runs once, at very beginning\n2. sets condition (same as in 'while'\n3. runs at end of each iteration\n\n\nfor (let i =1; i <x; i*= 2)\nalert('i am s[{i}'); #print\n1,2,4,8,16,\n\n\nPrompt: user input\nlet a = prompt (\"who\");\nlet b = prompt(\"what\");\n\n\na += b;\nb += a;\na += b;\nb+= a;\nconsole.log('ping: ${a}, pong: ${b}')\n\n\nConvert to int:\n\"pareseInt('7')\"\n\n\nlet n = parseInt(promt\n\n\n\nT-Tests\nIndependent T-test: lots of variability making it hard to find significant results\n\n\nDependent T-test: BETTER reduce a lot of variability\n\n\n\n\n\n\n\nMonthly Due on 20th (1200.00) ~ w/out cal grant\nQuarterly Due (3,600.00)\n\n\nAnnual Cal grant (5,000)\nQuarter Cal Grant (1800.00)\n\n\nWith Cal Grant:\nQuarterly Due on 20th (1400.00)\nMonthly Due on 20th (300.000)\n\n\n\n\n\n\n\n벌써 *already*,\n아직 *yet*,\n별로 *not really*,\n또 *also*,\n오래 *long time*,\n다시 *again*,\n나중에 *later*, 이따가 *later*,\n이젠(이제+는) *now *,\n그동안 *meanwhile*,\n그만 *stop*,\n잠깐만 *wait a sec*,\n적어도*at least*,\n어서 *hurry*,\n빨리*hurry*,\n금방 *soon*\n\n\n\nNo matter alphas: no PE = no change in AS\nPositive PE = both increase\n\n\n\n\n>0.5 = increased pressing during tone\n0.5 = no change\n0.0 = no pressing during tone\n\n\nlight = no change (no new learning)\n\n\n\nMichael Taylor\nSarah Davis\n\n\n\n\nTO DO:\nPSYCH 110:\n-Pre-discussion test (DUE: MON 9AM)\n-Essay (DUE: FRI)\n\n\nPSYCH 120A:\n-Reading (DUE: B4 Class)\n-ZAPs(DUE: MON 9AM)\n\n“Excuse me, but after briefly contemplating the gustatory qualities of these comestibles, I have discerned that their sensory qualities would be enhanced by the addition of a number of sodium and chloride ions, delivered in roughly equal proportions and in crystalline form; could you aid me in this endeavor?” - AKA pass the salt\nDescribe the overall performance of your models, state which combination of model and features (measurements) you recommend. Discuss how the model could be improved if more or different data were available.\n\n\nExploratory Analysis:\n1. Summary Statistics\n2. Construct visualizations about the relationships between variables\n3. Three figures and 1 displayed table\n       a. scatterplots\n       b. histograms\n       c. boxplots\n       d. barcharts\n- one figure must contain multiple axes\n-one display table must use df.groupby() to summarize data across multiple qualitative categories\n- may include data loading, preparation, and cleaning.\n\n\nNOT Explanatory visualizations:  visualizations related to cross-validation and decision regions\n- Each figure must explain how it illustrates a point which supports your modeling decisions below\n- Needs clear legends and axis-labels\n\n\nFeature Selection\nModel uses one qualitative feature and two quantitative features\n\n\nlegends\n\n\nPerform analysis to choose the features and justify choice - approach can be based on exploratory data analys, automated feature selection or any other method - but prepare to justify and write about your proposal\n\n\nYou are permitted to use different combinations of features for each of your three models (below). In this case, you should use the Feature Selection section to explain and illustrate your approach for a single model, which you can then repeat (without extensive explanation) for the other two models. Please remember that repetitive code should be wrapped in functions.\n\n\nModeling\n3 machine learning models & evaluate their perfomance\n-Scikit Learn: Except decision trees\na. Multinomial logistic regression\nb. Random forests\nc. Support vector machines\nd. nearest-neigbor classifiers\ne. neural networks\n\n\nMust include:\n1. Cross-validation to choose complexity parameters\n2. Evaluation on unseen testing data; including a confusion matrix\n3. Decision regions with one plot corresponding to each value of the qualitative variable. You are not permitted to use the mlxtend package to construct your decision regions. Your colors must be consistent between your decision region plots. You must also provide a readable legend and correct axis labels.\nDiscussion of the mistakes made by each model. Your discussion should give intuition for why the model fails in certain cases, using the decision regions to illustrate your explanation.\n\n\n\n\n1.Cross validation\n2. Discussion\n3. Legends\n4. Explanatory\n\nOxford handbook - stress, copping and health \nThe scatterplot shows the relationship between the chosen numerical column (e.g., GDP per capita) and the happiness score.\nIf there's a clear pattern where higher values of the chosen numerical column correspond to higher happiness scores, or vice versa, then there might be a correlation.\nA positive correlation would imply that as the chosen numerical column increases, the happiness score tends to increase as well.\nIt's important to interpret the scatterplot in the context of the data and the specific variables being compared. In this case, a correlation between GDP per capita and happiness score might make sense as higher GDP per capita often indicates better economic conditions, which can contribute to overall happiness. However, other factors could also influence happiness scores, so correlation does not imply causation.\n\n\n\n\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef create_data(n, n_groups):\n   \"\"\"\n   generate a set of fake data with group labels.\n   n data points and group labels are generated.\n   n_groups controls the number of distinct groups.\n   Returns an np.array() of integer group labels and an\n   np.array() of float data.\n   \"\"\"\n  \n   # random group assignments as integers between 0 and n_groups-1, inclusive\n   groups = np.random.randint(0, n_groups, n)\n  \n   # function of the groups plus gaussian noise (bell curve)\n   data   = np.sin(groups) + np.random.randn(n)\n  \n   return(groups, data)\n\n\n\n\n\n\nPart A\ndef facet_hist()\n\n\ndef facet_hist(groups, data, m_rows, m_cols, figsize):\n\n\ngroups, the np.array of group labels as output by create_data().\ndata, the np.array of data as output by create_data().\nm_rows, the number of desired rows in your faceted histogram (explanation coming).\nm_cols, the number of desired columns in your faceted histogram (explanation coming).\nfigsize, the size of the figure.\nYour function will create faceted histograms -- that is, a separate axis and histogram for each group. For example, if there are six groups in the data, then you should be able to use the code\n\n\ngroups, data = create_data(1000, 6)\nfacet_hist(groups, data, m_rows = 2, m_cols = 3, figsize = (6,4))\nto create a plot like this:\n\n\nAn array of six histograms, depicting bell-curve data, with two rows and three columns. Each histogram is labeled with one of the six group labels.\nIt's fine if your group labels run left-to-right (so that the top row has labels 0, 1, and 2 rather than 0, 2, 4).\n\n\nYou should also be able to change the orientation by modifying m_rows, m_cols, and figsize.\n\n\nfacet_hist(groups, data, m_rows = 3, m_cols = 2, figsize = (4,6))\nAn array of six histograms, depicting bell-curve data, with three rows and two columns. Each histogram is labeled with one of the six group labels.\nRequirements:\nYour function should work whenever m_rows*m_cols is equal to the total number of groups. Your function should first check that this is the case, and raise an informative ValueError if not. You may assume that there is at least one data point for each group label in the data supplied.\nFor full credit, you should not loop over the individual entries of groups or data. It is acceptable to loop over the distinct values of groups. In general, aim to minimize for-loops and maximize use of numpy indexing.\nUse of pandas is acceptable but unnecessary, and is unlikely to make your solution significantly simpler.\nYou should include a horizontal axis label (of your choice) along only the bottom row of axes.\nYou should include a vertical axis label (e.g. \"Frequency\") along only the leftmost column of axes.\nEach axis should have an axis title of the form \"Group X\", as shown above.\nComments and docstrings!\nHints\nIf your plots look \"squished,\" then plt.tight_layout() is sometimes helpful. Just call it after constructing your figure, with no arguments.\nInteger division i // j and remainders i % j are helpful here, although other solutions are also possible.\n\nAlso quick q, if you're going to the gym on thursday afternoon/evening can you lmk? and is it okay if my roomie tags along? she wanted to learn how to deadlift and I forgot to ask you about that yesterday lol\nPatients who are waiting for a painful medical procedure will report a significantly\nhigh level of comfort if they are accompanied by others compared to waiting alone. The increase of comfort level should be due to the company of other patients also waiting for a painful medical procedure according to the proverb, misery loves company.\n\n\nThe study will be a between-subjects design to minimize any carry-over effects and we would not need to counterbalance for order since the participant would only be a part of one of the conditions\n\nCh. 3, 7, 10\n\n\nApple A Day Introduction\nMaking healthy lifestyle choices, including what we eat, can be a determinant of our overall\nhealth. Unfortunately, many people don’t get the nutrients they need on a daily basis (Gala, 2020). Even\nthose who do “eat healthy” may not get enough of certain foods. For example, four out of five American\nadults report eating fewer than 5 servings of whole fruits and vegetables each day (PinkLady, 2022),\nwhich is the recommended amount according to the American Society for Apple Eating (Granny-Chen,\n2019).\nAccording to the old proverb, “an apple a day keeps the doctor away,” eating the nutrients\nfound in fresh fruit and vegetables should reduce the need to visit the doctor. However, the impact that\neating whole fruits and vegetables each day has on overall health has yet to be tested.(#2) Apples contain\nessential nutrients, like fiber and Vitamin C, which has been linked to a reduction in common colds\n(Honeycrisp, 2002) and may boost immunity (Fuji, 2012). Thus, eating a higher serving of apples each\nday should, as the proverb states, reduce the need to visit the doctor.\nThe Current Study\nIn this experiment, we aimed to determine whether greater intake of fresh fruit (specifically\napples) does in fact lead to fewer doctor visits over the course of a year.(#3) Participants who were patients\nat the Appletown Clinic were randomly assigned to eat either one apple or two apples each day for one\nyear, and their number of doctor visits were recorded by the clinic. We predicted that participants who\nate one apple each day would visit the doctor significantly more times over the course of a year than\nthose who ate two apples each day, given that apples provide a good source of Vitamin C and other\nnutrients\n\n\nrandom assignment - between subjects design - experimental design - 2 levels - (#4)\n\n\n5. an apple a day keeps the doctor away\n\nI notice that im having the thought that\n Print Korean Handout\nPickup Textbooks\nIntroduction (Korean Module)\nCAE\nIntro Video (Korean)\n\nPhylogenetic\nChronogram\nCladogram -\n\n\nTemporal isolation\nBehavioral isolation\nMolecular isolation\n\n\nbiological species concept: group of organisms that can successfully interbreed and produce fertile offspring\nConvergent Evolution\nParallel Evolution\nDifergent Evolution\nAdaptiv Radiation\n\n\nMonophyletic\nParaphyletic\nPolypheletic\n\n\nSympatric Speciation - no barriers, all together\nAllopatric Speciation - geographic barrier\nParapatric Speciation - same region, seperate environment\nPolygenetic Inheritance\n\n\nEvolution:\nSister Taxa\nPrinciple of Darwinis Theory of Evolution by Natural selection\n\n\nGenetic Drift\nBottleneck\nFounder Effect\nGene Pool\nHeterozygous Advantage\nSpecies : Interbreed\n\n\nHomologous and analogous traits\nDerived Traits\nInclusive Fitness\n\n\nFixation: Process by which an allele becomes the only allele found at a given locus within a gene pool.\nPolymorphism: detect more than one allele in a give population\n\n\n\n\nMoving on with the 2nd reading titled \"A home is not a house.\" Within this opinion piece, the author Reyner Banham heavily criticizes North American Architecture claiming that it contained an excess amount of mechanical services, so much so that, in his words, \"the hardware could stand up by itself without any assistance from the house.\"\n\n\nAs seen on the image to right of the screen, Banham created a piece named the, \"Anatomy of a Dwelling\" which showcases what he perceived a house to look like without the actual house itself. Instead what is shown is only the mechanical services used within a household such as the thermosta, the plumbing, or even the water tank.. It can be seen throughout the text that he teases with the idea of a house only being used for the purpose of concealing the mechanics rather than accomadating to the people residing there. He calls this the \"mechanical invasion\" one in which he claims to pose a cultural threat to Architects\n\n\nWhat I find interesting is the idea he poses in order fight off this \"mechanical invasion.\" He instead introduces the enviromnet bubble which in his eyes is the standard-of-living package. As you can see in this image, this is a drawing of his ideall living space. It is a transparent plastic bubble dome that is inflated by air-conditioning output. He preached this idea of a comfortable and safe enviroment that you wouldn't even need to wear clothes because of how secure, sanitray and warm it is.\nHe was so a influential that even Fuller made a proposal similar to the author: it Futurist visions of  living in closer\nproximity to nature \nWhat would the “environment\nbubble” be made of?\n\n\nrendition\n\n\n\n\nPredictions: \nIndividualistic, corporal, capitalistic society harbors independence but strips away community, making people feel lonelier and leads to mental health issues \n\nDatasets:\n\nMental Health \nlocate areas in the U.S w/ high suicide rates/depression rates/ anxiety rates/ mental health\n\nCorporations:\nlocate areas with a lot of huge corporations (fast food, walmarts/targets/costco/homedepots, etc, ross, tjmaxx, fast fashion)\ncorporate buildings\n\n\nlocate areas with more local shops \n\nCommunity\nchurches, mosques, temples\nlocal shops\nfarmers market\nparks (active and nice parks)\ngood transit\nwalkability \n\n\nSuicides\nhttps://www.cdc.gov/nchs/state-stats/deaths/suicide.html\nSmall Business Growth\nhttps://www.ondeck.com/resources/best-place-to-start-a-small-business\nhttps://www.lendingtree.com/business/places-with-most-family-owned-businesses/\nIndependent vs. Chainstores\nhttps://merchantmachine.co.uk/us-independent-stores/\n\nWalkable:\nhttps://www.statista.com/chart/33093/annual-average-daily-walking-trips-per-us-state-per-100-people/#:~:text=Data%20from%20transportation%20analytics%20company,and%20100%20people%20in%202022.\n\nhttps://www.homes.com/learn/most-walkable-cities-in-the-us/\n\nReligion: Attendance\nhttps://www.pewresearch.org/short-reads/2025/09/16/how-religious-is-your-state/\n\nFine-Grained Criteria: Fine-Grained Criteria break down broader concepts into smaller, well-defined components to provide clear, actionable guidelines for evaluation - in this case, a model's response.\n\nAtomic Structure: Each criterion should evaluate a single, specific aspect of the response. This avoids combining multiple considerations into one statement, ensuring clarity and precision.\n\nSelf-Containedness: All criteria should be self-contained, meaning they can be understood and applied independently, without needing to refer to the original prompt, context, or external knowledge. Each criterion should include all necessary details within itself.\n\nActionable Language: Criteria should use direct, actionable terms like \"should\" and \"should not\" to clearly define expectations.\n\nExplicit Criteria: These are requirements directly stated in the prompt instructions. They are \"hard\" rules that must be followed.\n\nImplicit Criteria: These are expectations not explicitly mentioned in the prompt but are likely assumed by most users. These reflect reasonable expectations based on context or typical standards.\n\nObjective Criteria: These are measurable and verifiable requirements that do not rely on personal judgment. They are factual and can be universally agreed upon.\n\nSubjective Criteria: These involve personal interpretation or judgment, often related to quality, tone, or style. Subjective criteria should include general principles and examples (\"For example...\") to reduce ambiguity.\n\nCPR: Cardiopulonary Resuscitation\n- Heart stops beatign (result from heart attack or stroke)\n- Heart stops --> lack of oxygen = brain damage \n- CPR --> keep brain and organs blood oxygenated \n\nGood Samaritan Laws: Gives legal protection to people that give emergency care without compensation\n- If you receive compensation, the laws don't apply to you anymore\n- Requires the samaritan to: act in good faith, not be deliberately negligent or reckless, act within the scope of his/her training, not abandon the person after starting to give care\n\nDecide whether CPR is needed:\n1. Assess the situation\n- Determine if the situation is safe\n2. Check for responsiveness \n- Tap or shake shoulder and should \"are you ok?\"\n- at the same time, check for breathing\n3. Call Emergency Response\n- If possible, direct someone at the scene to call emergency response (pick specific person and give explicit instructions, \"YOU SIR, call 9-1-1 Immediately!!\")\n- Script: \"My name is Alex Chen and I have a medical emergency. I am trained in CPR and am with a victim needing an ambulance. I am at 456 High Street, room 222 and the victim is unconscious and not breathing. My call back number is 555-0123 and I’m going to place the phone down and begin CPR.\"\n-\n\nCPR Techniques: Perfomed by a combination of chest compressions and rescue breaths \n\n1. Chest compressions: applying pressure to a victims chest in order to increase blood flow thought the heart \n- Focus on high quality compressions: allow chest to fully recoil, don't lean on the chest\n- Pump the chest 30x at the rate of 100-120 compressions per minute\n1a. Adult/Child: \n- Depth of compressions for adult: 2 inches, no more than 2.4 in\n-Depth of compressions for child: 2 inch\n1b. Infants\n- Depth of compressions: 1/3 the depth of the chest (1 1/2 in)\n- Place 2 or 3 fingers on the breastbone just below the nipple line\n\n2. Rescue Breaths: supply enough oxygen to a victim to preserve life. Rescue breaths are perfomed by breathing into the mouth of a victim\n2a. Child/Adult: \n- Tilt head back and lift chin, Pinch nose and perform rescue breaths for at least one second\n- Cover victim's mouth with your mouth to create a seal\n- Blow into the victims mouth for at least one second\n- Watch the victims chest rise and fall\n- If you don't see the chest rise and fall, there is probably a blockage in the airway which must be cleared. You must use abdominal thrusts to clear the blockage. Abdominal thrusts are covered later in the lesson on chocking\n- perform 2 rescue breaths per 30 chest compressions\n- Rescue breaths should take less than 10 seconds\n2b. Infant\n- Check infants mouth for a blockage, tilt head and life chin, don't pinch nose, cover infants mouth AND nose with your mouth, make a complete seal over infants mouth and nose, blow for one second (don't blow too hard, can damage infants lungs)\n- If chest doesn't reise, probably blockage --> use back blows or chest thrusts to clear blockage\n- perform 2 rescue breaths per 30 chest compressions\n\nCAB - Chest compressions, airway, breathing\n\n5 cycles of CPR = 2 minutes\n\n\nHands-Only CPR - Performing compressions only, without rescue breaths\n- Recommended for untrained rescuer \n\nChoking\n- If victim is coughing, encourage continued coughing \n- A person who cannot cough, speak or breathe is choking and needs help\n- Have someone call 9-1-1\n- Must ask for approval to help (if victim nods or gives approaval, use heimlich), if victim is unresponsive, approval is assumed \n- Give 5 black blows and 5 abdominal thrusts \n\nHow: Back Blows\n- Position behind victim\n-Wrap arms diagonally across persons chest. Place your hand securely on their opposite shoulder to provide support\n- Bend the victim at the waist. Make their upper body as parallel to the ground as possible \n-Strike the victim between the shoulder blades with the heel of your hand\n\nAbdominal Thrusts\n- Stand behind victim with one leg forward between the victims legs\n- Reach around the abdomen and locate the persons navel with a finger from one hand\n- Make a fist with the other hand and place the thumb side of the fist against the person's abdomen, just above the navel. Grasp your fist with your other hand\n- Thrust inward and upward into the victims abdomen with quick jerks. you may have to thrust hard enough to lift the victim off their feet\n\nIf victim becomes unresponsive: perform CPR\nIf victim is pregnat: give chest thrusts instead of abdominal (avoid squeenzing the ribs with your arms)\n\nResponsive infant: \n- If infant can't cry, cough or breathe\nHow: \n- Support infant face down by holding the head in one hand with torso against forearm or thigh\n- Give 5 slaps between sholder blades with the heel of your other hand\n- If object no expelled, roll infant face up, supporting the back of the infants head with your hand\n- place 2 fingers on the breastbone, just below the nipple line (same position as for CPR chest compressions)\n- Give 5 chest thrusts about 1 per second. Each thrust should be 1 1/2 inches deep\n-Continue cycles of 5 back blows (slaps) and 5 chest thrusts until object is expelled (call 911 after 1 minute if alone and unresponsive) \n- If unresponsive, begin CPR - look inside the mouth when openining it to give breaths and remove any object\n\nRecovery Posistion\nUse recovery position for any victim who is unresponsive and breathing \n- If victim begins to breathe during CPR, immediately place person in recovery position\n- Position helps person keep airway open, allows fluids to drain from the mouth and prevents victim from inhaling stomach contents if the victim vomits \nHow:\n- Lay victim on back and place the right hand next to the head\n- Place left hand on the right cheek\n- Hold left shoulder and left leg and pull the body towards you, rolling the patient onto his side\n- Rest the patient as shown and move the head bakcwards slightly \n\nAED: Automated external defibrillator - used to restore a victims normal heart rhythm by sending electric shocks throught the heart of a victim to restore normal rhythm \n- AED: Child 1-8 yrs old \n- CPR: Child: 1- onset of early puberty\n\nWhy defibrilate?\nIf victim is in ventricular fibrillation (VF) or ventricular tachycardia (VT), you need to shock the victims heart in an attempt to restore its normal rhythm\n\n- when used within the first 3-5 minutes of cardiac arrect (increase survival)\n\n\nKILZ (Low odor interior primer) 1 Gal\nHome Depot: 38.98\nWlmart: 59.01\n\nZinsser\n\nOil based primer (flat oil) , wood and decking\n- old \n\n\nGlidden (drywall)\n\nPrimer: fill in pourus \nresins --> penertrate gaps better\n\nTechnical Data Sheets:\n\nAcrylic = water-based\n\nLatex --> water based primer \nOil --? paint thinner to clean it (can crack more)\nSchelac --> alcohol based : denatured alcohol to clean (interior cause not good in heat)\n\nBenjamin Moore --> fresh start\n\nWater based (not good in silicone, beading occurs)\nEspecially inside\nWorks well with materials that stretch --> no cracking\n\nOil (wood)\nHide Tannin\n\nShelac (smoke damage)\n\nTitanium Oxide (very good)\nHigh volume of solvents\n\n\nKilz Mold Primer:\nWater Based\nIndoor and Outdoor\nAlkali resistant based w/ 12 PH --> can be used on powdery surfaces like concrete,cement\n\n\nZinsser Watertite:\nBlock 3PSI of water pressure\nAntimicrobial properties\nWater-resistant\n\nFiberlock Aftershock:\nMitigate mold --> kills microbe and fungicidal coaty\nPH 8.5 -->high aciditiy that kills bacteria\n\n\nZinnser Perma White:\n\nLow VOC --> easy to work with\n\n\n\nTask:\n \nHere are some of my past scattered sticky notes. By analyzing the context of each note, can you categorize all the different subjects into a numbered list"
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the content of your sticky notes, here is a categorized list of the different subjects identified:\n\n1.  **Psychology**: Covers developmental concepts (experience-expectant, risk factors, phenotype/genotype, multifinality), statistical methods (T-tests), experimental design (between-subjects, random assignment), and coursework (PSYCH 110, PSYCH 120A).\n2.  **JavaScript Programming**: Includes primitive types, printing, loops, functions, user input (prompt), type conversion, caching strategies, and script sourcing (defer attribute).\n3.  **HTML**: Notes on structure and elements like `<html>`, `<head>`, `<body>`, `<header>`, `<footer>`, semantic tags (`<section>`, `<h1>`), lists (`<ol>`, `<ul>`), images (`<img>`), and styling tags (`<b>`, `<i>`, `<hr>`), including copyright info with `&copy;`.\n4.  **Finance**: Details regarding student payments, including monthly/quarterly dues and California Grant amounts.\n5.  **Korean Language**: A list of basic vocabulary words and adverbs (e.g., 벌써, 아직, 별로, 다시).\n6.  **Data Science / Machine Learning**: Encompasses exploratory data analysis (summary stats, visualizations like scatterplots/histograms), feature selection, and modeling (logistic regression, random forests, SVM, k-NN) using Scikit-Learn, including cross-validation and evaluation metrics.\n7.  **Python Programming**: Focuses on data manipulation and visualization using libraries like NumPy and Matplotlib (e.g., creating synthetic data, generating faceted histograms).\n8.  **Biology / Evolution**: A collection of terms related to evolution, including phylogenetics, speciation (allopatric, sympatric), evolutionary mechanisms (drift, selection), and taxonomic concepts (cladistics, monophyletic groups).\n9.  **Architecture**: Critical analysis of North American architecture based on Reyner Banham's ideas, including the \"mechanical invasion\" and the proposed \"environment bubble.\"\n10. **Social Science Research**: An outline for a research project linking community characteristics (local businesses, walkability, religion) to mental health outcomes, with suggested datasets.\n11. **Evaluation Methodology**: Guidelines for creating fine-grained, atomic, and objective/subjective criteria to evaluate model responses.\n12. **Health / Emergency Medicine**: A detailed guide on performing CPR, using an AED, assisting a choking victim, and understanding Good Samaritan laws.\n13. **Home Improvement**: Notes on different types of primers and paints (e.g., KILZ, Zinsser), their chemical bases (acrylic, latex, oil), properties, and applications.\n"
+      },
+      {
+        "role": "user",
+        "content": "Based on these fragmented notes, what are my key interests and what overarching life goals was I working towards? Identify the specific fragments that support it, and deduce what my next logical action steps should be based on where the notes drop off."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the analysis of your fragmented sticky notes, your key interests and overarching life goals can be deduced. The notes reveal a pattern of intense curiosity and a drive for interdisciplinary learning, blending academic rigor with practical skill acquisition.\n\n### Key Interests\n\nYour notes cover a wide range of subjects, indicating diverse intellectual pursuits:\n\n1.  **Psychology & Human Development:** You are deeply interested in the mechanisms of human growth and behavior.\n    -   **Supporting Fragments:** \"1. What is an example of an experience-expectant development type?\", \"2. What is an example of a risk factor to prenatal development?\", \"3. What is the key difference between phenotype and genotype?\", \"4. What is an example of multifinality?\", \"T-Tests\", \"random assignment - between subjects design - experimental design\".\n\n2.  **Data Science & Machine Learning:** You are focused on using computational tools to analyze data, build models, and draw insights.\n    -   **Supporting Fragments:** \"Exploratory Analysis:\", \"Feature Selection\", \"Modeling\", \"3 machine learning models & evaluate their perfomance\", \"Cross-validation\", \"Decision regions\", \"def facet_hist(groups, data, m_rows, m_cols, figsize):\".\n\n3.  **Programming & Web Development:** You are building foundational skills in multiple programming languages for both web development and data analysis.\n    -   **Supporting Fragments:** \"Six Primitive types:\", \"Printing on JS\", \"Defer\", \"Strings\", \"if ( x < y){...}\", \"<html>, <head>, <meta>, <title>, ...\", \"import numpy as np\", \"from matplotlib import pyplot as plt\".\n\n4.  **Scientific Inquiry (Biology/Evolution):** You have a strong interest in the principles of life sciences, particularly evolutionary theory.\n    -   **Supporting Fragments:** \"Phylogenetic\", \"Chronogram\", \"Cladogram\", \"Biological species concept\", \"Principle of Darwinis Theory of Evolution by Natural selection\", \"Genetic Drift\", \"Bottleneck\", \"Founder Effect\".\n\n5.  **Social Science Research:** You are exploring the intersection of society, community, and individual well-being.\n    -   **Supporting Fragments:** \"Predictions: Individualistic, corporal, capitalistic society harbors independence but strips away community, making people feel lonelier and leads to mental health issues\", \"Datasets: Mental Health... Corporations... Community...\", links to CDC and other data sources.\n\n6.  **Practical Skills & Lifelong Learning:** You actively seek to acquire tangible skills and knowledge outside of traditional academics.\n    -   **Health/Medicine:** \"CPR: Cardiopulonary Resuscitation\", \"Good Samaritan Laws\", \"Choking\", \"AED\".\n    -   **Language:** \"벌써 *already*...\", \"Print Korean Handout\", \"Pickup Textbooks\", \"Introduction (Korean Module)\".\n    -   **Architecture:** \"Reyner Banham heavily criticizes North American Architecture\", \"mechanical invasion\", \"environment bubble\".\n    -   **Home Improvement:** \"KILZ (Low odor interior primer)...\", \"Technical Data Sheets...\".\n\n### Overarching Life Goals\n\nDeduced from your interests, you appear to be working towards two primary, interconnected goals:\n\n1.  **To become an interdisciplinary analyst/researcher:** You are systematically gathering knowledge in psychology, data science, and social theory to understand complex human and societal systems. The detailed notes on modeling and the research proposal on community vs. mental health are strong evidence of this goal. You want to move beyond passive learning to active investigation and model-building.\n2.  **To cultivate a well-rounded, resilient, and capable self:** The breadth of your notes—from learning Korean and CPR to understanding architectural theory and home repair—suggests a goal of personal development that is both intellectually expansive and practically grounded. You aim to be prepared for a variety of life's challenges and opportunities.\n\n### Next Logical Action Steps\n\nThe notes drop off mid-thought, but they clearly point to several unfinished tasks and immediate obligations. Based on the context, your next logical steps should be:\n\n1.  **Address Immediate Academic Deadlines (Highest Priority):** Your notes explicitly mention upcoming due dates.\n    -   **Action:** Complete the \"Pre-discussion test\" and \"ZAPs\" for PSYCH 110 and PSYCH 120A, respectively, both due Monday at 9 AM. Read the assigned material for PSYCH 120A before class. Begin drafting the essay for PSYCH 110, due Friday.\n    -   **Fragment Evidence:** \"PSYCH 110: -Pre-discussion test (DUE: MON 9AM) -Essay (DUE: FRI)\", \"PSYCH 120A: -Reading (DUE: B4 Class) -ZAPs(DUE: MON 9AM)\".\n\n2.  **Complete the Unfinished Data Science Coding Task:** The notes describe a specific function (`facet_hist`) but do not show its implementation. This appears to be a pending assignment.\n    -   **Action:** Write the Python code for the `facet_hist` function as described. Use `matplotlib` and `numpy` to create a figure with subplots (histograms) arranged in `m_rows` and `m_cols`. Ensure the layout matches the description and handles axis labels correctly. Test it with the provided example.\n    -   **Fragment Evidence:** \"def facet_hist(groups, data, m_rows, m_cols, figsize):\", \"Your function will create faceted histograms...\".\n\n3.  **Continue the Korean Language Module:** You have a clear plan to start learning Korean.\n    -   **Action:** Act on your note to \"Pickup Textbooks\" and \"Print Korean Handout,\" then proceed with the \"Introduction (Korean Module)\".\n    -   **Fragment Evidence:** \"Print Korean Handout\", \"Pickup Textbooks\", \"Introduction (Korean Module)\".\n\n4.  **Initiate the Social Science Research Project:** You have a hypothesis and a list of datasets. The next step is execution.\n    -   **Action:** Follow your own outline. Access the datasets (CDC, OnDeck, etc.), perform the exploratory analysis (summary statistics, create the required visualizations like scatterplots and histograms), and begin formulating your model to test the link between community structure and mental health.\n    -   **Fragment Evidence:** \"Predictions: ...\", \"Datasets: ...\", \"Exploratory Analysis: 1. Summary Statistics 2. Construct visualizations...\".\n"
+      },
+      {
+        "role": "user",
+        "content": "Based on these scattered notes, I need to write a cohesive 'Statement of Purpose' for my graduate school application. What overarching interdisciplinary research theme connects my recent academic notes, and how do my behavioral/hobby notes support this specific academic pivot?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. My default workspace has changed. Create a fresh analysis-journal.md there, begin it with '# Analysis Journal', and write this turn's source-grounded analysis. Do not modify the archived file in the former workspace. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.write_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/switch/final', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_10.fact_02.default_workspace.v2",
+          "key": "default_workspace",
+          "value": "docs/switch/final",
+          "stale_value": "docs/switch/drafts"
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.write_text",
+      "arguments": {
+        "path": "docs/switch/final/analysis-journal.md",
+        "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+        "overwrite": false
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_after_workspace_change",
+      "path": "docs/switch/final/analysis-journal.md",
+      "must_exist_after": true,
+      "former_workspace_files_must_be_preserved": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should adopt a professional, academic tone suitable for a graduate admissions committee. For example, it should avoid slang and overly casual phrasing.",
+        "The response should identify an overarching research theme that centers on the investigation of how socio-environmental structures (such as built, social, and economic environments) influence psychological development and community well-being.",
+        "The response should not claim that advanced machine learning models (Random Forests, multinomial logistic regression, or SVMs) were used for the primary social science research project.",
+        "The response should maintain a truthful chronological timeline, ensuring that the personal social science research project is not conflated with later, unrelated coursework in data science.",
+        "The response should identify the core hypothesis of the user's research: that a lack of community infrastructure correlates with negative mental health indicators.",
+        "The response should be formatted as a \"Statement of Purpose\" suitable for a graduate school application. For example, formal language with structured paragraphs.",
+        "The response should have an appropriate length for a typical Statement of Purpose. For example, it should be between 500 and 1000 words.",
+        "The response should be written in the first person, as is standard for a personal Statement of Purpose. For example, it should use pronouns like \"I\" and \"my\".",
+        "The response should clearly explain how the behavioral/hobby notes support the specific academic pivot. For example, it could state that a hobby in strategic gaming built the foundational logic skills necessary for machine learning.",
+        "The response should articulate a clear future goal for graduate study. For example, developing mixed-methods frameworks to identify at-risk communities and evaluate social interventions.",
+        "The response should avoid listing the hobbies as a series of disconnected interests and instead connect them into the narrative of the academic pivot."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/switch/final', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/switch/final"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should adopt a professional, academic tone suitable for a graduate admissions committee. For example, it should avoid slang and overly casual phrasing.",
+          "The response should identify an overarching research theme that centers on the investigation of how socio-environmental structures (such as built, social, and economic environments) influence psychological development and community well-being.",
+          "The response should not claim that advanced machine learning models (Random Forests, multinomial logistic regression, or SVMs) were used for the primary social science research project.",
+          "The response should maintain a truthful chronological timeline, ensuring that the personal social science research project is not conflated with later, unrelated coursework in data science.",
+          "The response should identify the core hypothesis of the user's research: that a lack of community infrastructure correlates with negative mental health indicators.",
+          "The response should be formatted as a \"Statement of Purpose\" suitable for a graduate school application. For example, formal language with structured paragraphs.",
+          "The response should have an appropriate length for a typical Statement of Purpose. For example, it should be between 500 and 1000 words.",
+          "The response should be written in the first person, as is standard for a personal Statement of Purpose. For example, it should use pronouns like \"I\" and \"my\".",
+          "The response should clearly explain how the behavioral/hobby notes support the specific academic pivot. For example, it could state that a hobby in strategic gaming built the foundational logic skills necessary for machine learning.",
+          "The response should articulate a clear future goal for graduate study. For example, developing mixed-methods frameworks to identify at-risk communities and evaluate social interventions.",
+          "The response should avoid listing the hobbies as a series of disconnected interests and instead connect them into the narrative of the academic pivot."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/switch/final', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_10.fact_02.default_workspace.v2",
+            "key": "default_workspace",
+            "value": "docs/switch/final",
+            "stale_value": "docs/switch/drafts"
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.write_text",
+        "arguments": {
+          "path": "docs/switch/final/analysis-journal.md",
+          "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+          "overwrite": false
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_after_workspace_change",
+        "path": "docs/switch/final/analysis-journal.md",
+        "must_exist_after": true,
+        "former_workspace_files_must_be_preserved": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "docs/switch/drafts"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

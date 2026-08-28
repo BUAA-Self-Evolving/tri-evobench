@@ -1,0 +1,290 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_1",
+  "turn_id": "turn59",
+  "turn_index": 59,
+  "turn_type": "long_delay_replay",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "replay",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "9e8b1fcb-bf96-245c-230e-5ba74cda2af9"
+    ],
+    "mapping_rule": "This turn derives from an earlier source_task turn and does not consume another source task.",
+    "source_jsonl_line": 136,
+    "source_sha256": "aa6506f148b6d8bac155602e53adcad198cf1ef68a75961c2629ef927f19bb3f",
+    "source_metadata": {
+      "task_id": "9e8b1fcb-bf96-245c-230e-5ba74cda2af9",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Group Conversations & Meeting Transcripts"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Long-delay replay: revisit the context-rich task first seen at turn 14 without reopening its source context. Re-answer its original request, then state my default work calendar ID now. Use the latest correction and do not present superseded information as current."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_replay",
+        "dimension": "replay_retention",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+      },
+      {
+        "check_id": "fact_retention",
+        "dimension": "replay_retention",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The response states the latest value 'cal_creator_work' for default work calendar ID."
+      },
+      {
+        "check_id": "no_stale_value",
+        "dimension": "stale_control",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response does not treat 'cal_creator_personal' as current."
+      },
+      {
+        "check_id": "state_integrity",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "Replay does not create a duplicate fact or corrupt unrelated active state."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_1.fact_05.default_calendar_id.v2",
+          "key": "default_calendar_id",
+          "value": "cal_creator_work",
+          "stale_value": "cal_creator_personal"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should list Rawl as one of the most powerful cards.",
+        "The response should provide evidence that directly supports its claims about the cards' effects. For example, the model could provide a quote that demonstrates how Leyline is used to protect other cards.",
+        "The response should use quotes to justify its reasoning.",
+        "The response should use quotes that contain information directly relevant to the card being discussed. For example, a quote about Leyline could state that it is used in protective strategies.",
+        "The response should include quotes that demonstrate players' perception of the discussed card being strong. For example, the model could provide a quote where a user comments on how they are going to beat everyone with Rawl.",
+        "The response should provide a timestamp next to each quote it uses to justify its reasoning."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_replay",
+          "dimension": "replay_retention",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+        },
+        {
+          "rubric_id": "fact_retention",
+          "dimension": "replay_retention",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The response states the latest value 'cal_creator_work' for default work calendar ID."
+        },
+        {
+          "rubric_id": "no_stale_value",
+          "dimension": "stale_control",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response does not treat 'cal_creator_personal' as current."
+        },
+        {
+          "rubric_id": "state_integrity",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": [
+        {
+          "role": "user",
+          "content": "<GamerDude> Ronin — 2/2/2026 6:32 PMMonday, February 2, 2026 6:32 PM\nI have DEEPLY ASSUMED that we were going to repeat our last years suite of cons.\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[6:32 PM]Monday, February 2, 2026 6:32 PM\nAWA being the shakiest of those, I don't know that that was a very successful con for the company. Had us HIDDEN away.\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\n@<GamerDude> Ronin\nI have DEEPLY ASSUMED that we were going to repeat our last years suite of cons.\n\nBen — 2/2/2026 6:34 PMMonday, February 2, 2026 6:34 PM\nAWA is still on the table. We’ve been very lucky to enjoy such success at all the cons prior to it, we forget ourselves to think making money, spreading the word of the game and holding a fantastic tournament wasn’t a great con!\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\nFebruary 3, 2026\n\nmiller99\n\nPEN\n — 2/3/2026 8:51 PMTuesday, February 3, 2026 8:51 PM\nanyone down to help me relearn the game?\n\ntopscore111 — 2/3/2026 8:52 PMTuesday, February 3, 2026 8:52 PM\nWhen are you looking to play\n\nmiller99\n\nPEN\n — 2/3/2026 8:53 PMTuesday, February 3, 2026 8:53 PM\nim free now\n\ntopscore111 — 2/3/2026 8:53 PMTuesday, February 3, 2026 8:53 PM\nWe have weekly webcam tournaments on Sunday\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[8:53 PM]Tuesday, February 3, 2026 8:53 PM\nDamn Im at work atm\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nmiller99\n\nPEN\n — 2/3/2026 8:53 PMTuesday, February 3, 2026 8:53 PM\ni dont have a mobile webcam but i can get one\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nAngelHalo4 — 2/3/2026 8:53 PMTuesday, February 3, 2026 8:53 PM\nDo u have Tabletop Simulator?\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nmiller99\n\nPEN\n — 2/3/2026 8:53 PMTuesday, February 3, 2026 8:53 PM\ni do!\n[8:54 PM]Tuesday, February 3, 2026 8:54 PM\ni actually just got set up on there for the game\n\nAngelHalo4 — 2/3/2026 8:54 PMTuesday, February 3, 2026 8:54 PM\nI’m just leaving work so be like 30ish minutes if u don’t mind the wait\n\nmiller99\n\nPEN\n — 2/3/2026 8:54 PMTuesday, February 3, 2026 8:54 PM\nthats fine\n\nAngelHalo4 — 2/3/2026 8:54 PMTuesday, February 3, 2026 8:54 PM\nAnd haven’t played the game all that much so would be learning the game alongside ya\n\nmiller99\n\nPEN\n — 2/3/2026 8:55 PMTuesday, February 3, 2026 8:55 PM\nill have the rules up lol i havent played in momocon last year\n\nAngelHalo4 — 2/3/2026 8:55 PMTuesday, February 3, 2026 8:55 PM\nLearned about the game from that con too XD\n\nmiller99\n\nPEN\n — 2/3/2026 9:00 PMTuesday, February 3, 2026 9:00 PM\nwe shall reteach each other!!\n\ntopscore111 — 2/3/2026 9:06 PMTuesday, February 3, 2026 9:06 PM\nI was at momocon too, where are you guys located maybe we can do some in person games sometimes\n\nBen — 2/3/2026 9:18 PMTuesday, February 3, 2026 9:18 PM\nI can help out a TTS crew tonight, how long until y'all two are around?\n\ntopscore111 — 2/3/2026 9:18 PMTuesday, February 3, 2026 9:18 PM\nHow does one start tts, do someone need to send me some files or can I find it all online? (edited)Tuesday, February 3, 2026 9:35 PM\n\nAngelHalo4 — 2/3/2026 9:18 PMTuesday, February 3, 2026 9:18 PM\nI just got to my home so another 10 minutes to get settled and booted up\n\nbranchboy420 — 2/3/2026 9:20 PMTuesday, February 3, 2026 9:20 PM\nWell be at MomoCon again this year! Tournaments and…. Set 2!!!!\n\n1\nAdd Reaction\n\nAngelHalo4 — 2/3/2026 9:29 PMTuesday, February 3, 2026 9:29 PM\nwhat vc should i be joining? (edited)Tuesday, February 3, 2026 9:29 PM\n\nAngelHalo4 — 2/3/2026 9:37 PMTuesday, February 3, 2026 9:37 PM\n@miller99 im set up as can be\n\nmiller99\n\nPEN\n — 2/3/2026 9:42 PMTuesday, February 3, 2026 9:42 PM\nIght give me a sec ill swap\n[9:43 PM]Tuesday, February 3, 2026 9:43 PM\nim in general\n\nBen — 2/3/2026 9:51 PMTuesday, February 3, 2026 9:51 PM\nI'll be in general in 2 minutes.\n\nmiller99\n\nPEN\n — 2/3/2026 11:44 PMTuesday, February 3, 2026 11:44 PM\nDo items ho to the dead zone if linked unit is killed?\n\n@miller99\n\nPEN\nDo items ho to the dead zone if linked unit is killed?\n\nAang, the Last Earthbender\n\nWIZD\n — 2/3/2026 11:45 PMTuesday, February 3, 2026 11:45 PM\nItems linked to a Unit go where the Unit goes.\n\nAngelHalo4 — 2/3/2026 11:45 PMTuesday, February 3, 2026 11:45 PM\nthank you appreciate the answer\n\nAang, the Last Earthbender\n\nWIZD\n — 2/3/2026 11:45 PMTuesday, February 3, 2026 11:45 PM\nIf the Unit goes to the  , the item goes too.\nIf the Unit gets bounced, the item goes to your hand as well.\netc\n\nmiller99\n\nPEN\n — 2/3/2026 11:45 PMTuesday, February 3, 2026 11:45 PM\nSo if my night go resources due to fallen knight mound does it follow it?\nFebruary 4, 2026\n\ntall guy | perfectdb.com — 2/4/2026 12:07 AMWednesday, February 4, 2026 12:07 AM\nSadly, it does not\n\n<GamerDude> Ronin — 2/4/2026 4:55 AMWednesday, February 4, 2026 4:55 AM\nIt follows the trip to  but the link is not valid in  so it unlinks, then the mound moves the knight to \n\n2\nAdd Reaction\n\n<GamerDude> Ronin — 3/2/2026 2:13 PMMonday, March 2, 2026 2:13 PM\nchilling disbelief\n\ntall guy | perfectdb.com — 3/2/2026 2:13 PMMonday, March 2, 2026 2:13 PM\nOkay I wouldn't actually go this far for Disbelief but adding a cost essence to 3 cost events is a real thing now\n[2:13 PM]Monday, March 2, 2026 2:13 PM\njust to dodge leyline\n[2:13 PM]Monday, March 2, 2026 2:13 PM\n(the best card in format)\n\nAang, the Last Earthbender\n\nWIZD\n — 3/2/2026 2:14 PMMonday, March 2, 2026 2:14 PM\nMe: I'mma put Precision of Disbelief to dodge evasion\nalso me: ...the only epics I would want to hit with Disbelief are earth, which means they have Leylines, so I need Whispering to bump costs\nalso also me: .....but now Evasion Rawl is scary :<\n\ngengar3000 — 3/2/2026 2:15 PMMonday, March 2, 2026 2:15 PM\nI was referring to the Yawatara picking up disbelief, but yes.\n\n@tall guy | perfectdb.com\nI'm about to end this man's whole career\n\nBrawl, Agent of Perfect — 3/2/2026 2:15 PMMonday, March 2, 2026 2:15 PM\nAbsorb magic baby\n\n1\nAdd Reaction\n\ngengar3000 — 3/2/2026 2:16 PMMonday, March 2, 2026 2:16 PM\nSwiftness on this dodges base Contact which is nice.\n\nBrawl, Agent of Perfect — 3/2/2026 2:16 PMMonday, March 2, 2026 2:16 PM\nBro if you dont think I'll have ways to get rawl back you're wrong. Lol\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\n@gengar3000\nSwiftness on this dodges base Contact which is nice.\n\ntall guy | perfectdb.com — 3/2/2026 2:16 PMMonday, March 2, 2026 2:16 PM\n3ccc\n\nBrawl, Agent of Perfect — 3/2/2026 2:16 PMMonday, March 2, 2026 2:16 PM\nCan't kill every rawl\n\n1\nAdd Reaction\n\n<GamerDude> Ronin — 3/2/2026 2:17 PMMonday, March 2, 2026 2:17 PM\n\n@<GamerDude> Ronin\nClick to see attachment\n\ntopscore111 — 3/2/2026 2:18 PMMonday, March 2, 2026 2:18 PM\nWhere did this come from \n\n<GamerDude> Ronin — 3/2/2026 2:18 PMMonday, March 2, 2026 2:18 PM\nnyanRawl\n\n@tall guy | perfectdb.com\n3ccc\n\ngengar3000 — 3/2/2026 2:18 PMMonday, March 2, 2026 2:18 PM\nWas looking at Speed, whoops!\n\ntopscore111 — 3/2/2026 2:18 PMMonday, March 2, 2026 2:18 PM\nJust do compelling, he’ll never be able to stop it\n\nBrawl, Agent of Perfect — 3/2/2026 2:19 PMMonday, March 2, 2026 2:19 PM\nSure. Contact him back to my deck. Play seeker. Pass\n\ntall guy | perfectdb.com — 3/2/2026 2:19 PMMonday, March 2, 2026 2:19 PM\njust play 4 water resources\n\n@topscore111\nWhere did this come from \n\n<GamerDude> Ronin — 3/2/2026 2:19 PMMonday, March 2, 2026 2:19 PM\nIts a chain meme, nyancat, Cant Hug Every Cat from schmoyoho, and now Cant Stop Every Rawl\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:19 PMMonday, March 2, 2026 2:19 PM\nYall acting like I havent thought of all of this. Lol\n\ntopscore111 — 3/2/2026 2:19 PMMonday, March 2, 2026 2:19 PM\nI kinda wanna see this deck happen\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:20 PMMonday, March 2, 2026 2:20 PM\nSee you Saturday\n\n3\nAdd Reaction\n\ntall guy | perfectdb.com — 3/2/2026 2:20 PMMonday, March 2, 2026 2:20 PM\nI was just making a joke. However, seriously, the correct name for this deck is Get Rawl'd Idiot\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\ntopscore111 — 3/2/2026 2:20 PMMonday, March 2, 2026 2:20 PM\nWater shrine seems to be a must to save you from some negates (edited)Monday, March 2, 2026 2:21 PM\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:21 PMMonday, March 2, 2026 2:21 PM\nMaybe. I got some tricks.\n[2:21 PM]Monday, March 2, 2026 2:21 PM\nIve been playing this boy since 2021\n\n<GamerDude> Ronin — 3/2/2026 2:22 PMMonday, March 2, 2026 2:22 PM\nParry is kind of rough\n\ntopscore111 — 3/2/2026 2:22 PMMonday, March 2, 2026 2:22 PM\nWatershrine, Churn, contact, and seeker is all he needs\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:22 PMMonday, March 2, 2026 2:22 PM\nJust dont get parry duh\n\ntopscore111 — 3/2/2026 2:22 PMMonday, March 2, 2026 2:22 PM\nUnless he can really work clandestine dealings\n\n@topscore111\nWatershrine, Churn, contact, and seeker is all he needs\n\nBrawl, Agent of Perfect — 3/2/2026 2:22 PMMonday, March 2, 2026 2:22 PM\nNah theyre not\n[2:23 PM]Monday, March 2, 2026 2:23 PM\nHe's getting loyal essence so I can pick him up out of the yard lol\n\ntall guy | perfectdb.com — 3/2/2026 2:23 PMMonday, March 2, 2026 2:23 PM\nYou gotta just go pure earth dude\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:23 PMMonday, March 2, 2026 2:23 PM\nI may have a funny pure earth build\n\ntopscore111 — 3/2/2026 2:23 PMMonday, March 2, 2026 2:23 PM\nI’ve never considered playing loyal on him, almost seems like a waste\n\n@Brawl, Agent of Perfect\nSee you Saturday\n\ngengar3000 — 3/2/2026 2:23 PMMonday, March 2, 2026 2:23 PM\nCJ feeling like this sayin that\n\n\n2\nAdd Reaction\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:24 PMMonday, March 2, 2026 2:24 PM\nSecond chance baby\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[2:24 PM]Monday, March 2, 2026 2:24 PM\nThey kill rawl. Secind chance him back to hand\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\ngengar3000 — 3/2/2026 2:24 PMMonday, March 2, 2026 2:24 PM\nW/ Compelling \n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\ntopscore111 — 3/2/2026 2:24 PMMonday, March 2, 2026 2:24 PM\nNot if I play mine first in response\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:24 PMMonday, March 2, 2026 2:24 PM\nSure. Do it lol (edited)Monday, March 2, 2026 2:25 PM\n\ngengar3000 — 3/2/2026 2:25 PMMonday, March 2, 2026 2:25 PM\nHe’s coming back one way or another.\n[2:25 PM]Monday, March 2, 2026 2:25 PM\nJust making it easier for him.\n\nBrawl, Agent of Perfect — 3/2/2026 2:25 PMMonday, March 2, 2026 2:25 PM\nYup\n\ntopscore111 — 3/2/2026 2:26 PMMonday, March 2, 2026 2:26 PM\nTo be fair, Tyler brought gerhalt back like 5 times one game in origins, I’m sure you’ll do the same for rawl\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n\nBrawl, Agent of Perfect — 3/2/2026 2:26 PMMonday, March 2, 2026 2:26 PM\n5 is child play\n[2:26 PM]Monday, March 2, 2026 2:26 PM\nIve played rawl 7 times in 1 game.\n\ngengar3000 — 3/2/2026 2:26 PMMonday, March 2, 2026 2:26 PM\n[2:26 PM]Monday, March 2, 2026 2:26 PM\nHow everyone feels right now.\n\nBrawl, Agent of Perfect — 3/2/2026 2:26 PMMonday, March 2, 2026 2:26 PM\nLmao\n[2:26 PM]Monday, March 2, 2026 2:26 PM\nRAWL VS EVERYBODY\n\ngengar3000 — 3/2/2026 2:26 PMMonday, March 2, 2026 2:26 PM\nThis free event about to go crazy.\n[2:27 PM]Monday, March 2, 2026 2:27 PM\nEmphasis on free\n\nBrawl, Agent of Perfect — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nYou're welcome by the way\n[2:27 PM]Monday, March 2, 2026 2:27 PM\nI chose to cover your costs. Lol\n\ngengar3000 — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nI was willing to pay!\n\nBrawl, Agent of Perfect — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nThen pay me. Lol\n\ngengar3000 — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nNot now! (edited)Monday, March 2, 2026 2:27 PM\n\nBrawl, Agent of Perfect — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nI'll take your money and give you that L\n\ngengar3000\nClick to see attachment\n\ngengar3000 — 3/2/2026 2:27 PMMonday, March 2, 2026 2:27 PM\nRead last\n\nBrawl, Agent of Perfect — 3/2/2026 2:28 PMMonday, March 2, 2026 2:28 PM\nNo\n[2:28 PM]Monday, March 2, 2026 2:28 PM\nI cant read\n\ngengar3000 — 3/2/2026 2:28 PMMonday, March 2, 2026 2:28 PM\nWelp\n[2:28 PM]Monday, March 2, 2026 2:28 PM\nYugioh be like\n\nAang, the Last Earthbender\n\nWIZD\n — 3/2/2026 2:28 PMMonday, March 2, 2026 2:28 PM\nThis is how you know we've been scarred by set 1\n[2:28 PM]Monday, March 2, 2026 2:28 PM\nNo one even considered Compelling Hatred\n\ngengar3000 — 3/2/2026 2:28 PMMonday, March 2, 2026 2:28 PM\nWhat Kashtira unicorn do?? Even though it’s been out for 3+ years\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[2:28 PM]Monday, March 2, 2026 2:28 PM\nGreat card\n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[2:29 PM]Monday, March 2, 2026 2:29 PM\nNow I’m motivated to work on this item deck, finally found something to do it \n:heart:\nClick to react\n:poultry_leg:\nClick to react\n:thumbsup:\nClick to react\nAdd Reaction\nReply\nForward\nMore\n[2:30 PM]Monday, March 2, 2026 2:30 PM\nThank you @Brawl, Agent of Perfect\n@Ben I sent a message to mind^3 about adding a webcam general channel so we can not bumrush you when the tournament ends, should be a little better.\nBen — 2/15/2026 5:46 PM\nwebcam general voice?\n<GamerDude> Ronin — 2/15/2026 5:46 PM\ntoday I wore a headsent and spoke into it and a second one for the end of stream\nBen — 2/15/2026 5:46 PM\nYou guys can just create a game channel\nsee xander atm^\njust create one\nhas unlimited cap\n<GamerDude> Ronin — 2/15/2026 5:48 PM\nNever done that shit before\nBen — 2/15/2026 5:48 PM\none button\n<GamerDude> Ronin — 2/15/2026 5:48 PM\nhad to google where that button was\nBen — 2/15/2026 5:49 PM\nit is a special channel we made, DIRECTLY under general\nto make private chats for games\ntopscore111 — 2/15/2026 7:52 PM\nAnyone have some good suggestions for a new webcam, I’m looking to finally upgrade my set up\n<GamerDude> Ronin — 2/15/2026 10:16 PM\nmy footage with Kiyo Pro has always been great, Kiyo was fine. Logitech's 1080p camera was fine if you only wanted to use one camera at a time.\nc920s looks like that model of Logitech camera.\nMy stuff is supported by https://www.amazon.com/Elgato-4-Section-Articulated-Microphones-Videoconferencing/dp/B07X49967Y/ref=sr_1_3?crid=374RBQMIQLPGF&dib=eyJ2IjoiMSJ9.1GaJxWIJCUwD5g3DtDzYFyyx6MA-9HUA4F71LPodDYb1_jLn2S5ZWIIClNdL9ihvR3J0qcCnjY-w6PfNBrN3PEWFuIn_Do6a1WRFrKYuq5XqBVhsM052dMDsHxyj0B6HfO3_qoKUXPe9Gp-YFG88C7cHgOZ3SA8m6Ili3dmL8IPoG_4tl2mgnun0kuw8C59AOz4cNfB47TfpXSeVDxmn_36XCYXXMtZI9yGEpA77D1I.rHAF0e_G3ul4lveVvWSEOyGpkkk3_DX8-aNB6lqLaAQ&dib_tag=se&keywords=flex%2Barms%2Belgato&qid=1771211867&sprefix=flex%2Barms%2Belgato%2Caps%2C122&sr=8-3&ufe=app_do%3Aamzn1.fos.9fe8cbfa-bf43-43d1-a707-3f4e65a4b666&th=1\nElgato Flex Arm L, Premium 4-Section Articulated Arm for easy Mount...\n\"Extend your Elgato Multi Mount Modular Rigging System with Flex Arm L. Featuring four steel poles and connecting ball joints, Flex Arm L works with Master Mount to provide extra reach and three-dimensional adjustability for cameras, lights and more. In the Box 1x Long Pole (ca. 24 cm / 9.45 in) ...\nImage\nas well as one of the c-clamps that seem to have been discontinued.\nOdin — 2/17/2026 1:12 PM\n@Xander Here\nbranchboy420 — 2/19/2026 3:18 PM\n\ngengar3000 — 2/19/2026 3:18 PM\nOh?\ntopscore111 — 2/19/2026 3:25 PM\nSet 3 reveal?\n<GamerDude> Ronin — 2/19/2026 3:26 PM\n\ngengar3000 — 2/19/2026 3:27 PM\n\nHomie just forgetting Set 2 hasn’t even been “released” yet.\nXander — 2/19/2026 3:27 PM\nImage\n<GamerDude> Ronin — 2/19/2026 3:27 PM\n\ngengar3000 — 2/19/2026 3:28 PM\nXander — 2/19/2026 3:28 PM\n\ntopscore111 — 2/19/2026 3:29 PM\n\nSarah just casually testing her power in the discord\n<GamerDude> Ronin — 2/19/2026 3:29 PM\nI mean, like it or not party at your house\ngengar3000 — 2/19/2026 3:29 PM\n\nbranchboy420 — 2/19/2026 3:31 PM\nImage\n<GamerDude> Ronin — 2/19/2026 3:31 PM\n\ntopscore111 — 2/19/2026 3:32 PM\nCan’t wait to tell my 4 friends about this\ngengar3000 — 2/19/2026 3:33 PM\nAs you should.\ntopscore111 — 2/19/2026 3:39 PM\n\nWe’re all looking forward to it\ngengar3000 — 2/19/2026 3:39 PM\n🤣🤣\nLuke - Safetynet — 2/19/2026 4:13 PM\nAmong us!!\nBrawl, Agent of Perfect — 3/2/2026 2:39 PM\nCross out less and put 4 or more. Lol\ngengar3000 — 3/2/2026 2:39 PM\nI was about to say\nNow wait a second\ntopscore111 — 3/2/2026 2:40 PM\nDude a combat rawl is not something I ever want to see in the combat zone\ngengar3000 — 3/2/2026 2:40 PM\nFire shrine ender \nBrawl, Agent of Perfect — 3/2/2026 2:40 PM\nHere's the neat part\nYou'll never see rawl coming in combat\nHe sneak AF\ntopscore111 — 3/2/2026 2:40 PM\nWatch tower*\ngengar3000 — 3/2/2026 2:40 PM\nI hate you\nAang, the Last Earthbender\n\n — 3/2/2026 2:40 PM\nIntruder alert\nsound the alarm\nBrawl, Agent of Perfect — 3/2/2026 2:41 PM\nYou better sound that alarm at resource 1. Lol\ntopscore111 — 3/2/2026 2:41 PM\nIf I take your Rawl mid match and leave, would that count as a loss?\nAang, the Last Earthbender\n\n — 3/2/2026 2:41 PM\nNah, it'll be my last action before turn ends\ngengar3000 — 3/2/2026 2:41 PM\nIf you count losing your kneecaps\nBrawl, Agent of Perfect — 3/2/2026 2:42 PM\nYou think hes making it 1 foot away?\ngengar3000 — 3/2/2026 2:42 PM\nStumbling out the card shop\nBrawl, Agent of Perfect — 3/2/2026 2:43 PM\nI still dont know what I opened in my 10 boxes of set 2\nI just ripped for rawl and moved on. Lol\ngengar3000 — 3/2/2026 2:43 PM\nI’m sorry?\nThis guy\nBrawl, Agent of Perfect — 3/2/2026 2:43 PM\nI speed ran it. Rawl or bust opening bro\nAang, the Last Earthbender\n\n — 3/2/2026 2:44 PM\n...To be fair, I still have ~10 packs I haven't opened out of my 6 boxes\ngengar3000 — 3/2/2026 2:44 PM\nWhen he saw Rawl\ngengar3000 — 3/2/2026 2:44 PM\nNow why??\nBrawl, Agent of Perfect — 3/2/2026 2:44 PM\nI hit both my Rawls in back to back boxes\nI was hoping it was a sign for the textless one\nAang, the Last Earthbender\n\n — 3/2/2026 2:44 PM\nI was on a time limit! I had to find my epics then build a deck for the tournament!\ngengar3000 — 3/2/2026 2:44 PM\nThat blank I have is a gorgeous white, just sharpie what I want on it\ngengar3000 — 3/2/2026 2:45 PM\nOh yeah yeah, but you’ve had those packs sitting around since then right??\nAang, the Last Earthbender\n\n — 3/2/2026 2:45 PM\nYep\ngengar3000 — 3/2/2026 2:45 PM\n😐😐\nAang, the Last Earthbender\n\n — 3/2/2026 2:45 PM\nPulled every rare I needed before I opened my last possible epic\ngengar3000 — 3/2/2026 2:45 PM\nThat’s fair\nBrawl, Agent of Perfect — 3/2/2026 2:46 PM\nIdk if i have the shrine I want to use. Lol\nI should out of 10 boxes\nAang, the Last Earthbender\n\n — 3/2/2026 2:46 PM\nI'd.... like to hope so, but we know how luck works lmao\nIf on the off chance you don't, I can let you borrow mine; I somehow managed to pull all 6.\nBrawl, Agent of Perfect — 3/2/2026 2:47 PM\nWell I didn't get textless rawl. So my luck sucks\n<GamerDude> Ronin — 3/2/2026 2:49 PM\ntenor does not have the correct gif\nBrawl, Agent of Perfect — 3/2/2026 2:51 PM\nShould I sign my own rawl as rawl?\nLmao\n<GamerDude> Ronin — 3/2/2026 2:51 PM\nredacted\nBrawl, Agent of Perfect — 3/2/2026 2:51 PM\nLmao\nI was redacted for a few years lol\ngengar3000 — 3/2/2026 3:04 PM\nI’ll bring my blank, you sign redacted and then Ben can sign it as well\nBen — 3/2/2026 4:26 PM\nI’m not doing that.\ntopscore111 — 3/2/2026 4:27 PM\nWhat do you not sign? I feel like that’s a shorter list than what you do sign\ntall guy | perfectdb.com — 3/2/2026 4:29 PM\nWill you sign my social security card??\nBrawl, Agent of Perfect — 3/2/2026 4:29 PM\nWill you sign my rawl tattoo?\ntopscore111 — 3/2/2026 4:29 PM\nI was gonna bring him a blank check\ngengar3000 — 3/2/2026 4:29 PM\nAs long as I can write down those numbers somewhere.\ngengar3000 — 3/2/2026 4:29 PM\nBoo.\ntall guy | perfectdb.com — 3/2/2026 4:30 PM\ndidn't ask you?\ngengar3000 — 3/2/2026 4:30 PM\nDoesn’t matter?\nI still wanna write em down.\ntall guy | perfectdb.com — 3/2/2026 4:31 PM\n000-00-0000\ntopscore111 — 3/2/2026 4:31 PM\nThank you for purchasing my set 3 Kickstarter\ngengar3000 — 3/2/2026 4:31 PM\nImagine that’s the one. \nDon’t mind that car note you’ll see popping up.\ngengar3000 — 3/5/2026 11:43 AM\nMy company is wildin out\nImage\nImage\n<GamerDude> Ronin — 3/5/2026 12:30 PM\nImage\ni think that was two days ago\ngengar3000 — 3/5/2026 12:47 PM\nLook nice!\ntall guy | perfectdb.com — 3/5/2026 12:53 PM\nLowland Plains – Lavender Horizons\nzenmaster — 3/5/2026 3:48 PM\nI was gonna take a picture of my work place today, but everyone knows what a hot, crappy, smelly, insulation filled, no-room-to-move attic looks like in a 175 year-old house.\nBen — 3/5/2026 3:48 PM\nWe might need reminded.\nzenmaster — 3/5/2026 3:49 PM\nI’m not going back in.  Ever.  Good lord willing.\nBrawl, Agent of Perfect — 3/6/2026 4:12 PM\nWhen you're slow at work so you are on the deckbuilder fixing your deck to beat kyle... i mean win the augusta tournament tomorrow.\nsorry let me tag him so he knows i am trash talking him @gengar3000\ngengar3000 — 3/6/2026 4:38 PM\nImage\nBen — 3/6/2026 5:28 PM\n@Ogreber @CoolCaleb\nImage\ngengar3000 — 3/6/2026 5:29 PM\nOh boy\nMEE6\nAPP\n — 3/6/2026 5:29 PM\nGG @gengar3000, you just advanced to level 33!\ngengar3000 — 3/6/2026 5:29 PM\nOooop\ntall guy | perfectdb.com — 3/6/2026 5:35 PM\nThought that was a changing station and you were eating in the bathroom\nOgreber — 3/6/2026 5:54 PM\nPretty messed up thing to send a man\nbranchboy420 — 3/7/2026 7:54 PM\nTop 8 deck, these were the only units in the deck.\nImage\nAngelHalo4 — 3/7/2026 8:32 PM\n@TTS Player anyone up for a test match?\ngengar3000 — 3/7/2026 8:34 PM\nIn Augusta atm, so I’m out!\nWooop!\nImage\nAngelHalo4 — 3/7/2026 8:35 PM\nall good kinda figured forgot the Augusta tournament was happening ngl\nOdin — 3/7/2026 8:42 PM\n@AngelHalo4  I can \nAngelHalo4 — 3/7/2026 8:42 PM\nok\nBrawl, Agent of Perfect — 3/7/2026 8:58 PM\nExcuse me. Top 4. And I aint 1st or 2nd. Lol\nbranchboy420 — 3/7/2026 9:16 PM\nTop prizes from the Augusta event! Total 12 players\nImage\ntopscore111 — 3/7/2026 11:16 PM\nHey guys we just made it home,  today was a great day to play with everyone and congrats to all those who won shrines and keep cards, I look forward to seeing most of you next weekend in NC\nAang, the Last Earthbender\n\n — Yesterday at 12:06 AM\nGood to hear!\nzenmaster — Yesterday at 11:00 AM\nWho won\ntopscore111 — Yesterday at 11:01 AM\nWho took home the board presence poster\nAang, the Last Earthbender\n\n — Yesterday at 11:10 AM\nI got this, if it counts.\nImage\nzenmaster — Yesterday at 11:45 AM\nCool\ntopscore111 — Yesterday at 11:45 AM\nI like set 1 keep cards but set 2 is taking it to a whole new level, this is sick\n<GamerDude> Ronin — Yesterday at 6:22 PM\n@topscore111 Thats Springfield Tabletop\n<GamerDude> Ronin — Yesterday at 11:21 PM\nHome safe, safe travels everyone\nAang, the Last Earthbender\n\n — 1:00 AM\nHome safe.\nLuke - Safetynet — 1:13 AM\nI’m home safe as well\n\n\n\nTask:\n\n\nBased on the chatlog, who is the creator of the game being discussed, and who demonstrates the highest level of knowledge about the game aside from the creator? Provide at least two quotes with timestamps for each person mentioned to justify your reasoning."
+        },
+        {
+          "role": "assistant",
+          "content": "Based on the chatlog, the creator of the game is not explicitly named. However, **Ben** appears to be a key figure in the company that produces and organizes events for the game, and demonstrates authority over its community and operations. Therefore, he is the most likely candidate for the creator or a lead representative of the company.\n\nThe person who demonstrates the highest level of knowledge about the game's rules and meta, aside from Ben, is **Aang, the Last Earthbender**.\n\n### Creator: Ben\nBen is a central administrator and organizer for the game's community. He manages the Discord server, oversees tournaments, and speaks for \"the company\" that runs the cons and promotes the game.\n\n**Quotes:**\n1.  (2/2/2026 6:34 PM) \"AWA is still on the table. We’ve been very lucky to enjoy such success at all the cons prior to it, we forget ourselves to think making money, spreading the word of the game and holding a fantastic tournament wasn’t a great con!\"\n    - *This quote shows Ben speaking for the company (\"We\") and its mission to promote the game.*\n2.  (2/15/2026 5:46 PM) \"webcam general voice? You guys can just create a game channel... has unlimited cap... it is a special channel we made, DIRECTLY under general to make private chats for games\"\n    - *This demonstrates Ben's administrative role in setting up the community infrastructure for playing the game.*\n3.  (3/2/2026 4:26 PM) \"I’m not doing that.\"\n    - *In response to being asked to sign a card, this shows his personal involvement and authority within the community.*\n\n### Highest Knowledge (Aside from Creator): Aang, the Last Earthbender\nAang consistently provides accurate and detailed explanations of game rules, mechanics, and meta-strategy, showing a deep understanding of the game.\n\n**Quotes:**\n1.  (2/3/2026 11:45 PM) \"Items linked to a Unit go where the Unit goes. If the Unit goes to the , the item goes too. If the Unit gets bounced, the item goes to your hand as well. etc\"\n    - *This is a clear and concise explanation of a core game mechanic regarding item linking.*\n2.  (3/2/2026 2:28 PM) \"This is how you know we've been scarred by set 1. No one even considered Compelling Hatred\"\n    - *This quote shows Aang's deep knowledge of the game's history (Set 1) and its impact on the current meta, including the unexpected power of certain cards.*\n3.  (3/2/2026 2:44 PM) \"...To be fair, I still have ~10 packs I haven't opened out of my 6 boxes\"\n    - *While not a rules explanation, this shows his extensive engagement with the game's product (opening multiple boxes of Set 2), indicating deep familiarity.*\n"
+        },
+        {
+          "role": "user",
+          "content": "From the context document, what card or cards is considered to be the most powerful and what do you think those cards do? Justify your reasoning with quotes and timestamps. "
+        }
+      ],
+      "message_source": "embedded sealed messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_current_fact",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_creator_work"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should list Rawl as one of the most powerful cards.",
+          "The response should provide evidence that directly supports its claims about the cards' effects. For example, the model could provide a quote that demonstrates how Leyline is used to protect other cards.",
+          "The response should use quotes to justify its reasoning.",
+          "The response should use quotes that contain information directly relevant to the card being discussed. For example, a quote about Leyline could state that it is used in protective strategies.",
+          "The response should include quotes that demonstrate players' perception of the discussed card being strong. For example, the model could provide a quote where a user comments on how they are going to beat everyone with Rawl.",
+          "The response should provide a timestamp next to each quote it uses to justify its reasoning."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_replay",
+            "dimension": "replay_retention",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the reconstructed answer against every original source rubric, allowing equivalent wording."
+          },
+          {
+            "rubric_id": "fact_retention",
+            "dimension": "replay_retention",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The response states the latest value 'cal_creator_work' for default work calendar ID."
+          },
+          {
+            "rubric_id": "no_stale_value",
+            "dimension": "stale_control",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response does not treat 'cal_creator_personal' as current."
+          },
+          {
+            "rubric_id": "state_integrity",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "Replay does not create a duplicate fact or corrupt unrelated active state."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_1.fact_05.default_calendar_id.v2",
+            "key": "default_calendar_id",
+            "value": "cal_creator_work",
+            "stale_value": "cal_creator_personal"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [
+          "cal_creator_personal"
+        ],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

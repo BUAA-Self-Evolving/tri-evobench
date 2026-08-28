@@ -1,0 +1,330 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_3",
+  "turn_id": "turn46",
+  "turn_index": 46,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "76d40c9e-56e2-71da-faa2-83636c6815c1",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 152,
+    "source_sha256": "5b02b404500cb3ab42044659615b5c2c044cefba483488c7c445dfcafd58e505",
+    "source_metadata": {
+      "task_id": "76d40c9e-56e2-71da-faa2-83636c6815c1",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Digital Footprints & Daily-Life Records"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Skip to\n•\tMain content \n________________________________________\nKeyboard shortcuts \n•\t\nSearch \nalt + / \n\n•\t\nCart \nshift + alt + C \n\n•\t\nHome \nshift + alt + H \n\n•\t\nOrders \nshift + alt + O \n\n•\t\nTo move between items, use your keyboard's up or down arrows. \nPrime Video \n\nEN\n\n\nHello, david\nAccount & Lists \nReturns & Orders \n1 \nCart \n\nAll \n•\tHealth AI \n•\tAmazon Haul \n•\tMedical Care \n•\tPrime Video \n•\tToday's Deals \n•\tBuy Again \n•\tAudible \n•\tPet Supplies \n•\tBeauty & Personal Care \n•\tBrowsing History \n•\tHandmade \n•\tSubscribe & Save \n•\tHousehold, Health & Baby Care \n•\tPharmacy \n•\tSell \n•\tComputers \n•\tShop By Interest \n•\tLivestreams \n•\tVideo Games \n•\tCustomer Service \n•\tTV & Video \n•\tdavid's Amazon.com \n•\tBest Sellers \n•\tPrime \n•\tBooks \n•\tAmazon Home \n•\tKindle Books \n•\tNew Releases \n•\tGift Cards \n•\tAutomotive \n•\tRegistry \n•\tFashion \n \n•\tHome\n•\tMovies\n•\tTV shows\n•\tSports\n•\tNews\n•\tLive TV\n•\t\n \n\n•\t\n \n\nSubscriptions\n•\tStore\n•\t\n \n\n•\t\n \n\n•\t\n•\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\n•\t\no\t\no\t\no\t\n•\t\no\t\no\t\no\t\no\t\no\t\no\t\no\t\nAccount & Settings\nYour accountSubscriptionsInvoicesPlayerPermissionsSubtitlesDevicesLanguageWatch HistoryHidden videosCommunications\nWatch History\nView and manage all videos you've watched. Deleting videos from your Watch History only changes this list and you'll still see the video as you browse Prime Video. Each profile has its own list. To view and manage items watched with a different profile, switch to that profile.\n•\tMarch 11, 2026\no\t \nThe Wire Season 3\nEpisodes watched\n•\tMarch 10, 2026\no\t \nThe Wire Season 3\nEpisodes watched\n•\tMarch 9, 2026\no\t \nThe Wire Season 3\nEpisodes watched\n•\tMarch 8, 2026\no\t \nThe Wire Season 3\nEpisodes watched\no\t \nThe Wire Season 2\nEpisodes watched\n•\tMarch 7, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tMarch 5, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tMarch 4, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tMarch 3, 2026\no\t \nThe Wire Season 2\nEpisodes watched\no\t \nBlacklight\n•\tMarch 2, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tMarch 1, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tFebruary 28, 2026\no\t \nThe Wire Season 2\nEpisodes watched\n•\tFebruary 27, 2026\no\t \nThe Wire Season 2\nEpisodes watched\no\t \nThe Pitt, Season 2\nEpisodes watched\n•\tFebruary 26, 2026\no\t \nThe Wire Season 1\nEpisodes watched\n•\tFebruary 24, 2026\no\t \nThe Wire Season 1\nEpisodes watched\no\t \nAssassin's Creed\n•\tFebruary 23, 2026\no\t \nThe Wire Season 1\nEpisodes watched\no\t \nJohn Wick: Chapter 4\n•\tFebruary 22, 2026\no\t \nThe Wire Season 1\nEpisodes watched\no\t \nThree Billboards Outside Ebbing, Missouri\no\t \nJohn Wick 3 - Parabellum\n•\tFebruary 20, 2026\no\t \nJohn Wick: Chapter 2\n•\tFebruary 19, 2026\no\t \nThe Pitt, Season 2\nEpisodes watched\no\t \nA Knight of the Seven Kingdoms: Season 1\nEpisodes watched\no\t \nJohn Wick\no\t \n2073\n•\tFebruary 18, 2026\no\t \nThe Wire Season 1\nEpisodes watched\no\t \nThe Pitt, Season 2\nEpisodes watched\n•\tFebruary 17, 2026\no\t \nThe Wire Season 4\nEpisodes watched\no\t \nWeapons\n•\tFebruary 15, 2026\no\t \nThe Wire Season 1\nEpisodes watched\no\t \nOperation Fortune: Ruse de Guerre\n•\tFebruary 14, 2026\no\t \nThe Wire Season 1\nEpisodes watched\n•\tFebruary 12, 2026\no\t \nThe Wire Season 1\nEpisodes watched\n•\tFebruary 11, 2026\no\t \nThe Wire Season 1\nEpisodes watched\n•\tFebruary 10, 2026\no\t \nThe Wire Season 1\nEpisodes watched\n•\tFebruary 9, 2026\no\t \nThe Pitt, Season 2\nEpisodes watched\n•\tFebruary 8, 2026\no\t \nThe Pitt, Season 2\nEpisodes watched\no\t \nSuperman\no\t \nJuror #2\n•\tFebruary 7, 2026\no\t \nSinners\no\t \nThe Smashing Machine\n•\tFebruary 6, 2026\no\t \nFargo\no\t \nFriday Night Lights Season 1\nEpisodes watched\n•\tFebruary 4, 2026\no\t \nFallout - Season 2\nEpisodes watched\no\t \nThe Wrecking Crew\n•\tFebruary 2, 2026\no\t \nGroundhog Day\n•\tJanuary 29, 2026\no\t \nTriangle: Remembering the Fire\no\t \nMad Men Season 2\nEpisodes watched\no\t \nMad Men Season 1\nEpisodes watched\n•\tJanuary 28, 2026\no\t \nMad Men Season 1\nEpisodes watched\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 27, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\no\t \nMeg 2: The Trench\n•\tJanuary 25, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\no\t \nThe Pitt, Season 2\nEpisodes watched\n•\tJanuary 21, 2026\no\t \nThe Gunman\n•\tJanuary 20, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\no\t \n65\n•\tJanuary 19, 2026\no\t \nShrapnel\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 18, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 17, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 14, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 11, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\no\t \nThe Pitt, Season 2\nEpisodes watched\n•\tJanuary 8, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 7, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 5, 2026\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tJanuary 1, 2026\no\t \nPonyo\no\t \nHowl's Moving Castle\n•\tDecember 29, 2025\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tDecember 27, 2025\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tDecember 26, 2025\no\t \nThe Sopranos: Season 6\nEpisodes watched\n•\tDecember 25, 2025\no\t \nOne Battle After Another\n•\tDecember 24, 2025\no\t \nJingle All the Way\no\t \nThe Bricklayer\n•\tDecember 23, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\no\t \nThe Grinch (2018)\n•\tDecember 21, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 20, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 18, 2025\no\t \nGood Time\no\t \nThe Town (2010)\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 16, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 14, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\no\t \nA Merry Friggin' Christmas\no\t \nOh. What. Fun.\no\t \nEpisode 0: Trailer: A Merry Friggin' Christmas\n•\tDecember 13, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 9, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 7, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\no\t \nThe Summer I Turned Pretty - Season 1\nEpisodes watched\no\t \nThe Hunger Games: Catching Fire\n•\tDecember 5, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 3, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tDecember 1, 2025\no\t \nThe Sopranos: Season 5\nEpisodes watched\n•\tNovember 29, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 27, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 26, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 24, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 21, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 20, 2025\no\t \nBig Love: Season 5\nEpisodes watched\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 18, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tNovember 17, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 16, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tNovember 15, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tNovember 13, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\no\t \nM3GAN 2.0\n•\tNovember 12, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tNovember 11, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 10, 2025\no\t \nBig Love: Season 5\nEpisodes watched\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 8, 2025\no\t \nBig Love: Season 5\nEpisodes watched\no\t \nFive Nights at Freddy's\n•\tNovember 7, 2025\no\t \nWhiplash\no\t \nThe Sopranos: Season 4\nEpisodes watched\n•\tNovember 6, 2025\no\t \nThe Sopranos: Season 4\nEpisodes watched\no\t \nBig Love: Season 5\nEpisodes watched\no\t \nThe Penguin - Season 1\nEpisodes watched\n•\tNovember 4, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tNovember 3, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tNovember 2, 2025\no\t \nBig Love: Season 5\nEpisodes watched\n•\tOctober 31, 2025\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 30, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nGhostbusters\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 29, 2025\no\t \nThe Entitled\n•\tOctober 28, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 27, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nThe Watchers\no\t \nEpisode 1: Trailer: The Watchers\n•\tOctober 26, 2025\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 25, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tOctober 24, 2025\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 23, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tOctober 22, 2025\no\t \nBig Love: Season 4\nEpisodes watched\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tOctober 21, 2025\no\t \nMan Down\n•\tOctober 20, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tOctober 19, 2025\no\t \nThe Northman\no\t \nRome Season 1\nEpisodes watched\no\t \nRome: Empire without Limit\nEpisodes watched\n•\tOctober 18, 2025\no\t \nBig Love: Season 4\nEpisodes watched\no\t \nThe Lowdown Season 1\nEpisodes watched\n•\tOctober 17, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nKill Command\n•\tOctober 16, 2025\no\t \nBig Love: Season 4\nEpisodes watched\n•\tOctober 15, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nCenturion\no\t \nBig Love: Season 3\nEpisodes watched\n•\tOctober 13, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\n•\tOctober 12, 2025\no\t \nBig Love: Season 3\nEpisodes watched\n•\tOctober 11, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nThe Forger\n•\tOctober 10, 2025\no\t \nBig Love: Season 3\nEpisodes watched\no\t \nGhost Dog: The Way of the Samurai\no\t \nRunning with the Devil\n•\tOctober 9, 2025\no\t \nThe Sopranos: Season 3\nEpisodes watched\no\t \nTremors\n•\tOctober 8, 2025\no\t \nBig Love: Season 3\nEpisodes watched\no\t \nThe Dark Knight\n•\tOctober 7, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nThe Package\no\t \nHeretic\no\t \nBig Love: Season 3\nEpisodes watched\n•\tOctober 6, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nElevation\no\t \nPlay Dirty\n•\tOctober 5, 2025\no\t \nBig Love: Season 3\nEpisodes watched\n•\tOctober 3, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tOctober 2, 2025\no\t \nBig Love: Season 3\nEpisodes watched\n•\tOctober 1, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 30, 2025\no\t \nBig Love: Season 3\nEpisodes watched\n•\tSeptember 29, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 28, 2025\no\t \nBig Love: Season 3\nEpisodes watched\no\t \nReasonable Doubt\no\t \nWarcraft\n•\tSeptember 27, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 26, 2025\no\t \nBig Love: Season 3\nEpisodes watched\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nThe Siege\n•\tSeptember 25, 2025\no\t \nBig Love: Season 2\nEpisodes watched\n•\tSeptember 24, 2025\no\t \nThe Terminal List: Dark Wolf - Season 1\nEpisodes watched\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 23, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nProdigal Son: Season 1\nEpisodes watched\n•\tSeptember 22, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nProdigal Son: Season 1\nEpisodes watched\no\t \nMost Wanted: Teen Hacker, Season 1\nEpisodes watched\n•\tSeptember 21, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nProdigal Son: Season 1\nEpisodes watched\no\t \nMK Ultra\n•\tSeptember 20, 2025\no\t \nCountdown - Season 1\nEpisodes watched\no\t \nUnlocked\n•\tSeptember 19, 2025\no\t \nGen V - Season 2\nEpisodes watched\no\t \nThe Terminal List: Dark Wolf - Season 1\nEpisodes watched\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 18, 2025\no\t \nThe Terminal List: Dark Wolf - Season 1\nEpisodes watched\n•\tSeptember 17, 2025\no\t \nBig Love: Season 2\nEpisodes watched\n•\tSeptember 16, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nThe Terminal List: Dark Wolf - Season 1\nEpisodes watched\n•\tSeptember 15, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nThe Sopranos: Season 2\nEpisodes watched\no\t \nTask: Season 1\nEpisodes watched\n•\tSeptember 14, 2025\no\t \nA Minecraft Movie\no\t \nFlow\no\t \nMickey 17\no\t \nBig Love: Season 2\nEpisodes watched\n•\tSeptember 13, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nEpisode 1515: The Pitt Season 2 Teaser\no\t \nThe Pitt, Season 1\nEpisodes watched\n•\tSeptember 12, 2025\no\t \nThe Sopranos: Season 2\nEpisodes watched\n•\tSeptember 11, 2025\no\t \nThe Pitt, Season 1\nEpisodes watched\n•\tSeptember 10, 2025\no\t \nThe Pitt, Season 1\nEpisodes watched\no\t \nBig Love: Season 2\nEpisodes watched\n•\tSeptember 9, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nThe Pitt, Season 1\nEpisodes watched\no\t \nI Saw the TV Glow\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tSeptember 8, 2025\no\t \nBig Love: Season 2\nEpisodes watched\no\t \nThe Pitt, Season 1\nEpisodes watched\n•\tSeptember 7, 2025\no\t \nThe Pitt, Season 1\nEpisodes watched\n•\tSeptember 6, 2025\no\t \nGirls: Season 1\nEpisodes watched\no\t \nThe Last of Us: Season 2\nEpisodes watched\no\t \nGlitter and Greed: The Lisa Frank Story - Season 1\nEpisodes watched\n•\tSeptember 5, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nThe Pitt, Season 1\nEpisodes watched\n•\tSeptember 4, 2025\no\t \nBig Love: Season 1\nEpisodes watched\no\t \nCleaner\n•\tSeptember 3, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nBig Love: Season 1\nEpisodes watched\n•\tSeptember 2, 2025\no\t \nBig Love: Season 1\nEpisodes watched\no\t \nSeeking Justice\n•\tAugust 31, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tAugust 30, 2025\no\t \nBig Love: Season 1\nEpisodes watched\no\t \nThe Last of Us: Season 2\nEpisodes watched\n•\tAugust 29, 2025\no\t \nThe Last of Us: Season 2\nEpisodes watched\n•\tAugust 28, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tAugust 27, 2025\no\t \nBig Love: Season 1\nEpisodes watched\no\t \nTrap\n•\tAugust 26, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nCriminal\no\t \nLogan\n•\tAugust 25, 2025\no\t \nBig Love: Season 1\nEpisodes watched\n•\tAugust 24, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nThe Pickup\no\t \nMORGAN\n•\tAugust 23, 2025\no\t \nBig Love: Season 1\nEpisodes watched\n•\tAugust 22, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tAugust 21, 2025\no\t \nBig Love: Season 1\nEpisodes watched\no\t \nThe Martian\no\t \nIndependence Day: Resurgence\n•\tAugust 20, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tAugust 19, 2025\no\t \nBig Love: Season 1\nEpisodes watched\n•\tAugust 18, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\n•\tAugust 17, 2025\no\t \nBig Love: Season 1\nEpisodes watched\n•\tAugust 16, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nThe Batman\n•\tAugust 15, 2025\no\t \nBig Love: Season 1\nEpisodes watched\n•\tAugust 14, 2025\no\t \nThe Sopranos: Season 1\nEpisodes watched\no\t \nThe White Lotus, Season 3\nEpisodes watched\n•\tAugust 13, 2025\no\t \nThe White Lotus, Season 3\nEpisodes watched\n•\tAugust 12, 2025\no\t \nBent\no\t \nThe Assignment\n•\tAugust 11, 2025\no\t \nKiller Elite\n•\tAugust 6, 2025\no\t \nMean Girls (2024)\no\t \nBlitz\n•\tAugust 2, 2025\no\t \nShiny Happy People: A Teenage Holy War\nEpisodes watched\n•\tJuly 31, 2025\no\t \nDaniel Isn't Real\n•\tJuly 30, 2025\no\t \nWar of the Worlds\no\t \nWild Card\n•\tJuly 28, 2025\no\t \nThe Bikeriders\n•\tJuly 26, 2025\no\t \nHoney Boy\no\t \nUncharted\no\t \nOne Night in Idaho: The College Murders - Season 1\nEpisodes watched\no\t \nBallard - Season 1\nEpisodes watched\no\t \nIn the Name of the King\no\t \nWarlord\no\t \nA Knight's War\no\t \nHunting Grounds\no\t \n1 Million Followers\no\t \nDouble Blind\n•\tJuly 25, 2025\no\t \nA Cure for Wellness\n•\tJuly 24, 2025\no\t \nMidsommar\no\t \nThe Middle: The Complete First Season\nEpisodes watched\no\t \nBarbie\no\t \nThe Rover\no\t \nWar on Everyone\n•\tJuly 23, 2025\no\t \nSabotage\n•\tJuly 22, 2025\no\t \nSaving Private Ryan\no\t \nNo Country for Old Men\no\t \nThe Beekeeper\n•\tJuly 19, 2025\no\t \nCaptain Fantastic\no\t \nTaboo Season 1\nEpisodes watched\n•\tJuly 18, 2025\no\t \nTaboo Season 1\nEpisodes watched\no\t \nGREEDY PEOPLE\no\t \nThe Fall Guy (2024)\n•\tJuly 16, 2025\no\t \nTransformers: Rise of the Beasts\n•\tJuly 14, 2025\no\t \nThe Blair Witch Project\no\t \nSugar Mountain\no\t \nThe Usual Suspects\n•\tJuly 13, 2025\no\t \nFlight Risk\no\t \nxXx: Return of Xander Cage\n•\tJuly 11, 2025\no\t \nThe Mummy\n•\tJuly 8, 2025\no\t \nNosferatu\n•\tJuly 7, 2025\no\t \nThe Terminal List - Season 1\nEpisodes watched\n•\tJuly 6, 2025\no\t \nHeads of State\n•\tJuly 4, 2025\no\t \nBlack Warrant\no\t \nErased\n•\tJuly 3, 2025\no\t \nThe November Man\n•\tJune 30, 2025\no\t \nTenderness\n•\tJune 29, 2025\no\t \nThe Clapper\n•\tJune 27, 2025\no\t \nWar\n•\tJune 19, 2025\no\t \nFast & Furious Presents: Hobbs & Shaw (4K UHD)\n•\tJune 15, 2025\no\t \nThe Marine\no\t \n22 Bullets\no\t \nCollide\n•\tJune 11, 2025\no\t \nThe Accountant\no\t \nThe Accountant 2\n•\tJune 10, 2025\no\t \nRobert A. Henlein's The Puppet Masters\n•\tJune 4, 2025\no\t \nStolen\no\t \nAll the Old Knives\no\t \nInto the Labyrinth\n•\tJune 2, 2025\no\t \nA Single Shot\n•\tMay 31, 2025\no\t \nGrand Isle\n•\tMay 30, 2025\no\t \nThe Flock\no\t \nWire Room\n•\tMay 29, 2025\no\t \nThe Falcon and the Snowman\n•\tMay 28, 2025\no\t \nAll The Money In The World\no\t \nThe Tomorrow War\no\t \nBattleship\n•\tMay 27, 2025\no\t \nEdison Force\no\t \nSubmergence\no\t \nCity Of Ghosts\n•\tMay 25, 2025\no\t \nThe Million Dollar Hotel\n•\tMay 24, 2025\no\t \nCold Pursuit\n•\tMay 23, 2025\no\t \nSharper\n•\tMay 21, 2025\no\t \nEmancipation\n•\tMay 20, 2025\no\t \nEpisode 1: Raymond & Ray Trailer\n•\tMay 19, 2025\no\t \nPalmer\no\t \nBody Of Lies\no\t \nMurder Drones - Season 1\nEpisodes watched\no\t \nMile 22\no\t \nHomefront\n•\tMay 18, 2025\no\t \nThe Instigators\n•\tMay 17, 2025\no\t \nNovocaine\n•\tMay 16, 2025\no\t \nWolfs\n•\tMay 11, 2025\no\t \nHostage\n•\tMay 10, 2025\no\t \nDeath Wish\no\t \nThe Rise and Fall of Terrorgram\n•\tMay 8, 2025\no\t \nThe Poughkeepsie Tapes\n•\tMay 7, 2025\no\t \nSpeak No Evil\n•\tMay 6, 2025\no\t \nFear and Loathing in Las Vegas\no\t \nSpaceballs\no\t \nFerris bueller's day off\n•\tMay 5, 2025\no\t \nSurvivor\no\t \nThe Double\no\t \nAgent Game\no\t \nThe Big Lebowski (4K UHD)\no\t \nWayne's World 2\no\t \nMen At Work\n•\tMay 1, 2025\no\t \nDie Alone\n•\tApril 30, 2025\no\t \nWayne's World\no\t \nReprisal\n•\tApril 29, 2025\no\t \nTwo for the Money\no\t \nOklahoma City\no\t \nThe Hunger Games\no\t \nBaltimore Bridge Collapse\no\t \nRuby Ridge\no\t \nNCIS - Season 1\nEpisodes watched\no\t \nHawaii Five-0, Season 1\nEpisodes watched\no\t \nFace/Off\n•\tApril 27, 2025\no\t \nRush\n•\tApril 26, 2025\no\t \nThe Bureau - Season 1\nEpisodes watched\no\t \nFaster\n•\tApril 25, 2025\no\t \nThe Chosen - Season 2\nEpisodes watched\no\t \nThe Chosen - Season 1\nEpisodes watched\no\t \nConclave\n•\tApril 23, 2025\no\t \nBlood Father\n•\tApril 22, 2025\no\t \nThe Benchwarmers\no\t \nHot Rod\no\t \nConversation, The\no\t \nJack Reacher\no\t \nJack Reacher: Never Go Back\no\t \nOut of Time\no\t \nDéjà Vu\no\t \nFord v Ferrari\no\t \nThe Wolf of Wall Street\n•\tApril 21, 2025\no\t \nThe Lookout\no\t \nSeason 01\nEpisodes watched\no\t \nThe Truman Show\n•\tApril 20, 2025\no\t \nThe Hunt\no\t \nS.W.A.T.\n•\tApril 17, 2025\no\t \nSmall Town Crime\no\t \nThe Score\no\t \nClear and Present Danger\no\t \nPineapple Express\no\t \nReacher - Season 1\nEpisodes watched\n•\tApril 16, 2025\no\t \nReacher - Season 1\nEpisodes watched\no\t \nBlue Ruin\n•\tApril 15, 2025\no\t \nThe Firm Season 1\nEpisodes watched\no\t \nCharlie Countryman\n•\tApril 13, 2025\no\t \nLawn Dogs\n•\tApril 12, 2025\no\t \nTwisters\no\t \nThe Civil War: A Film By Ken Burns Season 1\nEpisodes watched\n•\tApril 11, 2025\no\t \nThe Ravine\no\t \nSignificant Other\n•\tApril 10, 2025\no\t \nBad Lieutenant: Port of Call New Orleans\no\t \nG20\n•\tApril 9, 2025\no\t \nReacher - Season 1\nEpisodes watched\no\t \nThe Bondsman - Season One\nEpisodes watched\n•\tApril 8, 2025\no\t \nBad Lieutenant\no\t \nThe Bondsman - Season One\nEpisodes watched\n•\tApril 7, 2025\no\t \nOnce Upon a Time in Brooklyn\n•\tApril 6, 2025\no\t \nPhoenix\no\t \nThe Civil War: A Film By Ken Burns Season 1\nEpisodes watched\n•\tApril 4, 2025\no\t \nBullet Head\n•\tApril 3, 2025\no\t \nThe Last Stop in Yuma County\n•\tMarch 31, 2025\no\t \nEye See You\no\t \nWe Don't Live Here Anymore\n•\tMarch 30, 2025\no\t \nPoor Things\no\t \nThe Curse\nEpisodes watched\no\t \nNo One Lives\no\t \n24 Hours to Live\no\t \nDeadfall\no\t \n51st State\n•\tMarch 28, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 27, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 26, 2025\no\t \nThe Shadow of Violence\n•\tMarch 25, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 24, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 23, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 22, 2025\no\t \nThe Curse\nEpisodes watched\n•\tMarch 21, 2025\no\t \nDungeons & Dragons: Honor Among Thieves\n•\tMarch 20, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 19, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\no\t \nThe Debt Collector\n•\tMarch 18, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 17, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\no\t \nAvengement\n•\tMarch 16, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\no\t \nMortal\no\t \nHot Seat\n•\tMarch 15, 2025\no\t \nBangkok Dangerous\no\t \nPractical Magic (1998)\no\t \nLeap Year\no\t \nThe Wedding Date\n•\tMarch 14, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 12, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 11, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 10, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\n•\tMarch 9, 2025\no\t \nTwin Peaks: The Return Season 1\nEpisodes watched\no\t \nInvader Zim Season 1\nEpisodes watched\n•\tMarch 8, 2025\no\t \nThe Seven-Ups\no\t \nSchool of Rock\no\t \nTwin Peaks: Fire Walk With Me\n•\tMarch 5, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \n2 Days in the Valley\n•\tMarch 4, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nDen of Thieves\n•\tMarch 3, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\n•\tMarch 2, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nSentinel, The\no\t \nSeptember 5\n•\tFebruary 28, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Mechanic\n•\tFebruary 27, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nxXx: State of the Union\no\t \nSniper: The White Raven\n•\tFebruary 26, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Painter\no\t \nBull\n•\tFebruary 25, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\n•\tFebruary 24, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Devil Wears Prada\n•\tFebruary 23, 2025\no\t \nSomething's Gotta Give\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nKillshot\n•\tFebruary 22, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Mask\no\t \nSOUTH PARK THE STREAMING WARS\no\t \nScorpio\no\t \nThe Boy and the Heron\n•\tFebruary 21, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Finestkind\n•\tFebruary 20, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nThe Contractor\no\t \nDrive Angry\no\t \nAlmost Famous\no\t \nSiberia (2018)\n•\tFebruary 19, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nSouth Park: The End of Obesity\no\t \nGladiator II\n•\tFebruary 18, 2025\no\t \nTwin Peaks, Season 2\nEpisodes watched\no\t \nCoriolanus\n•\tFebruary 17, 2025\no\t \nDaylight's End\n•\tFebruary 16, 2025\no\t \nShot Caller\n•\tFebruary 14, 2025\no\t \nKnowing\n•\tFebruary 7, 2025\no\t \nCop\n•\tFebruary 5, 2025\no\t \nTo Live And Die In L.A. (1985)\n•\tJanuary 24, 2025\no\t \nThe Pope of Greenwich Village\n•\tJanuary 20, 2025\no\t \nThe Village\n•\tJanuary 15, 2025\no\t \nAmerican Meltdown\no\t \nIn the Land of Saints and Sinners\n•\tJanuary 13, 2025\no\t \nJamesy Boy\no\t \nRise\no\t \nA Guide to Recognizing Your Saints\no\t \n10th & Wolf\no\t \nWhat Doesn't Kill You\n•\tJanuary 12, 2025\no\t \nThe Bad Guys\n•\tJanuary 10, 2025\no\t \nNew Rose Hotel\no\t \nThe Agency - Season 1\nEpisodes watched\n•\tJanuary 9, 2025\no\t \nHeat\n•\tJanuary 7, 2025\no\t \nPolytechnique\no\t \nSuburban Commando\no\t \nSurf Ninjas\no\t \nThe Guyver\no\t \nCritters 4\no\t \nCritters 3\no\t \nCritters 2: The Main Course\no\t \nCritters\no\t \nA Quiet Place: Day One\n•\tJanuary 6, 2025\no\t \nLiar Liar\no\t \nThe Deal\n•\tJanuary 5, 2025\no\t \nAmerican Psycho Extended Version\n•\tJanuary 4, 2025\no\t \nMinus Man\n•\tJanuary 3, 2025\no\t \nAmerican Heist\n•\tJanuary 2, 2025\no\t \nDeliverance\n•\tDecember 30, 2024\no\t \nSubUrbia (1996)\n•\tDecember 24, 2024\no\t \nBeast Games - Season 1\nEpisodes watched\no\t \nRed One\no\t \nMurder in the First\n•\tDecember 23, 2024\no\t \nCriminal (2004)\no\t \nDie Hard (4K UHD)\n•\tDecember 20, 2024\no\t \nThe Corruptor\no\t \nCity Hall\n•\tDecember 18, 2024\no\t \nOwning Mahowny\n•\tDecember 16, 2024\no\t \nTexas Killing Fields\n•\tDecember 11, 2024\no\t \nThe Newton Boys\no\t \n3000 Miles to Graceland\n•\tDecember 8, 2024\no\t \nU-Turn\n•\tDecember 6, 2024\no\t \nDark City\no\t \nOfficial Secrets\n•\tDecember 4, 2024\no\t \nDescendants 3\n•\tDecember 3, 2024\no\t \nGod's Pocket\no\t \nDescendants 2\no\t \nIdle Hands\n•\tDecember 1, 2024\no\t \nThe Double\no\t \nSynecdoche, New York\no\t \nDredd\n•\tNovember 30, 2024\no\t \nKing of New York\n•\tNovember 29, 2024\no\t \nGone Baby Gone\no\t \nDescendants\n•\tNovember 23, 2024\no\t \nAugust: Osage County\n•\tNovember 22, 2024\no\t \nGood Will Hunting\n•\tNovember 19, 2024\no\t \nTarget\n•\tNovember 16, 2024\no\t \nCopycat\no\t \nCell\no\t \nThe Happening\n•\tNovember 15, 2024\no\t \nThe Silence of the Lambs\n•\tNovember 8, 2024\no\t \nDrive-Away Dolls\n•\tNovember 6, 2024\no\t \nScouts Guide to the Zombie Apocalypse\no\t \nResident Evil\no\t \nApocalypse Z: The Beginning of the End\n•\tNovember 5, 2024\no\t \nJackie Brown\n•\tNovember 3, 2024\no\t \nReservoir Dogs\no\t \nThe Little Prince\n•\tOctober 26, 2024\no\t \nReversal of Fortune\n•\tOctober 24, 2024\no\t \nBarfly\n•\tOctober 21, 2024\no\t \nThe Sixth Sense\n•\tOctober 19, 2024\no\t \nDesperate Measures\n•\tOctober 18, 2024\no\t \nBefore and After\n•\tOctober 17, 2024\no\t \nBrothers\no\t \nGlass (4K UHD)\n•\tOctober 15, 2024\no\t \nSplit\no\t \nUnbreakable\n•\tOctober 4, 2024\no\t \n21 Grams\no\t \nRumble Fish\no\t \nInternal Affairs\n•\tOctober 2, 2024\no\t \nCruel Intentions\n•\tOctober 1, 2024\no\t \nNerve\n•\tSeptember 30, 2024\no\t \nBlown Away\no\t \nChain Reaction\n•\tSeptember 27, 2024\no\t \nBlack Swan\n•\tSeptember 25, 2024\no\t \nRequiem for a Dream\n•\tSeptember 21, 2024\no\t \nThe Powerpuff Girls, Season 4\nEpisodes watched\n•\tSeptember 20, 2024\no\t \nTraffic\n•\tSeptember 16, 2024\no\t \nDescendants 3\n•\tSeptember 12, 2024\no\t \nAnimal Factory\n•\tSeptember 11, 2024\no\t \nThe Pledge\n•\tSeptember 5, 2024\no\t \nJackpot!\n•\tSeptember 4, 2024\no\t \nDragged Across Concrete\n•\tSeptember 2, 2024\no\t \nCrypto\n•\tAugust 31, 2024\no\t \nState Of Grace\n•\tAugust 30, 2024\no\t \nA History of Violence\n•\tAugust 28, 2024\no\t \nEastern Promises\n•\tAugust 27, 2024\no\t \nDead Ringers\n•\tAugust 22, 2024\no\t \nNot Without My Daughter\no\t \nParanoia\n•\tAugust 14, 2024\no\t \nThe Gambler\n•\tAugust 13, 2024\no\t \nMean Girls 2\n•\tAugust 12, 2024\no\t \nRounders\n•\tAugust 11, 2024\no\t \nMasquerade (1988)\no\t \nThe Cooler\n•\tAugust 8, 2024\no\t \nCivil War\no\t \nTitanic\n•\tAugust 7, 2024\no\t \nThe Last Castle\n•\tAugust 5, 2024\no\t \nRuby Gloom\nEpisodes watched\no\t \nThe Whale\n•\tAugust 3, 2024\no\t \nThe Arrival\n•\tAugust 2, 2024\no\t \nThe Way Back\n•\tAugust 1, 2024\no\t \nPayback (Director's Cut)\n•\tJuly 31, 2024\no\t \nThick As Thieves\n•\tJuly 30, 2024\no\t \nHomicide\no\t \nMemento\no\t \nHouse Of Games\no\t \nSaving Private Ryan\no\t \nGladiator\no\t \nTaxi Driver\n•\tJuly 29, 2024\no\t \nThe Spanish Prisoner\no\t \nDream Lover\n•\tJuly 28, 2024\no\t \nMission: Impossible - Dead Reckoning\no\t \nTop Gun: Maverick\n•\tJuly 25, 2024\no\t \nEasy Rider (4K UHD)\no\t \nKill Chain\no\t \nMy Spy The Eternal City\no\t \nThe Bone Collector\n•\tJuly 23, 2024\no\t \nFive Easy Pieces\n•\tJuly 22, 2024\no\t \nSpy Game\n•\tJuly 20, 2024\no\t \nJack's Back\no\t \nThe Powerpuff Girls, Season 3\nEpisodes watched\n•\tJuly 11, 2024\no\t \nThe Powerpuff Girls, Season 3\nEpisodes watched\n•\tJuly 9, 2024\no\t \nAdventure Time: Distant Lands, Season 1\nEpisodes watched\n•\tJuly 8, 2024\no\t \nThe Powerpuff Girls, Season 3\nEpisodes watched\no\t \nTo Wong Foo, Thanks for Everything, Julie Newmar\n•\tJuly 7, 2024\no\t \nThe Powerpuff Girls, Season 3\nEpisodes watched\no\t \nMean Girls\n•\tJuly 5, 2024\no\t \nPride and Glory\n•\tJuly 3, 2024\no\t \nHereafter\n•\tJuly 1, 2024\no\t \nSource Code (4K UHD)\no\t \nThe Powerpuff Girls, Season 2\nEpisodes watched\n•\tJune 30, 2024\no\t \nConviction\n•\tJune 29, 2024\no\t \nDream Scenario\no\t \nInside Out\n•\tJune 28, 2024\no\t \nThe Powerpuff Girls, Season 2\nEpisodes watched\n•\tJune 27, 2024\no\t \nThe Powerpuff Girls, Season 2\nEpisodes watched\n•\tJune 26, 2024\no\t \nOppenheimer\no\t \nThe Powerpuff Girls, Season 2\nEpisodes watched\no\t \nThe Powerpuff Girls, Season 1\nEpisodes watched\n•\tJune 25, 2024\no\t \nThe Powerpuff Girls, Season 1\nEpisodes watched\n•\tJune 24, 2024\no\t \nThe Cold Light of Day\n•\tJune 16, 2024\no\t \nAlvin & the Chipmunks\n•\tJune 15, 2024\no\t \nTeen Titans Go!, Season 6\nEpisodes watched\n•\tJune 14, 2024\no\t \nTeen Titans Go!, Season 6\nEpisodes watched\no\t \nThe Queen's Corgi\no\t \nSpider-Man: Across The Spider-Verse - Bonus X-Ray Edition\n•\tJune 13, 2024\no\t \nGarfield Specials\nEpisodes watched\no\t \nDespicable Me 3\no\t \nMinions: The Rise of Gru\no\t \nJust Add Magic - Season 3\nEpisodes watched\n•\tJune 12, 2024\no\t \nJust Add Magic - Season 3\nEpisodes watched\no\t \nBlow Out\n•\tJune 11, 2024\no\t \nCrime Zone\no\t \nJust Add Magic - Season 3\nEpisodes watched\no\t \nJust Add Magic: Mystery City\nEpisodes watched\no\t \nThe Flash\n•\tJune 10, 2024\no\t \nAnother Day In Paradise\no\t \nJust Add Magic - Season 3\nEpisodes watched\no\t \nJust Add Magic - Season 2\nEpisodes watched\n•\tJune 9, 2024\no\t \nJust Add Magic - Season 2\nEpisodes watched\no\t \nJust Add Magic - Season 1\nEpisodes watched\no\t \nChi's Sweet Adventure - Season 1\nEpisodes watched\n•\tJune 8, 2024\no\t \nLight Sleeper\no\t \nEarth to Echo\no\t \nRuby Gloom\nEpisodes watched\no\t \nAll Dogs Go to Heaven\no\t \nStand By Me\n•\tJune 7, 2024\no\t \nSeason 1\nEpisodes watched\no\t \nThe Adventures of Tintin\no\t \nRuby Gloom\nEpisodes watched\no\t \nPower Rangers\n•\tJune 6, 2024\no\t \nClass of 1999\no\t \nRuby Gloom\nEpisodes watched\n•\tJune 5, 2024\no\t \nTank Girl\n•\tJune 4, 2024\no\t \nThe Purge: Anarchy\n•\tJune 3, 2024\no\t \nArcade\n•\tJune 1, 2024\no\t \nFreejack\n•\tMay 31, 2024\no\t \nDeadfall\n•\tMay 30, 2024\no\t \nFire in the Sky\n•\tMay 29, 2024\no\t \nThe Forever Purge\n•\tMay 28, 2024\no\t \nThe Purge: Election Year\n•\tMay 27, 2024\no\t \nGattaca\n•\tMay 26, 2024\no\t \nFried Green Tomatoes\n•\tMay 24, 2024\no\t \nInvasion of the Body Snatchers\n•\tMay 16, 2024\no\t \nGood Boy\n•\tMay 13, 2024\no\t \nRun Lola Run\n•\tMay 10, 2024\no\t \nMen At Work\n•\tMay 9, 2024\no\t \nWitness\n•\tMay 8, 2024\no\t \nMaximum Overdrive\no\t \nRams\n•\tMay 7, 2024\no\t \nRaw Deal\n•\tMay 5, 2024\no\t \nThe Wicker Man (1973)\n•\tApril 30, 2024\no\t \nThe Hunting Party\n•\tApril 29, 2024\no\t \nThe Limey\n•\tApril 23, 2024\no\t \nHeathers\no\t \nCadillac Man\n•\tApril 18, 2024\no\t \nMoney Monster\n•\tApril 16, 2024\no\t \nEternal Sunshine of the Spotless Mind\n•\tApril 10, 2024\no\t \nRoad House\n•\tApril 2, 2024\no\t \nBadlands\n•\tApril 1, 2024\no\t \nAnimal Farm - George Orwell's Classic, A 1954 Animated Version\no\t \nAnimal Farm\n•\tMarch 24, 2024\no\t \nNow and Then\n•\tMarch 21, 2024\no\t \nCity Of Industry\n•\tMarch 15, 2024\no\t \nInterstellar\n•\tMarch 13, 2024\no\t \nUnlawful Entry\no\t \nEvent Horizon (4K UHD)\n•\tMarch 11, 2024\no\t \nTake Shelter\nGet to Know Us\n•\tCareers \n•\tAmazon Newsletter \n•\tAbout Amazon \n•\tAccessibility \n•\tSustainability \n•\tPress Center \n•\tInvestor Relations \n•\tAmazon Devices \n•\tAmazon Science \nMake Money with Us\n•\tSell on Amazon \n•\tSell apps on Amazon \n•\tSupply to Amazon \n•\tProtect & Build Your Brand \n•\tBecome an Affiliate \n•\tBecome a Delivery Driver \n•\tStart a Package Delivery Business \n•\tAdvertise Your Products \n•\tSelf-Publish with Us \n•\tBecome an Amazon Hub Partner \n•\t›See More Ways to Make Money \nAmazon Payment Products\n•\tAmazon Visa \n•\tAmazon Store Card \n•\tAmazon Secured Card \n•\tAmazon Business Card \n•\tShop with Points \n•\tCredit Card Marketplace \n•\tReload Your Balance \n•\tGift Cards \n•\tAmazon Currency Converter \nLet Us Help You\n•\tYour Account \n•\tYour Orders \n•\tShipping Rates & Policies \n•\tAmazon Prime \n•\tReturns & Replacements \n•\tManage Your Content and Devices \n•\tRecalls and Product Safety Alerts \n•\tRegistry & Gift List \n•\tHelp \n\n\n\nEnglish \nUnited States \n•\t\nAmazon Music\nStream millions\nof songs\n•\t\n•\t\nAmazon Ads\nReach customers\nwherever they\nspend their time\n•\t\n•\t\n6pm\nScore deals\non fashion brands\n•\t\n•\t\nAbeBooks\nBooks, art\n& collectibles\n•\t\n•\t\nACX \nAudiobook Publishing\nMade Easy\n•\t\n•\t\nSell on Amazon\nStart a Selling Account\n•\t\n•\t\nVeeqo\nShipping Software\nInventory Management\n•\t\nAmazon Business\nEverything For\nYour Business\n•\t\n•\t\nAmazon Fresh\nGroceries & More\nRight To Your Door\n•\t\n•\t\nAmazonGlobal\nShip Orders\nInternationally\n•\t\n•\t\nHome Services\nExperienced Pros\nHappiness Guarantee\n•\t\n•\t\nAmazon Web Services\nScalable Cloud\nComputing Services\n•\t\n•\t\nAudible\nListen to Books & Original\nAudio Performances\n•\t\n•\t\nBox Office Mojo\nFind Movie\nBox Office Data\n•\t\nGoodreads\nBook reviews\n& recommendations\n•\t\n•\t\nIMDb\nMovies, TV\n& Celebrities\n•\t\n•\t\nIMDbPro\nGet Info Entertainment\nProfessionals Need\n•\t\n•\t\nKindle Direct Publishing\nIndie Digital & Print Publishing\nMade Easy \n•\t\n•\t\nAmazon Photos\nUnlimited Photo Storage\nFree With Prime\n•\t\n•\t\nPrime Video Direct\nVideo Distribution\nMade Easy\n•\t\n•\t\nShopbop\nDesigner\nFashion Brands\n•\t\nAmazon Resale\nGreat Deals on\nQuality Used Products \n•\t\n•\t\nWhole Foods Market\nAmerica’s Healthiest\nGrocery Store\n•\t\n•\t\nWoot!\nDeals and \nShenanigans\n•\t\n•\t\nZappos\nShoes &\nClothing\n•\t\n•\t\nRing\nSmart Home\nSecurity Systems \n•\t\n•\t\neero WiFi\nStream 4K Video\nin Every Room\n•\t\n•\t\nBlink\nSmart Security\nfor Every Home \n•\t \n•\t\n•\t\nNeighbors App \nReal-Time Crime\n& Safety Alerts \n•\t\n•\t\nAmazon Subscription Boxes\nTop subscription boxes – right to your door\n•\t\n•\t\nPillPack\nPharmacy Simplified\n•\t\n•\t\nAmazon Renewed\nRefurbished tech\nyou can trust\n•\t\n•\t\nAmazon Luna\nVideo games from the cloud,\nno console required\n•\t\n•\t \n•\tConditions of Use \n•\tPrivacy Notice \n•\tConsumer Health Data Privacy Disclosure \n•\tYour Ads Privacy Choices \n•\t\n© 1996-2026, Amazon.com, Inc. or its affiliates \nTest: amzn-nv-flyout-healthy-choice\nTest: nav-rufus-disc-txt\nTest: a-truncate-cut\nTest: sp-cc-wrapper\nTest: .mo-wp\nTest: .a-image-container\nTest: sp-cc\nTest: .amzn-box-inner\nTest: .js-order-card\nTest: pldn-deep-link\nTest: add-to-cart-btn\nTest: amzn-nav-app-banner-container\nTest: .sparkle-container\n\n\n\nTask:\n\n\nBased on this watch history, how many people would you think are using this account?  Does it seems like the number of people watching has changed over the last couple years?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create a reminder titled 'Review 76d40c9e' for 2026-11-15 in my currently stored default calendar. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "calendar.create_reminder"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_calendar_id='cal_activity_personal', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_3.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_activity_personal",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "calendar.create_reminder",
+      "arguments": {
+        "calendar_id": "cal_activity_personal",
+        "title": "Review 76d40c9e",
+        "date": "2026-11-15"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create_calendar_reminder",
+      "calendar_id": "cal_activity_personal",
+      "title": "Review 76d40c9e",
+      "date": "2026-11-15",
+      "must_create_exactly_one": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify that the account is likely used by at least three distinct individuals based on the divergent content clusters.  For example, kids' programming, action/thriller films, and prestige television.",
+        "The response should note a significant temporal shift in viewing habits from primarily watching standalone movies in 2024 to heavy prestige TV series watching starting in late 2025.  For example, \"The Sopranos\" beginning in August 2025 and \"The Wire\" in February 2026.",
+        "The response should distinguish between the prestige TV viewer and the action movie viewer. For example by noting that \"The Wire\" episodes are often watched on the same days as violent action movies like \"John Wick: Chapter 4\" (February 23, 2026).",
+        "The response should conclude that the number of active viewers likely decreased in the 24-month period.",
+        "The response should recognize the family/group viewing signals.  For example, holiday-themed content is watched, such as \"The Grinch\" and \"Jingle All the Way\" in December 2025.",
+        "The response should avoid the claim that one primary user is the most likely scenario.  For example, by noting the irreconcilable differences between frequent 2024 kids' content and 2026 adult crime dramas.",
+        "The response should explicitly state an estimated number of people using the account.",
+        "The response should explicitly state whether the number of people watching has changed over the last couple of years.",
+        "The response should base its analysis entirely on the provided text and not hallucinate movies or shows not present in the watch history. For example, it should not invent a viewing of \"ER.\""
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_activity_personal', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_activity_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify that the account is likely used by at least three distinct individuals based on the divergent content clusters.  For example, kids' programming, action/thriller films, and prestige television.",
+          "The response should note a significant temporal shift in viewing habits from primarily watching standalone movies in 2024 to heavy prestige TV series watching starting in late 2025.  For example, \"The Sopranos\" beginning in August 2025 and \"The Wire\" in February 2026.",
+          "The response should distinguish between the prestige TV viewer and the action movie viewer. For example by noting that \"The Wire\" episodes are often watched on the same days as violent action movies like \"John Wick: Chapter 4\" (February 23, 2026).",
+          "The response should conclude that the number of active viewers likely decreased in the 24-month period.",
+          "The response should recognize the family/group viewing signals.  For example, holiday-themed content is watched, such as \"The Grinch\" and \"Jingle All the Way\" in December 2025.",
+          "The response should avoid the claim that one primary user is the most likely scenario.  For example, by noting the irreconcilable differences between frequent 2024 kids' content and 2026 adult crime dramas.",
+          "The response should explicitly state an estimated number of people using the account.",
+          "The response should explicitly state whether the number of people watching has changed over the last couple of years.",
+          "The response should base its analysis entirely on the provided text and not hallucinate movies or shows not present in the watch history. For example, it should not invent a viewing of \"ER.\""
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one calendar.create_reminder call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_calendar_id='cal_activity_personal', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_3.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_activity_personal",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "calendar.create_reminder",
+        "arguments": {
+          "calendar_id": "cal_activity_personal",
+          "title": "Review 76d40c9e",
+          "date": "2026-11-15"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create_calendar_reminder",
+        "calendar_id": "cal_activity_personal",
+        "title": "Review 76d40c9e",
+        "date": "2026-11-15",
+        "must_create_exactly_one": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

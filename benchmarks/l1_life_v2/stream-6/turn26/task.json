@@ -1,0 +1,257 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_6",
+  "turn_id": "turn26",
+  "turn_index": 26,
+  "turn_type": "fact_qa",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "probe",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "5c5dd9df-5140-e242-ec4a-f993aa7fbbf9"
+    ],
+    "mapping_rule": "This turn derives from an earlier source_task turn and does not consume another source task.",
+    "source_jsonl_line": 300,
+    "source_sha256": "aaf3b11a8b4be2f5ec4aaadf29bd6aa0fd34c20b7bf7b3572499e4ff84fe7a96",
+    "source_metadata": {
+      "task_id": "5c5dd9df-5140-e242-ec4a-f993aa7fbbf9",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Without reopening earlier source material, what is my current review focus now? Answer directly and use the latest correction."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "answer",
+        "dimension": "task_success",
+        "weight": 0.55,
+        "scoring": "ordinal",
+        "instruction": "The answer states the current value 'individual events' for current review focus."
+      },
+      {
+        "check_id": "memory_activation",
+        "dimension": "activation",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The trajectory/state shows retrieval of the active fact l1_life_stream_6.fact_06.current_focus.v1, not a guess or a rewritten new fact."
+      },
+      {
+        "check_id": "no_stale_value",
+        "dimension": "stale_control",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The answer does not invent a competing value."
+      },
+      {
+        "check_id": "format",
+        "dimension": "response_quality",
+        "weight": 0.05,
+        "scoring": "ordinal",
+        "instruction": "The answer is direct and does not reopen or quote the unavailable source context."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_6.fact_06.current_focus.v1",
+          "key": "current_focus",
+          "value": "individual events",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "answer",
+          "dimension": "task_success",
+          "weight": 0.55,
+          "scoring": "ordinal",
+          "criterion": "The answer states the current value 'individual events' for current review focus."
+        },
+        {
+          "rubric_id": "memory_activation",
+          "dimension": "activation",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The trajectory/state shows retrieval of the active fact l1_life_stream_6.fact_06.current_focus.v1, not a guess or a rewritten new fact."
+        },
+        {
+          "rubric_id": "no_stale_value",
+          "dimension": "stale_control",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The answer does not invent a competing value."
+        },
+        {
+          "rubric_id": "format",
+          "dimension": "response_quality",
+          "weight": 0.05,
+          "scoring": "ordinal",
+          "criterion": "The answer is direct and does not reopen or quote the unavailable source context."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": null,
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "exact_fact_value_with_semantic_variants",
+        "canonical_response": "Your current current focus is individual events.",
+        "acceptable_answer_values": [
+          "individual events"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": null
+      },
+      "rubric_gt": {
+        "source_rubrics": [],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "answer",
+            "dimension": "task_success",
+            "weight": 0.55,
+            "scoring": "ordinal",
+            "criterion": "The answer states the current value 'individual events' for current review focus."
+          },
+          {
+            "rubric_id": "memory_activation",
+            "dimension": "activation",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The trajectory/state shows retrieval of the active fact l1_life_stream_6.fact_06.current_focus.v1, not a guess or a rewritten new fact."
+          },
+          {
+            "rubric_id": "no_stale_value",
+            "dimension": "stale_control",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The answer does not invent a competing value."
+          },
+          {
+            "rubric_id": "format",
+            "dimension": "response_quality",
+            "weight": 0.05,
+            "scoring": "ordinal",
+            "criterion": "The answer is direct and does not reopen or quote the unavailable source context."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_6.fact_06.current_focus.v1",
+            "key": "current_focus",
+            "value": "individual events",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

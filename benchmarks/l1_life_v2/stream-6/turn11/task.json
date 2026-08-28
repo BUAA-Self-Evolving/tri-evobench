@@ -1,0 +1,314 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_6",
+  "turn_id": "turn11",
+  "turn_index": 11,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "47e8ab1b-f29c-6de5-9413-0dfb8086ae07",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 376,
+    "source_sha256": "412325947c3fa7500c8afec84c86dc28517b518fc8d44b72a928f90dada8c53b",
+    "source_metadata": {
+      "task_id": "47e8ab1b-f29c-6de5-9413-0dfb8086ae07",
+      "context_category": "Behavioral Records & Activity Trails",
+      "context_subcategory": "Self-Tracking Trajectories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Book Id\tTitle\tAuthor\tAuthor l-f\tAdditional Authors\tISBN\tISBN13\tMy Rating\tAverage Rating\tPublisher\tBinding\tNumber of Pages\tYear Published\tOriginal Publication Year\tDate Read\tDate Added\tBookshelves\tBookshelves with positions\tExclusive Shelf\tMy Review\tSpoiler\tPrivate Notes\tRead Count\tOwned Copies\n35826480\tAwait Your Reply\tDan Chaon\tChaon, Dan\t\t\t\t0\t3.54\tBallantine Books\tKindle Edition\t337\t2010\t2009\t\t2/13/2026\tcurrently-reading\tcurrently-reading (#2)\tcurrently-reading\t\t\t\t1\t0\n156023123\tAnnie Bot\tSierra Greer\tGreer, Sierra\t\t0063312697\t9780063312692\t4\t3.83\tMariner Books\tHardcover\t240\t2024\t2024\t1/20/2026\t1/11/2026\t\t\tread\t\t\t\t1\t0\n232466984\t107 Days\tKamala Harris\tHarris, Kamala\t\t1668211653\t9781668211656\t4\t4.29\tSimon & Schuster\tHardcover\t304\t2025\t2025\t1/7/2026\t12/31/2025\t\t\tread\t\t\t\t1\t0\n228110489\tHeart the Lover\tLily King\tKing, Lily\t\t0802165176\t9780802165176\t5\t4.28\tGrove Press\tHardcover\t256\t2025\t2025\t1/3/2026\t12/31/2025\t\t\tread\t\t\t\t1\t0\n213943061\tShow Don't Tell\tCurtis Sittenfeld\tSittenfeld, Curtis\t\t0593446747\t9780593446744\t5\t3.89\tRandom House\tKindle Edition\t320\t2025\t2025\t12/31/2025\t12/29/2025\t\t\tread\t\t\t\t1\t0\n160993353\tMagical Midlife Madness (Leveling Up, #1)\tK.F. Breene\tBreene, K.F.\t\t\t\t3\t4.19\t\tKindle Edition\t316\t2020\t2020\t12/22/2025\t12/1/2025\t\t\tread\t\t\t\t1\t0\n223032943\tThe Art of Manifesting: A Meditative Drawing Practice to Rewire Your Brain and Create Your Reality\tColette Baron-Reid\tBaron-Reid, Colette\t\t1401997864\t9781401997861\t0\t4.26\tHay House LLC\tKindle Edition\t210\t2025\t\t\t12/13/2025\tcurrently-reading\tcurrently-reading (#1)\tcurrently-reading\t\t\t\t1\t0\n207611566\tWitchcraft for Wayward Girls\tGrady Hendrix\tHendrix, Grady\t\t0593548981\t9780593548981\t5\t3.9\tBerkley\tHardcover\t482\t2025\t2025\t11/26/2025\t10/30/2025\t\t\tread\t\t\t\t1\t0\n223405886\tAll the Way to the River\tElizabeth Gilbert\tGilbert, Elizabeth\t\t0593540980\t9780593540985\t4\t3.76\tRiverhead Books\tHardcover\t400\t2025\t2025\t11/20/2025\t11/19/2025\t\t\tread\t\t\t\t1\t0\n60018618\tUnreasonable Hospitality: The Remarkable Power of Giving People More Than They Expect\tWill Guidara\tGuidara, Will\t\t0593418573\t9780593418574\t4\t4.41\tOptimism Press\tHardcover\t288\t2022\t2022\t10/29/2025\t10/14/2025\t\t\tread\t\t\t\t1\t0\n224004520\tAwake\tJen Hatmaker\tHatmaker, Jen\t\t166808368X\t9781668083680\t5\t4.14\tAvid Reader Press / Simon & Schuster\tHardcover\t320\t2025\t2025\t10/2/2025\t10/2/2025\t\t\tread\t\t\t\t1\t0\n198902277\tThe Wedding People\tAlison Espach\tEspach, Alison\t\t\t\t4\t4.08\tHenry Holt and Company\tHardcover\t367\t2024\t2024\t9/29/2025\t9/23/2025\t\t\tread\t\t\t\t1\t0\n18961505\tThe 12 Week Year: Get More Done in 12 Weeks than Others Do in 12 Months\tBrian P. Moran\tMoran, Brian P.\tMichael Lennington\t\t\t3\t3.86\tWiley\tKindle Edition\t212\t2013\t2009\t9/29/2025\t9/23/2025\t\t\tread\t\t\t\t1\t0\n29939161\tRadical Candor: Be a Kickass Boss Without Losing Your Humanity\tKim Malone Scott\tScott, Kim Malone\t\t1250103509\t9781250103505\t4\t4.05\tSt. Martin's Press\tHardcover\t336\t2017\t2017\t9/22/2025\t9/4/2025\t\t\tread\t\t\t\t1\t0\n216970593\tAll That Life Can Afford\tEmily  Everett\tEverett, Emily\t\t0593545168\t9780593545164\t4\t3.65\tG.P. Putnam's Sons\tKindle Edition\t376\t2025\t2025\t9/19/2025\t9/4/2025\t\t\tread\t\t\t\t1\t0\n224004260\tSister Wife: A Memoir of Faith, Family, and Finding Freedom\tChristine Brown Woolley\tWoolley, Christine Brown\t\t1668078260\t9781668078266\t4\t4.19\tGallery Books\tHardcover\t320\t2025\t\t9/13/2025\t9/6/2025\t\t\tread\t\t\t\t1\t0\n209330233\tEntitlement\tRumaan Alam\tAlam, Rumaan\t\t0593718461\t9780593718469\t3\t2.96\tRiverhead Books\tHardcover\t288\t2024\t2024\t9/4/2025\t8/30/2025\t\t\tread\t\t\t\t1\t0\n2807199\tAmerican Wife\tCurtis Sittenfeld\tSittenfeld, Curtis\t\t1400064759\t9781400064755\t4\t3.78\tRandom House\tHardcover\t555\t2008\t2008\t8/28/2025\t8/10/2025\t\t\tread\t\t\t\t1\t0\n211003817\tThe Mother Next Door: Medicine, Deception, and Munchausen by Proxy\tAndrea Dunlop\tDunlop, Andrea\tMike Weber\t1250284279\t9781250284273\t4\t4.14\tSt. Martin's Press\tHardcover\t304\t2025\t2025\t8/25/2025\t8/10/2025\t\t\tread\t\t\t\t1\t0\n8145194\tNantucket Nights\tElin Hilderbrand\tHilderbrand, Elin\t\t\t\t3\t3.54\t\tKindle Edition\t240\t\t2002\t7/27/2025\t7/27/2025\t\t\tread\t\t\t\t1\t0\n213243949\tThree Days in June\tAnne Tyler\tTyler, Anne\t\t0593803485\t9780593803486\t4\t3.59\tKnopf\tHardcover\t165\t2025\t2025\t7/21/2025\t7/21/2025\t\t\tread\t\t\t\t1\t0\n203334203\tLike Mother, Like Mother\tSusan  Rieger\tRieger, Susan\t\t0525512500\t9780525512509\t4\t3.77\tThe Dial Press\tKindle Edition\t337\t2024\t2024\t7/14/2025\t7/2/2025\t\t\tread\t\t\t\t1\t0\n223436601\tCareless People: A Cautionary Tale of Power, Greed, and Lost Idealism\tSarah Wynn-Williams\tWynn-Williams, Sarah\t\t1250391237\t9781250391230\t4\t4.14\tFlatiron Books\tHardcover\t382\t2025\t2025\t7/7/2025\t6/15/2025\t\t\tread\t\t\t\t1\t0\n220505376\tThe Shining (The Shining, #1)\tStephen  King\tKing, Stephen\t\t\t\t4\t4.28\tAnchor\tKindle Edition\t673\t2024\t1977\t7/1/2025\t5/28/2025\t\t\tread\t\t\t\t1\t0\n216101441\tThe Book Club for Troublesome Women\tMarie Bostwick\tBostwick, Marie\t\t1400344751\t9781400344758\t5\t4.09\tHarper Muse\tKindle Edition\t380\t2025\t2025\t5/21/2025\t5/12/2025\t\t\tread\t\t\t\t1\t0\n195790586\tThe Rom-Commers\tKatherine Center\tCenter, Katherine\t\t1250283809\t9781250283801\t4\t4.05\tSt. Martin's Press\tHardcover\t336\t2024\t2024\t5/11/2025\t5/11/2025\t\t\tread\t\t\t\t1\t0\n177560199\tAmericanah\tChimamanda Ngozi Adichie\tAdichie, Chimamanda Ngozi\t\t\t\t4\t4.31\tVintage\tKindle Edition\t610\t2023\t2013\t5/2/2025\t3/31/2025\t\t\tread\t\t\t\t1\t0\n62919409\tHow to Stay Married: The Most Insane Love Story Ever Told\tHarrison Scott Key\tKey, Harrison Scott\t\t1668015501\t9781668015506\t5\t4.04\tAvid Reader Press / Simon & Schuster\tHardcover\t320\t2023\t2023\t4/11/2025\t3/27/2025\t\t\tread\t\t\t\t1\t0\n211051531\tBeyond Anxiety: Curiosity, Creativity, and Finding Your Life's Purpose\tMartha N. Beck\tBeck, Martha N.\t\t0593656393\t9780593656396\t4\t3.98\tThe Open Field\tKindle Edition\t336\t2025\t2025\t4/3/2025\t3/12/2025\t\t\tread\t\t\t\t1\t0\n123087802\tThe Last Love Note\tEmma Grey\tGrey, Emma\t\t1958506281\t9781958506288\t5\t4.05\tZibby Publishing\tPaperback\t384\t2023\t2023\t3/16/2025\t3/1/2025\t\t\tread\t\t\t\t1\t0\n216351768\tThe Let Them Theory: A Life-Changing Tool That Millions of People Can't Stop Talking About\tMel Robbins\tRobbins, Mel\t\t1401971377\t9781401971373\t3\t4.02\tHay House LLC\tKindle Edition\t311\t2024\t2024\t3/10/2025\t2/26/2025\t\t\tread\t\t\t\t1\t0\n220572119\tColored Television\tDanzy Senna\tSenna, Danzy\t\t\t\t4\t3.53\tRiverhead Books\tKindle Edition\t287\t2024\t2024\t2/25/2025\t2/6/2025\t\t\tread\t\t\t\t1\t0\n197577021\tTangled Up in You (Meant to Be, #4)\tChristina Lauren\tLauren, Christina\t\t1368092837\t9781368092838\t3\t3.89\tHyperion Avenue\tPaperback\t309\t2024\t2024\t2/16/2025\t2/10/2025\t\t\tread\t\t\t\t1\t0\n208840265\tDinner for Vampires: Life on a Cult TV Show (While Also in an Actual Cult!)\tBethany Joy Lenz\tLenz, Bethany Joy\t\t1668067307\t9781668067307\t4\t4.24\tSimon & Schuster\tHardcover\t303\t2024\t2024\t2/6/2025\t1/20/2025\t\t\tread\t\t\t\t1\t0\n144715767\tThe Housemaid (The Housemaid, #1)\tFreida McFadden\tMcFadden, Freida\t\t1408728516\t9781408728512\t3\t4.27\tBookouture\tPaperback\t328\t2023\t2022\t2/6/2025\t2/6/2025\t\t\tread\t\t\t\t1\t0\n6562879\tThe Corrections\tJonathan Franzen\tFranzen, Jonathan\t\t\t\t3\t3.85\tFarrar, Straus and Giroux\tKindle Edition\t610\t2010\t2001\t1/29/2025\t1/6/2025\t\t\tread\t\t\t\t1\t0\n50659468\tA Court of Mist and Fury (A Court of Thorns and Roses, #2)\tSarah J. Maas\tMaas, Sarah J.\t\t1635575583\t9781635575583\t4\t4.63\tBloomsbury Publishing\tPaperback\t626\t2020\t2016\t12/31/2024\t12/17/2024\t\t\tread\t\t\t\t1\t0\n219278659\tSandwich\tCatherine Newman\tNewman, Catherine\t\t006334517X\t9780063345171\t3\t3.55\tHarper Perennial\tPaperback\t240\t2025\t2024\t12/2/2024\t11/26/2024\t\t\tread\t\t\t\t1\t0\n40605223\tI'm Thinking of Ending Things\tIain Reid\tReid, Iain\t\t\t\t4\t3.5\tGallery/Scout Press\tKindle Edition\t241\t2016\t2016\t11/8/2024\t10/12/2024\t\t\tread\t\t\t\t1\t0\n200704039\tSociety of Lies\tLauren Ling Brown\tBrown, Lauren Ling\t\t0593723368\t9780593723364\t4\t3.52\tBantam\tebook\t\t2024\t2024\t11/5/2024\t10/29/2024\t\t\tread\t\t\t\t1\t0\n209786389\tFramed: Astonishing True Stories of Wrongful Convictions\tJohn Grisham\tGrisham, John\tJim McCloskey\t0385550448\t9780385550444\t0\t4.1\tDoubleday\tHardcover\t368\t2024\t2024\t\t10/12/2024\tto-read\tto-read (#7)\tto-read\t\t\t\t0\t0\n89724\tWe Have Always Lived in the Castle\tShirley Jackson\tJackson, Shirley\tJonathan Lethem\t0143039970\t9780143039976\t4\t3.91\tPenguin Books\tPaperback\t152\t2006\t1962\t10/10/2024\t10/9/2024\t\t\tread\t\t\t\t1\t0\n197514374\tThe New Menopause: Navigating Your Path Through Hormonal Change with Purpose, Power, and Facts\tMary Claire Haver\tHaver, Mary Claire\t\t0593796268\t9780593796269\t3\t4.26\tRodale Books\tKindle Edition\t310\t2024\t\t10/9/2024\t8/20/2024\t\t\tread\t\t\t\t1\t0\n50659467\tA Court of Thorns and Roses (A Court of Thorns and Roses, #1)\tSarah J. Maas\tMaas, Sarah J.\t\t1635575567\t9781635575569\t4\t4.15\tBloomsbury Publishing\tPaperback\t419\t2020\t2015\t10/7/2024\t9/18/2024\t\t\tread\t\t\t\t1\t0\n193781998\tThe Husbands\tHolly Gramazio\tGramazio, Holly\t\t0385550618\t9780385550611\t4\t3.51\tDoubleday\tHardcover\t352\t2024\t2024\t9/23/2024\t9/18/2024\t\t\tread\t\t\t\t1\t0\n7636774\tI'd Know You Anywhere\tLaura Lippman\tLippman, Laura\t\t0061706558\t9780061706554\t4\t3.5\tWilliam Morrow\tHardcover\t373\t2010\t2010\t9/18/2024\t9/14/2024\t\t\tread\t\t\t\t1\t0\n43834909\tLong Bright River\tLiz    Moore\tMoore, Liz\t\t0525540679\t9780525540670\t4\t4.04\tRiverhead Books\tHardcover\t482\t2020\t2020\t9/13/2024\t8/26/2024\t\t\tread\t\t\t\t1\t0\n42359080\tThe Friends We Keep\tJane Green\tGreen, Jane\t\t0399583343\t9780399583346\t4\t3.66\tBerkley\tHardcover\t384\t2019\t2019\t8/19/2024\t8/18/2024\t\t\tread\t\t\t\t1\t0\n35259624\tThe Bad Daughter\tJoy Fielding\tFielding, Joy\t\t0399181520\t9780399181528\t4\t3.64\tBallantine Books\tHardcover\t354\t2018\t2018\t8/17/2024\t8/12/2024\t\t\tread\t\t\t\t1\t0\n29337028\tWinter Storms\tElin Hilderbrand\tHilderbrand, Elin\t\t0316261157\t9780316261159\t4\t3.91\tLittle, Brown and Company\tKindle Edition\t257\t2016\t2016\t12/27/2023\t12/27/2023\t\t\tread\t\t\t\t1\t0\n25324421\tWinter Stroll (Winter Street, #2)\tElin Hilderbrand\tHilderbrand, Elin\t\t0316261122\t9780316261128\t4\t3.85\tLittle, Brown and Company\tKindle Edition\t256\t2015\t2015\t12/26/2023\t12/21/2023\t\t\tread\t\t\t\t1\t0\n62975987\tRussian Sleeper Cell\tNathan Monk\tMonk, Nathan\t\t\t\t4\t4.26\t\tKindle Edition\t303\t2022\t2022\t8/6/2024\t7/19/2024\t\t\tread\t\t\t\t1\t0\n127279000\tListen for the Lie\tAmy Tintera\tTintera, Amy\t\t1250880319\t9781250880314\t4\t4.07\tCeladon Books\tHardcover\t336\t2024\t2024\t8/4/2024\t8/1/2024\t\t\tread\t\t\t\t1\t0\n201294595\tThere Is No Ethan: How Three Women Caught America's Biggest Catfish\tAnna Akbari\tAkbari, Anna\t\t1538742195\t9781538742198\t4\t3.57\tGrand Central Publishing\tHardcover\t304\t2024\t2024\t8/1/2024\t7/29/2024\t\t\tread\t\t\t\t1\t0\n127280508\tThe Stoic Mindset: Living the Ten Principles of Stoicism\tMark Tuitert\tTuitert, Mark\t\t1250325277\t9781250325273\t4\t3.48\tSt. Martin's Essentials\tHardcover\t144\t2024\t\t7/16/2024\t7/17/2024\t\t\tread\t\t\t\t1\t0\n62873996\tThe Five-Star Weekend (Sommer in Nantucket, #1)\tElin Hilderbrand\tHilderbrand, Elin\t\t0316258776\t9780316258777\t5\t4.01\tLittle, Brown and Company\tHardcover\t384\t2023\t2023\t7/6/2024\t7/4/2024\t\t\tread\t\t\t\t1\t0\n100244644\tReign (American Royals #4)\tKatharine McGee\tMcGee, Katharine\t\t0593429761\t9780593429761\t4\t3.89\tRandom House Books for Young Readers\tKindle Edition\t424\t2023\t2023\t7/1/2024\t6/30/2024\t\t\tread\t\t\t\t1\t0\n59776891\tRivals (American Royals #3)\tKatharine McGee\tMcGee, Katharine\t\t0593429729\t9780593429723\t4\t3.77\tRandom House\tKindle Edition\t398\t2022\t2022\t6/29/2024\t6/22/2024\t\t\tread\t\t\t\t1\t0\n51338797\tMajesty (American Royals, #2)\tKatharine McGee\tMcGee, Katharine\t\t1984830228\t9781984830227\t4\t3.75\tRandom House Children's Books\tKindle Edition\t379\t2020\t2020\t6/22/2024\t6/15/2024\t\t\tread\t\t\t\t1\t0\n28120943\tDesign for How People Learn (Voices That Matter)\tJulie Dirksen\tDirksen, Julie\t\t0134211529\t9780134211527\t5\t4.27\tNew Riders\tKindle Edition\t459\t2015\t2011\t6/5/2024\t1/4/2024\t\t\tread\t\t\t\t1\t0\n56484743\tThe Arrangement (The Arrangement, #1)\tSarah Stiles\tStiles, Sarah\t\t\t\t2\t4.06\tSarah Stiles\tKindle Edition\t228\t2021\t2021\t5/30/2024\t5/28/2024\t\t\tread\t\t\t\t1\t0\n134245143\tAnna O\tMatthew   Blake\tBlake, Matthew\t\t0063314169\t9780063314160\t4\t3.43\tHarper\tKindle Edition\t432\t2024\t2024\t5/27/2024\t4/11/2024\t\t\tread\t\t\t\t1\t0\n15793186\tThe Good House\tAnn Leary\tLeary, Ann\t\t1250015545\t9781250015549\t4\t3.7\tSt. Martin's Press\tHardcover\t292\t2013\t2013\t5/20/2024\t5/20/2024\t\t\tread\t\t\t\t1\t0\n125188440\tThe Firm (The Firm, #1)\tJohn Grisham\tGrisham, John\t\t\t\t4\t4.26\tDell\tKindle Edition\t498\t2023\t1991\t11/25/2023\t11/17/2023\t\t\tread\t\t\t\t1\t0\n193771976\tThe Real Deal\tCaitlin Devlin\tDevlin, Caitlin\t\t1662518242\t9781662518249\t3\t3.42\tLake Union Publishing\tKindle Edition\t359\t2024\t2024\t4/1/2024\t4/11/2024\t\t\tread\t\t\t\t1\t0\n59822\tFace the Fire (Three Sisters Island, #3)\tNora Roberts\tRoberts, Nora\t\t0749932988\t9780749932985\t4\t4.17\tJudy Piatkus\tPaperback\t358\t2002\t2002\t2/28/2024\t2/22/2024\t\t\tread\t\t\t\t1\t0\n626552\tA Rip in Heaven\tJeanine Cummins\tCummins, Jeanine\t\t0451210530\t9780451210531\t4\t4.23\tBerkley\tPaperback\t302\t2004\t2004\t2/24/2024\t2/19/2024\t\t\tread\t\t\t\t1\t0\n59830\tHeaven and Earth (Three Sisters Island, #2)\tNora Roberts\tRoberts, Nora\t\t0749932821\t9780749932824\t4\t4.15\tJudy Piatkus\tPaperback\t416\t2002\t2001\t2/22/2024\t2/19/2024\t\t\tread\t\t\t\t1\t0\n59829\tDance Upon the Air (Three Sisters Island, #1)\tNora Roberts\tRoberts, Nora\t\t0749932775\t9780749932770\t4\t4.21\tPiatkus\tPaperback\t400\t2001\t2001\t2/14/2024\t2/14/2024\t\t\tread\t\t\t\t1\t0\n34368987\tWinter Solstice (Winter Street Book 4)\tElin Hilderbrand\tHilderbrand, Elin\t\t\t\t4\t4.07\tLittle, Brown and Company\tKindle Edition\t305\t2017\t2017\t12/28/2023\t12/27/2023\t\t\tread\t\t\t\t1\t0\n20928835\tWinter Street (Winter Street, #1)\tElin Hilderbrand\tHilderbrand, Elin\t\t\t\t4\t3.8\tLittle, Brown and Company\tKindle Edition\t257\t2014\t2014\t12/18/2023\t12/16/2023\t\t\tread\t\t\t\t1\t0\n123285511\tThe Exchange (The Firm, #2)\tJohn Grisham\tGrisham, John\t\t0385548958\t9780385548953\t4\t3.68\tDoubleday\tHardcover\t338\t2023\t2023\t12/4/2023\t11/26/2023\t\t\tread\t\t\t\t1\t0\n41715227\tEvidence of the Affair\tTaylor Jenkins Reid\tReid, Taylor Jenkins\t\t1542044510\t9781542044516\t4\t3.85\tAmazon Original Stories\tKindle Edition\t88\t2018\t2018\t11/8/2023\t11/16/2023\t\t\tread\t\t\t\t1\t0\n59912428\tMad Honey\tJodi Picoult\tPicoult, Jodi\tJennifer Finney Boylan\t1984818384\t9781984818386\t5\t4.07\tBallantine\tHardcover\t464\t2022\t2022\t10/14/2023\t10/14/2023\t\t\tread\t\t\t\t1\t0\n49090884\tTender Is the Flesh\tAgustina Bazterrica\tBazterrica, Agustina\tSarah Moses\t\t\t4\t3.77\tScribner\tPaperback\t209\t2020\t2017\t10/8/2023\t10/8/2023\t\t\tread\t\t\t\t1\t0\n124946899\tThe Last Word\tTaylor  Adams\tAdams, Taylor\t\t0063222906\t9780063222908\t4\t3.67\tWilliam Morrow Paperbacks\tMass Market Paperback\t400\t2023\t2023\t10/11/2023\t10/11/2023\t\t\tread\t\t\t\t1\t0\n60290773\tUnder the Influence\tNoelle Crooks\tCrooks, Noelle\t\t\t\t4\t3.39\tGallery Books\tKindle Edition\t320\t2023\t2023\t9/10/2023\t9/10/2023\t\t\tread\t\t\t\t1\t0\n61406731\tThe Sister Effect\tSusan Mallery\tMallery, Susan\t\t1335448640\t9781335448644\t4\t3.99\tHQN\tHardcover\t416\t2023\t2023\t9/8/2023\t9/8/2023\t\t\tread\t\t\t\t1\t0\n36589761\tThe Last Anniversary\tLiane Moriarty\tMoriarty, Liane\t\t\t\t4\t3.78\tHarper Perennial\tebook\t402\t2010\t2006\t8/6/2023\t8/6/2023\t\t\tread\t\t\t\t1\t0\n58747122\tThe Perfect Marriage (Perfect, #1)\tJeneva Rose\tRose, Jeneva\t\t1504071573\t9781504071574\t3\t3.97\tBloodhound Books\tKindle Edition\t344\t2020\t2020\t8/2/2023\t8/2/2023\t\t\tread\t\t\t\t1\t0\n58562607\tThe Widow\tKaira Rouda\tRouda, Kaira\t\t1542039223\t9781542039222\t4\t3.81\tThomas & Mercer\tKindle Edition\t310\t2022\t2022\t6/26/2023\t6/25/2023\t\t\tread\t\t\t\t1\t0\n45299992\tIf You Tell: A True Story of Murder, Family Secrets, and the Unbreakable Bond of Sisterhood\tGregg Olsen\tOlsen, Gregg\t\t1542005248\t9781542005241\t3\t3.98\tThomas & Mercer\tKindle Edition\t431\t2019\t2019\t6/24/2023\t6/22/2023\t\t\tread\t\t\t\t1\t0\n61776030\tEveryday MAGIC: The Joy of Not Being Everything and Still Being More Than Enough\tMattie James\tJames, Mattie\t\t\t\t4\t4\tWorthy Books\tKindle Edition\t257\t2022\t\t6/20/2023\t5/16/2023\t\t\tread\t\t\t\t1\t0\n61266164\tI'll Stop the World\tLauren Thoman\tThoman, Lauren\t\t1662509952\t9781662509957\t5\t3.99\tMindy's Book Studio\tKindle Edition\t446\t2023\t2023\t6/18/2023\t5/16/2023\t\t\tread\t\t\t\t1\t0\n52838315\tGreenlights\tMatthew McConaughey\tMcConaughey, Matthew\t\t0593139135\t9780593139134\t4\t4.2\tCrown\tHardcover\t289\t2020\t2020\t5/31/2023\t5/16/2023\t\t\tread\t\t\t\t1\t0\n51704136\tLittle Fires Everywhere\tCeleste Ng\tNg, Celeste\t\t0143135163\t9780143135166\t3\t4.07\tPenguin Books\tPaperback\t368\t2020\t2017\t5/19/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n60667906\tThe Candy House\tJennifer Egan\tEgan, Jennifer\t\t1432895583\t9781432895587\t4\t3.64\tThorndike Press\tLibrary Binding\t549\t2022\t2022\t4/25/2023\t3/16/2023\t\t\tread\t\t\t\t1\t0\n61151408\tThe Time-Saving Mom: How to Juggle a Lot, Enjoy Your Life, and Accomplish What Matters Most\tCrystal Paine\tPaine, Crystal\t\t0764237241\t9780764237249\t3\t4.13\tBethany House Publishers\tHardcover\t256\t2023\t\t4/4/2023\t4/4/2023\t\t\tread\t\t\t\t1\t0\n6391876\tThe Big Leap: Conquer Your Hidden Fear and Take Life to the Next Level\tGay Hendricks\tHendricks, Gay\t\t0061735345\t9780061735349\t4\t3.97\tHarperOne\thardcover\t224\t2009\t2009\t3/30/2023\t3/20/2023\t\t\tread\t\t\t\t1\t0\n42201584\tThe Latte Factor: Why You Don't Have to be Rich to Live Rich\tDavid Bach\tBach, David\tJohn David Mann\t150828377X\t9781508283775\t3\t3.83\tSimon & Schuster Audio\tAudio CD\t304\t2019\t\t3/13/2023\t3/13/2023\t\t\tread\t\t\t\t1\t0\n62296528\tSpare\tPrince Harry\tHarry, Prince\tJ.R. Moehringer\t0593593804\t9780593593806\t4\t3.83\tRandom House\tHardcover\t410\t2023\t2023\t3/5/2023\t1/18/2023\t\t\tread\t\t\t\t1\t0\n58429175\tI Guess I Haven't Learned That Yet: Discovering New Ways of Living When the Old Ways Stop Working\tShauna Niequist\tNiequist, Shauna\t\t0310355567\t9780310355564\t3\t3.99\tZondervan\tHardcover\t240\t2022\t2022\t2/28/2023\t2/28/2023\t\t\tread\t\t\t\t1\t0\n25893709\tMy Name Is Lucy Barton (Amgash, #1)\tElizabeth Strout\tStrout, Elizabeth\t\t1400067693\t9781400067695\t3\t3.6\tRandom House\tHardcover\t193\t2016\t2016\t2/8/2023\t2/8/2023\t\t\tread\t\t\t\t1\t0\n57865158\tThe Judge's List (The Whistler, #2)\tJohn Grisham\tGrisham, John\t\t0385546025\t9780385546027\t4\t4.14\tDoubleday\tHardcover\t357\t2021\t2021\t1/18/2023\t1/10/2023\t\t\tread\t\t\t\t1\t0\n60393672\tIt Starts with Us (It Ends with Us, #2)\tColleen Hoover\tHoover, Colleen\t\t1668001225\t9781668001226\t3\t3.84\tAtria Books\tPaperback\t324\t2022\t2022\t11/16/2022\t11/17/2022\t\t\tread\t\t\t\t1\t0\n56145998\tThe Royals Next Door\tKarina Halle\tHalle, Karina\t\t\t\t3\t3.69\tBerkley \tebook\t336\t2021\t2021\t7/25/2022\t7/22/2022\t\t\tread\t\t\t\t1\t0\n52347808\tEvery Last Secret\tA.R. Torre\tTorre, A.R.\t\t1542020182\t9781542020183\t4\t3.93\tThomas & Mercer\tKindle Edition\t291\t2020\t2020\t8/4/2021\t7/31/2021\t\t\tread\t\t\t\t1\t0\n43706726\tWhen We Believed in Mermaids\tBarbara O'Neal\tO'Neal, Barbara\t\t1542004527\t9781542004527\t4\t4.17\tLake Union Publishing\tPaperback\t341\t2019\t2019\t6/22/2022\t6/9/2022\t\t\tread\t\t\t\t1\t0\n25572917\tEat Love Pray\tElizabeth Gilbert\tGilbert, Elizabeth\t\t0142196517\t9780142196519\t4\t3.65\tPenguin\tPaperback\t334\t2006\t2006\t6/3/2022\t5/31/2022\t\t\tread\t\t\t\t1\t0\n58435123\tI Take My Coffee Black: Reflections on Tupac, Musical Theater, Faith, and Being Black in America\tTyler Merritt\tMerritt, Tyler\tJimmy Kimmel\t1546029400\t9781546029403\t5\t4.5\tWorthy Books\tKindle Edition\t256\t2021\t2021\t5/16/2022\t5/14/2022\t\t\tread\t\t\t\t1\t0\n59909777\tWish You Were Here\tJodi Picoult\tPicoult, Jodi\t\t0593497201\t9780593497203\t5\t3.91\tBallantine\tPaperback\t0\t2021\t2021\t5/12/2022\t5/11/2022\t\t\tread\t\t\t\t1\t0\n40901227\tFear: Trump in the White House\tBob Woodward\tWoodward, Bob\t\t150117553X\t9781501175534\t0\t3.87\tSimon & Schuster\tKindle Edition\t357\t2018\t2018\t\t4/4/2022\t\t\tread\t\t\t\t1\t0\n30139140\tBetween Two Worlds: Lessons From the Other Side\tTyler Henry\tHenry, Tyler\t\t1501152653\t9781501152658\t4\t4.19\tGallery Books\tKindle Edition\t225\t2016\t\t3/19/2022\t3/16/2022\t\t\tread\t\t\t\t1\t0\n58375936\tFind Your Unicorn Space: Reclaim Your Creative Life in a Too-Busy World\tEve Rodsky\tRodsky, Eve\t\t0593328027\t9780593328026\t3\t3.46\tG.P. Putnam's Sons\tKindle Edition\t336\t2021\t2021\t3/18/2022\t2/1/2022\t\t\tread\t\t\t\t1\t0\n56947777\tGood Neighbors: A Novel\tSarah Langan\tLangan, Sarah\t\t1797119346\t9781797119342\t5\t3.53\tSimon & Schuster Audio and Blackstone Publishing\tAudio CD\t1\t2021\t2021\t2/16/2022\t2/11/2022\t\t\tread\t\t\t\t1\t0\n60148895\tSparring Partners (Jake Brigance, #4)\tJohn Grisham\tGrisham, John\t\t0385549326\t9780385549325\t0\t3.75\tDoubleday\tHardcover\t320\t2022\t2022\t\t2/13/2022\tto-read\tto-read (#6)\tto-read\t\t\t\t0\t0\n55590431\tWho Is Maud Dixon?\tAlexandra  Andrews\tAndrews, Alexandra\t\t\t\t4\t3.82\tLittle, Brown and Company\tebook\t304\t2021\t2021\t2/9/2022\t1/19/2022\t\t\tread\t\t\t\t1\t0\n841612\tAmy and Isabelle\tElizabeth Strout\tStrout, Elizabeth\t\t0375501347\t9780375501340\t5\t3.93\tRandom House\tHardcover\t304\t1999\t1998\t1/29/2022\t1/25/2022\t\t\tread\t\t\t\t1\t0\n30900534\tYou Are a Badass at Making Money: Master the Mindset of Wealth\tJen Sincero\tSincero, Jen\t\t0735222975\t9780735222977\t4\t3.89\tPenguin Life\tHardcover\t267\t2017\t2017\t12/7/2021\t10/3/2021\t\t\tread\t\t\t\t1\t0\n55628983\tSurvive the Night\tRiley Sager\tSager, Riley\t\t0593183169\t9780593183168\t2\t3.52\tDutton\tHardcover\t336\t2021\t2021\t1/17/2022\t1/2/2022\t\t\tread\t\t\t\t1\t0\n56038380\tThe Ivies\tAlexa Donne\tDonne, Alexa\t\t0593303725\t9780593303726\t4\t3.67\t Crown Books for Young Readers\tKindle Edition\t316\t2021\t2021\t12/30/2021\t12/30/2021\t\t\tread\t\t\t\t1\t0\n10644930\t11/22/1963\tStephen  King\tKing, Stephen\t\t1451627289\t9781451627282\t4\t4.35\tScribner\tHardcover\t849\t2011\t2011\t12/12/2021\t12/5/2021\t\t\tread\t\t\t\t1\t0\n55315487\tThe Plot (The Book Series, #1)\tJean Hanff Korelitz\tKorelitz, Jean Hanff\t\t125079076X\t9781250790767\t4\t3.81\tCeladon Books\tHardcover\t320\t2021\t2021\t12/5/2021\t11/21/2021\t\t\tread\t\t\t\t1\t0\n58194122\tHooked: How Crafting Saved My Life\tSutton Roe\tRoe, Sutton\t\t1538734273\t9781538734278\t4\t4.08\tGrand Central Publishing\tKindle Edition\t257\t2021\t2021\t11/20/2021\t10/16/2021\t\t\tread\t\t\t\t1\t0\n55518780\tAce of Spades\tFaridah Ã€bÃ­kÃ©-ÃyÃ­mÃ­dÃ©\tÃ€bÃ­kÃ©-ÃyÃ­mÃ­dÃ©, Faridah\t\t1250800811\t9781250800817\t5\t4.13\tFeiwel & Friends\tHardcover\t422\t2021\t2021\t11/8/2021\t10/16/2021\t\t\tread\t\t\t\t1\t0\n54895727\tWhen the Stars Go Dark\tPaula McLain\tMcLain, Paula\t\t0593237897\t9780593237892\t4\t3.84\tBallantine Books\tHardcover\t370\t2021\t2021\t10/7/2021\t10/3/2021\t\t\tread\t\t\t\t1\t0\n35952990\tLuckiest Girl Alive\tJessica Knoll\tKnoll, Jessica\t\t0606385231\t9780606385237\t4\t3.54\tTurtleback Books\tLibrary Binding\t368\t2016\t2015\t9/27/2021\t9/27/2021\t\t\tread\t\t\t\t1\t0\n58313177\tMalibu Rising\tTaylor Jenkins Reid\tReid, Taylor Jenkins\t\t0593355261\t9780593355268\t5\t4.02\tBallantine Books\tPaperback\t369\t2021\t2021\t9/24/2021\t9/24/2021\t\t\tread\t\t\t\t1\t0\n55119814\tOlympus, Texas\tStacey Swann\tSwann, Stacey\t\t0385545215\t9780385545211\t4\t3.73\tDoubleday\tHardcover\t318\t2021\t2021\t9/7/2021\t9/7/2021\t\t\tread\t\t\t\t1\t0\n54614594\tSimple and Free: 7 Experiments Against Excess\tJen Hatmaker\tHatmaker, Jen\t\t0593236769\t9780593236765\t4\t3.98\tConvergent Books\tHardcover\t336\t2021\t\t8/25/2021\t8/25/2021\t\t\tread\t\t\t\t1\t0\n36967019\tThe Favorite Sister\tJessica Knoll\tKnoll, Jessica\t\t1501153196\t9781501153198\t3\t3.09\tSimon & Schuster\tHardcover\t372\t2018\t2018\t8/24/2021\t8/24/2021\t\t\tread\t\t\t\t1\t0\n56125813\tThe Seven Day Switch\tKelly Harms\tHarms, Kelly\t\t1542027101\t9781542027106\t3\t3.93\tLake Union Publishing\tKindle Edition\t314\t2021\t2021\t7/17/2021\t7/15/2021\t\t\tread\t\t\t\t1\t0\n58354662\tThe Book of Two Ways\tJodi Picoult\tPicoult, Jodi\t\t1984818376\t9781984818379\t0\t3.66\tBallantine Books\tPaperback\t406\t2021\t2020\t\t7/31/2021\tto-read\tto-read (#5)\tto-read\t\t\t\t0\t0\n40178118\tI'll Be Gone in the Dark: One Woman's Obsessive Search for the Golden State Killer\tMichelle McNamara\tMcNamara, Michelle\tGillian Flynn, Patton Oswalt\t0062319787\t9780062319784\t4\t4.11\tHarper \tHardcover\t328\t2018\t2018\t7/29/2021\t7/29/2021\t\t\tread\t\t\t\t1\t0\n51291382\tIntuitive Eating: A Revolutionary Anti-Diet Approach\tEvelyn Tribole\tTribole, Evelyn\tElyse Resch\t1250758289\t9781250758286\t3\t4.23\tSt. Martin's Essentials\tKindle Edition\t392\t2020\t1995\t7/20/2021\t5/25/2021\t\t\tread\t\t\t\t1\t0\n57818877\t2nd Chance Karma Yoga Studio\tJane        Doe\tDoe, Jane\t\t\t\t4\t3.6\tJane Doe\tKindle Edition\t84\t2021\t\t7/14/2021\t7/13/2021\t\t\tread\t\t\t\t1\t0\n39867964\tNine Perfect Strangers\tLiane Moriarty\tMoriarty, Liane\t\t\t\t4\t3.56\tFlatiron Books\tebook\t458\t2018\t2018\t7/11/2021\t7/8/2021\t\t\tread\t\t\t\t1\t0\n55172984\tCarrie\tStephen  King\tKing, Stephen\t\t\t\t4\t3.99\tAnchor \tebook\t322\t2008\t1974\t7/8/2021\t7/6/2021\t\t\tread\t\t\t\t1\t0\n42140794\tCity of Girls\tElizabeth Gilbert\tGilbert, Elizabeth\t\t0698408322\t9780698408326\t5\t4.04\tRiverhead Books\tKindle Edition\t391\t2019\t2019\t7/3/2021\t6/23/2021\t\t\tread\t\t\t\t1\t0\n54701865\tHour of the Witch\tChris Bohjalian\tBohjalian, Chris\t\t0385542445\t9780385542449\t5\t3.84\tVintage\tKindle Edition\t406\t2021\t2021\t6/21/2021\t6/9/2021\t\t\tread\t\t\t\t1\t0\n36530849\tGet Money: Live the Life You Want, Not Just the Life You Can Afford\tKristin   Wong\tWong, Kristin\t\t0316515639\t9780316515634\t3\t3.87\tGrand Central Publishing\tKindle Edition\t293\t2018\t2018\t6/9/2021\t5/19/2021\t\t\tread\t\t\t\t1\t0\n9851860\tJoy for Beginners\tErica Bauermeister\tBauermeister, Erica\t\t0399157123\t9780399157127\t5\t3.73\tG.P. Putnam's Sons\tHardcover\t269\t2011\t2011\t6/5/2021\t5/19/2021\t\t\tread\t\t\t\t1\t0\n56705354\tThe Delphi Eddies: a southern-fried tale of seduction, secrets, and sin\tJohn Roe\tRoe, John\t\t\t\t4\t4.67\t\tebook\t\t2021\t2021\t2/10/2021\t2/6/2021\t\t\tread\t\t\t\t1\t0\n55404546\tMalibu Rising\tTaylor Jenkins Reid\tReid, Taylor Jenkins\t\t1524798657\t9781524798659\t0\t4.02\tBallantine Books\tHardcover\t369\t2021\t2021\t\t5/22/2021\tto-read\tto-read (#4)\tto-read\t\t\t\t0\t0\n46225061\tThe Two Lives of Lydia Bird\tJosie Silver\tSilver, Josie\t\t0593135237\t9780593135235\t4\t3.74\tBallantine Books\tHardcover\t369\t2020\t2020\t5/18/2021\t4/12/2021\t\t\tread\t\t\t\t1\t0\n33027965\tOf Mess and Moxie: Wrangling Delight Out of This Wild and Glorious Life\tJen Hatmaker\tHatmaker, Jen\t\t0718031865\t9780718031862\t5\t4\tThomas Nelson\tebook\t224\t2017\t2017\t5/10/2021\t4/3/2021\t\t\tread\t\t\t\t1\t0\n52219451\tThe Wife Stalker\tLiv Constantine\tConstantine, Liv\t\t0062967282\t9780062967282\t3\t3.72\tHarperCollins Publishers\tHardcover\t320\t2020\t2020\t4/11/2021\t4/11/2021\t\t\tread\t\t\t\t1\t0\n45016784\tMoral Compass\tDanielle Steel\tSteel, Danielle\t\t0399179542\t9780399179549\t4\t3.98\tDelacorte Press\tKindle Edition\t352\t2020\t2020\t4/3/2021\t4/2/2021\t\t\tread\t\t\t\t1\t0\n49254027\tPretty Things\tJanelle Brown\tBrown, Janelle\t\t\t\t5\t3.89\t Random House\tKindle Edition\t470\t2020\t2020\t3/30/2021\t3/20/2021\t\t\tread\t\t\t\t1\t0\n25095508\tHow to Write Short Romance Kindle Books: A Complete Guide to Kindle Publishing (Fast-Track Guides Book 1)\tMary Major\tMajor, Mary\t\t\t\t4\t3.93\tMaryMajorDigital\tKindle Edition\t243\t2015\t2015\t3/23/2021\t2/22/2021\t\t\tread\t\t\t\t1\t0\n42506310\tLeaving the Witness: Exiting a Religion and Finding a Life\tAmber Scorah\tScorah, Amber\t\t0735222541\t9780735222540\t0\t3.81\tViking\tHardcover\t288\t2019\t2019\t\t3/23/2021\tto-read\tto-read (#3)\tto-read\t\t\t\t0\t0\n33406197\tThe Good Daughter (The Good Daughter, #1)\tKarin Slaughter\tSlaughter, Karin\t\t\t\t4\t4.13\tWilliam Morrow\tKindle Edition\t528\t2017\t2017\t3/15/2021\t2/24/2021\t\t\tread\t\t\t\t1\t0\n53137893\tThe Wife Upstairs\tRachel Hawkins\tHawkins, Rachel\t\t1250245494\t9781250245496\t5\t3.72\tSt. Martin's Press\tHardcover\t290\t2021\t2021\t2/23/2021\t2/16/2021\t\t\tread\t\t\t\t1\t0\n54503905\tShare Your Stuff. I'll Go First.: 10 Questions to Take Your Friendships to the Next Level\tLaura Tremaine\tTremaine, Laura\tJenna Fischer\t0310359864\t9780310359869\t5\t3.9\tZondervan\tKindle Edition\t214\t2021\t2021\t2/23/2021\t2/9/2021\t\t\tread\t\t\t\t1\t0\n51541496\tLuster\tRaven Leilani\tLeilani, Raven\t\t0374194327\t9780374194321\t4\t3.5\tFarrar, Straus and Giroux\tHardcover\t227\t2020\t2020\t2/18/2021\t2/17/2021\t\t\tread\t\t\t\t1\t0\n43798285\tThe Institute\tStephen  King\tKing, Stephen\t\t\t\t5\t4.19\tScribner\tHardcover\t561\t2019\t2019\t12/26/2020\t12/3/2020\t\t\tread\t\t\t\t1\t0\n49099926\tParty of Two (The Wedding Date, #5)\tJasmine Guillory\tGuillory, Jasmine\t\t0593100816\t9780593100813\t5\t3.75\tBerkley\tHardcover\t312\t2020\t2020\t2/16/2021\t2/15/2021\t\t\tread\t\t\t\t1\t0\n52747169\tDon't Overthink It: Make Easier Decisions, Stop Second-Guessing, and Bring More Joy to Your Life\tAnne Bogel\tBogel, Anne\t\t1493421409\t9781493421404\t4\t3.87\tBaker Books\tKindle Edition\t187\t2020\t2020\t2/8/2021\t1/12/2021\t\t\tread\t\t\t\t1\t0\n50998096\tTroubles in Paradise (Paradise, #3)\tElin Hilderbrand\tHilderbrand, Elin\t\t0316435589\t9780316435581\t4\t3.94\tLittle, Brown and Company\tHardcover\t352\t2020\t2020\t2/4/2021\t2/2/2021\t\t\tread\t\t\t\t1\t0\n45289222\tWriters & Lovers\tLily King\tKing, Lily\t\t\t\t4\t3.99\tGrove Press\tHardcover\t320\t2020\t2020\t1/31/2021\t1/21/2021\t\t\tread\t\t\t\t1\t0\n43884998\tWhat Happens in Paradise (Paradise, #2)\tElin Hilderbrand\tHilderbrand, Elin\t\t0316426075\t9780316426077\t4\t4.03\tLittle, Brown and Company\tHardcover\t432\t2019\t2019\t1/18/2021\t1/12/2021\t\t\tread\t\t\t\t1\t0\n52129515\tUntamed\tGlennon Doyle\tDoyle, Glennon\tGlennon Doyle Melton\t1984801252\t9781984801258\t4\t3.98\tThe Dial Press\tHardcover\t333\t2020\t2020\t1/16/2021\t12/29/2020\t\t\tread\t\t\t\t1\t0\n45865963\tMy Dark Vanessa\tKate Elizabeth Russell\tRussell, Kate Elizabeth\t\t0062941526\t9780062941527\t5\t4.1\tWilliam Morrow\tKindle Edition\t395\t2020\t2020\t1/11/2021\t1/5/2021\t\t\tread\t\t\t\t1\t0\n38472072\tWinter in Paradise (Paradise #1)\tElin Hilderbrand\tHilderbrand, Elin\t\t\t\t4\t4.08\tLittle, Brown and Company\tKindle Edition\t321\t2018\t2018\t1/3/2021\t12/29/2020\t\t\tread\t\t\t\t1\t0\n53341603\tIn a Holidaze\tChristina Lauren\tLauren, Christina\t\t\t\t4\t3.65\tGallery Books\tKindle Edition\t336\t2020\t2020\t12/29/2020\t12/12/2020\t\t\tread\t\t\t\t1\t0\n53867504\tLeave the World Behind\tRumaan Alam\tAlam, Rumaan\t\t0062667653\t9780062667656\t3\t3.14\tEcco\tKindle Edition\t256\t2020\t2020\t11/22/2020\t10/19/2020\t\t\tread\t\t\t\t1\t0\n43982428\tEverything is Figureoutable\tMarie Forleo\tForleo, Marie\t\t0525534997\t9780525534990\t5\t3.97\tPortfolio\tHardcover\t304\t2019\t2019\t11/2/2020\t10/20/2020\t\t\tread\t\t\t\t1\t0\n40804359\tDuma Key\tStephen  King\tKing, Stephen\t\t\t\t4\t3.99\tScribner\tKindle Edition\t790\t2008\t2008\t10/20/2020\t9/23/2020\t\t\tread\t\t\t\t1\t0\n45163258\tSuch a Fun Age\tKiley Reid\tReid, Kiley\t\t0525541926\t\t5\t3.77\tG.P. Putnam's Sons\tKindle Edition\t320\t2019\t2019\t10/3/2020\t9/14/2020\t\t\tread\t\t\t\t1\t0\n149267\tThe Stand\tStephen  King\tKing, Stephen\tBernie Wrightson\t\t\t0\t4.35\tDoubleday Books\tHardcover\t1152\t1990\t1978\t\t9/23/2020\tto-read\tto-read (#2)\tto-read\t\t\t\t0\t0\n50396242\tThe Lazy Genius Way: Embrace What Matters, Ditch What Doesn't, and Get Stuff Done\tKendra Adachi\tAdachi, Kendra\tEmily P. Freeman\t\t\t4\t4.11\tWaterBrook\tebook\t221\t2020\t2020\t9/20/2020\t9/1/2020\t\t\tread\t\t\t\t1\t0\n52195151\tThe Vanishing Half\tBrit Bennett\tBennett, Brit\t\t\t\t4\t4.12\tRiverhead Books\tKindle Edition\t350\t2020\t2020\t9/14/2020\t9/1/2020\t\t\tread\t\t\t\t1\t0\n50265329\tThe Book of Two Ways\tJodi Picoult\tPicoult, Jodi\t\t198481835X\t9781984818355\t0\t3.66\tBallantine \tHardcover\t416\t2020\t2020\t\t9/1/2020\tto-read\tto-read (#1)\tto-read\t\t\t\t0\t0\n30812840\tThe Universe Has Your Back: Transform Fear to Faith\tGabrielle Bernstein\tBernstein, Gabrielle\t\t1401952011\t9781401952013\t3\t3.99\tHay House LLC\tKindle Edition\t201\t2016\t2016\t9/1/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n25574782\tPretty Girls\tKarin Slaughter\tSlaughter, Karin\t\t0062430874\t9780062430878\t4\t4\tWilliam Morrow\tPaperback\t432\t2015\t2015\t6/10/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n40364332\tInheritance: A Memoir of Genealogy, Paternity, and Love\tDani Shapiro\tShapiro, Dani\t\t1524732710\t9781524732714\t5\t3.89\tKnopf\tHardcover\t252\t2019\t2019\t1/11/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n51022071\tCatch and Kill: Lies, Spies, and a Conspiracy to Protect Predators\tRonan Farrow\tFarrow, Ronan\t\t0316454133\t9780316454131\t4\t4.4\tLittle, Brown and Company\tHardcover\t608\t2019\t2019\t1/23/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n44891473\tThe Gifted School\tBruce Holsinger\tHolsinger, Bruce\t\t0525534970\t9780525534976\t4\t3.71\tRiverhead Books\tPaperback\t560\t2020\t2019\t2/22/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n37570546\tMaybe You Should Talk to Someone: A Therapist, Her Therapist, and Our Lives Revealed\tLori Gottlieb\tGottlieb, Lori\t\t1328662055\t9781328662057\t5\t4.37\tHarper\tHardcover\t415\t2019\t2019\t3/3/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n42201100\tThree Women\tLisa Taddeo\tTaddeo, Lisa\t\t1451642296\t9781451642292\t4\t3.71\tAvid Reader Press \tHardcover\t306\t2019\t2019\t3/21/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n41057294\tNormal People\tSally Rooney\tRooney, Sally\t\t1984822179\t9781984822178\t4\t3.81\tCrown\tHardcover\t273\t2019\t2018\t5/4/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n51918673\tTiny Imperfections\tAlli Frank\tFrank, Alli\tAsha Youmans\t0593085027\t9780593085028\t3\t3.69\tG.P. Putnam's Sons \tPaperback\t322\t2020\t2020\t6/29/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n52951550\tSorry I Missed You\tSuzy Krause\tKrause, Suzy\t\t1542010195\t9781542010191\t3\t3.64\tLake Union Publishing\tKindle Edition\t313\t2020\t2020\t8/4/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n52909027\tThe Lies That Bind\tEmily Giffin\tGiffin, Emily\t\t0399178953\t9780399178955\t3\t3.76\tBallantine Books\tHardcover\t352\t2020\t2020\t8/29/2020\t8/30/2020\t\t\tread\t\t\t\t1\t0\n\n\n\nTask:\n\n\nBased on this reading log, identify the distinct \"eras\" of my reading habits since I started keeping this log on GoodReads. Based on what you see in these eras, what major life events or transitions might correspond to my reading.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/gamelog/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_6.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/gamelog/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/gamelog/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 11"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/gamelog/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should explicitly identify at least two distinct eras of reading habits based on the provided log. For example, it could identify an era focused on thriller novels and another focused on self-help and parenting books.",
+        "The response should propose major life events or transitions that logically correspond to the identified reading eras. For example, it could suggest that a sudden shift toward books about motherhood and marriage indicates starting a family.",
+        "The response should recognize novel genres and logically associate them with personal emotions or experiences. For example, the response should identify that Stephen King novels are Horror themed and attribute a life experience with a similar tone."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/gamelog/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/gamelog/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should explicitly identify at least two distinct eras of reading habits based on the provided log. For example, it could identify an era focused on thriller novels and another focused on self-help and parenting books.",
+          "The response should propose major life events or transitions that logically correspond to the identified reading eras. For example, it could suggest that a sudden shift toward books about motherhood and marriage indicates starting a family.",
+          "The response should recognize novel genres and logically associate them with personal emotions or experiences. For example, the response should identify that Stephen King novels are Horror themed and attribute a life experience with a similar tone."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/gamelog/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_6.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/gamelog/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/gamelog/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 11"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/gamelog/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

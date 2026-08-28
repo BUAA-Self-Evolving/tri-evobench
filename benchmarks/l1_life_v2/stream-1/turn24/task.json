@@ -1,0 +1,342 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_1",
+  "turn_id": "turn24",
+  "turn_index": 24,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "edc173ae-e07b-3d23-4f4b-57ee884d8c51",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 386,
+    "source_sha256": "df0e557ddedf92648b55a2909ad1090d86a9a71b29e82f5014d04f324461284b",
+    "source_metadata": {
+      "task_id": "edc173ae-e07b-3d23-4f4b-57ee884d8c51",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Group Conversations & Meeting Transcripts"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Jessica\nWe are stuck here at home this year.\n11/21/25, 11:55 AM\nJessica\nCamerons suit for christmas\n[photo]\n[photo]\nWas thinking 5hid for brooklyn\nJessica\nThis\n11/21/25, 2:03 PM\nRobin\nVery pretty\n11/21/25, 2:21 PM\nYou sent\nnice\n11/23/25, 12:46 AM\nYou sent\nLook who carries Thrifty ice cream now !\n[photo]\nRobin\nOh, you like?\nYou sent\nYes! They carry my favorite: chocolate malted crunch.\nYou sent\nWhy the flip does nobody make pineapple sherbet anymore?\n11/23/25, 6:41 AM\nRobin\nPretty sure Safeway select does\nRobin\nWe get it at Vons\n11/23/25, 10:52 AM\nJessica replied to you\nI told you this....I saw it at the neighborhood store\nYou sent\nOh, I guess I didn't realize what neighborhood store was.\n11/23/25, 3:50 PM\nRobin\n[video]\n11/23/25, 7:03 PM\nYou sent\nRobin, Brooklyn says you're going to move to Vancooter.\n11/23/25, 8:39 PM\nRobin\n[laughing emoji]\n11/24/25, 6:50 PM\nYou sent\nHa ha. The Black Friday deal is no better than what I paid.\n[photo]\n11/24/25, 8:39 PM\nRobin\n[photo]\nI don’t have an extra hundred dollars to have the watermark removed so this will have to do\nYou sent\nI kind of thought she looked like me, to be honest.\nRobin\nHahaaaa yep\nYou sent\nWow! So that's my princess look. It's perfect.\nJessica replied to Robin  · \nEdited\nShe doesn't answer any of my messages.\nYou sent\nunvo?\nRobin\n?\nRobin\nShe messaged me to call her because she lost my phone number\nRobin\nAnd she hasn’t been up to being on the Internet very much\nYou sent\nThen how did she message you?\nRobin\nShe wanted me to tell you guys to call her so that she could get your phone numbers\nRobin\nI think she’s just getting on the Internet only as much as she needs to to update people\nRobin\nI only spoke to her for a short while as it was because she doesn’t have much energy\nYou sent\nOk, she messaged you on Messenger? Ok.\nYou sent\nHow did you make that picture? AI, right?\nRobin\nYes\nRobin\nYes\nYou sent\nIt's so cute.\nRobin\n[photo]\n[photo]\nBrooklyn is going to love that!\nYou sent\nShe should have those hanging in her room.\nRobin\nTrying to make one of Jessi, but I’m trying to find a good picture\nYou sent\nWhere's yours?\nRobin\nHaven’t made one yet\nYou sent\nWhy does it cost so much to take the watermark off? Is it a year-long subscription?\nRobin\nNo, it’s not a subscription. You can actually buy the portrait and they take the watermark off and send you a gallery level portrait.\nYou sent\nBut they want a hundred dollars each?\nRobin\nYep\nYou sent\nouch\nYou sent\nWere I rich, it would be worth it.\nRobin\n[photo]\nThat looks like Sandra Bullock.\nYou sent\nWho is that?\nRobin\nJessi\n[photo]\nYou sent\nI like the composition in that one better, but Jessi likes deep red and royal blue.\nRobin\n[photo]\nYou sent\nThat one's pretty. And that was her hair color as a young girl.\nRobin\n[photo]\nYou sent\nThat one's really cool.\nYou sent\nI never realized how much she looks like Sandra Bullock.\nYou sent\nWhere's yours?\nYou sent\nHow about the boys?\nRobin\n[photo]\nYou sent\nOh, I love that.\nRobin\nTakes a while.. working on them\n[photo]\nIs that me?\nYou sent\nIt's nice, but I think it works better for you because my head's too big for the body in that one.\nRobin\nProbably just cause of the photo used\nRobin\nI still like it for you\n[photo]\nHere’s a slightly different version using the same photo\nRobin\nMore cartoonish\nRobin\n[photo]\n[photo]\n[photo]\nYou sent\nYeah, I liked it, too. But I thought it was perfect for you.\nRobin\n[photo]\nYou sent\nThe last one is really nice, too. The blue. The gold is also nice.\nYou sent\nAww, Cameron the Scotsman.\nRobin\n[photo]\n[photo]\n[photo]\nYou sent\nIs Liam the little duke?\nYou sent\nJessi's is beautiful!!\nYou sent\nMaybe this is more how we'll look in heaven.\nYou sent\nI hope she sees these.\nRobin\nMe too\nRobin\nI feel like that last one with her in the red looks like her a lot\nYou sent\nagreed\nYou sent\nand it's stunning\nYou sent\nI just worked on a task for nearly three hours and then had tech issues and couldn't submit my work.\nRobin\n[photo]\nYikes that’s aweful. I’m sorry\nYou sent\nWho was that supposed to be?\nRobin\nCarlos \nYou sent\nm'k\nYou sent\nIf you say so.\nRobin\n[photo]\nPicture off his facebook\nYou sent\nmuch better\nYou sent\nAnd I can see the resemblence.\nYou sent\nDo you have Matt?\nRobin\n[photo]\nYou sent\nThe heck?\nYou sent\nWho is that?\nRobin\nCarlos\nYou sent\nI hope that's not supposed to be Dad.\nYou sent\nWhat about Matt?\nRobin\nWorking on it\nYou sent\nok\n11/24/25, 11:19 PM\nRobin\n[photo]\nFinally found a photo of Matt that it would accept\nYou sent\nThat's a great one.\nRobin\nUnreal how much he looks like Arthur in this photo\nYou sent\nThat's a really good one of Matt.\nYou sent\nThe website says they're $40, though.\nRobin\n[photo]\nYou sent\nThat one's good, too, but I like the first one better.\n11/24/25, 11:44 PM\nRobin\nCost depends on size.\nRobin\nAnd Black Friday prices\nYou sent\nYeah, I saw that.\nYou sent\nOh well.\n11/25/25, 12:33 PM\nRobin\n[photo]\nTrying to bring this nastiness back!\n11/25/25, 1:31 PM\nYou sent\new\n11/25/25, 6:33 PM\nJessica\nThe dress i got Brooklyn for christmas\n[photo]\n11/26/25, 6:31 AM\nRobin\nWow!!\nRobin\nI want pics!!\n11/26/25, 5:40 PM\nRobin\n[photo]\nFound this at Costco for $20! ITS REAL!!!!!!\nRobin\nSmells so good\nRobin\nI put it on the inside so we can enjoy the smell\n11/26/25, 7:07 PM\nJessica\n[photo]\nEthan took his dreadlocks out.I'm so happy\n11/26/25, 7:30 PM\nRobin\nI like his hair!\n11/27/25, 1:21 AM\nJessica\n[video]\nYou sent\nThis is why I choose my own style and don't follow trends.\n[photo]\n11/27/25, 9:00 AM\nRobin\n[photo]\n11/27/25, 12:20 PM\nYou sent\noh no\n11/27/25, 12:42 PM\nRobin\n[photo]\nHappy thanksgiving\n12/4/25, 5:02 PM\nRobin\n[video]\nYou sent\nAre you particularly down this holiday season? You've never focused so much on alcoholic beverages.\nRobin\nlol\nRobin\nI thought that was sprite\nRobin\nI like the idea,\nYou sent\nYeah, it's pretty. I don't want twigs and their micro-vermin in my drink, though.\n12/6/25, 3:07 PM\nRobin\n[video]\n12/6/25, 3:57 PM\nYou sent\nI want Bette Davis's dress!\n12/7/25, 4:42 PM\nRobin\nThat would be pretty on you\nRobin\nI like Brigitte Bordot\n12/7/25, 5:10 PM\nYou sent\nThat was my second favorite.\n12/7/25, 9:27 PM\nRobin\n[photo]\nHomemade pot pie tonight\nYou sent\nI made turkey.\nYou sent\nIt was easy. \nI put it in the oven and went to sleep.\nWoke up, and BAM. Turkey jerky.\nRobin\nOh, leftovers?\nRobin\nThat’s hilarious\nYou sent\nNo, I've had a turkey I bought a while ago. It was in the fridge over a week, but it took forever to thaw. In fact, there was still ice on it when I put it in the oven.\nRobin\nI’m having images of Chevy Chase eating their overdone turkey\nYou sent\nIt's fine. I took its temp right away and it kept saying 90-96 degrees. I couldn't figure out why. Then I saw it was set to Celsius.\nYou sent\nI just use it in soup or tacos anyway.\nRobin\n[video]\nThe part where he tries to chew it lol\nYou sent\nI ate the turkey neck first. It was good.\nRobin\nDid the turkey I made you turn out OK though?\nYou sent\nYep. Been making tacos.\nRobin\nOk cool\n12/8/25, 9:32 PM\nYou sent\nRobin, are you planning on coming back any time soon? You forgot the Christmas tree.\n12/8/25, 10:17 PM\nRobin\nDidn’t have anything planned. When did you need it picked up?\nYou sent\nI just thought you wanted it. Christmas is coming up fast. Like, shockingly fast.\nYou sent\nIt's amazing how fast it comes when you're not watching for that pot to boil.\nRobin\nTruely\nYou sent\nAnd I want to move by Feb. 1st.\nYou sent\nat the latest.\n12/10/25, 5:44 PM\nYou sent\nThey're trying to evict me. [angry emoji]\nRobin\n[surprised emoji]\nRobin\nWhy??\nYou sent\nThey want me to pay an illegal late fee that I thought was settled back in August.\nYou sent\nI've already been inquiring at apartments up north, but it's still annoying.\n12/10/25, 6:29 PM\nYou sent\nI need to get my car fixed so I can drive up there asap.\nYou sent\nI've had my weather app on my phone set to Portland for a long time now and I've always felt jealous when it would rain. Soon I'll get to revel in it.\n12/10/25, 7:14 PM\nRobin\nI’m a little jealous you’re going\nYou sent\nWell, your lease will be up just a few months later.\nRobin replied to you\n?\nRobin\nJune\nYou sent\nYeah. It'll go by fast.\n12/10/25, 9:50 PM\nRobin\n[photo]\nCaught red handed\nYou sent\nDo you know what you're doing for Christmas?\nYou sent\nThere are only two weeks left.\nYou sent\nI've literally bought 1.1 gifts.\nRobin\nI work Christmas Eve so we are staying home\nRobin\nPlaying it low key\nRobin\nCrafts and cooking at home\nYou sent\nShould Jessi and I come over there if she wants to?\nRobin\nI’ve noticed prices for things on Amazon and Walmart, etc. had temporarily increase their prices so that when they had black Friday sales, it was really just regular prices. I have an app that trends prices so there you go.\nRobin\nThat would be nice if you guys want to you’re more than welcome to come on over.\nRobin\nI’m off for the 21st, 22nd and 23rd as well\nEdited\nBut the 21st is my anniversary\nYou sent\nAre you off the 25th?\nRobin\nYes\nYou sent\ngood\nRobin\nI get home Christmas morning\nYou sent\nThat would have been too hard.\nYou sent\nTo be honest, flying out of Portland would be much faster than driving from Southern Oregon.\nYou sent\nOr driving up to Portland to fly.\n12/11/25, 5:02 PM\nRobin\n[video]\nNow I know what Matt’s been doing up all night every night\n12/12/25, 2:36 AM\nYou sent\nHere's a project for you, Robin.\n[video]\n12/12/25, 4:21 AM\nRobin\nCool\n12/12/25, 6:50 PM\nYou sent\nYes, I want to go to your house for Christmas.\n[photo]\nHowever, it remains to be seen whether I can go because, instead of paying for a battery, my landlord is trying to extract a bogus late fee.\nYou sent\nI'm sure it'll work out, though. I need my car, anyway.\n12/12/25, 10:57 PM\nRobin\nI sure hope it rains. It’s been hot here in the low 80/\nYou sent\nI guess I can bring the Christmas tree...if it fits.\nRobin\n[photo]\nYou sent\nI know, but look at Christmas time. It rains by you for several days in a row.\nRobin\nI would be elated if it rains\nYou sent\nDid you see what I posted?\nRobin\nYes\nYou sent\nIt's usually accurate, down to the hour.\nRobin\nAwesome!!\nYou sent\nand a relief\nYou sent\nI'm so excited about living where rain isn't an urban myth.\nRobin\nI’m happy for you\nYou sent\nYeah, I just wish I didn't feel like I was being pushed out.\nYou sent\nAnd I need things to come together.\n12/17/25, 11:07 PM\nRobin\nYou were right. It’s gonna rain 24,25,26\n12/17/25, 11:39 PM\nYou sent\nLooks like your place is the cabin this year.\n12/18/25, 12:47 AM\nRobin\nIt will be good to just stay home for a change.\nRobin\nWallet friendly\n[photo]\nOur meager tree this year\nYou sent\nIs it real?\nRobin\nLiam already took it down once\nRobin\nNo fake\nWe decorated another ways. Lights are all down the hallway, but they’re not on right now.\n12/18/25, 6:29 AM\nYou sent\nSorry you didn't get the tree from my house.\n12/18/25, 11:34 AM\nRobin\nNo worries. We have a bigger one but I didn’t want to unpack it and lug it in\nRobin\nThis size suits our apartment just fine\n12/18/25, 1:03 PM\nRobin\n[photo]\nI think it’s pretty with the lights on\n12/18/25, 1:57 PM\nRobin\n[video]\nChinese company, toxins\n12/18/25, 2:35 PM\nRobin\nBeautiful. Thought of you jenny\n[video]\nYeah, I've seen that before. Very pretty.\n12/19/25, 1:38 PM\nRobin\nIt’s gonna snow on Christmas in Vancouver. It’s a sign \nYou sent\nIt’s time to go home.\n12/19/25, 2:58 PM\nYou sent\nAre we going to have Fence-Hopper Penne for Christmas dinner once you move?\n[video]\n12/20/25, 2:22 PM\nYou sent\nThis is what I'm missing out on.\n[photo]\nRobin\nNot for long though\nYou sent\ntrue\nYou sent\nI've been looking in the Sandy area for a long time now and it gets more snow than Portland.\n12/20/25, 5:01 PM\nYou sent\nWe're going to stay out here for Christmas.\nRobin\nNo worries\nRobin\nWe plan to come out there on the 23rd\nRobin\nFor a small get together\nYou sent\noh\n12/21/25, 10:48 AM\nYou sent\nI just heard Brooklyn get fed up with Cameron's crap and announce, \"OK, I'm done.\"\n12/24/25, 12:33 AM\nJessica\n[photo]\nPrincess Diana replica.... he bought a ring.\nJessica\nI love it so much\nJessica\nAnd yes... I got in a fight with debbies stairway.... it won\n12/24/25, 3:48 PM\nRobin\n[video]\nYou sent\nBrooklyn keeps asking when you're coming.\nRobin\nAwe\n12/28/25, 1:52 AM\nRobin\n[video]\nCome visit me at Muddy River!\n12/28/25, 9:21 AM\nRobin\nI thought for sure you’d bust up laughing at that \nRobin\nI just about died of laughter when I saw it.\n12/28/25, 9:47 AM\nYou sent\nI just now saw it.More rain coming for new years\n12/29/25, 6:29 AM\nRobin\n\n12/29/25, 7:20 AM\nYou sent\nI saw that!\nYou sent\n[tea emoji]\n12/30/25, 10:45 AM\nYou sent\n[link]\n12/30/25, 12:35 PM\nRobin\nCool\n12/30/25, 12:58 PM\nYou sent\nThey have a lot of beautiful ones, esp. Christmas ones.\nYou sent\nI don't know if they're really quilts, though, instead of just being printed.\n12/30/25, 1:42 PM\nRobin\nNo, not traditional quilts, but has the quilted stitching. Just not pieced together and is very thin. Might me a type of microfiber.\n12/30/25, 4:28 PM\nYou sent\nHow do you know?\n12/30/25, 4:58 PM\nRobin\nI have 2\nRobin\nBut the ones I have were from Wayfair so I think it might just be similar. I don’t know if it’s the same textile or not.\nJan 1, 2026, 12:28 AM\nRobin\nHappy new year!!!\nJan 1, 2026, 2:33 PM\nYou sent\n[video]\nTrump dancing\nJan 4, 2026, 11:13 AM\nYou sent\nOn the 10th day of Christmas…\nJan 4, 2026, 11:33 PM\nYou sent\n[video]\nFinally! This is my era! Time for me to finally buy a house.\nJan 7, 2026, 6:42 AM\nRobin\nJanuary 6th..\n\nFive years ago.  I remember the crowds, the singing, the joy.  I remember talking with old Chinese women, (several of them) who had tears in their eyes, begging us native born Americans not to surrender to socialism and communism.  I remember thinking, \"I have never seen so many people in one place at one time.\"  Honestly, it was shoulder-to-shoulder.  I remember singing \"God Bless America\" near the scaffolding on the western steps of the capitol.  I remember seeing nuns, boys scouts, families, veterans, and a very jovial bunch of South Carolinians drinking, (I think), pirated mint juleps. \n\nI remember getting pepper-sprayed, even though I did nothing to deserve it.  I didn't resent the capitol police, even with the one fat guy who appeared to enjoy dousing the crowd from a kind of pepper-spray super-soaker.  I can remember one protestor getting milk poured in his eyes and begging to be relieved from the pain.  It was like any boisterous First Amendment protest I've ever attended.  I counted it a good day.  From where I was standing, I couldn't see any of the altercations near the entrances to the capitol.  \n\nWhen I got back to my hotel, I witnessed the limited incidents of violence CNN played on a continuous loop.  I stuck around in DC for a few days and began to sense I was considered an \"insurrectionist\" merely for being there.  I thought to myself \"no reasonable jury could convict people merely for protesting, right?  They didn't crack down on the BLM protesters who forced the president into the bunker, right?\"\n\nBoy, was I naive.  When I returned home, Sarah said she felt threatened.  An anonymous chat window correspondent hoped that all the Smiths would be burned alive in their homes.  When I reported it, the detective was more interested in my activities in DC. One wife of a local law enforcement officer kept wondering if I was \"okay.\"  (I kept thinking to myself, 'does she know something I don't?\")  \n\nA friend I met after the event told me an FBI SWAT team pointed red laser target dots at his chest, forced him to sit outside in the cold, while his 12 year old daughter remained inside during the search.  He was sworn at, abused, and ultimately subjected to three years of prosecution and prison.  He never went inside the building.  He gave first aid to people who were wounded by the capitol police.  He was pardoned by President Trump, like all the others, because it really was a modern day witch hunt.\n\nAn inside source told me that in Southern California, all of the FBI people who participated in the persecution of the J6 political prisoners have been \"walked out of the building.\" I don't know if that's true, but I can hope.  Political law enforcement means the end of the republic.\n\nPraise God it's over.  Even if you hate everything about the J6 protestors, you really should ask yourself, \"do I want to live in a country where justice changes with every election.\"\nJan 8, 2026, 6:31 PM\nJessica\nHe surprised me with my favorite flowers\n[photo]\nYou sent\n[tea emoji]\nJessica\nNo no\nJessica\n[tea emoji]\nJessica\nThat's a cup of coffee\nYou sent\nIt's tea to me. Cheers!\nJessica\nEnglish breakfast\nYou sent\nof course\n[smiling emoji]\nJan 8, 2026, 8:40 PM\nRobin\nI’ve found that a really good quality tea can rival a cup of coffee\nJan 9, 2026, 10:26 AM\nRobin\n[photo]\nThis I will see\nRobin\nPut a rainbow horn on it and I’m sold!\n[video]\nJan 9, 2026, 2:27 PM\nRobin\n[photo]\n[crying emoji]\nJanuary\nJan 9, 2026, 3:21 PM\nYou sent\n[photo]\nThis time next year, this is what I'll be looking at.\nJan 10, 2026, 6:48 AM\nRobin\nIt’s already January. Next year? Ate you postponing the move?\nJan 10, 2026, 9:40 AM\nYou sent\nNo\nJan 11, 2026, 3:43 AM\nRobin\n[video]\nYou sent\nYes, I know.\nYou sent\nBeen wanting to look into how to make cheese .\nJan 11, 2026, 7:41 AM\nRobin  · \nEdited\nThere we’re some interesting comments below the video regarding Rennet and how it’s pretty much GMO and all the cheeses now and so it’s better off making your own\nEdited\nRennet is pretty much owned by Pfizer apparently\nJan 11, 2026, 9:04 AM\nYou sent\nYes\nJan 11, 2026, 1:53 PM\nYou sent\nNew surreal moment unlocked: Cameron crying hysterically because Brooklyn won't stop singing.\nJan 11, 2026, 8:27 PM\nJessica\n[photo]\nJan 13, 2026, 2:25 AM\nYou sent\n[video]\nJan 13, 2026, 8:16 AM\nRobin\nCouple of them made me chuckle\nYou sent\nThe grass is always greener on the other side. You were unhappy out here.\nRobin\nYes, but I think part of that was just because I really disliked our Landlord and was stressed out all the time. Somehow things feel different now and living out in. Yucaipa feels a little bit isolating.\nRobin\nI thought being this far out we would go to the beach more maybe but I feel like we go even less now\nRobin\nThe commute is totally taking a toll on the truck. There’s just so many reasons\nYou sent\nk\nYou sent\nIt's a chance to really make a change, though.\nRobin\nIf we could get a house with a backyard then maybe we can get like a 10 x 13 he or she shed and have some raised beds around there and have more of an opportunity to garden. I figure the gardening season is fall through spring here.\nRobin\nMaybe plant some of our trees too\nEdited\nBut we will see because we are not 100% wanting to come back here.\nYou sent\n[link]\nRobin\nI don’t have my bachelors degree\nRobin\nAnd when we have the means to get our forever home, we plan on touring the country for at least a few months or more more likely to get a feel of where we wanna end up\nRobin\nI kinda have a dream that Matt would go to UDub\nRobin\nI think he would be really happy there\nRobin\nBut it doesn’t feel like we’re really living where we are right now we’re just existing\nYou sent\nDoes he have a regular diploma or a special ed diploma?\nRobin\nNot sure, but I think it’s a regular diploma\nYou sent\nDo you know his GPA?\nRobin\nMatt absolutely loves the cold and the rain. When I toured you dub in high school and toured their dentistry department that was where my interest in dentistry started.. lots of aviation opportunities up there\nRobin\nBut I think maybe coming back here to the desert would be a good start for him\nRobin\nGet acclimated to having his first job and starting some community college classes nearby\nRobin\nThen, maybe in the future think about going up there\nJan 13, 2026, 3:02 PM\nYou sent\nExactly what I had been contemplating last night when thinking about my relocation trip.\n[video]\nJan 14, 2026, 6:33 AM\nRobin\n[link]\nUncle Bob wrote a book! How cool!\nJan 14, 2026, 6:55 AM\nRobin\n[photo]\nOur nectarine tree thinks it’s spring\n[photo]\nStill getting tomatoes. Crazy..\nJan 14, 2026, 1:19 PM\nRobin\n[photo]\nReminds me of you, jenny, when you were a kid…. Photos of you\nYou sent\nThat's soon to be me.\nRobin\nlol\nYou sent\nhuh\nYou sent\nI don't remember ever doing that.\nRobin\nI think it kinda looks like you\nYou sent\noh ok\nRobin\nNo. Just photos of you in the snow\nRobin\nJust reminds me of you… she kinda looks like you if you ask me.\nJan 17, 2026, 12:17 AM\nYou sent\n[photo]\nOh my gosh, I must have been so tired!!\nRobin\nLmbo\nYou sent\nWhat's worse, I don't even remember this video.\nRobin\nToo funny\nJan 19, 2026, 6:05 PM\nRobin\nDid you feel the earthquake?\nWed 5:42 PM\nRobin\nyep, close to us\nYou sent\nfreaked the kids out\nJan 20, 2026, 12:23 AM\nRobin\nAnother quake\nYou sent\nWhere?\nYou sent\nGet prayed up. We're at the precipice of stuff going down.\nYou sent\nA whole bunch in the dame spot as earlier and a new one over 4.0 near Joshua Tree.\nThat gave me $50 off a car battery.\nYou sent\nIt just won't allow for delivery.\nJan 21, 2026, 1:51 PM\nYou sent\nSome are saying a 6.0 or 7.0 will probably hit this week. I wish I could leave.\nJan 21, 2026, 2:07 PM\nBunch of bees attacking our nectarine tree. 💕\nRobin replied to you\nI hope I’m not there when it happens. Geez\nYou sent\nThey all keep hitting in the exact same place.\nRobin\nIndio Hills in sky Valley\nRobin\nThe Hills over by Oakwood, but more towards the Mountain\nThe bees are good for the tree. It means you'll probably get fruit.\nRobin\nYeah, that’s why I’m jazzed about it\nYou sent\nOK, I wasn't sure.\nYou sent\nI thought that was a cherry tree.\nYou sent\nI guess they look the same.\nJan 21, 2026, 3:20 PM\nRobin\nWe got hit wilth a pretty big one in Palm Springs around 2000 or 2001. I remember the water in the pool creating pretty big waves splashing out the sides.\nYou sent\nI was concerned you might be working if one hits. I'm concerned for Jessi and the kids, too, but I've prayed over you guys.\n[video]\nQuake history Palm Springs\nYou sent\nWe've had two over 4.0 in the last two days.\nWhen we had just moved to the Palm Springs house in the summer of 99\nRobin\nI’m sure one of those was the one where the pool water was trying to escape the pool\nYou sent\nI found out I can use my car to tow a trailer to move my stuff, so I'm calling apartments around Portland.\nRobin\nLol\nRobin\nUr too funny\nYou sent\nWhat?\nRobin\nI can see the cloud of dust behind you and you peel outta faster than yesterday\nYou sent\nlol\nRobin\nI have a colleague saying she so so so much regrets selling her condo in Portland and wishes she could go back. Was encouraging me to follow my dream of moving up there\nYou sent\nI would second that notion.\nRobin\ncascadia subduction zone\nYou sent\nWhat about it?\nRobin\nOf COURSE it would lie right along the most desirable places to live\nYou sent\nI know the entire west coast, including Alaska, are on the Ring of Fire.\nRobin\n[video]\nThat's true of the entire west coast.\nYou sent\nPortland isn't even on the coast.\nRobin\nRiver can rise\nRobin\nI wonder how far a 100 foot wave would reach inland though\n[video]\nThat earthquake was 190 miles west of the coast.\nYou sent\nThere are going to be a few big ones, one being over an 8.0. One in California, one in Alaska, and one in New York.\nRobin\nMt hood is an active volcano 🤔\nYou sent\nSo is Mt. St. Helens, close to Vancouver. So is Mt. Rainier. Are you trying to talk yourself out of it?\nRobin replied to you\nMy Rainer too far\nRobin\nMy hood 50 miles from Portland\nYou sent\nuh huh\nRobin\nInactive volcano in Portland proper\nYou sent\nI know.\nRobin\nJust noting I don’t want to be too close to hood\nRobin\nI’d rather he higher elevation in Vancouver than lower elevation in Portland area\nYou sent\nThat volcano that's expected to erupt is 300 miles off the coast. And underwater.\nJan 21, 2026, 4:57 PM\nRobin\n[video]\nGood video\nRobin\nMaybe camas is for me 🤷🏻‍♀️\nEdited\nI can't watch it. I'm working 14 hours each day.\nNo prob\nEdited\nBy the way, I heard that if you buy an ounce of silver from the government, it costs around $175 (I forgot the exact number), meaning that's the actual price of silver right now (the spot prices are being manipulated).\nJan 21, 2026, 7:41 PM\nYou sent\nYou are near the San Andreas Fault and the Coachella Valley segment, which is considered one of the most overdue sections for a major rupture\nThe recent swarm activity is occurring in an area of significant seismic concern\nA 6.0–7.0 is plausible given the swarm behavior—while swarms don't always precede large quakes, this area's history warrants serious preparation\nThe Coachella segment hasn't ruptured since ~1680—over 300 years of built-up strain\nYou sent\nLocal Hazards\nLiquefaction risk: The Coachella Valley has sandy, alluvial soil that can behave like liquid during strong shaking\nLandslide risk: Indio Hills themselves are loose, ancient lakebed sediment—steep areas nearby could slide\nInfrastructure: The Coachella Canal and irrigation systems could be disrupted, affecting water supply\nExtreme heat: If this is happening now (desert climate), loss of power means loss of AC—have water and a plan to get to cooler areas\nLimited exits: Depending on your exact location, road options out of the valley could be affected by landslides or overpass damage on the I-10\nJan 21, 2026, 8:32 PM\nYou sent\nRoad trip, anyone?\nJan 22, 2026, 9:04 PM\nYou sent\nIt snowed in Portland today.\nJan 23, 2026, 4:34 PM\nWhat else do you want to do?\nRobin\nTeach kindergarten\nRobin\nMaybe\nRobin\nOr homestead\nRobin\nI like the idea of being off during the summer and still having insurance\nYou sent\nWell, if you want to get your degree in elementary education, you'd probably be looking at 2.5 years.\nYou sent\nBut the pay isn't good.\nI thought medicine was your love.\nRobin\nIt’s the hours and being around kids that attract me\nRobin\nPerhaps I could do school nursing 🤔\nRobin\nWe shall see\nYou sent\nTeachers usually work a lot more hours than people realize. Planning lessons takes a very long time, for example.\nRobin\nI doubt it’s worse than working 13 hours a day. I just want to go to days and I don’t wanna be gone the whole day to the point where I don’t see my family.\nYou sent\nok\nRobin\nMaybe I’ll just go work part-time at Starbucks again ha ha\nYou sent\nI understand. Keep in mind that it's normal for teachers to work evenings and weekeneds.\nRobin\nI really enjoyed working there\nEdited\nToyed with the idea of driving school buses again too\nYou sent\nWell, if you're financially independent.\nYou sent\nYou can do that.\nYou sent\nThe job where I was the happiest, aside from writing, was working at the bookstore.\nRobin\nQi feel you\nJan 23, 2026, 5:28 PM\nYou sent\nSilver spot price $103.26\nJan 23, 2026, 6:41 PM\nRobin\nWhaaaaaaaaat! Wow!\nRobin\nIt’s shooting for the stars! lol\nRobin\n⭐️ 🤩\nYou sent\nYep, God's been saying for a while that it would skyrocket.\nRobin\nIs there a prediction how high it might go?\nYou sent\nJust the ones I told you about.\nRobin\nOh, I didn’t remember. It’s okay.\nYou sent\nIt's been said that it will have the same value as gold, that it will be as if it were priceless, etc. How and when that plays out is anybody's guess. I'm thinking it will most likely go over $2k, probably considerably, especially since there are emerging technologies that require it.\nRobin\nI see\nRobin\nJust got to work. Will chat later.\nJan 26, 2026, 5:13 PM\n[video]\nYou sent\nJan 26, 2026, 6:32 PM\nRobin\nJuan and I have been there. It’s awesome. The pub was actually made from wood from Ireland. It’s pretty cool.\nYou sent\nAnd you paid for it in your Irish stew and soda bread.\nRobin\n?\nYou sent\nlol\nYou sent\nI'd imagine they went deeply into hock to haul that wood from Ireland. So the cost ended up in a pint of ale.\nRobin\nWe went February 2020 just before Covid shut down and just before I had my hip replaced\nYou sent\nok...\nRobin replied to you\nI dunno.\n[video]\nWould you consider living here?\nYou sent\nYeah, I saw that one. I definitely love turrets. The only thing I'd change is I don't think I'd want the front door to be in the turret.\nYou sent\nYou?\nJan 26, 2026, 9:36 PM\nRobin\nI think it’s gorgeous. I don’t mind the rock theme as long as it is carried throughout. We saw a house half rock, half euro-Dutch/stucco/undecided. Was so ugly. Bringing down the neighborhood.\nJan 27, 2026, 9:45 AM\nRobin\n[video]\nThey forgot Shakespeare and Co. in Paris.\nJan 29, 2026, 10:23 PM\n[video]\nYou sent\nRobin\nI was just telling someone at work this the other day. World champs is ridiculous.\nYou sent\nNo different than choosing a Miss Universe.\nFeb 5, 2026, 8:15 PM\nRobin\n[video]\nEdited\nThis is why it's sometimes tempting to go kosher. Everything's poisoned. Chicken is cleaned in bleach, they put folic acid in breads, etc. etc. I couldn't even find a clean bouillon.\nRobin\n[video]\nBut Trump is making it so corporations can't buy mass amounts of property.\nYou sent\nI don't know yet where the line will be drawn.\nRobin\nI sure hope so 😿\nFeb 10, 2026, 12:33 AM\nRobin\n[video]\nFeb 10, 2026, 12:32 PM\nYou sent\nIch bin aber kein Morgenmuffel.\nRobin\nAhhhhh I like that\nYou sent\nHave you read The Ballad of Songbirds and Snakes yet?\nRobin\nNo unfortunately… the movie turned me off\nYou sent\nSorry, I meant Sunrise on the Reaping.\nRobin\nTruely did not like the female lead and turned me off from the character\nYou sent\nI've got a pounding headache. Too much Pepsi.\nRobin\nOh! No I didn’t know there was another. Have you?\nYou sent\nYeah. I've had the book for months but couldn't find the time to read it.\nYou sent\nWell, I was sick recently, so I checked out the audio book from the library.\nYou sent\nIt was really well written.\nYou sent\nOf course\nRobin\nWell darn now I wanna pick it up\nYou sent\nBut it's got Betee in it and his character is shockingly tragic.\nYou sent\nHave you seen the trailer for the movie?\nRobin\nNo\nRobin\nDidn’t know it existed\nYou sent\n[video]\nRobin\nI forgot who betee is. Been so long\nRobin\nI watched the full twilight saga sometime back lol\nYou sent\nHe was the one who set up the Capital's security system because he's a nerd. He was introduced in Catching Fire.\nWow, looks great\nRobin\nSometimes it takes a ridiculous amount of time to go back and fix stupid audio AutoCorrect\nYou sent\nYep.\nYou sent\nHappened a few days ago sending voice-to-text to Jessi. I ended up giving up.\nRobin\nGlamis is an area in Southern California that’s remote and it’s got a bunch of sand dunes that people like to take their ATVs out there and motorcycles and whatever and do a lot of stunts off in the sand dunes. It’s kind of famous.\nYou sent\nOK, no.\nYou sent\nIt's abroad.\nRobin\nOk I wanna know now. Australia?\nYou sent\nSpain\nRobin\nNew Zealand?\nRobin\nPshhh never woulda guessed\nYou sent\nI had to double check it because I couldn't believe it.\nRobin\nI was thinking Romania or Switzerland\nYou sent\nI know. New Zealand sounded plausible, too. I never would have guessed Spain.\nYou sent\nI mean, parts of Spain look like a desert.\nYou sent\nApparently it's a national park where it was filmed.\nFri 1:09 PM\nRobin\n[video]\nSaw that one. Did you see the comment from the person saying their family gave the middle finger to the government?\nRobin\nThat’s funny\nRobin\nAmazing it’s still standing\nYou sent\nThey must have lived in the tiny space above. That would have gotten old really quickly.\nRobin\n[video]\nThey are all beautiful. I like aspects from most of them but of course I went with #2\nYou sent\nI'm guessing you like #2.\nYou sent\ngrr\nYou sent\nYou're supposed to wait for me.\nRobin\n1 really like 1 and 3 too though\nYou sent\n4 is boring.\nRobin\nKk\nYou sent\nYour guess for me?\nRobin\n#1\nYou sent\nyeah\nRobin\n#3 for jessi. I’m really not sure for her\nYou sent\nme either\nYou sent\nBut if I had to guess, I'd say one.\nRobin\nOk @Jessica Taylor …. Which one?\nRobin\n🙀 would be so cool to go to a restaurant like this\n[video]\nOr a vacation home.\nRobin\nWhat great ideas. It would be nice to see it happen\nRobin\nAny family discounts? Haha\nYou sent\nlol\nEdited\nof course\nRobin\nI will pass on the hunger, games, themed destination\nYou sent\nI'd wanted to include a lighthouse, but they're way too expensive.\nYou sent\ntens of millions...just not worth it.\nRobin\nWow, that’s really surprising. Geez. Who knew lighthouse was that much? crazy\nYou sent\nAnd with the Oregon coast being in a tsunami zone...just not worth it, I think.\nRobin\nThey have a restaurant in a lighthouse in San Diego that I was considering having the reception in, but it was too pricey\nYou sent\nAnd now we know why.\nYou sent\nThere's a nice one in Oregon. Let me find it.\nRobin\nWell, to be more clear, it wasn’t any more expensive than any of the other restaurants in the harbor.\nRobin\nIt was certainly upscale. But you’re paying for the view anywhere you go in the harbor\nYou sent\n[link]\nHeceta Lighthouse\nRobin\nHow beautiful\nRobin\nI like the outside in the living room, but I think that’s about it. But if I can move my house right there and have it look like that from the outside then it will be perfect cause that is stunning.\nRobin\nI’ve always hated seeing horses, locked up in stalls\nRobin replied to you\nCozy\n\n\n\nTask:\n\n\nFor next Christmas, I'll have moved by then. Looking at different people's circumstances and feelings, assuming they will be constant, where should he family meet? Present 1-3 different conclusions based upon different conditionals. Present each one starting with the location in bold on its own line. Then explain in a single paragraph the rationale, using each relevant quote from the context. Account for each person's (Robin, Jenny, and Jessica) affected by this conclusion. In each rationale, contrast what negative affects it would have and explain why the benefits would offset the cons.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Append this turn's source-grounded findings to the existing analysis-journal.md in my current default workspace. Preserve all earlier content. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.append_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_1.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/creator/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.append_text",
+      "arguments": {
+        "path": "docs/creator/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded addition for turn 24"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "append",
+      "path": "docs/creator/drafts/analysis-journal.md",
+      "prior_content_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should present one specific location per conclusion. For example, it should choose Jenny’s house, Jessica’s house, or Robin’s house.",
+        "The response should include each quote once per presented solution. For example, the response should avoid repeating that Jenny wants to live where, “rain isn't an urban myth,” in part or in whole.",
+        "The response should present all conclusions with the understanding that Jenny will have moved to Oregon by next Christmas.",
+        "The response should present 1-3 distinct meeting places, based on varying conditional circumstances. For example, it should choose a number of suggested meeting places based upon differing possible circumstances that may happen, up to three.",
+        "The response should begin each solution with the specific meeting place as its header/title.",
+        "The response should present a one-paragraph rationale for each proposed meeting place.",
+        "The response should format each specific meeting place that begins each section in bolded letters.",
+        "The response should present the specific meeting place that begins each section on its own line.",
+        "The response should explicitly account for the circumstances of all three primary people in each scenario. For example, it should consider the living circumstances, feelings, desires, concerns, and sentiments expressed by all three women (Robin, Jenny, and Jessica) in the context for each suggested meeting place.",
+        "The response should use one relevant direct quote from the provided context to support each point made in each rationale. For example, if three points are made to prove a specific solution is viable, there should be three related quotes, one for each of those points.",
+        "The response should include at least one contrasting condition in the rationale for each presented solution. For example, it should identify any primary drawbacks to each solution with a relevant quote as proof.",
+        "The response should counter any communicated drawbacks with a rationale that explains why the presented solution is still ideal. For example, it should counter any rebuttals with persuasive language that frames the presented solution in an ideal light.",
+        "The response should distinguish that the desert is a place to which Robin is considering a move rather than a current living location. For example, it should interpret the quote, \"But I think maybe coming back here to the desert would be a good start for him,\" as meaning Robin is not writing the message from home and the desert is a place she's lived before.",
+        "The response should use the scenario where Robin has moved to the Vancouver/Camas area as one possible condition that requires a suggested location. For example, it should recognize that is a major possible scenario that could significantly affect a recommended meeting place.",
+        "The response should use proper writing conventions. For example, it should use proper grammar and spelling conventions for American English (since this takes place in the United States), such as spelling “effects” beginning with an e rather than an a.",
+        "The response should use reasoning for suggested locations based upon a Christmas visit. For example, it should avoid using supporting evidence that promotes the idea of Robin moving because her son likes the cold and wants to go to the University of Washington, since the focus is on where they would spend Christmas and not on where they live.",
+        "The response should be logically cohesive. For example, it should present its rationale logically, with each idea building upon another, ideas transitioning from one to the next clearly, and with no isolated ideas that are disconnected from the purpose of the paragraph or the surrounding sentences."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/creator/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should present one specific location per conclusion. For example, it should choose Jenny’s house, Jessica’s house, or Robin’s house.",
+          "The response should include each quote once per presented solution. For example, the response should avoid repeating that Jenny wants to live where, “rain isn't an urban myth,” in part or in whole.",
+          "The response should present all conclusions with the understanding that Jenny will have moved to Oregon by next Christmas.",
+          "The response should present 1-3 distinct meeting places, based on varying conditional circumstances. For example, it should choose a number of suggested meeting places based upon differing possible circumstances that may happen, up to three.",
+          "The response should begin each solution with the specific meeting place as its header/title.",
+          "The response should present a one-paragraph rationale for each proposed meeting place.",
+          "The response should format each specific meeting place that begins each section in bolded letters.",
+          "The response should present the specific meeting place that begins each section on its own line.",
+          "The response should explicitly account for the circumstances of all three primary people in each scenario. For example, it should consider the living circumstances, feelings, desires, concerns, and sentiments expressed by all three women (Robin, Jenny, and Jessica) in the context for each suggested meeting place.",
+          "The response should use one relevant direct quote from the provided context to support each point made in each rationale. For example, if three points are made to prove a specific solution is viable, there should be three related quotes, one for each of those points.",
+          "The response should include at least one contrasting condition in the rationale for each presented solution. For example, it should identify any primary drawbacks to each solution with a relevant quote as proof.",
+          "The response should counter any communicated drawbacks with a rationale that explains why the presented solution is still ideal. For example, it should counter any rebuttals with persuasive language that frames the presented solution in an ideal light.",
+          "The response should distinguish that the desert is a place to which Robin is considering a move rather than a current living location. For example, it should interpret the quote, \"But I think maybe coming back here to the desert would be a good start for him,\" as meaning Robin is not writing the message from home and the desert is a place she's lived before.",
+          "The response should use the scenario where Robin has moved to the Vancouver/Camas area as one possible condition that requires a suggested location. For example, it should recognize that is a major possible scenario that could significantly affect a recommended meeting place.",
+          "The response should use proper writing conventions. For example, it should use proper grammar and spelling conventions for American English (since this takes place in the United States), such as spelling “effects” beginning with an e rather than an a.",
+          "The response should use reasoning for suggested locations based upon a Christmas visit. For example, it should avoid using supporting evidence that promotes the idea of Robin moving because her son likes the cold and wants to go to the University of Washington, since the focus is on where they would spend Christmas and not on where they live.",
+          "The response should be logically cohesive. For example, it should present its rationale logically, with each idea building upon another, ideas transitioning from one to the next clearly, and with no isolated ideas that are disconnected from the purpose of the paragraph or the surrounding sentences."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.append_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_1.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/creator/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.append_text",
+        "arguments": {
+          "path": "docs/creator/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded addition for turn 24"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "append",
+        "path": "docs/creator/drafts/analysis-journal.md",
+        "prior_content_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

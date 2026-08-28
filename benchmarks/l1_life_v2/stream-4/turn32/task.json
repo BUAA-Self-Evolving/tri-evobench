@@ -1,0 +1,408 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_4",
+  "turn_id": "turn32",
+  "turn_index": 32,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "c1bb8d18-a696-6236-1005-6126318a47a9",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 362,
+    "source_sha256": "59292716c0420ea018d719fb8ccf2d71179475f554be03683ffb2bcaf8fc9984",
+    "source_metadata": {
+      "task_id": "c1bb8d18-a696-6236-1005-6126318a47a9",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Group Conversations & Meeting Transcripts"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "User01\n\n — Yesterday at 1:48 AM\nwell there are one time treasure, they give you 21 and then there are weekly they give you 4\nuser02 — Yesterday at 1:49 AM\nhow do u enable the thing TSM shows to track knowldge points? i clciked it off and cant find it again\nUser01\n\n — Yesterday at 1:49 AM\nim using weeklyknowledge\ndont know about tsm\nuser02 — Yesterday at 1:50 AM\ni have myus one but it doesnt really track much just says i can get 2 +1s\nuser02 — Yesterday at 2:03 AM\nso ive got the +3s which are the 21 points? and im after the 4 which are weekly... what treasures did u traget for the 4?\nactually dw i think i figured it out\nUser03 — Yesterday at 2:22 AM\ni think this just fucked over\nalot of people though\nthat hate cancelscnaning and like to sit trade chat\nUser01\n\n — Yesterday at 2:22 AM\n100%\nalot of people going profession tools to do crats and now its basically cancel scanning all day\nUser04 — Yesterday at 3:05 AM\nJust burn concentration, sell cheaper than other people, take your profit and move on\nUser01\n\n — Yesterday at 3:11 AM\nfor most of my crafts i dont even need concentration\nso i will just sell as long as there is some profit\nUser05 — Yesterday at 3:47 AM\n>Blue profession equipment now boe?\noh my fucking god blizzard\nUser06 — Yesterday at 4:04 AM\nno workorders in this discord, per the rules in ⁠welcome  . tips in the pins how you can find a crafter ingame\nUser07 — Yesterday at 4:25 AM\nsome profit ? so you are that guy who cuts from 75k to 12k\nUser01\n\n — Yesterday at 4:38 AM\nnope\nI jsut cancelscan the hell out of people until they stop\nUser07 — Yesterday at 4:46 AM\nfrom my exp when they stop they gonna make u stop too with nuking item to 0 margins\nuser02 — Yesterday at 6:01 AM\nya everytime i battle relist someone theyjust drop to like harldy any profit\nUser08 — Yesterday at 6:10 AM\npeople's brains are fried\nUser09 — Yesterday at 6:42 AM\nDo I understand it right by saying it's impossible to craft R2 potions / flasks without concentration until purple tools ?\nUser10 — Yesterday at 6:43 AM\npurple tools dont help, they dont give any more skill than blue tools\nI think R2 potions/flasks are 2+ weeks away\nUser11 — Yesterday at 6:44 AM\nAre treasure kps only from voidstorm?\nUser09 — Yesterday at 6:46 AM\nThey.... Do ? The main stat is included when calculating overall skill for pots, right ? Otherwise it's impossible to get to 530\nUser10 — Yesterday at 6:47 AM\nnope only skill afaik?\nflasks/potions need extra points in the alchemical mastery tree, that's another +50 skill available\nImage\nthat's quill but should be the same for alchemy\nUser10 — Yesterday at 6:57 AM\n@User09 I missed an extra 10 skill in alchemical mastery > recycle, requires 15 knowledge though\nbut it's 110 knowledge required for r2 flasks\nUser09 — Yesterday at 7:01 AM\nMaybe i'm confused about the \"difficulty\" number (530, 490, etc) and what contributes to it then \nUser12 — Yesterday at 7:02 AM\nyou guys think the double knowledge from treatises is worth it?\ncosts 10 points\nso break-even by week 10 \nUser01\n\n — Yesterday at 7:09 AM\nWow Arcanoweave Bolt exlpoded in price\nuser13 — Yesterday at 7:21 AM\nDoes anyone know if you have 2 sparks now, can you craft a weapon?\nUser01\n\n — Yesterday at 7:22 AM\nyou can craft onehand weapons\nuser13 — Yesterday at 7:22 AM\nbut not 2Hs?\nwhat do 2Hs require that 1Hs dont\nUser10 — Yesterday at 7:23 AM\nthey need 4 sparks\nUser01\n\n — Yesterday at 7:23 AM\n4 Sparks 😄\nuser13 — Yesterday at 7:23 AM\nOhhh\n:Sadge:\nUser14 — Yesterday at 7:41 AM\nIf imma specialize in concentration crafting, should my tool have missive of ingenuity?\nuser15\n\n — Yesterday at 7:47 AM\nIf there is some ultra expensive mats - resourcefulness, if it can multicraft - multicraft, if niether then ingenuity\nUser11 — Yesterday at 7:50 AM\nIf im to see craftsim average profit with enchanting on the AH menu, Should i use my shatter essence before checking the prices/profits? Or is it accounted for?\nUser14 — Yesterday at 7:51 AM\nmat's seem to be already in the dumpster costwise, idk what multicraft is, want to crtaft staffs and off-hands\nuser02 — Yesterday at 8:02 AM\ncan u get a resourcefulness proc on items that have like majestic claw/fin etc.? is it just more rare then a proc for other mats in the craft?\nlike can it proc majestic fin refund, or ?\nUser16 — Yesterday at 8:09 AM\nDoes the TWW crafting speed buff from that weekly still work in MN\nUser05 — Yesterday at 8:19 AM\nit does if you're in tww zones\nUser16 — Yesterday at 8:19 AM\noh\ncan I use tww engi bench to make mn engi items\nUser05 — Yesterday at 8:31 AM\nno idea but i think you should be able to?\nUser16 — Yesterday at 8:42 AM\ndamn missives 650 skill to make max with r1\nguess thats a concentration/inginuity spec for now \nUser17 — Yesterday at 8:45 AM\nwait holy shit blue prof gear is no longer bop!?!?!\nUser18 — Yesterday at 9:06 AM\ndoes the quality matter for finding recipes when recycling with engineering? \nUser19 — Yesterday at 9:30 AM\nEverything’s is a conc spec for now :KEKW:\nuser20\n\n — Yesterday at 9:37 AM\nare the voidstorm treasures avail now?\nuser21 — Yesterday at 9:37 AM\nsad 🙁\nUser17 — Yesterday at 9:39 AM\nwhy this is the best fucking thing thats happened since shadowlands.  instead of wasting your conc on tips you can now turn it into gear you can directly sell on the ah.\nUser01\n\n — Yesterday at 9:39 AM\nYep\nOnly thing i would ahve wished foir was to know sooner\nuser21 — Yesterday at 9:39 AM\nhad tool makers, i never used conc 😛\nUser17 — Yesterday at 9:39 AM\nyea that same blue gear you maybe got a 10k to 50k tip for now has like 200k profit on it\nUser01\n\n — Yesterday at 9:39 AM\nthen i would have bulk bought majestic reagents \nUser17 — Yesterday at 9:39 AM\ntbh majestic materials havent moved in price much\nUser01\n\n — Yesterday at 9:40 AM\nthey were at like 20k on eu last few days \nUser17 — Yesterday at 9:40 AM\nat the same time they added the fix the causals are now farming so more quantity balances the price\nUser01\n\n — Yesterday at 9:40 AM\nnow at 40-60k jumping pretty often\nespecially claws were dirt cheap\nUser17 — Yesterday at 9:43 AM\nprices are stable in US\nUser01\n\n — Yesterday at 9:43 AM\nbut still pretty good, making money and finishing some of the last few points i needed for professions\nUser17 — Yesterday at 9:43 AM\ntbh it might be some big goblin flipping it\nuser21 — Yesterday at 9:46 AM\nare people actually paying this much? or just hopes and wishes listings\nuser20\n\n — Yesterday at 9:49 AM\ngotta be hope and wish listings. the JC crafts im looking at are like 50-60k above materials\nUser10 — Yesterday at 9:49 AM\nI think prof tools arent server wide, so depends how many crafters on your server, prof tools ive seen on region-server are 1-5k above cost\nUser01\n\n — Yesterday at 9:49 AM\nIm selling most of my stuff at 40-60k profit\nUser16 — Yesterday at 9:51 AM\nblue ones?\nUser22 — Yesterday at 9:57 AM\nIs it possible to invest enough into milling to turn t1 herbs into t2 pigments?\n(w/o conc)\nUser10 — Yesterday at 10:05 AM\nyea\nUser10 — Yesterday at 10:06 AM\ndont think so, atleast for other professions there's only just enough knowledge to do r2 > r2\nuser13 — Yesterday at 10:29 AM\nbruh\nI just bought green tools yesterday...\nUser23 [Serveralpha - Horde] — Yesterday at 10:51 AM\nBeing able to sell blue profs tool on the AH was something I really missed having in TWW. I had thousands of AA just lying around on alts on dead servers. Good they changed that.\nuser24\n\n — Yesterday at 11:12 AM\ni have 91 total knowledge, i would love to get that last 20, is there anything else i can do?\nUser25 — Yesterday at 11:14 AM\nSay, could it be that there are no vendor discounts for trade goods anymore?\nUser23 [Serveralpha - Horde] — Yesterday at 11:16 AM\nDownload the addon Weeklyknowledge to track ur KP. Maybe there are some recipes u didnt craft or get yet. Did u do Darkmoon faire quest?\nuser24\n\n — Yesterday at 11:17 AM\ni did yes, to the most of my abilities . Im wondering if anyone has 100+ knowledge\nUser26 — Yesterday at 11:39 AM\nI'm at 98 Ench knowledge lol\nIf that one treasure wasn't bugged i'd be at 101\nUser01\n\n — Yesterday at 11:40 AM\nEnchanting is giving you a boatload with all the illusions\nUser26 — Yesterday at 11:53 AM\n100% it's just super easy to get knowledge in. I'm only missing the abundance and bugged one now outside of the treatise\nUser01\n\n — Yesterday at 11:54 AM\nYeah, really hope they fix the abundance soon\nUser27 — Yesterday at 12:04 PM\nare there any benefits of leveling your crafter alt to 90?\nUser28\n\n — Yesterday at 12:19 PM\nguys in prospecting i can do any of the 4 ores or 1 is better\nand is it better to get the higher quality ores or not\nuser20\n\n — Yesterday at 12:20 PM\nin theory you may need it for knowledge books in later patches\nit happened in tww if you wanted them you had to be max to interact with vendors\nUser29\n\n — Yesterday at 1:18 PM\nturns out the backpacks actually are selling  who knew\nImage\nI really thoguth it wouldnt at that price\nuser30 — Yesterday at 1:25 PM\nin case this is helpful for anyone so they don't have to go through the effort like I did, here's a count of how many times an enchant appears in the wowhead class guides. I only took the \"best\" enchant (or the first one listed if there's multiple options) so take it with a grain of salt but some trends definitely pop out for what to focus on maxing early \nImage\nUser29\n\n — Yesterday at 1:46 PM\nguys is it worth it 😆\nImage\nuser20\n\n — Yesterday at 2:48 PM\ni would pay it for skill, the augment covers a lot of that soon\nuser31\n\n — Yesterday at 2:52 PM\ni swear this just changed with reset or something. i was looking during EA and they were all still BoP and I wasn't able to find any orders to fulfill. I saw these on the AH and thought there was a bug or something lmao\nUser17 — Yesterday at 3:07 PM\nIt just seemed to change this Tuesday.  Blues have never been boe.\nUser25 — Yesterday at 4:10 PM\nSomeone happen to know if recrafting the blue snippers costs another majestic claw?\nuser32 — Yesterday at 4:31 PM\nImage\nUser33 — Yesterday at 5:45 PM\ndoes anyone use autoflood+messagequeue anymore for trade advertising\nUser34\n\n — Yesterday at 6:12 PM\ndoes multicraft rly work on prospecting though?\nImage\ndoes not show up on craft details even when I got some\nUser10 — Yesterday at 6:15 PM\nI've never seen it hit a multicraft so I dont think so\nImage\nUser35 — Yesterday at 6:18 PM\n@User33 I do but cant get the alerts to make noise\nUser34\n\n — Yesterday at 6:25 PM\nI believe I've seen a double when prospecting but idno if thats just how they are or if multi actually did anything\nHowever I might be making stuff up,\nUser03 — Yesterday at 6:33 PM\ndamn\ncant get skill ups via recrafting\ntried to recraft my tool 15 times no skill ups\nuser30 — Yesterday at 6:48 PM\nare any enchanters getting shimmering dust from DEs? I have yet to get any\nUser10 — Yesterday at 6:50 PM\nI think thats just you get a random 1-3 proc, it's not multicraft\nUser34\n\n — Yesterday at 6:52 PM\nYeah I assumed that too\nUser23 [Serveralpha - Horde] — Yesterday at 6:52 PM\nBack in TWW multicrafting showed up in crafts that didnt include multicrafting, especially for refining herbs to higher ranks I think it was. So its just Blizzard that is being lazy.\nUser34\n\n — Yesterday at 7:11 PM\nHmmm\nUser36\n\n — Yesterday at 7:20 PM\nwhat is it people use to instantly whisper people who post crafting requests in trade chat?\nUser34\n\n — Yesterday at 7:25 PM\nWould resourceful still be better tool enchant and such during prospecting\neven if multi works\nUser04 — Yesterday at 7:32 PM\nMy typing class in school finally paid off\nUser36\n\n — Yesterday at 7:38 PM\nare people legit just standing there staring at trade chat and instantly manually typing out their blerbs to everyone?\nUser37 — Yesterday at 7:40 PM\nmacros, addons\nbut ya, theres people (and bots) who are just in tradechat all day every day.\nuser38 — Yesterday at 8:03 PM\nquestion about prospecting, how does gem quality from prospecting work? like if i prospect rank 2 ore, do i get rank 2 gems from it if i have max skill and tree?\nuser20\n\n — Yesterday at 8:26 PM\ncraftscan\nits an addon\nUser16 — Yesterday at 10:41 PM\nAnyone know if the Robes tree in tailoring effects profession robes too?\nor do only generic skill nodes effect proff gear\nuser39\n\n — Yesterday at 10:48 PM\nis there a way to see how much gold you have coming in from sales on the auction house\nUser40 — Yesterday at 11:24 PM\nAnyone know if there is a macro I can make with /m to craft a specific item?\nUser41 — Yesterday at 11:58 PM\nHello guys, for those of you leveling up enchanting what are the best recipes you've been selling?\nUser42 — 1:14 AM\nYo so i have 22 tailors for my bolt dailys and they all got reset to having  10 available for both. Is it that something that blizzard would act on if i crafted them all? i feel like i read somewhere in the past that they did in df?\nUser43 — 2:13 AM\nWith the recent change to making blue tools sellable on AH I've been thinking into going all in on tools, which is not a big deal for me to swap to, but I'm thinking it's AH cancel scan fiesta, and I'd rather have 0 gold than do that. So people selling tools on AH, can you please enlighten me, is it as bad as I'm thinking it is? 😂\nUser44 — 2:22 AM\nsup lads, any recommendations for easy enscription recipes that the renown vendors sell?\nthat seems good for concentration\nUser01\n\n — 4:34 AM\nI cant complain about selling tools but yeah its a cancel fiesta on some servers \non my main server im somehow one of the only persons selling them and just have some goblins pop in from time to time and trying to cancle scan for 15 min. But its pretty good profit especially after Majestic mats nose dived in cost. I made around 1.5 Mil yesterday from tools \nuser02 — 5:08 AM\nhow many diff tools u doing? \nUser01\n\n — 5:11 AM\nSkinning, Herbalism, Mining, Tailor, Alch and Blacksmithing \ncould do more but margins are better with this selection \nuser02 — 5:12 AM\nu doing only rank 5 or doing rank 2-3-4 etc.?\nUser01\n\n — 5:12 AM\nonly rank 5\nI can craft them all without Conc\nuser02 — 5:16 AM\nah ok. im not doing many proffessions-  i find im too late to work out/know what to do at new expac that by the time i do or did, its not as good as it was... like late to make good money from it \nim thinking about putting money in but dunno\nive never really done professions before this\ndoing many*\nUser01\n\n — 5:18 AM\nYeah, i takes a bit of time to really know whats worth it and how to use knowledge points, atleast for me it took a while. Really only started going into professions in dragonflight after they changed it\nuser02 — 5:22 AM\nim slowly adding up more items and professions tho\nUser01\n\n — 5:24 AM\nThats a good way to start\nI basically only did LW and JC in Dragonflight, then increased it in TWW and now im basically doing all profs \nUser45 — 5:28 AM\nSo to be blunt, unless you mega sweat you will always be a bit behind something where it wasnt as good as it once was, that said that doesnt mean it isn't still good though even if the gains arent that explosive exceptional at the very start\nUser01\n\n — 5:29 AM\ntrue\nUser45 — 5:29 AM\nIts the issu e a lot of people are hitting gathering now too, tons expected tww ea 100k, 200k/hr stuff, instead they got 40-60k which was mid to end of tww good, but still good\nUser01\n\n — 5:29 AM\nYep, maybe it changes with season release but thats a gamble\nnow you dont really need herbs for much, only really professions as Flasks and Pots are not needed\nuser02 — 5:40 AM\nim really liking playing the AH tho now that ive learned how to use TSM\nim just hesistant on doing more professions/items\nUser46 — 11:35 AM\nin which section new enchantments for profession tools are sold on AH?\nUser06 — 11:37 AM\nitem enchants -> misc.\nor search for 'enchant tool' and they'll show up as well\nUser47 — 11:43 AM\nanyone else getting \"Requires 10 Tranquility Bloom\" after 2 mills despite having enough material in bags?\nnvm it works after a \"Clean Up Bags\"\nUser06 — 11:50 AM\nyep that happens if the stack that's being used has <10 left. by cleaning up your bags, that 1st stack is back a ful lstack so it works again.\nUser48\n\n — 11:59 AM\nis craftsim simulation mode not working atm ?\nUser37 — 12:29 PM\nwild that this is still a thing/bug\nUser05 — 12:37 PM\nhttps://www.curseforge.com/wow/addons/mass-salvage-assist an addon that fixes it\nUser47 — 12:37 PM\nthanks!\nUser14 — 12:49 PM\nCo all crafters need to be 90? I dont want to fall behind in KP but I dont have the heart to level more characters to 90, its so slow\nUser49 — 12:52 PM\nI don't think any need to be 90. I guess they might need to be to get raid recipes if you're farming them and not buying from AH\nUser50 — 12:58 PM\ncan you do abundance whilst not 90?\nUser51\n\n — 1:28 PM\nyes\n.tyrix\n\n — 1:53 PM\nyooo, I've just been picking up professions and got a JC to 100, what's th ebest way to make some money ? or should i be speccing into something like enchants?\nUser50 — 2:09 PM\ncool, thanks\nuser21 — 2:24 PM\nis there a good mod that lets people see what you can craft against all alts?\nUser16 — 2:34 PM\nso is propecting/crushing dead for MN?\ni remember in tww there being some stones we were selling\ni firgot tho it was a while ago\nsome dude saved up a billion stones\nUser37 — 2:35 PM\nyes. its been a week since early access. all professions are officially completely and entirely dead, cya in the last titan\nUser16 — 2:36 PM\ni dont see how crushing can become good w/ the new system tbh there isn't enough skill to get r2 without conc\nSeems way harder than tww\nUser04 — 3:07 PM\nbots read the reddit article.. \nImage\nUser53\n\n — 3:13 PM\n@User01 are u able to just use r2 materials and craft r5 no matter wat no concetration at all?\nUser54 — 3:13 PM\nwhat u talking about\nUser16 — 3:14 PM\ngetting rank 2 with rank 1 mats\ncrushing\nUser54 — 3:14 PM\nOh\nYeah not possible\nUser16 — 3:14 PM\nsame with vials i think\nso i guess those u gotta pray for multicraft\nUser54 — 3:14 PM\nr2 with r2 only i suppose\n🤷\nUser16 — 3:14 PM\nbig loss lol, maybe will be good during raid week\nhopefully\nUser01\n\n — 3:15 PM\nI dont need to use any concentration for the crafts with R2 mats\nand also Stat choice\nUser53\n\n — 3:15 PM\nhow tf?\nwhat am i missing T_T i have all the kp\nand blue tools\nr5\nUser01\n\n — 3:16 PM\n100/100  fullKP for all tools in Blacksmithing and blue tools\nUser53\n\n — 3:16 PM\ndoes craftsim show the correct different in skill when u change materials from r1 to r2?\nmaybe thats wats wrong\nim judging it without actually having the r2 materials\nUser01\n\n — 3:17 PM\nif i use r1 i can only craft r3 and need 89 to next rank \naccording to craftsim\nUser53\n\n — 3:17 PM\nmine is 115\nim still missing some skill tho\n74/105\nUser01\n\n — 3:17 PM\nyeah you need full skill\nUser45 — 3:17 PM\nYeah that is huge\nUser53\n\n — 3:18 PM\nmakes sense\nig i just make some r4s and cry a little\nnot too loudly tho\nUser01\n\n — 3:18 PM\nI basicall just made some with conc and used the + 20 skill scroll to do it after i only missed 20 \nUser45 — 3:18 PM\n31 points missing is a bunch. Definitely good to see they are profitable though, might get my blacksmith leveled and try to get into the tool market a lil as well as my own stuff xD\nUser53\n\n — 4:07 PM\nwhen posting proff tools how tf do i post them correctly i use specific item variant and put it into a group\nbut then it shows like 3 232 resourcefulness pieces\nand when i try to post it tries to post some at a watever my normal price is even tho the item and its variant exists on the AH\nUser53\n\n — 4:20 PM\nheres an example\nImage\n1 resourcefullness\n1 multicraft\nand its trying to do 2 of each?\nbut one is pretending there are none on the AH for\nUser01\n\n — 4:32 PM\nThats why i just did it by hand at the end \ndidnt want to figure out how to post things correctly\nUser45 — 5:15 PM\nTsm doesnt play nice with them right now still is my understanding\n\n\n\nTask:\n\n\nBased on the conversation, what appears to be the sentiment regarding user confidence around profitability of professions in the game and can you reconcile any apparent contradictions with specific logs quoted? Narrow user confidence to two specific subgroups (newcomers vs veterans) and require separate conclusions for each, supported by quotes."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the provided Discord conversation, the sentiment regarding user confidence in the profitability of professions is mixed, ranging from enthusiastic optimism to deep skepticism and frustration. This variation is largely dependent on a user's experience level, chosen niche, and server-specific market conditions. Apparent contradictions, such as claims of high profitability versus reports of ruinous competition, can be reconciled by understanding that success is situational and requires specific knowledge and strategies.\n\nHere is a breakdown of the sentiment, reconciling contradictions, and separate conclusions for newcomers versus veterans.\n\n### Reconciliation of Apparent Contradictions\n\n*   **Profitability vs. Competition:** Some users report significant profits (e.g., \"made around 1.5 Mil yesterday from tools\"), while others describe a \"cancel fiesta\" where profits are minimal.\n    *   **Reconciliation:** Profitability is highly dependent on the specific item, profession, and server. User01 notes that on their main server, they are one of the few sellers and are successful, but acknowledges it's a \"cancel fiesta on some servers.\" The key is identifying a profitable niche (like blue profession tools for User01) and avoiding oversaturated markets.\n*   **The Role of Concentration:** Some claim \"Everything’s is a conc spec for now,\" while others state they \"dont even need concentration\" for their profitable crafts.\n    *   **Reconciliation:** While high-end crafts like R2 potions currently require concentration due to skill constraints, many other profitable crafts do not. User01 specifically crafts rank 5 tools without concentration, highlighting that not all profitable activities are locked behind the concentration system. The statement that \"everything is a conc spec\" reflects the difficulty of reaching the highest ranks, but not the entire market.\n\n---\n\n### Confidence Among Subgroups\n\n#### 1. Newcomers (Low Confidence)\n\nNewcomers exhibit low confidence, characterized by hesitation, uncertainty, and a fear of financial loss. They feel they have entered the market late, are overwhelmed by its complexity, and are unsure which professions or items are viable. Their lack of experience makes them vulnerable to the aggressive market tactics of others.\n\n**Conclusion:** Newcomers are largely unconfident and risk-averse, perceiving the market as highly competitive and potentially unprofitable if they enter incorrectly. They seek guidance and are hesitant to invest time or gold without a clear path to success.\n\n**Supporting Quotes:**\n*   **Expressing Hesitation and Being Late:** \"im not doing many proffessions- i find im too late to work out/know what to do at new expac that by the time i do or did, its not as good as it was... like late to make good money from it... im just hesistant on doing more professions/items\" — **User02**\n*   **Frustration with Competition:** \"ya everytime i battle relist someone theyjust drop to like harldy any profit\" — **User02**\n*   **Feeling Overwhelmed and Behind:** \"how tf? what am i missing T_T i have all the kp and blue tools r5... makes sense ig i just make some r4s and cry a little not too loudly tho\" — **User53**\n*   **Reluctance to Invest Effort:** \"Co all crafters need to be 90? I dont want to fall behind in KP but I dont have the heart to level more characters to 90, its so slow\" — **User14**\n*   **Directly Asking for Guidance:** \"yooo, I've just been picking up professions and got a JC to 100, what's th ebest way to make some money ? or should i be speccing into something like enchants?\" — **User51**\n\n#### 2. Veterans (Cautiously Optimistic & Realistic Confidence)\n\nVeterans display a more confident and realistic outlook. Their confidence stems from experience, knowledge of the game systems (like knowledge points and crafting trees), and the ability to identify and exploit profitable opportunities. They acknowledge the increased competition (\"cancel fiesta\") but view it as a manageable challenge that can be overcome with the right strategy. They are actively engaged in the market, sometimes even participating in the aggressive tactics, but are also quick to spot positive changes.\n\n**Conclusion:** Veterans are confident in their ability to profit from the current profession system. They combine an understanding of the game mechanics with market awareness to find profitable niches, even in a competitive environment. Their confidence is not naive; they recognize the challenges but rely on their experience to navigate them.\n\n**Supporting Quotes:**\n*   **Reporting High Profits and Market Awareness:** \"Wow Arcanoweave Bolt exlpoded in price\", \"I made around 1.5 Mil yesterday from tools\", \"I cant complain about selling tools but yeah its a cancel fiesta on some servers\" — **User01**\n*   **Proactive and Competitive Stance:** \"for most of my crafts i dont even need concentration... I jsut cancelscan the hell out of people until they stop\" — **User01**\n*   **Identifying Positive Changes and Opportunities:** \"why this is the best fucking thing thats happened since shadowlands. instead of wasting your conc on tips you can now turn it into gear you can directly sell on the ah.\" — **User17**\n*   **Sharing Knowledge and Strategy:** \"So to be blunt, unless you mega sweat you will always be a bit behind something where it wasnt as good as it was, that said that doesnt mean it isn't still good though even if the gains arent that explosive exceptional at the very start\" — **User45**\n*   **Providing Technical Expertise:** \"purple tools dont help, they dont give any more skill than blue tools\", \"I think R2 potions/flasks are 2+ weeks away... flasks/potions need extra points in the alchemical mastery tree, that's another +50 skill available\" — **User10**\n"
+      },
+      {
+        "role": "user",
+        "content": "Who appears to be the most talkative of the group and what is their general sentiment around the current state of crafting profitability? Support with quotes and time stamps."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the conversation, **User01** appears to be the most talkative member of the group, with a significant number of messages detailing their experiences, strategies, and observations about the game's profession system.\n\nUser01's general sentiment around the current state of crafting profitability is one of **confident optimism and pragmatic success**. They are actively making substantial profits, have identified lucrative niches, and view the competitive landscape as a manageable challenge. They are not naive about the difficulties but are clearly thriving.\n\nThis sentiment is supported by the following quotes and timestamps:\n\n*   **Pragmatic Approach to Profitability:** User01 describes a flexible strategy focused on consistent, low-effort profit.\n    > \"for most of my crafts i dont even need concentration so i will just sell as long as there is some profit\"\n    > — **User01, Yesterday at 3:11 AM**\n\n*   **Recognition of Market Opportunities:** They highlight specific items that have become profitable.\n    > \"Wow Arcanoweave Bolt exlpoded in price\"\n    > — **User01, Yesterday at 7:09 AM**\n\n*   **Positive Reaction to Game Changes:** User01 celebrates a major change that boosted their profits.\n    > \"Yep Only thing i would ahve wished foir was to know sooner\"\n    > — **User01, Yesterday at 9:39 AM** (in response to blue profession gear becoming BoE)\n\n*   **Reporting High Profits:** They explicitly state the large amount of gold they are earning.\n    > \"I made around 1.5 Mil yesterday from tools\"\n    > — **User01, 4:34 AM**\n\n*   **Balancing Competition with Success:** User01 acknowledges the intense competition (\"cancel fiesta\") but emphasizes their own success on their server.\n    > \"I cant complain about selling tools but yeah its a cancel fiesta on some servers on my main server im somehow one of the only persons selling them and just have some goblins pop in from time to time and trying to cancle scan for 15 min. But its pretty good profit especially after Majestic mats nose dived in cost.\"\n    > — **User01, 4:34 AM**\n\n*   **Aggressive but Effective Strategy:** They describe their method for dealing with competitors.\n    > \"I jsut cancelscan the hell out of people until they stop\"\n    > — **User01, Yesterday at 4:38 AM**\n"
+      },
+      {
+        "role": "user",
+        "content": "Which 3 users appear to disagree with User01 the most that also have supporting claims to back their disagreement? Provide supporting quotes and time stamps. For each disagreeing user, explain why their claim conflicts with User01 and whether it's a direct contradiction vs. a different-server/different-item caveat."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the conversation, the three users who appear to disagree most with User01, while providing supporting claims, are **User07**, **User02**, and **User43**.\n\n### 1. User07\nUser07 directly challenges User01's pricing strategy and its long-term viability, accusing them of predatory undercutting and predicting a race to the bottom.\n\n*   **Supporting Quote & Timestamp:**\n    > \"some profit ? so you are that guy who cuts from 75k to 12k\"\n    > — **User07, Yesterday at 4:25 AM**\n    >\n    > \"from my exp when they stop they gonna make u stop too with nuking item to 0 margins\"\n    > — **User07, Yesterday at 4:46 AM**\n\n*   **Conflict Explanation:** User01 advocates for an aggressive \"cancelscan\" strategy to maintain sales (\"I jsut cancelscan the hell out of people until they stop\") and reports healthy profits of \"40-60k\" (Yesterday at 9:49 AM). User07 interprets this as cutting prices drastically (from 75k to 12k) and argues from experience that such tactics lead to competitors nuking the price to zero, eliminating all profit. This directly contradicts User01's assertion of maintaining \"pretty good profit.\"\n\n*   **Nature of Conflict:** This is a **direct contradiction** in business philosophy and observed outcomes. However, it could also involve a **different-server caveat**, as User01's success might be on a server with less competition for their specific products (blue profession tools), whereas User07's experience is that competitors will always escalate the price war.\n\n### 2. User02\nUser02 describes a personal experience where competition makes profitable crafting impossible, which contradicts User01's narrative of consistent success.\n\n*   **Supporting Quote & Timestamp:**\n    > \"ya everytime i battle relist someone theyjust drop to like harldy any profit\"\n    > — **User02, Yesterday at 6:01 AM**\n\n*   **Conflict Explanation:** User01 repeatedly states they are making significant profits, such as \"around 1.5 Mil yesterday from tools\" and selling items at a \"40-60k profit\" (Yesterday at 9:49 AM). User02's statement that competitors dropping prices results in \"hardly any profit\" is a direct contradiction to User01's experience of maintaining solid margins.\n\n*   **Nature of Conflict:** This is primarily a **different-server/different-item caveat**. User01 is focused on a specific niche (blue profession tools) where they claim to be one of the few sellers on their server. User02's experience likely comes from a different market segment that is more saturated, leading to the price erosion they describe. It's a contradiction in their individual experiences, not necessarily a flaw in User01's logic.\n\n### 3. User43\nUser43 expresses strong skepticism about User01's core strategy (selling profession tools), viewing the competitive environment as unbearable and unprofitable.\n\n*   **Supporting Quote & Timestamp:**\n    > \"With the recent change to making blue tools sellable on AH I've been thinking into going all in on tools, which is not a big deal for me to swap to, but I'm thinking it's AH cancel scan fiesta, and I'd rather have 0 gold than do that. So people selling tools on AH, can you please enlighten me, is it as bad as I'm thinking it is? 😂\"\n    > — **User43, 2:13 AM**\n\n*   **Conflict Explanation:** User01 is actively and successfully participating in the \"cancel scan fiesta\" for blue profession tools, calling it a source of \"pretty good profit\" (4:34 AM). User43 frames the exact same activity—an \"AH cancel scan fiesta\"—as something they would avoid at all costs, preferring to have zero gold. This is a fundamental disagreement on the desirability and viability of the shared market.\n\n*   **Nature of Conflict:** This is a **different perspective/server caveat**. User43 assumes the negative experience of a \"cancel fiesta\" is universal. User01 clarifies that it's situational, stating, \"it's a cancel fiesta on some servers\" but that on their main server, they are one of the few sellers and are doing very well (4:34 AM). The disagreement stems from User43's fear of the worst-case scenario versus User01's lived reality on a specific server.\n"
+      },
+      {
+        "role": "user",
+        "content": "Create a table that rates the 10 most active users based on their general sentiment of positive vs negative regarding the potential for profitability of crafting sales. Rate on a scale of 1 to 5 where 1 is the most negative and 5 is the most positive. If a user's sentiment does not have enough information to draw a conclusion then state their rating as \"NEI\". Also create a column in the table that shows the number of messages that each of the listed users has posted. Explain one ambiguous case where a user’s comments could be read as both positive and negative, and decide which rating is better supported by the log.\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Rename the existing analysis-journal.md to analysis-journal-archived.md inside my current default workspace without changing its contents. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.rename"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.rename call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/daily/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_4.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/daily/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.rename",
+      "arguments": {
+        "old_path": "docs/daily/drafts/analysis-journal.md",
+        "new_path": "docs/daily/drafts/analysis-journal-archived.md"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "rename",
+      "old_path": "docs/daily/drafts/analysis-journal.md",
+      "new_path": "docs/daily/drafts/analysis-journal-archived.md",
+      "old_must_exist_after": false,
+      "new_must_exist_after": true,
+      "content_must_be_unchanged": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should list the 10 most active users based on the total number of messages sent in the provided log, as follows: User01, User02, User16, User10, User17, User53, User45, User20, User13, and User21.",
+        "The response should present its list of the 10 most active users in a table.",
+        "The response should include a column in its table for the number of messages posted by each user.",
+        "The response should include a column in its table where it provides a sentiment rating for each user on a scale of 1 to 5 (where 1 is the most negative and 5 is the most positive), regarding the potential for profitability of crafting sales, or states \"NEI\" when there is insufficient information to provide a rating for a user.",
+        "The response should correctly state that User01 has a message count of 29.",
+        "The response should correctly state that User02 has a message count of 10.",
+        "The response should correctly state that User16 has a message count of 10.",
+        "The response should correctly state that User10 has a message count of 9.",
+        "The response should correctly state that User17 has a message count of 8.",
+        "The response should correctly state that User53 has a message count of 7.",
+        "The response should correctly state that User45 has a message count of 5.",
+        "The response should correctly state that User20 has a message count of 5.",
+        "The response should correctly state that User13 has a message count of 4.",
+        "The response should correctly state that User21 has a message count of 4.",
+        "The response should assign User01 a positive sentiment rating (e.g. 5), justified by their comments about making \"1.5 Mil yesterday\" and finding lucrative niches.",
+        "The response should assign User17 a positive sentiment rating (e.g., 5), justified by their enthusiastic comment that game changes are the \"best fucking thing that's happened.\"",
+        "The response should assign User10 a positive sentiment rating (e.g. 4) as their comments are cautiously positive and point to future profitability, \"R2 flasks in 2+ weeks.\"",
+        "The response should assign User45 a positive sentiment rating (e.g. 4), as they report that \"you will always be a bit behind something where it wasnt as good as it once was, that said that doesnt mean it isn't still good.\"",
+        "The response should assign User20 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"are people actually paying this much? or just hopes and wishes listings\").",
+        "The response should assign User13 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"dont think so, atleast for other professions there's only just enough knowledge to do r2 > r2\").",
+        "The response should assign User21 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"Yep\r\nOnly thing i would ahve wished foir was to know sooner.\").",
+        "The response should assign User02 a negative sentiment rating (e.g. 2), as they express hesitation (\"i'm just hesitant\") and frustration (\"drop to like hardly any profit\").",
+        "The response should assign User53 a negative sentiment rating (e.g. 2), as they express frustration about their skills (\"cry a little\").",
+        "The response should assign User16 a negative sentiment rating of (e.g. 1 or 2), justified by their statement that professions are \"dead for MN.\"",
+        "The response should explain one ambiguous case where a user’s comments could be read as both positive and negative.",
+        "The response should provide a final decision on which rating is better supported for the ambiguous case.",
+        "The decision for the ambiguous case in the response should be supported by specific evidence from the log (e.g., citing User53's \"cry a little\" or their confusion about posting tools).",
+        "The response should list exactly 10 users (no more and no fewer) in the table.",
+        "The response should ensure that each sentiment rating is accompanied by a brief justification tied to the user’s statements in the log. For example, it should include one short phrase summarizing the relevant message(s) per user.",
+        "The response should base each user’s sentiment rating on that user’s messages about the profitability of crafting sales, not on the user's message about unrelated topics.",
+        "The response should order the users by activity (highest message count to lowest) rather than listing them in an arbitrary order, since “10 most active users” implies ranking by activity.",
+        "The response should include a distinct “User” column in the table containing the username for each row, so the message count and sentiment are unambiguously associated with a specific user.",
+        "The response should not assign “NEI” to any of the 10 listed users because the log contains at least one profitability-relevant statement for each user (User01: “1.5 Mil yesterday”; User17: “best … thing that’s happened.”; User10: “R2 flasks in 2+ weeks”; User45 crafting may be “behind” peak profitability but still “good;” User20: \"are people actually paying this much? or just hopes and wishes listings\"; User13: \"dont think so, atleast for other professions there's only just enough knowledge to do r2 > r2\"; User 21: \"Yep Only thing i would ahve wished foir was to know sooner.\"; User02: \"drop to like hardly any profit\"; User53: \"cry a little;\" User16: \"dead for MN.\").",
+        "The response should keep the sentiment rating values within the allowed set {1, 2, 3, 4, 5, “NEI”} and should not invent intermediate values (e.g., 3.5) or alternate labels (e.g., “mixed”).",
+        "The response should ensure the sentiment scale direction is consistent with the definition: 1 = most negative, 5 = most positive, and should not invert the scale in text or ratings.",
+        "The response should ensure the ambiguous-case explanation names the specific user being treated as ambiguous (one of the 10 users listed in the table)."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.rename call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/daily/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/daily/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should list the 10 most active users based on the total number of messages sent in the provided log, as follows: User01, User02, User16, User10, User17, User53, User45, User20, User13, and User21.",
+          "The response should present its list of the 10 most active users in a table.",
+          "The response should include a column in its table for the number of messages posted by each user.",
+          "The response should include a column in its table where it provides a sentiment rating for each user on a scale of 1 to 5 (where 1 is the most negative and 5 is the most positive), regarding the potential for profitability of crafting sales, or states \"NEI\" when there is insufficient information to provide a rating for a user.",
+          "The response should correctly state that User01 has a message count of 29.",
+          "The response should correctly state that User02 has a message count of 10.",
+          "The response should correctly state that User16 has a message count of 10.",
+          "The response should correctly state that User10 has a message count of 9.",
+          "The response should correctly state that User17 has a message count of 8.",
+          "The response should correctly state that User53 has a message count of 7.",
+          "The response should correctly state that User45 has a message count of 5.",
+          "The response should correctly state that User20 has a message count of 5.",
+          "The response should correctly state that User13 has a message count of 4.",
+          "The response should correctly state that User21 has a message count of 4.",
+          "The response should assign User01 a positive sentiment rating (e.g. 5), justified by their comments about making \"1.5 Mil yesterday\" and finding lucrative niches.",
+          "The response should assign User17 a positive sentiment rating (e.g., 5), justified by their enthusiastic comment that game changes are the \"best fucking thing that's happened.\"",
+          "The response should assign User10 a positive sentiment rating (e.g. 4) as their comments are cautiously positive and point to future profitability, \"R2 flasks in 2+ weeks.\"",
+          "The response should assign User45 a positive sentiment rating (e.g. 4), as they report that \"you will always be a bit behind something where it wasnt as good as it once was, that said that doesnt mean it isn't still good.\"",
+          "The response should assign User20 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"are people actually paying this much? or just hopes and wishes listings\").",
+          "The response should assign User13 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"dont think so, atleast for other professions there's only just enough knowledge to do r2 > r2\").",
+          "The response should assign User21 a neutral sentiment rating (3), as they primarily ask questions and provide minor observations without expressing a strong opinion on profitability (\"Yep\r\nOnly thing i would ahve wished foir was to know sooner.\").",
+          "The response should assign User02 a negative sentiment rating (e.g. 2), as they express hesitation (\"i'm just hesitant\") and frustration (\"drop to like hardly any profit\").",
+          "The response should assign User53 a negative sentiment rating (e.g. 2), as they express frustration about their skills (\"cry a little\").",
+          "The response should assign User16 a negative sentiment rating of (e.g. 1 or 2), justified by their statement that professions are \"dead for MN.\"",
+          "The response should explain one ambiguous case where a user’s comments could be read as both positive and negative.",
+          "The response should provide a final decision on which rating is better supported for the ambiguous case.",
+          "The decision for the ambiguous case in the response should be supported by specific evidence from the log (e.g., citing User53's \"cry a little\" or their confusion about posting tools).",
+          "The response should list exactly 10 users (no more and no fewer) in the table.",
+          "The response should ensure that each sentiment rating is accompanied by a brief justification tied to the user’s statements in the log. For example, it should include one short phrase summarizing the relevant message(s) per user.",
+          "The response should base each user’s sentiment rating on that user’s messages about the profitability of crafting sales, not on the user's message about unrelated topics.",
+          "The response should order the users by activity (highest message count to lowest) rather than listing them in an arbitrary order, since “10 most active users” implies ranking by activity.",
+          "The response should include a distinct “User” column in the table containing the username for each row, so the message count and sentiment are unambiguously associated with a specific user.",
+          "The response should not assign “NEI” to any of the 10 listed users because the log contains at least one profitability-relevant statement for each user (User01: “1.5 Mil yesterday”; User17: “best … thing that’s happened.”; User10: “R2 flasks in 2+ weeks”; User45 crafting may be “behind” peak profitability but still “good;” User20: \"are people actually paying this much? or just hopes and wishes listings\"; User13: \"dont think so, atleast for other professions there's only just enough knowledge to do r2 > r2\"; User 21: \"Yep Only thing i would ahve wished foir was to know sooner.\"; User02: \"drop to like hardly any profit\"; User53: \"cry a little;\" User16: \"dead for MN.\").",
+          "The response should keep the sentiment rating values within the allowed set {1, 2, 3, 4, 5, “NEI”} and should not invent intermediate values (e.g., 3.5) or alternate labels (e.g., “mixed”).",
+          "The response should ensure the sentiment scale direction is consistent with the definition: 1 = most negative, 5 = most positive, and should not invert the scale in text or ratings.",
+          "The response should ensure the ambiguous-case explanation names the specific user being treated as ambiguous (one of the 10 users listed in the table)."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.rename call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/daily/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_4.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/daily/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.rename",
+        "arguments": {
+          "old_path": "docs/daily/drafts/analysis-journal.md",
+          "new_path": "docs/daily/drafts/analysis-journal-archived.md"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "rename",
+        "old_path": "docs/daily/drafts/analysis-journal.md",
+        "new_path": "docs/daily/drafts/analysis-journal-archived.md",
+        "old_must_exist_after": false,
+        "new_must_exist_after": true,
+        "content_must_be_unchanged": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

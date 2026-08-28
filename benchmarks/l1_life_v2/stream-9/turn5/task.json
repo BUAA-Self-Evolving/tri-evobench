@@ -1,0 +1,330 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_9",
+  "turn_id": "turn5",
+  "turn_index": 5,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "7b8a278a-4c8a-beb6-22e1-fef5a8fdebc1",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 288,
+    "source_sha256": "8e234e3c06fec1eedf960f068435d3f65956a5ce0ca0846268337f9afe347fab",
+    "source_metadata": {
+      "task_id": "7b8a278a-4c8a-beb6-22e1-fef5a8fdebc1",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Group Conversations & Meeting Transcripts"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Tuesday, Jan 20\n\n\nSARAH\nYes , next Thursday works for us.  We hope to arrive by 5:45.  \n\nMy bard character is on D n D Beyond.  I also have a Centaur.\n\nME\nAwesome. I'll double check with my friend to see if those details work. \n\nExcellent, I'll try to set up a DnD Beyond account soon.\n\nAlso, if you guys were still wanting to meet this Sunday, to do board games or something, I should be free, though I understand if you'd rather not do anything that day. \n\nSARAH\nSure, We have a plans for this sunday. Which game would you like?  Ticket to ride maybe?\n\nME\nSure, Ticket to Ride sounds fun. \n\n\nFriday, Jan 23\n\n\nAll right, I've set up a D&D Beyond account. I'm not sure how sharing content on it works, but my username is \"AnEpicElf\" (with the email \"epicelfNNN@gmail.com\"), so send me the characters you guys wish to play, including backstory if you wish, when you can please. \n\nIf you want to wait to create a backstory until you know what the campaign will be about though, I can give you some details on Sunday. \n\n\nSunday, Jan 25\n\n\nSARAH\nToday , the floors and the tables of panera were dirtier than usual. If you'd like we can play d and d at our house four minutes away from here next weekend. We have 2 cats.. \n\nME\nI think I'm actually allergic to cats, so I'd prefer to continue trying out Panera. If Panera turns out to not be a great place to play, though, I'm flexible on location. \n\nSARAH\nWe could maybe do the starbucks down the street. \n\nME\nI think that's a good backup, but Panera's dirtiness could just be a one-off, so I personally think we could give Panera another chance. \n\nSARAH\nOk\n\n\nSunday, Feb 1\n\n\nME\nJust to confirm: You guys are good to meet at 2:30 today at Panera?\n\nSARAH\nWas it regular board games or trying that d and d thing you had created?\n\nME\nD&D I believe. \n\nCopy\nIf you're ready for D&D, we're ready too 😀\n\nME\nAwesome. \n\n\nThursday, Feb 5\n\n\nME\nI think I should be able to do D&D on Sunday. I'm not totally sure, but I think so. \n\nSARAH \nA lot of people are excited about that Super Bowl.So if you decide not to do d and d , we could certainly bump at a week \n\nME\nAll right. I'll have to see, but I believe I should be free then. \n\n\nSunday, Feb 8\n\n\nME\nI, in fact, don't have anything going on today. Are you guys good to do D&D at 2:30?\n\nMARK\nSounds good to me 😊\n\nME\nAwesome. \n\nSARAH \nI tried to send a message , but it looks like it failed. I didn't think Mark would be home by two thirty. \n\nME\nAh, okay. \n\nMARK\nI'm home now, we'll be there at 2:30. Is it ok to do a shorter session today? Up to 90 min?\n\nME\nCool. Yeah, that's fine with me. \n\n\nFriday, Feb 13\n\n\nSARAH \nDo u want D and D Sunday?  \n\nME\nYeah, I'm good to do so. \n\nMARK\nGreat, we'll see you at 2:30. We left on quite a cliff hanger! 😁\n\nME\nAwesome, I'm excited. \n\n\nSunday, Feb 15\n\n\nSARAH \nYou said your dad might want to join us.  Can u invite him?  More people makes a campaign dynamic. \n\nME\nI did, but unfortunately he's busy today. He might be able to join next week though. \n\nSARAH \nHe's always welcome.  \n\n\nSaturday, Feb 21\n\n\nMARK\nTomorrow we've got a conflict, but we should be free March 1\n\nSARAH \nWe have a friend who might join next time for D n D if we can meet at 5pm some Sunday.   Is later in the day OK for u, and your dad?\n\nME\nI'm afraid I can't really do much later on Sunday. I could perhaps do Monday, Thursday, or Friday night, though. (Not this week, but most of the time.)\n\nAnd since Panera closes at 8:00, if it helps with timing, we could do it at your house if you want (I could just take allergy medicine before coming).\n\nMy dad should be able to join next session, though. \n\nSARAH \nDarn, my friend works Sunday afternoons. \n\nME\nCould one of the other times I mentioned potentially work? \n\nAlso, can you guys still do D&D tomorrow at 2:30?\n\nMARK\nYes, we can be there tomorrow\n\nME\nAwesome. My dad will be able to join, too. \n\nSARAH \n👍 \n\n\nSaturday, Feb 28\n\n\nMARK\nThis weekend we've got a conflict with our usual D&D time. Do you want to meet up next week instead?\n\nME\nSure, I'm fine with that. \n\nMARK\nThanks!\n\n\n\n\n\nSunday, Dec 28\n\n\nME\nThis is me.\n\n\nMonday, Dec 29\n\n\nSARAH \nThis weekend we will be home, But the weekend after we will be in LA. Let me know if you wanted to play other board games or Dungeons & Dragons on a Thursday, night or Saturday and Sunday This weekend, Panera and Starbucks have plenty of parking and would be good, but panera closes at 8 PM.Thursday. Is a tea bar on birch street and elm, Have you been there?And do you know if they have tables , that would facilitate a d and d game?\n\nME\nI'm busy this Thursday and Saturday, but I probably should be free Sunday (doing 2:30 again is a good time for me). I have not been to the tea bar, but Panera is fine with me, or Starbucks if you prefer there. \n\n\nTuesday, Dec 30\n\n\nSARAH \nI like panera because there are meals Available as well as cookies and treats. Star.\\nBucks has a few little breakfast things , but I don't know if they would have run out by late afternoon.\n\nME\nI'm fine with either, so whatever you prefer works for me.\n\nHowever, I will say that one possible factor to consider is that there are a bunch of Starbuckses around, increasing the chances of miscommunication about where to meet, whereas there's only one Panera nearby, making it easier to find.\n\nBut if you, or anyone else who may join at some point, like Starbucks more, I'm sure it will work well enough. \n\nSARAH \nThat's a good point. Choosing paneera offers more food options and less confusion.  Thanks.  \n\nME\nNo problem. So is the plan to meet at Panera this Sunday, 2:30, to play games?\n\nSARAH \nSure\n\nI had announced this on next door and Facebook and you were the only person who came.So do you want to announce it to your friends that you know , and i'm happy to do dungeons and dragons if they'd rather.\n\nME\nAwesome. \n\nI'll talk to my friends about it and get back to you.\n\nSARAH \nHoly smokes comma it's not that I don't believe you but I don't believe anyone and I google to see how many Panera breads there were either in the five cities or the area. This is the only Panera in the entire county!  As a new arrival , I am still learning a lot about the geography. We only moved up here a couple months ago and it is quite different.\n\nME\nHuh, I didn't know Panera was THAT scarce (I just entered Panera into Google maps and saw that the second-closest Panera was not that close)...Interesting.\n\nSARAH \nThe one we met at is the only one in the county, South of here , in new jersey county , there's one inn new york. I've been going to New York for various things.Because they have the only department store in the area. Even up by the university in kingstown , there's no macy's or nordstrom or bloomingdale's. \n\nME\nI don't know much about about stores or geography, but that's pretty fascinating. \n\nSARAH \nThese are things i've taken for granted by living in a larger city. We had library hours that were 9 a m to 9 p m two cities over from me. It had study cubicles and a small coffee house within it for when people wanted to have conversations.   The population of this entire county is less than half of the population of the city where I lived , and I wasn't even in manhattan , proper. There are eighty seven other cities in the county. So because of the tiny population north of  delaware, there's not enough people for kaiser permanente , to operate up here. Even with new jersey, that's not enough potential customers , so they stop at brooklyn.\n\nThis\\nIs how many Macy's department stores?I had to choose from near where I lived and worked, And that ain't even counting delaware. This is probably why i'm having difficulty finding other people who like board games or dungeons and dragons, I'm used to living in a area with A lot more people , so with only one in a thousand of us like something , that's still a sizable amount of people.\n\nME\nInteresting, makes sense. \n\n\nSaturday, Jan 3\n\n\nSARAH \nWe were excited to hear somebody who knows how to be a dungeon master, Are we doing d and d tomorrow or is it board games?\n\nME\nWell, I have not been able to get any friends to join (not yet, anyway), but if you guys want to play D&D and are okay with a party of 2, I can DM.\n\nHowever, I'll need time to prepare, and we should probably discuss what we want the campaign to be like, so we could have a \"session 0\" tomorrow, then play board games the rest of the time, then properly start the campaign at a later date. \n\nSARAH \nOk.  And I will hope that in the next day , in a couple of your friends say they will join. \n\nME\nTo double-check: We're doing Panera, 2:30 tomorrow, right?\n\nSARAH \nYes.  We can do 3 or 3:30 if u prefer. \n\nME\nI'm good with pretty much whatever -- 2:30 works for me if it works for you. \n\n\nSunday, Jan 4\n\n\nSARAH \nBecause it's raining out.I wanted to double check and see if you were still going to panera.  We can head over  To be there at two thirty. We don't mind rain. \n\nME\nYeah, I'm still good to be there at 2:30.\n\n\nMonday, Jan 5\n\n\nME\nBy the way, here's my email: epicelfNNN@gmail.com\n\nSARAH \nThis Sunday there's a group D n Ding at New York Library.   We may not be back up north by then. I was hoping to catch at least their last two hours. Do you want the info?\n\nME\nNo thank you, I'd rather not have to meet a bunch of new people if I don't have to. If you like that group and want to join them permanently, though, then I'll consider joining, and we could do that instead of me DMing a game. \n\nSARAH \nI'll let u know if they are nice if I make it up from LA in time.  They meet monthly on a Sunday,  so I may not see them till February. B\n\nME\nAll right. \n\n\nTuesday, Jan 13\n\n\nME\nHow'd you like the New York Library game? Would you rather we join them, or would you prefer me to run a game? (Or maybe we do both...?)\n\nSARAH \nThey were awesome.   When I arrived they had 2 tables, 2 DMs.  Both paused their games to welcome us.  The players didn't gripe about it.  They sometimes have a 3rd table.  Big conference room, so no library patrons would complain about noise.  We didn't have characters with us because I wanted to check the vibe.  I feel good about recommending it to u.  We're going next month, they meet monthly.  If u want to DM here I'd do both.  New York is only 16 minutes south. \n\nME\nAll right. I'm willing to try DMing for a while (I'm a bit busy, so I'll see how I do), and I'll consider the New York group too. Is continuing to meet Sundays, 2:30, at Panera good with you guys?\n\nSARAH \nWe have plans this Sunday.  But we'll totally do a D n D w u if u have time.  \n\nME\nCool. I don't think I can really meet consistently at any other time (at least not this week), but I should be ready to DM the next Sunday. \n\nSARAH \nSuper. \n\n\nTuesday, Jan 20\n\n\nME\nOkay, so I managed to get one friend interested in our D&D game, but he isn't available on Sundays. He's available Thursday nights though, and I think I could make those work (NOT this Thursday, though). Do you guys think Thursday, perhaps 6:00-8:00, at Panera would work for you?\n\nSARAH \nI will ask my husband. \n\n\nWednesday, March 4\n\n\nSARAH \nThis sunday is that new york library dungeons and dragons group. They all seem like, really nice people.And it was such a big group , they divided into two , and they said , sometimes even three tables. We're going down for that if you would like to meet us there or i'm happy to pick you up. New York is about eighteen minutes away.\n\nSorry we needed to cancel last sunday, A gentle breeze opened our front door and the knob went straight into the extremely cheap drywall. I bought doorstops for this rental house so that doesn't happen on any of the other doors.But after a lifetime of dealing with lath and plaster, I'm flummoxed Attempting to patch this paper , thin chips and board that has a texturized coating.  \n\nME\nHmm, I'll think about it...Do you know what time they begin and end? And what level their characters are?\n\nCanceling is no problem, it happens. \n\nSARAH \nAgain, it was such a big group.They always have two tables , sometimes three. That gives you a variety of choices on levels.   They had a full table of people that were under level seven suitable for my husband and I. I Didn't ask how high the levels went on the other table.\n\n1pm. It does not give a stop time.\n\nME\nAll right, I'll think about it.\n\nSARAH \nI googled and the library closes at five , so the gaming can't go past five. Probably wrap up at least 15 minutes early.So people can grab their gear.\n\nME\nCool, all right. \n\n\nFriday, March 6\n\n\nME\nI'll try out the New York library group this Sunday. I think I'm out the way of your route (it's 24 minutes away for me), so I'll just meet you there. \n\nSARAH \nOk\n\nThere were a bunch of dads with their teens.  Ur dad would fit in. \n\nME\nAll right, I'll see if he wants to go.\n\n\n\n\n\nDiary\n\nSession 1 – Prelude: A Few Grains of Sand\nDragon attack! Jane and Joseph fought a baby gencast dragon in an old ruin. They didn’t want to, but a voice was commanding the dragon, and the pair used their magic to defeat it.\nThe illusions of the ruin dissolved, revealing a metal room. A med team went to the dragon while Director Rodrick of the Dragon Warrior Academy applauded them (and the experimental dragon) on their test – they were now ready for missions for the Dragon Warriors.\nAs they were leaving, they bumped into a janitor clutching a mop and wearing a metal backpack, Avlae Pinooloo, who fangirled over the party and wanted to shadow them, though she expressed doubt that finding the True Dragons would be possible. Rodrick then asked the party to repair a laser turret that had become detached from the space station (called the Hourglass).\nUnfortunately, all their dragons were sick, so they would have to do the job without them. The party got into space suits and cleverly used their magic to repair the turret. They also found possible signs of sabotage.\nThe party went to bed. Jane was awoken by something. Then a dragon landed on her window…and it broke the glass, and she was sucked into space! But her magic and Joe managed to bring her back inside, and they went to see what was happening.\nTurned out: A full-on assault, with squadrons of dragons firing at the station and troops boarding. Rodrick tried to gain control of the situation while the party fought some invaders. Rodrick found the command room was out of commission, so the backup emergency button, in the bottom half of the Hourglass, would have to be reached in order to get reinforcements from the nearby planet LAX.\nWith Pinooloo tagging along, the party made a plan. They donned space suits and went outside the station, sneaking along its side with Joe's magic providing some propulsion, in order to sneak past the enemy. They managed to get to the lift separating the two halves of the Hourglass, but found it guarded. Jane used an invisible force to pull the dragon riders’ space suit tubes, distracting them and allowing the party to sneak inside to find the inside of the lift. They found it guarded, but much less than the outside, and took out the soldiers (Jane slitting the throats of the unconscious ones).\nAs they entered the lift, Pinooloo was suddenly shot! They dragged her into the lift and started the descent. Joe healed Pinooloo, but it didn't seem effective.\nBut as Jane and Joe prepared to exit the lift, they suddenly found Pinooloo tearing a hole in the wall with her mop-turned-halberd! She said sorry, but this was her operation and she wanted the party dead. She was a fan, but really, they were just like a couple grains of sand – what could they really accomplish? Her backpack unfolded into dark armor and she finished her hole, and she was sucked into space as a dragon filled the hole (Jane managing to get in a parting insult at Pinooloo).\nJoe magic-shoved the dragon away, and, as the lift finished its journey, they pulled themselves out. They managed to find the backup emergency button room…but found the door being held shut.\nIt was Blu, a classmate they liked. She seemed scared, but the party suspected she might be a traitor. They managed to convince her to let them in, and they pressed the emergency button.\nThey waited…and waited…finally a dreadnought appeared, and the enemy was sent into retreat!\nRodrick congratulated the party, and told them that the next high-priority mission was definitely theirs. (Also, the party really wanted to talk to the Dragon Warriors Council about adding extra emergency buttons and background checks for janitors…)\n\nSession 2 – Deep Secrets Part I: Gossip\nFive days after the attack, Jane and Joseph went into the Dragon Warrior Council meeting, where the council was bickering about what to do about the attack. Though it was kind of hard to get the council to listen, the party did manage to suggest getting the Scalax Realm’s senate to communicate with the Scalax Realm’s allies about the Bloodfire Empire.\nAlso, the liquid found in the magic vial in space turned out to just be water. Jane hypothesized that it might have been used to freeze the turret's latches to make it easier to break them. The dragons being sick during the attack was also found to be the result of poison. Additionally, prisoners from the attack revealed that the Empire intended to take the station and kill several people, including, most likely, Jane and Joe.\nThe party, eager to get information, asked Rodrick to go investigate. He said that there might be a mission soon – a Warrior on the surface of LAX Prime may have found something – but they could probably take a few days off. So they got some dragons and went to Lith, a mostly neutral, self-contained system, on the edge of Bloodfire Empire territory. They sniffed around the system's teleportation circle space station and found someone who lost an uncle in a recent Bloodfire attack. Apparently, Bloodfire agents entered a neutral trading post space station, the Trim Barrel, in disguise, tried to buy a perhaps dragon-related piece of paper, and then chaos suddenly erupted and the station was blown up, leaving few survivors (though a significant number of the stations’ defensive dragons were “missing,” not “confirmed dead”). While there, the party also found out that the Dragon Warriors, being government agents, weren’t trusted by some elements of society, and the Dragon Warriors were considered particularly weird and nosy.\nThe party then went down to the surface of Lith Prime and entered one of the more civilized cities, hiding their identities as dragon warriors. While Joe stayed behind to guard the dragons and talk with local police – who have been on the lookout for potential Bloodfire agents – Jane went into town in hunt of rumors and information. She found a little carnival with a lot of people and found a shady-looking, whispering group. She overheard them talking about the city’s defenses. She then, intending to get a better look at them, went up to them, pretending to be asking about where to get a drink, and one of them put a pistol to her stomach.\n\nSession 3 – Deep Secrets Part II: Seedy Alleyways\nJane managed to talk her way out of being immediately shot, but she was soon lured into an alley by the shady-looking group and ambushed. She called for backup and managed to hold off the attackers until Joe got there, dragons blazing. The party killed two and took the last, a cat person, hostage. Joe used charming magic to get the cat person talking, and they found that the Bloodfire Empire was infiltrating and investigating the defenses of cities around the planet in preparation for invasion. The party then handed the cat over to the local police and headed back to the Hourglass for their next mission.\nAn agent on LAX Prime, Boris, had found a tourist that had found a secret second layer to a ruin on the planet. They were to meet Boris in a bar beneath the city of Draco Minor so he could lead them to the ruin and investigate it for dragon lore. However, when they got there (after getting Jane some better armor), they found him missing. His cloak was at a booth, and he was last seen at a designated smoking area. There, Joe used magic to talk to the sea life outside the underwater tunnel and found that Boris had been kidnapped by three people with fire-shaped ice tattoos. So they went off in search of Boris…\n\nSession 4 – Deep Secrets Part III: Coldtists\nJane and Joseph were stopped by someone whose cart apparently broke, but then they found themselves ambushed by two bounty hunters who were looking for them, as well as a third Dragon Warrior. Just then, Adrian, the third Dragon Warrior, arrived just as things were getting ugly, and though the two bounty hunters called in reinforcements – which ended up being a shooter in a building – the bounty hunters were defeated with the help of Adrian’s martial arts skills, with only the shooter surviving and getting away. Adrian, who’d been chasing down a lead for dragon lore that hadn’t panned out, decided to join Jane and Joe on their quest.\nJoe talked to a squid and some dolphins for directions for where Boris had gone, then invited the animals to come with. The party found a building with scratches likely from a metal foot, and in the alley next to it they found a homeless-looking guy with an ice-fire tattoo pretend-sleeping in front of a door. Jane tried and failed to kill him via insults, then Joe intimidated him into getting his boss. Joe then turned into a mouse and followed him inside, finding Boris tied up in a room with a bunch of carousing gang members, called “the Coldtists.” He began nibbling on Boris’s ropes.\nMeanwhile, the party’s squid friend was warning Jane and Adrian that people were coming. They tried to act natural, but the people coming were more coldtists, and they were suspicious of where the homeless guy was, and Adrian killed one of the guys and intimidated the other into bringing them inside. There, they found Boris, along with the leader of the Coldtists, Thingo. They managed to convince him that they had NOT killed one of his guys (whose name was Log) and wanted to negotiate for Boris’s release. Apparently, Boris had cost the Coldtists a shipment of laser guns, so Adrian offered him ten bags of 21 gold pieces each, giving him one of the bags as proof. Thingo accepted, and the party grabbed Boris (whose ropes came off real easy) and hustled out, just as Thingo shouted that they’d been swindled (the other nine bags were empty!). The party was chased by the Coldtists, but Joe used magic to break up the terrain behind them, and they got away.\nThey introduced themselves to Boris, and he told them that he had a key that would unlock an unexplored portion of a ruin. He left it with a friend, Lef (Lev? Lif? Left?), and they went to his place. But he wasn’t there, and he didn’t answer Boris’s watch call. The party went to a nearby pawn shop to see if Lef(?) had sold it, and, through Jane's truth magic and intimidation, the pawn shop owner revealed that Lef had sold it to him a couple hours ago, then someone had bought it half an hour later. That person had also bought an “I love beer” pin, so the party went in search of a bar…\n\n\n\nTask:\n\n\nHey, I've attached two text threads and my dragon-themed D&D campaign's diary. I want to make sure I didn't somehow miss writing down the events of a session. Can you tell me the number of real sessions we've had in this game, and map each session from the diary to a date?\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Create analysis-journal.md in my current default workspace. Begin it with '# Analysis Journal' and write a faithful source-grounded analysis; do not overwrite an existing file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.write_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/curator/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_9.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/curator/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.write_text",
+      "arguments": {
+        "path": "docs/curator/drafts/analysis-journal.md",
+        "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+        "overwrite": false
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "create",
+      "path": "docs/curator/drafts/analysis-journal.md",
+      "must_exist_after": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should state that exactly 4 real sessions of the D&D campaign were confirmed by the chat logs: Session 1 on February 1st, Session 2 on February 8th, Session 3 on February 15th, and Session 4 on February 22nd.",
+        "The response should map Diary Session 1 (\"Prelude: A Few Grains of Sand\") specifically to the meeting on Sunday, February 1.",
+        "The response should map Diary Session 2 (\"Deep Secrets Part I: Gossip\") specifically to the meeting on Sunday, February 8.",
+        "The response should map Diary Session 3 (\"Deep Secrets Part II: Seedy Alleyways\") specifically to the meeting on Sunday, February 15.",
+        "The response should map Diary Session 4 (\"Deep Secrets Part III: Coldtists\") specifically to the meeting on Sunday, February 22.",
+        "The response should not associate the \"shorter session\" (90 min) mentioned by Mark on February 8 with the Diary Session 1. For example, the \"shorter session was a comment made about the second session, so it should not be associated with Session 1.",
+        "The response should correctly identify that the \"cliffhanger\" Mark mentioned in the February 13 log refers to the ending of Diary Session 2, which was played on February 8. For example, it should not associate the \"cliffhanger\" with Diary Session 1, as it was a comment made about the second session.",
+        "The response should not mention the meeting on January 4th. For example, since the prompt only asked for \"real sessions,\" the response should not include the meeting to discuss campaign details, as it was not a \"real session\" and cannot be mapped to a diary session.",
+        "The response should treat the label (\"ME\") as the user themselves (the person being addressed or the narrator), using first or second-person framing.  For example, where the transcript shows \"ME\", the response should interpret this as the user's own actions or words, not as a third-party character named \"ME\" performing actions separate from the user.",
+        "The response should not interpret the two chat logs provided as one continuous conversation, as they are clearly from different sources. For example, it should notice the date change from February back to December and treat them as two separate conversations with distinct starting points."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/curator/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/curator/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should state that exactly 4 real sessions of the D&D campaign were confirmed by the chat logs: Session 1 on February 1st, Session 2 on February 8th, Session 3 on February 15th, and Session 4 on February 22nd.",
+          "The response should map Diary Session 1 (\"Prelude: A Few Grains of Sand\") specifically to the meeting on Sunday, February 1.",
+          "The response should map Diary Session 2 (\"Deep Secrets Part I: Gossip\") specifically to the meeting on Sunday, February 8.",
+          "The response should map Diary Session 3 (\"Deep Secrets Part II: Seedy Alleyways\") specifically to the meeting on Sunday, February 15.",
+          "The response should map Diary Session 4 (\"Deep Secrets Part III: Coldtists\") specifically to the meeting on Sunday, February 22.",
+          "The response should not associate the \"shorter session\" (90 min) mentioned by Mark on February 8 with the Diary Session 1. For example, the \"shorter session was a comment made about the second session, so it should not be associated with Session 1.",
+          "The response should correctly identify that the \"cliffhanger\" Mark mentioned in the February 13 log refers to the ending of Diary Session 2, which was played on February 8. For example, it should not associate the \"cliffhanger\" with Diary Session 1, as it was a comment made about the second session.",
+          "The response should not mention the meeting on January 4th. For example, since the prompt only asked for \"real sessions,\" the response should not include the meeting to discuss campaign details, as it was not a \"real session\" and cannot be mapped to a diary session.",
+          "The response should treat the label (\"ME\") as the user themselves (the person being addressed or the narrator), using first or second-person framing.  For example, where the transcript shows \"ME\", the response should interpret this as the user's own actions or words, not as a third-party character named \"ME\" performing actions separate from the user.",
+          "The response should not interpret the two chat logs provided as one continuous conversation, as they are clearly from different sources. For example, it should notice the date change from February back to December and treat them as two separate conversations with distinct starting points."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.write_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/curator/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_9.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/curator/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.write_text",
+        "arguments": {
+          "path": "docs/curator/drafts/analysis-journal.md",
+          "content": "non-empty source-grounded analysis beginning with '# Analysis Journal'",
+          "overwrite": false
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "create",
+        "path": "docs/curator/drafts/analysis-journal.md",
+        "must_exist_after": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

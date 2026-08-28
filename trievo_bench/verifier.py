@@ -151,3 +151,186 @@ class LLMJudge:
             return CheckResult(score=max(0.0, min(1.0, score)), passed=passed, feedback=str(feedback), details={"type": "llm", "raw": result})
         except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
             return CheckResult(score=0.0, passed=False, feedback="LLM judge returned invalid JSON; retry is allowed.", details={"type": "llm_parse_error", "raw": text[:1000], "error": str(exc)})
+
+
+class L1LifeJudge:
+    """Evaluator for the sealed, component-scored L1-Life protocol.
+
+    The dataset supplies an immutable literal-template prompt per turn.  This
+    class deliberately keeps that prompt and every expected value on the
+    evaluator side; the baseline only receives the agent-input projection.
+    """
+
+    _allowed_scores = {0.0, 0.5, 1.0}
+
+    def __init__(self, client: Any) -> None:
+        self.client = client
+
+    def evaluate(self, check: dict[str, Any], response: str, sandbox: Sandbox, trajectory: Any = None) -> CheckResult:
+        trajectory = trajectory if isinstance(trajectory, dict) else {}
+        values = {
+            "stream_id": check.get("stream_id"),
+            "turn_id": check.get("turn_id"),
+            "turn_type": check.get("turn_type"),
+            "turn_origin": check.get("turn_origin"),
+            "agent_input": check.get("agent_input", {}),
+            "final_response": response,
+            "interaction_transcript": trajectory.get("interactions", []),
+            "tool_calls": trajectory.get("tool_calls", []),
+            "tool_results": trajectory.get("tool_results", []),
+            "state_before": trajectory.get("state_before", {}),
+            "state_after": trajectory.get("state_after", {}),
+            "state_diff": trajectory.get("state_diff", []),
+            "workspace_before": trajectory.get("workspace_before", {}),
+            "workspace_after": trajectory.get("workspace_after", {}),
+            "reference_context": check.get("reference_context"),
+            "rubrics": check.get("rubrics", {}),
+            "checks": check.get("checks", []),
+            "expected_state": check.get("expected_state", {}),
+            "expected_tool_call": check.get("expected_tool_call"),
+            "expected_workspace_effect": check.get("expected_workspace_effect"),
+            "gt": check.get("gt", {}),
+        }
+        prompt = self._render(str(check.get("judge_prompt", "")), values)
+        max_tokens = int(check.get("max_output_tokens", 12000))
+        result: dict[str, Any] | None = None
+        scores: dict[str, float | None] | None = None
+        source_scores: dict[int, float | None] | None = None
+        last_error = "unknown judge parse error"
+        for attempt in range(2):
+            retry_note = "" if attempt == 0 else (
+                "\n\n[RETRY AFTER INVALID OUTPUT]\n"
+                "Return the required JSON object again. Every score must be exactly 0, 0.5, 1, or null; "
+                "include every required check_id and every required source-rubric index exactly once."
+            )
+            try:
+                text = self.client.complete(
+                    [
+                        {"role": "system", "content": "You are a strict L1-Life reference evaluator. Return JSON only."},
+                        {"role": "user", "content": prompt + retry_note},
+                    ],
+                    max_tokens=max_tokens,
+                    json_mode=True,
+                )
+            except RuntimeError:
+                raise
+            except Exception as exc:
+                return self._invalid(f"judge request failed: {exc}")
+            try:
+                result = self._parse(text)
+                scores, source_scores = self._validate(result, check)
+                break
+            except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
+                last_error = str(exc)
+        if result is None or scores is None or source_scores is None:
+            return self._invalid(last_error)
+        total = self._aggregate(scores, source_scores, check)
+        threshold = float(check.get("pass_threshold", 1.0))
+        failed_dimensions = [
+            str(item.get("dimension", item.get("check_id", "unknown")))
+            for item in check.get("checks", [])
+            if scores.get(str(item.get("check_id"))) not in {None, 1.0}
+        ]
+        feedback = "Task succeeded." if not failed_dimensions else "Failed dimensions: " + ", ".join(dict.fromkeys(failed_dimensions)) + "."
+        return CheckResult(
+            score=total,
+            passed=total >= threshold,
+            feedback=feedback,
+            details={
+                "type": "l1_life_llm_judge",
+                "check_scores": scores,
+                "source_rubric_scores": source_scores,
+                "rationale": str(result.get("rationale", ""))[:1000],
+            },
+        )
+
+    @staticmethod
+    def _render(template: str, values: dict[str, Any]) -> str:
+        if not template:
+            raise ValueError("L1-Life judge prompt is missing")
+        rendered = template
+        for name, value in values.items():
+            rendered = rendered.replace("{" + name + "}", json.dumps(value, ensure_ascii=False))
+        return rendered
+
+    @staticmethod
+    def _parse(text: Any) -> dict[str, Any]:
+        raw = str(text).strip()
+        try:
+            value = json.loads(raw)
+        except json.JSONDecodeError:
+            start, end = raw.find("{"), raw.rfind("}")
+            if start < 0 or end <= start:
+                raise
+            value = json.loads(raw[start : end + 1])
+        if not isinstance(value, dict):
+            raise ValueError("judge output must be a JSON object")
+        return value
+
+    def _validate(self, result: dict[str, Any], check: dict[str, Any]) -> tuple[dict[str, float | None], dict[int, float | None]]:
+        if result.get("stream_id") != check.get("stream_id") or result.get("turn_id") != check.get("turn_id"):
+            raise ValueError("judge output has an unexpected stream_id or turn_id")
+        expected_checks = [str(item["check_id"]) for item in check.get("checks", [])]
+        raw_checks = result.get("check_scores")
+        if not isinstance(raw_checks, list):
+            raise ValueError("judge output is missing check_scores")
+        scores: dict[str, float | None] = {}
+        for item in raw_checks:
+            if not isinstance(item, dict):
+                raise ValueError("check_scores items must be objects")
+            check_id = str(item.get("check_id", ""))
+            if check_id not in expected_checks or check_id in scores:
+                raise ValueError("judge output has duplicate or unknown check_id")
+            scores[check_id] = self._score(item.get("score"))
+        if set(scores) != set(expected_checks):
+            raise ValueError("judge output must cover every check_id exactly once")
+
+        expected_indices = list(range(1, len(check.get("rubrics", {}).get("source_rubrics", [])) + 1))
+        raw_source = result.get("source_rubric_scores")
+        if not isinstance(raw_source, list):
+            raise ValueError("judge output is missing source_rubric_scores")
+        source_scores: dict[int, float | None] = {}
+        for item in raw_source:
+            if not isinstance(item, dict):
+                raise ValueError("source_rubric_scores items must be objects")
+            index = int(item.get("rubric_index", 0))
+            if index not in expected_indices or index in source_scores:
+                raise ValueError("judge output has duplicate or unknown rubric_index")
+            source_scores[index] = self._score(item.get("score"))
+        if set(source_scores) != set(expected_indices):
+            raise ValueError("judge output must cover every source rubric exactly once")
+        return scores, source_scores
+
+    def _score(self, value: Any) -> float | None:
+        if value is None:
+            return None
+        if isinstance(value, bool):
+            raise ValueError("judge scores must be 0, 0.5, 1, or null")
+        score = float(value)
+        if score not in self._allowed_scores:
+            raise ValueError("judge scores must be 0, 0.5, 1, or null")
+        return score
+
+    @staticmethod
+    def _aggregate(scores: dict[str, float | None], source_scores: dict[int, float | None], check: dict[str, Any]) -> float:
+        usable_source = [score for score in source_scores.values() if score is not None]
+        source_mean = sum(usable_source) / len(usable_source) if usable_source else None
+        numerator = 0.0
+        denominator = 0.0
+        for item in check.get("checks", []):
+            score = source_mean if item.get("scoring") == "mean_source_rubrics" else scores[str(item["check_id"])]
+            if score is None:
+                continue
+            weight = float(item.get("weight", 0.0))
+            numerator += weight * score
+            denominator += weight
+        return numerator / denominator if denominator else 0.0
+
+    @staticmethod
+    def _invalid(error: str) -> CheckResult:
+        return CheckResult(
+            score=0.0,
+            passed=False,
+            feedback="L1-Life judge returned invalid output; retry is allowed.",
+            details={"type": "l1_life_judge_parse_error", "error": error[:1000]},
+        )

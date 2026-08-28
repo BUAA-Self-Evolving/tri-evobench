@@ -1,0 +1,283 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn14",
+  "turn_index": 14,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "interactive",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "8626a7ff-be0f-50ad-94b4-038cd6a72141",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 230,
+    "source_sha256": "677b82000482e53d67192d94f949fc94b981e98605e39b3e42ec169af883a757",
+    "source_metadata": {
+      "task_id": "8626a7ff-be0f-50ad-94b4-038cd6a72141",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "\n\n----------------------\n\n\nScript #1\n\nBITCOIN FOR BEGINNERS\n\n**Quick, eye catching logo**\n\nIntroduction\n**Me, Standing before Green Screen animated backdrop**\n**As the video goes on, when I am on-screen explaining, use cuts from full body to close up occasionally to keep things dynamic.**\n\nHi, I’m [HOST], and I want to tell you everything you need to know to get up to speed on the Bitcoin revolution! If you’re new to Bitcoin, then know that it is a brand new financial asset that is seeking to change the way money works forever, and in this video I’ll be telling you all about: \n\nThe origins of Bitcoin, and how its creator Satoshi Nakamoto remains a mystery to this day.\nThe basics of how the blockchain technology powering Bitcoin works.\nSome of the major moments in Bitcoin’s 11 year history that define what it has become.\nWhere can you actually get some Bitcoin, and how can you store it?\nLastly, we’ll talk about the latest developments and explore what lies in the future for Bitcoin.\n\n**Imagery should accompany each of these points, foreshadowing what will be explored**\n\nBy the end of this video you’ll be familiar with all of the basics and more, and you should be ready to begin getting involved with this highly exciting and unprecedented form of currency. So what are we waiting for? Let me explain to you what makes Bitcoin so amazing!\n\n**Brief animated intro**\n\nThe Origins of Bitcoin\n\nIn 2008 the world suffered from a global financial crisis, largely caused by unethical banking standards that are supported worldwide. On October 31st, 2009, a document entitled “Bitcoin: A Peer-to-peer Electronic cash system” was released to a cryptography mailing list. \n**Images of actual post \nThe author used the name Satoshi Nakamoto, generally believed to be a pseudonym, and this paper outlined the ins and outs of how the Bitcoin network would function. To this day nobody knows who Satoshi Nakamoto actually was, or if it was even just one person, but there is no shortage of theories as to who was behind this post. What we do know is that he was active in these cryptography forums leading up to and for a couple of years after Bitcoin was released, but then went quiet and has basically remained so ever since.\n\n**Images of various people believed to be nakamoto/articles making claims**\n\nOn January 3rd 2010 Satoshi created the very first Bitcoin to ever exist. How that process works is a subject we’ll return to in just a moment, but by January 9th the code for Bitcoin version 0.1 had been released to the community.\n\n**Images of the code**\n\nThis meant others were now able to begin getting involved and creating their own Bitcoins. Just three days later Satoshi performed the world's first Bitcoin transaction, in which he sent programmer and cryptography expert Marcus Thorne 10 Bitcoins. \n**Image of Marcus Thorne**\n\nNow before we go any further, we need to explain why all of these events are exciting, which will require us to explore just what it was Satoshi Nakamoto had created. Bitcoin is the world’s first fully functioning **blockchain**  Cool, so what does that mean? Well, imagine a ledger. **Ledger imagery** Just a document that holds a list of transactions, obviously businesses and banks etc, use these everyday to track their finances. **Businesses, Banks** Of course, any type of traditional ledger can be falsified. Great measures can be taken to limit who has access to the ledger, and audits can be done by independent parties to double check everything, but this has a couple problems. 1, it takes a lot of work-hours just to try and keep the system honest and 2. There will still always be a handful of entities you have no choice but to trust. Unless you yourself are doing the audits, there are always going to be points where deception or corruption can come in. \n**Relevant imagery of legers, business, etc.**\n\nOkay, now imagine that instead of the ledger being locked away for only a privileged few to edit or verify, instead literally everyone in the company has a copy that they can review the complete history of at any time, and is instantly updated, for everyone, whenever any type of transaction happens. Think about that, complete transparency. There would be no need for audits or trust because literally everyone could see what anyone is doing. \n\n\nWell, this is basically how a blockchain works. To make it more literal, the Bitcoin network functions like this:\n\nEach “block” is that ledger that everyone can see. Every new block in the “chain” is just the latest update to the ledger. Whenever a new block is created, it is broadcast to every entity on the network, which are called nodes. Nodes can all talk to other nodes, and as the block propagates through the network, the nodes all create a **consensus** that this block contains only valid transactions. \n**Blockchain imagery**\n\nOkay well, who creates these “blocks?” There are special types of nodes that are referred to as **miners.** Miners use powerful computers to attempt to solve complex cryptographic functions which are tied to the data of all the transactions to ever happen on the network. I know that sounds complicated, and don’t worry we’re not getting into the math today, but understand that this means that there is a mathematically verifiable way to prove that new blocks can be trusted, and everyone on the network can check that this holds up with each block. \n\n**Math imagery**\n\nUnderstand that miners are actually working competitively. See, each block that is created also creates new Bitcoin, and this new coin is awarded to the miner that was the first to find the correct solution that verified the block. Miners are basically “brute force” searching for the next answer, by literally throwing possible solutions at the problem as fast as possible until one works. Also know that the difficulty of these problems get dynamically adjusted, so that on average a new block will be mined every 10 minutes. \n\n**Images of mining rigs, hash graphs**\n\nAt this point you may be wondering how it takes miners so much effort to solve these problems, but any other node can easily verify it is correct. The best analogy for this that I have ever heard is a sudoku puzzle. **Sudoku image** It takes notable time and effort to correctly solve the entire puzzle, but once you have done so, anyone who knows the rules can pretty quickly check your work and verify it. Sudoku puzzles aren’t how Bitcoin is created, but that same logic applies here. \n\nSo when Bitcoin gets created, where does it actually exist? Well, all Bitcoin exists on the network in what are called **addresses.** Addresses are long, complex numbers that can basically hold any amount of Bitcoin. Whenever someone performs a transaction on the network, they are basically broadcasting to the whole network “I would like to send x amount of Bitcoin from this address to this one.” They will need to provide a special, secret “key” that is created with each address and grants access to the Bitcoin within. If they provide the correct key, and the network can see they have enough Bitcoin available in their address, then a miner will include the transaction in a block, and once that block has been mined, the rest of the network will see it and go “Yeah, that was a valid transaction.” \n\n**Images of addresses, transactions, transaction confirmation screen?**\n\nAt this point we should mention fees. Yes, Bitcoin transactions do have fees involved. However they work a little different than what you may be used to from other payment systems. When someone creates a transaction, they include pretty much any amount they want, on top of what is being sent, as the fee. This is the incentive for the miners to include your transaction in a block. See, in addition to the aforementioned block reward, miners also collect the fees for every transaction they include in their block. Only so many transactions fit inside a single block, so miners generally take the highest fees first. \n\nWhat this means is that while higher fees can be paid if you want to ensure that your transaction is given top priority, you usually will be fine paying well under 1% and you should still see your transfer included into one of the next few blocks. \n\nLet’s do a quick recap of what all of this is describing. We’re talking about a global payment network with its own native currency. Anyone can download the software and run their own node or miner, so long as they have a computer and internet access. Transactions can be sent to any address on the network as long as they are valid, and cannot in any way be blocked, intercepted or censored. Every member of the network is playing an active role in securing the whole of the network, but there is no central point of failure. So long as anyone is still running a node, the network can be considered to still exist. \n\n**Bitcoin Network Imagery**\n\nThis is the basis for why those first few milestones in Bitcoin’s history were so important. At the time, only a handful of cypherpunks knew it, but Bitcoin was alive and it was working as intended. In the early days it was mined by a slowly growing number of people and was originally traded between these people as a sort of novelty, but it wouldn’t be very long before an exchange rate began to emerge. \n\nOne of the first known exchanges of Bitcoin for something that could basically be priced in US Dollars was on May 22nd, 2010 when a programmer named Julian Reed negotiated a transaction for two pizzas in exchange for 10,000 BTC. Given that the pizzas were worth roughly $30, the value of the Bitcoin during this transaction would still be considered worth less than $0.01 per coin. \n\n**Images of Pizza, Forum post**\n\nHowever as more users began to get involved and the first public exchanges started to come online, the price would quickly rise. Less than a year after the pizza incident, Bitcoin was being traded as high as a dollar per Bitcoin by early 2011. If that sounds impressive for an asset that just over a year prior had no established value, then check this out. By November of 2013 a single Bitcoin was fetching a whopping $1,200. Of course, this growth was arguably way too fast, and inevitably this first bubble popped. \n\n**Chart History Images**\n\nOne of the largest Bitcoin exchanges at the time, Mt.Gox **Image** would announce its insolvency and shutdown in 2014 and this would trigger a crash that would send Bitcoin back into the low to mid hundreds range for the next few years. \n**Chart**\n\nIt should be mentioned that during this time period Bitcoin wasn’t growing up in a vacuum. Its code is all open source, so it wasn’t long before people copied it, tweaked it, and began releasing their own variations. This has led to the broader term of **cryptocurrencies** to emerge, which is a blanket for Bitcoin and every other digital asset that followed its philosophy. Not only were there projects that were largely the same with just a few tweaks, like Litecoin and Bitcoin Cash, but also ones that went further, or re-imagined how their networks would even work, like Ethereum and Monero. **Images of currencies** Today there’s literally thousands of projects out there today creating a vast ecosystem of assets with unique use cases, and you can look forward to our next video when we will begin cracking open some of the most popular. **After next video is created, add a card linking to it at this point** But for now, back to Bitcoin.\n\nIn early 2017 Bitcoin would finally see its price rise to break the previous all time high, and this began a year long bull run that climaxed in December with a new high of just under $20,000. **More charts** As is the way of market cycles, this predated another crash. Over the course of 2018 Bitcoin slowly slumped back down, all the way to about $3,300 by the one year anniversary of the all time high. Since then, it has re-climbed back as high as $14,000, and as of this video is sitting somewhat comfortably near $9,000, though with ups and downs along the way for sure.\n\nHow do you get and use Bitcoin?\n\nOkay, so after hearing all that you’re like “I’m sold, but what do I actually DO to get some Bitcoin?” First of all, know that you don’t have to run a node or be a miner in order to acquire some. Those are key elements of the network, but you don’t have to be securing the network in order to use it any more than you do with, say, a social network. \n\nFor beginners, the easiest way to get your first Bitcoin is going to be an exchange. Exchanges for Bitcoin work much like traditional asset exchanges. If you’re new, it may seem daunting, but many of the biggest exchanges these days have made great strides in simplifying the user experience, and often buying Bitcoin is literally no more complicated than buying anything online with a credit card. **Exchange logos, images of interfaces** You can use US Dollars, or other currencies, to purchase Bitcoin directly, which can then be transferred off of the exchange for personal safekeeping, or kept on the exchange and actively day traded with. \n\nWe’ll cover all you need to know about trading in a video very soon, but let’s say you bought some bitcoin and just want to hold onto it. We mentioned addresses and broadcasting transactions, but how do you actually access this stuff? We’ll keep it simple, but this is where **Wallets** generally come in. A Wallet is a term for software that lets you manage one or usually multiple Bitcoin addresses. It monitors the addresses, keeps track of their values, and allows the user to send out new transactions on the network. \n\nIt should be noted that unless your wallet software is attached to a node that you yourself operate, there will need to be an element of trust here. **BE AWARE image** Without your own node, the Wallet software will need to send your transaction to some node. This really isn’t a major issue mind you, as there are plenty of Wallet options out there which are open sourced, transparent about what nodes they use, and have a proven track record of being honest. Further take solace knowing that other nodes aren’t actually able to tamper with your transaction because it is encrypted, but we just wanted to be clear that unless you run a node yourself, this slight trust element is invariably still present.\n\nSo to recap, you can get Bitcoin off of reputable exchanges, and store it on your computer or phone using wallet software, of which many options exist online and in app stores for free. While there is obviously a lot more you could learn about these services, that’s really all you need to get started. \n\nWhat Lies in the Future for Bitcoin?\n\nThe short answer here is that nobody exactly knows because this is something new on the planet earth. We glossed over a lot of Bitcoins' varied past, but just know that developers have updated and streamlined elements of the network over the last 10 years and continue to do so today. Work is a little slow as these are teams of people all over the world who are passionate, but there is no central business or authority governing it all. \n\n**Imagery from github, forums, twitter**\n\nUpdates are carefully vetted and reviewed because nobody wants to break what already works. To that end, it really does work. The bitcoin network has effectively existed since the first block was mined with virtually no downtime over more than 10 years. Not many networks can boast that. It has also never been hacked or disrupted, and to this day there doesn’t appear to be a realistic way to do so. \n\nThat all being said, more work does need to be done. While Bitcoin does currently work great, the network isn’t yet ready to take on the number of transactions that it would see if the whole world started using it. \n\n**Images of TX rate, network fees**\n\nFortunately there are a variety of possible solutions that are being explored to improve the capacity of the network, and most are confident that one or more will work out to allow Bitcoin to scale with added interest. \n\n\nFor example there’s the lightning network. **LN imagery** LN is a network that sits on top of bitcoin and takes advantage of the immutability of the blockchain, but can transmit even faster and cheaper than the regular Bitcoin network, which could make the promise of this becoming digital cash begin to materialize.\nWhile it definitely isn’t perfect yet, Bitcoin has already addressed many of the flaws plaguing the traditional financial world. As we head into the 21st century, many worldwide are hoping that this evolution can continue to make a more fair economic playing field for everyone, but it’s fair to say this has yet to be proven. Whatever Bitcoin becomes, it doesn’t look like it’s going to be going away anytime soon.\n\nThat should wrap it up for us today. Join us next time as we take a step outside of Bitcoin and look at the wider world of Altcoins. For now, you should have enough information to get out there and start going even deeper. To that end, be sure to check out some of our other educational content and interviews on YT, and if you can’t wait to learn about trading, go take a glance at our Signals Group on Telegram. As mentioned, don’t hesitate to hit like and subscribe if you want to keep seeing this type of content, thank you all so much for watching, and I’ll see you in another video here really soon!\n\n**Fade out to logo/end screen** \n\n-----------------------------------------------------------------------------------------------------------------------------------------\nScript #2\n\nTitle: Is It Too Late to Buy Bitcoin in 2021?\n\nOutline:\n\nIntro\n1. History of Bitcoin/Stock to Flow\n2. Recent Celebrity Endorsements/Institutional Adoption\n3. The World of Altcoin Opportunities\n4. There’s More to Crypto Than Getting Rich\n5. Stormgain Promo\nOutro\n\n\n Is It Too Late to Buy Bitcoin in 2021?\n\n**Imagery of charts, possibly real numbers.**\nToday we’re going to talk about a question that is undoubtedly on a lot of people’s minds as Bitcoin enters its next bull run. Namely, is it already too late to buy bitcoin? This is a common feeling that many get when an asset does exceptionally well and they haven’t already bought some. \n\nWell I won’t keep you in suspense, the answer is emphatically NO, you haven’t missed the rocketship to the moon at all, at least we don’t think so. In this video, I’ll break down a handful of reasons to be optimistic about where Bitcoin is going. Our examples range from purely economic reasons to public opinion, but they all point to continued growth in Bitcoin, and most decentralized assets, well into 2021 and beyond. \n\nSo what are we waiting for? Let me explain to you why we think that no, it is not too late to buy bitcoin, in 2021.\n**Graphics of logo**\nBitcoin has been around since 2009, and at the time that this is being shot, the price is around ($60,000). It’s definitely been a bumpy ride, with multiple bull runs and bear markets.\n**60,000 on screen at this point**\nAs you may have noticed, we seem to be beginning another bull run right now. With the price already having come so far, it’s understandable that some people are wondering if they’ve already missed out. Sure, the pattern looks to be repeating from previous cycles, but how do we know this time will be the same?\n\nWell, to be blunt, we don’t. This video isn’t investment advice and I can’t promise you that the price won’t plummet tomorrow. I do, however, want to break down a few reasons why we think it’s highly plausible that Bitcoin, and cryptocurrency in general, still have a lot of room to grow.\n\nLet’s start with the Stock to Flow model. I’ve actually already broken this down in my video on the Bitcoin Halving of 2020, which is a great companion to this video, so be sure to check that out too. \n**Stock to flow image**\nIn a nutshell, the S2F model outlines the ratio of the existing reserves of an asset aka the stock, to the amount of that asset being regularly produced, or flow. Every four years, Bitcoin’s S2F ratio changes when a halving event occurs, and so far the price has always risen in response to this shift. \n\nOn this chart, the only thing you need to understand is that the purple line you see that jumps up every four years is the s2f ratio. Those jumps are the halving events. The multicolored dots are the price of bitcoin. Notice how after each halving, the price rises, overshoots the purple line (bull run), then spends a couple years recalibrating to the line (bear market), before the next halving repeats the cycle. \n\nBecause bitcoins production rate is so highly predictable, we can use this model to make reasonable projections about the potential for future growth.\n\nOf course, if it were really just that simple, then I wouldn’t be so adamant about reminding our viewers that this isn’t investment advice. There’s more than just s2f that decides bitcoin’s price, and the model would break down fast if people lost their faith in the asset. So next let’s discuss the fact that people haven’t lost faith, and in fact there is plenty to be optimistic about going forward.\n\nAgain, this video was made when bitcoin’s price was around $60,000, putting its market cap at just a little over $1 trillion. \n\nBreaking the trillion barrier has been lauded as a great milestone, but just for comparison, here’s some other numbers to think about.\n\nFor one, Gold’s current market cap alone is about 10 times bigger than Bitcoin’s. \n\nSimilarly, the global real estate market in 2019 was also estimated at around $10 trillion. \n\nThat same year, the sum Gross Domestic Product of all nations on earth was estimated at about $87 trillion. \n**Images to back up all of the above**\n**Look for real and metaphoric images**\nThese are just a few simple examples, but they show how bitcoin is still a small fish in a big pond. This is actually fantastic, because if you believe that the technology has inherent value then you can see how much money there is in the world that hasn’t even begun to flow into cryptocurrency, yet.\n\nOf course, none of this matters if the rest of the world doesn’t come around and begin using Bitcoin. Fortunately here too, there is optimistic news. For one, Bitcoin has recently seen attention from some pretty big names. We’ll start with the one everyone’s heard about, and that’s Elon Musk. *Image* Musk has made some notable waves in the crypto world lately, both with his public endorsements of Bitcoin and Dogecoin on twitter, as well as the fact that his company, Tesla, recently purchased $1.5 billion worth of Bitcoin. When the richest man in the world is on your side, it’s generally a good sign.\n\nThere’s of course some other interesting names that are proponents of cryptocurrency, like Akon and Lindsay Lohan, *Images* but perhaps the most promising endorsements come from big names in social media and online payments. \n\nFor example Jack Dorsey, *Img* CEO of twitter, has repeatedly been vocal about his love for the digital asset, and he has just recently  teamed up with rapper JayZ to create a Bitcoin Trust *Imgs* that is currently working hard to grow development teams in Africa and India. \n\nThen there’s the fact that PayPal recently began supporting cryptocurrencies, with CEO Dan Schulman saying in a recent interview that he is “very bullish on digital currencies of all kinds.”\n\nWhen you combine these endorsements, with the fact that Binance has recently noticed a rise in institutional investors on their platform, it’s easy to see that interest in Bitcoin is starting to reach into some very influential levels of society. \n\nIs there still some pushback out there? Absolutely, but this comes more from regulators and less from actual players in financial markets. Generally speaking, as a deeper understanding of bitcoin proliferates, we think so will adoption.\n\nWe’ve been largely focusing on Bitcoin so far, but we need to take a moment to highlight the fact that there’s so much more going on in cryptocurrency than just this one, albeit popular, asset. For example we recently made the case that Ethereum could, in time, surpass Bitcoin. We’ve also covered things like Decentralized Finance and the myriad of projects popping up in that realm. \n\n\nWe’re not going to go into any specific projects here, rather just point out that there are opportunities available all across the cryptocurrency landscape that have the potential to grow massively as this economic space develops. \n\nAs we always say, do your homework. For every real money-making investment opportunity out there, there are countless scams and useless projects. \n**Altcoin images**\nSo many coins want to be “the next Bitcoin,” but realistically very few can deliver this. Being well educated on what a project is claiming, who is behind it and what is their track record will go a long way in separating promising new startups from pump and dump coins.\n\nOn that note, there’s one more thing I wanted to mention about making money from Bitcoin. I think it’s important to keep in mind that Bitcoin’s biggest supporters aren’t simply in this for the potential money. I know, everyone loves to say that, and very few people are truly ambivalent about the price rising. \n\nStill, there are many who feel that Bitcoin’s ability to transmit value worldwide over the internet will stay intact at any particular fiat valuation. Hence, even when Bitcoin someday does begin to flatten out in terms of growth, it will still be worth owning. In fact, it will presumably be much more worth owning than it is now, as it will be more scarce. \n\n\nWhat we’re saying is, approaching cryptocurrency with a “get rich quick” attitude is arguably missing some of the point. Yes, we all hope to see our portfolio value grow, that’s just called good investing. But both Bitcoin and the entire crypto space have so much more to offer, we don’t want to miss it because we keep checking the latest prices.\n\nWell, that should do it for today. Tell us below in the comments what you think. Is it too late to get on board with Bitcoin? If so, what projects do you think stand to be the most profitable?\n\n“What projects do YOU think are undervalued? Tell us below!” \n^^Put this on screen too!\nHopefully we’ve made a pretty solid case for why we’re so optimistic about Bitcoin’s ability to keep growing in the coming years. We could, of course be wrong about everything, and unforeseen events can always change the nature of the markets, so do your own research, including staying up on the latest developments going on with cryptocurrency. \n\nThanks For Watching!\n\n\n\nTask:\n\n\nBased on these scripts, can you create a new one that emulates this writing style? I don’t need a full script, I would like five different summaries of potential scripts I can choose between. Each synopsis should be over 100 words and sound like it was written by the same author as the examples given. Each synopsis should be different, and should explore a different cutting edge technology besides bitcoin. Think VR, AI, Quantum computing, or similar breakthroughs. Each one should be approached in a similar fashion though, with a bit of history and explanation of the tech. Also include suggestions for where to put images and what they might be, also aligned with how these examples are written. \n\n\n"
+      },
+      {
+        "role": "assistant",
+        "content": "Here are five different script summaries, written in the style of the provided Bitcoin scripts, exploring different cutting-edge technologies.\n\n---\n\n### **Synopsis 1: Virtual Reality**\n\n**Title: VIRTUAL REALITY: YOUR PORTAL TO NEW WORLDS**\n\nHi, I’m [HOST], and today I’m going to pull back the curtain on the mind-bending world of Virtual Reality! If you’ve ever wondered how you can visit the surface of Mars or battle dragons from your living room, then this is the video for you. By the end of our time together, you’ll understand the origins of VR, the fascinating tech that powers it, and how you can start exploring these digital realms yourself. **(Imagery: Quick animated intro showing a portal opening to various fantastical landscapes)**.\n\nWe’ll start with the **history** of VR, from its sci-fi roots and early experiments like Morton Heilig’s Sensorama in the 1960s, to the term being coined by Jaron Lanier. The watershed moment came in 2012 with the Oculus Rift Kickstarter. **(Images: Photos of old VR contraptions, Palmer Luckey with the first Rift prototype)**.\n\nNext, we’ll break down the **technology**. Imagine a computer-generated dreamscape that you can step into. Modern VR relies on **head tracking** to know where you’re looking, **stereoscopic displays** to give depth to the image, and handheld controllers that let you interact with the world. **(Imagery: Diagram showing how a VR headset tracks head movement, close-up on a controller)**. We’ll use an analogy: it’s like being inside the world’s most immersive video game.\n\nWe’ll cover major milestones like the launch of the HTC Vive and PlayStation VR, and the explosion of social VR platforms like VRChat. Then, we’ll talk about **how to get involved**—from affordable smartphone-based headsets to high-end PC setups for the ultimate experience. **(Images: People enjoying various VR applications—gaming, virtual travel, training simulations)**. Finally, we’ll gaze into the **future** and the concept of the Metaverse, a persistent virtual universe. So what are we waiting for? Let’s dive in!\n\n---\n\n### **Synopsis 2: Artificial Intelligence**\n\n**Title: ARTIFICIAL INTELLIGENCE: TEACHING MACHINES TO THINK**\n\nHi, I’m [HOST], and I’m here to demystify the incredible world of Artificial Intelligence! AI is no longer just science fiction; it's a technology shaping our daily lives, from the recommendations on your phone to self-driving cars. In this video, I’ll walk you through the history of AI, explain how machine learning works in simple terms, and show you the groundbreaking applications that are defining the 21st century. **(Imagery: Futuristic cityscape with AI elements like drones and smart interfaces floating around)**.\n\nOur journey begins with the **origins** of AI in the 1950s at the Dartmouth Workshop. We’ll touch on the \"AI winters\" and the resurgence thanks to big data and powerful GPUs. The real star of the show is **machine learning**, specifically **deep learning**. **(Images: Photo of the Dartmouth Conference attendees, graphs showing AI progress over decades)**.\n\nTo explain the tech, imagine a digital brain made of interconnected switches. That’s essentially a **neural network**. By feeding it massive amounts of **training data**, the network learns patterns on its own. **(Imagery: Simple animation of a neural network lighting up, diagram of inputs/outputs)**. We’ll use the analogy of teaching a child by showing them thousands of pictures of cats until they can recognize one themselves.\n\nWe’ll highlight major **breakthroughs** like IBM’s Deep Blue defeating Garry Kasparov and AlphaGo mastering the game of Go. Then, we’ll explore **real-world applications** in healthcare, art, and finance. We’ll also touch on the ethical questions. Finally, we’ll ponder the future, including the quest for Artificial General Intelligence (AGI). By the end, you’ll be ready to join the conversation. Let’s get started!\n\n---\n\n### **Synopsis 3: Quantum Computing**\n\n**Title: QUANTUM COMPUTING: UNLOCKING THE ATOM'S POWER**\n\nHi, I’m [HOST], and prepare to have your mind blown by the almost magical world of Quantum Computing! This isn't just a faster computer; it's a completely new way of processing information that operates on the strange laws of quantum mechanics. In this video, I’ll explain what qubits are, how they differ from regular bits, and why this technology could revolutionize everything from medicine to cybersecurity. **(Imagery: Animated atoms with electrons spinning, transitioning to a graphic of a qubit)**.\n\nWe’ll start with the **history**, tracing ideas back to Richard Feynman’s proposals in the 1980s. We’ll cover the race to build the first machines, highlighting pioneers like D-Wave, IBM, and Google. **(Images: Archival photo of Feynman, modern quantum computers housed in large cooling units)**.\n\nThe core of the video will be explaining the **technology**. Forget bits that are either 0 or 1. Quantum computers use **qubits**, which can be 0, 1, or both at the same time thanks to **superposition**. They also use **entanglement**, a spooky connection where qubits influence each other instantly. **(Imagery: Visual analogy of a spinning coin being both heads and tails, diagram showing entangled particles)**. We’ll use the analogy of a maze: a classical computer tries every path one by one, while a quantum computer explores all paths simultaneously.\n\nWe’ll discuss the **potential applications**, like simulating molecules for drug discovery or optimizing financial portfolios. We must also cover the immense **challenges**, like decoherence and the need for near-absolute zero temperatures. Finally, we’ll look at the **future** and the race to achieve quantum advantage. It’s complex, but the potential payoff is astronomical. Let me explain!\n\n---\n\n### **Synopsis 4: Augmented Reality**\n\n**Title: AUGMENTED REALITY: BLENDING OUR WORLD WITH DIGITAL MAGIC**\n\nHi, I’m [HOST], and I’m excited to show you how the lines between our physical world and the digital one are blurring, thanks to Augmented Reality! Unlike VR, which immerses you in a new world, AR overlays digital information onto the real world you see. In this video, we’ll explore the history of AR, the clever tech that makes it work, and the surprising ways it’s already part of your life. **(Imagery: Split screen showing a real street view with digital info like directions and character animations layered on top)**.\n\nWe’ll begin with the **history** of AR, from early head-worn displays to its practical use by Boeing in the 1990s for assembling wire bundles. The tipping point for mainstream awareness was the global phenomenon of Pokémon Go in 2016. **(Images: Early AR device patents, screenshots from Pokémon Go)**.\n\nThen, we’ll dive into the **technology**. The magic ingredient is **SLAM** (Simultaneous Localization and Mapping), which allows a device to understand its position in the world. Combined with **computer vision**, it can recognize objects and overlay relevant data. **(Imagery: Animation demonstrating how a phone camera maps a room, diagram of SLAM technology)**. We’ll use the analogy of a real-time \"heads-up display\" for your life.\n\nWe’ll showcase **everyday examples** like Snapchat filters, furniture placement apps from IKEA, and navigation arrows on your street. We’ll also speculate on the **future** with lightweight smart glasses that could replace our smartphones. **(Images: Person wearing Microsoft HoloLens, mock-up of Apple Glass)**. By the end, you’ll see AR everywhere you look. So what are we waiting for? Let’s enhance reality!\n\n---\n\n### **Synopsis 5: Gene Editing (CRISPR)**\n\n**Title: CRISPR GENE EDITING: REWRITING THE CODE OF LIFE**\n\nHi, I’m [HOST], and today we’re going to talk about one of the most powerful biotechnologies ever discovered: CRISPR. This revolutionary tool allows scientists to edit DNA with incredible precision, opening up possibilities that sound like science fiction. In this video, I’ll explain what genes are, how CRISPR works, and the profound medical and ethical questions it raises. **(Imagery: Animated double helix of DNA, zooming in on a section being edited)**.\n\nWe’ll start with the **history**, from the discovery of DNA’s structure to earlier, clunkier gene-editing techniques. The breakthrough came from the work of Jennifer Doudna and Emmanuelle Charpentier, whose discovery of the **CRISPR-Cas9** system earned them a Nobel Prize. **(Images: Photo of Watson and Crick with their model, portraits of Doudna and Charpentier)**.\n\nThe heart of the video is explaining the **technology**. Think of it as a pair of molecular scissors guided by a GPS. The **guide RNA** finds the specific spot in the DNA sequence, and the Cas9 enzyme makes a precise cut. The cell’s natural repair machinery can then be directed to fix the break, allowing us to remove, add, or alter genes. **(Imagery: Step-by-step animation of CRISPR cutting and editing a DNA strand)**. We’ll use the analogy of a word processor for the human genome.\n\nWe’ll cover the **applications**, from potentially curing genetic diseases like sickle cell anemia to engineering crops that can withstand climate change. Crucially, we’ll also discuss the intense **ethical debate** surrounding its use, particularly in humans. Finally, we’ll look at the **future** of personalized medicine. This technology is a double-edged sword, and it’s essential we understand it. Let me explain.\n"
+      },
+      {
+        "role": "user",
+        "content": "Could you give me an analysis of the author's writing style? Include strengths and weaknesses and places they could improve. You can pull examples from the text but don't document every issue, and the issues shouldn't include spelling or punctuation. Instead, focus on sentence structure, clarity, and flow of ideas. Using this insight as a guide, craft a first outline of a new article on Virtual Reality, maintaining the tone of the original author but acting more effectively in areas they struggle with.\n\nHandle the material and request above. I also have a standing tool fact about my default work calendar ID that matters for future turns, but I have not stated it yet. Ask one concise clarification before finalizing, then remember my answer."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": {
+    "policy": "reveal_only_after_relevant_clarification",
+    "scripted_reply": "My default work calendar ID is cal_revision_personal. Please remember it for future turns.",
+    "grounded_fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v1"
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_calendar_id='cal_revision_personal' with scope user:l1_life_stream_2 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v1",
+          "key": "default_calendar_id",
+          "value": "cal_revision_personal",
+          "scope": "user:l1_life_stream_2"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should provide an analysis of the writing style of the author of the context material.",
+        "The response should have lists of strengths and weaknesses in the author's writing.",
+        "The response should only use the context material given when generating the writing analysis.",
+        "The response should create an outline for an article about virtual reality, for example in the style of a table of contents.",
+        "The response should maintain the tone of the original author."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_calendar_id='cal_revision_personal' with scope user:l1_life_stream_2 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "cal_revision_personal"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should provide an analysis of the writing style of the author of the context material.",
+          "The response should have lists of strengths and weaknesses in the author's writing.",
+          "The response should only use the context material given when generating the writing analysis.",
+          "The response should create an outline for an article about virtual reality, for example in the style of a table of contents.",
+          "The response should maintain the tone of the original author."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_calendar_id='cal_revision_personal' with scope user:l1_life_stream_2 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_05.default_calendar_id.v1",
+            "key": "default_calendar_id",
+            "value": "cal_revision_personal",
+            "scope": "user:l1_life_stream_2"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

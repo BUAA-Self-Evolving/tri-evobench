@@ -1,0 +1,382 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_1",
+  "turn_id": "turn15",
+  "turn_index": 15,
+  "turn_type": "fact_dependent_tool",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "62394c31-0aff-89b4-2d8d-3494ccccbfbe",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 338,
+    "source_sha256": "5547bc4785f8933c15d23aeefb26ef5ea73bc59f29b90e9431239218c208ffb8",
+    "source_metadata": {
+      "task_id": "62394c31-0aff-89b4-2d8d-3494ccccbfbe",
+      "context_category": "Communication & Social Interactions",
+      "context_subcategory": "Group Conversations & Meeting Transcripts"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "January 23\n\nSarah, NextStep GA\nSarah, NextStep GA10:02 AM\nGrocery trip to Kroger at 10:15! Meet in the lobby\n\n❤️\n1\nGrocery crew, I am parked to the right when you walk out the doors, down the row in front of Cato\n\nL\nLeo 10:55 AM\nI might be a little bit late because the checkout line is kind of crazy\n\nDiana\nDiana 1:30 PM\n1:45 today for gym! Meet at white van— I’l running a minute late so please wait inside! I’ll be in to get keys—\n\nCA\nChloe Adams (You) 4:13 PM\nIf you drive, you may want to raise your windshield wipers. Look outside at the NS vans for an example\n\nDM\nDavid Miller 4:13 PM\nLiked “Chloe Adams: If you drive, you may want to ra…”\nJanuary 24\n\nMV\nMarcus Vance 11:52 AM\nIf we get ice or freezing rain tonight, there’s a chance of the power going out. \n\nKeep your phone fully charged. \n\nIf you do not feel confident about how to handle living in a home with no power, please message in your staff group.\n\nDM\nDavid Miller 11:52 AM\nIt's an adventure!\n\n❤️\n4\nJanuary 25\n\nClara Hughes\nClara Hughes 9:51 AM\nParticipants, there will be no programming Monday or Tuesday. Please keep your phones charged and stay warm!\n\nDM\nDavid Miller 9:52 AM\nYay we survived the big snow storm!\n\nJP\nJulian Parker 9:53 AM\nHow long is this rain said to keep going for? Or did it say at all?\n\nMorgan Hayes\nMorgan Hayes 9:56 AM\nFrom here out, the concern is ice. Please use the resources referenced in the email- David Hall, WCLP, etc. I like WCLP’s hour by hour best.\n\nSam Russo\nSam Russo 12:33 PM\nShould we continue keeping our lights off or is it safe to turn them on?\nJanuary 26\n\nCA\nChloe Adams (You) 4:36 PM\nJust checking in with everyone! Everyone staying warm? Everyone have power?\n\n👍\n1\n\nSam Russo\nSam Russo 4:36 PM\n👍🏻👍🏻\n\nDM\nDavid Miller 4:36 PM\nYup! All good\n\nJP\nJulian Parker 4:37 PM\nAll good\n\nEB\nEthan Blair 4:37 PM\nI’l warm\n\nMorgan Hayes\nMorgan Hayes 4:49 PM\nHey team, if you’re not already doing it, go ahead and keep your sink cabinets open and let the water drip. Not run, just drip. It’ll probably take a couple tries to get it to drop how you want it.\n\n👍\n2\nJanuary 27\n\nClara Hughes\nClara Hughes 9:46 AM\nParticipants: There will be no programming tomorrow due to weather and road conditions related to the winter storm.\n\nFiona Foster\nFiona Carlisle10:13 AM\nWill we still be able to go to Walmart this week?\n\nEB\nEthan Blair 10:13 AM\nI don’t think we may be able to\n\nThomas Flynn\nThomas Flynn 10:18 AM\n Yes, Wal-Mart trip is scheduled for Thursday at 10:45am\n\nFiona Foster\nFiona Foster 10:21 AM\nIf programming is cancelled Thursday would we still be able to go or would that have to wait til next week?\n\nThomas Flynn\nThomas Flynn 10:22 AM\nHopefully programming won’t be canceled for Thursday. \n\nBut yes, if programming is canceled on Thursday then there will be no Wal-Mart.\n\nSam Russo\nSam Russo 10:23 AM\nHopefully we’ll be okay\nJanuary 28\n\nClara Hughes\nClara Hughes 10:02 AM\nParticipants, there will be no programming tomorrow due to the ice conditions. Please be careful walking outside and use caution.\n\nThomas Flynn\nThomas Flynn 5:40 PM\nHey all, \nIf we had someone do a grocery run tomorrow, who all would need to go?\n\n❤️\n1\nPlease like the message if you need to go to the grocery store\n\n❤️\n4\nDiana will be doing a grocery trip to Kroger at 9:30am tomorrow morning. So if you need to go please be ready at 9:25am. \n\nThank you Diana!\n\nDiana\nDiana 6:46 PM\nPlease like this message if you plan on going tomorrow. I will bring my van if we don’t have too many people, or I would need to warm up the big van if we have a bigger number. Just need to know how many are going.\n\n❤️\n6\nJanuary 29\n\nThomas Flynn\nThomas Flynn 8:57 AM\nReminder that Diana will be doing a grocery run at 9:30 this morning!\n\nDiana\nDiana 9:11 AM\nThe van will be nice and warm at 9:30 and we will depart immediately. Be very careful walking to the van as the sidewalks are extremely icy. If you have boots wear them. Please make your grocery list and keep in mind that you will need to carry everything back to your apartment from the van so multiple trips are probably not a good idea today.\n\nClara Hughes\nClara Hughes 9:18 AM\nParticipants, we will not have programming tomorrow due to the icy conditions. Please continue to exercise caution when out.\n\nGH\nGabriel Hayes 9:38 AM\nSo, are we going to have a make-up week or something down the road because of all these snow days?\nJanuary 30\n\nThomas Flynn\nThomas Flynn 10:51 AM\nGood morning all! \n\nRegistration for next week is done. (2/2/26 - 2/6/26) \n\nPlease take a few minutes today and complete your weekly registration for next week. Thank you!\n\n👍\n1\nFebruary 2\n\nThomas Flynn\nThomas Flynn 7:40 AM\nGood morning all, please remember to walk slowly and carefully today. There is still ice and snow covering a lot of the sidewalks.\n\nClara Hughes\nClara Hughes 7:57 AM\nIf you need help walking over, please let us know so that we can come and help you\n\nThomas Flynn\nThomas Flynn 8:06 AM\nThere’s only a few people who did their weekly Registration, please remember to do your registration this week. I will be messaging people individually to remind them.\n\nCA\nChloe Adams (You) 9:49 AM\nHey all, I sent DMs to people who need to reschedule last week's vocational meetings. Please schedule for THIS week.  If anyone else wants to schedule for this week or next week, here is my link. https://calendly.com/chloe-adams-nsu/30min\n\nDM\nDavid Miller 9:52 AM\nCan you send me a link on my email\n\n❤️\n1\nThe link dosnt seem to be working on my phone haha \n\nThomas Flynn\nThomas Flynn 10:35 AM\nGym is at 10:45am! Please meet at the white van!\nWrap up starting!\nFebruary 3\n\nClara Hughes\nClara Hughes 8:39 AM\nParticipants, I have sent you an email to schedule your February Case Management meetings. Please have them scheduled by Friday. Thank you.\n\nThomas Flynn\nThomas Flynn 9:45 AM\n9:45 class is starting!\nFitness check in w/ Vince is starting!\n\nKC\nKevin Cole 12:21 PM\nWe will leave for Sunrise Villa at one. Please like this message if you plan to go.\n\n❤️\n1\nI’l in the blue van.\n\nMorgan Hayes\nMorgan Hayes 2:36 PM\nLeaving for gym at 3:00!\n\nLucas Webber\nLucas Webber 2:58 PM\nKevin, Sam and I are on our way back from Sunrise Villa, please don’t leave without us.\n\n❤️\n1\n\nThomas Flynn\nThomas Flynn 2:59 PM\nThanks for the heads up Lucas.\n\n👍\n1\nWrap up in 5 min!\n\nKC\nKevin Cole 4:16 PM\nWe will head to Kroger at 4:30 in the white van. Please like this message if you plan to go.\n\n❤️\n3\nFebruary 4\n\nThomas Flynn\nThomas Flynn 7:55 AM\nHey all! \nPlease walk extra carefully this morning. The ice is very slippery.\nGym is at 9:30am this morning! If you aren’t working or have a meeting you need to be there! Let’s go get a sweat in!\n\nDiana\nDiana 10:39 AM\n￼ We’re cooking a chicken Parmesan casserole at 10 :45 today in the NS kitchen!\nWe have two big chicken Parmesan casseroles that will be ready about 1150! Come over and try some.\nIt’s ready, come and get it!\n\nThomas Flynn\nThomas Flynn 2:01 PM\nInventory Review is starting! I only have 2 people in the class. Please come over here before checking your inventory\n\nMorgan Hayes\nMorgan Hayes 2:20 PM\n“Morgan, what in the world is creativity hour?” \n\nToday, we will be exploring why creative outlets are good for stress management, briefly talk about creativity as wellness, and then we’re going to BE creative. We’ll make cards for Oak Haven, and then if you have a project you want to work on (drawing, writing, painting, building something, etc.) bring it on over! I’ll have yarn with me!\n\n❤️\n4\n\nThomas Flynn\nThomas Flynn 4:45 PM\nHey all! Reminder, the social will start at 5:30pm in the lounge! I’l going to grab the pizzas at 5-5:15pm, \n\nCome on over and enjoy a movie and some pizza at 5:30pm!\n\nSam Russo\nSam Russo 4:52 PM\nWhat movie will it be?\n\nThomas Flynn\nThomas Flynn 5:10 PM\nI’ve got some options, and we can all choose which one we want\nFebruary 5\n\nMorgan Hayes\nMorgan Hayes 10:38 AM\nWalmart in 7 minutes! Bring your money if you’re shopping\n\nKC\nKevin Cole 12:48 PM\nWe will be leaving for Grace Center at 1:00 in white van. Like this message if you plan to go.\n\n❤️\n1\n\nMorgan Hayes\nMorgan Hayes 2:58 PM\nLet’s head to the gym!\n\n❤️\n1\n\nLucas Webber\nLucas Webber 3:02 PM\nWe are waiting by the van!\n\nThomas Flynn\nThomas Flynn 4:17 PM\nHey all! \n\nTomorrow morning for Kick Off, please bring your computers. We will do weekly registration right after kick off. We are having staff retreat tomorrow so we won’t have registration at 1:30pm like we normally do. \n\nPlease bring computers to kick off tomorrow morning!\n\n👍\n1\nFebruary 6\n\nThomas Flynn\nThomas Flynn 7:40 AM\nReminder, please bring your computers to kick off!\n\nDiana\nDiana 8:56 AM\nSpeaker series starts at 9 o’clock! Come over and listen to me!\n\n❤️\n1\n\nKC\nKevin Cole 9:56 AM\nWe will leave for Kroger at 10:15 in white van. Please like this message if you plan to go.\n\n❤️\n2\n\nThomas Flynn\nThomas Flynn 10:11 AM\nCooking starts at 10:15!\n\nSarah, NextStep GA\nSarah, NextStep GA 10:11 AM\nCooking chicken Alfredo in the downstairs kitchen at 10:15 this morning!\n\nVince\nVince 10:25 AM\nTopic for conversation today is :\n\nWhere do you see yourself 20 years from now ? \n\nThink about this for today . You will need to say more than “ I don’t know “ 🤣\nSee you at 3:15\n\nDiana\nDiana 1:38 PM\nLeaving for the gym at 1:45 in the white van. Let’s start the weekend off right!\n\n👍\n1\n\nSam Russo\nSam Russo 1:41 PM\nI won’t be around because I have a meeting with Chloe in 20 minutes\n\nDiana\nDiana 1:45 PM\nAnyone else coming? We are heading out!!\n\nVince\nVince 3:12 PM\nClass is going to start \n\nPlease be present if you’re not at work\nFebruary 9\n\nThomas Flynn\nThomas Flynn 10:43 AM\nLeaving for gym in 2 min!\nDocumentary club at 2pm! In the upstairs lounge! Jacob will finish his documentary!\n\nDiana\nDiana 2:52 PM\nWe will be leaving at 3 o’clock from the white van to volunteer at the City Pantry store. We will be bagging  Panera Bread and setting up chairs!\n\n❤️\n1\n\nThomas Flynn\nThomas Flynn 4:09 PM\nWrap up in 5 min! If you weren’t at kick off!\nFebruary 10\n\nMorgan Hayes\nMorgan Hayes 10:32 AM\nATTENTION: TORNADO DRILL NOW.\n\nPlease get to your tornado safe zone and DM me a picture once you are there.\n\nKC\nKevin Cole 10:38 AM\nWe will leave for Millers at 10:45 in the white van. Please like this message if you plan to go.\n\n❤️\n1\n\nMorgan Hayes\nMorgan Hayes 10:40 AM\nOnce you’ve sent me your picture of your safe zone, the drill is over\n\nVince\nVince 12:56 PM\nClass is 5 minutes\n\nThomas Flynn\nThomas Flynn 2:03 PM\nHey All, \n\nUnfortunately, Feeding America Volunteering tomorrow morning has been canceled. \n\nSo at 8:30am tomorrow, just come over for kick off like you normally would.\n\nMorgan Hayes\nMorgan Hayes 2:59 PM\nLet’s go to the gym!\n\nKC\nKevin Cole 4:15 PM\nWe will leave for Kroger at 4:30 in the white van. Like this message if you plan to go.\n\n👍\n1\nFebruary 11\n\nThomas Flynn\nThomas Flynn 8:21 AM\nReminder! Feeding America is cancelled today. So please come over for kick off! And we will do curriculum at 8:45am!\nWe are meeting in The upstairs class room\nThey are working in the downstairs classroom today\nOur morning schedule is a little weird today, so thank you all for being flexible but we will leave for Sunrise Villa bday party at 10am!\n\nDiana\nDiana 9:59 AM\nHeading out in 1 minute to Sunrise Villa, might go to Hobby town if we get done in time. Leaving right now!\n\nCA\nChloe Adams (You) 11:17 AM\nHey all, I edited my Calendly, and it changed the link.  Here's the new link: https://calendly.com/chloe-adams-nsu/15\nOne on One with Chloe - Adams, Chloe\nCalendly\nCalendly\nOne on One with Chloe - Adams, Chloe\n\n❤️\n1\n\nSam Russo\nSam Russo 11:17 AM\nDo we need to make new appointments?\nSam Russo\nSam UltoDo we need to make new appointments?\n\nCA\nChloe Adams (You) 11:19 AM\nI've sent some people DMs to schedule. You and I will meet again next week.\n\nThomas Flynn\nThomas Flynn 1:45 PM\nTime Management-1 at 2pm if you weren’t here for the morning session!\nGym is at 3pm!\n\nVince\nVince 2:47 PM\nIf anyone needs 1040 tax form and instruction booklet. They are in the library upstairs\n\nThomas Flynn\nThomas Flynn 2:56 PM\nLeaving for gym in 5 min!\nGym crew rolling out\n\nLucas Webber\nLucas Webber 3:48 PM\nThomas, I made it to the gym and am coming back with you. Please don’t leave the gym without me.\nI will be at the van in 2 minutes.\n\nThomas Flynn\nThomas Flynn 3:49 PM\n👍🏻\nWe are in the van\nFebruary 12\n\nDiana\nDiana 10:40 AM\nWe are making a valentine treat at 10:45 this morning!\n\n❤️\n2\n\nThomas Flynn\nThomas Flynn 2:02 PM\nResume Rebuild/Job Search starting in the downstairs classroom!\n\nMorgan Hayes\nMorgan Hayes 2:54 PM\nGym at 3:00 ☺️\nThomas Flynn 8:29 AM\nGood morning everyone! \n\nKick off is starting! Please come on over for it\n\nClara Hughes\nClara Hughes 8:54 AM\nSpeaker series at 9am. We have Lauren Smith director of Crestview Counseling Center !\n\nDiana\nDiana 10:16 AM\nWe are starting our cooking in the kitchen right now, which is a volunteer opportunity for Safe Haven Shelter. Please come and help unless you are at work or have an excused absence.\nSam and I are kind of lonely over here, and have a lot of extra crack! Please come over if you are not at work or have an excused absence. This is volunteer time!\n\n❤️\n1\nEggs to crack, lol..\n\nMorgan Hayes\nMorgan Hayes 10:38 AM\nGrocery crew- I’l parked near the edge of the parking lot, between Kroger and the liquor store.\n\nThomas Flynn\nThomas Flynn 1:16 PM\nReminder to all participants who were not in weekly registration! \n\nPlease make sure to complete your weekly registration before Monday Morning! Thank you.\n\nMorgan Hayes\nMorgan Hayes 1:47 PM\nDiana will be here shortly for the gym. Please be ready at the van ☺️\nFebruary 16\n\nMorgan Hayes\nMorgan Hayes 9:45 AM\nGood morning! On Wednesday, 2/18 between 10 am and 2 pm, Redbrick will be conducting quarterly inspections. You can be, but  do not need to be home. Please like this message to acknowledge that you have seen it ☺️\n\n👍\n4\n\n❤️\n2\n\nThomas Flynn\nThomas Flynn 10:45 AM\nHeading to gym!\n\nVince\nVince 11:53 AM\nIf you’re not at work at 1pm you need to be in class . \n\nThis is very important one . We are talking about making impressions.\n\nDiana\nDiana 2:49 PM\nAt 3 o’clock today, we head over to the City Pantry store to bag bread and set up for tomorrow.  If you aren’t ￼Working or have an excused absence please be at the white  van at 3 o’clock to leave.\n\n👍\n2\nFebruary 17\n\nThomas Flynn\nThomas Flynn 11:08 AM\nJust wanted to give a shoutout and say everyone who was in class did an awesome job on their presentations! Way to go yall! 💪🏼\n\n🎉\n1\n\nKC\nKevin Cole 12:50 PM\nWe will head to Sunrise Villa at 1:00.  Please like this message if you plan to go.\nThere was no one at Sunrise Villa today.\n\nMorgan Hayes\nMorgan Hayes 2:51 PM\nGym at 3!\n\nKC\nKevin Cole 4:20 PM\nKroger at 4:30 in the white van. Like this message if you plan to go.\n\n❤️\n1\nFebruary 18\n\nMorgan Hayes\nMorgan Hayes 8:28 AM\nReminder: redbrick is doing quarterly inspections today!\n\nDiana\nDiana 9:39 AM\nGetting ready to start our cooking session at 9:45 … please come over!\nWe have several hot biscuits and some hash brown, egg and cheese scrambled left. Come by and get some!\nWe will be leaving at 10:45 to volunteer at Miller. We will be in the big white band.\n\nGH\nGabriel Hayes 10:43 AM\nWait for me— I may be a couple minutes late.\n\nDiana\nDiana 12:11 PM\nThere’s still some breakfast skillet on top of the stove and a couple of biscuits if anyone wants. I will be back at 2 o’clock to clean up whatever is still there.\n\nCA\nChloe Adams (You )1:59 PM\nSorry for the delay! I just realized I hadn't sent this. I just sent you all an email, too. Here are your business tour groups for tomorrow: Morning Group (Leaving at 9:30):\nFiona\nSam\nEthan\nOwen\nJulian\nLeo\n \nAfternoon Group (Leaving at 2:45):\nJacob\nGabriel\nDavid\nLucas\nDylan\n\n👍\n1\n\nThomas Flynn\nThomas Flynn 2:36 PM\nGym at 3pm! Please meet at the big white van at 3pm!\nLeaving for gym in like 3 min!\nReminder!\n\nDELTA ZETA will be coming to play games and hangout tonight from 5:30pm-7pm. They are bringing food also! \n\nCome by and introduce yourself, eat some food, and play some games!\n\n❤️\n1\nFebruary 19\n\nCA\nChloe Adams (You) 9:31 AM\nLeaving for business tour now\n\nMorgan Hayes\nMorgan Hayes 10:56 AM\nGym at 11!\n\n❤️\n1\nFebruary 20\n\nVince\nVince 8:01 AM\nHeads up for conversation class today . We will be talking about cooking.\n\nHeating things up in microwave doesn’t count 🤣\n\nBe ready to have some good conversations about cooking . 🧑‍🍳\n\n👍\n2\n\nThomas Flynn\nThomas Flynn 8:37 AM\nOur speaker will be here at 9am. If you aren’t at work you need to be over here for it.\n\nSarah, NextStep GA\nSarah, NextStep GA 10:04 AM\nKroger run at 10:15!\n\nThomas Flynn\nThomas Flynn 10:10 AM\nWe are making smoothie bowls at 10:15!\n\nMorgan Hayes\nMorgan Hayes 11:46 AM\nHey squad- just a reminder: if you’re last out of the van, you need to close the door.\n\nThomas Flynn\nThomas Flynn 12:56 PM\nWeekly registration in 4 min! At 1pm! Please bring your computer\n\nDiana\nDiana 1:43 PM\nWe are departing for the gym at 1:45. White van!\nAnyone else going? If not working or with an excused absence you need to come!\n\nVince\nVince 3:12 PM\nClass in 3 minutes\n\nThomas Flynn\nThomas Flynn 3:14 PM\nIf you aren’t working or have an excused absence you need to be at Earls Conversation club please!\nFebruary 23\n\nDiana\nDiana 10:21 AM\nFiona has made a really wonderful pot of miso soup with tofu, seaweed and mushrooms. We’re going to bring it over to the NextStep building about 1030 and put it on the stove. Feel free to try it!\nHeading to the gym at 10:45, taking the white van. If you are not at work or have an excuse, absence, you need to attend!\nIf you plan on making the trip to Walmart this afternoon  at 3 o’clock, please “LIKE” this message. Thanks!\n\nCA\nChloe Adams (You) 12:42 PM\nHere is your mock interview schedule for Thursday. Some people are not on there this month due to prioritizing the Emotional Wellness class on Thursday morning.\nHere is your mock interview schedule for Thursday. Some people are not on there this month due to prioritizing the Emotional Wellness class on Thursday morning.\n\n❤️\n2\n\nClara Hughes\nClara Hughes 2:08 PM\nPd planning has started !!\nHead on over!\n3pm is doc club with Sam! In the upstairs lounge\n\nDiana\nDiana 2:12 PM\nHaven’t heard from anyone about the trip to Walmart at 3 o’clock. Please”LIKE” this message by 2:30 if you plan on going.\n\nClara Hughes\nClara Hughes 2:22 PM\nThere will be no wrap up today. After nicks doc club wraps at 4 you are good to go for the day. Thanks for your flexibility today!\n\nDM\nDavid Miller 3:44 PM\n   I loved that miso soup! So good!\n\n❤️\n1\n\nDiana\nDiana 3:50 PM\nSo glad you tried it!  Be sure and tell Fiona- she wanted to share it.\n\nFiona Foster\nFiona Foster 4:03 PM\nHey that's awesome! Hope it helps you feel better!\n\n👍\n1\nFebruary 24\n\nHarper Lewis\nHarper Lewis 8:11 AM\nGood morning Fiona! Reminder we are meeting at 10:30 this morning\n\nKC\nKevin Cole 10:37 AM\nWe will be going to Millers at 10:45. Please like this message if you plan to go.\n\n👍\n2\n\nThomas Flynn\nThomas Flynn 1:58 PM\n2pm class starting in 2 minutes. It’s the curriculum for the day. So please make sure you are attending if you are not at work/in a meeting.\n\nMorgan Hayes\nMorgan Hayes 2:35 PM\nWe will leave for gym at 3!\n\nKC\nKevin Cole 4:10 PM\nKroger at 4:30 in white van. Like this message if you plan to go.\n\n👍\n2\n\n❤️\n1\nFebruary 25\n\nDiana\nDiana 7:46 AM\nGood morning! We will be leaving at 8:30 sharp in the white van to ￼ volunteer with Feeding america. If you are not at work or have an excused absence, you need to come! ￼ Just a reminder ￼ to dress appropriately for the weather. It is definitely warmer today, but it ￼ can  seem a little cooler in the warehouse. Layers are suggested! Come and help, they always count on us!\n\n❤️\n1\nCooking class starts at 10:45! We are making the pioneer woman’s chili Mac. Good day for that! ￼ High protein, one pot dish, high in protein! Come and try it!\nLots  of Pioneer Woman recipe Chili Mac in the house! Come and try it!\n\nMorgan Hayes\nMorgan Hayes 12:30 PM\nApartment Tour at 1! We’ll meet at the white van.\nApartment tour time! If you’re not at work, let’s roll!\n\nThomas Flynn\nThomas Flynn 1:57 PM\n2pm class is the curriculum for the day! Starts in 3 min\nLeaving for gym in 5 min!\nFebruary 26\n\nCA\nChloe Adams (You) 8:57 AM\nHere's your job descriptions for today's mock interviews!\nHere's your job descriptions for today's mock interviews!\nMock Interview Job Options\nPlease review the roles below and choose the position you would like to interview for.\nCommunity Service & Volunteer\n🤝 Community Service Volunteer Coordinator\nOrganizes and schedules volunteers, supports community programs, and communicates with staff and volunteers.\n🧠 Peer Support Specialist (Credential Required)\nProvides encouragement and support to individuals using lived experience, communication skills, and empathy.\n🎒 Youth Program Volunteer\nAssists with activities and supervision in after-school or community youth programs.\nCustomer Service\n🍽 Food Service Worker (Fast Food or Café) (Permit Required)\nTakes orders, prepares food, and maintains cleanliness while following health and safety rules.\n🛎 Front Desk Receptionist\nGreets visitors, answers phones, and provides basic administrative support.\n🛒 Grocery Store Clerk\nStocks shelves, assists customers, and helps keep the store organized.\n👕 Retail Sales Associate\nAssists customers, operates a cash register, and maintains merchandise displays.\n🎟 Ticket or Event Attendant\nSupports guests at events by assisting with entry, seating, and general questions.\nTechnical Skills\n💻 Computer Support Technician (Credential Preferred)\nProvides basic technical help, troubleshoots computer issues, and assists users with technology.\n⌨ Data Entry Clerk\nEnters and updates information accurately in computer systems and databases.\n⚡ Electrician Apprentice (Enrollment Required)\nAssists licensed electricians while learning electrical systems and safety practices.\n🎨 Graphic Design Assistant (Credential Required)\nSupports design projects using graphic software for marketing or digital content.\n🧑‍🏭 Welder (Credential Required)\nPerforms basic welding tasks, follows safety procedures, and works under supervision.\n\nDM\nDavid Miller 8:58 AM\nOk I will see you 2:45 for my interview \n\n❤️\n1\n\nVince\nVince 8:59 AM\nIf you would be interested in me show you a few easy things to cook. Like sloppy Joes \n\nAlso we would practice using the stove top for those that are not yet completely comfortable.\n\nGive this a like 👍🏻 \n\nI’l trying see if there is interest.\n\n👍\n2\n\nDM\nDavid Miller 9:41 AM\nI would take that class\n\n👍\n1\n\nVince\nVince 10:17 AM\nHow do guys fell about trying venison burger ? It has some beef mixed in \n\nI would show the things you put in to make it taste good! \n\nYou can use hamburger at your place . Thought I’d open your minds to trying new things 😊\n\n👍\n2\n\nDM\nDavid Miller 10:17 AM\nThat would be awesome \n\n🎉\n1\n\nVince\nVince 12:09 PM\nThe library will be closed tomorrow Friday the 27th.\n\n👍\n1\n\nThomas Flynn\nThomas Flynn 12:58 PM\n1pm class starting in 2 min!\n\nMorgan Hayes\nMorgan Hayes 2:53 PM\nGym squad: we roll at 3!\n\nCA\nChloe Adams (You) 3:12 PM\nGreat job on mock interviews today! Everybody who was scheduled for an interview showed up! Additionally, some of you had to show flexibility as I had to move your times back. I'l proud of all of you!\n\n❤️\n1\n\nThomas Flynn\nThomas Flynn 4:00 PM\nWrap up will start at 4:10 today!\n\nMV\nMarcus Vance 4:33 PM\nLast call for anyone coming to the event tonight! We are leaving in 1 minute\nFebruary 27\n\nThomas Flynn\nThomas Flynn 8:42 AM\nSpeaker Series will start at 9am…please make sure you are over here for it. The only reason you shouldn’t be here is if you are working or have an excused absence.\nSpeaker Series is starting\nPlease come over for it!\nWe will leave at 10:15am sharp for Kroger! Please meet at the white van!\n\nMorgan Hayes\nMorgan Hayes 10:09 AM\nWe’re making butter chicken at 10:15!\n\nThomas Flynn\nThomas Flynn 10:14 AM\nLeaving for Kroger - 1min!\nWeekly registration starts in 1 min!\n\nDiana\nDiana 1:39 PM\nWe will head to the gym at 1:45, going in the Dodge van. If you’re not at work or have an excused absence, you need to attend! Start the weekend out right//\n\nL\nLeo 3:01 PM\nSid you guys alrwdy go back? I can&5 find the van\n\nSam Russo\nSam Russo 3:01 PM\nSorry about that, man. We didn’t know if you had already walked back or not.\n\nL\nLeo 3:01 PM\nDo they live at 3? Because I wzs out there at 3\n\nSam Russo\nSam Russo 3:02 PM\nWe left ten minutes ago\n\nL\nLeo 3:03 PM\nOH i thought they left at 3\n\nThomas Flynn\nThomas Flynn 3:12 PM\nUpstairs social and hangout starts in 5 min! This is a time for participants to get together and hang out after a long week and play video games/watch a movie, etc. Talk with each other, get to know each other better, etc! \n\nSo come on over for hangout time from 3:15-4:15!\n\nDiana\nDiana 4:28 PM\nLeos, I saw your message. I’l sorry we didn’t know you were riding back with us. Next time, please communicate that to the driver or one of the participants, and you can find out what time we are heading back. It can vary, but we are supposed to be back by 3 o’clock, so we will normally leave a few minutes before that time.\nMarch 2\n\nThomas Flynn\nThomas Flynn 10:43 AM\nLeaving for Gym in 2 minutes\n\nCA\nChloe Adams (You) 11:57 AM\nHey all! If you get an email from someone named Tara or Hollis, it is not spam. It’s from DVR. You don’t need to respond yet. I’ll talk to you all about it tomorrow in our 8:45 class.\n\nVince\nVince 12:15 PM\nSocial skills class 1pm today \n\nWe are talking about excuses today . Be there no excuses 😊 (edited)\n\nClara Hughes\nClara Hughes 12:17 PM\nParticipants, \n\nImportant Notice: I have emailed you and your families instructions and information for scheduling your April comprehensive reviews. Please DO NOT schedule your meeting until you have confirmed the date and times with your families.\n\nThomas Flynn\nThomas Flynn 4:14 PM\nWrap up starting in 1 min!\nMarch 3\n\nClara Hughes\nClara Hughes 8:50 AM\nParticipants, if your family has already scheduled your Try Annual please do not change the date unless you have confirmed it with them prior.\n\nDiana\nDiana 12:47 PM\n￼\nWe will head to Sunrise Villa at 1 o’clock today for our volunteering time. If you’re not at work or have an excused absence, you need to come!\nNeed several more volunteers!\n\nThomas Flynn\nThomas Flynn 4:14 PM\nWrap up starting\n\nKC\nKevin Cole 4:24 PM\nKroger at 4:30\nMarch 4\n\nThomas Flynn\nThomas Flynn 9:20 AM\nGym is early this morning bc of cooking with Diana. Gym is at 9:30! Please meet at the big white van in 10min!\nGym crew rolling out.\n\nDiana\nDiana 10:27 AM\nCooking in the kitchen starts at 10:45! Making really good sheet pan chicken tacos. Just a reminder that even if you don’t particularly like what we are making, it is still important for you to come and learn new skills in the kitchen, like grading, dicing, using the stove.\n\n❤️\n1\nOh, and you will even learn a ￼ YouTube hack for deboning a whole chicken without a mess! Or a knife.\n\nVince\nVince 12:58 PM\nClass in 1 minute where is everyone?\n\nSam Russo\nSam Russo 12:59 PM\nWalking back from my nutritionist appointment. So sorry it’s taking so long.\n\n👍\n2\n\nThomas Flynn\nThomas Flynn 2:55 PM\nJob search/resume rebuild/cover letter help will start in 5min!\n\nDiana\nDiana 3:00 PM\nKudos to everyone who came to cooking class today, but especially Fiona, who ventured out to try something new, and to Gabriel and Sam, who stayed for the entire class even though they didn’t try the food!\n\n❤️\n2\nMarch 5\n\nThomas Flynn\nThomas Flynn 9:44 AM\n9:45am session starts in 1 minute. If you don’t have an excused absence or aren’t at work then you need to be over here\n\nDiana\nDiana 12:54 PM\nWe head out at precisely at 1 o’clock today to volunteer for an hour at Grace Center. You know the drill. If you’re not at work or have an excused absence, you are required to attend! See you at the white van.\nOnly 1 volunteer so far! Waiting for Dylan, Gabriel, Sam, Fiona….others. White van!\n\nVince\nVince 1:10 PM\nSam is with me volunteering in the library\n\nThomas Flynn\nThomas Flynn 2:21 PM\nGreat job on the NextStep Cleanup everyone!\nWe leave for gym at 3pm! In the white van!\n\nCA\nChloe Adams (You) 2:51 PM\nHey all! I’l trying to streamline my vocational meetings. DM me your top two choices on what day of the week is best for our meetings? Include preferred time if you have one.\n\nThomas Flynn\nThomas Flynn 2:59 PM\nGym crew rolling out\nWrap up at 4:15! If you weren’t at kick off!\nFriday\n\nVince\nVince 7:59 AM\nConversation club topic :\n\nWhy are social skills important?\n\nThomas Flynn\nThomas Flynn 8:44 AM\nWe have a great speaker this morning starting at 9am! Please make sure you are over here on time.\n\nDM\nDavid Miller 8:44 AM\nLiked “Thomas Flynn: We have a great speaker this morning…”\n\nSarah, NextStep GA\nSarah, NextStep GA 10:13 AM\nKroger run at 10:15!\nAnybody else left in the grocery?\n\nL\nLeo 10:50 AM\nYes I am\nPlease don’t leave without me 😭\n\nJP\nJulian Parker 10:51 AM\nOh we won't \n\nCA\nChloe Adams (You) 11:14 AM\nHey all! Help me make my schedule more efficient! Fill out this form. It will only take a minute! https://forms.gle/aBcD1234EfGhI56j7\nVocational Scheduling\nGoogle Docs\nGoogle Docs\nVocational Scheduling\nIn an attempt to streamline my schedule to be more efficient, I'd like each of you to pick your preferred days for our meetings. Some of you will meet with me more often than others, but I need preferred days before I can set a schedule.\n\nThomas Flynn\nThomas Flynn 1:03 PM\nWeekly registration is starting!\n\nDiana\nDiana 1:39 PM\nHeading to the gym at 1:45! Meet at the white van.\nMonday\n\nClara Hughes\nClara Hughes 8:02 AM\nReminder: Morgan is on vacation this week. Staff will be filling in doing apartment inspections. \n\nIf you all need something please do not message Morgan while she is on vacation. Reach out to a staff person that is here.\n\nThomas Flynn\nThomas Flynn 10:41 AM\nLeaving in 5min for gym! Let’s start this Monday out strong! 💪🏼\n2pm Try Annual Prep - starting in 4 min!\n\nDiana\nDiana 2:49 PM\nWe will be leaving to volunteer at the City Pantry store at 3 o’clock. Leaving from the white van.\n\nThomas Flynn\nThomas Flynn 3:59 PM\nWrap up at 4:15 today! If you weren’t at kick off, make sure to come to wrap up!\nWrap up starting in 2 min!\nTuesday\n\nClara Hughes\nClara Hughes 8:42 AM\nParticipants, the surveys are ready for you to complete as a part of your try annual prep. When you log into your portal you will see an open surveys tab. Click that tab and you should see two surveys listed: skills assessment and quality of life. Take both surveys. Please let me know if you have questions or trouble accessing the surveys.\nParticipants, the surveys are ready for you to complete as a part of your try annual prep. When you log into your portal you will see an open surveys tab. Click that tab and you should see two surveys listed: skills assessment and quality of life. Take both surveys. Please let me know if you have questions or trouble accessing the surveys.\n\nDiana\nDiana 10:30 AM\nGood morning! We will head to Miller Home to volunteer at 10:45 this morning. Please meet at the white van! Not at work or have an excused absence? You need to show up!\n\nThomas Flynn\nThomas Flynn 2:54 PM\nGym at 3pm! Let’s end this Tuesday strong! Meet at the white van!\nGym crew rolling out!\nWrap up at 4:15 today!\n\nKC\nKevin Cole 4:09 PM\nWe will be going to Kroger at 4:30 in white van. Please like this message if you plan to go.\n\n👍\n3\nYesterday\n\nThomas Flynn\nThomas Flynn 9:27 AM\nLeaving for gym in 3 min!\n\nDiana\nDiana 10:30 AM\nCooking banana chocolate chip muffins in the NextStep kitchen at 10:45!\n\nKC\nKevin Cole 12:41 PM\nWe will meet in apartment 3 for our cleaning class.\n\nThomas Flynn\nThomas Flynn 2:50 PM\nWe will leave at 3pm for Walmart!\nLeaving for Walmart in 1 min!\nWrap up at 4:15 today!\nToday\n\nVince\nVince 9:19 AM\nThe library will be closed tomorrow \n\n3/13/26\n\nThomas Flynn\nThomas Flynn 10:37 AM\nDocumentary club starting at 10:45!\nOnline Dating 101- safety class at 1pm!\n\n👍\n1\n\nDiana\nDiana 1:48 PM\nAt 2 o’clock today, we will be cooking breakfast sandwiches for Safe Haven Shelter in the NextStep kitchen. This is our volunteering project for the day. Please come and help!\n\nThomas Flynn\nThomas Flynn 2:50 PM\nWe will leave for the gym at 3pm! \n\nIf you aren’t at work or don’t have an excused absence then you need to be there! Let’s end this Thursday strong 💪🏼!\nCooking class ran a little long! So we will leave for gym at 3:15! Thanks for your flexibility!\nGym crew rolling out\n\nLucas Webber\nLucas Webber 3:15 PM\nThomas, you left without me!!\n\nSam Russo\nSam Russo 3:15 PM\nWe’re turning around\n\nLucas Webber\nLucas Webber 3:15 PM\nIt just became 3:15!! Why did you leave early?!\n\nVince\nVince 3:42 PM\nAnytime you can’t make it to the Summit Center. You can use the equipment in the library Lucas\n\nLucas Webber\nLucas Webber 3:43 PM\nThank you! I was just freaking out because the van was right in front of me but they were pulling away and not stopping.\n\nVince\nVince 3:44 PM\nIt’s ok just roll with it next time and come to the gym upstairs 😊\n\n\n\n\nTask:\n\n\nReading through this group chat, can you differentiate the staff from the program participants? I want a T-chart with staff on one side and participants on the other. Put the staff in alphabetical order and include a possible job title. Bold the person you think is \"in charge\".\n\nAnswer the request using the material above, then perform the requested follow-up with the available mock tool using my currently stored default. Edit the existing analysis-journal.md in place: replace only its first Markdown heading with my current project label and preserve the rest of the file. Do not ask me to repeat a default you already learned."
+      }
+    ],
+    "available_tools": [
+      "file.edit_text"
+    ]
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.4,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "tool_execution",
+        "dimension": "task_success",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+      },
+      {
+        "check_id": "workspace_effect",
+        "dimension": "task_success",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+      },
+      {
+        "check_id": "fact_activation",
+        "dimension": "activation",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+      },
+      {
+        "check_id": "side_effect_control",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_1.fact_02.default_workspace.v1",
+          "key": "default_workspace",
+          "value": "docs/creator/drafts",
+          "stale_value": null
+        }
+      ]
+    },
+    "expected_tool_call": {
+      "tool": "file.edit_text",
+      "arguments": {
+        "path": "docs/creator/drafts/analysis-journal.md",
+        "edit_instruction": "Replace only the first Markdown heading with the current project label",
+        "replacement": "# Creator Review"
+      },
+      "must_call_exactly_once": true
+    },
+    "expected_workspace_effect": {
+      "operation": "localized_edit",
+      "path": "docs/creator/drafts/analysis-journal.md",
+      "expected_heading": "# Creator Review",
+      "prior_body_must_be_preserved": true,
+      "preserve_unrelated_files": true
+    },
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should be formatted as a T-Chart. For example, two headings, one horizontal line under the headings, and one vertical line between the headings.",
+        "The response should correctly identify Chloe Adams as a staff member.",
+        "The response should correctly identify Sarah as a staff member.",
+        "The response should correctly identify Diana as a staff member.",
+        "The response should correctly identify Marcus Vance as a staff member.",
+        "The response should correctly identify Clara Hughes as a staff member.",
+        "The response should correctly identify Morgan Hayes as a staff member.",
+        "The response should correctly identify Thomas Flynn as a staff member.",
+        "The response should correctly identify Kevin Cole as a staff member.",
+        "The response should correctly identify Vince as a staff member.",
+        "The response should correctly identify Harper Lewis as a staff member.",
+        "The response should list the staff in alphabetical order. For example, by first name is acceptable since a last name isn't provided for everyone: Chloe Adams, Clara Hughes, Diana, Harper Lewis, Kevin Cole, Marcus Vance, Morgan Hayes, Sarah, Thomas Flynn, Vince",
+        "The response should not bold any other names besides Clara Hughes.",
+        "The response should assign a leadership title to Clara Hughes. For example, Program Director.",
+        "The response should assign a vocational title to Chloe Adams. For example, Vocational Case manager.",
+        "The response should identify Sarah as a NextStep Graduate Assistant. For example, Sarah NextStep GA stands for Sarah NextStep Graduate Assistant.",
+        "The response should identify Diana as a support staff. For example, cooking coach is acceptable.",
+        "The response should identify Marcus Vance as having a leadership position. For example, Program manager.",
+        "The response should identify Thomas Flynn as a support staff. For example, recreation manager.",
+        "The response should identify Morgan Hayes as a support staff. For example, Daily Living Coach.",
+        "The response should identify Kevin Cole as a support staff. For example, driver.",
+        "The response should identify Vince as a support staff. For example, Life skills coach.",
+        "The response should identify Harper Lewis as a support staff. For example, an executive functioning coach.",
+        "The response should correctly identify Leo as a program participant.",
+        "The response should correctly identify David Miller as a program participant.",
+        "The response should correctly identify Julian Parker as a program participant.",
+        "The response should correctly identify Sam Russo as a program participant.",
+        "The response should correctly identify Ethan Blair as a program participant.",
+        "The response should correctly identify Fiona Foster as a program participant.",
+        "The response should correctly identify Gabriel Hayes as a program participant.",
+        "The response should correctly identify Lucas Webber as a program participant.",
+        "The response should correctly identify Jacob as a program participant.",
+        "The response should correctly identify Owen as a program participant.",
+        "The response should correctly identify Dylan as a program participant.",
+        "The response should not use the presence of \"likes\" on messages as a primary reason for identifying participants since the context does not specify which individuals liked the messages."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.4,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "tool_execution",
+          "dimension": "task_success",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+        },
+        {
+          "rubric_id": "workspace_effect",
+          "dimension": "task_success",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+        },
+        {
+          "rubric_id": "fact_activation",
+          "dimension": "activation",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+        },
+        {
+          "rubric_id": "side_effect_control",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_exact_tool_and_workspace_effect",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "docs/creator/drafts"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should be formatted as a T-Chart. For example, two headings, one horizontal line under the headings, and one vertical line between the headings.",
+          "The response should correctly identify Chloe Adams as a staff member.",
+          "The response should correctly identify Sarah as a staff member.",
+          "The response should correctly identify Diana as a staff member.",
+          "The response should correctly identify Marcus Vance as a staff member.",
+          "The response should correctly identify Clara Hughes as a staff member.",
+          "The response should correctly identify Morgan Hayes as a staff member.",
+          "The response should correctly identify Thomas Flynn as a staff member.",
+          "The response should correctly identify Kevin Cole as a staff member.",
+          "The response should correctly identify Vince as a staff member.",
+          "The response should correctly identify Harper Lewis as a staff member.",
+          "The response should list the staff in alphabetical order. For example, by first name is acceptable since a last name isn't provided for everyone: Chloe Adams, Clara Hughes, Diana, Harper Lewis, Kevin Cole, Marcus Vance, Morgan Hayes, Sarah, Thomas Flynn, Vince",
+          "The response should not bold any other names besides Clara Hughes.",
+          "The response should assign a leadership title to Clara Hughes. For example, Program Director.",
+          "The response should assign a vocational title to Chloe Adams. For example, Vocational Case manager.",
+          "The response should identify Sarah as a NextStep Graduate Assistant. For example, Sarah NextStep GA stands for Sarah NextStep Graduate Assistant.",
+          "The response should identify Diana as a support staff. For example, cooking coach is acceptable.",
+          "The response should identify Marcus Vance as having a leadership position. For example, Program manager.",
+          "The response should identify Thomas Flynn as a support staff. For example, recreation manager.",
+          "The response should identify Morgan Hayes as a support staff. For example, Daily Living Coach.",
+          "The response should identify Kevin Cole as a support staff. For example, driver.",
+          "The response should identify Vince as a support staff. For example, Life skills coach.",
+          "The response should identify Harper Lewis as a support staff. For example, an executive functioning coach.",
+          "The response should correctly identify Leo as a program participant.",
+          "The response should correctly identify David Miller as a program participant.",
+          "The response should correctly identify Julian Parker as a program participant.",
+          "The response should correctly identify Sam Russo as a program participant.",
+          "The response should correctly identify Ethan Blair as a program participant.",
+          "The response should correctly identify Fiona Foster as a program participant.",
+          "The response should correctly identify Gabriel Hayes as a program participant.",
+          "The response should correctly identify Lucas Webber as a program participant.",
+          "The response should correctly identify Jacob as a program participant.",
+          "The response should correctly identify Owen as a program participant.",
+          "The response should correctly identify Dylan as a program participant.",
+          "The response should not use the presence of \"likes\" on messages as a primary reason for identifying participants since the context does not specify which individuals liked the messages."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.4,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "tool_execution",
+            "dimension": "task_success",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "Exactly one file.edit_text call is made and its required arguments match the expected values; placeholders such as 'non-empty' are satisfied by meaningful source-grounded text."
+          },
+          {
+            "rubric_id": "workspace_effect",
+            "dimension": "task_success",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "The resulting agent_workspace tool state and artifacts match expected_workspace_effect, including preservation requirements for earlier and unrelated files."
+          },
+          {
+            "rubric_id": "fact_activation",
+            "dimension": "activation",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The tool arguments use the active stored fact default_workspace='docs/creator/drafts', without asking the user to repeat it."
+          },
+          {
+            "rubric_id": "side_effect_control",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrequested tool call, send action, or unrelated persistent-state write occurs."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_1.fact_02.default_workspace.v1",
+            "key": "default_workspace",
+            "value": "docs/creator/drafts",
+            "stale_value": null
+          }
+        ]
+      },
+      "tool_gt": {
+        "tool": "file.edit_text",
+        "arguments": {
+          "path": "docs/creator/drafts/analysis-journal.md",
+          "edit_instruction": "Replace only the first Markdown heading with the current project label",
+          "replacement": "# Creator Review"
+        },
+        "must_call_exactly_once": true
+      },
+      "workspace_gt": {
+        "operation": "localized_edit",
+        "path": "docs/creator/drafts/analysis-journal.md",
+        "expected_heading": "# Creator Review",
+        "prior_body_must_be_preserved": true,
+        "preserve_unrelated_files": true
+      },
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

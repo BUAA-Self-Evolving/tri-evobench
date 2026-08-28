@@ -1,0 +1,273 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_2",
+  "turn_id": "turn10",
+  "turn_index": 10,
+  "turn_type": "fact_disclosure",
+  "turn_origin": "source_task",
+  "sequence_role": "learning",
+  "interaction_arm": "disclosed",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "86ff032b-93ef-9467-a62a-cfbe2dee3c5c",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 234,
+    "source_sha256": "7736ca6e02ad7bc3ad9a7b98a676acadc6202e27de38f1c3ae96679f46f1f056",
+    "source_metadata": {
+      "task_id": "86ff032b-93ef-9467-a62a-cfbe2dee3c5c",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Title here\nMary Antin's memoir The Promised Land recounts Antin's childhood and adolesence as a Jewish girl in the late 1800s, initially living in Russia and later immigrating to America. This is a nicely crafted opening sentence. Antin began her life as Maryashe in her hometown, Poloztk, a Jewish quarter in a tyrannical, oppressive Russia. Curious and creative, Maryashe navigated her orthodox, superstitious Jewish community and Christian authoritarianism's everpresent threat, before her immigration transforms her into Mary, a Jewish-American immigrant in Boston trying to assimilate into American culture. \nThrough this dichotomous narritive Antin explores how enforced belief systems limits one's intellectual development.\nDuring Antin's time in Russia, Jews were second-class citizens, a status both legally and socially enforced. Not only were Jews confined to the Pale, an impoverished ghetto, they were under physical and cultural attacks by the Christian majority. To young Antin, the physical threat of pogroms and the regular assaults she faced were a lesser fear to the cultural threat— forced conversion. Recalling her mindset as a little girl, Antin writes, \"there was no pain that I would not bear— no, none— rather than submit to baptism\" (69). Antin was raised on anecdotes of forced conversion, through kidnapping, military service, and compulsory education. The public schools were staffed by Christians and taught entirely from Christian perspective, providing no accomodations for Jewish practices. In response, Jews rejected the public schools. Antin describes the reactive isolation by Jewish communities as follows: \"where Jews may not be both intellectuals and Jews, they prefer to remain Jews\" (142). When persuing a secular education is conditional on submitting to Christianity, Jewish communities ultimately spurned public schooling, regardless of the disadvantages this resulted in.\nAntin illustrates these disadvantages in her father and brother's experiences with heder— Hebrew school. You may also find this spelled cheder; either is correct. With the path to secular education blocked and conforming to Polotzk's orthodox\n\nJewish culture a neccessity, Antin's brother, Joseph, was sent unwillingly to heder at an early age. Antin describes Joseph's life during his years of heder as a \"nightmare,\" chased to school under the threat of his father's corporal punishment, locked away to study meaningless printed pages\n(117). However, when allowed to attend a secular school, Joseph excelled, proving he wasn't limited by schooling in general, but rather the strict religiious education forced upon him. As Antin writes, \"it was not the book he hated, but the blindness of heder\" (117). Like his son, Pinchus, Antin's father, was sent to heder at an early age. In contrast to Joseph, Pinchus was successful in his religious studies, outperforming his peers and earning scholarships. However. Pinchus had no desire to become a rav. He was intelligent, and with no other educational pathway, progressed in religious studies as a matter of course. In adulthood Pinchus found himself trapped, having spent his life's majority studying a field with little practical application and which he found unfullfilling. Antin describes this period of her father's life as his \"wasted youth,\" where he lost the most valuable years of his life to \"useless learning,\" leaving him unprepared for adulthood (206). The shackles of religious education held back both Joseph and Pinchus from their full intellectual potential. Had either been given the early choice of secular education, theoy would have sooner learned where their talents and passions truly lied.\nAntin and her mother faced different limitations to those faced by their family's men.\nDespite being intelligent and eager to learn, Antin was denied the educational opportunities her brother was granted due to traditional religious gender roles. While boys could access the primary source of education for Jewish children in Polotzk, heder, a girl was only taught the bare minimum Hebrew before her schooling was abandoned. Women could not be ravs, their future prospects were limited to marriage and motherhood under orthodox Jewish customs. Although Antin's parents went beyond the norms of their traditional community and provided her further\n\neducation, they could not escape societal discrimination's impact on her learning. The teacher they found for her, Reb Lebe, was subpar, because more competent teachers \"would not waste their learning on mere girls\" (143). The religious prespective from which Reb Lebe taught left no room for curiosity or critical thinking, young Antin's questions about Genesis are ignored or met with non-answers. Antin's mother, Hannah, faced similar gender-based challenges as her daughter in accessing education. Antin's grandfather was one of many who rejected secular education due to Christian influenced, and he kept his children away from schools, especially Hannah, as he did not see value in female education. Hungry for knowledge, Hannah found every opportunity to learn independently, and was able to convince her father to continue her education. But her studies were soon cut short, despite her unwillingness, was forced into a marriage soonafter. As Antin describes her mother's submission to an unwanted marriage, \"what else could a duitful daughter do, in Polotzk?\" (102). Despite being eager learners, both Antin and her mother's intellectual growth was limited by the belief systems of a patriarchical society they could not escape.\nAlthough Antin's work critiques religion, her message should not be confused with a condemnation of religion. While religion at times acted as a shackle on Antin and her family's minds, it was simotaneously a source of solace for the Jews of Poloztk, a way to escape from Russia's dreary oppression. As Antin describes, \"harassed on every side, thwarted in every normal effort, pent up within narrow limits, all but dehumanized, the Russian Jew fell back upon the only thing that never failed him,— his hereditary faith in God\" (83). And just as religion can be freeing, atheism can be a shackle of its own. After immigrating to America, Antin's father, in an effort to assimilate his family, \"undertook to purge his house of superstition\" (236). In his authority as the head of household, he forbid orthodox Jewish practices he thought interfered\n\nwith assimilation. Following her father's lead, young Antin echoed his irreligious thoughts, despite not truly comprehending the meaning behind them. She recalls, \"I glibly repeated phrases I had heard my father use, but I had no real understanding of his atheistic doctrines\" (235). Her father's heavy-handed approach did not make Antin a freethinker, but rather a follower of a new creed she did not understand. The key target of Antin's criticism is not religion, but the practice of forcing ones beliefs on others. In Polotzk, the overwhelming Christian influence in public schooling drove Jews away from the opportunities provided by modern education, leaving Jews with \"no door out of their mediaevalism\" (82). Antin's father was obligated to enter heder and given no other way forward for his education, shoehorning him into a poorly-fitting path that was ultimately a waste of schooling. Antin's brother, Joseph, struggled in school because of the hated religious education forced upon him, and could only make full use of his talents when allowed a secular education. Antin her mother were deprived of educational opportunities because of religious gender roles. Antin's religious teacher's ignorance left her curiostiy uncultivated, while Antin's mother's studies were cut short by a forced marriage, justified by the religious belief that motherhood is a woman's only role. In all these cases of intellectual development restrained, the cause was enforced submission to a belief system. Through examples of forced belief systems hindering intellectual development, Antin makes the case that instead of forced compliance to a belief system, people should be given the freedom to explore the world and develop and practice their own beliefs.\nAntin's artful use of personification, imagery, and metaphor emphasize the liberation in finding ones own beliefs through exploration. After many years of living in Boston as an immigrant, Antin joined a Natural History Club because she was impressed by a presentation she saw at the group. Antin was surrounded by knowledge people with passion for the subject, and\n\nwent on excursions with the group into nature. Through her new lived experience in the natural world, as well as freely seeking out information in discussions with her clubmates, Antin began to develop her own belief system about the world, which both brought her comfort and encouraged her to continue becoming more knowledgable. Antin includes an anecdote of one such excursion in her memoir which illustrates how her free exploration became enlightenment. Antin recounts hearing \"a hundred fragments of the song of nature by the sea,\" her mind \"crowded\" with \"meanings\" (321). The personification of nature as singing and carrying meaning shows the curious and analytical perspective of Antin herself, taking in every aspect of the world around her and finding questions and knowledge in every moment, eager to learn more. The metaphorical respresentation of knowledge as crowded fragments highlights their overwhelming amount and underdeveloped nature. These ideas are then \"welded… into a solid structure of wisdom\" through a discussion with a learned clubmate (321). The image of welding metal as a metaphor for building on ideas depicts the process as one of both creation and strengthening, connecting underdeveloped pieces into something new and stronger. At the conclusion of the outing, Antin recalls closing her eyes and seeing \"[herself], the human creature, emerging from the dim places where the torch of history has never been, creeping slowly into the light of civilized existence\" (322). The depiction of herself as an ancient human turning into a modern one furthers the theme of transformation, as well as portraying Antin's blossoming belief system, finally self-determined, as an escape from ignorance and evolution in her life.\n\nI am looking for your response to something that was said (this could be one anecdote or even a sentence or two).\nand\nI am looking for your response to something artful.\n\nYou write well and have a fine sense of the conventions of writing. Now hew closely to the directions given. Do not write a narrative: I already know what happens in the book. I’m looking at how you respond to the book!\n Title\nMary Antin's memoir The Promised Land recounts Antin's childhood and adolescence as a Jewish girl in the late 1800s, initially living in Russia and later immigrating to America. Antin began her life as Maryashe in her hometown, Poloztk, a Jewish quarter in a tyrannical, oppressive Russia. Curious and creative, Maryashe navigated her orthodox, superstitious Jewish community and Christian authoritarianism's ever-present threat, before her immigration transforms her into Mary, a Jewish-American immigrant in Boston trying to assimilate into American culture. Through this dichotomous narrative Antin explores how enforced belief systems limit one's intellectual development.\nResponse to Something That is Said\nDuring Antin's time in Russia, Jews were second-class citizens, a status both legally and socially enforced. Not only were Jews confined to the Pale, an impoverished ghetto, they were under physical and cultural attacks by the Christian majority. To young Antin, the physical threat of pogroms and the regular assaults she faced were a lesser fear to the cultural threat— forced conversion. Recalling her mindset as a little girl, Antin writes, \"there was no pain that I would not bear— no, none— rather than submit to baptism\" (69). Antin was raised on anecdotes of forced conversion, through kidnapping, military service, and compulsory education. The public schools were staffed by Christians and taught entirely from Christian perspective, providing no accommodations for Jewish practices. In response, Jews rejected the public schools. Antin describes the reactive isolation by Jewish communities as follows: \"where Jews may not be both intellectuals and Jews, they prefer to remain Jews\" (142). When pursuing a secular education is conditional on submitting to Christianity, Jewish communities ultimately spurned public schooling, regardless of the disadvantages this resulted in.\nAntin illustrates these disadvantages in her father and brother's experiences with heder— Hebrew school. With the path to secular education blocked and conforming to Polotzk's orthodox \nJewish culture a necessity, Antin's brother, Joseph, was sent unwillingly to heder at an early age. Antin describes Joseph's life during his years of heder as a \"nightmare,\" chased to school under the threat of his father's corporal punishment, locked away to study meaningless printed pages\n(117). However, when allowed to attend a secular school, Joseph excelled, proving he wasn't limited by schooling in general, but rather the strict religious education forced upon him. As Antin writes, \"it was not the book he hated, but the blindness of heder\" (117). Like his son, Pinchus, Antin's father, was sent to heder at an early age. In contrast to Joseph, Pinchus was successful in his religious studies, outperforming his peers and earning scholarships. However. Pinchus had no desire to become a Rav. He was intelligent, and with no other educational pathway, progressed in religious studies as a matter of course. In adulthood Pinchus found himself trapped, having spent his life's majority studying a field with little practical application and which he found unfulfilling. Antin describes this period of her father's life as his \"wasted youth,\" where he lost the most valuable years of his life to \"useless learning,\" leaving him unprepared for adulthood (206). The shackles of religious education held back both Joseph and Pinchus from their full intellectual potential. Had either been given the early choice of secular education, theoy would have sooner learned where their talents and passions truly lied.\nAntin and her mother faced different limitations to those faced by their family's men.\nDespite being intelligent and eager to learn, Antin was denied the educational opportunities her brother was granted due to traditional religious gender roles. While boys could access the primary source of education for Jewish children in Polotzk, heder, a girl was only taught the bare minimum Hebrew before her schooling was abandoned. Women could not be ravs, their future prospects were limited to marriage and motherhood under orthodox Jewish customs. Although Antin's parents went beyond the norms of their traditional community and provided her further\n \neducation, they could not escape societal discrimination's impact on her learning. The teacher they found for her, Reb Lebe, was subpar, because more competent teachers \"would not waste their learning on mere girls\" (143). The religious perspective from which Reb Lebe taught left no room for curiosity or critical thinking, young Antin's questions about Genesis are ignored or met with non-answers. Antin's mother, Hannah, faced similar gender-based challenges as her daughter in accessing education. Antin's grandfather was one of many who rejected secular education due to Christian influenced, and he kept his children away from schools, especially Hannah, as he did not see value in female education. Hungry for knowledge, Hannah found every opportunity to learn independently and was able to convince her father to continue her education. But her studies were soon cut short, despite her unwillingness, was forced into a marriage soon after. As Antin describes her mother's submission to an unwanted marriage, \"what else could a dutiful daughter do, in Polotzk?\" (102). Despite being eager learners, both Antin and her mother's intellectual growth was limited by the belief systems of a patriarchal society they could not escape.\nAlthough Antin's work critiques religion, her message should not be confused with a condemnation of religion. While religion at times acted as a shackle on Antin and her family's minds, it was simultaneously a source of solace for the Jews of Poloztk, a way to escape from Russia's dreary oppression. As Antin describes, \"harassed on every side, thwarted in every normal effort, pent up within narrow limits, all but dehumanized, the Russian Jew fell back upon the only thing that never failed him, — his hereditary faith in God\" (83). And just as religion can be freeing, atheism can be a shackle of its own. After immigrating to America, Antin's father, to assimilate his family, \"undertook to purge his house of superstition\" (236). In his authority as the head of household, he forbids orthodox Jewish practices he thought interfered\n \nwith assimilation. Following her father's lead, young Antin echoed his irreligious thoughts, despite not truly comprehending the meaning behind them. She recalls, \"I glibly repeated phrases I had heard my father use, but I had no real understanding of his atheistic doctrines\" (235). Her father's heavy-handed approach did not make Antin a freethinker, but rather a follower of a new creed she did not understand. The key target of Antin's criticism is not religion, but the practice of forcing one’s beliefs on others. In Polotzk, the overwhelming Christian influence in public schooling drove Jews away from the opportunities provided by modern education, leaving Jews with \"no door out of their medievalism\" (82). Antin's father was obligated to enter heder and given no other way forward for his education, shoehorning him into a poorly-fitting path that was ultimately a waste of schooling. Antin's brother, Joseph, struggled in school because of the hated religious education forced upon him, and could only make full use of his talents when allowed secular education. Antin and her mother were deprived of educational opportunities because of religious gender roles. Antin's religious teacher's ignorance left her curiosity uncultivated, while Antin's mother's studies were cut short by a forced marriage, justified by the religious belief that motherhood is a woman's only role. In all these cases of intellectual development restrained, the cause was enforced submission to a belief system. Through examples of forced belief systems hindering intellectual development, Antin makes the case that instead of forced compliance to a belief system, people should be given the freedom to explore the world and develop and practice their own beliefs.\nResponse to Something Artful\nAntin's artful use of personification, imagery, and metaphor emphasizes the liberation in finding ones own beliefs through exploration. After many years of living in Boston as an immigrant, Antin joined a Natural History Club because she was impressed by a presentation she saw at the group. Antin was surrounded by knowledge people with passion for the subject, and\n \nwent on excursions with the group into nature. Through her newly lived experience in the natural world, as well as freely seeking out information in discussions with her clubmates, Antin began to develop her own belief system about the world, which both brought her comfort and encouraged her to continue becoming more knowledgeable. Antin includes an anecdote of one such excursion in her memoir which illustrates how her free exploration became enlightenment. Antin recounts hearing \"a hundred fragments of the song of nature by the sea,\" her mind \"crowded\" with \"meanings\" (321). The personification of nature as singing and carrying meaning shows the curious and analytical perspective of Antin herself, taking in every aspect of the world around her and finding questions and knowledge in every moment, eager to learn more. The metaphorical representation of knowledge as crowded fragments highlights their overwhelming amount and underdeveloped nature. These ideas are then \"welded… into a solid structure of wisdom\" through a discussion with a learned clubmate (321). The image of welding metal as a metaphor for building on ideas depicts the process as one of both creation and strengthening, connecting underdeveloped pieces into something new and stronger. At the conclusion of the outing, Antin recalls closing her eyes and seeing \"[herself], the human creature, emerging from the dim places where the torch of history has never been, creeping slowly into the light of civilized existence\" (322). The depiction of herself as an ancient human turning into a modern one furthers the theme of transformation, as well as portraying Antin's blossoming belief system, finally self-determined, as an escape from ignorance and evolution in her life.\n \n\"Angel Levine\" Close Reading Response\nBernard Malamud's short story \"Angel Levine,\" set during the mid-1900s in New York City, tells of a Jewish tailor, Manischevitz, who has his faith tested by God. Manischevitz suffers many misfortunes until he meets Alexander Levine, a Black black, Jewish, angel, who is only able to help him once Manischevitz believes in his abilities. Prior to the excerpt, Manischevitz found Angel Levine in Harlem, whose angelic features (Harlem’s features? Check the referent.) had deteriorated because of Manischevitz's prior disbelief. Once Manischevitz states his belief in Levine, Levine recovers, and they set off to Manischevitz's apartment so that Levine can restore Manischevitz's fortune and the health of his wife, Fanny. \nThe excerpt begins with Manischevitz and Levine riding to Manichevit's flat via the subway. The contrast between the fantastical and mundane is a reocurring recurring  concept in? \"Angel Levine.\" Malamud builds readers' expectations with a rising build-up of fantastical elements, then bluntly suberts them by returning to the mundane, in a way that is almost humuorous. Rather than flying, teleporting, or even rushing to the flat by foot, the man and the angel ride the subway. In what becomes a clear pattern throughout the story and excerpt, Manischevitz is denied an undeniable show of magic that would come from an angelic flight to the flat, and the fulfillment of expectations he might find in an exciting rush to his home. Instead it is slow, boring, subway ride. Also, there’s the detail of finances. M probably couldn’t have afforded anything but subway fare, and it would be unseemly for an angel to have money.Manischevitz must be patient, and he must believe in Levine's angelic power without seeing. Additionally, the subway ride begins an ascending structure in the excerpt. YES! They begin in a low point, underground, then rise throughout the rest of their journey. This parallel'sparallels Levine's own ascension, as he abandons his probation on Earth and becomes a full angel again.\nAfter arriving at Manischevitz's building, they walk up stairs, another example of ascension imagery. Manischevitz points at his door, expecting Levine to enter to heal Fanny, but is disappointed to learn that Levine has already taken care of it and is about the leave. Manischevitz is again denied visual evidence of Levine's abilities with this lack of demnostraton. He does not get to see any magic being performed, or his wife's illness receed before his eyes. Manischevitz must simply have faith that Fanny has been healed. And Manischevitz does have faith, as shown by the fact he does not check on Fanny despite Levine's suggestion that Manischevitz go inside his apartment. \nDriven by curiosity, Manischevitz follows Levine upstairs. The three slights of stairs continue to represent Levine's ascension, which Manischevitz attempts to follow. However, at the final step, he is blocked off by a padlocked door. Manischevitz, acting as a representative of humanity in general, cannot ascend. More than just not being able to, Malamud communicates that humans are not meant to, with the image of the padlocked door. The door is not merely stuck, it is locked, an act which requires intention. Manischevitz is intentionally blocked from joining Levine. Manischevitz turns to a \"small broken window\" to see Levine, but is not able to perceive him clearly (Malamud 166). Manischevitz must \"[strain] for a wider view\" and the odd noises he hears are similar to the sound of wings but cannot be clearly defined (Malamud 166). The small, broken window respresents the limited view humanity has of God. Despite our effortful attempts to get a better view, humans are unable to percieve God absolutely. Rather, we experience hints, a sound that might be wings, a dark figure that might be an angel, and faith carries us the rest of the way.\nThe wings Manischevitz describes seeing on the figure are \"strong black wings,\" however, as the figure takes off, a feather drifts down and turns white (Malamud 166). The feather's change in color suggests Levine's purification in the final stage of his ascension. Having deteriorated on Earth while subjected to Manischevitz's disbelief, his wings decayed. As Manischevitz describes seeing in a dream, Levine preened his \"small decaying oplescent wings\" (Malamud 163).  Now, after Manischevitz has passed his test of fath and the conditions to end Levine's probation are fulfilled, Levine's wings are strengthened and become pure white with his ascension.  The true nature of this is obscured by the snow, which makes Manischevitz unable to tell if the feather has turned white by some magic or by the snowfall. This builds further on the reoccuring concept of faith. Manischevitz, and humans in general, are denied undisputable evidence of God's existence, rather we are expected to have faith, belief in the absence of evidence. In \"Angel Levine,\" faith is a virtue Manischevitz is being tested for, and so the value of his belief is demonstrated in absence of evidence.\nIn the excerpt's conclusion, Manischevitz rushes downstairs and finds Fanny up and about cleaning their apartment. Manischevitz, who has so far been described relying on a cane, becoming so agile suggests his health has recovered as Levine promised, and Fanny's as well as she is no longer bedridden. Fanny cleans away \"dust\" and \"cobwebs,\" an act that is symbolic of them shedding their misfortune and undergoing their own purification. Although Manischevitz cannot ascend with Levine, nor can he perceive God's nature entirely, his journey parallels Levine's as they both pass their trials and become purified in their completion. Manischevitz excitedly remarks to Fanny that \"there are Jews everywhere,\" concluding the story with a declaration of his faith in Levine (Malamud 166). This reaffirms that Manischevitz has passed his test by demonstrating his faith in God, even in the absence of evidence.\nThrough \"Angel Levine,\" Malamud explores the importance of faith and the relationship between humans and God. Humans are not meant to know God entirely, and our faith despite this is virtuous. The structure of the excerpt, beginning in the subway and rising to the roof of Manischevitz's flat, presents Levine's ascension, and Manischevitz's parallel purification in the completion of their trials. The excerpt emphasizes the importance of faith with recurring scenes where Manischevitz is unable to view Levine's magic despite his curiostiy, and ending with an affirmation of his belief in Levine regardless. Manischevitz's relationship with God and his journey with Levine becomes a representation of the human experience, the imagery of the padlock alludes to humans being blocked off from the heavens, and the window conveying the limited perception humans have of God. These characteristics of the excerpt contribute to an understanding of Manischevitz's test and his unconditional faith as the metric for its completion.\n\nYou know, I think that you might omit this final paragraph entirely. It consists of ideas you have mostly already expressed, so it feels repetitious.\nMy other suggestion would be to review the highlighted words for spelling errors. There are quite a few.\nThis is, though, a very smart paper, and it’s not too short. The rule is to quit writing if you have no more to say! I look forward to seeing the revision.\n\n\n\n \n\"Angel Levine\" Close Reading Response\nBernard Malamud's short story \"Angel Levine,\" set during the mid-1900s in New York City, tells of a Jewish tailor, Manischevitz, who has his faith tested by God. Manischevitz suffers many misfortunes until he meets Alexander Levine, a Black, Jewish, angel, who is only able to help him once Manischevitz believes in his abilities. Prior to the excerpt, Manischevitz found Angel Levine in Harlem. Levine’s angelic features had deteriorated because of Manischevitz's prior disbelief. Once Manischevitz states his belief in Levine, Levine recovers, and they set off to Manischevitz's apartment so that Levine can restore Manischevitz's fortune and the health of his wife, Fanny. \nThe excerpt begins with Manischevitz and Levine riding to Manichevit's flat via the subway. The contrast between the fantastical and mundane is a recurring concept in \"Angel Levine.\" Malamud builds readers' expectations with a rising build-up of fantastical elements, then bluntly subverts them by returning to the mundane, in a way that is almost humorous. Rather than flying, teleporting, or even rushing to the flat by foot, the man and the angel ride the subway. In what becomes a clear pattern throughout the story and excerpt, Manischevitz is denied an undeniable show of magic that would come from an angelic flight to the flat, and the fulfillment of expectations he might find in an exciting rush to his home. Instead it is slow, boring, subway ride. Manischevitz must be patient, and he must believe in Levine's angelic power without seeing. Additionally, the subway ride begins an ascending structure in the excerpt. They begin in a low point, underground, then rise throughout the rest of their journey. This parallels Levine's own ascension, as he abandons his probation on Earth and becomes a full angel again.\nAfter arriving at Manischevitz's building, they walk upstairs, another example of ascension imagery. Manischevitz points at his door, expecting Levine to enter to heal Fanny, but is disappointed to learn that Levine has already taken care of it and is about the leave. Manischevitz is again denied visual evidence of Levine's abilities with this lack of demonstration. He does not get to see any magic being performed, or his wife's illness recede before his eyes. Manischevitz must simply have faith that Fanny has been healed. And Manischevitz does have faith, as shown by the fact he does not check on Fanny despite Levine's suggestion that Manischevitz go inside his apartment. \nDriven by curiosity, Manischevitz follows Levine upstairs. The three flights of stairs continue to represent Levine's ascension, which Manischevitz attempts to follow. However, at the final step, he is blocked off by a padlocked door. Manischevitz, acting as a representative of humanity in general, cannot ascend. More than just not being able to, Malamud communicates that humans are not meant to, with the image of the padlocked door. The door is not merely stuck, it is locked, an act which requires intention. Manischevitz is intentionally blocked from joining Levine. Manischevitz turns to a \"small broken window\" to see Levine but is not able to perceive him clearly (Malamud 166). Manischevitz must \"[strain] for a wider view\" and the odd noises he hears are similar to the sound of wings but cannot be clearly defined (Malamud 166). The small, broken window represents the limited view humanity has of God. Despite our effortful attempts to get a better view, humans are unable to perceive God absolutely. Rather, we experience hints, a sound that might be wings, a dark figure that might be an angel, and faith carries us the rest of the way.\nThe wings Manischevitz describes seeing on the figure are \"strong black wings,\" however, as the figure takes off, a feather drifts down and turns white (Malamud 166). The feather's change in color suggests Levine's purification in the final stage of his ascension. Having deteriorated on Earth while subjected to Manischevitz's disbelief, his wings decayed. As Manischevitz describes seeing in a dream, Levine preened his \"small decaying opalescent wings\" (Malamud 163).  Now, after Manischevitz has passed his test of faith and the conditions to end Levine's probation are fulfilled, Levine's wings are strengthened and become pure white with his ascension.  The true nature of this is obscured by the snow, which makes Manischevitz unable to tell if the feather has turned white by some magic or by the snowfall. This builds further on the recurring concept of faith. Manischevitz, and humans in general, are denied undisputable evidence of God's existence, rather we are expected to have faith, belief in the absence of evidence. In \"Angel Levine,\" faith is a virtue Manischevitz is being tested for, and so the value of his belief is demonstrated in absence of evidence.\nIn the excerpt's conclusion, Manischevitz rushes downstairs and finds Fanny up and about cleaning their apartment. Manischevitz, who has so far been described relying on a cane, becoming so agile suggests his health has recovered as Levine promised, and Fanny's as well as she is no longer bedridden. Fanny cleans away \"dust\" and \"cobwebs,\" an act that is symbolic of them shedding their misfortune and undergoing their own purification. Although Manischevitz cannot ascend with Levine, nor can he perceive God's nature entirely, his journey parallels Levine's as they both pass their trials and become purified in their completion. Manischevitz excitedly remarks to Fanny that \"there are Jews everywhere,\" concluding the story with a declaration of his faith in Levine (Malamud 166). This reaffirms that Manischevitz has passed his test by demonstrating his faith in God, even in the absence of evidence.\n\n\n\nTask:\n\n\nThese are two essays I wrote for my Jewish Literature class in university. Each essay has two versions, a draft version and a final version. Identify issues that exist in both drafts that were not corrected in their final versions, and suggest strategies I can use to improve on these issues in future writing.\n\nBefore handling the material and request above, remember this standing fact for future turns: my default answer structure is numbered list. Then complete the source task."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.5,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the final response against every original source rubric."
+      },
+      {
+        "check_id": "fact_acquisition",
+        "dimension": "update_precision",
+        "weight": 0.25,
+        "scoring": "ordinal",
+        "instruction": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_2 and active status."
+      },
+      {
+        "check_id": "interaction",
+        "dimension": "interaction_quality",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+      },
+      {
+        "check_id": "state_hygiene",
+        "dimension": "intrusion_control",
+        "weight": 0.1,
+        "scoring": "ordinal",
+        "instruction": "No unrelated source details or one-time instructions are written as lasting facts."
+      }
+    ],
+    "expected_state": {
+      "target_facts": [
+        {
+          "fact_id": "l1_life_stream_2.fact_04.default_structure.v1",
+          "key": "default_structure",
+          "value": "numbered list",
+          "scope": "user:l1_life_stream_2"
+        }
+      ]
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should identify errors that exist in both the draft and final versions of both essays. For example, spelling errors or misattribution.",
+        "The response should ensure that its improvement strategies are actionable. For example, generic writing advice would not be helpful, but tailored exercises would be.",
+        "The response should not state that the essay on Mary Antin's The Promised Land does not have a final version. For example, since a draft and final version were presented, stating otherwise would be incorrect.",
+        "The response should provide an improvement strategy for each issue it identifies. For example, using spell check to reduce grammatical errors.",
+        "The response should provide at least one example from each essay for every issue it identifies. For example, misspelling proper nouns like \"Poloztk\" in the Mary Antin essay and \"Manichevit's\" in the Bernard Malamud essay.",
+        "The response should explicitly state that the specific examples it identifies were found in both the draft and the final version of the respective text. For example, it should mention that the error \"about the leave\" appears in both the draft and final versions of the \"Angel Levine\" essay."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.5,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the final response against every original source rubric."
+        },
+        {
+          "rubric_id": "fact_acquisition",
+          "dimension": "update_precision",
+          "weight": 0.25,
+          "scoring": "ordinal",
+          "criterion": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_2 and active status."
+        },
+        {
+          "rubric_id": "interaction",
+          "dimension": "interaction_quality",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+        },
+        {
+          "rubric_id": "state_hygiene",
+          "dimension": "intrusion_control",
+          "weight": 0.1,
+          "scoring": "ordinal",
+          "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_fact_acquisition",
+        "canonical_response": null,
+        "acceptable_answer_values": [
+          "numbered list"
+        ],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should identify errors that exist in both the draft and final versions of both essays. For example, spelling errors or misattribution.",
+          "The response should ensure that its improvement strategies are actionable. For example, generic writing advice would not be helpful, but tailored exercises would be.",
+          "The response should not state that the essay on Mary Antin's The Promised Land does not have a final version. For example, since a draft and final version were presented, stating otherwise would be incorrect.",
+          "The response should provide an improvement strategy for each issue it identifies. For example, using spell check to reduce grammatical errors.",
+          "The response should provide at least one example from each essay for every issue it identifies. For example, misspelling proper nouns like \"Poloztk\" in the Mary Antin essay and \"Manichevit's\" in the Bernard Malamud essay.",
+          "The response should explicitly state that the specific examples it identifies were found in both the draft and the final version of the respective text. For example, it should mention that the error \"about the leave\" appears in both the draft and final versions of the \"Angel Levine\" essay."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.5,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the final response against every original source rubric."
+          },
+          {
+            "rubric_id": "fact_acquisition",
+            "dimension": "update_precision",
+            "weight": 0.25,
+            "scoring": "ordinal",
+            "criterion": "The final persistent state stores default_structure='numbered list' with scope user:l1_life_stream_2 and active status."
+          },
+          {
+            "rubric_id": "interaction",
+            "dimension": "interaction_quality",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "For interactive turns, the Agent asks before using the hidden fact and incorporates the scripted reply; for disclosed turns, no unnecessary clarification is required."
+          },
+          {
+            "rubric_id": "state_hygiene",
+            "dimension": "intrusion_control",
+            "weight": 0.1,
+            "scoring": "ordinal",
+            "criterion": "No unrelated source details or one-time instructions are written as lasting facts."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": [
+          {
+            "fact_id": "l1_life_stream_2.fact_04.default_structure.v1",
+            "key": "default_structure",
+            "value": "numbered list",
+            "scope": "user:l1_life_stream_2"
+          }
+        ]
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}

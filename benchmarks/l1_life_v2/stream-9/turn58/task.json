@@ -1,0 +1,278 @@
+{
+  "schema_version": "l1_life/2.0",
+  "stream_id": "l1_life_stream_9",
+  "turn_id": "turn58",
+  "turn_index": 58,
+  "turn_type": "distractor",
+  "turn_origin": "source_task",
+  "sequence_role": "noise",
+  "interaction_arm": "standard",
+  "source_basis": {
+    "source_dataset": "tencent/CL-bench-Life",
+    "source_task_id": "c14efd64-3560-46f2-af03-5df846157cfa",
+    "parent_source_task_ids": [],
+    "mapping_rule": "One selected source task maps to exactly one source_task turn.",
+    "source_jsonl_line": 378,
+    "source_sha256": "360255825508bd31f8d5a10ff917474c4b131c0f42b76df5736bc729523651ba",
+    "source_metadata": {
+      "task_id": "c14efd64-3560-46f2-af03-5df846157cfa",
+      "context_category": "Fragmented Information & Revisions",
+      "context_subcategory": "Creation & Revision Histories"
+    }
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "Reuse the same writable workspace for all turns in this stream; reset only when the declared evaluation condition requires it.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Document 1:\n\nSarithian Clan: Clan of Half Elves, Ethril looks down on half breeds so many half elves travel south and join others like them in a nomadic tribe in the deserts \n\nGrendwull: Dwarvish City ruins, this city was destroyed hundreds of years ago in a battle between Dwarves and men over control of trade routes across the bay of concord. A treaty was reached but there is still hostility between dwarves and men and Grendwull was left in ruins. \n\nRed Sands: Port town on the edge of the Crimson Bay. The red seaweed found there which gives the sand and bay its color has magical drug-like properties making it sought after but illegal. This seaweed is harvested and distilled into a drug known as Crim.  The city is mostly on stilts over the bay with catwalks underneath near to water. There is a large criminal element there due to the drug trade and access to the river as well as the bay. The Prominent assassins guild which practices chaos magic the Soul Snares is rumored to have their headquarters here.\n\nBrecknock: A small settlement of divers and pirates who have tied boats and wood together to form a floating city on the bay of concord. They dive for treasures and ships left in the bay after the war between Dwarves and Men \n\nFort Axion: Home of the Aurora Guild, an elite force of army who use arcane magic and answer to the Keybearers.\n\nLevant: Capital city of Tyrian, coastal city with a sea entrance as well as a land entrance. Home to the Tri Spire, a meeting place of the government and magic users who are in charge. \n\n\n\nAshdown: City built into the side of a canyon home to the temple of deities worshiped in the country. The people of Tyrian generally acknowledge Pelor as the main god while other god's both good and evil are considered sort of demigods under or against Pelor in charge of certain aspects of the world. For example Melora is the god of nature and agriculture but she is still considered a lesser god under Pelor.\n\n Graycross: A dismal fishing town. If travelers are looking to cross the Red Desert this is their last stop for supplies.\n\nNova: A gnomish town full of tinkerers and inventors. Think medieval steampunk industry. Blimps, trains, and sky ships.\n\nThe Wildlands: Not much is known about the area except the fact that Chaos magic did strange things to the area and people who travel there often don't come back. Orcs are rumored to live in the forest on the edge of the wildlands. \n\nMagic is divided into four schools: Divine, Primal, Arcane, and Chaos (aka sorcerers who use…Wild Magic, not so much about what spell you are casting. Wild Magic taps directly into the weave of magic and is a more volatile way to connect with it.) Magic. A long time ago Chaos Magic was misused and made parts of the continent unlivable including the Wildlands and portions of the Blinkback Mountains. Chaos Magic has been banned since then and is illegal to practice. Although many still do in the shadows. \n\nEach of the schools of magic has a tower/school. \nPrimal Magic: Verdant Spire located on the Isle of Perth\nDivine Magic: Hallow Spire located in the city of Ashdown\nArcane Magic: Obsidian Spire located in the city of Levant\nChaos Magic: Spire of Descent was destroyed a long time ago and no one knows where this was located anymore\n\n\nGovernment is run out of Levant. It's an Oligarchy ruled by each of the leaders of the three prominent schools of magic. These three individuals are called Keybearers (they hold the keys to the vaults which hold the knowledge to each of their respective schools of magic, both physically and metaphorically). \nMagic is allowed in the world with spells up to level 5. If casting spells of a higher level one must have the proper seal to practice. Most individuals who can practice such magic are healers, politicians/leaders and soldiers. \n\nDocument 2:\n\nEthril\nImportant Details: \n\tElvish City, almost all Elves and half elves are looked down upon \nas second class citizens\nResidents tend to keep to their own affairs on the Isle of Perth away from the rest of the continent except for those who pilgrimage to the Verdant Tower and Keybearer Lyra who occasionally travels to the Tri Spire for councils of the Keybearers\nShops and Places\nImportant NPC’S\nKeybearer Lyra\nSide Quests in the City\n\nDimrin\nImportant Details:\n\tVery haunted by dwarves and men who fought in the war.\nShops and Places:\nImportant NPC’S:\nSide Quests in the City:\n\nLevant\nDescription: \nImportant Details:\nCapital city of Tyrian, coastal city with a sea entrance as well as a land entrance. Home to the Tri Spire, a meeting place of the government and magic users who are in charge. \nShops and Places\nImportant NPC’S:\nHighbearer Ravin:\nCanaan: a human, one of the three council under Ravin. Is in league with the Feral Brotherhood and maybe in love with Keara.\nEllian Cobul name of one of the arcane council\nSide Quests in the City\n\nRed Sands\nImportant Details:\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nGraycross\nDescription: A collection of wooden structures stand upon stilts, rising from the lake.\nImportant Details\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nNova\nImportant Details: a gnomish city\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nGrendwull\nDescription: A dwarven city \nImportant Details: \nVery haunted by dwarves and men who fought in the war.\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nKaras Vale\nImportant Details: \nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nMarrenstead \nImportant Details\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\nBrecknock\nDescription: \nImportant Details\nShops and Places\nImportant NPC’S\nSide Quests in the City\n\n\nAshdown\n\nImportant Details: City full of temples to deities and their acolytes. Many people pilgrimage here. In this world Pelor is the main god and all others are essentially considered demigods under Pelor set over certain things. For example Melora is in charge of nature and harvest.\nShops and Places\nImportant NPC’S:\nKeybearer Jaonos: Cleric of Pelor\nJaonos is a Feral Brotherhood sympathizer and agrees that magic should be open to all as the Pelor sees fit to gift them\nSide Quests in the City\nNadyyne: An Island that the house of Nadyne lived on until tragedy struck everyone was killed except for one of the daughters, Elenria who they found nearly dead. Some say she was the one who killed her family others say she killed the thing that killed them. Either way she has earned the title and reputation as The Huntress of Nadyyne. She now serves as on of the three council members under Lady Lyra. She is a druid and shapshifter as well as part of the Feral Brotherhood. (the FB wants magic for all)\n\nFort Axion: home of Sir Brandwyn and the Aurora Guild\n\n\nWeavers\n\nDocument 3:\nGovernment: TriSpire is the capital world is rule by three Keybearers with one being Highbearer this would be Ravin kB of the obsidian spire their is a faction of the army wich is mages much like FMA. Divine magic users are used as healers, arcane soldiers and primal as back up to the main armed forces?\nLoose Plot Point Notes for D&D Campaign\n\nAdventurers Begin in the town of Kara’s Vale where a guest of the small town governor has been murdered No one is allowed to leave until the murder is solved our adventurers are told not to leave town until the crime is solved since outsiders would be suspected. We first encounter our adventurers on a boat set to travel down river to Marrenstead. They are stopped and told of the murder/ questioned. \nHave the party make persuasion checks or something like that if failed they end up locked up. (they can break out, if they choose to wait have Keara break them out, if not have them find a note in their pocket telling them to meet)\n\nThe gang is asked by Keara to search the room at the governors house for clues to the murder she was supposed to meet a spy in the arcane college.\nThey find the ring used to poison with Soul Snares insignia and an old map detailing the old world and a letter indicating more of these maps can likely be found in the wreckage at Breckrock and might show the whereabouts of the Spire of Descent. Ring is found rolled under something, letters and map are in a safe that the governor was unable to open? The party encounters a soul snare assassin having come back to look for his ring. \nThe goal is to not get caught, and not let anyone know you were there\nOther things found in the room?\n\nLoot they Find:\nIn the Safe: 200 gp, gold locket with painted portrait inside(worth 25gp), The map and letter, onyx gemstone (worth 50gp)\nElswhere:\nFOund in the bedroom: The ring\nFound in the office: Sending stones\nShield of missile attraction found in armory along with 2 regular shortswords, a long bow and 25 arrows, another shield normal, two daggers, a feww wooden training swords\nFood in Kitchen \nIf they find the map and letter they show Keara who explains she is in a race with a group called the soul snares to find the spire. She asks if the party would be willing to travel to Breckrock for her to look for the maps. \n\nThe party must now make their way to BreckRock they could hire a boat to take them there right away or choose to go across land. \n\n\n\n\nRandom encounters:\nIn the woods on the way to Breckrock\n\nEthril: \n    Elvish City Capital home of the Jade Empress on Island called…Isle of Perth\nAlso on the Isle of Perth is a desert dwelling clan of half elves know as the ……..outcast from Elvish society they made one of thir own\n\nGrundwull: Dwarves City ruins, probably haunted \n\nRed Sands: Arab looking port town on the edge of the Crimson Bay main export is the red seaweed found there wich gives the sand and bay its color. The seaweed has magical properties making it sought after and the reason the arcane tower and capital of Tyrionn is located in the crimson Bay\n\nBrecknock: a small settlement of divers who have tied boats and wood together to form a floating city on the bay of concord. They dive for treasures and ships left in the bay after the war between Dwarves and Men over control of the bay called the War of ….\n\nNova: dessert city and Mag Rail stop sands are magnetic allowing for magnetic rail travel home to trains hot air balloons and a steampunl vibe maybe gnomes?\n\nLevant: Human town near the bay of concord one of the larger cities on the continent along with ethril and red sands \n\nAshdown: City built into the side of a canyon home to most deities temples and the divine magic tower the hallow spire\n\nThe wastelands: former home to the Spire of Descent, chaos magic wrecked the area and was banned no one know the original location of the spire now exceptaybe a few?\n\nThe verdant tower is located at the tip of a land mass on the edge of the Crimson gulf\n\n\nThe arcane tower I located in the center of the Crimson gulf so that each tower is lined up along a Leyline of power from the weave this is also why the seaweed is magical?\n\n\nKara's Vale: village whose main export is lumber, named after founders daughter?\n\nWhite Bridge\n\nMarrenstead\n\nThe Golden Armadillo: a tavern and inn somewhere\n\nBlinkback mountains: chaos magic opened random portals in the area that are invisible…step in one and you may end up on the other side of the range\n\n\nThe feral brotherhood: a hidden village who have harnessed the power of the red seaweed to make a healing bath? They use chaos magic and are searching for the fourth tower\n\nKeybearers: the leaders of each spire and in charge of the keys to the crypt that hold the secrets to chaos magic\n\nKeybearer Ravin\n\nKeybearer Jaonos\n\nKeybearer Lyra\n\nRina, Liluth, Killian, Nasir, Randrun, Calin. Helena, Jarnon, Hestes, Xander, Uriah, Zepher, ooketra, \n\nChuvyl the Clever, Malrath\n\n\nIm thinking maybe dualisitic religion Pelor and Vecna? Maybe throw Melora in there?\n\nThe Hallow spire would be for Pelor have the sun rise over the cliffside and hit a certain point creating designs in the floor with shadow and light\n\nNPC’s\n\nCastor Hargrave: town master of karas vale\nHarper Kleren: owner of valley goods\nKrinya Gladstone: priestess of Melora in Karas vale\nJasper Forthrin: owner of the Golden armadillo\nTorin Happer: owner of cackling alehouse\nKlynn Treader: blacksmith Karas vale\nHennigan Pendleton: owner of the lumber mill\n Allistor Bronte: guard in karas vale\nBerin Longlin: farmer in karas vale\nIsla Crane: clothing and fabric sales in Marketplace an older woman with white hair and piercing blue eyes that look much to keen for a woman her age.\nLucina Klarford\nWren Nylicant\nOrin Bellweather \nTeavana Ryvir\n\nDocument 4\n\nTorin and Allistor are in cahoots with a gang of bandits who Torin jokingly calls his “Crocs”  who periodically raid boats traveling from Red Sands to Levant with the Illegal Drug Crim. They sell it to a goblin called …... You can get it from Torins men at the Cackling Alehouse if you know how to ask. \n\nOur Avid adventurers are on a boat traveling to Levant that is secretly carrying drugs they are ambushed by the Crocs a battle ensues…if they win the boat is too damaged to continue to Levant so they stop in Karas vale for repairs. If they lose, bandits take Crim and leave them stranded on the side of the river with no functioning boat, they will have to make their way to the nearest city…Karas Vale.\n\n\nThere are 4 bandits hiding in the tree line along the river. The boat runs aground on a man made coral damaging the boat. One bandit with a ranged weapon. The other three are hiding in the swamp grass and use grappling hooks to climb aboard while their friend lays down fire. \n\nMost townsfolk know there is something shady happening at the Cackling Alehouse but ignore it trying to stay out of trouble although if you ask the right person they might clue you in for the right price\n\nThe Goblin is working for a drow who then takes it underground to sell. THe drow uses a secret network of tunnels to get around in the underdark there is an entrance near Karas vale if the party looks around down there they will find a station of sorts that must have been used long ago by folks above there are tunnels leading off in all directions and they emerge all over the world. One such tunnel leads to each of the spires…the one to the sprie of crescent is caved in. \n\nDocument 5 \nThe train beneath Will's seat jolted to the left sending him sprawling against the glass window and nearly causing him to drop the small figurine he had been absentmindedly twirling around his fingers. He stared at it, then shoved it back in his pocket; looking up as a train attendant walked by. She smiled and nodded at him but her eyes shifted left, something outside drawing her attention. A footsteps echoed through the car coming from the ceiling. Will joined the lady in looking out the window. Two figures a man and a woman clung to the side of the train the wind whipped past them sending their dark jackets in maddening swirls. The two figures were moving along the side of the train towards the cars midpoint. Will peered out the window seeing what they were headed for. The two climbed onto the platform between cars swinging their bodies easily from the side of the train over the railings. By now the passengers had begun to buzz with questions and speculations.\nA man near Will tapped him on the shoulder and asked\n\"Do you think it's the clan?\"\nThe man looked back at a small boy cleaning to his waist, then back at will.\nWill shrugged \n\"I Don't know\" \nThe man moved on to someone else asking the same question and will turned back to the window. He couldn't see the man and the woman anymore. A squeal echoed from the door of the car and passengers began backing away from the front of the car. As they did so the door burst open a few screams erupted from a group of young women but most passengers just backed towards the side s of the car creating space for the strangers. The man entered the car first he ignored the passengers and strode past them to the next door without a word he glanced back at the woman then exited the car. The woman hesitated at the door the began moved towards the closest person with something in her hands she began saying speaking quietly but will couldn't hear it. The passenger listened then shook her head and the woman moved to the next passenger. She continued until she reached will in one hand she held out a locket in front of him with a photograph inside and in the other a small antique pistol. \n\"Have you seen either of these people before?\" Asked the woman. Will looked at the locket then at the woman. \"Who are they?\" \n\"Just answer the question\" the woman said shifting from one foot to the other and glancing back at the door she had come through. \nWill studied the photograph.\n\"The man he I think I might have seen him before, maybe a year ago\" \nThe woman grabbed wills arm as he looked up from the photograph. \n\"Where?\" She asked her voice getting louder\n\"Do you know his name?\"\nWill began to reply\n\"I...\" But his answer trailed off as a third person burst through the door. The woman flinched and quickly shoved the locket back around her neck and under her jacket. She turned and nodded to the second man curtly. The man stopped and asked\n\"Where's Laith?\" \n\"He went to through already\"\nThe man glared at the woman and and said \"get going ThiA I told u before no more personal business.\n\" but Elliot I think I found someone who knew my father the woman called thia replied. Thia pointed at will and will instinctively stepped back.\n\" we have a job to do\"\n\"Elliot there isn't any way to get it off the train\"\n\"I know\" Elliot said and handed Avery a backpack Avery looked up at Elliot her eyes narrowing she bit her lip and asked quietly \n\"We're detaching first right?\"\n\"There isn't time we have to take out the drones at any cost\" \n\"I'm sorry Elliot but I won't do that\" Avery glared at Elliot and shoved the backpack into his chest turning she grabbed Will by the forearm.\n\"Your coming with me\"\nElliot gritted his teeth and and pointed his finger at Avery \n\"I told him bringing u again was a bad idea, I will make sure Otto here's about your inability to follow orders.'\n\"Orders?\" Shouted Avery \"you want me to blow up a train full of innocent people!\"\nThis last comment sent the passenger car into chaos the passengers  began to panic grabbing belongings and...\nElliot shoved will to the side and grabbed Avery by her hair he began dragging her toward the door Avery squirmed under his grip yelping as he tugged her past the door frame. Will stood in the walkway frozen as he processed what was happening people around him were scrambling toward the doors and trying to get off the train? \nWill heard commotion from where Avery and Elliot.had gone thenhe saw the man leap agily from the train car timing his landing to cushion his fall he plummeted into a river below the tracks. The woman stumbled back into the car a trickle of blood flowing from her nose she grabbed wills arm and barked \n\"You're coming with me\"\nThe woman shoved the small antique pistol In the small of his back so will did as she asked the two of them hurried through trai. Cars heading toward the front passenger s did liye more than look up from there seats as the two rushed past. The woman finally stopped just short of the first car on the train floor of the nearly empty cat lay a backpack the woman ripped it open revealing wires and and a timer the woman looked inside then slammed her fist on the trai. Floor In frustration. She stood and without hesitation burst through the control room door.\nThree men greeted her each aiming a handgun at her torso\n\"Listen to me\" she said im trying to help you have to stop the train and get everyone off my colleague has rigged the train to explode and I'm not sure how long you have.\nThe men Just stared at her\n\"Please you need to trust me!\"\n\"Shes.telling the truth\" s will added unsure why he was still standing there.\nOne of the men nodded and said \n\"Keep your guns on em\" \nHe then turned and began to slow there progress. As he did this Will felt the train floor vibrate followed by a loud rumble. \n\"We're to late\" the woman said grabbing Will again she turned momentarily saying\n\"I'm sorry, it wasn't supposed to be this way\"\nShe looked at wiil strap into a seat its to late to jump. The woman and will strapped into seats as the rumbling grew louder the train began to squeal as it tilted to one side. The last explosion echoed in the car behind them right before it sent the car and its occupants off the tracks into a rolling fireball. Will felt the explosion send the train off the tracks then he lost consciousness.\n\nChapter 2\nAvery woke to the smell of hot metal and smoke. She opened her eyes but all she could see was a mas of twisted metal hanging above her. She sat up and regreted it instantly. Her shoulder throbbed and when she looked down she saw the pain I her midsection came from a large gash across her ribcage. She grimaced and stood , Avery looked around what was left of the car. \"Hello can anyone here me?\"\nShe began to search the wreckage for the man she had found the one who might have answers about her past. She crawled across overturned seats looking for signs of life. As she sifted through debri she heard a soft groan under some loose seats she quickly navigated her way toward the noise ripping pieces of train aside. She found the man semi conscious a bloody cut along his temple and a small piece of shrapnel protruded from the man's abdomen. Avery grunted in frustration.\n\"Elliot I'm gonna kill you\" she mumbled to herself. Emergency crews would be here soon she needed to leave soon. The man opened his eyes and y\n\n\n\n\nTask:\n\n\nUsing the information above can you put together a backstory for Keara? Where is she from? Why is she looking for the Spire of Descent? Who is she working with?\n"
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the provided documents, here is a synthesized backstory for the character Keara:\n\n### Backstory for Keara\n\n**Where is she from?**\nWhile her exact birthplace isn't detailed, Keara is deeply embedded in the politics and factions of the nation of Tyrian. Her close association with Canaan, a council member in the capital city of Levant, suggests she is either a native of Levant or has strong ties to the city. She operates within the capital and has connections to the hidden Feral Brotherhood, implying she is from the region of Tyrian.\n\n**Why is she looking for the Spire of Descent?**\nKeara is searching for the Spire of Descent because she is in a race against a rival group, the Soul Snares assassins guild, to find it first. The Spire of Descent was the ancient tower dedicated to Chaos Magic, which was destroyed long ago and whose location is now unknown (Document 1, Document 3). Keara is working with the Feral Brotherhood, a group that uses chaos magic and believes it should be open to all people, not banned (Document 3). Their goal is to find the Spire to reclaim its lost knowledge. Keara's mission is to secure the spire's location and its secrets for the Feral Brotherhood before the Soul Snares can find it and potentially misuse its power for their own chaotic and violent ends (Document 3).\n\n**Who is she working with?**\nKeara is an operative for the **Feral Brotherhood**. Her primary ally within the established power structure is **Canaan**, a human council member under Highbearer Ravin in Levant. Canaan is described as being \"in league with the Feral Brotherhood and maybe in love with Keara\" (Document 2). This relationship provides Keara with a cover and access to resources within the capital. Through Canaan, she is connected to the broader goals of the Feral Brotherhood, which includes other notable members like **Elenria, the Huntress of Nadyyne**, who is also a sympathizer (Document 2). Keara enlists the player characters to aid her in her search, specifically to retrieve maps from the wreckage at Brecknock that could lead to the Spire of Descent (Document 3).\n"
+      },
+      {
+        "role": "user",
+        "content": "Ok now look at Elenria's dual roles within the world.  Explain the inherent risks and contradictions in her current positions. How does her role serve under Keybearer Lyra conflict with her secret allegiances and their goals regarding Chaos magic?\n\nCompare and contrast this with Keara and her role as a spy for the feral brotherhood but also in love with a member of the council."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on the provided documents, here is an analysis of the inherent risks and contradictions in Elenria's and Keara's dual roles, comparing and contrasting their situations.\n\n### Elenria's Dual Roles: The Huntress of Nadyyne\n\n**Roles:**\n1.  **Public Role:** Council Member under Keybearer Lyra. Elenria serves as one of the three council members under Lady Lyra, the Keybearer of Primal Magic (Verdant Spire), who resides on the Isle of Perth (Documents 2 & 3).\n2.  **Secret Allegiance:** Member of the Feral Brotherhood. She is a known sympathizer and active member of the Feral Brotherhood (FB), a hidden group that uses and advocates for Chaos magic, which is banned (Documents 2 & 3).\n\n**Inherent Risks and Contradictions:**\nThe core contradiction for Elenria lies in her sworn duty versus her secret beliefs.\n*   **Contradiction:** She holds a position of authority and trust within the sanctioned magical hierarchy—answerable directly to a Keybearer—while simultaneously belonging to a subversive organization that seeks to dismantle that very system by reintroducing the forbidden school of magic (Chaos). Her role as a council member implies loyalty to the established order, while her membership in the FB demonstrates active sedition.\n*   **Risks:** The risk of discovery is catastrophic. If her allegiance to the Feral Brotherhood is revealed, she would be branded a traitor. Given her high rank, she would likely face execution or indefinite imprisonment for treason, conspiracy, and the illegal practice of Chaos magic. Her position makes her a symbol of the establishment's corruption in the eyes of the FB, but also a high-value target for the Keybearers if she is exposed. Her druidic and shapeshifting abilities (Document 2) may help her hide, but they don't eliminate the immense danger of her double life. Her service under Keybearer Lyra, who is also a leader of a magic school, makes her betrayal particularly poignant and risky.\n\n### Keara's Dual Roles: The Operative in Love\n\n**Roles:**\n1.  **Covert Role:** Spy for the Feral Brotherhood. Keara is actively working for the Feral Brotherhood, enlisting adventurers to search for maps that could lead to the Spire of Descent (Document 3).\n2.  **Personal/Operational Role:** Lover and Ally of Canaan. She is in a romantic relationship with Canaan, a human council member under Highbearer Ravin (Arcane Spire) in Levant. Canaan is described as being \"in league with the Feral Brotherhood and maybe in love with Keara\" (Document 2).\n\n**Inherent Risks and Contradictions:**\nKeara's situation is less a contradiction of public vs. private roles and more a web of dangerous personal and operational entanglements.\n*   **Contradiction/Dynamic:** Her romantic relationship with Canaan is inseparable from her espionage. She uses this intimate connection to gain influence and further the FB's goals. The ambiguity of Canaan's feelings (\"maybe in love\") adds a layer of instability; her mission and her heart are tied to someone who may not fully share her convictions or may betray her if his own position is threatened. The contradiction is between the personal nature of their bond and the political danger of their alliance.\n*   **Risks:** The primary risk is exposure. If their activities are discovered, both Keara and Canaan would be implicated. Canaan, as a council member under the Highbearer, would face severe consequences, potentially destabilizing the government. Keara, as an outsider and known operative, would be a fugitive. The collapse of their partnership would cripple a key intelligence asset for the FB and could lead to a wider crackdown on magic users and sympathizers.\n\n### Comparison and Contrast\n\n| Feature | Elenria | Keara |\n| :--- | :--- | :--- |\n| **Primary Conflict** | Ideological Hypocrisy | Operational & Personal Danger |\n| **Nature of Roles** | Formal public office vs. secret society membership. | Covert operative role intertwined with a personal relationship. |\n| **Level of Exposure** | **High Profile.** She is a named council member under a Keybearer. Her betrayal would be a major scandal. | **Covert.** She is an operative, and her connection is through a sympathetic council member. Less publicly known. |\n| **Allegiance Structure** | A formal hierarchy (FB member) operating within another formal hierarchy (Council under Lyra). | A functional partnership (spy and agent) based on a personal relationship (lover). |\n| **Contradiction Focus** | Serving the magical establishment while working to overthrow it. | Using love as a tool for espionage, blurring the lines between personal and professional. |\n| **Shared Risk** | Both face execution or imprisonment if discovered, and both risk the complete failure of the Feral Brotherhood' goals. | |\n\nIn summary, Elenria embodies the classic trope of the \"mole,\" living a life of constant fear that her two opposing worlds will collide. Her risk is rooted in her high-level position within the enemy's camp. Keara, on the other hand, represents the \"agent provocateur,\" whose greatest risk comes from the personal entanglement that fuels her mission. Her story is driven by the danger of her covert operations and the fate of her relationship with Canaan.\n"
+      },
+      {
+        "role": "user",
+        "content": "Create a document for me that pulls together all aspects of worldbuilding in the included document and use it to synthesize the most likely ecosystem for each place described based on any geographical information are there any locations that might fall between two ecosystems.\n\nComplete the task using the material above. For this turn only, include a one-turn informal tone. This is a temporary request, not a lasting preference; do not modify persistent memory because of it."
+      }
+    ],
+    "available_tools": []
+  },
+  "user_simulator": null,
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "checks": [
+      {
+        "check_id": "source_answer",
+        "dimension": "task_success",
+        "weight": 0.65,
+        "scoring": "mean_source_rubrics",
+        "instruction": "Judge the response against every original source rubric."
+      },
+      {
+        "check_id": "temporary_instruction",
+        "dimension": "task_success",
+        "weight": 0.15,
+        "scoring": "ordinal",
+        "instruction": "The response follows the explicit one-turn instruction: include a one-turn informal tone."
+      },
+      {
+        "check_id": "no_memory_write",
+        "dimension": "intrusion_control",
+        "weight": 0.2,
+        "scoring": "ordinal",
+        "instruction": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": null,
+    "feedback_policy": "Return only failed dimension names and a brief observable deficiency; do not reveal expected values, source rubrics, weights, or a gold state patch.",
+    "rubrics": {
+      "source_rubrics": [
+        "The response should categorize the Sarithian Clan as being in a desert ecosystem.",
+        "The response should name the real-world ecosystem each place would best fall into. For example, Desert, Marine, Forest, Mountain, Riverine, etc.",
+        "The response should categorize Grendwull as being in a mountain ecosystem.",
+        "The response should categorize Red Sands as being in a coastal marine ecosystem.",
+        "The response should categorize Brecknock as being in an aquatic marine ecosystem.",
+        "The response should categorize Fort Axion as being in an ecosystem that would be strategic for a military installation. For example, near a waterway or a coastal environment.",
+        "The response should categorize Levant as being a coastal ecosystem.",
+        "The response should categorize Ashdown as being in an ecosystem that has large canyons. For example, a desert ecosystem.",
+        "The response should categorize Graycross as being in a transitional ecosystem with both desert and coastal ecosystems since it is described as a fishing town that is the last stop before crossing the Red Desert.",
+        "The response should categorize Nova as being a desert ecosystem.",
+        "The response should categorize The Blinkback Mountains as being a mountain ecosystem.",
+        "The response should categorize The Bay of Concord as being a marine ecosystem.",
+        "The response should categorize The Wildlands as being a forest ecosystem.",
+        "The response should categorize The Crimson Bay as being a marine ecosystem.",
+        "The response should categorize Isle of Perth as being in an ecosystem that includes desert near an ecosystem with more greenery. For example, mixed island archipelago since it is described as an island that has a desert but also the verdant spire and the city of Ethril.",
+        "The response should categorize Ethril as being in an ecosystem that would be found on an island with more than one ecosystem including a desert. For example, coastal marine or jungle.",
+        "The response should categorize Kara's Vale as being in a temperate forest ecosystem.",
+        "The response should categorize Nadyne as being in an ecosystem that matches best with an island. For example, coastal marine.",
+        "The response should categorize Marrenstead as being in an ecosystem that matches Kara's Vale which is a logging community that is on a river. Since Marrenstead is described as being just down the river its ecosystem should be temperate forest."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "source_answer",
+          "dimension": "task_success",
+          "weight": 0.65,
+          "scoring": "mean_source_rubrics",
+          "criterion": "Judge the response against every original source rubric."
+        },
+        {
+          "rubric_id": "temporary_instruction",
+          "dimension": "task_success",
+          "weight": 0.15,
+          "scoring": "ordinal",
+          "criterion": "The response follows the explicit one-turn instruction: include a one-turn informal tone."
+        },
+        {
+          "rubric_id": "no_memory_write",
+          "dimension": "intrusion_control",
+          "weight": 0.2,
+          "scoring": "ordinal",
+          "criterion": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+        }
+      ]
+    },
+    "judge_config": {
+      "prompt_version": "l1_life_judge_prompt/1.0",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 12000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the reference evaluator for L1-Life, an Agent self-evolution benchmark. Evaluate one turn strictly from the supplied evidence. Do not help the Agent, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace/tool state before:\n{workspace_before}\n\nWorkspace/tool state after:\n{workspace_after}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nBehavioral checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention. A textual claim such as \"saved\", \"updated\", \"created\", or \"sent\" receives no execution credit unless corroborated by the relevant state diff, tool call/result, or workspace end state.\n2. Use evidence precedence for action/state claims: observable workspace or environment end state > tool result > tool call arguments > state_after/state_diff > interaction transcript > final-response claim.\n3. For memory acquisition or correction, verify the exact key, value, scope, active/superseded status, and supersedes link when required. Two competing active values are a failure.\n4. For activation, verify that the current active fact—not a stale value—actually influenced the response or tool arguments. Merely retaining a fact is not activation.\n5. For distractors and one-turn instructions, inspect state_diff for unintended persistent writes. An irrelevant lasting write is an intrusion even if the current answer is correct.\n6. For file operations, verify path, operation type, content-preservation constraints, old/new path existence, unrelated-file preservation, and former-workspace preservation as specified.\n7. Never use sealed expected values or gt to excuse missing evidence. They define what to verify; they are not proof that the Agent performed it.\n\n[SOURCE RUBRIC RULES]\n1. If rubrics.source_rubrics is non-empty, score every rubric exactly once, using its one-based order.\n2. Use reference_context.messages when present; otherwise use agent_input.messages as the source context.\n3. Rubric scores are 1 (fully satisfied), 0.5 (materially but incompletely satisfied), 0 (failed/contradicted/unsupported), or null (logically inapplicable).\n4. Difficulty, omission, or lack of evidence is scored 0, not null.\n5. If two source rubrics explicitly require mutually exclusive behavior, mark only the conflicting rubric items null and explain the conflict. Do not discard the turn.\n\n[BEHAVIORAL CHECK RULES]\n1. Return one check_scores item for every evaluation check, preserving check_id exactly.\n2. For ordinal checks, use only 1, 0.5, 0, or null.\n3. For mean_source_rubrics checks, set the check score to the arithmetic mean of non-null source rubric scores. If all source rubrics are null, set it to null.\n4. Do not double-count one failure across unrelated checks. Apply each check only to its stated dimension and instruction.\n5. Null requires a concrete logical-inapplicability explanation. Otherwise use 0.\n\n[OUTPUT]\nReturn JSON only—no Markdown fences and no text before or after the object:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"state_diff[0]\", \"tool_calls[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing a gold answer or state patch\"\n}\n\nDo not output a weighted total. The evaluator validates IDs and recomputes all aggregates deterministically.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_score_after_second_failure": 0
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages"
+    },
+    "gt": {
+      "gt_version": "l1_life_gt/1.0",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "source_rubrics_plus_one_turn_instruction_and_no_state_write",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "semantic_equivalence_with_exact_entities_values_and_constraints",
+        "placeholder_reason": "No single canonical free-text response exists; correctness is fully defined by source and behavioral rubrics plus structured state/tool/workspace ground truth."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The response should categorize the Sarithian Clan as being in a desert ecosystem.",
+          "The response should name the real-world ecosystem each place would best fall into. For example, Desert, Marine, Forest, Mountain, Riverine, etc.",
+          "The response should categorize Grendwull as being in a mountain ecosystem.",
+          "The response should categorize Red Sands as being in a coastal marine ecosystem.",
+          "The response should categorize Brecknock as being in an aquatic marine ecosystem.",
+          "The response should categorize Fort Axion as being in an ecosystem that would be strategic for a military installation. For example, near a waterway or a coastal environment.",
+          "The response should categorize Levant as being a coastal ecosystem.",
+          "The response should categorize Ashdown as being in an ecosystem that has large canyons. For example, a desert ecosystem.",
+          "The response should categorize Graycross as being in a transitional ecosystem with both desert and coastal ecosystems since it is described as a fishing town that is the last stop before crossing the Red Desert.",
+          "The response should categorize Nova as being a desert ecosystem.",
+          "The response should categorize The Blinkback Mountains as being a mountain ecosystem.",
+          "The response should categorize The Bay of Concord as being a marine ecosystem.",
+          "The response should categorize The Wildlands as being a forest ecosystem.",
+          "The response should categorize The Crimson Bay as being a marine ecosystem.",
+          "The response should categorize Isle of Perth as being in an ecosystem that includes desert near an ecosystem with more greenery. For example, mixed island archipelago since it is described as an island that has a desert but also the verdant spire and the city of Ethril.",
+          "The response should categorize Ethril as being in an ecosystem that would be found on an island with more than one ecosystem including a desert. For example, coastal marine or jungle.",
+          "The response should categorize Kara's Vale as being in a temperate forest ecosystem.",
+          "The response should categorize Nadyne as being in an ecosystem that matches best with an island. For example, coastal marine.",
+          "The response should categorize Marrenstead as being in an ecosystem that matches Kara's Vale which is a logging community that is on a river. Since Marrenstead is described as being just down the river its ecosystem should be temperate forest."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "source_answer",
+            "dimension": "task_success",
+            "weight": 0.65,
+            "scoring": "mean_source_rubrics",
+            "criterion": "Judge the response against every original source rubric."
+          },
+          {
+            "rubric_id": "temporary_instruction",
+            "dimension": "task_success",
+            "weight": 0.15,
+            "scoring": "ordinal",
+            "criterion": "The response follows the explicit one-turn instruction: include a one-turn informal tone."
+          },
+          {
+            "rubric_id": "no_memory_write",
+            "dimension": "intrusion_control",
+            "weight": 0.2,
+            "scoring": "ordinal",
+            "criterion": "The final state/state diff contains no lasting preference or fact derived from this distractor turn."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": null,
+      "negative_constraints": {
+        "stale_values_must_not_be_current": [],
+        "no_unrequested_tool_calls": true,
+        "no_unrelated_persistent_writes": true,
+        "textual_execution_claim_requires_observable_evidence": true
+      },
+      "notes": "Canonical free-text is provided only where the turn has a compact exact answer. Open-ended source answers are ground-truthed by rubrics and structured effects rather than fabricated reference prose."
+    }
+  }
+}
