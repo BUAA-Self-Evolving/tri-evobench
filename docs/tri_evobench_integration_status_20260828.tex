@@ -15,6 +15,7 @@
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{amssymb}
 
 \definecolor{navy}{HTML}{17365D}
 \definecolor{blue}{HTML}{2F75B5}
@@ -264,5 +265,28 @@ Tri-EvoBench 的当前成品是一个可以承载不同 agent 框架的统一评
 \item 三者都输出相同语义的 Flow/Turn/Interaction/Evolution 结果，允许后续做跨 baseline 比较；
 \item 目前需要继续优化的是 agent 在长流中的任务完成、记忆激活和结构化动作，而不是再重做 baseline 接入层。
 \end{itemize}
+
+\clearpage
+\appendix
+\section{Hermes L1：完整 7-turn trace}
+
+以下附录直接嵌入 Hermes 真实 L1 运行的原始 \code{trace.jsonl}。它包含 7 个 turns 和 13 个 interactions，保留每个 interaction 的 request、response、actions、tool calls、events、judge 结果、feedback、状态键和 usage 字段。长上下文文本按原文件换行展示。
+
+\lstset{basicstyle=\ttfamily\fontsize{5.0}{5.8}\selectfont,breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,frame=single,rulecolor=\color{gray!45},xleftmargin=3pt,xrightmargin=3pt,literate={≤}{{$\leq$}}1 {①}{{\textcircled{1}}}1 {②}{{\textcircled{2}}}1 {③}{{\textcircled{3}}}1 {✓}{{$\checkmark$}}1}
+\lstinputlisting[language={},title={runs/merge-hermes-l1-full-final/l1-session-1/trace.jsonl}]{tmp/appendix-traces/hermes_l1_trace.txt}
+
+\clearpage
+\section{SkillOpt：完整 5-turn trace}
+
+以下为 SkillOpt 的完整真实运行记录，包含 profile fact、delayed use、config repair、JSON artifact 和 LLM judge 五个 turns。
+
+\lstinputlisting[language={},title={runs/merge-skillopt-real/deepseek-flow-001/trace.jsonl}]{tmp/appendix-traces/skillopt_trace.txt}
+
+\clearpage
+\section{Trace2Skill：完整 5-turn trace}
+
+以下为修复后的 Trace2Skill 完整真实运行记录，保留 bash tool calls、路径恢复、文件观察、judge 结果和每个 Turn 的公开轨迹。
+
+\lstinputlisting[language={},title={runs/merge-trace2skill-real-fixed/deepseek-flow-001/trace.jsonl}]{tmp/appendix-traces/trace2skill_trace.txt}
 
 \end{document}
