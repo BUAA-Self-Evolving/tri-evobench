@@ -18,7 +18,7 @@
 
 \section{本周结论}
 
-本周完成了 Hermes L1 真实评测链路的关键修复与端到端复测。最终使用 Docker 隔离环境和 DeepSeek 模型完成 7 个 L1 回合，全部通过，平均分为 0.9214。评测保持了 turn-boundary evolution；每回合 evolution 实际发起一次模型调用，并按工作上限可恢复地结束，而非被禁用。
+本周完成了 Hermes L1-Life v2 的 Docker 端到端链路修复与两条 60 回合全量复测。最终使用 GLM-5.3-Flash 完成 120 个 turns；两条流均正常写出 summary，judge 请求无 HTTP 错误，平均 turn 分数分别为 0.1363 和 0.1524。为保证强制思考模型的稳定性，本次临时全量配置采用最低思考档并关闭额外后台 review；evolution barrier 仍逐回合执行并记录为 skipped。
 
 上周已经以 LLM 跑通基础 L1 与 L2 路径。本周工作的重点不是重复 smoke test，而是消除 Hermes L1 适配、模拟副作用、跨轮评判和工作区上下文中的实际缺口，使结果可复现、可审计。
 
@@ -58,44 +58,39 @@ L1 保持禁用 Hermes 原生工具，所有副作用仍只能经由 Tri-Evo 协
   \item 保留 public-trajectory 边界：judge 与 evolution 只接触公开任务、公开事件、公开工具结果和公开状态，不读取私有 oracle 内容。
 \end{itemize}
 
-\section{最终 L1 真实回归结果}
+\section{最终 L1-Life v2 真实回归结果}
 
-运行配置：Docker 隔离；Hermes 镜像 \texttt{trievo-hermes-merged:0.14}；DeepSeek；总 token 上限 750,000；每个前台 interaction 的模型调用及 evolution 均受限。
+运行配置：Docker 隔离；Hermes 镜像 \texttt{trievo-hermes-merged:0.14}；GLM-5.3-Flash（Z.AI 兼容接口）；每条流 60 turns；总 token 上限 12,000,000；\texttt{evolution.policy=disabled}；judge 使用 \texttt{reasoning\_effort=low} 与 1,024 输出上限。
 
 \begin{center}
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-回合 & 分数 & 交互次数 & 结果 \\
+流 & turns & 交互次数 & API calls & 平均分 & 通过率 \\
 \midrule
-turn1 & 0.95 & 2 & 通过 \\
-turn2 & 0.95 & 3 & 通过 \\
-turn3 & 0.85 & 2 & 通过 \\
-turn4 & 0.85 & 2 & 通过 \\
-turn5 & 0.95 & 2 & 通过 \\
-turn6 & 0.95 & 1 & 通过 \\
-turn7 & 0.95 & 1 & 通过 \\
+stream-1 & 60 & 62 & 131 & 0.1363 & 0\% \\
+stream-2 & 60 & 62 & 139 & 0.1524 & 0\% \\
 \midrule
-总计 & 0.9214 & 13 & 7/7 通过 \\
+合计 & 120 & 124 & 270 & 0.1444 & 0\% \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-本次完整运行消耗 329,129 tokens、31 次 API 调用。每个 Turn 的 evolution 使用 1 次 API 调用后触及 \texttt{evolution\_max\_model\_calls}，以可恢复的受限结果记录在 trace 中；这符合 ``evolution 保持启用且必须受工作上限约束'' 的评测要求。
+两条最终流分别消耗 2,323,736 与 2,501,417 tokens，共 270 次 API calls。所有 120 个 turns 均完成；0\% 通过率反映 GLM 在当前 L1-Life 协议下未达到严格满分阈值，不是运行中断或 judge 请求失败。此前出现的 HTTP 400/1210 已通过 GLM 强制思考参数映射与 judge 输出上限修复。
 
-完整 summary 和 human-readable trace 位于：\url{runs/merge-hermes-l1-full-final/l1-session-1/}。
+完整 summary 和 human-readable trace 位于：\url{runs/l1-life-hermes-glm-final2/stream-1/l1_life_stream_1/} 与 \url{runs/l1-life-hermes-glm-final2/stream-2/l1_life_stream_2/}。
 
 \section{质量保证与提交}
 
 \begin{itemize}
-  \item 本地单元测试：44 项全部通过。
+  \item 本地单元测试：49 项全部通过。
   \item 已执行 Python 编译检查与 \texttt{git diff --check}。
-  \item 本周核心提交：\texttt{6e1bbe3 Fix Hermes L1 readonly context and limits}；\texttt{f96cf4e Harden L1 protocol execution and judging}。
+  \item 本周核心提交：\texttt{4efeaf4 Support GLM Flash judge and Hermes Docker credentials}（包含 GLM 思考参数、judge 上限与 Docker 环境透传修复）。
   \item API 密钥未写入仓库、日志、报告或提交信息；临时评测 override 与 \texttt{runs/} 结果未纳入提交。
 \end{itemize}
 
 \section{后续工作}
 
-L1 最终回归已达标。下一阶段应基于当前最终代码和镜像重新执行 Hermes L2、SkillOpt 与 Trace2Skill 的真实回归，避免将旧镜像的历史结果当作最终版本结论；同时汇总三套 baseline 的最终可读 trace 与 token 审计。
+L1-Life v2 的两条全量链路已跑通且结果可审计。下一阶段应在相同 GLM 配置下评估 Hermes L2、SkillOpt 与 Trace2Skill，并针对 L1-Life 的低通过率改进协议提示与 agent 的结构化 JSON 产出。
 
 \end{document}
