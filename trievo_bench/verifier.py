@@ -110,10 +110,15 @@ class LLMJudge:
         has_event_placeholder = "{events}" in rubric
         rubric = rubric.replace("{tool_calls}", json.dumps(trajectory.get("tool_calls", []), ensure_ascii=False))
         event_trace = json.dumps(trajectory.get("events", []), ensure_ascii=False)
+        interaction_trace = json.dumps(trajectory.get("interactions", []), ensure_ascii=False)
         rubric = rubric.replace("{events}", event_trace)
         rubric = rubric.replace("{final_state}", json.dumps(trajectory.get("state", {}), ensure_ascii=False))
         if not has_event_placeholder:
             rubric += "\n\n【轨迹 events】\n" + event_trace
+        if "{interactions}" in rubric:
+            rubric = rubric.replace("{interactions}", interaction_trace)
+        else:
+            rubric += "\n\n【当前 Turn 已发生的 interaction 轨迹】\n" + interaction_trace
         for placeholder, virtual_path in check.get("file_placeholders", {}).items():
             try:
                 content = sandbox.read_file(str(virtual_path))

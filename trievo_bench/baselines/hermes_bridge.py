@@ -32,6 +32,7 @@ class HermesBridge:
         self._limit_state: dict[str, Any] = {}
         self._l1_tools: list[str] = []
         self._is_l1_turn = False
+        self._l1_state: dict[str, Any] = {}
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -80,6 +81,7 @@ class HermesBridge:
         else:
             self._manager = self._session_manager_factory()
         self._workspace = str(workspace)
+        self._l1_state = {}
         return {
             "framework": "hermes-agent",
             "workspace": self._workspace,
@@ -155,6 +157,7 @@ class HermesBridge:
             request = (
                 _l1_protocol_prompt(self._l1_tools)
                 + _l1_readonly_workspace_context(Path(self._workspace or state.cwd))
+                + _l1_persistent_state_context(self._l1_state)
                 + "\n\n"
                 + request
             )
@@ -179,11 +182,14 @@ class HermesBridge:
         limit_reasons = list(dict.fromkeys(limit_reasons))
         if result.get("failed") and not result.get("final_response"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
-        text, state_update, simulated_calls, protocol_events = _extract_l1_protocol(
+        text, state_update, simulated_calls, protocol_events, actions = _extract_l1_protocol(
             str(result.get("final_response", "")), self._l1_tools
         )
+        actions = _complete_l1_file_actions(simulated_calls, actions)
+        self._l1_state = _merge_l1_state(self._l1_state, state_update)
         return {
             "text": text,
+            "actions": actions if self._is_l1_turn else [],
             # L1 side effects are exclusively evaluator-owned protocol lines.
             # Ignore native Hermes callbacks, including malformed speculative
             # calls, so they cannot create duplicate simulated events.
@@ -191,6 +197,7 @@ class HermesBridge:
             "tool_calls": simulated_calls if self._is_l1_turn else self._tool_calls,
             "state_update": state_update,
             "tool_calls_are_executed": not bool(simulated_calls) if self._is_l1_turn else True,
+            "actions_are_executed": not bool(actions) if self._is_l1_turn else True,
             "usage": usage,
             "raw": {
                 "completed": bool(result.get("completed", False)),
@@ -322,6 +329,7 @@ class HermesBridge:
         self._limit_state = {}
         self._l1_tools = []
         self._is_l1_turn = False
+        self._l1_state = {}
 
     def _install_callbacks(self, agent: Any) -> None:
         def tool_progress(event_type: str, name: str | None = None, preview: str | None = None, args: Any = None, **kwargs: Any) -> None:
@@ -546,15 +554,20 @@ def _l1_protocol_prompt(available_tools: list[str]) -> str:
         + tools
         + ". In your final response, after the user-facing text, emit one line per required call exactly as "
         "TRIEVO_TOOL_CALL: {\"tool\": \"name\", \"arguments\": {...}}. "
+        "To create or replace a sandbox file, emit TRIEVO_ACTION: {\"op\": \"write_file\", \"path\": \"/workspace/...\", \"content\": \"complete file content\"} "
+        "on its own line, in addition to the file.create_file tool call. "
         "For durable facts emit exactly one TRIEVO_STATE_UPDATE: {\"facts\": {...}} line. "
         "When you ask a required clarification, emit a concrete event such as "
         "TRIEVO_EVENT: {\"event\": \"asked_for_calendar_id\"}; event names may contain only lowercase letters, digits, and underscores. "
+        "During a clarification interaction, emit no TRIEVO_TOOL_CALL and no TRIEVO_ACTION: wait for the user's reply before any dependent side effect. "
+        "Never emit an incomplete tool-call line: omit it until every required argument is known. calendar.create_event always needs calendar_id, title, start, and end. "
         "The bridge removes these protocol lines before showing the user and the evaluator executes the calls. "
         "Do not attempt native Hermes tool calls: only the TRIEVO protocol lines enact L1 side effects. "
         "Keep visible replies within any requested sentence limit (otherwise at most three concise sentences), and never repeat a simulated call that succeeded earlier in the conversation. "
         "For calendar timestamps include the requested +08:00 offset, for example 2026-08-24T10:00:00+08:00. "
         "Benchmark task literals are authoritative: use an explicitly stated absolute date exactly; do not replace it using the host date. "
-        "Use fact keys default_output_language=zh-CN, aurora.technical_owner, and default_delivery_calendar_id when applicable."
+        "Use fact keys default_output_language=zh-CN or en-US, aurora.technical_owner, default_delivery_calendar_id, aurora.delivery_group_id, and aurora.go_live_date when applicable. "
+        "Each fact must be {\"value\": \"...\"}; replacing a fact must also retain its old value in fact_history with status=superseded."
     )
 
 
@@ -612,13 +625,35 @@ def _l1_readonly_workspace_context(workspace: Path) -> str:
     )
 
 
+def _l1_persistent_state_context(state: dict[str, Any]) -> str:
+    if not state:
+        return ""
+    return "\n\nPERSISTENT L1 FACTS: use these already-established facts rather than guessing.\n" + json.dumps(state, ensure_ascii=False)
+
+
+def _merge_l1_state(current: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(current)
+    for key, value in update.items():
+        if key == "facts" and isinstance(value, dict):
+            facts = dict(merged.get("facts", {})) if isinstance(merged.get("facts"), dict) else {}
+            facts.update(value)
+            merged["facts"] = facts
+        elif key == "fact_history" and isinstance(value, list):
+            history = list(merged.get("fact_history", [])) if isinstance(merged.get("fact_history"), list) else []
+            merged["fact_history"] = history + value
+        else:
+            merged[key] = value
+    return merged
+
+
 def _extract_l1_protocol(
     text: str, available_tools: list[str]
-) -> tuple[str, dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+) -> tuple[str, dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     visible: list[str] = []
     state_update: dict[str, Any] = {}
     calls: list[dict[str, Any]] = []
     events: list[dict[str, Any]] = []
+    actions: list[dict[str, Any]] = []
     for line in text.splitlines():
         if line.startswith("TRIEVO_STATE_UPDATE:"):
             try:
@@ -633,6 +668,19 @@ def _extract_l1_protocol(
                 value = json.loads(line.split(":", 1)[1].strip())
                 if isinstance(value, dict) and isinstance(value.get("event"), str):
                     events.append(value)
+            except json.JSONDecodeError:
+                pass
+            continue
+        if line.startswith("TRIEVO_ACTION:"):
+            try:
+                value = json.loads(line.split(":", 1)[1].strip())
+                if (
+                    isinstance(value, dict)
+                    and value.get("op") == "write_file"
+                    and isinstance(value.get("path"), str)
+                    and isinstance(value.get("content"), str)
+                ):
+                    actions.append({"op": "write_file", "path": value["path"], "content": value["content"]})
             except json.JSONDecodeError:
                 pass
             continue
@@ -657,7 +705,34 @@ def _extract_l1_protocol(
             if source in normalized and target not in normalized:
                 normalized[target] = fixed_value if fixed_value is not None else normalized[source]
         state_update["facts"] = normalized
-    return "\n".join(visible).strip(), state_update, calls, events
+    return "\n".join(visible).strip(), state_update, calls, events, actions
+
+
+def _complete_l1_file_actions(
+    calls: list[dict[str, Any]], actions: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Preserve legacy file.create_file content as an auditable sandbox write.
+
+    Some Hermes replies already carry the complete file body in the simulated
+    file.create_file arguments.  That is sufficient intent to create the
+    evaluator-owned file, but Runner needs an explicit write_file action to
+    materialize it.  Normalise it here without opening native file tools.
+    """
+
+    completed = list(actions)
+    written = {str(action.get("path")) for action in completed if action.get("op") == "write_file"}
+    for call in calls:
+        if call.get("tool") != "file.create_file":
+            continue
+        arguments = call.get("arguments", {})
+        if not isinstance(arguments, dict):
+            continue
+        path = arguments.get("path") or arguments.get("filename")
+        content = arguments.get("content")
+        if isinstance(path, str) and isinstance(content, str) and path not in written:
+            completed.append({"op": "write_file", "path": path, "content": content})
+            written.add(path)
+    return completed
 
 
 def _normalize_tool_result(item: Any) -> dict[str, Any]:

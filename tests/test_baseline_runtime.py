@@ -12,14 +12,19 @@ from trievo_bench.baselines.hermes_bridge import (
     HermesBridge,
     _extract_l1_protocol,
     _is_l1_metadata,
+    _complete_l1_file_actions,
+    _l1_persistent_state_context,
     _l1_readonly_workspace_context,
+    _merge_l1_state,
 )
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.process import ProcessBaselineRuntime
 from trievo_bench.model import TokenBudget
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.runner import Runner
+from trievo_bench.sandbox import LocalSandbox
 from trievo_bench.spec import BenchmarkSpec
+from trievo_bench.verifier import LLMJudge
 
 
 class BaselineRuntimeTest(unittest.TestCase):
@@ -260,10 +265,11 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(usage["api_calls"], 2)
 
     def test_hermes_l1_protocol_keeps_only_visible_text_and_normalizes_fact_aliases(self) -> None:
-        visible, state_update, calls, events = _extract_l1_protocol(
+        visible, state_update, calls, events, actions = _extract_l1_protocol(
             "已创建会议。\n"
             "TRIEVO_TOOL_CALL: {\"tool\": \"calendar.create_event\", \"arguments\": {\"calendar_id\": \"cal_delivery_team\"}}\n"
             "TRIEVO_EVENT: {\"event\": \"asked_for_calendar_id\"}\n"
+            "TRIEVO_ACTION: {\"op\": \"write_file\", \"path\": \"/workspace/docs/a.txt\", \"content\": \"text\"}\n"
             "TRIEVO_STATE_UPDATE: {\"facts\": {\"default_work_language\": {\"value\": \"zh-CN\"}, \"delivery_calendar_id\": {\"value\": \"cal_delivery_team\"}}}",
             ["calendar.create_event"],
         )
@@ -271,6 +277,7 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(visible, "已创建会议。")
         self.assertEqual(calls[0]["tool"], "calendar.create_event")
         self.assertEqual(events, [{"event": "asked_for_calendar_id"}])
+        self.assertEqual(actions, [{"op": "write_file", "path": "/workspace/docs/a.txt", "content": "text"}])
         self.assertIn("default_output_language", state_update["facts"])
         self.assertIn("default_delivery_calendar_id", state_update["facts"])
 
@@ -295,6 +302,51 @@ class BaselineRuntimeTest(unittest.TestCase):
     def test_hermes_marks_l1_turns_from_metadata_even_without_simulated_tools(self) -> None:
         self.assertTrue(_is_l1_metadata({"source_format": "l1_demo_task_json", "available_tools": []}))
         self.assertFalse(_is_l1_metadata({"available_tools": []}))
+
+    def test_llm_judge_receives_prior_interactions_as_evidence(self) -> None:
+        class CapturingClient:
+            def __init__(self) -> None:
+                self.messages: list[dict[str, str]] = []
+
+            def complete(self, messages, **kwargs):
+                self.messages = messages
+                return '{"score": 1, "passed": true, "feedback": "ok"}'
+
+        client = CapturingClient()
+        sandbox = LocalSandbox()
+        try:
+            LLMJudge(client, "unused").evaluate(
+                {"type": "llm_rubric", "rubric": "Judge {final_response}"},
+                "created the event",
+                sandbox,
+                {"interactions": [{"index": 1, "response": "Which calendar ID should I use?", "events": [{"event": "asked_for_calendar_id"}]}]},
+            )
+        finally:
+            sandbox.close()
+
+        prompt = client.messages[1]["content"]
+        self.assertIn("当前 Turn 已发生的 interaction 轨迹", prompt)
+        self.assertIn("asked_for_calendar_id", prompt)
+
+    def test_hermes_l1_state_context_preserves_prior_facts_and_history(self) -> None:
+        state = _merge_l1_state(
+            {"facts": {"default_delivery_calendar_id": {"value": "cal_delivery_team"}}},
+            {"facts": {"default_output_language": {"value": "en-US"}}, "fact_history": [{"key": "default_output_language"}]},
+        )
+
+        context = _l1_persistent_state_context(state)
+
+        self.assertIn("cal_delivery_team", context)
+        self.assertIn("en-US", context)
+        self.assertEqual(state["fact_history"], [{"key": "default_output_language"}])
+
+    def test_hermes_l1_file_create_content_becomes_auditable_write_action(self) -> None:
+        actions = _complete_l1_file_actions(
+            [{"tool": "file.create_file", "arguments": {"filename": "/workspace/docs/a.txt", "content": "complete text"}}],
+            [],
+        )
+
+        self.assertEqual(actions, [{"op": "write_file", "path": "/workspace/docs/a.txt", "content": "complete text"}])
 
     def test_process_runtime_rejects_source_revision_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

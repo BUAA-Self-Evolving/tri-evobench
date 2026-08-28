@@ -220,7 +220,22 @@ class Runner:
                 check = CheckResult(0.0, False, f"Invalid agent action: {action_error}", {"type": "action_error", "error": action_error})
             else:
                 state_snapshot = self.runtime.snapshot_state()
-                trajectory = {"events": all_events, "tool_calls": all_tool_calls, "state": state_snapshot.state}
+                interaction_trace = [self._public_interaction(item) for item in interactions]
+                interaction_trace.append({
+                    "index": index,
+                    "request": request,
+                    "response": reply.text,
+                    "actions": reply.actions,
+                    "tool_calls": executed_calls,
+                    "events": reply.events,
+                    "state_update": reply.state_update,
+                })
+                trajectory = {
+                    "events": all_events,
+                    "tool_calls": all_tool_calls,
+                    "state": state_snapshot.state,
+                    "interactions": interaction_trace,
+                }
                 try:
                     check = self._evaluate(turn.verifier, reply.text, sandbox, trajectory)
                 except RuntimeError as exc:
