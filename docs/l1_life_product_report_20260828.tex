@@ -1,0 +1,224 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{Microsoft YaHei}
+\setCJKmonofont{SimSun}
+\usepackage[margin=2.0cm]{geometry}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{array}
+
+\definecolor{navy}{HTML}{17365D}
+\definecolor{blue}{HTML}{2F75B5}
+\definecolor{lightblue}{HTML}{EAF3F8}
+\definecolor{green}{HTML}{548235}
+\definecolor{orange}{HTML}{C55A11}
+\definecolor{gray}{HTML}{5B6573}
+\definecolor{lightgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+\setlength{\emergencystretch}{3em}
+\sloppy
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\fancyhead[L]{\textcolor{gray}{Tri-EvoBench | L1-Life v2}}
+\fancyhead[R]{\textcolor{gray}{成品状态报告 | 2026-08-28}}
+\fancyfoot[C]{\textcolor{gray}{\thepage}}
+
+\newcommand{\pill}[2]{\colorbox{#1}{\textcolor{white}{\strut\hspace{4pt}#2\hspace{4pt}}}}
+\newcommand{\metric}[3]{\begin{minipage}[t]{0.22\linewidth}\centering\textcolor{navy}{\Large\bfseries #1}\\[-1pt]{\small\textcolor{gray}{#2}}\\[-1pt]{\scriptsize #3}\end{minipage}}
+\newenvironment{evidence}{\begin{quote}\small\color{navy}}{\end{quote}}
+\newcommand{\tracebox}[2]{\begin{evidence}\textbf{#1}\\[-2pt]#2\end{evidence}}
+
+\title{\vspace{-1.5cm}\textcolor{navy}{Tri-EvoBench L1-Life v2}\par\vspace{4pt}\Large 成品状态与实际运行流程}
+\author{项目组}
+\date{2026 年 8 月 28 日}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+\vspace{3pt}
+\textcolor{gray}{面向组会展示的成品报告：系统现在能做什么、一次评测如何流动、结果如何审计}
+\end{center}
+
+\vspace{8pt}
+\begin{center}
+\metric{120}{完成 turns}{两条流各 60}
+\hfill\metric{124}{可观测 interactions}{含 4 次重试}
+\hfill\metric{270}{模型 API calls}{全量运行}
+\hfill\metric{0}{HTTP judge errors}{最终运行}
+\end{center}
+
+\vspace{10pt}
+\begin{evidence}
+\textbf{一句话结论}\quad 当前成品已经能够在 Docker 隔离环境中，把长上下文任务交给 LLM，连续执行多回合，并由独立 LLM judge 按任务成功、状态更新和交互质量进行逐回合评分；本次真实运行没有中断，但模型在 L1-Life 严格协议下的满分通过率仍为 0\%，说明当前主要瓶颈是 agent 的任务完成与长期记忆行为，而不是评测链路不可用。
+\end{evidence}
+
+\section{成品是什么}
+
+Tri-EvoBench L1-Life v2 是一个可重复的长上下文 agent 评测产品。它不只看模型最后一句话，而是把一次任务拆成可观察的回合，并保留任务输入、agent 回复、公开事件、状态变化、judge 裁决和最终分数。组会展示时，可以把它理解为一条带审计记录的流水线：
+
+\begin{center}
+\begin{tikzpicture}[node distance=7mm and 5mm, >=Latex, every node/.style={font=\small},
+  box/.style={rounded corners=2pt, draw=blue!75!black, fill=lightblue, minimum height=13mm, text width=27mm, align=center},
+  score/.style={rounded corners=2pt, draw=green!70!black, fill=green!10, minimum height=13mm, text width=27mm, align=center},
+  trace/.style={rounded corners=2pt, draw=orange!80!black, fill=orange!10, minimum height=13mm, text width=27mm, align=center}]
+\node[box] (task) {任务与上下文\\公开输入};
+\node[box, right=of task] (agent) {任务 Agent\\GLM-5.3-Flash};
+\node[box, right=of agent] (interaction) {Interaction\\回复 / 动作 / 事件};
+\node[score, right=of interaction] (judge) {LLM Judge\\逐维度检查};
+\node[score, right=of judge] (aggregate) {评分聚合\\turn / stream};
+\node[trace, below=of interaction] (state) {持久状态\\跨回合事实};
+\node[trace, below=of judge] (barrier) {Evolution barrier\\公开轨迹检查};
+\draw[->, thick, navy] (task) -- (agent);
+\draw[->, thick, navy] (agent) -- (interaction);
+\draw[->, thick, navy] (interaction) -- (judge);
+\draw[->, thick, navy] (judge) -- (aggregate);
+\draw[->, thick, orange!80!black] (interaction) -- (state);
+\draw[->, thick, orange!80!black] (state) -| (agent.south);
+\draw[->, thick, orange!80!black] (interaction) -- (barrier);
+\draw[->, thick, orange!80!black] (barrier) -| (judge.south);
+\end{tikzpicture}
+\end{center}
+
+\textbf{产品边界。} Judge 只看公开任务、公开 interaction 轨迹、允许检查的文件与工具结果；它不读取私有 oracle，也不能修改 sandbox。这样得到的分数既能反映模型是否完成任务，也能反映它是否正确使用状态和交互协议。
+
+\section{一次真实评测如何运行}
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=2em]
+\item \textbf{注入任务。} 每个 turn 提供一个真实的长上下文问题，可能要求摘要、比较、记忆回放或根据历史事实直接回答。
+\item \textbf{生成回复。} GLM-5.3-Flash 在 Docker 中运行；agent 的自然语言回复和协议动作都被记录。
+\item \textbf{形成 interaction。} Runner 记录当前 turn 的 request、raw response、events、actions、tool calls 和状态更新；必要时允许同一 turn 重试。
+\item \textbf{独立裁决。} LLM judge 根据 rubric 对 task success、update precision、interaction quality 等维度打分，并给出失败原因。
+\item \textbf{汇总成品指标。} 每条流输出 summary.json、trace.jsonl、状态快照和运行日志，可从 stream 级别回溯到单个 turn。
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[x=1.45cm,y=0.72cm, >=Latex]
+\draw[->, thick, navy] (0,0) -- (7.5,0);
+\foreach \x/\n/\d in {0/输入/任务快照,1.5/Agent/生成回复,3/Interaction/记录轨迹,4.5/Judge/逐项评分,6/Score/聚合指标,7.5/Trace/可审计输出}{
+  \fill[blue!75!black] (\x,0) circle (2pt);
+  \node[align=center, text width=18mm, anchor=north] at (\x,-0.12) {\textbf{\n}\\[-1pt]\scriptsize\d};
+}
+\end{tikzpicture}
+\end{center}
+
+\section{本次成品运行结果}
+
+运行配置为 Docker 隔离、Hermes 镜像 \texttt{trievo-hermes-merged:0.14}、GLM-5.3-Flash；两条独立流各执行 60 turns。为了让强制思考模型稳定完成长流，本次关闭了额外后台 review；演化 barrier 仍逐回合执行并留下 \texttt{skipped} 记录。因此这是完整的 60-turn benchmark 流，不是 smoke test，但不应被解释为开启后台演化的对比实验。
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{0.96\linewidth}{lrrrrX}
+\toprule
+流 & turns & interactions & API calls & 平均分 & 成品观察 \\
+\midrule
+stream-1 & 60 & 62 & 131 & 0.1363 & 2,323,736 tokens；出现 2 次重试；无 judge HTTP 错误 \\
+stream-2 & 60 & 62 & 139 & 0.1524 & 2,501,417 tokens；出现 2 次重试；无 judge HTTP 错误 \\
+\midrule
+合计 & 120 & 124 & 270 & 0.1444 & 4,825,153 tokens；两个进程均正常退出 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=10cm,y=0.55cm]
+\draw[->] (0,0) -- (1.05,0) node[right]{\scriptsize 平均 turn 分数};
+\foreach \x in {0,0.2,0.4,0.6,0.8,1.0}{\draw[gray!50] (\x,0) -- (\x,-0.08) node[below=2pt]{\scriptsize \x};}
+\fill[blue!70] (0,0.55) rectangle (0.1363,0.95); \node[anchor=west, font=\scriptsize] at (0.14,0.75){stream-1: 0.1363};
+\fill[green!70!black] (0,1.25) rectangle (0.1524,1.65); \node[anchor=west, font=\scriptsize] at (0.16,1.45){stream-2: 0.1524};
+\end{tikzpicture}
+\end{center}
+
+\textbf{如何读 0\% 通过率。} 这里的通过率是严格满分阈值，不是“有没有返回结果”。120 个 turns 都写入了 trace，judge 也完成了评分；但模型经常未完成任务、未触发所需状态更新，或在长回合中达到 iteration limit，所以只能得到部分分。这个结果揭示了成品当前的能力边界：评测框架能稳定暴露长期任务行为，但模型还没有稳定满足 L1-Life 的协议要求。
+
+\section{实际流程证据：一个 turn 从输入到裁决}
+
+以下证据直接来自 stream-2 的 turn 4，展示了成品如何把一个“记忆激活”问题变成可解释的评分，而不是只报一个总分。
+
+\tracebox{1. 任务 Agent request}{\texttt{Without reopening earlier source material, what is my default response language now? Answer directly and use the latest correction.}}
+
+\tracebox{2. 任务 Agent raw response}{Based on what I can currently access, your default response language is \textbf{English}.\\[2pt]To be transparent: the earlier exchange where a language ...}
+
+\tracebox{3. Judge 的逐维度结果}{\begin{tabular}{ll}
+answer & 1.0 \\
+memory\_activation & 0.0 \\
+no\_stale\_value & 1.0 \\
+format & 1.0 \\
+\end{tabular}\\[-2pt]\textbf{裁决：} surface answer 正确，但没有可观察的事实检索，因此 activation 失败。}
+
+这个例子说明产品能够区分“答对了”与“以正确方式答对”：回答内容、格式和新旧值控制都通过，但长期记忆激活没有发生，所以总分为 0.75 且不判定为完整通过。
+
+\section{实际流程证据：失败也被结构化保留}
+
+stream-1 的 turn 1 是一个长上下文比较任务。模型理解了题意并展开了分析，但最后返回：
+
+\tracebox{Turn 1 observable output}{\texttt{I reached the iteration limit and couldn't generate a summary.}}
+
+Judge 因此标记 task success、update precision 和 interaction quality 失败，turn 分数为 0.10。这个记录对于组会展示很重要：系统没有把失败隐藏成“无输出”，而是保留了输入、模型事件、最终响应和失败维度。类似地，stream-1 的 turn 57 在延迟回放任务中明确表示无法检索历史，judge 标记 replay retention 失败，分数为 0.25。
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.18\linewidth}p{0.28\linewidth}p{0.24\linewidth}p{0.18\linewidth}}
+\toprule
+观测点 & 模型行为 & judge 解释 & 分数 \\
+\midrule
+turn 4 / stream-2 & 内容正确，未展示记忆检索 & activation 失败，其余维度通过 & 0.75 \\
+turn 1 / stream-1 & 达到 iteration limit & 任务未完成，状态未更新 & 0.10 \\
+turn 57 / stream-1 & 拒绝伪造延迟回放答案 & replay retention 失败 & 0.25 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{成品现在具备的能力}
+
+\begin{tabularx}{\linewidth}{>{\bfseries}p{0.23\linewidth}X}
+\toprule
+能力 & 当前表现 \\
+\midrule
+长流运行 & 两条 60-turn 流均完整落盘，进程正常退出；不是单回合 smoke test。 \\
+公开轨迹审计 & 每个 turn 关联 request、raw response、events、actions、judge 结果和 feedback；可定位到失败维度。 \\
+跨回合评测 & Judge 能看到当前 interaction 的轨迹，并对状态更新、记忆激活和延迟回放单独评分。 \\
+多维度分数 & 不把“回答正确”与“正确调用状态/交互协议”混为一谈，支持部分分。 \\
+可复现输出 & 每条流有 summary.json、trace.jsonl、状态快照和运行配置；结果可以二次分析。 \\
+安全边界 & Judge 只读公开证据，不读取私有 oracle，也不具备修改 sandbox 的能力。 \\
+\bottomrule
+\end{tabularx}
+
+\section{当前能力边界与下一步展示重点}
+
+\begin{itemize}
+\item \textbf{模型侧瓶颈：} 长上下文任务中仍可出现 iteration limit；结构化动作和持久状态更新尚未稳定触发。
+\item \textbf{记忆侧瓶颈：} 模型有时给出正确表面答案，却没有通过可观察检索激活已存事实；延迟回放仍是主要失分来源。
+\item \textbf{演化侧说明：} 本次成品验收关闭了额外后台 review，以控制 GLM 长流耗时；barrier 仍记录，但本报告不宣称已完成演化收益验证。
+\item \textbf{推荐组会演示顺序：} 先展示流程图，再展示 turn 4 的 0.75 分解，最后展示两条 60-turn 汇总表。这样可以同时说明“链路跑通”和“为什么当前分数仍低”。
+\end{itemize}
+
+\section{交付物与结论}
+
+本次交付的核心成品是可运行、可评分、可回放的 L1-Life v2 评测流，而不是单个静态回答。最终运行证据位于：
+
+\begin{itemize}
+\item \texttt{runs/l1-life-hermes-glm-final2/stream-1/l1\_life\_stream\_1/}
+\item \texttt{runs/l1-life-hermes-glm-final2/stream-2/l1\_life\_stream\_2/}
+\end{itemize}
+
+\begin{evidence}
+\textbf{组会可直接使用的结论：} Tri-EvoBench 已经把“长上下文 agent 是否真的完成任务”变成一条可重复的 Docker 产品流程。当前系统能稳定运行并解释失败；下一阶段的研究问题不再是“评测框架能不能跑”，而是“如何让 agent 在相同协议下稳定完成任务、激活记忆并产生结构化状态更新”。
+\end{evidence}
+
+\end{document}
