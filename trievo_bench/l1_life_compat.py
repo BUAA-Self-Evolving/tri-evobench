@@ -53,7 +53,9 @@ def _life_verifier(task: dict[str, Any]) -> dict[str, Any]:
         "turn_origin": task["turn_origin"],
         "agent_input": task["agent_input"],
         "judge_prompt": config.get("judge_prompt", ""),
-        "max_output_tokens": int(config.get("max_output_tokens", 12000)),
+        # GLM-5.3-Flash rejects oversized max_tokens on the compatible API;
+        # judge output is a compact JSON object, so keep a bounded ceiling.
+        "max_output_tokens": min(int(config.get("max_output_tokens", 1024)), 1024),
         "checks": evaluation.get("checks", []),
         "rubrics": evaluation.get("rubrics", {}),
         "expected_state": evaluation.get("expected_state", {}),
@@ -129,10 +131,12 @@ def load_l1_life_stream(
             "include_workspace_content": False,
             "max_output_tokens": 2400,
             "timeout": 180,
-            "thinking": "disabled",
+            # GLM-5.3-Flash is a mandatory-thinking model; its API rejects
+            # thinking=disabled (HTTP 1210). Use the lowest supported level.
+            "thinking": "low",
             "system_prompt": """You are the task agent for an L1-Life benchmark. The user message contains the complete current conversation; answer its latest request faithfully. Return one JSON object only with response (string), actions (array), tool_calls (array of {tool, arguments}), events (array), and state_update (object). Call only tools whose schemas appear in the user message. For a fact explicitly stated to matter in future turns, save only a semantic facts entry such as {\"facts\": {\"default_workspace\": {\"value\": \"docs/project/drafts\"}}}; never save a one-turn instruction. Do not claim a tool effect without including the corresponding tool_calls entry. You never receive evaluator rubrics, hidden facts, or expected values.""",
         },
-        "judge": {"type": "hybrid", "max_output_tokens": 12000, "timeout": 180},
+        "judge": {"type": "hybrid", "max_output_tokens": 1024, "timeout": 180},
         "flows": [{"id": task["stream_id"], "sandbox": {"backend": backend, "image": image}, "turns": converted}],
     }
     return BenchmarkSpec.from_dict(raw)

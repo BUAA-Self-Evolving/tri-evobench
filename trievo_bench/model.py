@@ -128,6 +128,11 @@ class OpenAICompatibleClient:
             payload["response_format"] = {"type": "json_object"}
         if self.thinking in {"enabled", "disabled"}:
             payload["thinking"] = {"type": self.thinking}
+        elif self.thinking in {"low", "medium", "high", "max"}:
+            # GLM-5.3-Flash is a mandatory-thinking model. Its OpenAI-
+            # compatible endpoint selects effort with the top-level
+            # reasoning_effort field; sending thinking.type=low yields 1210.
+            payload["reasoning_effort"] = self.thinking
         request = urllib.request.Request(
             f"{self.base_url}/chat/completions",
             data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
@@ -144,7 +149,12 @@ class OpenAICompatibleClient:
                 if exc.code in {429, 500, 502, 503, 504} and attempt < 2:
                     time.sleep(2 * (attempt + 1))
                     continue
-                raise RuntimeError(f"OpenAI-compatible model request failed (HTTP {exc.code})") from exc
+                try:
+                    detail = exc.read().decode("utf-8", errors="replace")[:500]
+                except Exception:
+                    detail = ""
+                suffix = f": {detail}" if detail else ""
+                raise RuntimeError(f"OpenAI-compatible model request failed (HTTP {exc.code}){suffix}") from exc
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
                 if attempt < 1:
                     time.sleep(2)
