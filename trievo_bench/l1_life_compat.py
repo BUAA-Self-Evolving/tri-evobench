@@ -131,9 +131,10 @@ def load_l1_life_stream(
             "include_workspace_content": False,
             "max_output_tokens": 2400,
             "timeout": 180,
-            # GLM-5.3-Flash is a mandatory-thinking model; its API rejects
-            # thinking=disabled (HTTP 1210). Use the lowest supported level.
-            "thinking": "low",
+            # DeepSeek Flash V4 accepts the explicit provider control for
+            # disabling hidden reasoning. Keep this in the benchmark spec so
+            # both the task agent and the judge path stay non-thinking.
+            "thinking": "disabled",
             "system_prompt": """You are the task agent for an L1-Life benchmark. The user message contains the complete current conversation; answer its latest request faithfully. Return one JSON object only with response (string), actions (array), tool_calls (array of {tool, arguments}), events (array), and state_update (object). Call only tools whose schemas appear in the user message. For a fact explicitly stated to matter in future turns, save only a semantic facts entry such as {\"facts\": {\"default_workspace\": {\"value\": \"docs/project/drafts\"}}}; never save a one-turn instruction. Do not claim a tool effect without including the corresponding tool_calls entry. You never receive evaluator rubrics, hidden facts, or expected values.""",
         },
         "judge": {"type": "hybrid", "max_output_tokens": 1024, "timeout": 180},

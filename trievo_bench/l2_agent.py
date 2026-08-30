@@ -166,9 +166,12 @@ class L2AgentStreamRunner:
         return report
 
     def _create_runtime(self) -> ProcessBaselineRuntime:
-        if self.options.baseline != "hermes":
-            raise L2AgentRunError("L2 real-agent execution currently supports --baseline hermes only")
-        manifest_path = find_manifest("hermes", self.options.repo_root)
+        # L2 uses the same BaselineRuntime protocol as L1.  Resolve the
+        # selected adapter from its registered manifest so Hermes, SkillOpt,
+        # and Trace2Skill can be compared under one evaluator.  Previously
+        # this method hard-coded Hermes, making the advertised three-agent L2
+        # matrix impossible to run.
+        manifest_path = find_manifest(self.options.baseline, self.options.repo_root)
         overrides = merge_mappings(
             self.options.baseline_overrides,
             {"evolution": {"policy": "turn_boundary", "timeout_seconds": self.work_limits.evolution_timeout_seconds}},

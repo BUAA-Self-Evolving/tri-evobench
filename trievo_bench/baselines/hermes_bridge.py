@@ -109,6 +109,11 @@ class HermesBridge:
         self._is_l1_life_turn = _is_l1_life_metadata(metadata)
         semantic_state = params.get("semantic_state", {})
         self._l1_state = dict(semantic_state) if self._is_l1_turn and isinstance(semantic_state, dict) else {}
+        # DeepSeek Flash V4 exposes hidden reasoning by default.  The
+        # benchmark track requested here is the non-thinking track, so apply
+        # the provider-neutral Hermes control to every turn (including L2 and
+        # the same-model evolution fork), not only the L1 protocol path.
+        agent.reasoning_config = {"enabled": False}
         if self._is_l1_turn:
             # L1 already controls retries through max_interactions.  Give the
             # framework exactly one foreground decision per Interaction: an
@@ -123,10 +128,6 @@ class HermesBridge:
             # invites the model to mutate the real workspace instead of using
             # the auditable simulated interface.
             agent.valid_tool_names = set()
-            # The DeepSeek V4 profile otherwise enables an expensive hidden
-            # reasoning stream by default.  L1 needs a concise protocol reply,
-            # and the evaluator itself supplies bounded retry feedback.
-            agent.reasoning_config = {"enabled": False}
             # Hermes' normal interactive UX retries length-truncated output
             # and then asks for a summary.  Those are extra model calls that
             # bypass L1's max_interactions contract, so return the partial

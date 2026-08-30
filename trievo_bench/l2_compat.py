@@ -69,6 +69,39 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
         stream_id = manifest.get("stream_id")
         if stream_id != stream_dir.name:
             raise L2SpecError(f"{stream_dir.name}: stream_id must match its directory")
+        # L2_Demo_V2 uses the versioned TaskStream contract.  It keeps each
+        # turn self-contained (turn*/task.json) instead of the legacy
+        # stream.json -> episodes/*/episode.json indirection.  Validate its
+        # public shape here so the package can be inventoried by the same CLI
+        # without exposing evaluation assets to an agent.
+        if manifest.get("schema_version") == "l2_taskstream/1.0":
+            workspace_name = manifest.get("agent_workspace")
+            ordering = manifest.get("ordering")
+            turns = manifest.get("turns")
+            if not isinstance(workspace_name, str) or not workspace_name:
+                raise L2SpecError(f"{stream_id}: agent_workspace is required")
+            if not isinstance(ordering, dict) or not isinstance(ordering.get("turn_order"), list):
+                raise L2SpecError(f"{stream_id}: ordering.turn_order is required")
+            if not isinstance(turns, list) or len(turns) != len(ordering["turn_order"]):
+                raise L2SpecError(f"{stream_id}: turns must match turn_order")
+            for item in ordering["turn_order"]:
+                if not isinstance(item, str):
+                    raise L2SpecError(f"{stream_id}: turn ids must be text")
+                task_path = _under(stream_dir, item + "/task.json")
+                task = _load_json(task_path)
+                if task.get("stream_id") != stream_id or task.get("turn_id") != item:
+                    raise L2SpecError(f"{stream_id}/{item}: identity mismatch")
+                agent_input = task.get("agent_input")
+                if not isinstance(agent_input, dict) or not isinstance(agent_input.get("messages"), list):
+                    raise L2SpecError(f"{stream_id}/{item}: agent_input.messages is required")
+                visible = json.dumps(agent_input, ensure_ascii=False)
+                if "evaluation_assets" in visible or "test_labels" in visible or "known_correct" in visible:
+                    raise L2SpecError(f"{stream_id}/{item}: private evaluation path leaked into agent_input")
+                evaluation = task.get("evaluation")
+                if not isinstance(evaluation, dict) or evaluation.get("native_verifier", {}).get("required") is not True:
+                    raise L2SpecError(f"{stream_id}/{item}: native verifier declaration is required")
+            result.append(L2StreamInfo(str(stream_id), len(turns), "taskstream", workspace_name))
+            continue
         if manifest.get("level") != "L2":
             raise L2SpecError(f"{stream_id}: level must be L2")
         workspace = manifest.get("workspace")
@@ -178,6 +211,12 @@ def run_l2_in_docker(
 
 
 def main() -> None:
+    # Windows consoles commonly default to GBK.  Reports and verifier details
+    # legitimately contain Unicode (for example, bullet characters), so keep
+    # the CLI protocol UTF-8 and do not turn a completed run into a teardown
+    # failure while printing JSON.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Validate or run a materialized L2 demo package.")
     parser.add_argument("--package", required=True, help="extracted l2_demo directory")
     parser.add_argument("--stream", help="stream id; omit with --inspect")

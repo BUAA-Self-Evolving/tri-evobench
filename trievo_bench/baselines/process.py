@@ -102,7 +102,10 @@ class NdjsonProcess:
         if stream is None:
             raise BaselineProtocolError("baseline adapter stdin is unavailable")
         try:
-            stream.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            # Protocol input may contain lone UTF-16 surrogates from benchmark
+            # fixtures.  Escaping non-ASCII keeps the NDJSON transport valid
+            # on Windows and lets the adapter decode the payload safely.
+            stream.write(json.dumps(payload, ensure_ascii=True) + "\n")
             stream.flush()
         except (BrokenPipeError, OSError) as exc:
             raise BaselineProtocolError("baseline adapter closed its input") from exc

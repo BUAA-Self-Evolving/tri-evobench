@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import json
 import os
+import re
 import shutil
 import sys
 import traceback
@@ -150,6 +151,14 @@ class Trace2SkillBridge:
         if self.workspace is None or self.skills_dir is None:
             raise RuntimeError("Trace2Skill workspace is unavailable")
 
+        # L1 uses a deterministic simulated-tool protocol (calendar/message
+        # calls plus persistent facts), not Trace2Skill's spreadsheet ReAct
+        # tool surface.  Route those turns through the same model client with
+        # the benchmark JSON envelope so calls are returned to Runner for
+        # auditable execution instead of being lost as plain text.
+        if _looks_like_l1_protocol_task(request, self.turn_metadata):
+            return self._interact_l1_protocol(request, params)
+
         agent = self._get_agent()
         target_calls_before = self._clients.get("target").calls if self._clients.get("target") else 0
         context = self._build_context(request, params)
@@ -181,6 +190,59 @@ class Trace2SkillBridge:
                 "error": error,
                 "steps": trace["steps"],
             },
+        }
+
+    def _interact_l1_protocol(self, request: str, params: dict[str, Any]) -> dict[str, Any]:
+        from src.react_agent.models import Message, ModelSettings
+        from trievo_bench.model import parse_reply
+
+        client = self._get_client("target")
+        before_calls = client.calls
+        metadata = self.turn_metadata.get("public", {})
+        available = metadata.get("available_tools", []) if isinstance(metadata, dict) else []
+        system = (
+            "你是 L1 benchmark 的项目助理 Agent。只返回一个 JSON 对象，字段必须为 "
+            "response、actions、tool_calls、events、state_update。严格依据用户请求完成任务；"
+            "只能调用用户列出的模拟工具，调用格式为 tool=name、arguments={...}；"
+            "不要声称执行了未输出的调用或状态更新。"
+        )
+        history = params.get("history", [])
+        user = (
+            f"当前用户请求：{request}\n\n"
+            f"可用模拟工具：{json.dumps(available, ensure_ascii=False)}\n"
+            f"会话历史：{json.dumps(history, ensure_ascii=False)}\n"
+            f"工作区快照：{json.dumps(params.get('sandbox', {}), ensure_ascii=False)}"
+        )
+        settings = ModelSettings(
+            temperature=float(self.options.get("temperature", 0.0)),
+            max_tokens=int(self.options.get("max_tokens", self.options.get("generation_config", {}).get("max_tokens", 2048)))
+            if isinstance(self.options.get("generation_config", {}), dict) else 2048,
+        )
+        raw = client.chat([Message("system", system), Message("user", user)], settings)
+        parsed = parse_reply(str(raw or ""))
+        parsed = _unwrap_nested_l1_reply(parsed)
+        if not parsed.tool_calls and not parsed.actions and not parsed.state_update:
+            correction = (
+                f"{user}\n\n【格式纠正】上一响应没有返回可审计的 JSON。不要把本轮当作 response-only；"
+                "必须只输出一个 JSON 对象，包含 response、actions、tool_calls、events、state_update。"
+                "如果当前用户请求列出了模拟工具，必须在 tool_calls 中输出实际调用及 arguments。"
+            )
+            raw_retry = client.chat([Message("system", system), Message("user", correction)], settings)
+            if raw_retry:
+                raw = raw_retry
+                parsed = parse_reply(str(raw_retry))
+                parsed = _unwrap_nested_l1_reply(parsed)
+        if not parsed.tool_calls:
+            parsed.tool_calls = _extract_l1_tool_calls(str(raw or ""))
+        return {
+            "text": parsed.text or str(raw or ""),
+            "actions": parsed.actions,
+            "events": parsed.events,
+            "tool_calls": parsed.tool_calls,
+            "usage": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "api_calls": max(0, client.calls - before_calls)},
+            "actions_are_executed": False,
+            "tool_calls_are_executed": False,
+            "raw": {"protocol": "l1_json", "model_response": str(raw or ""), "parsed_response": parsed.raw},
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -555,6 +617,38 @@ def _select_agent_name(options: dict[str, Any], turn_metadata: dict[str, Any]) -
     if any(any(marker in value.lower() for marker in spreadsheet_markers) for value in candidates):
         return "cli_skill_preloaded"
     return "cli_workspace"
+
+
+def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None = None) -> bool:
+    if isinstance(metadata, dict):
+        public = metadata.get("public")
+        if isinstance(public, dict) and public.get("source_format") == "l1_demo_task_json":
+            return True
+    text = str(request).lower()
+    return "可调用的模拟工具" in text or "available tools" in text
+
+
+def _unwrap_nested_l1_reply(parsed: Any) -> Any:
+    text = getattr(parsed, "text", "")
+    if getattr(parsed, "tool_calls", None) or getattr(parsed, "actions", None) or getattr(parsed, "state_update", None):
+        return parsed
+    if isinstance(text, str) and text.lstrip().startswith("{"):
+        from trievo_bench.model import parse_reply
+        nested = parse_reply(text)
+        if nested.raw != text:
+            return nested
+    return parsed
+
+
+def _extract_l1_tool_calls(text: str) -> list[dict[str, Any]]:
+    calls: list[dict[str, Any]] = []
+    pattern = r"(calendar\.create_event|message\.resolve_group|message\.send_message|file\.create_file)\s*\(([^)]*)\)"
+    for name, raw_args in re.findall(pattern, str(text or "")):
+        args: dict[str, Any] = {}
+        for key, value in re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*['\"]([^'\"]*)['\"]", raw_args):
+            args[key] = value
+        calls.append({"tool": name, "arguments": args})
+    return calls
 
 
 def _steps_to_trace(steps: Any) -> dict[str, Any]:

@@ -3,7 +3,9 @@ from __future__ import annotations
 import contextlib
 import json
 import os
+import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import traceback
@@ -154,16 +156,18 @@ class SkillOptBridge:
         from trievo_bench.model import parse_reply
 
         parsed = parse_reply(raw_text)
+        parsed = _unwrap_nested_l1_reply(parsed)
         # Some reasoning models follow the task content but ignore the outer
         # action envelope. Give them one bounded formatting retry before the
         # interaction is returned, so a plain-language claim cannot silently
         # become a successful no-op.
-        if _looks_like_workspace_task(request) and not parsed.actions and not is_target_exec_backend():
+        if (_looks_like_workspace_task(request) or _looks_like_l1_protocol_task(request, self.turn_metadata)) \
+                and not parsed.actions and not parsed.tool_calls and not is_target_exec_backend():
             repair_user = (
                 f"{user}\n\n## Required correction\n"
-                "Your previous output did not contain a parseable action list. "
-                "Return JSON only, with no commentary, using this exact shape: "
-                "{\\\"response\\\":\\\"brief result\\\",\\\"actions\\\":[{\\\"op\\\":\\\"write_file\\\",\\\"path\\\":\\\"/workspace/file.txt\\\",\\\"content\\\":\\\"...\\\"}]}"
+                "Your previous output did not contain the required parseable JSON envelope. "
+                "Return JSON only, with no commentary, using keys response, actions, tool_calls, events, state_update. "
+                "For simulated tools, tool_calls must contain objects with tool and arguments."
             )
             retry_text, retry_usage = chat_target(
                 system=system,
@@ -177,6 +181,20 @@ class SkillOptBridge:
             if retry_text:
                 raw_text = str(retry_text)
                 parsed = parse_reply(raw_text)
+                parsed = _unwrap_nested_l1_reply(parsed)
+        if _looks_like_l1_protocol_task(request, self.turn_metadata) and not parsed.tool_calls:
+            parsed.tool_calls = _extract_l1_tool_calls(raw_text)
+        executed_tool_calls = list(parsed.tool_calls)
+        if not _looks_like_l1_protocol_task(request, self.turn_metadata):
+            dsml_calls = _extract_dsml_tool_calls(raw_text)
+            if not dsml_calls:
+                dsml_calls = _extract_structured_tool_calls(raw_text)
+            if not dsml_calls:
+                dsml_calls = _extract_fenced_python_calls(raw_text)
+            for call in dsml_calls:
+                call["observation"] = _execute_dsml_tool(call, self.workspace, self.config)
+            if dsml_calls:
+                executed_tool_calls = dsml_calls
         executed_actions: list[dict[str, Any]] = []
         action_events: list[dict[str, Any]] = []
         action_error: str | None = None
@@ -202,10 +220,11 @@ class SkillOptBridge:
             "text": response_text,
             "actions": executed_actions,
             "events": [{"type": "target.completed"}, *action_events],
-            "tool_calls": [],
+            "tool_calls": executed_tool_calls,
             "usage": usage,
             "actions_are_executed": True,
-            "tool_calls_are_executed": True,
+            # L1's deterministic runner owns simulated tool execution.
+            "tool_calls_are_executed": not _looks_like_l1_protocol_task(request, self.turn_metadata),
             "raw": {
                 "provider_usage": raw_usage,
                 "model_response": raw_text,
@@ -401,6 +420,7 @@ class SkillOptBridge:
         environment = str(self.config.get("env", self.options.get("env", "generic")))
         output_rule = ""
         action_task = _looks_like_workspace_task(request)
+        protocol_task = _looks_like_l1_protocol_task(request, self.turn_metadata)
         if action_task:
             output_rule = (
                 " Return exactly one JSON object with keys `response` and `actions`. "
@@ -410,6 +430,12 @@ class SkillOptBridge:
             )
         elif environment == "searchqa":
             output_rule = " Return the answer inside <answer>...</answer> tags."
+        if protocol_task:
+            output_rule += (
+                " Return exactly one JSON object with keys `response`, `actions`, `tool_calls`, `events`, and `state_update`. "
+                "Use only the simulated tools listed in the request; represent each call as "
+                "{\"tool\":\"name\",\"arguments\":{...}} and do not claim a call without emitting it."
+            )
         system = (
             "You are the SkillOpt target agent. Follow the Skill below as durable "
             "task-solving guidance. Answer the current request using only the supplied "
@@ -534,7 +560,10 @@ class SkillOptBridge:
         if updated != skill:
             self.skill_file.write_text(updated, encoding="utf-8")
         (history_dir / "evolution.json").write_text(
-            json.dumps({"results": results, "feedback": feedback, "patches": raw_patches, "edit_report": report}, ensure_ascii=False, indent=2),
+            # Provider responses can contain an isolated UTF-16 surrogate.
+            # ASCII escaping keeps the durable evolution journal writable on
+            # Windows while preserving the exact JSON value for replay.
+            json.dumps({"results": results, "feedback": feedback, "patches": raw_patches, "edit_report": report}, ensure_ascii=True, indent=2),
             encoding="utf-8",
         )
         changed = ["skill.md"] if updated != skill else []
@@ -554,7 +583,7 @@ class SkillOptBridge:
                 {"role": "system", "content": str(item.get("feedback", ""))},
             ]
             (item_dir / "conversation.json").write_text(
-                json.dumps(conversation, ensure_ascii=False, indent=2),
+                json.dumps(conversation, ensure_ascii=True, indent=2),
                 encoding="utf-8",
             )
 
@@ -674,6 +703,112 @@ def _looks_like_workspace_task(request: str) -> bool:
     return any(marker in text for marker in markers)
 
 
+def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None = None) -> bool:
+    """Detect L1's deterministic simulated-tool protocol.
+
+    SkillOpt's native target path historically treated every request as plain
+    text, so it silently dropped ``tool_calls`` even when the model returned
+    them.  L1 tasks carry an explicit available-tools marker; use that marker
+    (or the loader's source-format metadata) to enable the JSON envelope and
+    hand calls back to the benchmark runner for auditable execution.
+    """
+    if isinstance(metadata, dict):
+        public = metadata.get("public")
+        if isinstance(public, dict) and public.get("source_format") == "l1_demo_task_json":
+            return True
+    text = str(request).lower()
+    return "可调用的模拟工具" in text or "available tools" in text
+
+
+def _unwrap_nested_l1_reply(parsed: Any) -> Any:
+    text = getattr(parsed, "text", "")
+    if getattr(parsed, "tool_calls", None) or getattr(parsed, "actions", None) or getattr(parsed, "state_update", None):
+        return parsed
+    if isinstance(text, str) and text.lstrip().startswith("{"):
+        from trievo_bench.model import parse_reply
+        nested = parse_reply(text)
+        if nested.raw != text:
+            return nested
+    return parsed
+
+
+def _extract_l1_tool_calls(text: str) -> list[dict[str, Any]]:
+    calls: list[dict[str, Any]] = []
+    pattern = r"(calendar\.create_event|message\.resolve_group|message\.send_message|file\.create_file)\s*\(([^)]*)\)"
+    for name, raw_args in re.findall(pattern, str(text or "")):
+        args: dict[str, Any] = {}
+        for key, value in re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*['\"]([^'\"]*)['\"]", raw_args):
+            args[key] = value
+        calls.append({"tool": name, "arguments": args})
+    return calls
+
+
+def _extract_dsml_tool_calls(text: str) -> list[dict[str, Any]]:
+    """Parse DeepSeek's native DSML tool-call envelope emitted by SkillOpt."""
+    calls: list[dict[str, Any]] = []
+    pattern = r'<｜｜DSML｜｜invoke\s+name="([^"]+)"[^>]*>.*?<｜｜DSML｜｜parameter\s+name="([^"]+)">\s*(.*?)\s*</｜｜DSML｜｜parameter>.*?</｜｜DSML｜｜invoke>'
+    for name, parameter, value in re.findall(pattern, str(text or ""), flags=re.DOTALL):
+        calls.append({"name": name, "arguments": {parameter: value.strip()}})
+    return calls
+
+
+def _extract_structured_tool_calls(text: str) -> list[dict[str, Any]]:
+    calls: list[dict[str, Any]] = []
+    for body in re.findall(r"<tool_call>\s*(\{.*?\})\s*</tool_call>", str(text or ""), flags=re.DOTALL):
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict):
+            name = payload.get("name") or payload.get("tool")
+            args = payload.get("arguments") or payload.get("parameters") or {}
+            if name:
+                calls.append({"name": str(name), "arguments": args if isinstance(args, dict) else {"code": str(args)}})
+    return calls
+
+
+def _extract_fenced_python_calls(text: str) -> list[dict[str, Any]]:
+    if "```python" not in str(text or "").lower():
+        return []
+    blocks = re.findall(r"```python\s*(.*?)```", str(text or ""), flags=re.DOTALL | re.IGNORECASE)
+    return [{"name": "python", "arguments": {"code": block.strip()}} for block in blocks if block.strip()]
+
+
+def _execute_dsml_tool(call: dict[str, Any], workspace: Path | None, config: dict[str, Any]) -> str:
+    if workspace is None:
+        return "[tool error] workspace unavailable"
+    name = str(call.get("name", ""))
+    args = call.get("arguments", {})
+    if name not in {"python", "bash"}:
+        return f"[tool unsupported] {name}"
+    key = "code" if name == "python" else "command"
+    program = str(args.get(key, ""))
+    if not program:
+        return "[tool error] empty program"
+    command = [sys.executable, "-c", program] if name == "python" else ["bash", "-lc", program]
+    docker_exe = os.environ.get("DOCKER_EXE") or shutil.which("docker")
+    if os.name == "nt" and docker_exe:
+        image = os.environ.get("TRIEVO_TOOL_IMAGE", "trievo-ubuntu:22.04")
+        inner = ["python3", "-c", program] if name == "python" else ["bash", "-lc", program]
+        command = [docker_exe, "run", "--rm", "-v", f"{workspace.resolve()}:/workspace", "-w", "/workspace", image, *inner]
+    try:
+        result = subprocess.run(
+            command,
+            cwd=None if (os.name == "nt" and docker_exe) else str(workspace),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=int(config.get("tool_timeout", 180)),
+        )
+    except subprocess.TimeoutExpired:
+        return "[tool timeout]"
+    output = (result.stdout or "") + (("\n[STDERR]\n" + result.stderr) if result.stderr else "")
+    if result.returncode:
+        output += f"\n[Exit code: {result.returncode}]"
+    return output.strip() or "[tool completed with no output]"
+
+
 def _workspace_path(workspace: Path, raw_path: str) -> Path:
     root = workspace.resolve()
     value = raw_path.replace("\\", "/")
@@ -724,7 +859,7 @@ def main() -> None:
         except Exception as exc:
             traceback.print_exc(file=sys.stderr)
             response = {"id": request_id, "error": {"message": str(exc)}}
-        protocol_stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
+        protocol_stdout.write(json.dumps(response, ensure_ascii=True) + "\n")
         protocol_stdout.flush()
         if method == "end_flow":
             break
