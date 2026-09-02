@@ -636,7 +636,7 @@ def run_minibatch_reflect(
             tag, patch = fut.result()
             if patch:
                 path = os.path.join(patches_dir, f"{tag}.json")
-                with open(path, "w") as f:
+                with open(path, "w", encoding="utf-8") as f:
                     json.dump(patch, f, ensure_ascii=False, indent=2)
                 raw_patches.append(patch)
             n_edits = len(get_payload_items(patch.get("patch", {}) if patch else {}, update_mode))
