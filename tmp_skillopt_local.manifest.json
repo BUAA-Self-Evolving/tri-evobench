@@ -5,7 +5,7 @@
   "workspace": {"mode": "shared_volume", "adapter_path": "{workspace}"},
   "state": {"scope": "flow", "adapter_path": "{state_dir}", "paths": ["skill.md", "history/**/*"], "enforce_turn_freeze": true},
   "evolution": {"policy": "turn_boundary", "timeout_seconds": 900},
-  "environment": {"inherit": ["TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL", "TRIEVO_TOOL_IMAGE", "DOCKER_EXE", "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE"], "set": {"PYTHONPATH": "{repo_root}/baseline/SkillOpt:{repo_root}"}},
+  "environment": {"inherit": ["TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL", "TRIEVO_TOOL_IMAGE", "DOCKER_EXE", "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE"], "set": {"PYTHONPATH": "{repo_root}/baseline/SkillOpt:{repo_root}", "PYTHONIOENCODING": "utf-8"}},
   "options": {"config": "baseline/SkillOpt/configs/searchqa/default.yaml", "skill": "baseline/SkillOpt/skillopt/envs/searchqa/skills/initial.md", "env": "searchqa", "target_backend": "openai_compatible", "optimizer_backend": "openai_compatible", "target_model": "deepseek-v4-flash", "optimizer_model": "deepseek-v4-flash", "reasoning_effort": "none", "analyst_workers": 1, "minibatch_size": 1, "edit_budget": 2, "max_completion_tokens": 4096, "l2_agent_limits": {"max_model_calls": 16, "max_tool_calls": 16, "terminal_timeout_seconds": 120, "episode_timeout_seconds": 600, "evolution_timeout_seconds": 180, "evolution_max_model_calls": 4}},
   "capabilities": ["target_chat", "target_exec", "skill_reflection", "direct_workspace", "usage", "evolution_barrier"]
 }
