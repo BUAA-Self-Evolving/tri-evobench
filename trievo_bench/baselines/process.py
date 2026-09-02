@@ -70,6 +70,10 @@ class NdjsonProcess:
             self._stderr_stream.close()
             raise
         self._messages: queue.Queue[Any] = queue.Queue()
+        # Adapters may emit responses out of order when an asynchronous
+        # evolution worker finishes just after the foreground request. Keep
+        # unmatched responses until the corresponding request is awaited.
+        self._pending: dict[int, dict[str, Any]] = {}
         self._request_id = 0
         self._reader = threading.Thread(target=self._read_stdout, name="baseline-protocol-reader", daemon=True)
         self._reader.start()
@@ -115,10 +119,12 @@ class NdjsonProcess:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise BaselineProtocolError(f"baseline adapter timed out during {method}")
-            try:
-                message = self._messages.get(timeout=remaining)
-            except queue.Empty as exc:
-                raise BaselineProtocolError(f"baseline adapter timed out during {method}") from exc
+            message = self._pending.pop(request_id, None)
+            if message is None:
+                try:
+                    message = self._messages.get(timeout=remaining)
+                except queue.Empty as exc:
+                    raise BaselineProtocolError(f"baseline adapter timed out during {method}") from exc
             if message is _STREAM_CLOSED:
                 code = self.process.poll()
                 raise BaselineProtocolError(f"baseline adapter closed stdout during {method} (exit={code})")
@@ -129,9 +135,11 @@ class NdjsonProcess:
             if message.get("event"):
                 continue
             if message.get("id") != request_id:
-                raise BaselineProtocolError(
-                    f"baseline adapter response id mismatch: expected {request_id}, got {message.get('id')}"
-                )
+                other_id = message.get("id")
+                if isinstance(other_id, int):
+                    self._pending[other_id] = message
+                    continue
+                raise BaselineProtocolError(f"baseline adapter response id mismatch: expected {request_id}, got {other_id}")
             if message.get("error") is not None:
                 error = message["error"]
                 if isinstance(error, dict):
