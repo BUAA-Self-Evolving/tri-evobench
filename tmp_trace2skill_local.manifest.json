@@ -5,7 +5,7 @@
   "workspace": {"mode": "shared_volume", "adapter_path": "{workspace}"},
   "state": {"scope": "flow", "adapter_path": "{state_dir}", "paths": ["skills/**/*", "history/**/*"], "enforce_turn_freeze": true},
   "evolution": {"policy": "turn_boundary", "timeout_seconds": 1200},
-  "environment": {"inherit": ["TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL", "TRIEVO_TOOL_IMAGE", "DOCKER_EXE", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE"], "set": {"PYTHONPATH": "{repo_root}/baseline/Trace2Skill:{repo_root}/baseline/Trace2Skill/src:{repo_root}"}},
+  "environment": {"inherit": ["TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL", "TRIEVO_TOOL_IMAGE", "DOCKER_EXE", "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE"], "set": {"PYTHONPATH": "{repo_root}/baseline/Trace2Skill:{repo_root}/baseline/Trace2Skill/src:{repo_root}"}},
   "options": {"agent": "auto", "model": "deepseek-v4-flash", "generation_config": {"max_tokens": 2048, "thinking": {"type": "disabled"}}, "skill_name": "xlsx", "max_turns": 16, "temperature": 0.0, "tool_timeout": 180, "use_cache": false, "evolution_batch_size": 1, "merge_batch_size": 5, "max_workers": 1, "evolution_temperature": 0.3, "max_verification_rounds": 1, "patch_pipeline": "json", "max_merge_levels": 1, "evolution_max_tokens": 2048, "enable_json_format_self_fix": false, "skip_translation": true, "l2_agent_limits": {"max_model_calls": 16, "max_tool_calls": 16, "terminal_timeout_seconds": 120, "episode_timeout_seconds": 600, "evolution_timeout_seconds": 180, "evolution_max_model_calls": 4}},
   "capabilities": ["direct_workspace", "tool_calls", "usage", "skill_reflection", "evolution_barrier"]
 }
