@@ -1,0 +1,10 @@
+{
+  "contract_version": "l2_native_verifier_cli/1.0",
+  "implementation_owner": "L2 data package",
+  "runtime_entrypoint": "evaluation_assets/verifier_cli.py",
+  "request_schema": "l2_native_verifier_request/1.0",
+  "result_schema": "l2_native_verifier_result/1.0",
+  "invocation": "Send one JSON request on stdin; read one JSON result from stdout.",
+  "network": "disabled by Benchmark Runtime",
+  "python_requirements": "evaluation_assets/requirements.txt"
+}

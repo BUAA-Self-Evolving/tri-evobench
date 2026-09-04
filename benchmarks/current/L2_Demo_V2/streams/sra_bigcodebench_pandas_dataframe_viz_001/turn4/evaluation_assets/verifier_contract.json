@@ -1,0 +1,44 @@
+{
+  "contract_version": "l2_native_verifier_cli/1.0",
+  "executable": true,
+  "implementation_owner": "L2 data package",
+  "runtime_entrypoint": "evaluation_assets/verifier_cli.py",
+  "native_semantics": {
+    "source": "SRA-Bench BigCodeBench evaluator",
+    "upstream_symbol": "sragents.evaluate.datasets.bigcodebench.evaluate",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f"
+  },
+  "inputs": {
+    "raw_model_output": "A complete self-contained Python answer containing task_func. Markdown fences are tolerated by the native sanitizer; a bare function body is not guaranteed to work.",
+    "source_item": "source_item.json",
+    "code_prompt": "code_prompt.txt",
+    "tests": "tests.py",
+    "reference_answer": "reference_answer.txt (function body; assemble with code_prompt for a known-correct raw output)"
+  },
+  "procedure": [
+    "Remove think tags and sanitize the raw model output using the native task_func entry point.",
+    "Construct solution = code_prompt + newline + four-space-indented pass + newline + sanitized output.",
+    "Run the complete tests.py suite in a temporary subprocess with the declared native resource limits.",
+    "Return pass, fail, or timeout and a binary score; score is 1 if and only if result is pass."
+  ],
+  "interaction_score": {
+    "pass": 1,
+    "fail": 0,
+    "timeout": 0,
+    "partial_credit": false
+  },
+  "non_goals": [
+    "This adapter is not a security-grade code Sandbox.",
+    "This adapter does not reproduce SRA retrieval or skill-ranking metrics."
+  ],
+  "native_item": {
+    "instance_id": "bigcodebench_00009",
+    "dataset": "bigcodebench",
+    "source_path": "data/bench/instances/bigcodebench.json"
+  },
+  "request_schema": "l2_native_verifier_request/1.0",
+  "result_schema": "l2_native_verifier_result/1.0",
+  "invocation": "Send one JSON request on stdin; read one JSON result from stdout.",
+  "network": "disabled by Benchmark Runtime",
+  "python_requirements": "evaluation_assets/requirements.txt"
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_15",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sci3",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All currency amounts as integers in USD, no decimal points, no thousand separators (e.g., 15000, not $15,000.00 or 15,000).",
+      "source": "standing_system_context",
+      "checker_criterion": "all monetary JSON fields are integers (no decimal, no thousand separator)"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "Markdown reports — every case/shift uses ### (level-3) heading, NOT ## (level-2).",
+      "source": "standing_system_context",
+      "checker_criterion": "Markdown reports use ### (level-3) headings, not ## (level-2)"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "CSV files — UTF-8 encoding, date fields YYYY-MM-DD, ratio fields two decimal places.",
+      "source": "standing_system_context",
+      "checker_criterion": "CSV files UTF-8, date fields YYYY-MM-DD, ratio fields two decimal places"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "All JSON field names in snake_case; array fields use plural names (e.g., violations, files, corrective_measures).",
+      "source": "standing_system_context",
+      "checker_criterion": "JSON field names snake_case; array fields plural"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "recommendation/action fields — plain text only, no nested JSON, max 150 chars.",
+      "source": "standing_system_context",
+      "checker_criterion": "recommendation/action fields plain text, no nested JSON, <= 150 chars"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "cdph_official_38874314-338e-14cc-ff9d-b50f312d8d4c.jsonl",
+          "size_bytes": 1250,
+          "sha256": "cfc930d8fd231622ff5f5fc58be4e9092fb532ef4b429309f99c12d3a4b647d0"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "hospital_data/SVMC_telemetry_violations_dec2025_jan2026.csv",
+          "size_bytes": 1651,
+          "sha256": "53e5d24d9ca01399f61487dc72e834fac5601bfaf27727edc53ab9e73407fa67"
+        },
+        {
+          "action": "new",
+          "target": "communications/cdph_supplemental_inspection_jan2026.txt",
+          "size_bytes": 112815,
+          "sha256": "338565634c0d0000f0d41d2693cc8a62870504a3e64ea2aa0492c82fcbe102b3"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "union_settlement_feishu_b6d6b99a-af30-2c57-6d02-86c0559ca6c1.jsonl",
+          "size_bytes": 1504,
+          "sha256": "91ab6b01227963f512098b14a5ddbd21b2d26ddc53e7aaeb5cdb9c3589b3a173"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "communications/union_settlement_memorandum.txt",
+          "size_bytes": 76390,
+          "sha256": "aa9f5e57c03cf158297c48892a59d1b9c230078ca5dbcaaf4d371753b609e15e"
+        },
+        {
+          "action": "new",
+          "target": "hospital_data/SVMC_icu_newly_discovered_violations.csv",
+          "size_bytes": 382,
+          "sha256": "ed245cb23066a790134b10b5ef3833e8500d1dab684a0954ecc6ec7095a0fa5d"
+        },
+        {
+          "action": "new",
+          "target": "reports/float_pool_requirement_updated.txt",
+          "size_bytes": 1062,
+          "sha256": "bbcffec6dadba972a162cc5e149601cf326b43437a46e120d5570f540405b4f4"
+        },
+        {
+          "action": "new",
+          "target": "communications/union_historical_email_thread_extended.txt",
+          "size_bytes": 111171,
+          "sha256": "7db9116599b0a88c3000d4319f18844a933584e3404ea5e761a61925bdd2296d"
+        }
+      ]
+    }
+  ]
+}

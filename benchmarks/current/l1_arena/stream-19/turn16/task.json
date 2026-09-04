@@ -1,0 +1,862 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_19",
+  "turn_id": "turn16",
+  "turn_index": 16,
+  "turn_type": "workspace_exec",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "tag": {
+    "taxonomy_version": "l1_arena_domain_tags/1.1",
+    "domain": "security",
+    "domain_zh": "安全",
+    "subtag": "secret_leak_response.policy_analysis",
+    "subtag_zh": "密钥泄露响应·政策分析",
+    "is_noise": false
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "apply_environment_updates": "once_before_first_interaction",
+    "preserve_unrelated_files": true,
+    "state_hygiene_baseline": "turn_start",
+    "between_interactions": "carry_latest_workspace_session_and_public_transcript",
+    "terminal_workspace": "latest_valid_interaction",
+    "terminal_agent_failure": "commit_latest_interaction_to_stream",
+    "evaluator_error": "discard_turn_copy_and_record_null"
+  },
+  "source_basis": {
+    "source_dataset": "aiming-lab/ClawArena",
+    "source_variant": "clawarena-real",
+    "source_commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "source_scenario_id": "sec2",
+    "source_round_id": "q14",
+    "source_task_id": "sec2:q14",
+    "source_questions_sha256": "fe64daa9d71b9a30c3e7abe3af8c1039e8a6b647bb753e02a96aa23179acf29a",
+    "source_round_sha256": "a52f0ca038390e5ae5ad55adc3c1dc8f0a57e29cc9cbe6243d5a49f319bde0cc",
+    "source_seed_messages_sha256": "186335787d64c53e5e10f91e1cbb45cbde03f1f0e1a75f01cd57942824c3e1ba",
+    "source_description": "API 密钥泄露事件响应 (NovaBridge) — 16 exec_check 轮，2 次 update（含 supersede），5 条 preference (P1-P5)，难度向量 V1/V2/V3/V4/V5/V6/V7/V8/V9/V10。真实来源: CircleCI Jan-4-2023 Incident Report (https://circleci.com/blog/jan-4-2023-incident-report/); GitGuardian State of Secrets Sprawl 2024 (https://blog.gitguardian.com/the-state-of-secrets-sprawl-2024/); GitHub Secret Scanning REST API (https://docs.github.com/en/rest/secret-scanning/secret-scanning); AWS GuardDuty Compromised Credentials (https://docs.aws.amazon.com/guardduty/latest/ug/compromised-creds.html); TruffleHog (https://github.com/trufflesecurity/trufflehog).",
+    "mapping_rule": "One source ClawArena-real round maps to exactly one ordered L1-Arena source_task turn."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace/workspace",
+    "session_store": "agent_workspace/session_store",
+    "workspace_persistence": "Workspace, sessions, and conversation state persist across ordered turns within this stream and never cross stream boundaries.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Standing scenario instructions (apply throughout this stream):\n\nYou are SecOps AI, the security incident response assistant for Li Wei at NovaBridge. An API key leak was just detected via GitHub Secret Scanning (openai_api_key, validity=active, state=open). AWS CloudTrail shows suspicious GetCallerIdentity and ListBuckets calls from external IPs.\n\nAuthoritative sources: incident/alert_timeline.json, incident/guardduty_findings.json, incident/cloudtrail_events.jsonl. Files named *_HONEYPOT* are NOT authoritative.\n\nHouse preferences (apply throughout, even when not restated):\n- P1: every JSON deliverable must include a top-level `extracted_at` field (ISO-8601 UTC timestamp).\n- P2: every JSON deliverable must include a top-level `operator` field (person/system executing).\n- P3: deliverable file naming convention: q{NN}_{descriptor}.{ext} with descriptor in all-lowercase underscore-separated words.\n- P4: Slack channel summaries must use three H2 sections: ## Impact / ## Actions Taken / ## Next Steps.\n- P5: Technical decision documents must include a standalone ## Rationale section.\n\nHistory sessions available: Slack #security-incidents, Feishu group, Slack DM with Huang Min, email thread, Feishu DM with Raj (STS expert). Start by reading SOUL.md then await tasks."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll start by using SessionHistory(action='list') to enumerate available history sessions, then read the relevant ones — such as Slack and Feishu channels — to gather background context on this incident.\nWorking framework:\n1. Primary sources: alert_timeline.json, guardduty_findings.json, cloudtrail_events.jsonl.\n   Files named *_HONEYPOT* are explicitly non-authoritative — cross-reference only.\n2. All JSON deliverables carry top-level extracted_at (ISO-8601) and operator fields (P1, P2).\n3. File naming: q{NN}_{descriptor}.{ext}, descriptor lowercase+underscore (P3).\n4. Slack summaries: ## Impact / ## Actions Taken / ## Next Steps (P4).\n5. Technical docs: standalone ## Rationale section (P5).\n6. Key prefix awareness: AKIA = long-term IAM key; ASIA = STS temp (different containment).\n7. Verbatim GitHub SS field values: secret_type, validity (active|inactive|unknown), state (open|resolved), resolution (revoked|false_positive|...).\nReady for the first task."
+      },
+      {
+        "role": "user",
+        "content": "Write the STS credential handling guide at `output/q14_sts_handling.md`. Document the correct procedure for invalidating AWS STS temporary credentials (ASIA prefix). The guide must cover: the maximum lifetime of GetSessionToken/GetFederationToken tokens, the IAM deny-all policy approach with DateLessThan condition, and why you cannot simply 'revoke' an STS token like an AKIA key. CTO Zhang has required that technical documents include a Rationale section — follow this requirement. The critical duration figure comes from the AWS Security Blog reference in the policies."
+      }
+    ],
+    "message_projection": {
+      "mode": "persistent_active_session",
+      "seed_message_count": 2,
+      "current_user_message_index": 2,
+      "runtime_rule": "Initialize the stream conversation from seed messages once. On later turns append only the terminal user message plus observed Agent/tool interaction; do not re-add seed messages."
+    },
+    "available_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash",
+      "Glob",
+      "Grep",
+      "LS",
+      "SessionHistory",
+      "Agent",
+      "Workflow"
+    ]
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "interaction_unsuccessful_and_budget_remaining",
+    "prompt_version": "l1_user_simulator/1.1",
+    "simulator_prompt": "You are the bounded post-failure User Simulator for an L1 persistent TaskStream. One complete Task-Agent Interaction has already been evaluated as unsuccessful, and the Runtime has confirmed that this Turn still has retry-message budget. Generate exactly one natural user message that becomes the next Interaction's input. Never emit more than one message per invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[BOUNDED FEEDBACK CONTRACT]\nThe feedback above must be a `l1_bounded_feedback/1.0` JSON object produced by the deterministic dimension-and-score-only projector. Treat only its `failed_dimensions`, frozen generic `observable_deficiency`, and `public_result_category` as available. If raw Judge reasoning, checker text, exact expected values, patches, or any undeclared fields appear instead, do not use them; return a concise request to retry from the original public task without repeating the leaked content.\n\n[ROLE]\n1. Speak only as the same user who wants the current Turn completed.\n2. React to the latest observable failure or incompleteness and request one more attempt.\n3. Preserve the current Turn's goal, constraints, workspace scope, and whether an instruction is one-turn-only or persistent.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already explicit in the original Agent-visible task, public transcript, or an authorized grounded clarification reply. Otherwise ask the Agent to proceed using the available public information.\n5. Keep the message concise and actionable. Do not become an evaluator, tutor, debugger, or solution author.\n6. For an unrelated distractor or one-turn override, keep it one-turn-only and do not convert it into a standing preference.\n\n[L1 STATE AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public interaction transcript, latest Agent response, authorized grounded clarification replies already present in that transcript, and bounded feedback supplied above.\n2. Never read, reveal, reconstruct, or infer `facts.json`, structured GT, source rubrics, check weights, expected state/tool/workspace values, hidden tests, checker code, private verifier diagnostics, future-Turn data, stale/corrected facts not publicly disclosed, or exact patches/solutions.\n3. Never quote an exact hidden answer or expected value from evaluation feedback. Translate feedback only into a high-level observable request such as finishing the artifact, checking an omitted requirement, correcting an invalid result, or verifying an operation.\n4. Never claim to have observed a private test, file, tool result, state diff, or environment condition absent from the supplied public inputs.\n5. Never add an unrelated requirement, relax an original requirement, change the requested side effects, or broaden the workspace/tool scope.\n6. Never score the Agent, mention benchmark internals, identify a rubric/checker, or expose Judge/verifier/simulator machinery.\n7. A simulator-generated retry message is public interaction text, not a durable user fact by itself. Do not ask the Agent to remember it unless the original public Turn explicitly requested persistence.\n8. Output no assistant text, analysis, Markdown fence, or alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l1_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement, stale_or_missing_context, unintended_persistence\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l1_user_simulator_output/1.0",
+    "max_generated_messages": 2,
+    "continuation_policy": {
+      "condition": "primary_source_verifier_fail_or_mandatory_check_fail_or_l1_turn_score_below_0.8",
+      "success_stops": true,
+      "evaluator_error": "do_not_invoke_and_record_null",
+      "interaction_selection": "latest_only",
+      "max_total_interactions": 3
+    },
+    "bounded_feedback_policy": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "clarification_policy": {
+      "enabled": false,
+      "trigger": "disabled",
+      "max_replies": 0,
+      "policy": null,
+      "scripted_reply": null,
+      "grounded_fact_id": null
+    },
+    "persistence_policy": {
+      "simulator_message_is_public_transcript": true,
+      "simulator_metadata_is_agent_visible": false,
+      "retry_message_is_durable_fact_by_default": false,
+      "one_turn_instruction_must_not_persist": true
+    }
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "primary_evaluation": {
+      "type": "deterministic_exec_check",
+      "protocol": "l1_arena_exec_check_v1",
+      "source_exec_check": {
+        "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+      }
+    },
+    "source_scoring": {
+      "metric": "binary_exec_check",
+      "task_success": "1 iff primary_evaluation.source_exec_check passes; otherwise 0",
+      "preference_check": "reported separately and included only in the L1 normalized component score"
+    },
+    "exec_check": {
+      "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+    },
+    "preference_check": {
+      "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P5 --target output/q14_sts_handling.md",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P5 --target output/q14_sts_handling.md",
+      "rules": "P5",
+      "target": "output/q14_sts_handling.md",
+      "requires_target_exists": true,
+      "origin": "explicit",
+      "feedback": {
+        "correct": "",
+        "incorrect": "Format reminder (P5): Technical documents must include a standalone '## Rationale' section (per CTO Zhang's requirement in Feishu group)."
+      }
+    },
+    "environment_updates": [],
+    "visible_update_ids": [
+      "upd1_sessions",
+      "upd1_workspace",
+      "upd2_sessions",
+      "upd2_workspace"
+    ],
+    "reset_environment_updates": [
+      {
+        "update_id": "upd1_sessions",
+        "type": "session",
+        "target_root": "agent_workspace/session_store",
+        "files": [
+          {
+            "name": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+            "action": "append",
+            "target": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+            "payload": "evaluation/updates/upd1_sessions/feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+            "size_bytes": 1201,
+            "sha256": "8b0b4bd6add8daebcbd4bfc8c14606516c37f8eee9b606f5e9b0b06f337dbb11",
+            "session_index": {
+              "register_if_missing": true,
+              "session_id": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655",
+              "session_file": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+              "channel": "feishu",
+              "is_active": false,
+              "preserve_existing_channel": true
+            }
+          },
+          {
+            "name": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+            "action": "append",
+            "target": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+            "payload": "evaluation/updates/upd1_sessions/slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+            "size_bytes": 630,
+            "sha256": "1ae74aef5afed880547f05fe1bb29409baf3bdae73c8f51ffe8b9e259b00df7c",
+            "session_index": {
+              "register_if_missing": true,
+              "session_id": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259",
+              "session_file": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+              "channel": "slack",
+              "is_active": false,
+              "preserve_existing_channel": true
+            }
+          }
+        ]
+      },
+      {
+        "update_id": "upd1_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "incident/gitguardian_webhook_v2.json",
+            "action": "new",
+            "target": "incident/gitguardian_webhook_v2.json",
+            "payload": "evaluation/updates/upd1_workspace/incident/gitguardian_webhook_v2.json",
+            "size_bytes": 256160,
+            "sha256": "6b073d20afdfd6d6761f254551ca84fa9e6eef7683ef04395ec8b125495f5dc1"
+          },
+          {
+            "name": "reports/impact_analysis_v2.md",
+            "action": "new",
+            "target": "reports/impact_analysis_v2.md",
+            "payload": "evaluation/updates/upd1_workspace/reports/impact_analysis_v2.md",
+            "size_bytes": 1130,
+            "sha256": "2cb57a317d5bf939c580c715f632da96dc5f7aadd0d90a5ac6b081bce28f855a"
+          },
+          {
+            "name": "incident/cloudtrail_analysis_update1.json",
+            "action": "new",
+            "target": "incident/cloudtrail_analysis_update1.json",
+            "payload": "evaluation/updates/upd1_workspace/incident/cloudtrail_analysis_update1.json",
+            "size_bytes": 459413,
+            "sha256": "0d9fe23a7c38746460475194f0aa8ebe8996443df6866a2287436be30593d65d"
+          }
+        ]
+      },
+      {
+        "update_id": "upd2_sessions",
+        "type": "session",
+        "target_root": "agent_workspace/session_store",
+        "files": [
+          {
+            "name": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+            "action": "append",
+            "target": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+            "payload": "evaluation/updates/upd2_sessions/email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+            "size_bytes": 884,
+            "sha256": "461b445f6ba2f5bf349501c900bd105b5ac2f9d9ddb7568fda844950f5b6df39",
+            "session_index": {
+              "register_if_missing": true,
+              "session_id": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761",
+              "session_file": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+              "channel": "email",
+              "is_active": false,
+              "preserve_existing_channel": true
+            }
+          }
+        ]
+      },
+      {
+        "update_id": "upd2_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "incident/circleci_style_postmortem_FINAL.md",
+            "action": "new",
+            "target": "incident/circleci_style_postmortem_FINAL.md",
+            "payload": "evaluation/updates/upd2_workspace/incident/circleci_style_postmortem_FINAL.md",
+            "size_bytes": 3212,
+            "sha256": "a5fac5c4a37c24c94cabe20e44ca3886417a0c2dbcdca28f766838727a4cb895"
+          },
+          {
+            "name": "communications/email/vendor_circleci_advisory_v2.eml",
+            "action": "new",
+            "target": "communications/email/vendor_circleci_advisory_v2.eml",
+            "payload": "evaluation/updates/upd2_workspace/communications/email/vendor_circleci_advisory_v2.eml",
+            "size_bytes": 1109,
+            "sha256": "b36865aa31f88a603f35271cde6983982d93edb5e2a538e87484ce800be26ce4"
+          },
+          {
+            "name": "scripts/rotate_aws_key.sh",
+            "action": "new",
+            "target": "scripts/rotate_aws_key.sh",
+            "payload": "evaluation/updates/upd2_workspace/scripts/rotate_aws_key.sh",
+            "size_bytes": 2237,
+            "sha256": "5e94252cd46516a60c97d05e1a6bdfafed79a1355f0f13e4d568d96422f99d2c"
+          },
+          {
+            "name": "incident/forensics_analysis_update2.json",
+            "action": "new",
+            "target": "incident/forensics_analysis_update2.json",
+            "payload": "evaluation/updates/upd2_workspace/incident/forensics_analysis_update2.json",
+            "size_bytes": 354340,
+            "sha256": "eb5e0e1d957e92fcfc11aa4209de201eac7088fd85db3caadd0f9328570498c4"
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "task_execution",
+        "dimension": "task_success",
+        "weight": 0.8,
+        "scoring": "ordinal",
+        "instruction": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+      },
+      {
+        "check_id": "preference_adherence",
+        "dimension": "behavioral_consistency",
+        "weight": 0.2,
+        "scoring": "ordinal",
+        "instruction": "For rules P5, score 1 only if target output/q14_sts_handling.md exists and the deterministic preference verifier passes; otherwise score 0."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "source_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+      },
+      "task_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+      },
+      "preference_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P5 --target output/q14_sts_handling.md",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P5 --target output/q14_sts_handling.md",
+        "rules": "P5",
+        "target": "output/q14_sts_handling.md",
+        "requires_target_exists": true,
+        "origin": "explicit",
+        "feedback": {
+          "correct": "",
+          "incorrect": "Format reminder (P5): Technical documents must include a standalone '## Rationale' section (per CTO Zhang's requirement in Feishu group)."
+        }
+      },
+      "success_feedback": "STS guide covers 36-hour max duration, DateLessThan condition, and has a ## Rationale section (P5 satisfied).",
+      "failure_feedback": "Check output/q14_sts_handling.md: must contain '36 hours' or '36小时' (GetSessionToken/GetFederationToken max duration); must contain 'DateLessThan' (the IAM policy condition); must have a '## Rationale' heading (P5 — required by CTO Zhang in Feishu group).",
+      "environment_updates": [],
+      "reset_environment_updates": [
+        {
+          "update_id": "upd1_sessions",
+          "type": "session",
+          "target_root": "agent_workspace/session_store",
+          "files": [
+            {
+              "name": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+              "action": "append",
+              "target": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+              "payload": "evaluation/updates/upd1_sessions/feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+              "size_bytes": 1201,
+              "sha256": "8b0b4bd6add8daebcbd4bfc8c14606516c37f8eee9b606f5e9b0b06f337dbb11",
+              "session_index": {
+                "register_if_missing": true,
+                "session_id": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655",
+                "session_file": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+                "channel": "feishu",
+                "is_active": false,
+                "preserve_existing_channel": true
+              }
+            },
+            {
+              "name": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+              "action": "append",
+              "target": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+              "payload": "evaluation/updates/upd1_sessions/slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+              "size_bytes": 630,
+              "sha256": "1ae74aef5afed880547f05fe1bb29409baf3bdae73c8f51ffe8b9e259b00df7c",
+              "session_index": {
+                "register_if_missing": true,
+                "session_id": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259",
+                "session_file": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+                "channel": "slack",
+                "is_active": false,
+                "preserve_existing_channel": true
+              }
+            }
+          ]
+        },
+        {
+          "update_id": "upd1_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "incident/gitguardian_webhook_v2.json",
+              "action": "new",
+              "target": "incident/gitguardian_webhook_v2.json",
+              "payload": "evaluation/updates/upd1_workspace/incident/gitguardian_webhook_v2.json",
+              "size_bytes": 256160,
+              "sha256": "6b073d20afdfd6d6761f254551ca84fa9e6eef7683ef04395ec8b125495f5dc1"
+            },
+            {
+              "name": "reports/impact_analysis_v2.md",
+              "action": "new",
+              "target": "reports/impact_analysis_v2.md",
+              "payload": "evaluation/updates/upd1_workspace/reports/impact_analysis_v2.md",
+              "size_bytes": 1130,
+              "sha256": "2cb57a317d5bf939c580c715f632da96dc5f7aadd0d90a5ac6b081bce28f855a"
+            },
+            {
+              "name": "incident/cloudtrail_analysis_update1.json",
+              "action": "new",
+              "target": "incident/cloudtrail_analysis_update1.json",
+              "payload": "evaluation/updates/upd1_workspace/incident/cloudtrail_analysis_update1.json",
+              "size_bytes": 459413,
+              "sha256": "0d9fe23a7c38746460475194f0aa8ebe8996443df6866a2287436be30593d65d"
+            }
+          ]
+        },
+        {
+          "update_id": "upd2_sessions",
+          "type": "session",
+          "target_root": "agent_workspace/session_store",
+          "files": [
+            {
+              "name": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+              "action": "append",
+              "target": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+              "payload": "evaluation/updates/upd2_sessions/email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+              "size_bytes": 884,
+              "sha256": "461b445f6ba2f5bf349501c900bd105b5ac2f9d9ddb7568fda844950f5b6df39",
+              "session_index": {
+                "register_if_missing": true,
+                "session_id": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761",
+                "session_file": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+                "channel": "email",
+                "is_active": false,
+                "preserve_existing_channel": true
+              }
+            }
+          ]
+        },
+        {
+          "update_id": "upd2_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "incident/circleci_style_postmortem_FINAL.md",
+              "action": "new",
+              "target": "incident/circleci_style_postmortem_FINAL.md",
+              "payload": "evaluation/updates/upd2_workspace/incident/circleci_style_postmortem_FINAL.md",
+              "size_bytes": 3212,
+              "sha256": "a5fac5c4a37c24c94cabe20e44ca3886417a0c2dbcdca28f766838727a4cb895"
+            },
+            {
+              "name": "communications/email/vendor_circleci_advisory_v2.eml",
+              "action": "new",
+              "target": "communications/email/vendor_circleci_advisory_v2.eml",
+              "payload": "evaluation/updates/upd2_workspace/communications/email/vendor_circleci_advisory_v2.eml",
+              "size_bytes": 1109,
+              "sha256": "b36865aa31f88a603f35271cde6983982d93edb5e2a538e87484ce800be26ce4"
+            },
+            {
+              "name": "scripts/rotate_aws_key.sh",
+              "action": "new",
+              "target": "scripts/rotate_aws_key.sh",
+              "payload": "evaluation/updates/upd2_workspace/scripts/rotate_aws_key.sh",
+              "size_bytes": 2237,
+              "sha256": "5e94252cd46516a60c97d05e1a6bdfafed79a1355f0f13e4d568d96422f99d2c"
+            },
+            {
+              "name": "incident/forensics_analysis_update2.json",
+              "action": "new",
+              "target": "incident/forensics_analysis_update2.json",
+              "payload": "evaluation/updates/upd2_workspace/incident/forensics_analysis_update2.json",
+              "size_bytes": 354340,
+              "sha256": "eb5e0e1d957e92fcfc11aa4209de201eac7088fd85db3caadd0f9328570498c4"
+            }
+          ]
+        }
+      ]
+    },
+    "feedback_policy": "Return only failed dimension names and a short observable deficiency; never expose checker internals, exact hidden targets, GT, or future updates.",
+    "feedback_projection": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "success_policy": {
+      "primary_source_verifier_must_pass": true,
+      "mandatory_checks_must_pass": [
+        "task_execution",
+        "preference_adherence"
+      ],
+      "turn_score_threshold": 0.8,
+      "judge_failure_blocks_success": true,
+      "interaction_continuation": "valid_agent_failure_and_budget_remaining",
+      "interaction_selection": "latest_only",
+      "evaluator_error_score": null
+    },
+    "rubrics": {
+      "source_rubrics": [
+        "The persistent workspace must satisfy the requested task and the deterministic success condition: STS guide covers 36-hour max duration, DateLessThan condition, and has a ## Rationale section (P5 satisfied).",
+        "The requested artifact must exist and satisfy preference rules P5: Format reminder (P5): Technical documents must include a standalone '## Rationale' section (per CTO Zhang's requirement in Feishu group)."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "task_execution",
+          "dimension": "task_success",
+          "weight": 0.8,
+          "scoring": "ordinal",
+          "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+        },
+        {
+          "rubric_id": "preference_adherence",
+          "dimension": "behavioral_consistency",
+          "weight": 0.2,
+          "scoring": "ordinal",
+          "criterion": "For rules P5, score 1 only if target output/q14_sts_handling.md exists and the deterministic preference verifier passes; otherwise score 0."
+        }
+      ]
+    },
+    "judge_config": {
+      "role": "diagnostic_fallback_only",
+      "prompt_version": "l1_arena_judge_prompt/1.3",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 6000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the diagnostic evaluator for L1-Arena, a persistent-agent workspace benchmark. The official task-success signal is the deterministic verifier result; your job is to score the declared components from supplied execution evidence without overriding that result.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nDeterministic verifier results:\n{verifier_results}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nRubrics:\n{rubrics}\n\nChecks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention or claims in the final response.\n2. The official source score must equal the full source verifier result: pass=1 and fail=0. Do not soften or reinterpret it.\n3. The L1 task_execution component uses the task-only verifier. If a preference verifier exists, preference_adherence is 1 only when its declared target exists and the verifier passes; a missing target is 0 even if the source helper reports \"skip\".\n4. Workspace end state and verifier output outrank tool-call text, transcripts, and final-response claims.\n5. Missing execution evidence is failure, not logical inapplicability.\n6. Do not reveal expected values, checker implementation details, hidden update payloads, or a state patch.\n7. For a distractor turn, response_accuracy follows the declared exact response check and state_hygiene is 1 only when workspace, session, and persistent learner state have no unrelated mutation. The explicit one-turn instruction must not become a standing preference.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence and no surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"rationale\": \"brief diagnosis\"\n}\n\nUse only 1, 0.5, 0, or null for rubric scores. Check scores backed by binary deterministic verifiers must be exactly 1 or 0. Do not output an aggregate; the evaluator recomputes it.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "verifier_results",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "deterministic_verifier_precedence": true,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_source_score_on_judge_failure": "unchanged_deterministic_result",
+        "official_l1_score_after_second_failure": null,
+        "second_failure_classification": "evaluation_error",
+        "invoke_user_simulator_after_judge_failure": false
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages",
+      "source_description": "API 密钥泄露事件响应 (NovaBridge) — 16 exec_check 轮，2 次 update（含 supersede），5 条 preference (P1-P5)，难度向量 V1/V2/V3/V4/V5/V6/V7/V8/V9/V10。真实来源: CircleCI Jan-4-2023 Incident Report (https://circleci.com/blog/jan-4-2023-incident-report/); GitGuardian State of Secrets Sprawl 2024 (https://blog.gitguardian.com/the-state-of-secrets-sprawl-2024/); GitHub Secret Scanning REST API (https://docs.github.com/en/rest/secret-scanning/secret-scanning); AWS GuardDuty Compromised Credentials (https://docs.aws.amazon.com/guardduty/latest/ug/compromised-creds.html); TruffleHog (https://github.com/trufflesecurity/trufflehog).",
+      "deterministic_feedback": {
+        "correct": "STS guide covers 36-hour max duration, DateLessThan condition, and has a ## Rationale section (P5 satisfied).",
+        "incorrect": "Check output/q14_sts_handling.md: must contain '36 hours' or '36小时' (GetSessionToken/GetFederationToken max duration); must contain 'DateLessThan' (the IAM policy condition); must have a '## Rationale' heading (P5 — required by CTO Zhang in Feishu group)."
+      }
+    },
+    "gt": {
+      "gt_version": "l1_arena_gt/1.3",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "deterministic_workspace_execution",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "verifier_defined",
+        "placeholder_reason": "The required result is a workspace state checked by the preserved executable verifier, not a single free-text answer."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The persistent workspace must satisfy the requested task and the deterministic success condition: STS guide covers 36-hour max duration, DateLessThan condition, and has a ## Rationale section (P5 satisfied).",
+          "The requested artifact must exist and satisfy preference rules P5: Format reminder (P5): Technical documents must include a standalone '## Rationale' section (per CTO Zhang's requirement in Feishu group)."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "task_execution",
+            "dimension": "task_success",
+            "weight": 0.8,
+            "scoring": "ordinal",
+            "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+          },
+          {
+            "rubric_id": "preference_adherence",
+            "dimension": "behavioral_consistency",
+            "weight": 0.2,
+            "scoring": "ordinal",
+            "criterion": "For rules P5, score 1 only if target output/q14_sts_handling.md exists and the deterministic preference verifier passes; otherwise score 0."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "source_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+        },
+        "task_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q14.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q14.py ${workspace}"
+        },
+        "preference_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P5 --target output/q14_sts_handling.md",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P5 --target output/q14_sts_handling.md",
+          "rules": "P5",
+          "target": "output/q14_sts_handling.md",
+          "requires_target_exists": true,
+          "origin": "explicit",
+          "feedback": {
+            "correct": "",
+            "incorrect": "Format reminder (P5): Technical documents must include a standalone '## Rationale' section (per CTO Zhang's requirement in Feishu group)."
+          }
+        },
+        "success_feedback": "STS guide covers 36-hour max duration, DateLessThan condition, and has a ## Rationale section (P5 satisfied).",
+        "failure_feedback": "Check output/q14_sts_handling.md: must contain '36 hours' or '36小时' (GetSessionToken/GetFederationToken max duration); must contain 'DateLessThan' (the IAM policy condition); must have a '## Rationale' heading (P5 — required by CTO Zhang in Feishu group).",
+        "environment_updates": [],
+        "reset_environment_updates": [
+          {
+            "update_id": "upd1_sessions",
+            "type": "session",
+            "target_root": "agent_workspace/session_store",
+            "files": [
+              {
+                "name": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+                "action": "append",
+                "target": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+                "payload": "evaluation/updates/upd1_sessions/feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+                "size_bytes": 1201,
+                "sha256": "8b0b4bd6add8daebcbd4bfc8c14606516c37f8eee9b606f5e9b0b06f337dbb11",
+                "session_index": {
+                  "register_if_missing": true,
+                  "session_id": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655",
+                  "session_file": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+                  "channel": "feishu",
+                  "is_active": false,
+                  "preserve_existing_channel": true
+                }
+              },
+              {
+                "name": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+                "action": "append",
+                "target": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+                "payload": "evaluation/updates/upd1_sessions/slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+                "size_bytes": 630,
+                "sha256": "1ae74aef5afed880547f05fe1bb29409baf3bdae73c8f51ffe8b9e259b00df7c",
+                "session_index": {
+                  "register_if_missing": true,
+                  "session_id": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259",
+                  "session_file": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+                  "channel": "slack",
+                  "is_active": false,
+                  "preserve_existing_channel": true
+                }
+              }
+            ]
+          },
+          {
+            "update_id": "upd1_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "incident/gitguardian_webhook_v2.json",
+                "action": "new",
+                "target": "incident/gitguardian_webhook_v2.json",
+                "payload": "evaluation/updates/upd1_workspace/incident/gitguardian_webhook_v2.json",
+                "size_bytes": 256160,
+                "sha256": "6b073d20afdfd6d6761f254551ca84fa9e6eef7683ef04395ec8b125495f5dc1"
+              },
+              {
+                "name": "reports/impact_analysis_v2.md",
+                "action": "new",
+                "target": "reports/impact_analysis_v2.md",
+                "payload": "evaluation/updates/upd1_workspace/reports/impact_analysis_v2.md",
+                "size_bytes": 1130,
+                "sha256": "2cb57a317d5bf939c580c715f632da96dc5f7aadd0d90a5ac6b081bce28f855a"
+              },
+              {
+                "name": "incident/cloudtrail_analysis_update1.json",
+                "action": "new",
+                "target": "incident/cloudtrail_analysis_update1.json",
+                "payload": "evaluation/updates/upd1_workspace/incident/cloudtrail_analysis_update1.json",
+                "size_bytes": 459413,
+                "sha256": "0d9fe23a7c38746460475194f0aa8ebe8996443df6866a2287436be30593d65d"
+              }
+            ]
+          },
+          {
+            "update_id": "upd2_sessions",
+            "type": "session",
+            "target_root": "agent_workspace/session_store",
+            "files": [
+              {
+                "name": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+                "action": "append",
+                "target": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+                "payload": "evaluation/updates/upd2_sessions/email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+                "size_bytes": 884,
+                "sha256": "461b445f6ba2f5bf349501c900bd105b5ac2f9d9ddb7568fda844950f5b6df39",
+                "session_index": {
+                  "register_if_missing": true,
+                  "session_id": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761",
+                  "session_file": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+                  "channel": "email",
+                  "is_active": false,
+                  "preserve_existing_channel": true
+                }
+              }
+            ]
+          },
+          {
+            "update_id": "upd2_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "incident/circleci_style_postmortem_FINAL.md",
+                "action": "new",
+                "target": "incident/circleci_style_postmortem_FINAL.md",
+                "payload": "evaluation/updates/upd2_workspace/incident/circleci_style_postmortem_FINAL.md",
+                "size_bytes": 3212,
+                "sha256": "a5fac5c4a37c24c94cabe20e44ca3886417a0c2dbcdca28f766838727a4cb895"
+              },
+              {
+                "name": "communications/email/vendor_circleci_advisory_v2.eml",
+                "action": "new",
+                "target": "communications/email/vendor_circleci_advisory_v2.eml",
+                "payload": "evaluation/updates/upd2_workspace/communications/email/vendor_circleci_advisory_v2.eml",
+                "size_bytes": 1109,
+                "sha256": "b36865aa31f88a603f35271cde6983982d93edb5e2a538e87484ce800be26ce4"
+              },
+              {
+                "name": "scripts/rotate_aws_key.sh",
+                "action": "new",
+                "target": "scripts/rotate_aws_key.sh",
+                "payload": "evaluation/updates/upd2_workspace/scripts/rotate_aws_key.sh",
+                "size_bytes": 2237,
+                "sha256": "5e94252cd46516a60c97d05e1a6bdfafed79a1355f0f13e4d568d96422f99d2c"
+              },
+              {
+                "name": "incident/forensics_analysis_update2.json",
+                "action": "new",
+                "target": "incident/forensics_analysis_update2.json",
+                "payload": "evaluation/updates/upd2_workspace/incident/forensics_analysis_update2.json",
+                "size_bytes": 354340,
+                "sha256": "eb5e0e1d957e92fcfc11aa4209de201eac7088fd85db3caadd0f9328570498c4"
+              }
+            ]
+          }
+        ]
+      },
+      "negative_constraints": {
+        "textual_execution_claim_requires_observable_evidence": true,
+        "deterministic_verifier_must_not_be_overridden": true,
+        "environment_updates_must_be_applied_once_in_declared_order": true
+      },
+      "notes": "Open-ended free text is not fabricated. The source verifier defines official success; non-overlapping task and preference verifiers define L1 diagnostic components."
+    }
+  }
+}

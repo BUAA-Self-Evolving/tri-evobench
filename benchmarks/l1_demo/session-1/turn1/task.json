@@ -1,0 +1,119 @@
+{
+  "turn_id": "turn1",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "user_message": "帮我做三件事：1）记住从现在起我的工作材料默认用中文；2）记住 Aurora 项目的技术负责人是周凯；3）把 Aurora 下周例会放到我平时用的交付日历（你如果不确定是哪个日历就先问我），时间是 8 月 24 日上午 10 点到 10 点半。全部做完后用中文简短汇报。",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "any_llm",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "judge_prompt": "你是严格的 Agent 行为评审员。根据下方材料对 Agent 本轮输出逐项核对并打 0-1 连续分（精确到 0.05）。\n\n【用户请求】\n{user_message}\n\n【用户请求】\n{user_message}\n\n【Agent 最终回复】\n{final_response}\n\n【Agent 工具调用轨迹】\n{tool_calls}\n\n【最终持久状态】\n{final_state}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}\n\n【核对清单（逐项独立判定，按权重加权求和）】\n- C1 (权重 0.15)：回复为中文（含中文字符）。\n- C2 (权重 0.10)：回复不含英文长句（不出现连续 15+ 英文字母的词）。\n- C3 (权重 0.10)：回复不超过 3 句。\n- C4 (权重 0.55)：四项各占 1/4：(a) tool_calls 中有 calendar.create_event 且 calendar_id=cal_delivery_team、start=2026-08-24T10:00:00+08:00、end=2026-08-24T10:30:00+08:00；(b) 轨迹 events 中存在向用户澄清日历 ID 的记录（在创建事件之前）；(c) final_state.facts 中 default_output_language = zh-CN；(d) final_state.facts 中 aurora.technical_owner = 周凯 或 Zhou Kai。\n- C5 (权重 0.10)：calendar.create_event 恰好调用 1 次（不重复创建）。\n\n评分规则：每项按完成比例给 0-1 分；禁止行为被违反时该项记 0 并总体扣 0.2；不得因回复华丽而放宽客观项。\n\n输出格式（只输出 JSON，不要其他内容）：\n{\"score\": <0-1 连续分，精确到 0.05>, \"per_check\": {\"<check_id>\": <0-1>}, \"rationale\": \"一句话理由\"}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "gt",
+        "user_message"
+      ],
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      }
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "note": "规则项由 judge LLM 逐项核对（原 verify.py 检查清单已并入 prompt）",
+    "gt": {
+      "response_format": "中文确认，简短（≤3 句）",
+      "facts_to_write": [
+        {
+          "key": "default_output_language",
+          "value": "zh-CN",
+          "scope": "user:lin_qian"
+        },
+        {
+          "key": "aurora.technical_owner",
+          "value": "周凯",
+          "scope": "project:aurora"
+        }
+      ],
+      "interaction": "创建日历事件前必须先向用户澄清默认交付日历，用户会回答 cal_delivery_team",
+      "required_tool_calls": [
+        {
+          "tool": "calendar.create_event",
+          "arguments": {
+            "calendar_id": "cal_delivery_team",
+            "title": "Aurora 周例会",
+            "start": "2026-08-24T10:00:00+08:00",
+            "end": "2026-08-24T10:30:00+08:00"
+          }
+        }
+      ],
+      "facts_learning": "从用户回复中额外学到 default_delivery_calendar_id=cal_delivery_team 并长期保存"
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "每次迭代后把未通过 check 的 description/feedback 反馈给 agent（不泄露权重与满分路径）"
+  },
+  "gold_reference": {
+    "facts_to_write": [
+      {
+        "fact_id": "F-PREF-01-V1",
+        "key": "default_output_language",
+        "value": "zh-CN",
+        "scope": "user:lin_qian"
+      },
+      {
+        "fact_id": "F-WORK-01-V1",
+        "key": "aurora.technical_owner",
+        "value": "周凯",
+        "scope": "project:aurora"
+      },
+      {
+        "fact_id": "F-TOOL-01-V1",
+        "key": "default_delivery_calendar_id",
+        "value": "cal_delivery_team",
+        "scope": "user:lin_qian"
+      }
+    ],
+    "required_tool_calls": [
+      {
+        "tool": "calendar.create_event",
+        "arguments": {
+          "calendar_id": "cal_delivery_team",
+          "title": "Aurora 周例会",
+          "start": "2026-08-24T10:00:00+08:00",
+          "end": "2026-08-24T10:30:00+08:00"
+        }
+      }
+    ]
+  }
+}

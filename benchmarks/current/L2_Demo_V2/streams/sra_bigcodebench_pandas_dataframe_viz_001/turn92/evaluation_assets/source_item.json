@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00041",
+  "dataset": "bigcodebench",
+  "question": "Calculate the skew of each row in a 2D data matrix and plot the distribution.\nThe function should output with:\n    pandas.DataFrame: A DataFrame containing the skewness of each row. The skweness is stored in a new column which name is 'Skewness'.\n    matplotlib.axes.Axes: The Axes object of the plotted distribution.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom scipy.stats import skew\ndef task_func(data_matrix):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_138",
+    "bigcodebench_062"
+  ],
+  "eval_data": {
+    "answer": "    skewness = skew(data_matrix, axis=1)\n    df = pd.DataFrame(skewness, columns=[\"Skewness\"])\n    plt.figure(figsize=(10, 5))\n    df[\"Skewness\"].plot(kind=\"hist\", title=\"Distribution of Skewness\")\n    return df, plt.gca()",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom scipy.stats import skew\ndef task_func(data_matrix):\n",
+    "test": "import unittest\nimport os\nimport numpy as np\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def setUp(self):\n        self.test_dir = \"data/task_func\"\n        os.makedirs(self.test_dir, exist_ok=True)\n    def test_case_1(self):\n        data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])\n        df, ax = task_func(data)\n        self.verify_output(df, ax, data.shape[0], data)\n    def test_case_2(self):\n        data = np.array([[0, 0, 1], [0, 1, 0], [1, 0, 0]])\n        df, ax = task_func(data)\n        self.verify_output(df, ax, data.shape[0], data)\n    def test_case_3(self):\n        data = np.array([[3, 5, 7, 1000], [200, 5, 7, 1], [1, -9, 14, 700]])\n        df, ax = task_func(data)\n        self.verify_output(df, ax, data.shape[0], data)\n    def test_case_4(self):\n        data = np.array(\n            [\n                [1, 2, 3, 4, 5, 4, 3, 2, 1],\n            ]\n        )\n        df, ax = task_func(data)\n        self.verify_output(df, ax, data.shape[0], data)\n    def test_case_5(self):\n        data = np.array([[1, 1], [1, 1], [1, 1]])\n        df, ax = task_func(data)\n        # Check if DataFrame is returned with correct values\n        self.assertIsInstance(df, pd.DataFrame)\n        self.assertEqual(df.shape, (3, 1))\n        self.assertIn(\"Skewness\", df.columns)\n        # Check if Axes object is returned for the plot\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(ax.get_title(), \"Distribution of Skewness\")\n    def verify_output(self, df, ax, expected_rows, data):\n        # Check if DataFrame is returned with correct values\n        self.assertIsInstance(df, pd.DataFrame)\n        self.assertEqual(df.shape, (expected_rows, 1))\n        self.assertIn(\"Skewness\", df.columns)\n        # Check if Axes object is returned for the plot\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(ax.get_title(), \"Distribution of Skewness\")\n        # Check skewness values\n        skewness = skew(data, axis=1)\n        self.assertListEqual(df[\"Skewness\"].tolist(), list(skewness))",
+    "entry_point": "task_func"
+  }
+}

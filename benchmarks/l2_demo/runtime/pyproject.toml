@@ -1,0 +1,34 @@
+[project]
+name = "l2-demo-runtime"
+version = "0.1.0"
+description = "Minimal executable runtime for the self-evolving L2 data demo"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "matplotlib>=3.8,<4",
+  "numpy>=2,<3",
+  "openai>=1.50,<4",
+  "pandas>=2.2,<4",
+  "scikit-learn>=1.5,<2",
+  "seaborn>=0.13,<1",
+  "tree-sitter>=0.22,<0.27",
+  "tree-sitter-python>=0.21,<0.26",
+]
+
+[project.optional-dependencies]
+browser = [
+  "playwright>=1.50,<2",
+  "pytest>=8,<10",
+]
+
+[project.scripts]
+l2-run-stream = "l2_runtime.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/l2_runtime"]
+
+[tool.uv]
+package = true

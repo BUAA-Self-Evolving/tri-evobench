@@ -1,0 +1,458 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_17",
+  "turn_id": "turn2",
+  "turn_index": 2,
+  "turn_type": "workspace_exec",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "tag": {
+    "taxonomy_version": "l1_arena_domain_tags/1.1",
+    "domain": "legal_and_hr",
+    "domain_zh": "法律与人力",
+    "subtag": "employment_compliance.compliance_assessment",
+    "subtag_zh": "劳动用工合规·合规评估",
+    "is_noise": false
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "apply_environment_updates": "once_before_first_interaction",
+    "preserve_unrelated_files": true,
+    "state_hygiene_baseline": "turn_start",
+    "between_interactions": "carry_latest_workspace_session_and_public_transcript",
+    "terminal_workspace": "latest_valid_interaction",
+    "terminal_agent_failure": "commit_latest_interaction_to_stream",
+    "evaluator_error": "discard_turn_copy_and_record_null"
+  },
+  "source_basis": {
+    "source_dataset": "aiming-lab/ClawArena",
+    "source_variant": "clawarena-real",
+    "source_commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "source_scenario_id": "sci5",
+    "source_round_id": "q2",
+    "source_task_id": "sci5:q2",
+    "source_questions_sha256": "1b70a013c768ae925680645e301e6f253b044e4cb6807870022475c6e463e96b",
+    "source_round_sha256": "61bdb6cb4322ca54ddc74f0cabf30bcaf873ceda123e45a8815c51f2e036a1a2",
+    "source_seed_messages_sha256": "624041ff0472bc183014e790aa3e51137a06b44131430b528d35f598cfe4ade2",
+    "source_description": "HelixDyne Software HR compliance crisis: PIP duration dispute (21-day pip_v1 violates 30-day company policy in HR Handbook §4.3), FMLA/ADEA/OWBPA analysis for employee Marcus Webb (terminated during active FMLA protection window), and multi-state WARN Act compliance analysis (federal/Cal-WARN/NYS) for a 58→31 employee restructuring. 16 exec_check rounds, 3 updates (Update 2 supersedes NYS WARN v1 analysis), 4 preference rules (P1–P4), difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: 29 U.S.C. § 2101 (https://www.law.cornell.edu/uscode/text/29/2101); Cal-WARN CA DIR (https://www.dir.ca.gov/dlse/cal-warnact.html); 29 CFR § 825.110 FMLA (https://www.law.cornell.edu/cfr/text/29/825.110); EEOC OWBPA Q&A (https://www.eeoc.gov/laws/guidance/qa-understanding-waivers-discrimination-claims-employee-severance-agreements).",
+    "mapping_rule": "One source ClawArena-real round maps to exactly one ordered L1-Arena source_task turn."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace/workspace",
+    "session_store": "agent_workspace/session_store",
+    "workspace_persistence": "Workspace, sessions, and conversation state persist across ordered turns within this stream and never cross stream boundaries.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Standing scenario instructions (apply throughout this stream):\n\nYou are PeopleOps AI, the HR compliance specialist for HelixDyne Software. We are conducting an urgent compliance review of two simultaneous HR crises:\n\n1. **Marcus Webb (EMP-0042)** — terminated 2025-09-12, filed FMLA 2025-08-15, PIP dispute (v1=21 days, below company policy minimum), potential ADEA/FMLA retaliation.\n\n2. **Company Restructuring** — originally 58-employee plan (restructuring_plan_v1.md), since revised to 31 employees (restructuring_plan_v2.md). GC's original memo (v1) contained material errors on WARN Act thresholds.\n\nActive preferences (apply silently throughout, even when not restated):\n- P1: Every JSON output must contain a top-level `\"reasoning\"` field explaining key judgments.\n- P4: When citing legal provisions, use full citation format (e.g., `29 U.S.C. § 2102`).\n\nAuthoritative sources: `company/hr_policy_handbook.md` (PIP policy Section 4.3), `legal/compliance_anchors.json`, and `pip_case/marcus_webb_personnel_file.md`. Auto-generated Slack bot summaries are NOT authoritative.\n\nHistory sessions available: Slack #hr-compliance, Slack DM (Marcus), Email GC, Feishu HR Team, Discord Outside Counsel. Start with `exec ls -R` and await tasks."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll start by calling SessionHistory(action='list') to see what history sessions are available across channels like Slack, Email, Feishu, and Discord, then read the relevant ones to understand prior context on the Marcus Webb case and the restructuring review. Working framework:\n1. Authoritative sources: company/hr_policy_handbook.md, legal/compliance_anchors.json, pip_case/marcus_webb_personnel_file.md. Slack bot summaries non-authoritative.\n2. Every JSON output carries a top-level `reasoning` field (P1).\n3. Legal citations use full format (e.g., 29 U.S.C. § 2101(a)(2)) (P4).\n4. Current PIP: pip_v2.md (30-day, HR-compliant). pip_v1.md is withdrawn (V6 guard).\n5. Restructuring: Plan v2 (31 employees, SD retained) supersedes Plan v1 (58 employees).\nReady for the first compliance task."
+      },
+      {
+        "role": "user",
+        "content": "Analyze PIP compliance for Marcus Webb. Read `pip_case/marcus_webb_pip_v1.md` (the original, now-withdrawn version) and `company/hr_policy_handbook.md` Section 4.3. Write `reports/pip_compliance.json` with keys: `duration_days` (int, from pip_v1), `compliant` (bool), `minimum_required_days` (int, per company policy), `policy_source` (string, exact source of the minimum), `deficiencies` (list). Do NOT reference pip_v2 here — analyze the ORIGINAL pip_v1 document as issued. Every JSON output must include a top-level `reasoning` field."
+      }
+    ],
+    "message_projection": {
+      "mode": "persistent_active_session",
+      "seed_message_count": 2,
+      "current_user_message_index": 2,
+      "runtime_rule": "Initialize the stream conversation from seed messages once. On later turns append only the terminal user message plus observed Agent/tool interaction; do not re-add seed messages."
+    },
+    "available_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash",
+      "Glob",
+      "Grep",
+      "LS",
+      "SessionHistory",
+      "Agent",
+      "Workflow"
+    ]
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "interaction_unsuccessful_and_budget_remaining",
+    "prompt_version": "l1_user_simulator/1.1",
+    "simulator_prompt": "You are the bounded post-failure User Simulator for an L1 persistent TaskStream. One complete Task-Agent Interaction has already been evaluated as unsuccessful, and the Runtime has confirmed that this Turn still has retry-message budget. Generate exactly one natural user message that becomes the next Interaction's input. Never emit more than one message per invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[BOUNDED FEEDBACK CONTRACT]\nThe feedback above must be a `l1_bounded_feedback/1.0` JSON object produced by the deterministic dimension-and-score-only projector. Treat only its `failed_dimensions`, frozen generic `observable_deficiency`, and `public_result_category` as available. If raw Judge reasoning, checker text, exact expected values, patches, or any undeclared fields appear instead, do not use them; return a concise request to retry from the original public task without repeating the leaked content.\n\n[ROLE]\n1. Speak only as the same user who wants the current Turn completed.\n2. React to the latest observable failure or incompleteness and request one more attempt.\n3. Preserve the current Turn's goal, constraints, workspace scope, and whether an instruction is one-turn-only or persistent.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already explicit in the original Agent-visible task, public transcript, or an authorized grounded clarification reply. Otherwise ask the Agent to proceed using the available public information.\n5. Keep the message concise and actionable. Do not become an evaluator, tutor, debugger, or solution author.\n6. For an unrelated distractor or one-turn override, keep it one-turn-only and do not convert it into a standing preference.\n\n[L1 STATE AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public interaction transcript, latest Agent response, authorized grounded clarification replies already present in that transcript, and bounded feedback supplied above.\n2. Never read, reveal, reconstruct, or infer `facts.json`, structured GT, source rubrics, check weights, expected state/tool/workspace values, hidden tests, checker code, private verifier diagnostics, future-Turn data, stale/corrected facts not publicly disclosed, or exact patches/solutions.\n3. Never quote an exact hidden answer or expected value from evaluation feedback. Translate feedback only into a high-level observable request such as finishing the artifact, checking an omitted requirement, correcting an invalid result, or verifying an operation.\n4. Never claim to have observed a private test, file, tool result, state diff, or environment condition absent from the supplied public inputs.\n5. Never add an unrelated requirement, relax an original requirement, change the requested side effects, or broaden the workspace/tool scope.\n6. Never score the Agent, mention benchmark internals, identify a rubric/checker, or expose Judge/verifier/simulator machinery.\n7. A simulator-generated retry message is public interaction text, not a durable user fact by itself. Do not ask the Agent to remember it unless the original public Turn explicitly requested persistence.\n8. Output no assistant text, analysis, Markdown fence, or alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l1_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement, stale_or_missing_context, unintended_persistence\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l1_user_simulator_output/1.0",
+    "max_generated_messages": 2,
+    "continuation_policy": {
+      "condition": "primary_source_verifier_fail_or_mandatory_check_fail_or_l1_turn_score_below_0.8",
+      "success_stops": true,
+      "evaluator_error": "do_not_invoke_and_record_null",
+      "interaction_selection": "latest_only",
+      "max_total_interactions": 3
+    },
+    "bounded_feedback_policy": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "clarification_policy": {
+      "enabled": false,
+      "trigger": "disabled",
+      "max_replies": 0,
+      "policy": null,
+      "scripted_reply": null,
+      "grounded_fact_id": null
+    },
+    "persistence_policy": {
+      "simulator_message_is_public_transcript": true,
+      "simulator_metadata_is_agent_visible": false,
+      "retry_message_is_durable_fact_by_default": false,
+      "one_turn_instruction_must_not_persist": true
+    }
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "primary_evaluation": {
+      "type": "deterministic_exec_check",
+      "protocol": "l1_arena_exec_check_v1",
+      "source_exec_check": {
+        "command": "python {evaluation_dir}/scripts/check_q2.py {workspace} && python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace} && python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json"
+      }
+    },
+    "source_scoring": {
+      "metric": "binary_exec_check",
+      "task_success": "1 iff primary_evaluation.source_exec_check passes; otherwise 0",
+      "preference_check": "reported separately and included only in the L1 normalized component score"
+    },
+    "exec_check": {
+      "command": "python {evaluation_dir}/scripts/check_q2.py {workspace}",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace}"
+    },
+    "preference_check": {
+      "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json",
+      "rules": "P1",
+      "target": "reports/pip_compliance.json",
+      "requires_target_exists": true,
+      "origin": "explicit_and_embedded",
+      "feedback": {
+        "correct": "",
+        "incorrect": "Preference reminder (P1): every JSON output must include a top-level `reasoning` field."
+      }
+    },
+    "environment_updates": [],
+    "visible_update_ids": [],
+    "reset_environment_updates": [],
+    "checks": [
+      {
+        "check_id": "task_execution",
+        "dimension": "task_success",
+        "weight": 0.8,
+        "scoring": "ordinal",
+        "instruction": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+      },
+      {
+        "check_id": "preference_adherence",
+        "dimension": "behavioral_consistency",
+        "weight": 0.2,
+        "scoring": "ordinal",
+        "instruction": "For rules P1, score 1 only if target reports/pip_compliance.json exists and the deterministic preference verifier passes; otherwise score 0."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "source_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q2.py {workspace} && python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace} && python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json"
+      },
+      "task_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q2.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace}"
+      },
+      "preference_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json",
+        "rules": "P1",
+        "target": "reports/pip_compliance.json",
+        "requires_target_exists": true,
+        "origin": "explicit_and_embedded",
+        "feedback": {
+          "correct": "",
+          "incorrect": "Preference reminder (P1): every JSON output must include a top-level `reasoning` field."
+        }
+      },
+      "success_feedback": "PIP analysis correct: pip_v1 had 21-day duration, non-compliant with company policy 30-day minimum from HR Handbook Section 4.3.",
+      "failure_feedback": "Check reports/pip_compliance.json: duration_days must be 21 (from pip_v1); compliant must be false; minimum_required_days must be 30 (from HR Handbook Section 4.3 — company policy commitment, not SHRM or statutory); policy_source must reference 'HR Handbook Section 4.3' or 'Section 4.3'. Also: JSON must include a top-level `reasoning` field (P1).",
+      "environment_updates": [],
+      "reset_environment_updates": []
+    },
+    "feedback_policy": "Return only failed dimension names and a short observable deficiency; never expose checker internals, exact hidden targets, GT, or future updates.",
+    "feedback_projection": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "success_policy": {
+      "primary_source_verifier_must_pass": true,
+      "mandatory_checks_must_pass": [
+        "task_execution",
+        "preference_adherence"
+      ],
+      "turn_score_threshold": 0.8,
+      "judge_failure_blocks_success": true,
+      "interaction_continuation": "valid_agent_failure_and_budget_remaining",
+      "interaction_selection": "latest_only",
+      "evaluator_error_score": null
+    },
+    "rubrics": {
+      "source_rubrics": [
+        "The persistent workspace must satisfy the requested task and the deterministic success condition: PIP analysis correct: pip_v1 had 21-day duration, non-compliant with company policy 30-day minimum from HR Handbook Section 4.3.",
+        "The requested artifact must exist and satisfy preference rules P1: Preference reminder (P1): every JSON output must include a top-level `reasoning` field."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "task_execution",
+          "dimension": "task_success",
+          "weight": 0.8,
+          "scoring": "ordinal",
+          "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+        },
+        {
+          "rubric_id": "preference_adherence",
+          "dimension": "behavioral_consistency",
+          "weight": 0.2,
+          "scoring": "ordinal",
+          "criterion": "For rules P1, score 1 only if target reports/pip_compliance.json exists and the deterministic preference verifier passes; otherwise score 0."
+        }
+      ]
+    },
+    "judge_config": {
+      "role": "diagnostic_fallback_only",
+      "prompt_version": "l1_arena_judge_prompt/1.3",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 6000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the diagnostic evaluator for L1-Arena, a persistent-agent workspace benchmark. The official task-success signal is the deterministic verifier result; your job is to score the declared components from supplied execution evidence without overriding that result.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nDeterministic verifier results:\n{verifier_results}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nRubrics:\n{rubrics}\n\nChecks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention or claims in the final response.\n2. The official source score must equal the full source verifier result: pass=1 and fail=0. Do not soften or reinterpret it.\n3. The L1 task_execution component uses the task-only verifier. If a preference verifier exists, preference_adherence is 1 only when its declared target exists and the verifier passes; a missing target is 0 even if the source helper reports \"skip\".\n4. Workspace end state and verifier output outrank tool-call text, transcripts, and final-response claims.\n5. Missing execution evidence is failure, not logical inapplicability.\n6. Do not reveal expected values, checker implementation details, hidden update payloads, or a state patch.\n7. For a distractor turn, response_accuracy follows the declared exact response check and state_hygiene is 1 only when workspace, session, and persistent learner state have no unrelated mutation. The explicit one-turn instruction must not become a standing preference.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence and no surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"rationale\": \"brief diagnosis\"\n}\n\nUse only 1, 0.5, 0, or null for rubric scores. Check scores backed by binary deterministic verifiers must be exactly 1 or 0. Do not output an aggregate; the evaluator recomputes it.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "verifier_results",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "deterministic_verifier_precedence": true,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_source_score_on_judge_failure": "unchanged_deterministic_result",
+        "official_l1_score_after_second_failure": null,
+        "second_failure_classification": "evaluation_error",
+        "invoke_user_simulator_after_judge_failure": false
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages",
+      "source_description": "HelixDyne Software HR compliance crisis: PIP duration dispute (21-day pip_v1 violates 30-day company policy in HR Handbook §4.3), FMLA/ADEA/OWBPA analysis for employee Marcus Webb (terminated during active FMLA protection window), and multi-state WARN Act compliance analysis (federal/Cal-WARN/NYS) for a 58→31 employee restructuring. 16 exec_check rounds, 3 updates (Update 2 supersedes NYS WARN v1 analysis), 4 preference rules (P1–P4), difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: 29 U.S.C. § 2101 (https://www.law.cornell.edu/uscode/text/29/2101); Cal-WARN CA DIR (https://www.dir.ca.gov/dlse/cal-warnact.html); 29 CFR § 825.110 FMLA (https://www.law.cornell.edu/cfr/text/29/825.110); EEOC OWBPA Q&A (https://www.eeoc.gov/laws/guidance/qa-understanding-waivers-discrimination-claims-employee-severance-agreements).",
+      "deterministic_feedback": {
+        "correct": "PIP analysis correct: pip_v1 had 21-day duration, non-compliant with company policy 30-day minimum from HR Handbook Section 4.3.",
+        "incorrect": "Check reports/pip_compliance.json: duration_days must be 21 (from pip_v1); compliant must be false; minimum_required_days must be 30 (from HR Handbook Section 4.3 — company policy commitment, not SHRM or statutory); policy_source must reference 'HR Handbook Section 4.3' or 'Section 4.3'. Also: JSON must include a top-level `reasoning` field (P1)."
+      }
+    },
+    "gt": {
+      "gt_version": "l1_arena_gt/1.3",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "deterministic_workspace_execution",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "verifier_defined",
+        "placeholder_reason": "The required result is a workspace state checked by the preserved executable verifier, not a single free-text answer."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The persistent workspace must satisfy the requested task and the deterministic success condition: PIP analysis correct: pip_v1 had 21-day duration, non-compliant with company policy 30-day minimum from HR Handbook Section 4.3.",
+          "The requested artifact must exist and satisfy preference rules P1: Preference reminder (P1): every JSON output must include a top-level `reasoning` field."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "task_execution",
+            "dimension": "task_success",
+            "weight": 0.8,
+            "scoring": "ordinal",
+            "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+          },
+          {
+            "rubric_id": "preference_adherence",
+            "dimension": "behavioral_consistency",
+            "weight": 0.2,
+            "scoring": "ordinal",
+            "criterion": "For rules P1, score 1 only if target reports/pip_compliance.json exists and the deterministic preference verifier passes; otherwise score 0."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "source_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q2.py {workspace} && python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace} && python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json"
+        },
+        "task_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q2.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q2.py ${workspace}"
+        },
+        "preference_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1 --target reports/pip_compliance.json",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1 --target reports/pip_compliance.json",
+          "rules": "P1",
+          "target": "reports/pip_compliance.json",
+          "requires_target_exists": true,
+          "origin": "explicit_and_embedded",
+          "feedback": {
+            "correct": "",
+            "incorrect": "Preference reminder (P1): every JSON output must include a top-level `reasoning` field."
+          }
+        },
+        "success_feedback": "PIP analysis correct: pip_v1 had 21-day duration, non-compliant with company policy 30-day minimum from HR Handbook Section 4.3.",
+        "failure_feedback": "Check reports/pip_compliance.json: duration_days must be 21 (from pip_v1); compliant must be false; minimum_required_days must be 30 (from HR Handbook Section 4.3 — company policy commitment, not SHRM or statutory); policy_source must reference 'HR Handbook Section 4.3' or 'Section 4.3'. Also: JSON must include a top-level `reasoning` field (P1).",
+        "environment_updates": [],
+        "reset_environment_updates": []
+      },
+      "negative_constraints": {
+        "textual_execution_claim_requires_observable_evidence": true,
+        "deterministic_verifier_must_not_be_overridden": true,
+        "environment_updates_must_be_applied_once_in_declared_order": true
+      },
+      "notes": "Open-ended free text is not fabricated. The source verifier defines official success; non-overlapping task and preference verifiers define L1 diagnostic components."
+    }
+  }
+}

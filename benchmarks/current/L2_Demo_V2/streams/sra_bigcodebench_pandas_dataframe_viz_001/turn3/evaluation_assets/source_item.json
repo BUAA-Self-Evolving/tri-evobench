@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00919",
+  "dataset": "bigcodebench",
+  "question": "Draw and return a bar chart that shows the distribution of categories in a specific column of a dictionary.\nNote that: The categories are defined by the constant CATEGORIES, which is a list containing ['A', 'B', 'C', 'D', 'E']. If some categories are missing in the DataFrame, they will be included in the plot with a count of zero. The x label of the plot is set to 'Category', the y label is set to 'Count', and the title is set to 'Distribution of {column}'.\nThe function should output with:\n    matplotlib.axes._axes.Axes: The Axes object for the generated plot.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(data, column):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "    df = pd.DataFrame(data)\n    # Define the categories\n    CATEGORIES = ['A', 'B', 'C', 'D', 'E']\n    \n    # Count occurrences of each category\n    counts = df[column].value_counts()\n    missing_categories = list(set(CATEGORIES) - set(counts.index))\n    for category in missing_categories:\n        counts[category] = 0\n\n    counts = counts.reindex(CATEGORIES)\n    \n    # Plotting\n    ax = counts.plot(kind='bar')\n    ax.set_xlabel('Category')\n    ax.set_ylabel('Count')\n    ax.set_title(f'Distribution of {column}')\n    plt.show()\n    \n    return ax",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(data, column):\n",
+    "test": "import unittest\nimport pandas as pd\nfrom matplotlib import pyplot as plt\nclass TestCases(unittest.TestCase):\n    \n    def test_with_all_categories(self):\n        \"\"\"Test with all categories present.\"\"\"\n        data = {'Category': ['A', 'B', 'B', 'C', 'A', 'D', 'E', 'E', 'D']}\n        ax = task_func(data, 'Category')\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(ax.get_xlabel(), 'Category')\n        self.assertEqual(ax.get_ylabel(), 'Count')\n        self.assertEqual(ax.get_title(), 'Distribution of Category')\n        self.assertEqual(len(ax.get_xticks()), 5)  # Check the number of x-axis ticks instead\n    def test_with_missing_categories(self):\n        \"\"\"Test with some categories missing.\"\"\"\n        data = {'Category': ['A', 'A', 'B', 'C']}\n        ax = task_func(data, 'Category')\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(len(ax.get_xticks()), 5)  # Ensure all categories are accounted for, including missing ones\n    def test_with_unexpected_category(self):\n        \"\"\"Test with a category not in predefined list.\"\"\"\n        data = {'Category': ['F', 'A', 'B']}  # 'F' is not a predefined category\n        ax = task_func(data, 'Category')\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(len(ax.get_xticks()), 5)  # 'F' is ignored, only predefined categories are considered",
+    "entry_point": "task_func"
+  }
+}

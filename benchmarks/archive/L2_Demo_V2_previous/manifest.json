@@ -1,0 +1,63 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "benchmark": "L2-TaskStream-Contract-V1-Pilot",
+  "source_datasets": [
+    "AIRS-Bench / SICK",
+    "MLGym / Titanic",
+    "SkillLearnBench",
+    "SkillsBench",
+    "SRA-Bench / SR-Agents",
+    "tau2-bench Telecom"
+  ],
+  "stream_count": 6,
+  "total_turn_count": 134,
+  "aggregation_profile": "l2_evolution_aggregation/1.0",
+  "judge_prompt_versions": [
+    "l2_judge/1.0",
+    "l2_judge/2.0"
+  ],
+  "user_simulator_prompt_version": "l2_user_simulator/1.0",
+  "tools_version": "l2_tools/1.0",
+  "judge_output_version": "l2_judge_output/1.0",
+  "bounded_feedback_version": "l2_bounded_feedback/1.0",
+  "native_verifier_request_version": "l2_native_verifier_request/1.0",
+  "native_verifier_result_version": "l2_native_verifier_result/1.0",
+  "streams": [
+    {
+      "stream_id": "airs_sick_textual_entailment_accuracy_001",
+      "directory": "airs_sick_textual_entailment_accuracy_001",
+      "turn_count": 2,
+      "path": "streams/airs_sick_textual_entailment_accuracy_001/stream.json"
+    },
+    {
+      "stream_id": "mlgym_titanic_tabular_classification_001",
+      "directory": "mlgym_titanic_tabular_classification_001",
+      "turn_count": 2,
+      "path": "streams/mlgym_titanic_tabular_classification_001/stream.json"
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001",
+      "directory": "skilllearn_stock_data_visualization_001",
+      "turn_count": 10,
+      "path": "streams/skilllearn_stock_data_visualization_001/stream.json"
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001",
+      "directory": "skillsbench_data_to_d3_001",
+      "turn_count": 10,
+      "path": "streams/skillsbench_data_to_d3_001/stream.json"
+    },
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "directory": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "turn_count": 100,
+      "path": "streams/sra_bigcodebench_pandas_dataframe_viz_001/stream.json"
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "directory": "tau2_telecom_mobile_data_roaming_001",
+      "turn_count": 10,
+      "path": "streams/tau2_telecom_mobile_data_roaming_001/stream.json"
+    }
+  ]
+}

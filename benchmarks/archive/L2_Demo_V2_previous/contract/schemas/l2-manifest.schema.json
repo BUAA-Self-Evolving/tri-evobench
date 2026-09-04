@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-manifest.schema.json",
+  "title": "L2 TaskStream Manifest V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "benchmark",
+    "source_datasets",
+    "stream_count",
+    "total_turn_count",
+    "aggregation_profile",
+    "user_simulator_prompt_version",
+    "tools_version",
+    "judge_output_version",
+    "bounded_feedback_version",
+    "native_verifier_request_version",
+    "native_verifier_result_version",
+    "streams"
+  ],
+  "properties": {
+    "schema_version": {"const": "l2_taskstream/1.0"},
+    "benchmark": {"type": "string", "minLength": 1},
+    "source_datasets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "stream_count": {"type": "integer", "minimum": 1},
+    "total_turn_count": {"type": "integer", "minimum": 1},
+    "aggregation_profile": {"const": "l2_evolution_aggregation/1.0"},
+    "judge_prompt_version": {"enum": ["l2_judge/1.0", "l2_judge/2.0"]},
+    "judge_prompt_versions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["l2_judge/1.0", "l2_judge/2.0"]}
+    },
+    "user_simulator_prompt_version": {"const": "l2_user_simulator/1.0"},
+    "tools_version": {"const": "l2_tools/1.0"},
+    "judge_output_version": {"const": "l2_judge_output/1.0"},
+    "bounded_feedback_version": {"const": "l2_bounded_feedback/1.0"},
+    "native_verifier_request_version": {"const": "l2_native_verifier_request/1.0"},
+    "native_verifier_result_version": {"const": "l2_native_verifier_result/1.0"},
+    "streams": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stream_id", "directory", "turn_count", "path"],
+        "properties": {
+          "stream_id": {"$ref": "#/$defs/id"},
+          "directory": {"$ref": "#/$defs/id"},
+          "turn_count": {"type": "integer", "minimum": 1},
+          "path": {"type": "string", "pattern": "^streams/[A-Za-z0-9._-]+/stream\\.json$"}
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "required": ["judge_prompt_version"],
+      "not": {"required": ["judge_prompt_versions"]}
+    },
+    {
+      "required": ["judge_prompt_versions"],
+      "not": {"required": ["judge_prompt_version"]}
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"}
+  }
+}

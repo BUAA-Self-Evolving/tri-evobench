@@ -31,7 +31,9 @@ def now():
 
 
 def jobs(repo: Path, root: Path, packages: Path | None = None):
-    packages = packages or repo.parent / "new-packages-20260903"
+    if packages is None:
+        local_packages = repo.parent / "new-packages-20260903"
+        packages = local_packages if local_packages.is_dir() else repo / "benchmarks/current"
     rows = []
     for level, package in (("l2", packages / "L2_Demo_V2"), ("l1", packages / "l1_arena")):
         manifests = sorted((package / "streams").glob("*/stream.json")) if level == "l2" else sorted(package.glob("stream-*/stream.json"), key=lambda p: int(p.parent.name.split("-")[-1]))

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "l1-bounded-feedback.schema.json",
+  "title": "L1 Bounded Evaluation Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "failed_dimensions",
+    "observable_deficiency",
+    "public_result_category"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "l1_bounded_feedback/1.0"
+    },
+    "failed_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "observable_deficiency": {
+      "type": "string",
+      "minLength": 1
+    },
+    "public_result_category": {
+      "enum": [
+        "incomplete_task",
+        "incorrect_result",
+        "invalid_artifact",
+        "missing_evidence",
+        "execution_error",
+        "unanswered_requirement",
+        "stale_or_missing_context",
+        "unintended_persistence"
+      ]
+    }
+  }
+}

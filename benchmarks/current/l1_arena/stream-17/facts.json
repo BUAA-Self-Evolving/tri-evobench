@@ -1,0 +1,169 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_17",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sci5",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "Every JSON output must contain a top-level `\"reasoning\"` field explaining key judgments.",
+      "source": "standing_system_context",
+      "checker_criterion": "every JSON output must contain a top-level `reasoning` field."
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "formal legal documents must carry the fixed header block.",
+      "source": "preference_checker_contract"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "all WARN notice drafts must carry the standard footer.",
+      "source": "preference_checker_contract"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "When citing legal provisions, use full citation format (e.g., `29 U.S.C. § 2102`).",
+      "source": "standing_system_context",
+      "checker_criterion": "legal citations must use full citation format (e.g., 29 U.S.C. § 2102)."
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "CSV files must use UTF-8 with BOM encoding.",
+      "source": "preference_checker_contract"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 3,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "feishu_hr_team_8c62941f-420d-6483-d9fa-a5a06dbc1dbb.jsonl",
+          "size_bytes": 529,
+          "sha256": "5fa66a6a20e83b57abcb56fe9157b0a2f229d0f87e0679050bce444d4f866f7e"
+        },
+        {
+          "action": "append",
+          "target": "email_gc_hr_d31f6aeb-5a59-9b91-f8b6-3d7bfd758983.jsonl",
+          "size_bytes": 555,
+          "sha256": "0346cd0315055ad2aa37962d5c6c2a5fc1eb62043f534124b8b8d3e4e2ed3e30"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 3,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "pip_case/marcus_webb_pip_v2.md",
+          "size_bytes": 8546,
+          "sha256": "1788b9c5ef3972bd5fefc87fbe4b51e04b8e5eb043bd59920c507a1fbc46fe5d"
+        },
+        {
+          "action": "new",
+          "target": "legal/pip_compliance_review_2025.md",
+          "size_bytes": 106189,
+          "sha256": "073d807bd869062183671f32e4641bd8fc02d112b9669df7b15a3bb0e00aac56"
+        },
+        {
+          "action": "new",
+          "target": "legal/fmla_eligibility_review_webb.md",
+          "size_bytes": 32425,
+          "sha256": "85b5e47cb2712370f01c38af4d841c0a4a35f2fd3b89c9cecda67b2e7da6a8d6"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "email_gc_hr_d31f6aeb-5a59-9b91-f8b6-3d7bfd758983.jsonl",
+          "size_bytes": 1216,
+          "sha256": "cd56fe641d333b7f6debcdf220c70bd92c9cc52f79991c3c7779f63d46da6080"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "layoff/restructuring_plan_v2.md",
+          "size_bytes": 8331,
+          "sha256": "497c316667d464777e58b4216da8e02dbf67d2e6b1c3b07bea47b2225161df90"
+        },
+        {
+          "action": "new",
+          "target": "layoff/affected_employees_list_v2.csv",
+          "size_bytes": 2110,
+          "sha256": "6f131eb1dfd163a79e52a331b7853b2c5567b4690e623795c9bd5b4fd44e6363"
+        },
+        {
+          "action": "new",
+          "target": "legal/warn_compliance_analysis_v2.md",
+          "size_bytes": 97437,
+          "sha256": "ae66c80265dbdb9f09981a426df7a832e7308881798a1cdc6aaaf6ae97dfab66"
+        },
+        {
+          "action": "new",
+          "target": "legal/nys_warn_case_study.md",
+          "size_bytes": 51822,
+          "sha256": "fa205d7797c2e7973315e91805fe2078f34826f940a1828b35b266679977625e"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_sessions",
+      "type": "session",
+      "first_applied_turn": 16,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "discord_outside_counsel_272ecaa7-ccce-22ea-26ee-292978a11f14.jsonl",
+          "size_bytes": 1206,
+          "sha256": "46ea4ab4a5288a532cb64637e48b0e61b87ebc1b11ab3f7d5567d6af1381d6a3"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_workspace",
+      "type": "workspace",
+      "first_applied_turn": 16,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "legal/owbpa_waiver_template_v2.md",
+          "size_bytes": 10580,
+          "sha256": "19ed2d617f4c8891964baaeb1f7e64156d72aeb4e29b556c6177042a46c2c7c5"
+        },
+        {
+          "action": "new",
+          "target": "legal/owbpa_attorney_advice_memo.md",
+          "size_bytes": 7719,
+          "sha256": "c55ccfe9f3183b415e63b5c882271fa524cd64fe505b31446c03a13bc1fc1276"
+        },
+        {
+          "action": "new",
+          "target": "legal/owbpa_compliance_guide.md",
+          "size_bytes": 135701,
+          "sha256": "c66d82501a3377f940521357a08b37a5ce4e8468c4f9cc63aec23c418eb3782d"
+        }
+      ]
+    }
+  ]
+}

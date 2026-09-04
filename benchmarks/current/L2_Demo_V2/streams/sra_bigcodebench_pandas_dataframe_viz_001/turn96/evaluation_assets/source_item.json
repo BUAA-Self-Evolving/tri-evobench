@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00568",
+  "dataset": "bigcodebench",
+  "question": "Analyzes a list of functions and draws a bar chart showing the number of arguments for each function. The function names are listed along the x-axis, and the number of arguments are represented as bars. This method showcases the integration of function introspection, data frame creation, and data visualization.\nThe function should raise the exception for: ValueError: if the input contains lambda function\nThe function should output with:\n    pandas.DataFrame: Returns a DataFrame containing the function names and their respective number of arguments.\nYou should write self-contained code starting with:\n```\nimport inspect\nimport matplotlib.pyplot as plt\nimport pandas as pd\ndef task_func(f_list):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_051",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "    func_info = []\n    for f in f_list:\n        if f.__name__ == \"<lambda>\":\n            raise ValueError(\"The function should not be a lambda function.\")\n        spec = inspect.getfullargspec(f)\n        func_info.append([f.__name__, len(spec.args)])\n\n    df = pd.DataFrame(func_info, columns=['Function Name', 'Number of Arguments'])\n    df.set_index('Function Name', inplace=True)\n    df.plot(kind='bar')  # Uncomment to visualize the bar chart\n    plt.show()  # Uncomment to display the plot\n    return df",
+    "code_prompt": "import inspect\nimport matplotlib.pyplot as plt\nimport pandas as pd\ndef task_func(f_list):\n",
+    "test": "import unittest\nimport pandas as pd\nimport inspect\nfrom unittest.mock import patch\nclass TestCases(unittest.TestCase):\n    def test_single_function(self):\n        def sample_function(x): pass\n        df = task_func([sample_function])\n        self.assertEqual(df.loc['sample_function', 'Number of Arguments'], 1)\n    def test_multiple_functions(self):\n        def f(x): pass\n        def g(x, y): pass\n        df = task_func([f, g])\n        self.assertEqual(df.loc['f', 'Number of Arguments'], 1)\n        self.assertEqual(df.loc['g', 'Number of Arguments'], 2)\n    def test_no_arguments_function(self):\n        def no_arg_func(): pass\n        df = task_func([no_arg_func])\n        self.assertEqual(df.loc['no_arg_func', 'Number of Arguments'], 0)\n    def test_lambda_functions(self):\n        lambda_func = lambda x, y: x + y\n        with self.assertRaises(ValueError):\n            df = task_func([lambda_func])\n    \n    def test_function_with_defaults(self):\n        def func_with_defaults(x, y=2): pass\n        df = task_func([func_with_defaults])\n        self.assertEqual(df.loc['func_with_defaults', 'Number of Arguments'], 2)\n    @patch('matplotlib.pyplot.show')\n    def test_plot_called(self, mock_show):\n        def sample_function(x): pass\n        task_func([sample_function])\n        mock_show.assert_called_once()",
+    "entry_point": "task_func"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "source": {
+    "repository": "aiming-lab/ClawArena",
+    "commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "implementation": "ClawArena/src/clawarena/native/tools"
+  },
+  "tools": {
+    "Read": {
+      "description": "Read a file in the mounted workspace.",
+      "arguments": {
+        "file_path": "string",
+        "offset": "integer|null",
+        "limit": "integer|null"
+      },
+      "required": [
+        "file_path"
+      ]
+    },
+    "Write": {
+      "description": "Create or overwrite a file in the mounted workspace after the source read-before-write checks.",
+      "arguments": {
+        "file_path": "string",
+        "content": "string"
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    },
+    "Edit": {
+      "description": "Apply an exact localized replacement in a workspace file.",
+      "arguments": {
+        "file_path": "string",
+        "old_string": "string",
+        "new_string": "string",
+        "replace_all": "boolean"
+      },
+      "required": [
+        "file_path",
+        "old_string",
+        "new_string"
+      ]
+    },
+    "Bash": {
+      "description": "Run a path-confined shell command inside the mounted workspace.",
+      "arguments": {
+        "command": "string",
+        "description": "string",
+        "timeout": "number|null"
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    },
+    "Glob": {
+      "description": "Find mounted-workspace paths by glob pattern.",
+      "arguments": {
+        "pattern": "string",
+        "path": "string|null"
+      },
+      "required": [
+        "pattern"
+      ]
+    },
+    "Grep": {
+      "description": "Search mounted-workspace file contents using the pinned Native grep contract.",
+      "arguments": {
+        "pattern": "string",
+        "path": "string|null",
+        "glob": "string|null",
+        "type": "string|null",
+        "output_mode": "string|null",
+        "-i": "boolean|null",
+        "-n": "boolean|null",
+        "-A": "number|null",
+        "-B": "number|null",
+        "-C": "number|null",
+        "head_limit": "number|null",
+        "offset": "number|null",
+        "multiline": "boolean|null"
+      },
+      "required": [
+        "pattern"
+      ]
+    },
+    "LS": {
+      "description": "List mounted-workspace directory contents.",
+      "arguments": {
+        "path": "string|null",
+        "include_hidden": "boolean|null"
+      },
+      "required": []
+    },
+    "SessionHistory": {
+      "description": "List or read this stream's indexed multi-channel historical sessions.",
+      "arguments": {
+        "action": "list|read",
+        "session_id": "string|null"
+      },
+      "required": []
+    },
+    "Agent": {
+      "description": "Run a bounded Native subagent task in the same mounted workspace.",
+      "arguments": {
+        "subagent_type": "string",
+        "description": "string",
+        "prompt": "string"
+      },
+      "required": [
+        "subagent_type",
+        "description",
+        "prompt"
+      ]
+    },
+    "Workflow": {
+      "description": "Run a bounded Native asynchronous JavaScript workflow.",
+      "arguments": {
+        "script": "string|null",
+        "name": "string|null",
+        "args": "any|null",
+        "scriptPath": "string|null"
+      },
+      "required": []
+    }
+  }
+}

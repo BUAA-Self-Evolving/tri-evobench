@@ -1,0 +1,72 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "tau2_telecom_mobile_data_roaming_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "declared Agent assets",
+      "persistent workspace after declared patches"
+    ],
+    "note": "Do not mount evaluation.json or evaluation_assets into the Agent-visible Workspace."
+  },
+  "source": {
+    "benchmark": "tau2-bench Telecom",
+    "upstream_url": "https://github.com/sierra-research/tau2-bench.git",
+    "revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "dataset": "telecom/tasks_small.json",
+    "split": "small",
+    "license": "MIT",
+    "license_file": "SOURCE_LICENSE.txt"
+  },
+  "similarity_rule": {
+    "type": "same_domain_purpose_and_procedure",
+    "value": "telecom/mobile-data-slow-internet/roaming tasks_small.json /0,/1,/2",
+    "explanation": "Three pinned native Telecom mobile-data/roaming siblings share the same user, issue, reward basis, and roaming/data troubleshooting procedure while varying phone-side and carrier-side roaming state."
+  },
+  "adaptation_scope": {
+    "included": "The selected native initial state, relevant user-tool semantics, ENV_ASSERTION reward basis, and binary terminal score.",
+    "excluded": [
+      "the upstream live half-duplex orchestrator",
+      "an LLM user simulator",
+      "voice transport and unrelated Telecom tools"
+    ],
+    "reason": "The data demo serializes a completed relevant tool trajectory so any common TextModel can produce it and a package-local deterministic verifier can replay it."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace_then_apply_patch",
+    "user_simulator_scope": "episode",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "note": "Pinned tasks_small.json /0, /1, /2 in fixed order.",
+    "episode_order": [
+      "E001",
+      "E002",
+      "E003"
+    ]
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "runner": "l2_runtime.runner:StreamRunner",
+    "response_contract": "tau2-telecom-trajectory-0.1 JSON",
+    "verifier": "l2_runtime.tau2_telecom:Tau2TelecomVerifier",
+    "episode_result_policy": "latest_interaction",
+    "persistent_state_path": "workspace/.l2_state/",
+    "note": "The shared runner dispatches this package-local verifier from evaluation.json; no generated-code unsafe opt-in is required for this data-only replay adapter."
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json",
+    "episodes/E003/episode.json"
+  ]
+}

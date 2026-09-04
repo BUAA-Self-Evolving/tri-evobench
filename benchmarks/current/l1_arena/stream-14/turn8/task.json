@@ -1,0 +1,395 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_14",
+  "turn_id": "turn8",
+  "turn_index": 8,
+  "turn_type": "workspace_exec",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "tag": {
+    "taxonomy_version": "l1_arena_domain_tags/1.1",
+    "domain": "healthcare",
+    "domain_zh": "医疗",
+    "subtag": "medical_device_incident.data_quality_analysis",
+    "subtag_zh": "医疗器械事故·数据质量分析",
+    "is_noise": false
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "apply_environment_updates": "once_before_first_interaction",
+    "preserve_unrelated_files": true,
+    "state_hygiene_baseline": "turn_start",
+    "between_interactions": "carry_latest_workspace_session_and_public_transcript",
+    "terminal_workspace": "latest_valid_interaction",
+    "terminal_agent_failure": "commit_latest_interaction_to_stream",
+    "evaluator_error": "discard_turn_copy_and_record_null"
+  },
+  "source_basis": {
+    "source_dataset": "aiming-lab/ClawArena",
+    "source_variant": "clawarena-real",
+    "source_commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "source_scenario_id": "sci2",
+    "source_round_id": "q7",
+    "source_task_id": "sci2:q7",
+    "source_questions_sha256": "52aec47d7b920dc0430daad8c5dd5af43bea6753282100f6cc013eab226d0cf6",
+    "source_round_sha256": "e169f15ce0488e0ce56d40bf962c0b10f81c6c4efd716e68b02e5d556ae5d754",
+    "source_seed_messages_sha256": "93e9dccdabcd251d759cdb22173a795c1e3397de630a263199f61066d90e3449",
+    "source_description": "Medical device safety incident Root Cause Analysis (RCA) — 17 exec_check rounds, 2 updates (incl. Ivenix software-version supersede), 5 preference rules P1-P5, difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: InfuTronix Nimbus Class I recall (https://www.fda.gov/medical-devices/medical-device-recalls/infutronix-llc-recalls-nimbus-and-nimbus-ii-infusion-pump-systems-multiple-device-failures-may-cause); Fresenius Kabi Ivenix LVP recall Z-0885-2026 (https://www.softwarecpr.com/2025/12/fda-recall-software-anomalies-can-cause-serious-harm-or-death/); 21 CFR Part 803/806 regulatory requirements (https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-803).",
+    "mapping_rule": "One source ClawArena-real round maps to exactly one ordered L1-Arena source_task turn."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace/workspace",
+    "session_store": "agent_workspace/session_store",
+    "workspace_persistence": "Workspace, sessions, and conversation state persist across ordered turns within this stream and never cross stream boundaries.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Standing scenario instructions (apply throughout this stream):\n\nYou are MedSafe RCA AI, a senior quality engineering assistant for the MedSafe RCA Team. We are conducting Root Cause Analysis on three FDA recall events. Read SOUL.md and USER.md first, then inspect the workspace.\n\nTeam output preferences (apply throughout this engagement, even when not restated):\nP1: All 5-Why analyses must be presented as Markdown tables (not prose paragraphs).\nP2: Fishbone (Ishikawa) diagrams must use exactly the Six-M classification (Man/Machine/Material/Method/Environment/Measurement).\nP3: MDR-related documents must follow FDA MedWatch Form 3500A section structure (Sections A through G) — do not use custom section names.\nP4: Executive Summary documents must include a YAML frontmatter block with fields: date, author, recall_cases, classification.\nP5: Final report files must follow the naming convention: final_rca_report_YYYYMMDD.md (use the actual production date, not a placeholder).\n\nHistory sessions: Slack #safety-alerts, Feishu RCA WIP group, Email regulatory thread, Discord DM with Dr. Kevin Liu (lead engineer). Review them as needed.\n\nNote: The bot_summary_HONEYPOT.md file in sessions/ is NOT authoritative — always verify numbers against primary sources in cases/ and regulations/.\n\nBegin by running exec ls -R and await task instructions."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll start by calling SessionHistory(action='list') to enumerate available history sessions, then read the relevant ones — including the Slack #safety-alerts, Feishu RCA WIP group, email regulatory thread, and Discord DM with Dr. Kevin Liu — to gather background context before proceeding.\n\nConfirmed working framework:\n\n1. All numbers verified against primary sources (official recall notices, MAUDE data, 21 CFR regulations) — bot_summary_HONEYPOT.md is explicitly non-authoritative.\n2. Team preferences logged: P1 (5-Why as Markdown tables), P2 (Six-M fishbone), P3 (Form 3500A section structure), P4 (YAML frontmatter in Executive Summary), P5 (final_rca_report_YYYYMMDD.md naming).\n3. Legacy case_C SynchroMed II (2019) is archived reference only — NOT incorporated into current 2024/2025-2026 RCA analysis.\n4. Update awareness: when new Field Safety Notices or session updates arrive, they supersede earlier information.\n\nReady for the first task."
+      },
+      {
+        "role": "user",
+        "content": "Based on the current state of the workspace (before any update), write a technical summary for the Ivenix software recall at rca_outputs/ivenix_tech_summary_v1.md. Include the recall number and product code from the recall document. Record the affected software version as stated in the initial session correspondence. Also document the fixed LVP software version and the IMS fixed version, plus the battery health threshold percentage below which replacement is required — all are mentioned in the anomaly investigation document. This summary captures the pre-update state."
+      }
+    ],
+    "message_projection": {
+      "mode": "persistent_active_session",
+      "seed_message_count": 2,
+      "current_user_message_index": 2,
+      "runtime_rule": "Initialize the stream conversation from seed messages once. On later turns append only the terminal user message plus observed Agent/tool interaction; do not re-add seed messages."
+    },
+    "available_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash",
+      "Glob",
+      "Grep",
+      "LS",
+      "SessionHistory",
+      "Agent",
+      "Workflow"
+    ]
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "interaction_unsuccessful_and_budget_remaining",
+    "prompt_version": "l1_user_simulator/1.1",
+    "simulator_prompt": "You are the bounded post-failure User Simulator for an L1 persistent TaskStream. One complete Task-Agent Interaction has already been evaluated as unsuccessful, and the Runtime has confirmed that this Turn still has retry-message budget. Generate exactly one natural user message that becomes the next Interaction's input. Never emit more than one message per invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[BOUNDED FEEDBACK CONTRACT]\nThe feedback above must be a `l1_bounded_feedback/1.0` JSON object produced by the deterministic dimension-and-score-only projector. Treat only its `failed_dimensions`, frozen generic `observable_deficiency`, and `public_result_category` as available. If raw Judge reasoning, checker text, exact expected values, patches, or any undeclared fields appear instead, do not use them; return a concise request to retry from the original public task without repeating the leaked content.\n\n[ROLE]\n1. Speak only as the same user who wants the current Turn completed.\n2. React to the latest observable failure or incompleteness and request one more attempt.\n3. Preserve the current Turn's goal, constraints, workspace scope, and whether an instruction is one-turn-only or persistent.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already explicit in the original Agent-visible task, public transcript, or an authorized grounded clarification reply. Otherwise ask the Agent to proceed using the available public information.\n5. Keep the message concise and actionable. Do not become an evaluator, tutor, debugger, or solution author.\n6. For an unrelated distractor or one-turn override, keep it one-turn-only and do not convert it into a standing preference.\n\n[L1 STATE AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public interaction transcript, latest Agent response, authorized grounded clarification replies already present in that transcript, and bounded feedback supplied above.\n2. Never read, reveal, reconstruct, or infer `facts.json`, structured GT, source rubrics, check weights, expected state/tool/workspace values, hidden tests, checker code, private verifier diagnostics, future-Turn data, stale/corrected facts not publicly disclosed, or exact patches/solutions.\n3. Never quote an exact hidden answer or expected value from evaluation feedback. Translate feedback only into a high-level observable request such as finishing the artifact, checking an omitted requirement, correcting an invalid result, or verifying an operation.\n4. Never claim to have observed a private test, file, tool result, state diff, or environment condition absent from the supplied public inputs.\n5. Never add an unrelated requirement, relax an original requirement, change the requested side effects, or broaden the workspace/tool scope.\n6. Never score the Agent, mention benchmark internals, identify a rubric/checker, or expose Judge/verifier/simulator machinery.\n7. A simulator-generated retry message is public interaction text, not a durable user fact by itself. Do not ask the Agent to remember it unless the original public Turn explicitly requested persistence.\n8. Output no assistant text, analysis, Markdown fence, or alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l1_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement, stale_or_missing_context, unintended_persistence\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l1_user_simulator_output/1.0",
+    "max_generated_messages": 2,
+    "continuation_policy": {
+      "condition": "primary_source_verifier_fail_or_mandatory_check_fail_or_l1_turn_score_below_0.8",
+      "success_stops": true,
+      "evaluator_error": "do_not_invoke_and_record_null",
+      "interaction_selection": "latest_only",
+      "max_total_interactions": 3
+    },
+    "bounded_feedback_policy": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "clarification_policy": {
+      "enabled": false,
+      "trigger": "disabled",
+      "max_replies": 0,
+      "policy": null,
+      "scripted_reply": null,
+      "grounded_fact_id": null
+    },
+    "persistence_policy": {
+      "simulator_message_is_public_transcript": true,
+      "simulator_metadata_is_agent_visible": false,
+      "retry_message_is_durable_fact_by_default": false,
+      "one_turn_instruction_must_not_persist": true
+    }
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "primary_evaluation": {
+      "type": "deterministic_exec_check",
+      "protocol": "l1_arena_exec_check_v1",
+      "source_exec_check": {
+        "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+      }
+    },
+    "source_scoring": {
+      "metric": "binary_exec_check",
+      "task_success": "1 iff primary_evaluation.source_exec_check passes; otherwise 0",
+      "preference_check": "reported separately and included only in the L1 normalized component score"
+    },
+    "exec_check": {
+      "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+    },
+    "preference_check": null,
+    "environment_updates": [],
+    "visible_update_ids": [],
+    "reset_environment_updates": [],
+    "checks": [
+      {
+        "check_id": "task_execution",
+        "dimension": "task_success",
+        "weight": 1.0,
+        "scoring": "ordinal",
+        "instruction": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "source_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+      },
+      "task_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+      },
+      "preference_verifier": null,
+      "success_feedback": "Ivenix v1 summary present; contains Z-0885-2026, LVP-SW-0005, and the initial version reference.",
+      "failure_feedback": "Check rca_outputs/ivenix_tech_summary_v1.md: must contain Z-0885-2026 and LVP-SW-0005; must reference the affected version from the initial email session (5.10.0).",
+      "environment_updates": [],
+      "reset_environment_updates": []
+    },
+    "feedback_policy": "Return only failed dimension names and a short observable deficiency; never expose checker internals, exact hidden targets, GT, or future updates.",
+    "feedback_projection": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "success_policy": {
+      "primary_source_verifier_must_pass": true,
+      "mandatory_checks_must_pass": [
+        "task_execution"
+      ],
+      "turn_score_threshold": 0.8,
+      "judge_failure_blocks_success": true,
+      "interaction_continuation": "valid_agent_failure_and_budget_remaining",
+      "interaction_selection": "latest_only",
+      "evaluator_error_score": null
+    },
+    "rubrics": {
+      "source_rubrics": [
+        "The persistent workspace must satisfy the requested task and the deterministic success condition: Ivenix v1 summary present; contains Z-0885-2026, LVP-SW-0005, and the initial version reference."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "task_execution",
+          "dimension": "task_success",
+          "weight": 1.0,
+          "scoring": "ordinal",
+          "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+        }
+      ]
+    },
+    "judge_config": {
+      "role": "diagnostic_fallback_only",
+      "prompt_version": "l1_arena_judge_prompt/1.3",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 6000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the diagnostic evaluator for L1-Arena, a persistent-agent workspace benchmark. The official task-success signal is the deterministic verifier result; your job is to score the declared components from supplied execution evidence without overriding that result.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nDeterministic verifier results:\n{verifier_results}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nRubrics:\n{rubrics}\n\nChecks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention or claims in the final response.\n2. The official source score must equal the full source verifier result: pass=1 and fail=0. Do not soften or reinterpret it.\n3. The L1 task_execution component uses the task-only verifier. If a preference verifier exists, preference_adherence is 1 only when its declared target exists and the verifier passes; a missing target is 0 even if the source helper reports \"skip\".\n4. Workspace end state and verifier output outrank tool-call text, transcripts, and final-response claims.\n5. Missing execution evidence is failure, not logical inapplicability.\n6. Do not reveal expected values, checker implementation details, hidden update payloads, or a state patch.\n7. For a distractor turn, response_accuracy follows the declared exact response check and state_hygiene is 1 only when workspace, session, and persistent learner state have no unrelated mutation. The explicit one-turn instruction must not become a standing preference.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence and no surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"rationale\": \"brief diagnosis\"\n}\n\nUse only 1, 0.5, 0, or null for rubric scores. Check scores backed by binary deterministic verifiers must be exactly 1 or 0. Do not output an aggregate; the evaluator recomputes it.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "verifier_results",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "deterministic_verifier_precedence": true,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_source_score_on_judge_failure": "unchanged_deterministic_result",
+        "official_l1_score_after_second_failure": null,
+        "second_failure_classification": "evaluation_error",
+        "invoke_user_simulator_after_judge_failure": false
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages",
+      "source_description": "Medical device safety incident Root Cause Analysis (RCA) — 17 exec_check rounds, 2 updates (incl. Ivenix software-version supersede), 5 preference rules P1-P5, difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: InfuTronix Nimbus Class I recall (https://www.fda.gov/medical-devices/medical-device-recalls/infutronix-llc-recalls-nimbus-and-nimbus-ii-infusion-pump-systems-multiple-device-failures-may-cause); Fresenius Kabi Ivenix LVP recall Z-0885-2026 (https://www.softwarecpr.com/2025/12/fda-recall-software-anomalies-can-cause-serious-harm-or-death/); 21 CFR Part 803/806 regulatory requirements (https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-803).",
+      "deterministic_feedback": {
+        "correct": "Ivenix v1 summary present; contains Z-0885-2026, LVP-SW-0005, and the initial version reference.",
+        "incorrect": "Check rca_outputs/ivenix_tech_summary_v1.md: must contain Z-0885-2026 and LVP-SW-0005; must reference the affected version from the initial email session (5.10.0)."
+      }
+    },
+    "gt": {
+      "gt_version": "l1_arena_gt/1.3",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "deterministic_workspace_execution",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "verifier_defined",
+        "placeholder_reason": "The required result is a workspace state checked by the preserved executable verifier, not a single free-text answer."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The persistent workspace must satisfy the requested task and the deterministic success condition: Ivenix v1 summary present; contains Z-0885-2026, LVP-SW-0005, and the initial version reference."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "task_execution",
+            "dimension": "task_success",
+            "weight": 1.0,
+            "scoring": "ordinal",
+            "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "source_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+        },
+        "task_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q7.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q7.py ${workspace}"
+        },
+        "preference_verifier": null,
+        "success_feedback": "Ivenix v1 summary present; contains Z-0885-2026, LVP-SW-0005, and the initial version reference.",
+        "failure_feedback": "Check rca_outputs/ivenix_tech_summary_v1.md: must contain Z-0885-2026 and LVP-SW-0005; must reference the affected version from the initial email session (5.10.0).",
+        "environment_updates": [],
+        "reset_environment_updates": []
+      },
+      "negative_constraints": {
+        "textual_execution_claim_requires_observable_evidence": true,
+        "deterministic_verifier_must_not_be_overridden": true,
+        "environment_updates_must_be_applied_once_in_declared_order": true
+      },
+      "notes": "Open-ended free text is not fabricated. The source verifier defines official success; non-overlapping task and preference verifiers define L1 diagnostic components."
+    }
+  }
+}

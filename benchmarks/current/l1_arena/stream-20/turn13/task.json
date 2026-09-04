@@ -1,0 +1,659 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_20",
+  "turn_id": "turn13",
+  "turn_index": 13,
+  "turn_type": "dynamic_update_exec",
+  "turn_origin": "source_task",
+  "sequence_role": "update_application",
+  "interaction_arm": "dynamic_update",
+  "tag": {
+    "taxonomy_version": "l1_arena_domain_tags/1.1",
+    "domain": "financial_risk",
+    "domain_zh": "金融风控",
+    "subtag": "trading_deployment_compliance.report_generation",
+    "subtag_zh": "交易部署合规·报告与文档生成",
+    "is_noise": false
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "apply_environment_updates": "once_before_first_interaction",
+    "preserve_unrelated_files": true,
+    "state_hygiene_baseline": "turn_start",
+    "between_interactions": "carry_latest_workspace_session_and_public_transcript",
+    "terminal_workspace": "latest_valid_interaction",
+    "terminal_agent_failure": "commit_latest_interaction_to_stream",
+    "evaluator_error": "discard_turn_copy_and_record_null"
+  },
+  "source_basis": {
+    "source_dataset": "aiming-lab/ClawArena",
+    "source_variant": "clawarena-real",
+    "source_commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "source_scenario_id": "sec3a",
+    "source_round_id": "q11",
+    "source_task_id": "sec3a:q11",
+    "source_questions_sha256": "0cb28778c28aeae5c73cedf229bbf7a4411d72476005aeb477121aec02c1829b",
+    "source_round_sha256": "53bfa884cfd4178d6e5957e458325d225221b21d66dce3c33bb0408352de55af",
+    "source_seed_messages_sha256": "a5e2dd623c34bef427f76d2740afb8b8b96702111782cdf507dec929101a1d92",
+    "source_description": "Knight Capital (2012) deployment incident & SEC Rule 15c3-5 compliance — 16 exec_check rounds, 3 updates (incl. 1 supersede: price_diff_usd→price_diff_vwap_usd), 5 preference rules P1-P5, difficulty vectors V1/V2/V4/V5/V6/V7/V8/V9/V10. Real sources: SEC Release No. 34-70694 (https://www.sec.gov/files/litigation/admin/2013/34-70694.pdf); SEC press release 2013-222 (https://www.sec.gov/newsroom/press-releases/2013-222); Doug Seven DevOps analysis (https://dougseven.com/2014/04/17/knightmare-a-devops-cautionary-tale/); FCA Market Watch 59 (https://www.fca.org.uk/publication/newsletters/market-watch-59.pdf); SEC Rule 15c6-1 T+1 FAQ (https://www.sec.gov/exams/educationhelpguidesfaqs/t1-faq).",
+    "mapping_rule": "One source ClawArena-real round maps to exactly one ordered L1-Arena source_task turn."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace/workspace",
+    "session_store": "agent_workspace/session_store",
+    "workspace_persistence": "Workspace, sessions, and conversation state persist across ordered turns within this stream and never cross stream boundaries.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Standing scenario instructions (apply throughout this stream):\n\nYou are ComplianceOps AI, the quantitative compliance engineering assistant for Dr. Elena Vasquez (Chief Compliance Officer) at ArtemisQ Capital.\n\nWe are conducting the post-incident regulatory response for the 2024-11-03 AROS v4.2 timezone misconfiguration incident. The workspace contains incident logs, source code, regulatory documents, and reference materials.\n\nAUTHORITATIVE SOURCES: regulatory/ and reference/ directories. reports/bot_summary_incident_20241103.md is NON-AUTHORITATIVE (machine-generated, known inaccuracies).\n\nHouse Preferences (apply throughout, even when not restated):\n- P1: all JSON output must use snake_case field names exclusively (no camelCase/PascalCase).\n- P2: all JSON deliverables must carry a top-level 'schema_version' field set to \"1.0\".\n- P3: all regulatory citations must include the specific sub-paragraph (e.g., 'Rule 15c3-5(b)', not 'Rule 15c3-5'). Partial citations are non-compliant.\n- P4: corrective action plan (CAP) items must each include an 'owner' field identifying the responsible party.\n- P5: regulatory submission JSON top-level field order must be: incident_date, rule_violated, financial_impact, remediation_count, submission_date.\n\nHistory sessions: Slack #incident-20241103, Email (SEC correspondence), Feishu #quant-team, Discord #devops-alerts. Start by running exec ls -R and reading SOUL.md, then await each task."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll start by using SessionHistory(action='list') to list available history sessions across channels such as Slack #incident-20241103, Email (SEC correspondence), Feishu #quant-team, and Discord #devops-alerts, then read the relevant sessions to understand the incident background. Working framework:\n1. Authoritative sources: regulatory/ and reference/ directories only. Bot summary (reports/bot_summary_incident_20241103.md) is non-authoritative — always verify figures against primary documents.\n2. Verbatim citations: every SEC rule reference includes sub-paragraph (e.g., Rule 15c3-5(b)). Every MiFIR field reference uses exact name (Field 28).\n3. JSON deliverables: snake_case fields, schema_version '1.0', sub-paragraph citations.\n4. CAP items: each includes owner field.\n5. Submission JSON: fixed field order (incident_date → rule_violated → financial_impact → remediation_count → submission_date).\nReady for the first task."
+      },
+      {
+        "role": "user",
+        "content": "Legal counsel has issued a memo (now in `regulatory/legal_counsel_memo_20241106.md`) that SUPERSEDES part of the SEC letter requirements. Generate the order-level difference report as `output/order_level_diff_report.csv`. Apply the CURRENT authoritative field specification (from `regulatory/revised_field_spec_v2.md`) — note that a field name has changed per the supersede notice. The CSV must have a header row followed by exactly 87 data rows matching the affected orders from `incident/affected_orders_detail.csv`. Use ISO 8601 UTC timestamps in all datetime columns."
+      }
+    ],
+    "message_projection": {
+      "mode": "persistent_active_session",
+      "seed_message_count": 2,
+      "current_user_message_index": 2,
+      "runtime_rule": "Initialize the stream conversation from seed messages once. On later turns append only the terminal user message plus observed Agent/tool interaction; do not re-add seed messages."
+    },
+    "available_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash",
+      "Glob",
+      "Grep",
+      "LS",
+      "SessionHistory",
+      "Agent",
+      "Workflow"
+    ]
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "interaction_unsuccessful_and_budget_remaining",
+    "prompt_version": "l1_user_simulator/1.1",
+    "simulator_prompt": "You are the bounded post-failure User Simulator for an L1 persistent TaskStream. One complete Task-Agent Interaction has already been evaluated as unsuccessful, and the Runtime has confirmed that this Turn still has retry-message budget. Generate exactly one natural user message that becomes the next Interaction's input. Never emit more than one message per invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[BOUNDED FEEDBACK CONTRACT]\nThe feedback above must be a `l1_bounded_feedback/1.0` JSON object produced by the deterministic dimension-and-score-only projector. Treat only its `failed_dimensions`, frozen generic `observable_deficiency`, and `public_result_category` as available. If raw Judge reasoning, checker text, exact expected values, patches, or any undeclared fields appear instead, do not use them; return a concise request to retry from the original public task without repeating the leaked content.\n\n[ROLE]\n1. Speak only as the same user who wants the current Turn completed.\n2. React to the latest observable failure or incompleteness and request one more attempt.\n3. Preserve the current Turn's goal, constraints, workspace scope, and whether an instruction is one-turn-only or persistent.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already explicit in the original Agent-visible task, public transcript, or an authorized grounded clarification reply. Otherwise ask the Agent to proceed using the available public information.\n5. Keep the message concise and actionable. Do not become an evaluator, tutor, debugger, or solution author.\n6. For an unrelated distractor or one-turn override, keep it one-turn-only and do not convert it into a standing preference.\n\n[L1 STATE AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public interaction transcript, latest Agent response, authorized grounded clarification replies already present in that transcript, and bounded feedback supplied above.\n2. Never read, reveal, reconstruct, or infer `facts.json`, structured GT, source rubrics, check weights, expected state/tool/workspace values, hidden tests, checker code, private verifier diagnostics, future-Turn data, stale/corrected facts not publicly disclosed, or exact patches/solutions.\n3. Never quote an exact hidden answer or expected value from evaluation feedback. Translate feedback only into a high-level observable request such as finishing the artifact, checking an omitted requirement, correcting an invalid result, or verifying an operation.\n4. Never claim to have observed a private test, file, tool result, state diff, or environment condition absent from the supplied public inputs.\n5. Never add an unrelated requirement, relax an original requirement, change the requested side effects, or broaden the workspace/tool scope.\n6. Never score the Agent, mention benchmark internals, identify a rubric/checker, or expose Judge/verifier/simulator machinery.\n7. A simulator-generated retry message is public interaction text, not a durable user fact by itself. Do not ask the Agent to remember it unless the original public Turn explicitly requested persistence.\n8. Output no assistant text, analysis, Markdown fence, or alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l1_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement, stale_or_missing_context, unintended_persistence\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l1_user_simulator_output/1.0",
+    "max_generated_messages": 2,
+    "continuation_policy": {
+      "condition": "primary_source_verifier_fail_or_mandatory_check_fail_or_l1_turn_score_below_0.8",
+      "success_stops": true,
+      "evaluator_error": "do_not_invoke_and_record_null",
+      "interaction_selection": "latest_only",
+      "max_total_interactions": 3
+    },
+    "bounded_feedback_policy": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "clarification_policy": {
+      "enabled": false,
+      "trigger": "disabled",
+      "max_replies": 0,
+      "policy": null,
+      "scripted_reply": null,
+      "grounded_fact_id": null
+    },
+    "persistence_policy": {
+      "simulator_message_is_public_transcript": true,
+      "simulator_metadata_is_agent_visible": false,
+      "retry_message_is_durable_fact_by_default": false,
+      "one_turn_instruction_must_not_persist": true
+    }
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "primary_evaluation": {
+      "type": "deterministic_exec_check",
+      "protocol": "l1_arena_exec_check_v1",
+      "source_exec_check": {
+        "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 60,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+      }
+    },
+    "source_scoring": {
+      "metric": "binary_exec_check",
+      "task_success": "1 iff primary_evaluation.source_exec_check passes; otherwise 0",
+      "preference_check": "reported separately and included only in the L1 normalized component score"
+    },
+    "exec_check": {
+      "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+      "expect_exit": 0,
+      "timeout": 60,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+    },
+    "preference_check": null,
+    "environment_updates": [
+      {
+        "update_id": "upd2_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "legal_counsel_memo_20241106.md",
+            "action": "new",
+            "target": "regulatory/legal_counsel_memo_20241106.md",
+            "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+            "size_bytes": 4642,
+            "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+          },
+          {
+            "name": "revised_field_spec_v2.md",
+            "action": "new",
+            "target": "regulatory/revised_field_spec_v2.md",
+            "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+            "size_bytes": 2942,
+            "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+          },
+          {
+            "name": "vwap_reference_20241103.csv",
+            "action": "new",
+            "target": "incident/vwap_reference_20241103.csv",
+            "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+            "size_bytes": 201407,
+            "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+          }
+        ]
+      }
+    ],
+    "visible_update_ids": [
+      "upd1_workspace",
+      "upd2_workspace"
+    ],
+    "reset_environment_updates": [
+      {
+        "update_id": "upd1_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "sec_inquiry_letter_20241105.md",
+            "action": "new",
+            "target": "regulatory/sec_inquiry_letter_20241105.md",
+            "payload": "evaluation/updates/upd1_workspace/sec_inquiry_letter_20241105.md",
+            "size_bytes": 3937,
+            "sha256": "7eea7894d5a900634e3048a1fb80a49efea964bde04a5c109be085a088678cf2"
+          },
+          {
+            "name": "affected_orders_detail.csv",
+            "action": "new",
+            "target": "incident/affected_orders_detail.csv",
+            "payload": "evaluation/updates/upd1_workspace/affected_orders_detail.csv",
+            "size_bytes": 433996,
+            "sha256": "7e808779f40ef84a1ffebce7b0964b3b81e70d9bced509041da1c3ff8ed25af1"
+          }
+        ]
+      },
+      {
+        "update_id": "upd2_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "legal_counsel_memo_20241106.md",
+            "action": "new",
+            "target": "regulatory/legal_counsel_memo_20241106.md",
+            "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+            "size_bytes": 4642,
+            "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+          },
+          {
+            "name": "revised_field_spec_v2.md",
+            "action": "new",
+            "target": "regulatory/revised_field_spec_v2.md",
+            "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+            "size_bytes": 2942,
+            "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+          },
+          {
+            "name": "vwap_reference_20241103.csv",
+            "action": "new",
+            "target": "incident/vwap_reference_20241103.csv",
+            "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+            "size_bytes": 201407,
+            "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "task_execution",
+        "dimension": "task_success",
+        "weight": 1.0,
+        "scoring": "ordinal",
+        "instruction": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "source_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 60,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+      },
+      "task_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 60,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+      },
+      "preference_verifier": null,
+      "success_feedback": "Order-level diff report: uses price_diff_vwap_usd (not old price_diff_usd); 87 rows; ISO 8601 UTC timestamps.",
+      "failure_feedback": "Check output/order_level_diff_report.csv: column headers must include 'price_diff_vwap_usd' (NOT 'price_diff_usd' — superseded per legal memo); must have exactly 87 data rows; datetime columns must be ISO 8601 UTC (Z suffix or +00:00).",
+      "environment_updates": [
+        {
+          "update_id": "upd2_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "legal_counsel_memo_20241106.md",
+              "action": "new",
+              "target": "regulatory/legal_counsel_memo_20241106.md",
+              "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+              "size_bytes": 4642,
+              "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+            },
+            {
+              "name": "revised_field_spec_v2.md",
+              "action": "new",
+              "target": "regulatory/revised_field_spec_v2.md",
+              "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+              "size_bytes": 2942,
+              "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+            },
+            {
+              "name": "vwap_reference_20241103.csv",
+              "action": "new",
+              "target": "incident/vwap_reference_20241103.csv",
+              "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+              "size_bytes": 201407,
+              "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+            }
+          ]
+        }
+      ],
+      "reset_environment_updates": [
+        {
+          "update_id": "upd1_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "sec_inquiry_letter_20241105.md",
+              "action": "new",
+              "target": "regulatory/sec_inquiry_letter_20241105.md",
+              "payload": "evaluation/updates/upd1_workspace/sec_inquiry_letter_20241105.md",
+              "size_bytes": 3937,
+              "sha256": "7eea7894d5a900634e3048a1fb80a49efea964bde04a5c109be085a088678cf2"
+            },
+            {
+              "name": "affected_orders_detail.csv",
+              "action": "new",
+              "target": "incident/affected_orders_detail.csv",
+              "payload": "evaluation/updates/upd1_workspace/affected_orders_detail.csv",
+              "size_bytes": 433996,
+              "sha256": "7e808779f40ef84a1ffebce7b0964b3b81e70d9bced509041da1c3ff8ed25af1"
+            }
+          ]
+        },
+        {
+          "update_id": "upd2_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "legal_counsel_memo_20241106.md",
+              "action": "new",
+              "target": "regulatory/legal_counsel_memo_20241106.md",
+              "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+              "size_bytes": 4642,
+              "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+            },
+            {
+              "name": "revised_field_spec_v2.md",
+              "action": "new",
+              "target": "regulatory/revised_field_spec_v2.md",
+              "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+              "size_bytes": 2942,
+              "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+            },
+            {
+              "name": "vwap_reference_20241103.csv",
+              "action": "new",
+              "target": "incident/vwap_reference_20241103.csv",
+              "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+              "size_bytes": 201407,
+              "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+            }
+          ]
+        }
+      ]
+    },
+    "feedback_policy": "Return only failed dimension names and a short observable deficiency; never expose checker internals, exact hidden targets, GT, or future updates.",
+    "feedback_projection": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "success_policy": {
+      "primary_source_verifier_must_pass": true,
+      "mandatory_checks_must_pass": [
+        "task_execution"
+      ],
+      "turn_score_threshold": 0.8,
+      "judge_failure_blocks_success": true,
+      "interaction_continuation": "valid_agent_failure_and_budget_remaining",
+      "interaction_selection": "latest_only",
+      "evaluator_error_score": null
+    },
+    "rubrics": {
+      "source_rubrics": [
+        "The persistent workspace must satisfy the requested task and the deterministic success condition: Order-level diff report: uses price_diff_vwap_usd (not old price_diff_usd); 87 rows; ISO 8601 UTC timestamps."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "task_execution",
+          "dimension": "task_success",
+          "weight": 1.0,
+          "scoring": "ordinal",
+          "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+        }
+      ]
+    },
+    "judge_config": {
+      "role": "diagnostic_fallback_only",
+      "prompt_version": "l1_arena_judge_prompt/1.3",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 6000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the diagnostic evaluator for L1-Arena, a persistent-agent workspace benchmark. The official task-success signal is the deterministic verifier result; your job is to score the declared components from supplied execution evidence without overriding that result.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nDeterministic verifier results:\n{verifier_results}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nRubrics:\n{rubrics}\n\nChecks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention or claims in the final response.\n2. The official source score must equal the full source verifier result: pass=1 and fail=0. Do not soften or reinterpret it.\n3. The L1 task_execution component uses the task-only verifier. If a preference verifier exists, preference_adherence is 1 only when its declared target exists and the verifier passes; a missing target is 0 even if the source helper reports \"skip\".\n4. Workspace end state and verifier output outrank tool-call text, transcripts, and final-response claims.\n5. Missing execution evidence is failure, not logical inapplicability.\n6. Do not reveal expected values, checker implementation details, hidden update payloads, or a state patch.\n7. For a distractor turn, response_accuracy follows the declared exact response check and state_hygiene is 1 only when workspace, session, and persistent learner state have no unrelated mutation. The explicit one-turn instruction must not become a standing preference.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence and no surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"rationale\": \"brief diagnosis\"\n}\n\nUse only 1, 0.5, 0, or null for rubric scores. Check scores backed by binary deterministic verifiers must be exactly 1 or 0. Do not output an aggregate; the evaluator recomputes it.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "verifier_results",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "deterministic_verifier_precedence": true,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_source_score_on_judge_failure": "unchanged_deterministic_result",
+        "official_l1_score_after_second_failure": null,
+        "second_failure_classification": "evaluation_error",
+        "invoke_user_simulator_after_judge_failure": false
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages",
+      "source_description": "Knight Capital (2012) deployment incident & SEC Rule 15c3-5 compliance — 16 exec_check rounds, 3 updates (incl. 1 supersede: price_diff_usd→price_diff_vwap_usd), 5 preference rules P1-P5, difficulty vectors V1/V2/V4/V5/V6/V7/V8/V9/V10. Real sources: SEC Release No. 34-70694 (https://www.sec.gov/files/litigation/admin/2013/34-70694.pdf); SEC press release 2013-222 (https://www.sec.gov/newsroom/press-releases/2013-222); Doug Seven DevOps analysis (https://dougseven.com/2014/04/17/knightmare-a-devops-cautionary-tale/); FCA Market Watch 59 (https://www.fca.org.uk/publication/newsletters/market-watch-59.pdf); SEC Rule 15c6-1 T+1 FAQ (https://www.sec.gov/exams/educationhelpguidesfaqs/t1-faq).",
+      "deterministic_feedback": {
+        "correct": "Order-level diff report: uses price_diff_vwap_usd (not old price_diff_usd); 87 rows; ISO 8601 UTC timestamps.",
+        "incorrect": "Check output/order_level_diff_report.csv: column headers must include 'price_diff_vwap_usd' (NOT 'price_diff_usd' — superseded per legal memo); must have exactly 87 data rows; datetime columns must be ISO 8601 UTC (Z suffix or +00:00)."
+      }
+    },
+    "gt": {
+      "gt_version": "l1_arena_gt/1.3",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "deterministic_workspace_execution",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "verifier_defined",
+        "placeholder_reason": "The required result is a workspace state checked by the preserved executable verifier, not a single free-text answer."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The persistent workspace must satisfy the requested task and the deterministic success condition: Order-level diff report: uses price_diff_vwap_usd (not old price_diff_usd); 87 rows; ISO 8601 UTC timestamps."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "task_execution",
+            "dimension": "task_success",
+            "weight": 1.0,
+            "scoring": "ordinal",
+            "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "source_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 60,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+        },
+        "task_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q11.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 60,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q11.py ${workspace}"
+        },
+        "preference_verifier": null,
+        "success_feedback": "Order-level diff report: uses price_diff_vwap_usd (not old price_diff_usd); 87 rows; ISO 8601 UTC timestamps.",
+        "failure_feedback": "Check output/order_level_diff_report.csv: column headers must include 'price_diff_vwap_usd' (NOT 'price_diff_usd' — superseded per legal memo); must have exactly 87 data rows; datetime columns must be ISO 8601 UTC (Z suffix or +00:00).",
+        "environment_updates": [
+          {
+            "update_id": "upd2_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "legal_counsel_memo_20241106.md",
+                "action": "new",
+                "target": "regulatory/legal_counsel_memo_20241106.md",
+                "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+                "size_bytes": 4642,
+                "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+              },
+              {
+                "name": "revised_field_spec_v2.md",
+                "action": "new",
+                "target": "regulatory/revised_field_spec_v2.md",
+                "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+                "size_bytes": 2942,
+                "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+              },
+              {
+                "name": "vwap_reference_20241103.csv",
+                "action": "new",
+                "target": "incident/vwap_reference_20241103.csv",
+                "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+                "size_bytes": 201407,
+                "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+              }
+            ]
+          }
+        ],
+        "reset_environment_updates": [
+          {
+            "update_id": "upd1_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "sec_inquiry_letter_20241105.md",
+                "action": "new",
+                "target": "regulatory/sec_inquiry_letter_20241105.md",
+                "payload": "evaluation/updates/upd1_workspace/sec_inquiry_letter_20241105.md",
+                "size_bytes": 3937,
+                "sha256": "7eea7894d5a900634e3048a1fb80a49efea964bde04a5c109be085a088678cf2"
+              },
+              {
+                "name": "affected_orders_detail.csv",
+                "action": "new",
+                "target": "incident/affected_orders_detail.csv",
+                "payload": "evaluation/updates/upd1_workspace/affected_orders_detail.csv",
+                "size_bytes": 433996,
+                "sha256": "7e808779f40ef84a1ffebce7b0964b3b81e70d9bced509041da1c3ff8ed25af1"
+              }
+            ]
+          },
+          {
+            "update_id": "upd2_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "legal_counsel_memo_20241106.md",
+                "action": "new",
+                "target": "regulatory/legal_counsel_memo_20241106.md",
+                "payload": "evaluation/updates/upd2_workspace/legal_counsel_memo_20241106.md",
+                "size_bytes": 4642,
+                "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+              },
+              {
+                "name": "revised_field_spec_v2.md",
+                "action": "new",
+                "target": "regulatory/revised_field_spec_v2.md",
+                "payload": "evaluation/updates/upd2_workspace/revised_field_spec_v2.md",
+                "size_bytes": 2942,
+                "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+              },
+              {
+                "name": "vwap_reference_20241103.csv",
+                "action": "new",
+                "target": "incident/vwap_reference_20241103.csv",
+                "payload": "evaluation/updates/upd2_workspace/vwap_reference_20241103.csv",
+                "size_bytes": 201407,
+                "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+              }
+            ]
+          }
+        ]
+      },
+      "negative_constraints": {
+        "textual_execution_claim_requires_observable_evidence": true,
+        "deterministic_verifier_must_not_be_overridden": true,
+        "environment_updates_must_be_applied_once_in_declared_order": true
+      },
+      "notes": "Open-ended free text is not fabricated. The source verifier defines official success; non-overlapping task and preference verifiers define L1 diagnostic components."
+    }
+  }
+}

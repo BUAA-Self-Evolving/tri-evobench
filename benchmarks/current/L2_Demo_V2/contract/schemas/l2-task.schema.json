@@ -1,0 +1,554 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-task.schema.json",
+  "title": "L2 TaskStream Task V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "stream_id", "turn_id", "turn_index", "turn_type",
+    "turn_origin", "sequence_role", "interaction_arm", "source_basis",
+    "capability_relation", "agent_input", "workspace_transition",
+    "user_simulator", "evaluation"
+  ],
+  "properties": {
+    "schema_version": {"const": "l2_taskstream/1.0"},
+    "stream_id": {"$ref": "#/$defs/id"},
+    "turn_id": {"type": "string", "pattern": "^turn[1-9][0-9]*$"},
+    "turn_index": {"type": "integer", "minimum": 1},
+    "turn_type": {"type": "string", "minLength": 1},
+    "turn_origin": {"enum": ["source_task", "derived_evolution_turn"]},
+    "sequence_role": {"$ref": "#/$defs/sequenceRole"},
+    "interaction_arm": {"type": "string", "minLength": 1},
+    "source_basis": {"$ref": "#/$defs/sourceBasis"},
+    "capability_relation": {"$ref": "#/$defs/capabilityRelation"},
+    "agent_input": {"$ref": "#/$defs/agentInput"},
+    "workspace_transition": {"$ref": "#/$defs/workspaceTransition"},
+    "user_simulator": {"$ref": "#/$defs/userSimulator"},
+    "evaluation": {"$ref": "#/$defs/evaluation"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"turn_origin": {"const": "source_task"}}},
+      "then": {"properties": {"source_basis": {"properties": {"source_task_id": {"type": "string", "minLength": 1}}}}}
+    },
+    {
+      "if": {"properties": {"turn_origin": {"const": "derived_evolution_turn"}}},
+      "then": {
+        "properties": {
+          "source_basis": {
+            "properties": {
+              "source_task_id": {"type": "null"},
+              "parent_source_task_ids": {"minItems": 1}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {"evaluation_profile": {"const": "auto_research"}},
+            "required": ["evaluation_profile"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "user_simulator": {
+            "properties": {
+              "trigger": {"const": "submission_invalid_or_unverifiable_and_budget_remaining"}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "relativePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"},
+    "sequenceRole": {
+      "enum": ["learning", "application", "probe", "replay", "noise"],
+      "description": "Role used for Stream-level learning-curve/evolution-gain aggregation. Current L2 Demo V2 uses learning/application/probe; replay/noise are reserved for future explicitly designed measurements."
+    },
+    "promptPath": {"type": "string", "pattern": "^prompts/rubrics/(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+\\.md$"},
+    "workspacePath": {"type": "string", "pattern": "^agent_workspace/(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"},
+    "assetSourcePath": {"type": "string", "pattern": "^assets/(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"},
+    "evaluationPath": {"type": "string", "pattern": "^evaluation_assets/(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"},
+    "sourceBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_dataset", "source_task_id", "parent_source_task_ids", "mapping_rule", "source_revision", "source_path", "source_selector", "source_metadata"],
+      "properties": {
+        "source_dataset": {"type": "string", "minLength": 1},
+        "source_task_id": {"type": ["string", "null"]},
+        "parent_source_task_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "mapping_rule": {"type": "string", "minLength": 1},
+        "source_revision": {"type": "string", "minLength": 1},
+        "source_path": {"type": "string", "minLength": 1},
+        "source_selector": {"type": "object"},
+        "source_metadata": {"type": "object"}
+      }
+    },
+    "capabilityRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "relation_type", "parent_turn_ids", "expected_transfer"],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/id"},
+        "relation_type": {"type": "string", "minLength": 1},
+        "parent_turn_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^turn[1-9][0-9]*$"}},
+        "expected_transfer": {"type": "string", "minLength": 1}
+      }
+    },
+    "agentInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_workspace", "workspace_persistence", "messages", "available_tools", "assets"],
+      "properties": {
+        "agent_workspace": {"const": "agent_workspace"},
+        "workspace_persistence": {"const": "stream"},
+        "messages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "content"],
+            "properties": {
+              "role": {"enum": ["user", "assistant"]},
+              "content": {"type": "string", "minLength": 1}
+            }
+          },
+          "contains": {"properties": {"role": {"const": "user"}}, "required": ["role"]}
+        },
+        "available_tools": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "kind", "mime_type", "sha256", "description"],
+            "properties": {
+              "path": {"$ref": "#/$defs/workspacePath"},
+              "kind": {"enum": ["file", "directory"]},
+              "mime_type": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "description": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "transitionOperation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "source", "target"],
+          "properties": {"op": {"const": "copy"}, "source": {"$ref": "#/$defs/assetSourcePath"}, "target": {"$ref": "#/$defs/workspacePath"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "target", "content"],
+          "properties": {"op": {"const": "create"}, "target": {"$ref": "#/$defs/workspacePath"}, "content": {"type": "string"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "target", "patch"],
+          "properties": {"op": {"const": "apply_patch"}, "target": {"$ref": "#/$defs/workspacePath"}, "patch": {"type": "string", "minLength": 1}}
+        }
+      ]
+    },
+    "workspaceTransition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "operations", "preserve_unrelated_files"],
+          "properties": {"mode": {"const": "continue"}, "operations": {"type": "array", "maxItems": 0}, "preserve_unrelated_files": {"const": true}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "operations", "preserve_unrelated_files"],
+          "properties": {"mode": {"const": "continue_with_patch"}, "operations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/transitionOperation"}}, "preserve_unrelated_files": {"const": true}}
+        }
+      ]
+    },
+    "userSimulator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "trigger", "prompt_version", "simulator_prompt", "inputs", "temperature", "output_schema", "max_generated_messages"],
+      "properties": {
+        "type": {"const": "llm_post_failure"},
+        "trigger": {
+          "enum": [
+            "interaction_unsuccessful_and_budget_remaining",
+            "submission_invalid_or_unverifiable_and_budget_remaining"
+          ]
+        },
+        "prompt_version": {"const": "l2_user_simulator/1.0"},
+        "simulator_prompt": {"type": "string", "minLength": 1},
+        "inputs": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 4,
+          "items": {"enum": ["agent_input", "interaction_transcript", "latest_agent_response", "bounded_evaluation_feedback"]},
+          "allOf": [
+            {"contains": {"const": "agent_input"}},
+            {"contains": {"const": "interaction_transcript"}},
+            {"contains": {"const": "latest_agent_response"}},
+            {"contains": {"const": "bounded_evaluation_feedback"}}
+          ]
+        },
+        "temperature": {"const": 0},
+        "output_schema": {"const": "l2_user_simulator_output/1.0"},
+        "max_generated_messages": {
+          "const": 2,
+          "description": "Cumulative maximum across one Turn. Each User Simulator invocation emits exactly one next_user_message, so at most two retry messages can follow the initial Interaction."
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "dimension", "weight", "scoring", "instruction"],
+      "properties": {
+        "check_id": {"$ref": "#/$defs/id"},
+        "dimension": {"type": "string", "minLength": 1},
+        "weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "scoring": {"enum": ["ordinal", "mean_source_rubrics"]},
+        "instruction": {"type": "string", "minLength": 1}
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubric_id", "instruction"],
+      "properties": {"rubric_id": {"$ref": "#/$defs/id"}, "instruction": {"type": "string", "minLength": 1}}
+    },
+    "nativeVerifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "verifier_id", "entrypoint", "input_bindings", "request_schema", "result_schema", "timeout_seconds", "network", "authority"],
+      "properties": {
+        "required": {"const": true},
+        "verifier_id": {"$ref": "#/$defs/id"},
+        "entrypoint": {"$ref": "#/$defs/evaluationPath"},
+        "input_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "source", "path"],
+            "properties": {
+              "name": {"$ref": "#/$defs/id"},
+              "source": {"enum": ["workspace", "evaluation_assets", "interaction_record"]},
+              "path": {"$ref": "#/$defs/relativePath"}
+            },
+            "allOf": [
+              {"if": {"properties": {"source": {"const": "workspace"}}}, "then": {"properties": {"path": {"$ref": "#/$defs/workspacePath"}}}},
+              {"if": {"properties": {"source": {"const": "evaluation_assets"}}}, "then": {"properties": {"path": {"$ref": "#/$defs/evaluationPath"}}}}
+            ]
+          }
+        },
+        "request_schema": {"const": "l2_native_verifier_request/1.0"},
+        "result_schema": {"const": "l2_native_verifier_result/1.0"},
+        "timeout_seconds": {"type": "integer", "minimum": 1},
+        "network": {"const": "disabled"},
+        "authority": {"const": "objective_evidence"}
+      }
+    },
+    "submissionContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "payload_kind", "source_binding", "adapter", "audit", "failure_semantics"],
+      "properties": {
+        "mode": {"enum": ["final_response", "workspace_artifact", "tool_trajectory"]},
+        "payload_kind": {"type": "string", "minLength": 1},
+        "source_binding": {"$ref": "#/$defs/id"},
+        "adapter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["owner", "type", "entrypoint", "version"],
+          "properties": {
+            "owner": {"const": "native_verifier"},
+            "type": {"enum": ["source_specific", "identity"]},
+            "entrypoint": {"anyOf": [{"$ref": "#/$defs/evaluationPath"}, {"type": "null"}]},
+            "version": {"type": "string", "minLength": 1}
+          },
+          "allOf": [
+            {"if": {"properties": {"type": {"const": "source_specific"}}}, "then": {"properties": {"entrypoint": {"$ref": "#/$defs/evaluationPath"}}}},
+            {"if": {"properties": {"type": {"const": "identity"}}}, "then": {"properties": {"entrypoint": {"type": "null"}}}}
+          ]
+        },
+        "audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["retain_raw_submission", "retain_adapted_submission", "hash_algorithm"],
+          "properties": {
+            "retain_raw_submission": {"const": true},
+            "retain_adapted_submission": {"type": "boolean"},
+            "hash_algorithm": {"const": "sha256"}
+          }
+        },
+        "failure_semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["empty_or_invalid_submission", "adapter_error"],
+          "properties": {
+            "empty_or_invalid_submission": {"const": "task_failure"},
+            "adapter_error": {"const": "verifier_error"}
+          }
+        }
+      }
+    },
+    "judgeConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt_version", "judge_prompt", "model_role", "temperature", "inputs", "output_format", "output_schema", "aggregation", "failure_policy"],
+      "properties": {
+        "prompt_version": {"enum": ["l2_judge/1.0", "l2_judge/2.0"]},
+        "judge_prompt": {"type": "string", "minLength": 1},
+        "model_role": {"const": "reference_judge"},
+        "temperature": {"const": 0},
+        "inputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "output_format": {"const": "json"},
+        "output_schema": {"const": "l2_judge_output/1.0"},
+        "aggregation": {"const": "framework_weighted_non_null_mean"},
+        "failure_policy": {"const": "one_repair_then_turn_unsuccessful"},
+        "rubric_route": {"$ref": "#/$defs/rubricRoute"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"prompt_version": {"const": "l2_judge/2.0"}}},
+          "then": {"required": ["rubric_route"]}
+        },
+        {
+          "if": {"properties": {"prompt_version": {"const": "l2_judge/1.0"}}},
+          "then": {"not": {"required": ["rubric_route"]}}
+        }
+      ]
+    },
+    "rubricRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubric_id", "version", "path"],
+      "properties": {
+        "rubric_id": {"$ref": "#/$defs/id"},
+        "version": {"type": "string", "minLength": 1},
+        "path": {"$ref": "#/$defs/promptPath"}
+      }
+    },
+    "rubricRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["composition", "domain_rubric", "benchmark_rubric"],
+      "properties": {
+        "composition": {"const": "common_then_domain_then_benchmark"},
+        "domain_rubric": {"$ref": "#/$defs/rubricRef"},
+        "benchmark_rubric": {
+          "anyOf": [
+            {"$ref": "#/$defs/rubricRef"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "metricProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id", "metric_name", "raw_direction", "raw_metric_required",
+        "judge_value_source", "judge_value_semantics", "performance_bands"
+      ],
+      "properties": {
+        "profile_id": {"$ref": "#/$defs/id"},
+        "metric_name": {"type": "string", "minLength": 1},
+        "raw_direction": {"enum": ["maximize", "minimize"]},
+        "raw_metric_required": {"const": true},
+        "judge_value_source": {"const": "native_verifier_result.score"},
+        "judge_value_semantics": {"const": "normalized_higher_is_better_0_1"},
+        "performance_bands": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["partial_min_inclusive", "full_min_inclusive"],
+          "properties": {
+            "partial_min_inclusive": {"type": "number", "minimum": 0, "maximum": 1},
+            "full_min_inclusive": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        }
+      }
+    },
+    "successPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["native_verifier_requirement", "turn_score_threshold", "judge_failure_blocks_success", "interaction_selection"],
+      "properties": {
+        "native_verifier_requirement": {"const": "valid_result_before_judge"},
+        "turn_score_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "judge_failure_blocks_success": {"const": true},
+        "interaction_selection": {"const": "latest_only"},
+        "interaction_continuation": {"enum": ["score_below_threshold", "invalid_or_unverifiable_submission_only"]},
+        "low_metric_is_retryable": {"type": "boolean"}
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "protocol", "checks", "rubrics", "gt", "expected_state", "expected_tool_call", "expected_workspace_effect", "reference_context", "submission_contract", "native_verifier", "judge_config", "success_policy", "feedback_policy", "feedback_projection"],
+      "properties": {
+        "type": {"const": "llm_as_judge"},
+        "protocol": {"const": "l2_native_evidence_llm_judge_v1"},
+        "evaluation_profile": {"enum": ["general", "auto_research"]},
+        "metric_profile": {
+          "anyOf": [
+            {"$ref": "#/$defs/metricProfile"},
+            {"type": "null"}
+          ]
+        },
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "rubrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_rubrics", "behavioral_rubrics"],
+          "properties": {
+            "source_rubrics": {"type": "array", "items": {"$ref": "#/$defs/rubric"}},
+            "behavioral_rubrics": {"type": "array", "items": {"$ref": "#/$defs/rubric"}}
+          }
+        },
+        "gt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["gt_version", "status", "answer_gt", "rubric_gt", "state_gt", "tool_gt", "workspace_gt", "negative_constraints", "notes"],
+          "properties": {
+            "gt_version": {"type": "string", "minLength": 1},
+            "status": {"enum": ["complete", "partial", "not_applicable"]},
+            "answer_gt": {},
+            "rubric_gt": {},
+            "state_gt": {},
+            "tool_gt": {},
+            "workspace_gt": {},
+            "negative_constraints": {"type": "array", "items": {"type": "string", "minLength": 1}},
+            "notes": {"type": ["string", "null"]}
+          }
+        },
+        "expected_state": {},
+        "expected_tool_call": {},
+        "expected_workspace_effect": {},
+        "reference_context": {},
+        "submission_contract": {"$ref": "#/$defs/submissionContract"},
+        "native_verifier": {"$ref": "#/$defs/nativeVerifier"},
+        "judge_config": {"$ref": "#/$defs/judgeConfig"},
+        "success_policy": {"$ref": "#/$defs/successPolicy"},
+        "feedback_policy": {"const": "bounded_public_failure_feedback_only"},
+        "feedback_projection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["include", "exclude", "output_schema"],
+          "properties": {
+            "include": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "exclude": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["gt", "private_diagnostics", "evaluation_assets", "future_turns", "exact_fix_steps"]}},
+            "output_schema": {"const": "l2_bounded_feedback/1.0"}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"evaluation_profile": {"const": "general"}},
+            "required": ["evaluation_profile"]
+          },
+          "then": {
+            "properties": {
+              "metric_profile": {"type": "null"},
+              "judge_config": {
+                "allOf": [
+                  {"$ref": "#/$defs/judgeConfig"},
+                  {"properties": {"prompt_version": {"const": "l2_judge/1.0"}}}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {"evaluation_profile": {"const": "auto_research"}},
+            "required": ["evaluation_profile"]
+          },
+          "then": {
+            "required": ["metric_profile"],
+            "properties": {
+              "metric_profile": {"$ref": "#/$defs/metricProfile"},
+              "checks": {
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "allOf": [
+                    {"$ref": "#/$defs/check"},
+                    {
+                      "properties": {
+                        "check_id": {"const": "auto_research_overall"},
+                        "weight": {"const": 1},
+                        "scoring": {"const": "ordinal"}
+                      }
+                    }
+                  ]
+                }
+              },
+              "judge_config": {
+                "allOf": [
+                  {"$ref": "#/$defs/judgeConfig"},
+                  {
+                    "properties": {
+                      "prompt_version": {"const": "l2_judge/2.0"},
+                      "rubric_route": {
+                        "properties": {
+                          "domain_rubric": {
+                            "properties": {
+                              "rubric_id": {"const": "auto_research"},
+                              "version": {"const": "1.0"},
+                              "path": {"const": "prompts/rubrics/auto_research_v1.md"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "success_policy": {
+                "allOf": [
+                  {"$ref": "#/$defs/successPolicy"},
+                  {
+                    "required": ["interaction_continuation", "low_metric_is_retryable"],
+                    "properties": {
+                      "interaction_continuation": {"const": "invalid_or_unverifiable_submission_only"},
+                      "low_metric_is_retryable": {"const": false}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "judge_config": {
+                "properties": {"prompt_version": {"const": "l2_judge/2.0"}},
+                "required": ["prompt_version"]
+              }
+            },
+            "required": ["judge_config"]
+          },
+          "then": {"required": ["evaluation_profile", "metric_profile"]}
+        }
+      ]
+    }
+  }
+}

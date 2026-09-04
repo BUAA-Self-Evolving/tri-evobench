@@ -1,0 +1,76 @@
+{
+  "schema_version": "l2_tools/1.0",
+  "tools": {
+    "terminal": {
+      "description": "Execution capability declared by the adapted L2 task: terminal.",
+      "arguments": {}
+    },
+    "filesystem": {
+      "description": "Execution capability declared by the adapted L2 task: filesystem.",
+      "arguments": {}
+    },
+    "browser": {
+      "description": "Execution capability declared by the adapted L2 task: browser.",
+      "arguments": {}
+    },
+    "check_network_status": {
+      "description": "Read phone mobile-data and data-roaming settings; no state change.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "toggle_roaming": {
+      "description": "Toggle the phone Data Roaming setting and search for the network again.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "toggle_data": {
+      "description": "Toggle phone mobile data on/off.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "run_speed_test": {
+      "description": "Read current mobile internet speed and quality; no state change.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "enable_roaming": {
+      "description": "Permit roaming on the carrier line.",
+      "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+      },
+      "requestor": "assistant"
+    },
+    "toggle_data_saver_mode": {
+      "description": "Toggle phone Data Saver mode on/off.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "set_network_mode_preference": {
+      "description": "Set the preferred cellular network mode.",
+      "arguments": {
+        "mode": "4g_5g_preferred"
+      },
+      "requestor": "user"
+    },
+    "disconnect_vpn": {
+      "description": "Disconnect the active phone VPN.",
+      "arguments": {},
+      "requestor": "user"
+    },
+    "refuel_data": {
+      "description": "Add an approved amount of mobile data to the carrier line.",
+      "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002",
+        "gb_amount": 2.0
+      },
+      "requestor": "assistant"
+    },
+    "toggle_airplane_mode": {
+      "description": "Toggle phone Airplane Mode on/off.",
+      "arguments": {},
+      "requestor": "user"
+    }
+  }
+}

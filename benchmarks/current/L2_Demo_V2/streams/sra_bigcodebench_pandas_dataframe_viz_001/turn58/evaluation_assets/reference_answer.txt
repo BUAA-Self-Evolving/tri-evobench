@@ -1,0 +1,17 @@
+
+    if not isinstance(df, pd.DataFrame) or not all(col in df.columns for col in ['group', 'date', 'value']):
+        raise ValueError("Invalid 'df': must be a DataFrame with 'group', 'date', and 'value' columns.")
+
+    color_cycle = cycle('bgrcmk')
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for group in groups:
+        group_df = df[df['group'] == group].copy()
+        group_df['date'] = group_df['date'].apply(lambda x: x.toordinal())
+        ax.scatter(group_df['date'], group_df['value'], color=next(color_cycle))
+
+    ax.set_xlabel('Date (ordinal)')
+    ax.set_ylabel('Value')
+    ax.set_title('Scatterplot of Values for Each Group Over Time')
+
+    return ax

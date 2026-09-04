@@ -1,0 +1,63 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "skillsbench_data_to_d3_001",
+  "episode_id": "E002",
+  "source_provenance": {
+    "benchmark": "SkillsBench",
+    "revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "instance_id": "data-to-d3-json-derived",
+    "source_pointer": "tasks/data-to-d3",
+    "variant_type": "derived_data_format_variant",
+    "extraction": "task.md + environment/data + environment/skills/d3-visualization + verifier + oracle"
+  },
+  "agent_view": {
+    "request": "Build the D3 v6 stock bubble-chart and linked table application specified in assets/request.md. All paths in that request are relative to the persistent Stream Workspace.",
+    "request_file": "assets/request.md",
+    "assets": [
+      "workspace/episodes/E002/data/stock-descriptions.json",
+      "workspace/episodes/E002/data/indiv-stock/",
+      "workspace/.agents/skills/d3-visualization/"
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem",
+      "browser",
+      "d3-visualization skill"
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": [],
+    "note": "This Episode continues in the Stream Workspace; derived input fixtures are namespaced rather than applied through a reset."
+  },
+  "materialization": {
+    "content_mode": "derived_from_materialized_native_fixture",
+    "copied_files": [
+      "workspace/episodes/E002/data/stock-descriptions.json",
+      "workspace/episodes/E002/data/indiv-stock/ (50 files)",
+      "workspace/.agents/skills/d3-visualization/",
+      "episodes/E002/assets/request.md"
+    ],
+    "path_rewrites": [
+      {
+        "upstream": "/root/data",
+        "package_workspace": "episodes/E002/data"
+      },
+      {
+        "upstream": "/root/output",
+        "package_workspace": "output"
+      },
+      {
+        "upstream": "/root/.agents/skills/d3-visualization",
+        "package_workspace": ".agents/skills/d3-visualization"
+      }
+    ],
+    "runtime_dependency_on_upstream_checkout": false
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "retry_feedback": "bounded verifier category only"
+  },
+  "evaluation_ref": "evaluation.json"
+}

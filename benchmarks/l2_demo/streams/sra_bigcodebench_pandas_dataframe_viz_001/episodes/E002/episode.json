@@ -1,0 +1,38 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E002",
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+  "index": 2,
+  "source_provenance": {
+    "instance_id": "bigcodebench_00020",
+    "dataset": "bigcodebench",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "path": "data/bench/instances/bigcodebench.json",
+    "selector": "instance_id == bigcodebench_00020"
+  },
+  "materialization": {
+    "mode": "copied_inline",
+    "runtime_dependency_on_upstream": false,
+    "copied_files_scope": "agent_visible_runtime_assets_only",
+    "copied_files": [],
+    "path_rewrites": []
+  },
+  "agent_view": {
+    "request": "Read a CSV file, convert the string representations of dictionaries in a specific column ('dict_column') to Python dictionaries, and visualize the data with Seaborn's pairplot.\nThe function should output with:\n    tuple: A tuple containing:\n    df (DataFrame): The DataFrame after reading and processing the CSV file.\n    ax (PairGrid): Seaborn's PairGrid object after plotting.\nYou should write self-contained code starting with:\n```\nimport ast\nimport pandas as pd\nimport seaborn as sns\ndef task_func(csv_file):\n```",
+    "assets": [],
+    "available_tools": []
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": []
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "feedback": "pass_fail_timeout_only"
+  },
+  "evaluation_ref": "evaluation.json",
+  "expected_outputs": [
+    "Complete self-contained Python code containing task_func(csv_file); native SRA sanitization may extract it from a Markdown code fence."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "verifier-contract-0.1",
+  "executable": true,
+  "entrypoint": "verifier.py:FileArtifactVerifier",
+  "input": "path to the current Interaction's Workspace output/ directory",
+  "output": {"category": ["pass", "fail", "timeout"], "score": [0.0, 1.0], "details": "benchmark-private"},
+  "native_semantics": "Adapt only /root/output, /logs/verifier, and fixed HTTP port; execute the complete materialized upstream Playwright/pytest suite.",
+  "security": "Submission JavaScript executes in local Chromium; explicit unsafe opt-in is mandatory and this is not a container Sandbox.",
+  "terminal_policy": "latest_interaction"
+}

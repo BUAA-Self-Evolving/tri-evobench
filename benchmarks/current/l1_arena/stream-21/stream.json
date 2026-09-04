@@ -1,0 +1,413 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_21",
+  "directory": "stream-21",
+  "source_scenario_id": "sec3b",
+  "category": "sec",
+  "category_name": "Security, finance, privacy, and risk",
+  "profile": "Security response, financial incidents, privacy compliance, and fraud investigation",
+  "theme": "MiFIR/T+1 时区/DST 结算合规整改（ArtemisQ Capital AROS v4.2 2024-11-03 事故）— 16 exec_check 轮次，3 次 update（含 1 次 supersede：price_diff_usd→price_diff_vwap_usd），5 条 preference 规则 P1-P5，难度向量 V1/V2/V3/V4/V5/V6/V7/V8/V9/V10。真实来源：FCA Market Watch 59 (https://www.fca.org.uk/publication/newsletters/market-watch-59.pdf)；SEC Rule 15c6-1 T+1 (https://www.sec.gov/exams/educationhelpguidesfaqs/t1-faq)；SEC Release 34-70694 Knight Capital (https://www.sec.gov/files/litigation/admin/2013/34-70694.pdf)；CME Group Trading Hours (https://www.cmegroup.com/trading-hours.html).",
+  "domain": "financial_risk",
+  "domain_zh": "金融风控",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "financial_risk": 16,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "settlement_timezone_compliance.compliance_assessment": 3,
+      "settlement_timezone_compliance.data_quality_analysis": 1,
+      "settlement_timezone_compliance.final_signoff": 2,
+      "settlement_timezone_compliance.metric_calculation": 1,
+      "settlement_timezone_compliance.remediation_planning": 2,
+      "settlement_timezone_compliance.report_generation": 2,
+      "settlement_timezone_compliance.root_cause_analysis": 1,
+      "settlement_timezone_compliance.source_verification": 2,
+      "settlement_timezone_compliance.test_creation": 1,
+      "settlement_timezone_compliance.timeline_reconstruction": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 18,
+  "task_layout": "turn{1..18}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 3,
+    "workspace_exec": 13
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 3,
+  "runtime_update_id_count": 3,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 34,
+      "size_bytes": 314637,
+      "tree_sha256": "e59914fd4851da10d92fa557a3e0ecec96a5b1b8c5324f1bbce48efb9b2cb87d"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 9038,
+      "tree_sha256": "cb8e2e622642cd2c1404ebf856469e67b371dfaecef7e2aca5ea11b9de0a9ef3"
+    },
+    "evaluation_scripts": {
+      "file_count": 17,
+      "size_bytes": 51502,
+      "tree_sha256": "4fb28484867e1e03a67fe45d5915274c72e69db48fc9b0e6768a466c8d583ef8"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.timeline_reconstruction",
+        "subtag_zh": "结算时区合规·时间线重建",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.report_generation",
+        "subtag_zh": "结算时区合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.data_quality_analysis",
+        "subtag_zh": "结算时区合规·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.source_verification",
+        "subtag_zh": "结算时区合规·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.compliance_assessment",
+        "subtag_zh": "结算时区合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.remediation_planning",
+        "subtag_zh": "结算时区合规·整改规划",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q7",
+      "source_round_id": "q7",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.compliance_assessment",
+        "subtag_zh": "结算时区合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.metric_calculation",
+        "subtag_zh": "结算时区合规·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.root_cause_analysis",
+        "subtag_zh": "结算时区合规·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sec3b:q10",
+      "source_round_id": "q10",
+      "update_ids": [
+        "upd1_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.compliance_assessment",
+        "subtag_zh": "结算时区合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sec3b:q11",
+      "source_round_id": "q11",
+      "update_ids": [
+        "upd2_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.report_generation",
+        "subtag_zh": "结算时区合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q12",
+      "source_round_id": "q12",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.final_signoff",
+        "subtag_zh": "结算时区合规·最终签核",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.remediation_planning",
+        "subtag_zh": "结算时区合规·整改规划",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.source_verification",
+        "subtag_zh": "结算时区合规·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sec3b:q15",
+      "source_round_id": "q15",
+      "update_ids": [
+        "upd3_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.test_creation",
+        "subtag_zh": "结算时区合规·测试编写",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sec3b:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "financial_risk",
+        "domain_zh": "金融风控",
+        "subtag": "settlement_timezone_compliance.final_signoff",
+        "subtag_zh": "结算时区合规·最终签核",
+        "is_noise": false
+      }
+    }
+  ]
+}

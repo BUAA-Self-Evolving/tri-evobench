@@ -1,0 +1,92 @@
+{
+  "turn_id": "turn6",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "task_type": "translation",
+  "user_message": "把 docs/abstract_polished.txt 那篇摘要翻成中文，给公司管理层看。要求：1）译文准确完整，不能漏句、不能合并句子；2）专业术语处理：anonymization 译“匿名化”，inference 译“推理”，privacy–utility trade-off 译“隐私–效用权衡”，\\textsc{IntentAnony} 这样的系统名保留英文不译；3）数据集名 Personal Reddit、SynthPAI 保留英文；4）存成 docs/abstract_zh.md，开头加一行“> 译自 Aurora 合作项目投稿摘要”；5）中文表达要通顺自然，别是翻译腔。",
+  "available_tools": [
+    "file.create_file"
+  ],
+  "workspace_files": [
+    "agent_workspace/docs/abstract_polished.txt"
+  ],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "gpt-4o",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      },
+      "judge_prompt": "你是专业中英学术翻译评审员。对 Agent 的中文译文打 0-1 连续分（精确 0.05）。\n\n【英文原文】\n{source_text}\n\n【中文译文】\n{translated_text}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}\n\n【用户请求】\n{user_message}\n\n【评分维度】\nA. 忠实度（0.4）：逐句对照，是否有漏译、增译、主张强弱漂移（尤其限定语 under the evaluated settings / without implying 必须译出）；\nB. 术语一致性（0.3）：anonymization=匿名化、inference=推理、privacy–utility trade-off=隐私–效用权衡，系统名与数据集名保留英文；\nC. 中文流畅度（0.3）：通顺自然、符合中文表达习惯，而非翻译腔。\n\n【评分规则】\n- 各维度内部分完成按比例给分；发现整句漏译时 A 记 0；\n- 只输出 JSON：{\"score\": <0-1>, \"per_dimension\": {\"A\":..,\"B\":..,\"C\":..}, \"rationale\": \"一句话\"}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "gt",
+        "user_message"
+      ]
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "gt": {
+      "reference_translation_file": "demo_good/abstract_zh.md（参考译文，逐句完整版）",
+      "glossary": {
+        "anonymization": "匿名化",
+        "inference": "推理",
+        "privacy–utility trade-off": "隐私–效用权衡"
+      },
+      "keep_english": [
+        "IntentAnony",
+        "Personal Reddit",
+        "SynthPAI"
+      ],
+      "completeness": "逐句完整翻译，无漏句/并句；关键限定语（under the evaluated settings / without implying protection）必须译出",
+      "file_format": "docs/abstract_zh.md，首行 '> 译自 Aurora 合作项目投稿摘要'"
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "反馈术语缺失/句数差异 + judge 低分维度与具体漏译句位置"
+  },
+  "gold_reference": {
+    "glossary": {
+      "anonymization": "匿名化",
+      "inference": "推理",
+      "privacy–utility trade-off": "隐私–效用权衡",
+      "keep_english": [
+        "IntentAnony",
+        "Personal Reddit",
+        "SynthPAI"
+      ]
+    },
+    "critical_qualifiers": [
+      "under the evaluated settings",
+      "without implying protection"
+    ]
+  }
+}

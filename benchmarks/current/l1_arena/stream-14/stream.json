@@ -1,0 +1,430 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_14",
+  "directory": "stream-14",
+  "source_scenario_id": "sci2",
+  "category": "sci",
+  "category_name": "Research, healthcare, legal, and people operations",
+  "profile": "Research integrity, healthcare safety, contracts, and employment compliance",
+  "theme": "Medical device safety incident Root Cause Analysis (RCA) — 17 exec_check rounds, 2 updates (incl. Ivenix software-version supersede), 5 preference rules P1-P5, difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: InfuTronix Nimbus Class I recall (https://www.fda.gov/medical-devices/medical-device-recalls/infutronix-llc-recalls-nimbus-and-nimbus-ii-infusion-pump-systems-multiple-device-failures-may-cause); Fresenius Kabi Ivenix LVP recall Z-0885-2026 (https://www.softwarecpr.com/2025/12/fda-recall-software-anomalies-can-cause-serious-harm-or-death/); 21 CFR Part 803/806 regulatory requirements (https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-803).",
+  "domain": "healthcare",
+  "domain_zh": "医疗",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "healthcare": 17,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "medical_device_incident.compliance_assessment": 2,
+      "medical_device_incident.data_quality_analysis": 2,
+      "medical_device_incident.final_signoff": 1,
+      "medical_device_incident.metadata_extraction": 1,
+      "medical_device_incident.report_generation": 2,
+      "medical_device_incident.root_cause_analysis": 6,
+      "medical_device_incident.source_verification": 2,
+      "medical_device_incident.state_update": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 19,
+  "task_layout": "turn{1..19}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 2,
+    "workspace_exec": 15
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 2,
+  "runtime_update_id_count": 4,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 28,
+      "size_bytes": 380786,
+      "tree_sha256": "922e008c47719ef2c397bd740435b44d616ee6a9439abb0d22d8076be57498d6"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 11467,
+      "tree_sha256": "e1b3c6c7da3e64902e72f46c36ed06215b9595ee7ce684a0fa28f14ea6c54ef9"
+    },
+    "evaluation_scripts": {
+      "file_count": 18,
+      "size_bytes": 56195,
+      "tree_sha256": "62a5f3fa321bf8b42418057001e7ededef29b485e50386e162126c69b0dbfb68"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.metadata_extraction",
+        "subtag_zh": "医疗器械事故·元数据提取",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.source_verification",
+        "subtag_zh": "医疗器械事故·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.compliance_assessment",
+        "subtag_zh": "医疗器械事故·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.report_generation",
+        "subtag_zh": "医疗器械事故·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q7",
+      "source_round_id": "q7",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.data_quality_analysis",
+        "subtag_zh": "医疗器械事故·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci2:q8",
+      "source_round_id": "q8",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.data_quality_analysis",
+        "subtag_zh": "医疗器械事故·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q11",
+      "source_round_id": "q11",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.report_generation",
+        "subtag_zh": "医疗器械事故·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci2:q12",
+      "source_round_id": "q12",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.state_update",
+        "subtag_zh": "医疗器械事故·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.source_verification",
+        "subtag_zh": "医疗器械事故·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.root_cause_analysis",
+        "subtag_zh": "医疗器械事故·根因分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.final_signoff",
+        "subtag_zh": "医疗器械事故·最终签核",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci2:q17",
+      "source_round_id": "q17",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "healthcare",
+        "domain_zh": "医疗",
+        "subtag": "medical_device_incident.compliance_assessment",
+        "subtag_zh": "医疗器械事故·合规评估",
+        "is_noise": false
+      }
+    }
+  ]
+}

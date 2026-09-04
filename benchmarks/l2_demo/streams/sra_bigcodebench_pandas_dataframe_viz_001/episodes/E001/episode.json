@@ -1,0 +1,38 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E001",
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+  "index": 1,
+  "source_provenance": {
+    "instance_id": "bigcodebench_00009",
+    "dataset": "bigcodebench",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "path": "data/bench/instances/bigcodebench.json",
+    "selector": "instance_id == bigcodebench_00009"
+  },
+  "materialization": {
+    "mode": "copied_inline",
+    "runtime_dependency_on_upstream": false,
+    "copied_files_scope": "agent_visible_runtime_assets_only",
+    "copied_files": [],
+    "path_rewrites": []
+  },
+  "agent_view": {
+    "request": "Create a Pandas DataFrame from a list of pairs and visualize the data using a bar chart. - The title of the barplot should be set to 'Category vs Value'`.\nThe function should output with:\n    tuple:\n    DataFrame: A pandas DataFrame with columns 'Category' and 'Value'.\n    Axes: A matplotlib Axes displaying a bar chart of categories vs. values.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(list_of_pairs):\n```",
+    "assets": [],
+    "available_tools": []
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": []
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "feedback": "pass_fail_timeout_only"
+  },
+  "evaluation_ref": "evaluation.json",
+  "expected_outputs": [
+    "Complete self-contained Python code containing task_func(list_of_pairs); native SRA sanitization may extract it from a Markdown code fence."
+  ]
+}

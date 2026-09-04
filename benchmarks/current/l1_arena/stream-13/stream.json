@@ -1,0 +1,412 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_13",
+  "directory": "stream-13",
+  "source_scenario_id": "sci1b",
+  "category": "sci",
+  "category_name": "Research, healthcare, legal, and people operations",
+  "profile": "Research integrity, healthcare safety, contracts, and employment compliance",
+  "theme": "sci1b: Gino behavioural-economics data falsification reproduction (4 retracted papers, calcChain/Excel analysis, COPE classification). 16 exec_check rounds, 2 updates (incl. calcChain analyst supersede), 5 preference rules P1-P5, difficulty vectors V1/V2/V4/V5/V6/V7/V8/V9/V10. Real sources: Data Colada [109] (https://datacolada.org/109); Data Colada [112] (https://datacolada.org/112); Wikipedia Francesca Gino (https://en.wikipedia.org/wiki/Francesca_Gino); PNAS retraction (https://doi.org/10.1073/pnas.2115397118).",
+  "domain": "research_integrity",
+  "domain_zh": "科研诚信",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "research_integrity": 16,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "behavioral_economics_fraud.classification": 1,
+      "behavioral_economics_fraud.evidence_synthesis": 1,
+      "behavioral_economics_fraud.final_signoff": 1,
+      "behavioral_economics_fraud.metric_calculation": 1,
+      "behavioral_economics_fraud.report_generation": 2,
+      "behavioral_economics_fraud.source_verification": 3,
+      "behavioral_economics_fraud.state_update": 3,
+      "behavioral_economics_fraud.statistical_analysis": 3,
+      "behavioral_economics_fraud.workspace_initialization": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 18,
+  "task_layout": "turn{1..18}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 2,
+    "workspace_exec": 14
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 2,
+  "runtime_update_id_count": 4,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 38,
+      "size_bytes": 538843,
+      "tree_sha256": "75ae58644a7300d708fc0ec9b5c6ed6f7a52e09ca435afc59d01a82709e6ada4"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 6591,
+      "tree_sha256": "9014fe5c60ac16fe453b76494c651d012c8a400e078124b07d063b5295c62375"
+    },
+    "evaluation_scripts": {
+      "file_count": 17,
+      "size_bytes": 46717,
+      "tree_sha256": "adf5b928fa5bfc561d006c154781a1918db96d3b4ca41b9745a76e61d1d659d0"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.workspace_initialization",
+        "subtag_zh": "行为经济学数据造假·工作区初始化",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.report_generation",
+        "subtag_zh": "行为经济学数据造假·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.metric_calculation",
+        "subtag_zh": "行为经济学数据造假·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.source_verification",
+        "subtag_zh": "行为经济学数据造假·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.evidence_synthesis",
+        "subtag_zh": "行为经济学数据造假·证据综合",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.statistical_analysis",
+        "subtag_zh": "行为经济学数据造假·统计分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q7",
+      "source_round_id": "q7",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.state_update",
+        "subtag_zh": "行为经济学数据造假·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.source_verification",
+        "subtag_zh": "行为经济学数据造假·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci1b:q9",
+      "source_round_id": "q9",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.statistical_analysis",
+        "subtag_zh": "行为经济学数据造假·统计分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.report_generation",
+        "subtag_zh": "行为经济学数据造假·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q11",
+      "source_round_id": "q11",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.classification",
+        "subtag_zh": "行为经济学数据造假·分类判定",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci1b:q12",
+      "source_round_id": "q12",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.state_update",
+        "subtag_zh": "行为经济学数据造假·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.source_verification",
+        "subtag_zh": "行为经济学数据造假·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.state_update",
+        "subtag_zh": "行为经济学数据造假·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.statistical_analysis",
+        "subtag_zh": "行为经济学数据造假·统计分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1b:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "behavioral_economics_fraud.final_signoff",
+        "subtag_zh": "行为经济学数据造假·最终签核",
+        "is_noise": false
+      }
+    }
+  ]
+}

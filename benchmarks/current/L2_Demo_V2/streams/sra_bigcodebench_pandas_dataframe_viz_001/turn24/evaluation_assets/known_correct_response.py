@@ -1,0 +1,28 @@
+import pandas as pd
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+def task_func(df):
+
+    # Data preparation
+
+    if df.empty:
+        return 0,0
+
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = pd.concat([df['Date'], df['Value'].apply(pd.Series)], axis=1)
+    
+    # Performing PCA
+    pca = PCA()
+    pca.fit(df.iloc[:,1:])
+    
+    # Extracting explained variance ratio
+    explained_variance_ratio = pca.explained_variance_ratio_
+    
+    # Creating bar chart
+    fig, ax = plt.subplots()
+    ax.bar(range(len(explained_variance_ratio)), explained_variance_ratio)
+    ax.set_title('Explained Variance Ratio of Principal Components')
+    ax.set_xlabel('Principal Component')
+    ax.set_ylabel('Explained Variance Ratio')
+    
+    return explained_variance_ratio, ax

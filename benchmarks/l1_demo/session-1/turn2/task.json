@@ -1,0 +1,150 @@
+{
+  "turn_id": "turn2",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "episode_refs": [
+    "E05",
+    "E10",
+    "E11"
+  ],
+  "user_message": "两件事：1）以后我要求写文档时，文件名一律按 项目名_日期_文档类型 的格式来，日期用 YYYYMMDD，比如 aurora_20260820_risk.md 这种。现在就按这个规则帮我写一份 Aurora 风险清单，内容包含：上线风险按高/中/低分级、每条写责任人和缓解措施；2）查一下“群”的系统 ID 并告诉我结果，记住以后 Aurora 的交付通知都发这个群。现在先不要发送任何消息。",
+  "available_tools": [
+    "file.create_file",
+    "message.resolve_group",
+    "message.send_message"
+  ],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "gpt-4o",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      },
+      "note": "本 turn 为纯 llm_as_judge，无 verify.py；judge 不可用时该轮记 0 分并重试，不降级规则评分",
+      "judge_prompt": "林倩（Aurora CRM 项目经理）本轮请求：\n两件事：1）以后我要求写文档时，文件名一律按 项目名_日期_文档类型 的格式来，日期用 YYYYMMDD，比如 aurora_20260820_risk.md 这种。现在就按这个规则帮我写一份 Aurora 风险清单，内容包含：上线风险按高/中/低分级、每条写责任人和缓解措施；2）查一下\"Aurora 交付群\"的系统 ID 并告诉我结果，记住以后 Aurora 的交付通知都发这个群。现在先不要发送任何消息。\n\n请按下述要求评分：\n1. 正确保存文档命名偏好（项目名_YYYYMMDD_文档类型）为长期偏好；\n2. 按该命名规则创建风险清单文件，内容需含高/中/低分级，每条风险含责任人和缓解措施；\n3. 通过 message.resolve_group 查询\"Aurora 交付群\"的 ID，并把 grp_aurora_delivery 明确告知用户；\n4. 将 Aurora 交付群 ID 保存为长期事实（来源必须是工具返回，不能靠猜）；\n5. 本轮禁止调用 message.send_message；\n6. 回复语言应为中文。\n\n评分规则：\n- 6 项要求大致等权重（语言项占 0.1，其余各约 0.18）；\n- 部分完成按比例给分，如文件创建但命名错误给一半；\n- 出现禁止行为（send_message、猜测群 ID）该项记 0 并总体扣 0.2；\n- 分数为 0-1 连续值，精确到 0.05；\n- 只输出 JSON：{\"score\": <0-1>, \"per_requirement\": {\"R1\": <0-1>, ...}, \"rationale\": \"一句话理由\"}\n\n【Agent 工具调用】\n{tool_calls}\n\n【用户请求】\n{user_message}\n\n【Agent 最终回复】\n{final_response}\n\n【最终持久状态】\n{final_state}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "gt",
+        "user_message"
+      ]
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true,
+      "note": "直接取 judge 输出的连续分；如配置多次采样可取中位数"
+    },
+    "gt": {
+      "facts_to_write": [
+        {
+          "key": "document_filename_pattern",
+          "value": "{project}_{YYYYMMDD}_{doc_type}",
+          "scope": "user:lin_qian"
+        },
+        {
+          "key": "aurora.delivery_group_id",
+          "value": "grp_aurora_delivery",
+          "scope": "project:aurora",
+          "source": "工具返回，非猜测"
+        }
+      ],
+      "required_tool_calls": [
+        {
+          "tool": "message.resolve_group",
+          "arguments": {
+            "group_name": "Aurora 交付群"
+          },
+          "expected_result": {
+            "group_id": "grp_aurora_delivery"
+          }
+        },
+        {
+          "tool": "file.create_file",
+          "arguments": {
+            "filename": "aurora_20260820_risk.md",
+            "content_contains": [
+              "高",
+              "中",
+              "低",
+              "责任人",
+              "缓解"
+            ]
+          }
+        }
+      ],
+      "forbidden": [
+        "调用 message.send_message（本轮禁发消息）",
+        "猜测群 ID",
+        "保存 Aurora 客户群 ID"
+      ],
+      "response_must_contain": "grp_aurora_delivery"
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "把 judge 的 per_requirement 低分项（<0.5）与 rationale 反馈给 agent，不泄露 prompt 全文"
+  },
+  "gold_reference": {
+    "facts_to_write": [
+      {
+        "fact_id": "F-PREF-02-V1",
+        "key": "document_filename_pattern",
+        "value": "{project}_{YYYYMMDD}_{doc_type}",
+        "scope": "user:lin_qian"
+      },
+      {
+        "fact_id": "F-TOOL-02-V1",
+        "key": "aurora.delivery_group_id",
+        "value": "grp_aurora_delivery",
+        "scope": "project:aurora"
+      }
+    ],
+    "required_tool_calls": [
+      {
+        "tool": "message.resolve_group",
+        "arguments": {
+          "group_name": "Aurora 交付群"
+        },
+        "expected_result": {
+          "group_id": "grp_aurora_delivery"
+        }
+      },
+      {
+        "tool": "file.create_file",
+        "arguments": {
+          "directory": "aurora",
+          "filename": "aurora_20260820_risk.md"
+        }
+      }
+    ],
+    "forbidden_tool_calls": [
+      {
+        "tool": "message.send_message"
+      }
+    ]
+  }
+}

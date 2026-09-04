@@ -1,0 +1,180 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_8",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "prd2",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All JSON files use 2-space indentation and snake_case key names (no camelCase).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "All numeric fields carry a companion `_source_url` field documenting the authoritative URL for that value.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "Time-limit values are expressed in months as the primary unit, with 1 decimal place (e.g. `6.0` months for 6 months, `0.5` months for 14 days).",
+      "source": "standing_system_context",
+      "checker_criterion": "time limits in months 1 decimal / P4: [^N] footnote citations / P5: reports/ naming convention)."
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Markdown documents use `[^N]` footnote references and include a `## 参考来源` section at the document end.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "Files under `reports/` follow naming convention `{type}_{yyyy-mm}.json`; when no specific month applies, use `latest` (e.g. `violation_stats_latest.json`).",
+      "source": "standing_system_context"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "compliance_slack_70b2f2a6-e323-012a-93bf-e37660b6baa2.jsonl",
+          "size_bytes": 537,
+          "sha256": "2ec8aa5c5d5c6ee0fc55a1b18717d020ceb8432ef33ccabf744a10da7e219bc7"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "policy_engine/internal/appeal_tracker.json",
+          "size_bytes": 8574,
+          "sha256": "c97bba694a4e856e036d9d2f48b166065a6b56663d1af8f745c070295252cd18"
+        },
+        {
+          "action": "append",
+          "target": "policy_engine/internal/violation_log_2025.csv",
+          "size_bytes": 177300,
+          "sha256": "b365c961de138f7c306d49801854df80f43e68d3e2b5db01b1089d41e42a2b65"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/policy_update_analysis.md",
+          "size_bytes": 6280,
+          "sha256": "ca57e6cb32bf79064ccdeea97eedccd6683438361eecb3bc3a481fd9cd4d729b"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "modops_discord_9eb4f2e5-c59e-081a-9abe-945bc7474c0c.jsonl",
+          "size_bytes": 1037,
+          "sha256": "8612932ba974a6c167440a3f60b5d1c8388270094a54336c3552f0f2aa58f2c7"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "policy_engine/internal/appeal_tracker.json",
+          "size_bytes": 9288,
+          "sha256": "e8f96621947342fefe99c4c473c5a99c92c192cbc6c82d9c233078e17b1be7ba"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/platforms/tiktok/q3_2025_report.json",
+          "size_bytes": 803,
+          "sha256": "e939c5ec213d127e0ed4f41eff2b19f817322ad35914203239543b653d100370"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/regulatory_review_checklist.md",
+          "size_bytes": 41428,
+          "sha256": "76d2316edd063eb491376f423728cead0329033e11fe4aaa38a388a3c4837d89"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/tiktok_policy_review.md",
+          "size_bytes": 4679,
+          "sha256": "54868b97fd3eb25673a03364b93ce8095f1642f211888ff6d8aa089179c15b5c"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/violation_log_q3_2025.csv",
+          "size_bytes": 108728,
+          "sha256": "f5167af2de0b739d34e6f90c112386f459bb1a9da9fb84e374297fc2e18e942e"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_sessions",
+      "type": "session",
+      "first_applied_turn": 17,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "pm_jordan_email_1de0a73c-37f1-c488-0ec5-64b89fe13e91.jsonl",
+          "size_bytes": 1310,
+          "sha256": "a90d675cecb9512a52184a501a2c578c8276d595610bdeecaa1ec00dd56462c1"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_workspace",
+      "type": "workspace",
+      "first_applied_turn": 17,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "policy_engine/internal/eu_dsa_compliance.md",
+          "size_bytes": 8909,
+          "sha256": "afe6cb149d0e7a0ed5639258c3dc9057cce07036efdc6ef3fd4370a1312a4e2c"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/dsa_articles_reference.json",
+          "size_bytes": 5228,
+          "sha256": "78471d396b357c03792074104c631892c729c496fd96092c080f99729460d2dd"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/vlop_analysis_report.md",
+          "size_bytes": 5290,
+          "sha256": "89e9d6023d8952bfaede113c035e78f3cd38e1ceb4d7e64a6f804d506c2ee65f"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/legal_email_thread.md",
+          "size_bytes": 7097,
+          "sha256": "bbf4615ad20517a81bd546757bfcfb571c9815ed29ed19d3ef79a7a13df6c4ec"
+        },
+        {
+          "action": "new",
+          "target": "policy_engine/internal/dsa_compliance_cases.csv",
+          "size_bytes": 126468,
+          "sha256": "31615d529273132c19e4c23ab9c6425dd79a188ddcecec062fc2a103766d5849"
+        }
+      ]
+    }
+  ]
+}

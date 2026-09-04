@@ -1,0 +1,18 @@
+    df = pd.merge(df1, df2, on="id")
+    X = df[features]
+    y = df[target]
+    model = LinearRegression()
+    model.fit(X, y)
+    y_pred = model.predict(X)
+    residuals = y - y_pred
+    fig, ax = plt.subplots()
+    ax.scatter(y_pred, residuals)  # scatter plot of residuals
+    ax.axhline(y=0, color="r", linestyle="-")  # horizontal line at y=0
+    ax.set_xlabel("Predicted Values")
+    ax.set_ylabel("Residuals")
+    ax.set_title("Residuals Plot")
+    return {
+        "coefficients": list(model.coef_),
+        "intercept": model.intercept_,
+        "residuals_plot": ax,
+    }

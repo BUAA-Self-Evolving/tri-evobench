@@ -1,0 +1,13 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+def task_func(data):
+    if not data:
+        return None
+    df = pd.DataFrame(data)
+    plt.figure()
+    for label in df.columns:
+        plt.plot(df[label], label=label)
+    plt.xlabel("Time")
+    plt.ylabel("Data Points")
+    plt.title("Data over Time")
+    return plt.gca()

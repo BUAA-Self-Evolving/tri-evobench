@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00104",
+  "dataset": "bigcodebench",
+  "question": "Analyzes the groups in a DataFrame by plotting a scatter plot of the ordinals against the values for each group.\nThe function should raise the exception for: ValueError: If 'df' is not a DataFrame or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object with the scatter plot.\n    The Axes object will have a title 'Scatterplot of Values for Each Group Over Time',\n    x-axis labeled as 'Date (ordinal)', and y-axis labeled as 'Value'.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom itertools import cycle\ndef task_func(df, groups=['A', 'B', 'C', 'D', 'E']):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_108",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "\n    if not isinstance(df, pd.DataFrame) or not all(col in df.columns for col in ['group', 'date', 'value']):\n        raise ValueError(\"Invalid 'df': must be a DataFrame with 'group', 'date', and 'value' columns.\")\n\n    color_cycle = cycle('bgrcmk')\n    fig, ax = plt.subplots(figsize=(10, 6))\n\n    for group in groups:\n        group_df = df[df['group'] == group].copy()\n        group_df['date'] = group_df['date'].apply(lambda x: x.toordinal())\n        ax.scatter(group_df['date'], group_df['value'], color=next(color_cycle))\n\n    ax.set_xlabel('Date (ordinal)')\n    ax.set_ylabel('Value')\n    ax.set_title('Scatterplot of Values for Each Group Over Time')\n\n    return ax",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom itertools import cycle\ndef task_func(df, groups=['A', 'B', 'C', 'D', 'E']):\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.df = pd.DataFrame({\n            \"group\": [\"A\", \"A\", \"A\", \"B\", \"B\"],\n            \"date\": pd.to_datetime([\"2022-01-02\", \"2022-01-13\", \"2022-02-01\", \"2022-02-23\", \"2022-03-05\"]),\n            \"value\": [10, 20, 16, 31, 56],\n        })\n    def test_return_type(self):\n        ax = task_func(self.df)\n        self.assertIsInstance(ax, plt.Axes)\n    def test_invalid_dataframe(self):\n        with self.assertRaises(ValueError):\n            task_func(pd.DataFrame({'a': [1, 2], 'b': [3, 4]}))\n    def test_custom_groups(self):\n        custom_groups = ['A', 'B']\n        ax = task_func(self.df, groups=custom_groups)\n        # Check if only the custom groups are plotted\n        plotted_groups = set(self.df[self.df['group'].isin(custom_groups)]['group'].unique())\n        self.assertEqual(len(plotted_groups), len(custom_groups))\n    def test_plot_labels(self):\n        ax = task_func(self.df)\n        self.assertEqual(ax.get_xlabel(), 'Date (ordinal)')\n        self.assertEqual(ax.get_ylabel(), 'Value')\n        self.assertEqual(ax.get_title(), 'Scatterplot of Values for Each Group Over Time')",
+    "entry_point": "task_func"
+  }
+}

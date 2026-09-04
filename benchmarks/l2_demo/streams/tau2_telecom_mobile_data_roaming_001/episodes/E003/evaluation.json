@@ -1,0 +1,78 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E003",
+  "visibility": "benchmark_private",
+  "native_source": {
+    "domain": "telecom",
+    "revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "materialized_item": "evaluation_assets/source_item.json",
+    "environment": "src/tau2/domains/telecom/environment.py",
+    "user_tools": "src/tau2/domains/telecom/user_tools.py",
+    "evaluator": "src/tau2/evaluator/evaluator_env.py"
+  },
+  "verifier": {
+    "type": "tau2_environment_assertion_replay",
+    "implementation": "package_local_python",
+    "entrypoint": "l2_runtime.tau2_telecom:Tau2TelecomVerifier",
+    "contract": "evaluation_assets/verifier_contract.json",
+    "interface": "verify(raw_model_output, episode_dir) -> VerifyResult",
+    "inputs": [
+      "raw_model_output"
+    ],
+    "assets": [
+      "evaluation_assets/source_item.json",
+      "evaluation_assets/known_correct_response.json",
+      "evaluation_assets/verifier_contract.json"
+    ]
+  },
+  "scoring": {
+    "method": "native_reward_basis",
+    "range": [
+      0,
+      1
+    ],
+    "success_threshold": 1.0,
+    "episode_score_policy": "latest_interaction",
+    "interaction_score_source": "tau2_ENV_ASSERTION",
+    "episode_score_policy_source": "project_terminal_interaction_policy",
+    "aggregation": "product of all native environment-assertion checks",
+    "criteria": [
+      {
+        "id": "native_env_assertions",
+        "description": "All materialized native Telecom environment assertions are true after replaying the response trajectory from the native initial state.",
+        "measurement": "all_ENV_ASSERTION_checks_met",
+        "weight": 1.0,
+        "partial_credit": false
+      }
+    ]
+  },
+  "gold": {
+    "mode": "materialized_files",
+    "native_item": "evaluation_assets/source_item.json",
+    "known_correct_response": "evaluation_assets/known_correct_response.json",
+    "known_correct_response_format": "tau2-telecom-trajectory-0.1",
+    "reward_basis": [
+      "ENV_ASSERTION"
+    ]
+  },
+  "feedback": {
+    "source": "project_interaction_wrapper_over_native_reward",
+    "visible_to_agent": "pass_fail_only",
+    "allowed_categories": [
+      "pass",
+      "fail"
+    ],
+    "exposed_fields": [
+      "normalized_result"
+    ],
+    "hide": [
+      "source_item",
+      "initial_state",
+      "reference_actions",
+      "environment_assertions",
+      "known_correct_response",
+      "verifier_details"
+    ],
+    "note": "The native task does not define multi-Interaction disclosure. The wrapper exposes only pass/fail and never assertion-level diagnostics."
+  }
+}

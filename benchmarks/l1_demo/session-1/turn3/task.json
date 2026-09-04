@@ -1,0 +1,152 @@
+{
+  "turn_id": "turn3",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "episode_refs": [
+    "E17",
+    "E19",
+    "E21",
+    "E24"
+  ],
+  "carried_state_note": "本轮开始时 persistent state 中应已有：default_output_language=zh-CN(V1)、default_delivery_calendar_id=cal_delivery_team、aurora.go_live_date=2026-09-30(V1) 等。turn3 重点考修正与干扰项。",
+  "user_message": "几件事一起说：1）更新我的偏好——从现在起工作材料默认改用英文，不再默认中文，请用英文简短确认；2）Aurora 上线日期从 9 月 30 日延期到 10 月 8 日，更新一下，并按命名规则（我之前定的那个）写一份英文上线准备纪要文件；3）在默认交付日历上创建上线准备会，时间 10 月 8 日 09:00-09:30，标题 Launch Readiness；4）这份纪要这次需要口头同步给西班牙客户，请用西班牙语复述纪要要点（只是本次，别改我的默认语言设置）。",
+  "available_tools": [
+    "calendar.create_event",
+    "file.create_file"
+  ],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "any_llm",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "judge_prompt": "你是严格的 Agent 行为评审员。根据下方材料对 Agent 本轮输出逐项核对并打 0-1 连续分（精确到 0.05）。\n\n【用户请求】\n{user_message}\n\n【用户请求】\n{user_message}\n\n【Agent 最终回复】\n{final_response}\n\n【Agent 工具调用轨迹】\n{tool_calls}\n\n【最终持久状态】\n{final_state}\n\n【工作空间相关文件】\n{workspace_files}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}\n\n【核对清单（逐项独立判定，按权重加权求和）】\n- C1 (权重 0.10)：确认段语言为英文（中文最多零星出现）。\n- C2 (权重 0.10)：创建了符合命名偏好 {project}_{YYYYMMDD}_{doc_type} 的纪要文件，如 aurora_20260910_launch_readiness.md。\n- C3 (权重 0.15)：tool_calls 中 calendar.create_event 参数为 calendar_id=cal_delivery_team、title=Launch Readiness、start=2026-10-08T09:00:00+08:00、end=2026-10-08T09:30:00+08:00；日历对但时间错给一半。\n- C4 (权重 0.55，五项各 1/5)：(a) final_state 中 default_output_language 的 active 值 = en-US；(b) 该 key 的 active 版本恰好 1 个（不得中英并存）；(c) 旧版本 V1(zh-CN) 保留在 fact_history（supersede 而非删除）；(d) aurora.go_live_date 的 active 值 = 2026-10-08；(e) es-ES 不得出现在 active 值或 fact_history（一次性西语复述不得污染长期偏好）。\n- C5 (权重 0.10)：副作用恰为 1 个日历事件 + 1 个纪要文件。\n\n评分规则：每项按完成比例给 0-1 分；禁止行为被违反时该项记 0 并总体扣 0.2；不得因回复华丽而放宽客观项。\n\n输出格式（只输出 JSON，不要其他内容）：\n{\"score\": <0-1 连续分，精确到 0.05>, \"per_check\": {\"<check_id>\": <0-1>}, \"rationale\": \"一句话理由\"}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "workspace_files",
+        "gt",
+        "user_message"
+      ],
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      }
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "note": "supersede 状态机检查由 judge LLM 核对 final_state/fact_history",
+    "gt": {
+      "fact_events": [
+        {
+          "action": "supersede",
+          "key": "default_output_language",
+          "old": "zh-CN",
+          "new": "en-US",
+          "要求": "active 唯一，旧版本进历史不删除"
+        },
+        {
+          "action": "supersede",
+          "key": "aurora.go_live_date",
+          "old": "2026-09-30",
+          "new": "2026-10-08",
+          "要求": "active 唯一，旧版本进历史不删除"
+        }
+      ],
+      "required_tool_calls": [
+        {
+          "tool": "calendar.create_event",
+          "arguments": {
+            "calendar_id": "cal_delivery_team",
+            "title": "Launch Readiness",
+            "start": "2026-10-08T09:00:00+08:00",
+            "end": "2026-10-08T09:30:00+08:00"
+          }
+        },
+        {
+          "tool": "file.create_file",
+          "arguments": {
+            "filename": "aurora_20260910_launch_readiness.md",
+            "language": "英文"
+          }
+        }
+      ],
+      "response_format": "英文简短确认 + 西班牙语纪要要点复述（一次性，西语仅限复述段）",
+      "must_not": [
+        "es-ES 写入长期偏好或 fact_history",
+        "保留两个 active 默认语言",
+        "删除 V1 历史"
+      ]
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "verifier 未通过项的 description + judge 低分维度反馈给 agent，不泄露权重与 gold_reference"
+  },
+  "gold_reference": {
+    "fact_events": [
+      {
+        "action": "supersede",
+        "fact_id": "F-PREF-01-V2",
+        "supersedes": "F-PREF-01-V1",
+        "key": "default_output_language",
+        "value": "en-US"
+      },
+      {
+        "action": "supersede",
+        "fact_id": "F-WORK-02-V2",
+        "supersedes": "F-WORK-02-V1",
+        "key": "aurora.go_live_date",
+        "value": "2026-10-08"
+      }
+    ],
+    "required_tool_calls": [
+      {
+        "tool": "calendar.create_event",
+        "arguments": {
+          "calendar_id": "cal_delivery_team",
+          "title": "Launch Readiness",
+          "start": "2026-10-08T09:00:00+08:00",
+          "end": "2026-10-08T09:30:00+08:00"
+        }
+      },
+      {
+        "tool": "file.create_file",
+        "arguments": {
+          "directory": "aurora",
+          "filename": "aurora_20260910_launch_readiness.md"
+        }
+      }
+    ],
+    "must_not_write": [
+      {
+        "key": "default_output_language",
+        "value": "es-ES",
+        "reason": "一次性覆盖不得入长期状态"
+      }
+    ]
+  }
+}

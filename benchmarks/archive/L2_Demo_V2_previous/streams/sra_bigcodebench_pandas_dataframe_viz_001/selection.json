@@ -1,0 +1,2059 @@
+{
+  "schema_version": "l2_sra_selection/1.0",
+  "source": {
+    "dataset": "bigcodebench",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "path": "data/bench/instances/bigcodebench.json"
+  },
+  "target_turn_count": 100,
+  "selection_rule": {
+    "required_gold_skill": "bigcodebench_094",
+    "required_visualization_skill_any": [
+      "bigcodebench_013",
+      "bigcodebench_138"
+    ],
+    "required_imports": {
+      "all": [
+        "pandas"
+      ],
+      "any": [
+        "matplotlib",
+        "seaborn"
+      ]
+    },
+    "required_entry_point": "task_func",
+    "allowed_third_party_modules": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "scipy",
+      "seaborn",
+      "sklearn"
+    ],
+    "other_imports_must_be_python_standard_library": true,
+    "excluded_standard_library_modules": [
+      "sqlite3"
+    ],
+    "native_fixture_preflight": {
+      "requirement": "known-correct response must pass the materialized native verifier in the pinned validation environment",
+      "recorded_incompatible_items": {
+        "bigcodebench_00049": "reference fixture is timezone-sensitive in the pinned environment",
+        "bigcodebench_00101": "reference fixture performs a network fetch while Runtime network is disabled",
+        "bigcodebench_00111": "reference fixture disagrees with native missing-value expectations",
+        "bigcodebench_00112": "reference fixture constructs an incorrect status-to-percentage mapping",
+        "bigcodebench_00157": "reference fixture disagrees with native correlation output shape",
+        "bigcodebench_00225": "reference fixture has a pandas dtype compatibility mismatch",
+        "bigcodebench_00251": "native test includes an all-zero pie-chart edge case rejected by Matplotlib",
+        "bigcodebench_00416": "reference fixture disagrees with native correlation output shape",
+        "bigcodebench_00511": "native pie-chart test passes non-numeric values rejected by pinned Matplotlib"
+      }
+    },
+    "priority": [
+      "retain independently reviewed pilot anchors that pass all eligibility gates",
+      "prefer fewer auxiliary skills outside pandas/matplotlib/seaborn",
+      "use a stable SHA-256 tie-breaker only after semantic filtering"
+    ],
+    "tie_breaker": "sra-viz-selection-v1"
+  },
+  "candidate_counts": {
+    "all_bigcodebench_items": 1140,
+    "required_gold_skill": 426,
+    "visualization_annotated": 150,
+    "native_fixture_incompatible_found_during_preflight": 9,
+    "eligible_after_all_filters": 132,
+    "selected": 100
+  },
+  "ordering": {
+    "method": "fixed_seed_shuffle",
+    "seed": 20260828,
+    "algorithm": "sort_by_sha256('sra-viz-order-v1:' + seed + ':' + instance_id)",
+    "selection_and_order_are_separate": true
+  },
+  "sequence_role_policy": {
+    "learning": [
+      1
+    ],
+    "probe": [
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90,
+      100
+    ],
+    "application": "all remaining turn indices",
+    "probe_basis": "Each probe remains a unique native item satisfying the same gold-skill and visualization-workflow filters; periodic placement diagnoses the preceding 10-Turn bin without changing native verifier semantics.",
+    "replay_and_noise": "not used in this release"
+  },
+  "selected_turns": [
+    {
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "instance_id": "bigcodebench_01037",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "9d9cc2c27697c21733b1014fbbf192ac76b7f11cc462d7a19f058c05662150ca",
+      "code_prompt_sha256": "522a78c08b7fa457e1f0d86c96abdc898b7540377a68450b10c50ebf7e8fa227",
+      "tests_sha256": "da19c5fecd18ba32f1c1c883393abce3c48739994999369ce019d02e893d8f9a"
+    },
+    {
+      "turn_index": 2,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00613",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "ad75a0d43df07cfc1dcb2657e57b878ed46de99699912b20a5bd6896b4c5de19",
+      "code_prompt_sha256": "c653f0370312f5f68b6138171d9b33813d8c1068eeb271d47617ebb637e92c9d",
+      "tests_sha256": "9406244c871d5c6730f666b50b3a6e1101912747937b1232831c3a31d01556ab"
+    },
+    {
+      "turn_index": 3,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00919",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "68198abbca693517c4c33a4849928eb0915b6da509f073d9319d633b25b6c92e",
+      "code_prompt_sha256": "454fb10266111a067a5a414d295c98f9d15406dbce6197c5541d59519840befc",
+      "tests_sha256": "38ce7d1184c6ac148036b43669dc016493764bc590989dceac0d63f6506e9696"
+    },
+    {
+      "turn_index": 4,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00296",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "7f31436f6a9286a4630fb8ca635d8a2342a0f5a302550b1c6824cf4db6011288",
+      "code_prompt_sha256": "c48cb1ae112196464389103cd3bf8bd1de6b9a73c29d81bc785d89522a8546d1",
+      "tests_sha256": "d306b26c8009c2bb12dcc16c0860195ce6f29d6508e873b4b4e76afc8a62fbea"
+    },
+    {
+      "turn_index": 5,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00208",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "5423166aa5deb58251366b43e5236fe9d9896ecd34bfcb578c658d194b247236",
+      "code_prompt_sha256": "222a45bf5af2ea6ffd307897b630dea2a8543b00a6c44107aa7668091cee6f74",
+      "tests_sha256": "d96a854df36cc4f50c4a5c069ffbd964203b8293c8a3421ccacc5523eb8452a7"
+    },
+    {
+      "turn_index": 6,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00057",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "6da44df67af47d11b962124d59ab1df8e444682cf26f2704596f3cf554755f65",
+      "code_prompt_sha256": "81c17afcdaa300b1ec6cfc957013a2e0be621c157a7674b700201a86c41c7aff",
+      "tests_sha256": "9a9f2017b266f780fb3d7636c54bedd9e371c23135e204497eb1c33b74f6480a"
+    },
+    {
+      "turn_index": 7,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00109",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "6b8d6de0643bed3d28485e7b78941e8f80cbecbc80fba6e93a3132840958111a",
+      "code_prompt_sha256": "586210f9bd8a48aa5fb17890b7bb15266d97536d9aa1f058cf7161bd8e7920af",
+      "tests_sha256": "87b39d185b188fadd3159711c95131243565d743bd1e2561e0536b375e2e0ba7"
+    },
+    {
+      "turn_index": 8,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00065",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "32192e85fb581959e8558c70ab33ce7c38bd99c4bb3be4d48d7c3dc4b786b450",
+      "code_prompt_sha256": "139276c318cf7bb05b555ec3e72ed72d8cfd47ae6090cf2c62eb8fea68f18b4a",
+      "tests_sha256": "89716bcc325f3af65593e28a81c4dcf146c0a77e45e7d3d582344c1f6193513b"
+    },
+    {
+      "turn_index": 9,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00165",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "6c4fe9462c4768b7698e903f1710d90e2898516ff8c0af24394ffee45013e276",
+      "code_prompt_sha256": "3138f0dca00c0ea13e5212f543dd3de3bfb7c17a97f891938aab48e868fe691c",
+      "tests_sha256": "db6c996bdbd5a72e60c31cc2ba93640036e5a5c9363fedc93fd5e7247e3f7990"
+    },
+    {
+      "turn_index": 10,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00523",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "940e742ce0dc9bb7a3b05b659eaef224ed0b01867aeaf45025618167793db973",
+      "code_prompt_sha256": "94b41f2ff057823e0a0e52ccc7a10c057e07ca8cef2506c43157943a264f2ee9",
+      "tests_sha256": "d263fa6616075659cbd176b561df20ad0b78bcec667f23dfe34e4224e4db0b9c"
+    },
+    {
+      "turn_index": 11,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00160",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_062",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_062"
+      ],
+      "imported_modules": [
+        "pandas",
+        "scipy",
+        "seaborn"
+      ],
+      "question_sha256": "2b1ef727d10bacf952a11720fff49b0ea8bfe408631ccf2727579827bc405fc2",
+      "code_prompt_sha256": "f8ed2389724c3e03027f18664d5968bb65cf6b4f5f20ab7890cc85a466636b63",
+      "tests_sha256": "64567c3b89378d7d885c517feccea17079561234c886874039d49a0ae841cdbc"
+    },
+    {
+      "turn_index": 12,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00920",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "6506724749561b23b430d3f2fde5ee1a4bd425c09caca9bdb15c78318d3c1343",
+      "code_prompt_sha256": "a22c49aef6232fb96c93c80c6a1d7b48fe93ee4dc4ac16c47493f7c345ffb71f",
+      "tests_sha256": "40903b69c5399aa8d3215417c5c97d80674053aee5566e7f481a65b404fa0881"
+    },
+    {
+      "turn_index": 13,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00942",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "93baee6821b4671e491cf9c447e321099710c44f9e5c5fd213611208e9fbcabb",
+      "code_prompt_sha256": "8257eade6f4fc1a3d40653684100357c70a73354355bf122280f4ef09154706f",
+      "tests_sha256": "74661b9e4fcb8c558ac80b425d17ca6b88b86102944520f3e4203c0fec27db7b"
+    },
+    {
+      "turn_index": 14,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00103",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "5ce1fc906d913f4ee4bcc0750d0e3a19f6d3596df414cd57d71b8b385adc2bf7",
+      "code_prompt_sha256": "4084bcf6de7b3372eebb6f4b197cb5015c4508156e6a463d62a66e5f722aa8cb",
+      "tests_sha256": "49c8edc64ab0f79a1d0f5bac9f907e6e7a53910c4410b24d4acd49c7f58e603e"
+    },
+    {
+      "turn_index": 15,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00616",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "3acef591b9d37ee806d96fa534b7e7e1006fb36b9cd34f08f38c26ba9c0c0ed6",
+      "code_prompt_sha256": "4aae5e3cf1d85b6d3e98e63706251d71884a6c83927e77296dfd18e01ccd1c1d",
+      "tests_sha256": "129c17ab7e792ad1613a04794ea87bd5dcbe6c00d213912bf03c2e2bb8a9fbf6"
+    },
+    {
+      "turn_index": 16,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00138",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "e0a644e7e745dfe55b54c8d8c59c5feaed943404d426d5538778bdd63475df12",
+      "code_prompt_sha256": "470a21e5d4b507ed015a78306531859a7eb3d592110626e7a766ef89f3e7041c",
+      "tests_sha256": "1f231806c72464525a649964453fb8d1d68c4081afa63b47b1f66f82379c1105"
+    },
+    {
+      "turn_index": 17,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00063",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "8508f38c1e5af403ba321d52f2d40c5b3bbf132d547688504ce2761195d3adcf",
+      "code_prompt_sha256": "6176c6eb9a303018cfaec50a48ef89948b4412840157595d40d45747f20e21ef",
+      "tests_sha256": "bd9c276984ee9a30f186bb96350434d38e62828b02a53a562a2c2a7aff1a8709"
+    },
+    {
+      "turn_index": 18,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00341",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "bb6a6ffb119e73eb3fe7ed15da592a2635c81345a3081e0dab8c7c245547bdc8",
+      "code_prompt_sha256": "8b19850e83d78913b6a919d91669d1ee0bca3e136e3dbcae08b26cc12b267953",
+      "tests_sha256": "76a8393605e1f07894199de8590624bcd0fd01193f2e616478ab31b1b1ea1c97"
+    },
+    {
+      "turn_index": 19,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00515",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "21e77b02edf694c1f13656d1c2d77a11e4d54db0a8806ef13d683c0eb248777d",
+      "code_prompt_sha256": "fb58858195140e64b48d0a14206006d07afc433a4b7f7b3b8dd7867f4f9aaf2c",
+      "tests_sha256": "15f7d4f7aa467e1e4ed11d9d7ba90720ddda10cfeb52eb4c722e69f58928cbc7"
+    },
+    {
+      "turn_index": 20,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_01002",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "d38b12bcb4a47fb8bd4b2de72d19c6f22eb6b5cb6ecce37c3023693276ab832f",
+      "code_prompt_sha256": "e989382a46fbdf94d83035f8779032290617f19acd24bc6e7a87f17ef3a43c95",
+      "tests_sha256": "0d273589386c7320a5991ad04933073dd5d48b2020bec433a7477446197a0385"
+    },
+    {
+      "turn_index": 21,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00009",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "58427a409ed5818ebf7a7a08245c049420bc619c73959b5ef1a5fb4caf5ab8a9",
+      "code_prompt_sha256": "2048e55f712a89d2941f3dd855bd713b9154159f690a3aff4357e196bb77d167",
+      "tests_sha256": "1b1a3c511b62e70b5cd5842bdb72888966d88add6f19b4b247817f1b6dd03d60"
+    },
+    {
+      "turn_index": 22,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00559",
+      "skill_annotations": [
+        "bigcodebench_062",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_062"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "scipy"
+      ],
+      "question_sha256": "114e79dc95f776bcf8db1b0e06d6a5e3667764b5bf5e2579c82be1ee28411d05",
+      "code_prompt_sha256": "b40e8fd89402f57f81291a2f3650c8e38883b14814a0ae6ad81c9c59614c7fe0",
+      "tests_sha256": "48a3b5b91e99a3567cad5e0d8193556cf612cb0c4e760f6d8d0b234c22680354"
+    },
+    {
+      "turn_index": 23,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01060",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "cbfe22f145e9384383e80e9915db065e5f5d7a8f10855529a4e5322c3e0e540d",
+      "code_prompt_sha256": "993a65b9a51b753b7cc481e1abfa405544c77312b3eecd0ec23e21b4f9809946",
+      "tests_sha256": "f4ce70cb22fbe7931b165eae77d94991c8b3bed299173162cdde725b30d6b825"
+    },
+    {
+      "turn_index": 24,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00304",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "157de6d18e8eda3768dcadabeb02b1ff75e4ebab1e90bdb4f701fadcd3bef254",
+      "code_prompt_sha256": "6e31122c64a3e7c2c6b93057bc1d63a06738983906109bd9278a17544072cbcf",
+      "tests_sha256": "1d3a07891414f2f3473a480286ca288640d34db75c20feb0a70f27b32bd0a709"
+    },
+    {
+      "turn_index": 25,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00064",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "5e43dec80c8c5d673a36f1a2c7459a10fe6afef34806d921b4658bacee30f8c3",
+      "code_prompt_sha256": "ba2ddab438dfd3fc89b5daa19362fddfe8f9a546539edbba02116378b73915a3",
+      "tests_sha256": "0e44bcdf99e2aba348c41da82868038f026d31b9d7ebf9b5035faa4881f7a13a"
+    },
+    {
+      "turn_index": 26,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00614",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "c85ee455e75e6810157e28807ac1d4d39c1a28e86c5636c0a17c616559376fc4",
+      "code_prompt_sha256": "2cbc5be04cc726ebf7b4864134619c8a96642162eeb0627e965763257b205a8f",
+      "tests_sha256": "765a2e117a816297129dc9a45d993bc22844782666803a28e36b5eacc582ed1a"
+    },
+    {
+      "turn_index": 27,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00428",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_024",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "pandas",
+        "seaborn",
+        "sklearn"
+      ],
+      "question_sha256": "bb52b6c630bba3b127e4cd8019e609727a51ea6c0d7f27d461e35aed55c49908",
+      "code_prompt_sha256": "33e23d84eb6c04c5ea34cf4553959f89827e14ab14c80a6d373255a9af7b8e3a",
+      "tests_sha256": "1310cc20b2553b1bd12f08fff2b430bbac229a5edd967d9e628867dbef533a5d"
+    },
+    {
+      "turn_index": 28,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00230",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "41ed3fe8f83ec87ef3d66232c9cf705f67e886d3113a91591bc5681456b5ca7e",
+      "code_prompt_sha256": "b36855ae25c61d1ea1e1d0073612e7196a60938c83ae76ba77c207f419d49820",
+      "tests_sha256": "95f25aad33ef4ad52f95c50cde035ed583ecc9271b3db1fff74e4eb4525ee92a"
+    },
+    {
+      "turn_index": 29,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01024",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_137"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "numpy",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "b921b2bbacdee551390d66f8d398367bfc89241f3fec1d827cdff43a695bd8dd",
+      "code_prompt_sha256": "28df2e7995e1ac82b34b57169816dbbcc6d43f88a0b9ce70595d4aafa9708053",
+      "tests_sha256": "f4527f18ae808ec7c0ff9388abac3931c2362976c411d17abcdd366777274369"
+    },
+    {
+      "turn_index": 30,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00966",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "ee49e7acd69edab4931cb22a29588f588a47ce32acdae38fa9cbf0070224bf04",
+      "code_prompt_sha256": "29662f3697303171cfb58162af44db9c209c4b7c29f8e700f239cc4d0bb91aef",
+      "tests_sha256": "6620711f0702d9d2a57d36c150978a36e88ad201fe13e5834b54fc7ebd79401b"
+    },
+    {
+      "turn_index": 31,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01023",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "e7958e88a1c17bef0dc5c72584138553c97bbbf97fb8c62771316f2fc4c42524",
+      "code_prompt_sha256": "97651fd7e7e77cdf3d98f7363b49e48f3c824b2faea0b09e703ae73ceeea44f1",
+      "tests_sha256": "18a01d5b88981d3427e7d594149561e7e07ea82a33ecc472fbb5f6545045cf69"
+    },
+    {
+      "turn_index": 32,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00099",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn",
+        "sklearn"
+      ],
+      "question_sha256": "4185c382e3f6de8a07f5fe420d77cde285ce5c3cca2e6acb9954be94767e4122",
+      "code_prompt_sha256": "6707f8c4e1999e12c87cc64972dac2f38302e451ae50a317c7333bdb073fc1ca",
+      "tests_sha256": "9ad84346c2030d81a17c8c0ce0f1c97ced5a2d7de5a50d6ec69751e6e1ee21f1"
+    },
+    {
+      "turn_index": 33,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00066",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "04af49d5b59e77a5738994298a9ba56d76b25a8f433066d4d870ea48f13c5c28",
+      "code_prompt_sha256": "72370f65d2ac1baea8db5d759977d831fb82f3fe311c45938b227047eced6c3d",
+      "tests_sha256": "074d5ed0cce47b1b0bdf45bb4a3214fc984300e61e1d4a69c02d9839c3c4e877"
+    },
+    {
+      "turn_index": 34,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00605",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "0f953b79de5a3b7e370dcfed33349085ad6bde8b36331627e946020aaf7036fe",
+      "code_prompt_sha256": "a1e0bfaba7a063d813dd7a1ac787941098e9cd5a9f59cf59d0f68c7637d98567",
+      "tests_sha256": "ba751910a36416b2958c6d7d6deb7ac4c506a5023bf12113c0390dae41b87aac"
+    },
+    {
+      "turn_index": 35,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00139",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "fb3bd80e193455c82cc96f17fe44f50363e406336cba4d35fdd30a3a8684c800",
+      "code_prompt_sha256": "996618a76a4275afbd73521b05863213f61256d710f65564f089f15af1be8e61",
+      "tests_sha256": "ac2e39b59fc11261e69a17098402c67615e98c1ca944c27a53ce73db4c22130f"
+    },
+    {
+      "turn_index": 36,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00038",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "49f9398d0d11158c05f9d707f28e2770eaed9a765862eea32ed69d4c61ba1855",
+      "code_prompt_sha256": "8179570b9cc6d1727bd4e20614e86e108d786d8676639cc178d27e994a9b1f44",
+      "tests_sha256": "b9b85fefbfc0b4a34b6d737bc19f63bae8161d932855d63eabd893bc92d9114f"
+    },
+    {
+      "turn_index": 37,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00092",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "524ef9efb1ebfa481d7de078ac1c3d133474bcde1575eee8986ab944cfac3606",
+      "code_prompt_sha256": "8f36fca764f8f83b0ef43f29da25aac635f7a280d56f999cecce56ade29d1248",
+      "tests_sha256": "679e0822da7db1e51e924c4d22267f350a255601d22e24b101377dd43534ddae"
+    },
+    {
+      "turn_index": 38,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00345",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "4095ea35325d393eaa77cb7da815a584ef58139c97c88973d4f15e1e7bd8cc92",
+      "code_prompt_sha256": "7f2357dfc270c14449a5378e1fdb10208614990925d52a0cda69d43d8c8a918c",
+      "tests_sha256": "7cd6937dfefaf58ba719bc7d9800121af6dd21c7d6884f70345217ab67ea4a24"
+    },
+    {
+      "turn_index": 39,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00164",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "8e99af0f8ce697f56f022829245239d0cf32e1ba74a33a8e8073f4ce2fcff24c",
+      "code_prompt_sha256": "3f6fb876c9408907f8568be4c02a16bf713bcc2baa62ce6141711e4be5b0a86c",
+      "tests_sha256": "aef0fcd8de443cf4d6b25025aaff3bb97ab90e794da96726f2a9f12a96f4ac03"
+    },
+    {
+      "turn_index": 40,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00020",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_046",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_046"
+      ],
+      "imported_modules": [
+        "ast",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "447be4c7b9dec8df6f875ba02b7ec3197f2051ea25a0c0f4894007a92f77f955",
+      "code_prompt_sha256": "c4fe809f897024af361e859f0557f491e269e8a1a42181cd4ed8d8dc098f6e70",
+      "tests_sha256": "5e21f28641e41785f523414ad7034dd31718d8ff796358fdc1bf82658f0fe29b"
+    },
+    {
+      "turn_index": 41,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00302",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "a879e8fd798c8e65ca38380c6994630adc801efc4dcd3b13832d081470938515",
+      "code_prompt_sha256": "34978d999ea27c42dd95d1ae8dc9c8fe769d81aed32eac73aaf39d478ccdcb83",
+      "tests_sha256": "d8a0f7be40295cd9f0070299d8c0a533ef9267464e9967b0d22a9b52d6e67d25"
+    },
+    {
+      "turn_index": 42,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01025",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "8c765017592865692608c47c37bf36078b08758838039a91ddc74dc172a9d861",
+      "code_prompt_sha256": "2a3d922a13600a8515692de29c2edec134d7c41890c9c89a5ba756bc33126e06",
+      "tests_sha256": "15d8b2168cfb747b7c8ef9ff8b622f3afa96d1be90eeca676fab39cb56695bdc"
+    },
+    {
+      "turn_index": 43,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00102",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn",
+        "sklearn"
+      ],
+      "question_sha256": "51e996656e9c23a44272b3beccee7a4583f06cd7228f02bcddb8b098927a2148",
+      "code_prompt_sha256": "715b63c967a0dde590a2af2a02667238da3a6a59b3e85afec0796842c4aed31c",
+      "tests_sha256": "c7f8a1d9de1d646aa243d9d3d9874611df3e14f35678b8c1c9dea49ebd42b947"
+    },
+    {
+      "turn_index": 44,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00521",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "ade8d216b5e6128581135c4602826776e4447ba43f26de4a2d615bbc147318c3",
+      "code_prompt_sha256": "2271a20d9d13db051f41a00ea6a2c4e5563dcba1bc8c7eb8181b7bded52f81ee",
+      "tests_sha256": "1cce78e2f1667a8c316a077adf5e2ae1fe38fc6aa29239358f492485878910b7"
+    },
+    {
+      "turn_index": 45,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00168",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "cf40a4422fa1767746d797f6ca1f92cae44e16354e9c6646ce73dacfe39f7c14",
+      "code_prompt_sha256": "66585603c236d8e819226c297e1190995d9de0581cfd412cbce76cf50193af60",
+      "tests_sha256": "345ab0602f36e824fdcd726fbfd8ac3fcee7d15ba4f4e90428652e85641e2a67"
+    },
+    {
+      "turn_index": 46,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01053",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "b1e4fadff30a9ec68fdf1e51c11f84d83ecf8c4f2cb04c1ceb7283b40b9e83b1",
+      "code_prompt_sha256": "97d32f7b43ddc5dada58f1a6e62bd5154e6c0733c136ce02448b75ddfa6ee8a4",
+      "tests_sha256": "4b5c753537f4997e68a3c1d9ef007aa00216bfee14bded4acfb77428efbc0627"
+    },
+    {
+      "turn_index": 47,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00639",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_137"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "numpy",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "897163fe18a85fd358a14714ecd48bade21cc67c112766ca14baf55ede6072d3",
+      "code_prompt_sha256": "47ed111434524647bc36074b3786b4806e8752beec1aba8b1b8ef6439bad49a9",
+      "tests_sha256": "955bc4e56f761d949e897abaa411ac8f0169542b13112d9dfeb746e27bd17482"
+    },
+    {
+      "turn_index": 48,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00156",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "40d4a42f7384081cf2e194b3a1960b8214fad1f0202ab4194993df3738a2f2bc",
+      "code_prompt_sha256": "5272268843bf4f15d41ee5976c41b7a20058bb433989c67f826fc4ca8eb6b2ec",
+      "tests_sha256": "f2a2e87b8b2331d4c3173c088b3cf6711582920e0945d74ecb6590e420e6bba9"
+    },
+    {
+      "turn_index": 49,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00636",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "cdf3d9176037f27443b292a35571bb85250a8a3f5c0f51b709c6a4a502fbda6c",
+      "code_prompt_sha256": "7ae3e0e0ae730633c350cabdb7143eae1201ca57c0cd58a2a6b008e2e80cc317",
+      "tests_sha256": "69cb46b147579e5c89a3295077980d2fa6a8a02f0914d12c4929b19140adaae6"
+    },
+    {
+      "turn_index": 50,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00133",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "629e6ee09215e97453a359a713ec211186fdc16920990e43155c56ad313df007",
+      "code_prompt_sha256": "c4d3749aeca9a9db7cbc175d718f474f8c9b1b75fac1ee6915c5c068ea8f206e",
+      "tests_sha256": "696ce722d6bf53fe81c03d3dd2192e26c27a5236065cc0eb1c31fa0296e79931"
+    },
+    {
+      "turn_index": 51,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01062",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "8f3bf499771fe71eb2a25113a71ac166aecd84163b694dbfa80e9a07c48f8b9d",
+      "code_prompt_sha256": "3b45cd2742802dc2e400db634f1cfd2a4e03952d3ef27595e9f60af611fde33c",
+      "tests_sha256": "ababbab8948dd4a0bff5737c606d3290615fb2ec714717e7a95308bc5358f5af"
+    },
+    {
+      "turn_index": 52,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00068",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "2c4870857f7ee351afeab8eb70dcfef13aa524e4f53c6aedd10b77b2e4acbb0c",
+      "code_prompt_sha256": "9ce087a96ab9fbcc27bcc7e6d6e5a3da504a6675daa5d2854e9f6e617d49aa0b",
+      "tests_sha256": "f9947e8da0c6441dcbaf9aeb65a756283b31ab4a5fe7bf57cc5deff063091aa2"
+    },
+    {
+      "turn_index": 53,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00456",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn",
+        "sklearn"
+      ],
+      "question_sha256": "4ae3c53e66490ef2083dccccb89e4a027a1d6692820ca606fa6064d0c7fdf266",
+      "code_prompt_sha256": "b796643f149654328e854056a0f9d7ad331540a988a6247937bf53c309b4a26b",
+      "tests_sha256": "779a80cc10b06667e6279197de1503780df2f73300ae3f137eaecb822294bfa8"
+    },
+    {
+      "turn_index": 54,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00155",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "e2ed426b61ba19f2af627ca05686de61068a4684b176fb8e8bcf219206b73122",
+      "code_prompt_sha256": "84efbee9410ad8a9bad440fc893ae8f7363ece26917b832366f733cd0adbdc04",
+      "tests_sha256": "04d9461640c6aa1b3a853d011cb11ae470ba06acfcc57c3179e0fa01c8ce7eff"
+    },
+    {
+      "turn_index": 55,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01001",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "d8614052dec7ff9f28d158ba173a51480349cabc93b741123ab09282b0d81a8a",
+      "code_prompt_sha256": "5d94104d1078923fc8bc5c7afad63c6bf7052028e3d20731afe8ddb4a9db20e0",
+      "tests_sha256": "6a13da51371efa0cc2c59c7b23b7323a49cf41332d15aae5a007f44305c2572d"
+    },
+    {
+      "turn_index": 56,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01052",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "2f327a34f8493b25af78a9c017ef7a689ea377ca9217ee163f41ee40c3e1ea80",
+      "code_prompt_sha256": "97d32f7b43ddc5dada58f1a6e62bd5154e6c0733c136ce02448b75ddfa6ee8a4",
+      "tests_sha256": "bb40fb0e65343489ea4be42572d44d5b8d6f52fbb412ec73b15dd50355e35de1"
+    },
+    {
+      "turn_index": 57,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00167",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "f5bae39c08c4e1c0da9daad80dfc879aa3260be0984d86ae25228f1a23bc2861",
+      "code_prompt_sha256": "3ef052b97db098cfea35e59f4da2040e3f1c933f2a7c96c8cda18892eafc2a10",
+      "tests_sha256": "52bd3b0020066d63d2e8d660fd354a3a66cc015c5162462535e77da049e16caa"
+    },
+    {
+      "turn_index": 58,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00104",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_108",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_108"
+      ],
+      "imported_modules": [
+        "itertools",
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "efda02a627292e1fb669bbd86a6b184ef6cc789e6b3cda887dc34fceb91a29ae",
+      "code_prompt_sha256": "5bb0221316591851a1269d2ab191dc9a250cd060f9f222f27c49331dc6672a8e",
+      "tests_sha256": "e1c1629f9030f06b4a4f53322d4a136d42076934109ad7e07108be529b8da7f4"
+    },
+    {
+      "turn_index": 59,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00427",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "a3eb5429f6e965ba9e3dd3f4da7ca76f86ca0e1d1e985ee8a1e9a58771463519",
+      "code_prompt_sha256": "3d00751ba4ef7c85970fa8931ed6e2454f74c83322a4c040a60b3090d3c97ed3",
+      "tests_sha256": "d187c6566b20cdeb479d1623a260e038646a22d42e0995583c4b04d4e8a1fb14"
+    },
+    {
+      "turn_index": 60,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00449",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "c1e7be157c925b34f4761aed3b66be3a29a2741c329c7505cedea2e84b910097",
+      "code_prompt_sha256": "777054327d1899cdfbc1eb3aa5c4419917ceb72b0351f26f333fd09472866864",
+      "tests_sha256": "e26d6826ffbf9c66df9ebd73ac8aec97a466fb54e667b1bc16a78f3b3c7f31b4"
+    },
+    {
+      "turn_index": 61,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00904",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "4802bdde43b9cdd3659796af4fe3e5efda4ffad4044bb3e02e294b794e17b9dd",
+      "code_prompt_sha256": "780db597badb22ab6dba3f7065698ca4111072080d5e1fb2d047bab2eb6018d3",
+      "tests_sha256": "a4b42d9eab902d5f9772dd3f4f36ed649b4ebe9d6bb11fbc7d9cef65a5a27836"
+    },
+    {
+      "turn_index": 62,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00588",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "4fa770308c88b06e6c60b24e5f8628b02a390ee64761f338d5705cde1b2aaf83",
+      "code_prompt_sha256": "d553a059dbc089a8bad7f4bd92b565927b9727855c59f905ecbf223c678e1841",
+      "tests_sha256": "528a2ae72db19f04a4576b8d08f456d34b3aeae1c437f70f9558a41c6d6e9fee"
+    },
+    {
+      "turn_index": 63,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00105",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "98764ba997092baf42e9d7c55179d82e655f40c2c6c6f1915bd471a87c49bf3d",
+      "code_prompt_sha256": "7d147a8f49c1578eb05d06d95b614b96d6ce9cedead3a4db169230711cdea9c6",
+      "tests_sha256": "50f395bd35676d7ed1bfb889e9cca96730752735b892e694ff230d78f0d55377"
+    },
+    {
+      "turn_index": 64,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00107",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "15ce9ed9ef8443a1fe406a6a481438ea94480a2be6a290f3f6360bc32cff81da",
+      "code_prompt_sha256": "9d6f4d939cdc4cb1a10610233a4a3223ef19c15cb77a5605650fbb92e1732ad5",
+      "tests_sha256": "a9a4ccd92fb192bbf3dcd6c2bdc94fea27f6942d9ba80b04d1f8269768733fdd"
+    },
+    {
+      "turn_index": 65,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00298",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "63b2512a9dfd2b01f90b26c1718e08efb745dc468a85729760abc1be31d31136",
+      "code_prompt_sha256": "1f96223014091b01fbf557ea066705788d5e0c36773bb4e4e43273183f0eb0c3",
+      "tests_sha256": "7e9eb501b3d9347b7e2fe6dcd8fe48ab58b2b99ca681449813de906d74fbe870"
+    },
+    {
+      "turn_index": 66,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00134",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "0e85f692d8fcc888288e68788c8a46f5ca498f53744cdc129f73718653528635",
+      "code_prompt_sha256": "67b1b2e636a25354bd03139985a225328f8cb3fa04b0082c460f3b602e72fee7",
+      "tests_sha256": "99b0e631c2107ba489036b32052c04fb94dc83cd0c8c5f5727a788d99e6b364d"
+    },
+    {
+      "turn_index": 67,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00916",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "e429a597a1defc5698602f9ccd4ae9bcc19105e9c12c871fda376bc5ec937409",
+      "code_prompt_sha256": "cbb3af6f46e03297138a31b31ba75b7335d230a158ed7241f8d6e4096bba9716",
+      "tests_sha256": "6ced6a871d8e2e482396c0daf0a521b81f25e3282600c922f89e16253870f23e"
+    },
+    {
+      "turn_index": 68,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00343",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "4af452e1a521cf16f63271796eb519c11451d6d1e58afd8f1fc0c8a71825ca53",
+      "code_prompt_sha256": "9cbaaf3a16a894611808992464793f29cefaaee89f2400ccd11ffb8a29c2a089",
+      "tests_sha256": "3c1ec1916db302d542eba7aab26e1cb5fb48273bdd0307fcc57b278ae62f2c3b"
+    },
+    {
+      "turn_index": 69,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01011",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "3fd067ca0f4fb9fae7665ba3ebbe600fe079ace90eeab5c7f8c42b3a9fecdfa2",
+      "code_prompt_sha256": "2e1e42d751d266f99e00a3236b9ab7e6535f0908029acc9c37a1b5ee3a9f715f",
+      "tests_sha256": "ee509da879219176c9116e78a31bedea20bfae84244058acf5b64523e7908e1f"
+    },
+    {
+      "turn_index": 70,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_01081",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "1f0e40eecb07602f64a095b06ce68f396952796b9b9a9fa8d8942190696d8bd9",
+      "code_prompt_sha256": "69e4955a62feb64f7d0159d83834a1197b328023f6a7cd0cd276d1c366ca45aa",
+      "tests_sha256": "23aa7f1fed175b11cb6879c7d6002425692b464d14623bb461c33aba5a54490d"
+    },
+    {
+      "turn_index": 71,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00110",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "3447e15c43beac966b6f5136a5fb1b37c9b7bd4b794f1e8cbf6fd4ebfbbb8e6d",
+      "code_prompt_sha256": "c48cb1ae112196464389103cd3bf8bd1de6b9a73c29d81bc785d89522a8546d1",
+      "tests_sha256": "7cea6941798961aa13f8e4369ca903ce93c17acb7c9af6f989ce1392a2b4d73a"
+    },
+    {
+      "turn_index": 72,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01036",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "9a9783a3b2846f5d16e4df76ca8bb1e9d085b81ec6fbe65d3e3fc27242f27cc5",
+      "code_prompt_sha256": "b1758b004e29c3d87cc952b9f01fbb69077381abd6b8bcdcb4b865c0f5026dea",
+      "tests_sha256": "6f5901c81e7295d1033a7244ec44b90c90b56aa9df61da9811eb4ce02b7a33e8"
+    },
+    {
+      "turn_index": 73,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01043",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "0ec68b1f0f3aee015290b40b7700d46ca00ac06c5e1653a9c39ca3e02acbe07c",
+      "code_prompt_sha256": "ed601c712ffa840ceb8663d977791f121ea140986f05aad8afcdce7e5b1f72b3",
+      "tests_sha256": "a639ae3af9a892512b55b71aebb7e23c000f540ca376cb7fc120bfb96c486f89"
+    },
+    {
+      "turn_index": 74,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00354",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_105",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_105"
+      ],
+      "imported_modules": [
+        "collections",
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "1202493d0e8dc9d9a1f3ed404f684beb15764b0866928bf4ca6ced3af0314a30",
+      "code_prompt_sha256": "193c98ec638e84ec7d05a9664a925d18abb30a05831cdf283eebf27ae4cbcd75",
+      "tests_sha256": "dd237b356bd6081bea0716639eb1b4a6597477ebfa458a4a19263c9f9d102056"
+    },
+    {
+      "turn_index": 75,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00661",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_137"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "numpy",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "8961c8e4ffb9d69c7424304ebd7821a4d12f67805d8e73a06fc0fc3f2f5c1aa2",
+      "code_prompt_sha256": "ce163ca5b267e231780c0ce1b8c75ee93ba1c48a0da861b5f6f7faa0db0d3c7f",
+      "tests_sha256": "201eaa7f653d849eb03260198cc47e3bcd3cd7c47812ea2c784b8c719044d5d0"
+    },
+    {
+      "turn_index": 76,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00519",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "f48a4f5ca35bef2e15b549af04bb324f7398b74e157651e4e3175a88d0da1cae",
+      "code_prompt_sha256": "94b41f2ff057823e0a0e52ccc7a10c057e07ca8cef2506c43157943a264f2ee9",
+      "tests_sha256": "1d633a1c4db2ef277ee0838f9557f4bec6dccca9a1bcd6f62d536bbd0b4d1da1"
+    },
+    {
+      "turn_index": 77,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00551",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_105",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_105"
+      ],
+      "imported_modules": [
+        "collections",
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "1c8561119869308157d202d4f02a3ce8024bba33e1c31baaaf6583a2141878ba",
+      "code_prompt_sha256": "2078480faf85ac57ee8217691d7ccb0265eef060113bf99d87eaffe805d273a1",
+      "tests_sha256": "c065639a7425870b599e173613271771d6873036252e2d3a62e27d365b517a74"
+    },
+    {
+      "turn_index": 78,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00640",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "8a92b179d5f20a4356ca9974abfbb9186416ec377a1b195cf488b7e1f6e2619f",
+      "code_prompt_sha256": "3656547bea805359ff9d320ff4c65027be1aa7e7fdedd2564e697ac58059a762",
+      "tests_sha256": "baaf93b10671b2d8258730e98e5f500ff29b734405d61d4910393e4a8f10e2d0"
+    },
+    {
+      "turn_index": 79,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00968",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "3b540054bd2ed571a36624b75edf1426b2d651726f6894005fcc709a37d6eafb",
+      "code_prompt_sha256": "a22c49aef6232fb96c93c80c6a1d7b48fe93ee4dc4ac16c47493f7c345ffb71f",
+      "tests_sha256": "fa670d87b01a25d69d88729b7fe6d47a76ca6d075ede8761fe66ba9eb4b3a22d"
+    },
+    {
+      "turn_index": 80,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00618",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random",
+        "seaborn"
+      ],
+      "question_sha256": "bbdc3b49b7ad24d5e8ebd8f809e8f741da8a4687548cd66fc81d896cacc13dd4",
+      "code_prompt_sha256": "f1e5acba7e5b1a0259c129d6743c992b45d1557c50d8d4ccb732039eb7134a48",
+      "tests_sha256": "f96b5accad78cc9ffc996f5c2106acf5595077f34002c2e1a6f55edc22333178"
+    },
+    {
+      "turn_index": 81,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00264",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "4c40e332124f0147884c40d8b1c609b40165701effa26846663f15071b06b1c6",
+      "code_prompt_sha256": "36b02ebc25417b7287d7b9edf84792bab1df274cc6cd9198ba3a548122e7f0bd",
+      "tests_sha256": "676fb14cf801ea84ed645f67a1438826b01fd837f0c1a4267b109b609edc641f"
+    },
+    {
+      "turn_index": 82,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00567",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "d675aaf107732bca097a86656c548f3060c576f273d202b5fd29bfee6d979158",
+      "code_prompt_sha256": "c7f9bd24155af2fd57a7a8c32db8f66c058ad36a54a5871f612246e2f4d80f64",
+      "tests_sha256": "45add14bc2f8e5978c6d65ab55545374d5ccebbd58c5c47308e891b81e8e4ec5"
+    },
+    {
+      "turn_index": 83,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00607",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "a499a0c6dd6ef47f33d3628da5362e47fee6ed62fba9934e1bdb29f2e3698368",
+      "code_prompt_sha256": "da6ea6000d602c3f69009c08137edb93abda03a4596a7a492283be67d890b353",
+      "tests_sha256": "ea42e16986027fd4dce1d93dcde43e3da749df7db27fd92ad44111d33c8fd5f1"
+    },
+    {
+      "turn_index": 84,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01079",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "4a51513b51a1da33790fd8b5bdf30456fe04344bbf14a782040805fa24400010",
+      "code_prompt_sha256": "c7f9bd24155af2fd57a7a8c32db8f66c058ad36a54a5871f612246e2f4d80f64",
+      "tests_sha256": "a503724a3acb6efdbdca8762246637719e7cc911f9584f315e05e361905d8c92"
+    },
+    {
+      "turn_index": 85,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01083",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "174e77e4e9d94778f648bb574f6722d358525d81c87b51aa83ad6606f43ed8c2",
+      "code_prompt_sha256": "5272268843bf4f15d41ee5976c41b7a20058bb433989c67f826fc4ca8eb6b2ec",
+      "tests_sha256": "59bc820e83920cb7afeae7e8c404d566fae26fc95fbd3beb828f389161dde032"
+    },
+    {
+      "turn_index": 86,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00610",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_073",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "pandas",
+        "random",
+        "seaborn"
+      ],
+      "question_sha256": "18aabe6049081b06ec97d321b306773b2d0d9cd55352ac0cd89e4464891dca42",
+      "code_prompt_sha256": "9e93881afe47960603f29e897178e04759685bd24a2796f85c04b6d99b778ca2",
+      "tests_sha256": "1e87722973a148262da80ad04bbd348b5e829f63f37f842c34cf8b83a3a79a11"
+    },
+    {
+      "turn_index": 87,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00506",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "68fda3c1cb66f45b98b1175fcb974b4a781656574446fb50565eba6877e33e46",
+      "code_prompt_sha256": "3a9ce1fe1d3827b2f24a6222c086d88183e5f42775c962ba5846aafc98b6e755",
+      "tests_sha256": "d4c0206d8d108bda2b264ede37383d3cea676f16ca2276b33a33440cd694fef1"
+    },
+    {
+      "turn_index": 88,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_01069",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "71202b729ae0c9abaabcf8d798aa6f3d931b5fac3634b3bed9b9dadb6f75b312",
+      "code_prompt_sha256": "2a1890076e677f3a352c8057551156ae3b7f4ce20be210031c32d36ffbe269ba",
+      "tests_sha256": "70d53011b129fe1ae8a09caa3ae927fe93d9593128b66c90404e845487184ee2"
+    },
+    {
+      "turn_index": 89,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00135",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024",
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas",
+        "seaborn",
+        "sklearn"
+      ],
+      "question_sha256": "0c05470965adbcec2f7dff6a72d5f6fc8042c26a8ba3eb1fd98cdea985eb8a03",
+      "code_prompt_sha256": "94f3c6a741f283c92da58854937baa3e3232d4b17a942caa42064be0828dcb0b",
+      "tests_sha256": "5784ad114206980c1b0ee5b1bfa1071e85e12375ba5229e55f30eba846e3cc50"
+    },
+    {
+      "turn_index": 90,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00040",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_062",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_062"
+      ],
+      "imported_modules": [
+        "pandas",
+        "scipy",
+        "seaborn"
+      ],
+      "question_sha256": "5b3ea5e89fb5fa629f9e388bb563956ef1acd6745dd714bcc859001e5daaab10",
+      "code_prompt_sha256": "580af2ce8279866c097de2bdb32b560bb0c3ef42ee48a9dda2e1b7b40c039904",
+      "tests_sha256": "ab5ce2939c4f7e0311b9a272e67fe3d107416550bc4807298a918524787394a8"
+    },
+    {
+      "turn_index": 91,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00042",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "dcc1e390113bd84b0db572f437e13230f73e07cf93bef861c2c0d65b387a92e0",
+      "code_prompt_sha256": "7a1a3e84c221a373dceeca733cb8825f1761545a73b1751bf727842fdffa1388",
+      "tests_sha256": "ab2e60c0fdc80bf8b2c6f9d7835bff30dc218c37a4b3c9a40a2f32641133f627"
+    },
+    {
+      "turn_index": 92,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00041",
+      "skill_annotations": [
+        "bigcodebench_062",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_062"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "scipy"
+      ],
+      "question_sha256": "b71b8e14f1e0628f881c51e817af18be1697a7ac80db65b30d99b85eea52d9be",
+      "code_prompt_sha256": "6e5cdd0d3b4309fee94fbf19efb0ca25389fe50358b25f82df476d6831490533",
+      "tests_sha256": "adfd5ef82df08ae5c0e287a76aa37ba1fb824c297400a6f083cef79e5115bb8a"
+    },
+    {
+      "turn_index": 93,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00513",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "c880e8e35421755be364b1bd804718502f814791aced0684371f7fe7c2436f09",
+      "code_prompt_sha256": "3a9ce1fe1d3827b2f24a6222c086d88183e5f42775c962ba5846aafc98b6e755",
+      "tests_sha256": "3dd75f63257a25a6ce397d66eafbcb6be4640e385c90aae8dd21958da3f8523b"
+    },
+    {
+      "turn_index": 94,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00477",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "a2aa6df009d2f2a7689ded28fd4659792d1bf9e810bbe711259666fdff07b19b",
+      "code_prompt_sha256": "04c6aca913ab022f1fbbd017e40b8b92cfd147f390f5ea2bd1475938824006bf",
+      "tests_sha256": "04ff9519b65a0686b12627279666a71850d3e577f3aa646a724972167c35ea36"
+    },
+    {
+      "turn_index": 95,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00469",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_105",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_105"
+      ],
+      "imported_modules": [
+        "collections",
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "06530fe08c2f5bdcc08b90af1dcce410ad895b661c46eca43aac90a4f81d63c4",
+      "code_prompt_sha256": "a5a35de6b6a163afbde9c8cc7fd21d3ee6ae5f002e82663d97eb0e52d0144312",
+      "tests_sha256": "46cf42cd8cc4e7960529590dc5b38df8d3358344d806c14a9a9b1a349bc3a405"
+    },
+    {
+      "turn_index": 96,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00568",
+      "skill_annotations": [
+        "bigcodebench_051",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_051"
+      ],
+      "imported_modules": [
+        "inspect",
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "518bb1619a19ba395d062f163a45f8ca212cbfbf8741509f342ef9fcf48c1dd7",
+      "code_prompt_sha256": "872ff01925234773c32e01a04b02a96bb11bf79e2f53418ab7cc3198bb967191",
+      "tests_sha256": "b6747bae78749d2e479c7f7bab2b2e073ebe4a035447abcf6d9cfb48d92d68c2"
+    },
+    {
+      "turn_index": 97,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00136",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "35099c6184af03c8dbb39dd0b701c1d5ca0dd5cdca74199470264881adad604e",
+      "code_prompt_sha256": "6e31122c64a3e7c2c6b93057bc1d63a06738983906109bd9278a17544072cbcf",
+      "tests_sha256": "1eb9b3fcdd4b02bf967aa493e9303ef267f78ad644636ddfc3d50d60b8457671"
+    },
+    {
+      "turn_index": 98,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00560",
+      "skill_annotations": [
+        "bigcodebench_043",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_043"
+      ],
+      "imported_modules": [
+        "datetime",
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "1261080d82baa4ed7ce8e704098f4a2c0fe64d89194b94195ee75599ed028255",
+      "code_prompt_sha256": "d854b977a5572e46959b6fd0b5364dfae77785507705afcf6ca3a09761ececd1",
+      "tests_sha256": "1b371fc652d3ac6c904b2f73072e1d609e1ce7288209f1c2ff26578de01759b0"
+    },
+    {
+      "turn_index": 99,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00106",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "625e570dfd60782b51df8b2a00649968a2077a571bb49f5d2883f9aa4fbdd766",
+      "code_prompt_sha256": "96ccd74df40873f2fa2a99908535f5284b1ab71b698eef8753c65c59c1e0b25a",
+      "tests_sha256": "685ccd8096efaaa5bf787917e7cf79f0a36be3985cce883d2021ad1ae88397f4"
+    },
+    {
+      "turn_index": 100,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00514",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "254d6f22720d4b6021d2fb48c7a5876652be56de060c20ee7f6f906b26263289",
+      "code_prompt_sha256": "91265df53fca276d6bef87560b22f598d4b0eb72998531f12508d0f2a672c75c",
+      "tests_sha256": "72861f028fe13ca7ef6267b8df672f720809f2d51aa7dacba62612b3b84c6ffc"
+    }
+  ]
+}

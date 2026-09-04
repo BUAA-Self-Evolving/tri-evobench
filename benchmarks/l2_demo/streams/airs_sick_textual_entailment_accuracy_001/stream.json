@@ -1,0 +1,67 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "airs_sick_textual_entailment_accuracy_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "workspace/"
+    ],
+    "note": "test_labels.csv and known-correct code remain benchmark-private."
+  },
+  "source": {
+    "benchmark": "AIRS-Bench",
+    "upstream_url": "https://github.com/facebookresearch/airs-bench.git",
+    "revision": "18e4f1d501069cf7d7e2740d81c2ca748c56a6a1",
+    "dataset": "RobZamp/sick default",
+    "split": "native train/validation/test",
+    "license": "CC-BY-NC-4.0 (AIRS-Bench); CC-BY-NC-SA-3.0 (SICK dataset card)",
+    "license_file": "SOURCE_LICENSE.txt",
+    "additional_license_files": [
+      "SICK_DATASET_CARD.md"
+    ]
+  },
+  "similarity_rule": {
+    "type": "same_text_classification_workflow",
+    "value": "TextualClassification + SICK entailment + Accuracy",
+    "explanation": "E001 preserves the native SICK task; E002/E003 are deterministic disjoint test-slice variants with the same train/validation data, label space, metric, and verifier contract."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace_then_apply_patch",
+    "user_simulator_scope": "episode",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "episode_order": [
+      "E001",
+      "E002",
+      "E003"
+    ],
+    "note": "E001 native full split, followed by fixed derived test slices."
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "runner": "l2_runtime.runner:StreamRunner",
+    "model_protocol": "openai_chat_completions",
+    "user_simulator": "bounded_retry_template",
+    "episode_result_policy": "latest_interaction",
+    "learner_update": "llm_memory_summary",
+    "persistent_state_path": "workspace/.l2_state/",
+    "model_response_artifact": "model-response-0.1 JSON",
+    "unsafe_local_execution_requires_opt_in": true
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json",
+    "episodes/E003/episode.json"
+  ]
+}

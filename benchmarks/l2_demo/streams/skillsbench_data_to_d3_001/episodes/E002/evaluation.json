@@ -1,0 +1,47 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E002",
+  "visibility": "benchmark_private",
+  "verifier": {
+    "type": "package_local_browser_pytest",
+    "entrypoint": "evaluation_assets/verifier.py:FileArtifactVerifier",
+    "implementation": "episode-local verifier.py",
+    "smoke_command": "uv run --with pytest --with playwright python episodes/E002/evaluation_assets/smoke_test.py"
+  },
+  "scoring": {
+    "method": "binary_pass",
+    "range": [
+      0,
+      1
+    ],
+    "success_threshold": 1.0,
+    "episode_score_policy": "latest_interaction",
+    "criteria": [
+      {
+        "id": "native_browser_tests",
+        "description": "Package-local Playwright/pytest verifier passes against the generated output directory.",
+        "measurement": "all_tests_pass",
+        "weight": 1.0,
+        "partial_credit": false
+      }
+    ]
+  },
+  "gold": {
+    "mode": "materialized_files",
+    "oracle": "evaluation_assets/oracle_solution.sh",
+    "native_tests": "evaluation_assets/native_test_outputs.py"
+  },
+  "feedback": {
+    "visible_to_agent": "bounded_error_category",
+    "allowed_categories": [
+      "pass",
+      "fail",
+      "timeout"
+    ],
+    "hide": [
+      "native_test_body",
+      "oracle_solution",
+      "verifier_logs"
+    ]
+  }
+}

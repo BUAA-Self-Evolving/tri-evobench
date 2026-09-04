@@ -1,0 +1,5 @@
+    df = pd.DataFrame(data)
+    correlation_matrix = df.corr()
+    ax = sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+    ax.set_title('Correlation Matrix')
+    return ax

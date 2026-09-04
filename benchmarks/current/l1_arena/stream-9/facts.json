@@ -1,0 +1,99 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_9",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "prd3",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "every structured JSON output must include `source_url` (or `source`) AND `generated_at` (ISO 8601 timestamp) fields at the top level.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "conflict and anomaly flags must include `from` field identifying the session source.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "anomalous categories must be marked with `\"flagged\": true`, not just described in text.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "numeric fields use 1 decimal place for inventory-level metrics (e.g. 31.5 days) and 2 decimal places for percentages (e.g. 19.30%), no mixing.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "final Markdown report must include three fixed H2 sections: \"## 数据来源\", \"## 口径说明\", \"## 异常标记\".",
+      "source": "standing_system_context"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "data/updates/pm_correction_note.md",
+          "size_bytes": 1275,
+          "sha256": "0ee5155854439a3f4a14431a7670e7967e4a7ecf9443b7fde0b5de6b527d15ea"
+        },
+        {
+          "action": "new",
+          "target": "data/raw/gmv_daily_618_v2.csv",
+          "size_bytes": 43567,
+          "sha256": "6f197e4f45634dfae2c676436078eeda80e509446b9fd0cec461f6356d90cef1"
+        },
+        {
+          "action": "new",
+          "target": "data/processed/v1_v2_reconciliation_detail.csv",
+          "size_bytes": 51013,
+          "sha256": "a641b1e0696c5f3555f1b01a28d83e65c5eaaf23daf27e06c80884e0752ff644"
+        },
+        {
+          "action": "new",
+          "target": "data/updates/update_slack_thread.md",
+          "size_bytes": 616,
+          "sha256": "e4c69cc43d466ec668a61d2f04c3593c1533d401748ce7ddeaaa56eac123c95c"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "data/updates/finance_audit_memo.md",
+          "size_bytes": 1748,
+          "sha256": "556a8c06005e6d85c29ad78a7b82a62664ad174c8edf93f8dc39a43a8ebee901"
+        },
+        {
+          "action": "new",
+          "target": "data/reference/revised_category_benchmarks.json",
+          "size_bytes": 737,
+          "sha256": "4baebda0896139fcb8fad342543e0e3dde0c7df9222a0ff0b7f4f5ecdc16abbc"
+        },
+        {
+          "action": "new",
+          "target": "data/processed/legacy_report_v0.md",
+          "size_bytes": 1302,
+          "sha256": "d74a1852d06f07cb032b14e7ec7dbba5b12c11fb505a5c5ab404621c93350cbb"
+        },
+        {
+          "action": "new",
+          "target": "data/updates/channel_reconciliation_detailed.md",
+          "size_bytes": 3177,
+          "sha256": "e5dce5dcc6280d884325b34906f23951ee58a6b12744c47b47492b4fa29b69bc"
+        }
+      ]
+    }
+  ]
+}

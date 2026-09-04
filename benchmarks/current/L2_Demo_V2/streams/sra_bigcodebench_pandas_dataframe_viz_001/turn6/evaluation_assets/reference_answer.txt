@@ -1,0 +1,6 @@
+    data = pd.read_csv(csv_file_path)
+    corr = data.corr().round(2)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr, annot=True, cmap='coolwarm', cbar=True)
+    plt.title(title)
+    return corr, plt.gca()

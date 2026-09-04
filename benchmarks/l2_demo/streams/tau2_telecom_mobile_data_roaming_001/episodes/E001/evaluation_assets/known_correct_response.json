@@ -1,0 +1,21 @@
+{
+  "schema_version": "tau2-telecom-trajectory-0.1",
+  "assistant_message": "I will resolve the mobile-data issue by following the declared support path for this case: phone roaming is disabled while carrier roaming is already allowed.",
+  "tool_calls": [
+    {
+      "requestor": "user",
+      "name": "check_network_status",
+      "arguments": {}
+    },
+    {
+      "requestor": "user",
+      "name": "toggle_roaming",
+      "arguments": {}
+    },
+    {
+      "requestor": "user",
+      "name": "run_speed_test",
+      "arguments": {}
+    }
+  ]
+}

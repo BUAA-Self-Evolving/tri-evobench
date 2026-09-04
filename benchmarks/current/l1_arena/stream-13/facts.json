@@ -1,0 +1,126 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_13",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sci1b",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "all report files named `YYYY-MM-DD_caseid_type.md` (e.g., `2023-07-12_gino_final_report.md`).",
+      "source": "standing_system_context",
+      "checker_criterion": "Report files named YYYY-MM-DD_caseid_type.md"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "all formal RIO case reports must contain exactly four sections: `## Background`, `## Evidence`, `## Classification`, `## Recommendation`.",
+      "source": "standing_system_context",
+      "checker_criterion": "Formal reports contain sections Background/Evidence/Classification/Recommendation"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "every JSON deliverable carries a top-level `schema_version` field = \"1.0\".",
+      "source": "standing_system_context",
+      "checker_criterion": "Every JSON deliverable carries top-level schema_version == \"1.0\""
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "executive summaries (Abstract/Executive Summary) must not exceed 300 words.",
+      "source": "standing_system_context",
+      "checker_criterion": "Executive summary (Abstract/Executive Summary section) <= 300 words"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "every retracted paper must be listed with BOTH `original_doi` AND `retraction_doi` in separate fields.",
+      "source": "standing_system_context",
+      "checker_criterion": "Every retracted paper listed with both original_doi and retraction_doi"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "rio_slack_78a6e614-011d-5a92-e32a-8b74c3897e81.jsonl",
+          "size_bytes": 945,
+          "sha256": "4a6b6b8f7f0af93bd75629104c5929ea1a7df2b18724ccee5a21bd9951bd29b0"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 10,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "cases/gino/raw_data_analysis/why_connect_extended_dataset.csv",
+          "size_bytes": 234042,
+          "sha256": "3993753c1bc7c382c375dfc84dd13f0d3e20fe65fcc80dcf541c678369a034c1"
+        },
+        {
+          "action": "new",
+          "target": "cases/gino/retraction_registry_v1.json",
+          "size_bytes": 945,
+          "sha256": "7d23ef0142b96c951dfab7af0f90251a13d3b363540aea34db7c584393ee4106"
+        },
+        {
+          "action": "new",
+          "target": "cases/gino/extended_commentary.md",
+          "size_bytes": 25868,
+          "sha256": "3e056c6c2320ae354685ce5ac7495e8b1cd2eb769f6cf7b1f605fad783d7dcdb"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "legal_ops_email_ae446336-b19e-5d94-b6d3-c92da832c1f1.jsonl",
+          "size_bytes": 966,
+          "sha256": "6e0e24248026873958fdfa8bb7c7d941ce4c9eca754d33c3747994f158bfc6b6"
+        },
+        {
+          "action": "append",
+          "target": "integritybbot_feishu_beb152b4-f0c2-370e-a52b-d858b899b325.jsonl",
+          "size_bytes": 637,
+          "sha256": "d22e69475dc2a70a45afbc9d86d0821e2f04a9cd2cb933bf5c402c2d3283d69a"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "cases/gino/legal_memo_calcchain_v2.md",
+          "size_bytes": 1086,
+          "sha256": "9d10aca23e38935cff541440d0ca0f3d2f40c4671eafa4bf34b4969e76ee41f8"
+        },
+        {
+          "action": "new",
+          "target": "cases/gino/raw_data_analysis/pnas_extended_reanalysis.csv",
+          "size_bytes": 297578,
+          "sha256": "4b1be428025b760b0072b791f120e3a66e932c2f80e4b0157c46d191df9c3410"
+        },
+        {
+          "action": "new",
+          "target": "cases/gino/case_status_update.json",
+          "size_bytes": 342,
+          "sha256": "71e54f0c27f5e5e1d525ff6b35bf3e91225df7d62694d1e67374836c38c66146"
+        }
+      ]
+    }
+  ]
+}

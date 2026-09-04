@@ -1,0 +1,140 @@
+{
+  "turn_id": "turn4",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "task_type": "data_analysis",
+  "episode_refs": [
+    "E03"
+  ],
+  "user_message": "帮我分析一下 Aurora 最近四个迭代（S24–S27）的质量数据，工作空间里有 sprint_metrics.csv。我要：1）每个 sprint 的整体缺陷密度（bugs_found 之和）和 P0 缺陷数；2）三个模块里哪个模块的质量最差、依据是什么；3）test_coverage 和 ci_failure_rate 之间看起来有没有关系；4）结论用不超过 5 句话总结。对了，如果你对‘质量最差’的口径有疑问先问我，别自己瞎定。",
+  "interactive_clarification": {
+    "ambiguity": "用户没有定义‘质量最差’的口径（P0 数量 / 未修复缺陷 / 失败率）",
+    "expected_behavior": "agent 应先向用户澄清口径再下结论",
+    "scripted_user_reply": {
+      "when": "agent asks how to define worst quality",
+      "reply": "以 P0 缺陷数为主，未修复缺陷数（found-fixed）为辅。"
+    }
+  },
+  "available_tools": [],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "rule_verifier",
+    "entry": "verify.py",
+    "interface": "verify(response, workspace, trajectory) -> {score, checks, feedback}",
+    "design_note": "GAIA 式脚本答案匹配 + tau-bench 式确定性检查：gold 由 data/sprint_metrics.csv 确定性重算，数值比对/幻觉检查不依赖 LLM；统计分析类任务数字可验证，脚本评测可靠性高于 llm_as_judge",
+    "checks": [
+      {
+        "check_id": "C1",
+        "desc": "结论前先澄清口径",
+        "kind": "trajectory_event",
+        "weight": 0.15
+      },
+      {
+        "check_id": "C2",
+        "desc": "4 个 sprint 的 bugs/P0 汇总正确（8 个数字）",
+        "kind": "numeric_match_from_csv",
+        "weight": 0.4
+      },
+      {
+        "check_id": "C3",
+        "desc": "指出 crm-core 最差且依据含 P0=8",
+        "kind": "numeric_match_from_csv",
+        "weight": 0.15
+      },
+      {
+        "check_id": "C4",
+        "desc": "指出 coverage 与 ci_failure_rate 负相关",
+        "kind": "regex",
+        "weight": 0.1
+      },
+      {
+        "check_id": "C5",
+        "desc": "结论 ≤5 句",
+        "kind": "sentence_count",
+        "weight": 0.05
+      },
+      {
+        "check_id": "C6",
+        "desc": "中文回复",
+        "kind": "regex",
+        "weight": 0.05
+      },
+      {
+        "check_id": "C7",
+        "desc": "无幻觉 sprint/模块",
+        "kind": "entity_whitelist",
+        "weight": 0.1
+      }
+    ],
+    "scoring": {
+      "method": "weighted_sum",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "gt": {
+      "interaction": "给出'质量最差'结论前应先向用户澄清口径；用户答复：以 P0 缺陷数为主、未修复缺陷数为辅",
+      "sprint_totals": {
+        "S24": {
+          "bugs_found": 35,
+          "p0": 3
+        },
+        "S25": {
+          "bugs_found": 32,
+          "p0": 3
+        },
+        "S26": {
+          "bugs_found": 23,
+          "p0": 1
+        },
+        "S27": {
+          "bugs_found": 23,
+          "p0": 2
+        }
+      },
+      "conclusion": {
+        "worst_module": "crm-core",
+        "依据": "P0 合计 8 个全项目最高；且 test_coverage 均值最低（68）、ci_failure_rate 均值最高（约 0.1175）",
+        "correlation": "test_coverage 与 ci_failure_rate 负相关（覆盖率越低失败率越高；api-gateway 相反）"
+      },
+      "format": "中文，结论 ≤5 句，不得出现不存在的 sprint/模块（合法集合：S24-S27、auth、api-gateway、crm-core）"
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "反馈未通过的 check 描述与数值差异（不直接给出正确数字）"
+  },
+  "gold_reference": {
+    "sprint_totals": {
+      "S24": {
+        "bugs_found": 35,
+        "bugs_fixed": 30,
+        "p0": 3
+      },
+      "S25": {
+        "bugs_found": 32,
+        "bugs_fixed": 30,
+        "p0": 3
+      },
+      "S26": {
+        "bugs_found": 23,
+        "bugs_fixed": 23,
+        "p0": 1
+      },
+      "S27": {
+        "bugs_found": 23,
+        "bugs_fixed": 20,
+        "p0": 2
+      }
+    },
+    "note": "S24: 12+8+15=35, S25: 9+6+17=32, S26: 7+5+11=23, S27: 6+4+13=23；crm-core P0 合计 2+3+1+2=8 最高、coverage 均值最低（68）、ci_failure_rate 均值最高（0.1175）"
+  }
+}

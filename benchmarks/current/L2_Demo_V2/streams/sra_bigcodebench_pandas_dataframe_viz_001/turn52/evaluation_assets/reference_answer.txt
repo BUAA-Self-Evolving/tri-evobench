@@ -1,0 +1,8 @@
+    # Load data and filter
+    df = pd.read_csv(data)
+    df = df[df['Employee ID'].str.startswith(emp_prefix)]
+
+    # Plot histogram
+    ax = sns.histplot(data=df, x='Age', kde=True)
+
+    return df, ax

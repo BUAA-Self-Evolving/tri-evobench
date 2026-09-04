@@ -1,0 +1,24 @@
+{
+  "schema_version": "tau2-telecom-trajectory-0.1",
+  "assistant_message": "I followed the roaming troubleshooting policy and restored excellent mobile data speed.",
+  "tool_calls": [
+    {
+      "requestor": "assistant",
+      "name": "enable_roaming",
+      "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+      }
+    },
+    {
+      "requestor": "user",
+      "name": "toggle_roaming",
+      "arguments": {}
+    },
+    {
+      "requestor": "user",
+      "name": "run_speed_test",
+      "arguments": {}
+    }
+  ]
+}

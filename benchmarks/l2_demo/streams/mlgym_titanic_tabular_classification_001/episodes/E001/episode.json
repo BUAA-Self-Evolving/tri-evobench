@@ -1,0 +1,62 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E001",
+  "stream_id": "mlgym_titanic_tabular_classification_001",
+  "index": 1,
+  "source_provenance": {
+    "instance_id": "titanicSurvival",
+    "dataset": "titanic",
+    "revision": "9d40c1b5035202018cd7091fb4e83a9c68b377c0",
+    "path": "configs/tasks/titanic.yaml",
+    "selector": "id == titanicSurvival",
+    "variant_type": "native"
+  },
+  "materialization": {
+    "mode": "copied_files_and_adapted_paths",
+    "runtime_dependency_on_upstream": false,
+    "copied_files_scope": "agent_visible_train_and_test_only",
+    "copied_files": [
+      "workspace/data/train.csv",
+      "workspace/data/test.csv"
+    ],
+    "path_rewrites": [
+      {
+        "from": "/home/agent/workspace/data/train.csv",
+        "to": "data/train.csv"
+      },
+      {
+        "from": "/home/agent/workspace/data/test.csv",
+        "to": "data/test.csv"
+      },
+      {
+        "from": "/home/agent/workspace/submission.csv",
+        "to": "submission.csv"
+      }
+    ]
+  },
+  "agent_view": {
+    "request": "You are solving the native MLGym Titanic Survival Prediction workflow for this Episode. The persistent workspace contains data/train.csv and data/test.csv. Return one complete Python script, train_and_predict.py, that reads the training data, predicts the Survived label for every test PassengerId, and writes submission.csv in the current working directory with exactly the required PassengerId and Survived columns. The native metric is accuracy. Return only the Python script, optionally inside one Python Markdown fence.",
+    "assets": [
+      "data/train.csv",
+      "data/test.csv"
+    ],
+    "available_tools": [
+      "python",
+      "pandas",
+      "scikit-learn"
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": []
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "feedback": "pass_fail_timeout_only"
+  },
+  "evaluation_ref": "evaluation.json",
+  "expected_outputs": [
+    "A complete train_and_predict.py script that creates submission.csv with PassengerId and Survived."
+  ]
+}

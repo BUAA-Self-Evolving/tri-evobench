@@ -1,0 +1,14 @@
+
+    # Ensure tuple elements match DataFrame columns for removal
+    df = df[~df.apply(tuple, axis=1).isin(tuples)]
+
+    # Generate random plots
+    plots = []
+    for _ in range(n_plots):
+        selected_columns = sample(COLUMNS, 2)
+        ax = df.plot(x=selected_columns[0], y=selected_columns[1], kind='scatter')
+        plots.append(ax)
+
+    plt.show()
+
+    return df, plots

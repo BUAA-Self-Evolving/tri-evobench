@@ -1,0 +1,87 @@
+{
+  "turn_id": "turn7",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "task_type": "rewriting",
+  "user_message": "把 docs/abstract_zh.md 那篇中文摘要改写成一段给公司高管看的一页纸导读，用大白话，高管不懂技术。要求：1）用 3 个要点讲清楚“这套技术解决什么问题、怎么解决、效果和局限”，可以用比喻但不得歪曲原意；2）必须保留的关键信息：系统能在发布文本前自动降低隐私泄露风险、效果比“直接遮盖/改写”类方法更好、但仍存在残余风险、结论仅在测试过的场景下成立；3）长度 150–300 字；4）结尾加一句“是否立项投入，建议等跨模型验证报告出来再定”，这句一个字都不能改；5）直接在回复里给我，不用存文件。对了，如果你不确定高管导读的详略程度，先问我一句。",
+  "interactive_clarification": {
+    "ambiguity": "“一页纸导读”的详略程度（要数据还是要结论）未明确",
+    "expected_behavior": "agent 应先简短澄清详略偏好；若用户未回复前的首轮即给出合格版本也可接受（弱交互要求，澄清行为作为加分而非硬门槛）",
+    "scripted_user_reply": {
+      "when": "agent asks about detail level",
+      "reply": "只给结论级信息，不要具体数字，控制在 200 字左右。"
+    },
+    "policy": "soft_clarification_bonus"
+  },
+  "available_tools": [],
+  "workspace_files": [
+    "agent_workspace/docs/abstract_zh.md"
+  ],
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "gpt-4o",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      },
+      "judge_prompt": "你是面向高管的科技传播评审员。对 Agent 改写的高管导读打 0-1 连续分（精确 0.05）。\n\n【原文（中文摘要）】\n{source_text}\n\n【高管导读】\n{final_response}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}\n\n【用户请求】\n{user_message}\n\n【评分维度】\nA. 结构（0.25）：清晰按\"解决什么问题 / 怎么解决 / 效果与局限\"三点组织；\nB. 通俗性（0.25）：高管视角下易懂，比喻恰当，无未解释的术语堆砌；\nC. 忠实性（0.3）：不歪曲原意、不过度承诺（不能把\"测试场景下有效\"说成\"全面解决隐私问题\"）；\nD. 得体性（0.2）：语气适合内部高管汇报，长度适中，结尾建议句自然衔接。\n\n【评分规则】\n- 部分完成按比例给分；C 维度发现过度承诺直接记 0 并在 rationale 说明；\n- 只输出 JSON：{\"score\": <0-1>, \"per_dimension\": {\"A\":..,\"B\":..,\"C\":..,\"D\":..}, \"rationale\": \"一句话\"}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "gt",
+        "user_message"
+      ]
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "gt": {
+      "structure": "3 个要点：解决什么问题 / 怎么解决 / 效果与局限",
+      "key_info_must_cover": [
+        "发布文本前自动降低隐私泄露风险",
+        "效果优于直接遮盖/简单改写类方法",
+        "仍存在残余风险",
+        "结论仅在已测试场景下成立"
+      ],
+      "mandatory_closing": "是否立项投入，建议等跨模型验证报告出来再定（一字不差）",
+      "format": "大白话（高管可懂），150-300 字，不得出现'彻底解决/完全消除'类过度承诺"
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "反馈字数/关键信息缺失项 + judge 低分维度；结尾句缺失直接列为最高优先级修复项"
+  },
+  "gold_reference": {
+    "mandatory_closing_sentence": "是否立项投入，建议等跨模型验证报告出来再定",
+    "overclaim_watchlist": [
+      "彻底解决隐私问题",
+      "完全消除泄露风险",
+      "任何场景下都有效"
+    ]
+  }
+}

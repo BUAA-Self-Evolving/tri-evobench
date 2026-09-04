@@ -1,0 +1,13 @@
+    
+    # Drop rows based on tuples
+    df = df.set_index(list('ABCDE')).drop(tuples, errors='ignore').reset_index()
+    
+    plots = []
+    # Generate plots only if DataFrame is not empty
+    if not df.empty:
+        for _ in range(n_plots):
+            selected_columns = sample(COLUMNS, 2)
+            plot = sns.jointplot(data=df, x=selected_columns[0], y=selected_columns[1])
+            plots.append(plot)
+    
+    return df, plots

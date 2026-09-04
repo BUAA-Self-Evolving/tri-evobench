@@ -1,0 +1,64 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E001",
+  "stream_id": "airs_sick_textual_entailment_accuracy_001",
+  "index": 1,
+  "source_provenance": {
+    "instance_id": "TextualClassificationSickAccuracy",
+    "dataset": "RobZamp/sick",
+    "revision": "18e4f1d501069cf7d7e2740d81c2ca748c56a6a1",
+    "path": "airsbench/tasks/rad/TextualClassificationSickAccuracy",
+    "selector": "metadata.logging_info.name == TextualClassificationSickAccuracy",
+    "variant_type": "native"
+  },
+  "materialization": {
+    "mode": "downloaded_native_dataset_to_csv",
+    "runtime_dependency_on_upstream": false,
+    "copied_files_scope": "agent_visible_features_and_training_labels_only",
+    "copied_files": [
+      "workspace/data/train.csv",
+      "workspace/data/validation.csv",
+      "workspace/data/test.csv"
+    ],
+    "path_rewrites": [
+      {
+        "from": "./data/train",
+        "to": "data/train.csv"
+      },
+      {
+        "from": "./data/validation",
+        "to": "data/validation.csv"
+      },
+      {
+        "from": "./data/test",
+        "to": "data/test.csv"
+      }
+    ]
+  },
+  "agent_view": {
+    "request": "Complete the AIRS-Bench SICK textual-entailment Accuracy task for this Episode. The workspace contains data/train.csv and data/validation.csv with sentence_A, sentence_B, and label, plus data/test.csv without labels. Labels are 0 entailment, 1 neutral, and 2 contradiction. The runtime provides scikit-learn 1.9.0; use APIs compatible with that version, e.g. avoid deprecated LogisticRegression multi_class parameters and choose a solver that supports the class count you use. Return one complete Python script, train_and_predict.py, that learns or derives predictions and writes submission.csv in the current directory with exactly one header column named label and one prediction for each test row. Return only the script, optionally inside one Python Markdown fence.",
+    "assets": [
+      "data/train.csv",
+      "data/validation.csv",
+      "data/test.csv"
+    ],
+    "available_tools": [
+      "python",
+      "pandas",
+      "scikit-learn"
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": []
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "feedback": "pass_fail_timeout_only"
+  },
+  "evaluation_ref": "evaluation.json",
+  "expected_outputs": [
+    "A complete train_and_predict.py script that creates submission.csv with one label column and 4906 rows."
+  ]
+}

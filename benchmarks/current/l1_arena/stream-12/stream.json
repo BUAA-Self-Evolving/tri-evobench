@@ -1,0 +1,430 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_12",
+  "directory": "stream-12",
+  "source_scenario_id": "sci1a",
+  "category": "sci",
+  "category_name": "Research, healthcare, legal, and people operations",
+  "profile": "Research integrity, healthcare safety, contracts, and employment compliance",
+  "theme": "DFCI 图像操纵专项核查（Dana-Farber Cancer Institute 2024）— 17 exec_check rounds, 2 updates (incl. Researcher_1 identity supersede), 5 preference rules P1-P5, difficulty vectors V1/V2/V4/V5/V6/V7/V8/V9/V10. Real sources: For Better Science blog (https://forbetterscience.com/2024/01/02/dana-farberications-at-harvard-university/); Retraction Watch settlement (https://retractionwatch.com/2025/12/16/dana-farber-settlement-false-claims-act-image-manipulation/); Science retraction notice (https://www.science.org/doi/10.1126/science.adp1104).",
+  "domain": "research_integrity",
+  "domain_zh": "科研诚信",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "research_integrity": 17,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "biomedical_image_integrity.evidence_synthesis": 2,
+      "biomedical_image_integrity.final_signoff": 1,
+      "biomedical_image_integrity.inventory_audit": 1,
+      "biomedical_image_integrity.metric_calculation": 3,
+      "biomedical_image_integrity.report_generation": 4,
+      "biomedical_image_integrity.source_verification": 3,
+      "biomedical_image_integrity.state_update": 2,
+      "biomedical_image_integrity.workspace_initialization": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 19,
+  "task_layout": "turn{1..19}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 2,
+    "workspace_exec": 15
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 2,
+  "runtime_update_id_count": 4,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 40,
+      "size_bytes": 1001159,
+      "tree_sha256": "bf3d0c2b761faca04fc0439b74a262ee2b02cef90041c6af38c41084f090c402"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 8653,
+      "tree_sha256": "62bb360fa2a952746464e8f339aa8d6c4c83e768d673af82bf2c4187fa3fd89a"
+    },
+    "evaluation_scripts": {
+      "file_count": 18,
+      "size_bytes": 56857,
+      "tree_sha256": "9330038fbca9d28cacbdf9060a297e25fbebee884b797a99428293b5c480bafd"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.workspace_initialization",
+        "subtag_zh": "生物医学图像诚信·工作区初始化",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.inventory_audit",
+        "subtag_zh": "生物医学图像诚信·盘点审计",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.source_verification",
+        "subtag_zh": "生物医学图像诚信·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.metric_calculation",
+        "subtag_zh": "生物医学图像诚信·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.metric_calculation",
+        "subtag_zh": "生物医学图像诚信·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.report_generation",
+        "subtag_zh": "生物医学图像诚信·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q7",
+      "source_round_id": "q7",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.evidence_synthesis",
+        "subtag_zh": "生物医学图像诚信·证据综合",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.source_verification",
+        "subtag_zh": "生物医学图像诚信·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.evidence_synthesis",
+        "subtag_zh": "生物医学图像诚信·证据综合",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.state_update",
+        "subtag_zh": "生物医学图像诚信·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci1a:q11",
+      "source_round_id": "q11",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.metric_calculation",
+        "subtag_zh": "生物医学图像诚信·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q12",
+      "source_round_id": "q12",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.report_generation",
+        "subtag_zh": "生物医学图像诚信·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci1a:q13",
+      "source_round_id": "q13",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.state_update",
+        "subtag_zh": "生物医学图像诚信·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.source_verification",
+        "subtag_zh": "生物医学图像诚信·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.report_generation",
+        "subtag_zh": "生物医学图像诚信·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.report_generation",
+        "subtag_zh": "生物医学图像诚信·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci1a:q17",
+      "source_round_id": "q17",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "research_integrity",
+        "domain_zh": "科研诚信",
+        "subtag": "biomedical_image_integrity.final_signoff",
+        "subtag_zh": "生物医学图像诚信·最终签核",
+        "is_noise": false
+      }
+    }
+  ]
+}

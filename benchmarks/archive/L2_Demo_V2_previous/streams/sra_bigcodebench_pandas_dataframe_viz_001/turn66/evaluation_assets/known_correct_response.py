@@ -1,0 +1,15 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+def task_func(df, bins=20):
+
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        raise ValueError("The input must be a non-empty pandas DataFrame.")
+
+    last_col_name = df.columns[-1]
+    fig, ax = plt.subplots()
+    ax.hist(df[last_col_name], bins=bins)
+    ax.set_title(f'Histogram of {last_col_name}')
+    ax.set_xlabel('Value')
+    ax.set_ylabel('Frequency')
+    plt.show()
+    return ax

@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00107",
+  "dataset": "bigcodebench",
+  "question": "Convert the 'date' column of a DataFrame to ordinal, perform KMeans clustering on 'date' and 'value' columns, and plot the clusters. Required names: x: 'Date (ordinal)' ylabel: 'Value' title: 'KMeans Clustering of Value vs Date'\nThe function should raise the exception for: ValueError: If the DataFrame is empty or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object containing the scatter plot of the clusters.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nfrom sklearn.cluster import KMeans\nimport matplotlib.pyplot as plt\ndef task_func(df, n_clusters=3, random_state=0):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_138",
+    "bigcodebench_024"
+  ],
+  "eval_data": {
+    "answer": "    if df.empty or not all(col in df.columns for col in ['group', 'date', 'value']):\n        raise ValueError(\"DataFrame must be non-empty and contain 'group', 'date', and 'value' columns.\")\n\n    if not pd.api.types.is_datetime64_any_dtype(df['date']):\n        raise ValueError(\"'date' column must be in datetime format.\")\n\n    df['date'] = df['date'].apply(lambda x: x.toordinal())\n    X = df[['date', 'value']]\n\n    kmeans = KMeans(n_clusters=n_clusters, random_state=random_state)\n    kmeans.fit(X)\n    y_kmeans = kmeans.predict(X)\n\n    fig, ax = plt.subplots()\n    ax.scatter(X['date'], X['value'], c=y_kmeans, cmap='viridis')\n    ax.set_title('KMeans Clustering of Value vs Date')\n    ax.set_xlabel('Date (ordinal)')\n    ax.set_ylabel('Value')\n\n    return ax",
+    "code_prompt": "import pandas as pd\nfrom sklearn.cluster import KMeans\nimport matplotlib.pyplot as plt\ndef task_func(df, n_clusters=3, random_state=0):\n",
+    "test": "import unittest\nimport pandas as pd\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.df = pd.DataFrame({\n            \"group\": [\"A\", \"A\", \"A\", \"B\", \"B\"],\n            \"date\": pd.to_datetime([\"2022-01-02\", \"2022-01-13\", \"2022-02-01\", \"2022-02-23\", \"2022-03-05\"]),\n            \"value\": [10, 20, 16, 31, 56],\n        })\n    def test_basic_functionality(self):\n        ax = task_func(self.df)\n        self.assertEqual(len(ax.collections), 1)  # Check if scatter plot is created\n    def test_empty_dataframe(self):\n        with self.assertRaises(ValueError):\n            task_func(pd.DataFrame())\n    def test_missing_columns(self):\n        incomplete_df = self.df.drop(columns=['date'])\n        with self.assertRaises(ValueError):\n            task_func(incomplete_df)\n    def test_invalid_date_column(self):\n        invalid_df = self.df.copy()\n        invalid_df['date'] = \"not a date\"\n        with self.assertRaises(ValueError):\n            task_func(invalid_df)\n    def test_plot_labels_and_title(self):\n        ax = task_func(self.df)\n        self.assertEqual(ax.get_xlabel(), 'Date (ordinal)')\n        self.assertEqual(ax.get_ylabel(), 'Value')\n        self.assertEqual(ax.get_title(), 'KMeans Clustering of Value vs Date')",
+    "entry_point": "task_func"
+  }
+}

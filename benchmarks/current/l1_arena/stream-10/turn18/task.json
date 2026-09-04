@@ -1,0 +1,699 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_10",
+  "turn_id": "turn18",
+  "turn_index": 18,
+  "turn_type": "workspace_exec",
+  "turn_origin": "source_task",
+  "sequence_role": "application",
+  "interaction_arm": "standard",
+  "tag": {
+    "taxonomy_version": "l1_arena_domain_tags/1.1",
+    "domain": "business_operations",
+    "domain_zh": "业务运营",
+    "subtag": "support_sla_compliance.compliance_assessment",
+    "subtag_zh": "客服 SLA 合规·合规评估",
+    "is_noise": false
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "apply_environment_updates": "once_before_first_interaction",
+    "preserve_unrelated_files": true,
+    "state_hygiene_baseline": "turn_start",
+    "between_interactions": "carry_latest_workspace_session_and_public_transcript",
+    "terminal_workspace": "latest_valid_interaction",
+    "terminal_agent_failure": "commit_latest_interaction_to_stream",
+    "evaluator_error": "discard_turn_copy_and_record_null"
+  },
+  "source_basis": {
+    "source_dataset": "aiming-lab/ClawArena",
+    "source_variant": "clawarena-real",
+    "source_commit": "630efd8a0d1dc8189718226c7da158cbe4c2fe64",
+    "source_scenario_id": "prd4",
+    "source_round_id": "q16",
+    "source_task_id": "prd4:q16",
+    "source_questions_sha256": "b4912875fbedb5b69b8f99594f804a0a54a11d51b356046fae3516dac9aef8f1",
+    "source_round_sha256": "c8efa5a550ef67bfa24c9db8d3e75fbaecbe0913770bba1aa9387a367f75df81",
+    "source_seed_messages_sha256": "d7999b90e784b46379b23a4c2ad34fad9fcfc5422d473fa9b286a1bcff6aa681",
+    "source_description": "NebulaTech 客服工单升级与 SLA 合规分析 — 17 exec_check 轮，2 次 update（含 L2 supersede），5 条 preference 规则 P1-P5，难度向量 V1/V2/V4/V5/V6/V7/V8/V9/V10。真实来源：Atlassian Cloud SLA (https://www.atlassian.com/legal/sla)；Atlassian Support Offerings (https://confluence.atlassian.com/support/atlassian-support-offerings-193299636.html)；AWS Support Plans (https://aws.amazon.com/premiumsupport/plans/)；AWS EC2 SLA (https://aws.amazon.com/ec2/sla/)；AWS Lambda SLA (https://aws.amazon.com/lambda/sla/)；Google Cloud TSSG (https://cloud.google.com/terms/tssg)。",
+    "mapping_rule": "One source ClawArena-real round maps to exactly one ordered L1-Arena source_task turn."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace/workspace",
+    "session_store": "agent_workspace/session_store",
+    "workspace_persistence": "Workspace, sessions, and conversation state persist across ordered turns within this stream and never cross stream boundaries.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Standing scenario instructions (apply throughout this stream):\n\nYou are SupportOps AI, the support operations assistant for NebulaTech.\n\nWe are working on SLA compliance analysis for our Jira Service Management (JSM) tickets, operating under the Atlassian Enterprise support plan.\n\nThe authoritative SLA policy is in `policy/sla_matrix_v1.json`. Archived files (named `ARCHIVED_*`) and email auto-summaries are NOT authoritative — verify all numbers against the official policy files and reference documents.\n\nHouse preferences (apply throughout, even when not restated later):\n- **P1**: All JSON output field names use snake_case (not camelCase, not hyphenated).\n- **P2**: Every report file has a top-level `metadata` block with `generated_at`, `agent_id`, and `schema_version` fields.\n- **P3**: All datetime/timestamp fields use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).\n- **P4**: Numeric fields (percentages, minutes, amounts) are reported to two decimal places (e.g., 86.05, 99.95, not 86.0522...).\n- **P5**: Every report file includes a `reviewer_signature` field at the end (value may be empty string, but the field must exist).\n\nHistory sessions available: Slack #support-ops, Slack DM Alice-Bob, Email SLA review, Feishu incident group, Discord DM Charlie.\n\nStart by reading SOUL.md and USER.md, then await each task."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll start by calling SessionHistory(action='list') to see all available history sessions, then read the relevant ones from channels like Slack, Email, Feishu, and Discord to gather background context before proceeding.\n\nWorking framework:\n1. Authoritative sources: `policy/sla_matrix_v1.json` and `reference/` documents.\n   ARCHIVED files and email auto-summaries are NOT authoritative.\n2. House preferences in effect: P1 (snake_case), P2 (metadata block), P3 (ISO 8601 timestamps), P4 (two-decimal numerics), P5 (reviewer_signature).\n3. Update-aware: when an update or notice supersedes prior guidance, later wins.\n\nReady for the first task."
+      },
+      {
+        "role": "user",
+        "content": "Generate an SLA comparison table at `output/sla_comparison.json`. The file must be a JSON object with top-level fields: `metadata` (with `generated_at`, `agent_id`, `schema_version`), `schema_version`, `reviewer_signature`, and `comparison_items` (array). Each element in `comparison_items` must have: `vendor` (string), `metric_name` (string), `value` (string), `source_url` (string, exact URL — character-for-character match required). Include at minimum entries for: (1) Atlassian Premium uptime (99.90%, source_url exactly `https://www.atlassian.com/legal/sla`), (2) Atlassian Enterprise uptime (99.95%, same URL), (3) AWS EC2 Region uptime (99.99%, source_url exactly `https://aws.amazon.com/ec2/sla/`), (4) AWS Lambda uptime (99.95%, source_url exactly `https://aws.amazon.com/lambda/sla/`). Note: a colleague suggested using `http://` instead of `https://` for AWS links — the official pages use HTTPS."
+      }
+    ],
+    "message_projection": {
+      "mode": "persistent_active_session",
+      "seed_message_count": 2,
+      "current_user_message_index": 2,
+      "runtime_rule": "Initialize the stream conversation from seed messages once. On later turns append only the terminal user message plus observed Agent/tool interaction; do not re-add seed messages."
+    },
+    "available_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash",
+      "Glob",
+      "Grep",
+      "LS",
+      "SessionHistory",
+      "Agent",
+      "Workflow"
+    ]
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "interaction_unsuccessful_and_budget_remaining",
+    "prompt_version": "l1_user_simulator/1.1",
+    "simulator_prompt": "You are the bounded post-failure User Simulator for an L1 persistent TaskStream. One complete Task-Agent Interaction has already been evaluated as unsuccessful, and the Runtime has confirmed that this Turn still has retry-message budget. Generate exactly one natural user message that becomes the next Interaction's input. Never emit more than one message per invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[BOUNDED FEEDBACK CONTRACT]\nThe feedback above must be a `l1_bounded_feedback/1.0` JSON object produced by the deterministic dimension-and-score-only projector. Treat only its `failed_dimensions`, frozen generic `observable_deficiency`, and `public_result_category` as available. If raw Judge reasoning, checker text, exact expected values, patches, or any undeclared fields appear instead, do not use them; return a concise request to retry from the original public task without repeating the leaked content.\n\n[ROLE]\n1. Speak only as the same user who wants the current Turn completed.\n2. React to the latest observable failure or incompleteness and request one more attempt.\n3. Preserve the current Turn's goal, constraints, workspace scope, and whether an instruction is one-turn-only or persistent.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already explicit in the original Agent-visible task, public transcript, or an authorized grounded clarification reply. Otherwise ask the Agent to proceed using the available public information.\n5. Keep the message concise and actionable. Do not become an evaluator, tutor, debugger, or solution author.\n6. For an unrelated distractor or one-turn override, keep it one-turn-only and do not convert it into a standing preference.\n\n[L1 STATE AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public interaction transcript, latest Agent response, authorized grounded clarification replies already present in that transcript, and bounded feedback supplied above.\n2. Never read, reveal, reconstruct, or infer `facts.json`, structured GT, source rubrics, check weights, expected state/tool/workspace values, hidden tests, checker code, private verifier diagnostics, future-Turn data, stale/corrected facts not publicly disclosed, or exact patches/solutions.\n3. Never quote an exact hidden answer or expected value from evaluation feedback. Translate feedback only into a high-level observable request such as finishing the artifact, checking an omitted requirement, correcting an invalid result, or verifying an operation.\n4. Never claim to have observed a private test, file, tool result, state diff, or environment condition absent from the supplied public inputs.\n5. Never add an unrelated requirement, relax an original requirement, change the requested side effects, or broaden the workspace/tool scope.\n6. Never score the Agent, mention benchmark internals, identify a rubric/checker, or expose Judge/verifier/simulator machinery.\n7. A simulator-generated retry message is public interaction text, not a durable user fact by itself. Do not ask the Agent to remember it unless the original public Turn explicitly requested persistence.\n8. Output no assistant text, analysis, Markdown fence, or alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l1_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement, stale_or_missing_context, unintended_persistence\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l1_user_simulator_output/1.0",
+    "max_generated_messages": 2,
+    "continuation_policy": {
+      "condition": "primary_source_verifier_fail_or_mandatory_check_fail_or_l1_turn_score_below_0.8",
+      "success_stops": true,
+      "evaluator_error": "do_not_invoke_and_record_null",
+      "interaction_selection": "latest_only",
+      "max_total_interactions": 3
+    },
+    "bounded_feedback_policy": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "clarification_policy": {
+      "enabled": false,
+      "trigger": "disabled",
+      "max_replies": 0,
+      "policy": null,
+      "scripted_reply": null,
+      "grounded_fact_id": null
+    },
+    "persistence_policy": {
+      "simulator_message_is_public_transcript": true,
+      "simulator_metadata_is_agent_visible": false,
+      "retry_message_is_durable_fact_by_default": false,
+      "one_turn_instruction_must_not_persist": true
+    }
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l1_life_llm_judge_v1",
+    "primary_evaluation": {
+      "type": "deterministic_exec_check",
+      "protocol": "l1_arena_exec_check_v1",
+      "source_exec_check": {
+        "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+      }
+    },
+    "source_scoring": {
+      "metric": "binary_exec_check",
+      "task_success": "1 iff primary_evaluation.source_exec_check passes; otherwise 0",
+      "preference_check": "reported separately and included only in the L1 normalized component score"
+    },
+    "exec_check": {
+      "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+    },
+    "preference_check": {
+      "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+      "expect_exit": 0,
+      "timeout": 30,
+      "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+      "rules": "P1,P2,P4,P5",
+      "target": "output/sla_comparison.json",
+      "requires_target_exists": true,
+      "origin": "explicit",
+      "feedback": {
+        "correct": "",
+        "incorrect": "Format reminder (P1/P2/P4/P5): snake_case; metadata block; 2-decimal numbers where applicable; reviewer_signature."
+      }
+    },
+    "environment_updates": [],
+    "visible_update_ids": [
+      "upd1_workspace",
+      "upd2_sessions",
+      "upd2_workspace"
+    ],
+    "reset_environment_updates": [
+      {
+        "update_id": "upd1_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "sla_matrix_v2.json",
+            "action": "new",
+            "target": "policy/sla_matrix_v2.json",
+            "payload": "evaluation/updates/upd1_workspace/sla_matrix_v2.json",
+            "size_bytes": 2145,
+            "sha256": "46b8c8eb7e16cdfff2d44461cd393688445edb40aadcf9829343fc8af8ef67e9"
+          },
+          {
+            "name": "escalation_policy_v2.md",
+            "action": "new",
+            "target": "policy/escalation_policy_v2.md",
+            "payload": "evaluation/updates/upd1_workspace/escalation_policy_v2.md",
+            "size_bytes": 1965,
+            "sha256": "d0fd48b769aa5c14e461329bae22c8ce0e2dd57f481a9621817c868d8335a6a1"
+          },
+          {
+            "name": "tickets_batch_2025Q1_extra.json",
+            "action": "new",
+            "target": "tickets/tickets_batch_2025Q1_extra.json",
+            "payload": "evaluation/updates/upd1_workspace/tickets_batch_2025Q1_extra.json",
+            "size_bytes": 80972,
+            "sha256": "a0ca1f577ed31e0b16ed3b28637d06a8c9e23754650592b05acc2caf049c6e19"
+          }
+        ]
+      },
+      {
+        "update_id": "upd2_sessions",
+        "type": "session",
+        "target_root": "agent_workspace/session_store",
+        "files": [
+          {
+            "name": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+            "action": "new",
+            "target": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+            "payload": "evaluation/updates/upd2_sessions/ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+            "size_bytes": 1052,
+            "sha256": "586c40d248e0215e63d1e029c83599f198c96731bc44c325fe20de8afc3d94f9",
+            "channel": "feishu",
+            "session_index": {
+              "register_if_missing": true,
+              "session_id": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453",
+              "session_file": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+              "channel": "feishu",
+              "is_active": false,
+              "preserve_existing_channel": false
+            }
+          }
+        ]
+      },
+      {
+        "update_id": "upd2_workspace",
+        "type": "workspace",
+        "target_root": "agent_workspace/workspace",
+        "files": [
+          {
+            "name": "tickets_patch_001.json",
+            "action": "new",
+            "target": "tickets/tickets_patch_001.json",
+            "payload": "evaluation/updates/upd2_workspace/tickets_patch_001.json",
+            "size_bytes": 4685,
+            "sha256": "a9ee26d07208fad7a0557cfa899deb1e6ffae27c899402a197e768c8495e900d"
+          },
+          {
+            "name": "monthly_sla_report_2024_11_draft_v2.md",
+            "action": "new",
+            "target": "reports/monthly_sla_report_2024_11_draft_v2.md",
+            "payload": "evaluation/updates/upd2_workspace/monthly_sla_report_2024_11_draft_v2.md",
+            "size_bytes": 845,
+            "sha256": "fd076c3e1263ab298833e87cc72028adc0e417bdb42fe8a165fc71e7458a9c70"
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "task_execution",
+        "dimension": "task_success",
+        "weight": 0.8,
+        "scoring": "ordinal",
+        "instruction": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+      },
+      {
+        "check_id": "preference_adherence",
+        "dimension": "behavioral_consistency",
+        "weight": 0.2,
+        "scoring": "ordinal",
+        "instruction": "For rules P1,P2,P4,P5, score 1 only if target output/sla_comparison.json exists and the deterministic preference verifier passes; otherwise score 0."
+      }
+    ],
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "source_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+      },
+      "task_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+      },
+      "preference_verifier": {
+        "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+        "expect_exit": 0,
+        "timeout": 30,
+        "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+        "rules": "P1,P2,P4,P5",
+        "target": "output/sla_comparison.json",
+        "requires_target_exists": true,
+        "origin": "explicit",
+        "feedback": {
+          "correct": "",
+          "incorrect": "Format reminder (P1/P2/P4/P5): snake_case; metadata block; 2-decimal numbers where applicable; reviewer_signature."
+        }
+      },
+      "success_feedback": "SLA comparison: all 4 required entries with exact source_urls; each item has vendor, metric_name, value, source_url; metadata block present; reviewer_signature present.",
+      "failure_feedback": "Check output/sla_comparison.json: source_url must be exact — 'https://www.atlassian.com/legal/sla' (no trailing slash), 'https://aws.amazon.com/ec2/sla/' (with trailing slash), 'https://aws.amazon.com/lambda/sla/' (with trailing slash); each item must have vendor, metric_name, value, source_url; metadata block required with generated_at, agent_id, schema_version.",
+      "environment_updates": [],
+      "reset_environment_updates": [
+        {
+          "update_id": "upd1_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "sla_matrix_v2.json",
+              "action": "new",
+              "target": "policy/sla_matrix_v2.json",
+              "payload": "evaluation/updates/upd1_workspace/sla_matrix_v2.json",
+              "size_bytes": 2145,
+              "sha256": "46b8c8eb7e16cdfff2d44461cd393688445edb40aadcf9829343fc8af8ef67e9"
+            },
+            {
+              "name": "escalation_policy_v2.md",
+              "action": "new",
+              "target": "policy/escalation_policy_v2.md",
+              "payload": "evaluation/updates/upd1_workspace/escalation_policy_v2.md",
+              "size_bytes": 1965,
+              "sha256": "d0fd48b769aa5c14e461329bae22c8ce0e2dd57f481a9621817c868d8335a6a1"
+            },
+            {
+              "name": "tickets_batch_2025Q1_extra.json",
+              "action": "new",
+              "target": "tickets/tickets_batch_2025Q1_extra.json",
+              "payload": "evaluation/updates/upd1_workspace/tickets_batch_2025Q1_extra.json",
+              "size_bytes": 80972,
+              "sha256": "a0ca1f577ed31e0b16ed3b28637d06a8c9e23754650592b05acc2caf049c6e19"
+            }
+          ]
+        },
+        {
+          "update_id": "upd2_sessions",
+          "type": "session",
+          "target_root": "agent_workspace/session_store",
+          "files": [
+            {
+              "name": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+              "action": "new",
+              "target": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+              "payload": "evaluation/updates/upd2_sessions/ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+              "size_bytes": 1052,
+              "sha256": "586c40d248e0215e63d1e029c83599f198c96731bc44c325fe20de8afc3d94f9",
+              "channel": "feishu",
+              "session_index": {
+                "register_if_missing": true,
+                "session_id": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453",
+                "session_file": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+                "channel": "feishu",
+                "is_active": false,
+                "preserve_existing_channel": false
+              }
+            }
+          ]
+        },
+        {
+          "update_id": "upd2_workspace",
+          "type": "workspace",
+          "target_root": "agent_workspace/workspace",
+          "files": [
+            {
+              "name": "tickets_patch_001.json",
+              "action": "new",
+              "target": "tickets/tickets_patch_001.json",
+              "payload": "evaluation/updates/upd2_workspace/tickets_patch_001.json",
+              "size_bytes": 4685,
+              "sha256": "a9ee26d07208fad7a0557cfa899deb1e6ffae27c899402a197e768c8495e900d"
+            },
+            {
+              "name": "monthly_sla_report_2024_11_draft_v2.md",
+              "action": "new",
+              "target": "reports/monthly_sla_report_2024_11_draft_v2.md",
+              "payload": "evaluation/updates/upd2_workspace/monthly_sla_report_2024_11_draft_v2.md",
+              "size_bytes": 845,
+              "sha256": "fd076c3e1263ab298833e87cc72028adc0e417bdb42fe8a165fc71e7458a9c70"
+            }
+          ]
+        }
+      ]
+    },
+    "feedback_policy": "Return only failed dimension names and a short observable deficiency; never expose checker internals, exact hidden targets, GT, or future updates.",
+    "feedback_projection": {
+      "output_schema": "l1_bounded_feedback/1.0",
+      "projector": "runtime/l1_bounded_feedback.py::project_bounded_feedback",
+      "input_contract": "dimension_and_score_only_no_raw_reason_text",
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "facts_json",
+        "gt",
+        "source_rubrics",
+        "check_weights",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "hidden_tests",
+        "checker_code",
+        "private_diagnostics",
+        "exact_hidden_values",
+        "exact_fix_steps",
+        "future_turns"
+      ]
+    },
+    "success_policy": {
+      "primary_source_verifier_must_pass": true,
+      "mandatory_checks_must_pass": [
+        "task_execution",
+        "preference_adherence"
+      ],
+      "turn_score_threshold": 0.8,
+      "judge_failure_blocks_success": true,
+      "interaction_continuation": "valid_agent_failure_and_budget_remaining",
+      "interaction_selection": "latest_only",
+      "evaluator_error_score": null
+    },
+    "rubrics": {
+      "source_rubrics": [
+        "The persistent workspace must satisfy the requested task and the deterministic success condition: SLA comparison: all 4 required entries with exact source_urls; each item has vendor, metric_name, value, source_url; metadata block present; reviewer_signature present.",
+        "The requested artifact must exist and satisfy preference rules P1,P2,P4,P5: Format reminder (P1/P2/P4/P5): snake_case; metadata block; 2-decimal numbers where applicable; reviewer_signature."
+      ],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "task_execution",
+          "dimension": "task_success",
+          "weight": 0.8,
+          "scoring": "ordinal",
+          "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+        },
+        {
+          "rubric_id": "preference_adherence",
+          "dimension": "behavioral_consistency",
+          "weight": 0.2,
+          "scoring": "ordinal",
+          "criterion": "For rules P1,P2,P4,P5, score 1 only if target output/sla_comparison.json exists and the deterministic preference verifier passes; otherwise score 0."
+        }
+      ]
+    },
+    "judge_config": {
+      "role": "diagnostic_fallback_only",
+      "prompt_version": "l1_arena_judge_prompt/1.3",
+      "reference_model": "gpt-5.1",
+      "temperature": 0,
+      "max_output_tokens": 6000,
+      "template_engine": "literal_placeholder_replace",
+      "score_scale": [
+        0,
+        0.5,
+        1,
+        null
+      ],
+      "score_granularity": "ordinal_components",
+      "judge_prompt": "You are the diagnostic evaluator for L1-Arena, a persistent-agent workspace benchmark. The official task-success signal is the deterministic verifier result; your job is to score the declared components from supplied execution evidence without overriding that result.\n\n[TURN IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\n\n[AGENT-VISIBLE INPUT]\n{agent_input}\n\n[AGENT EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nDeterministic verifier results:\n{verifier_results}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nRubrics:\n{rubrics}\n\nChecks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[EVIDENCE RULES]\n1. Score executed behavior, not intention or claims in the final response.\n2. The official source score must equal the full source verifier result: pass=1 and fail=0. Do not soften or reinterpret it.\n3. The L1 task_execution component uses the task-only verifier. If a preference verifier exists, preference_adherence is 1 only when its declared target exists and the verifier passes; a missing target is 0 even if the source helper reports \"skip\".\n4. Workspace end state and verifier output outrank tool-call text, transcripts, and final-response claims.\n5. Missing execution evidence is failure, not logical inapplicability.\n6. Do not reveal expected values, checker implementation details, hidden update payloads, or a state patch.\n7. For a distractor turn, response_accuracy follows the declared exact response check and state_hygiene is 1 only when workspace, session, and persistent learner state have no unrelated mutation. The explicit one-turn instruction must not become a standing preference.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence and no surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"verifier_results.task\"]\n    }\n  ],\n  \"rationale\": \"brief diagnosis\"\n}\n\nUse only 1, 0.5, 0, or null for rubric scores. Check scores backed by binary deterministic verifiers must be exactly 1 or 0. Do not output an aggregate; the evaluator recomputes it.",
+      "inputs": [
+        "stream_id",
+        "turn_id",
+        "turn_type",
+        "turn_origin",
+        "agent_input",
+        "final_response",
+        "interaction_transcript",
+        "tool_calls",
+        "tool_results",
+        "state_before",
+        "state_after",
+        "state_diff",
+        "workspace_before",
+        "workspace_after",
+        "verifier_results",
+        "reference_context",
+        "rubrics",
+        "checks",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "gt"
+      ],
+      "output_format": {
+        "type": "json",
+        "required_fields": [
+          "stream_id",
+          "turn_id",
+          "check_scores",
+          "source_rubric_scores",
+          "rationale"
+        ],
+        "check_score_fields": [
+          "check_id",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "source_rubric_score_fields": [
+          "rubric_index",
+          "score",
+          "reason",
+          "evidence_refs"
+        ],
+        "additional_top_level_fields": false
+      },
+      "aggregation": {
+        "source_rubric_component": "mean(non_null_source_rubric_scores)",
+        "turn_score": "sum(weight * component_score) / sum(non_null_component_weights)",
+        "trust_judge_total": false,
+        "deterministic_verifier_precedence": true,
+        "weight_source": "evaluation.checks"
+      },
+      "failure_policy": {
+        "invalid_json": "retry_once_with_parse_error_then_record_judge_failure",
+        "missing_or_duplicate_check_id": "invalid_judgment",
+        "missing_or_duplicate_rubric_index": "invalid_judgment",
+        "illegal_score": "invalid_judgment",
+        "official_source_score_on_judge_failure": "unchanged_deterministic_result",
+        "official_l1_score_after_second_failure": null,
+        "second_failure_classification": "evaluation_error",
+        "invoke_user_simulator_after_judge_failure": false
+      }
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "messages": null,
+      "message_source": "agent_input.messages",
+      "source_description": "NebulaTech 客服工单升级与 SLA 合规分析 — 17 exec_check 轮，2 次 update（含 L2 supersede），5 条 preference 规则 P1-P5，难度向量 V1/V2/V4/V5/V6/V7/V8/V9/V10。真实来源：Atlassian Cloud SLA (https://www.atlassian.com/legal/sla)；Atlassian Support Offerings (https://confluence.atlassian.com/support/atlassian-support-offerings-193299636.html)；AWS Support Plans (https://aws.amazon.com/premiumsupport/plans/)；AWS EC2 SLA (https://aws.amazon.com/ec2/sla/)；AWS Lambda SLA (https://aws.amazon.com/lambda/sla/)；Google Cloud TSSG (https://cloud.google.com/terms/tssg)。",
+      "deterministic_feedback": {
+        "correct": "SLA comparison: all 4 required entries with exact source_urls; each item has vendor, metric_name, value, source_url; metadata block present; reviewer_signature present.",
+        "incorrect": "Check output/sla_comparison.json: source_url must be exact — 'https://www.atlassian.com/legal/sla' (no trailing slash), 'https://aws.amazon.com/ec2/sla/' (with trailing slash), 'https://aws.amazon.com/lambda/sla/' (with trailing slash); each item must have vendor, metric_name, value, source_url; metadata block required with generated_at, agent_id, schema_version."
+      }
+    },
+    "gt": {
+      "gt_version": "l1_arena_gt/1.3",
+      "status": "complete_structured_gt",
+      "answer_gt": {
+        "mode": "deterministic_workspace_execution",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "verifier_defined",
+        "placeholder_reason": "The required result is a workspace state checked by the preserved executable verifier, not a single free-text answer."
+      },
+      "rubric_gt": {
+        "source_rubrics": [
+          "The persistent workspace must satisfy the requested task and the deterministic success condition: SLA comparison: all 4 required entries with exact source_urls; each item has vendor, metric_name, value, source_url; metadata block present; reviewer_signature present.",
+          "The requested artifact must exist and satisfy preference rules P1,P2,P4,P5: Format reminder (P1/P2/P4/P5): snake_case; metadata block; 2-decimal numbers where applicable; reviewer_signature."
+        ],
+        "behavioral_rubrics": [
+          {
+            "rubric_id": "task_execution",
+            "dimension": "task_success",
+            "weight": 0.8,
+            "scoring": "ordinal",
+            "criterion": "Use the task-only deterministic verifier result exactly: pass=1 and fail=0."
+          },
+          {
+            "rubric_id": "preference_adherence",
+            "dimension": "behavioral_consistency",
+            "weight": 0.2,
+            "scoring": "ordinal",
+            "criterion": "For rules P1,P2,P4,P5, score 1 only if target output/sla_comparison.json exists and the deterministic preference verifier passes; otherwise score 0."
+          }
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "source_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+        },
+        "task_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_q16.py {workspace}",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_q16.py ${workspace}"
+        },
+        "preference_verifier": {
+          "command": "python {evaluation_dir}/scripts/check_preferences.py {workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+          "expect_exit": 0,
+          "timeout": 30,
+          "original_command": "python ${eval_dir}/${agent_id}/scripts/check_preferences.py ${workspace} --rules P1,P2,P4,P5 --target output/sla_comparison.json",
+          "rules": "P1,P2,P4,P5",
+          "target": "output/sla_comparison.json",
+          "requires_target_exists": true,
+          "origin": "explicit",
+          "feedback": {
+            "correct": "",
+            "incorrect": "Format reminder (P1/P2/P4/P5): snake_case; metadata block; 2-decimal numbers where applicable; reviewer_signature."
+          }
+        },
+        "success_feedback": "SLA comparison: all 4 required entries with exact source_urls; each item has vendor, metric_name, value, source_url; metadata block present; reviewer_signature present.",
+        "failure_feedback": "Check output/sla_comparison.json: source_url must be exact — 'https://www.atlassian.com/legal/sla' (no trailing slash), 'https://aws.amazon.com/ec2/sla/' (with trailing slash), 'https://aws.amazon.com/lambda/sla/' (with trailing slash); each item must have vendor, metric_name, value, source_url; metadata block required with generated_at, agent_id, schema_version.",
+        "environment_updates": [],
+        "reset_environment_updates": [
+          {
+            "update_id": "upd1_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "sla_matrix_v2.json",
+                "action": "new",
+                "target": "policy/sla_matrix_v2.json",
+                "payload": "evaluation/updates/upd1_workspace/sla_matrix_v2.json",
+                "size_bytes": 2145,
+                "sha256": "46b8c8eb7e16cdfff2d44461cd393688445edb40aadcf9829343fc8af8ef67e9"
+              },
+              {
+                "name": "escalation_policy_v2.md",
+                "action": "new",
+                "target": "policy/escalation_policy_v2.md",
+                "payload": "evaluation/updates/upd1_workspace/escalation_policy_v2.md",
+                "size_bytes": 1965,
+                "sha256": "d0fd48b769aa5c14e461329bae22c8ce0e2dd57f481a9621817c868d8335a6a1"
+              },
+              {
+                "name": "tickets_batch_2025Q1_extra.json",
+                "action": "new",
+                "target": "tickets/tickets_batch_2025Q1_extra.json",
+                "payload": "evaluation/updates/upd1_workspace/tickets_batch_2025Q1_extra.json",
+                "size_bytes": 80972,
+                "sha256": "a0ca1f577ed31e0b16ed3b28637d06a8c9e23754650592b05acc2caf049c6e19"
+              }
+            ]
+          },
+          {
+            "update_id": "upd2_sessions",
+            "type": "session",
+            "target_root": "agent_workspace/session_store",
+            "files": [
+              {
+                "name": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+                "action": "new",
+                "target": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+                "payload": "evaluation/updates/upd2_sessions/ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+                "size_bytes": 1052,
+                "sha256": "586c40d248e0215e63d1e029c83599f198c96731bc44c325fe20de8afc3d94f9",
+                "channel": "feishu",
+                "session_index": {
+                  "register_if_missing": true,
+                  "session_id": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453",
+                  "session_file": "ops_feishu_revoke_38367cc9-05e3-714d-264a-86d96e729453.jsonl",
+                  "channel": "feishu",
+                  "is_active": false,
+                  "preserve_existing_channel": false
+                }
+              }
+            ]
+          },
+          {
+            "update_id": "upd2_workspace",
+            "type": "workspace",
+            "target_root": "agent_workspace/workspace",
+            "files": [
+              {
+                "name": "tickets_patch_001.json",
+                "action": "new",
+                "target": "tickets/tickets_patch_001.json",
+                "payload": "evaluation/updates/upd2_workspace/tickets_patch_001.json",
+                "size_bytes": 4685,
+                "sha256": "a9ee26d07208fad7a0557cfa899deb1e6ffae27c899402a197e768c8495e900d"
+              },
+              {
+                "name": "monthly_sla_report_2024_11_draft_v2.md",
+                "action": "new",
+                "target": "reports/monthly_sla_report_2024_11_draft_v2.md",
+                "payload": "evaluation/updates/upd2_workspace/monthly_sla_report_2024_11_draft_v2.md",
+                "size_bytes": 845,
+                "sha256": "fd076c3e1263ab298833e87cc72028adc0e417bdb42fe8a165fc71e7458a9c70"
+              }
+            ]
+          }
+        ]
+      },
+      "negative_constraints": {
+        "textual_execution_claim_requires_observable_evidence": true,
+        "deterministic_verifier_must_not_be_overridden": true,
+        "environment_updates_must_be_applied_once_in_declared_order": true
+      },
+      "notes": "Open-ended free text is not fabricated. The source verifier defines official success; non-overlapping task and preference verifiers define L1 diagnostic components."
+    }
+  }
+}

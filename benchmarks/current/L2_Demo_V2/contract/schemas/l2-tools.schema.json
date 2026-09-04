@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-tools.schema.json",
+  "title": "L2 Tool Catalog V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tools"],
+  "properties": {
+    "schema_version": {"const": "l2_tools/1.0"},
+    "tools": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "arguments"],
+        "properties": {
+          "description": {"type": "string", "minLength": 1},
+          "arguments": {"type": "object"},
+          "requestor": {"enum": ["user", "assistant", "system"]}
+        }
+      }
+    }
+  }
+}

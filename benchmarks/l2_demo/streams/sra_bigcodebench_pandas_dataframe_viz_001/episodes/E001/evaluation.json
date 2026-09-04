@@ -1,0 +1,73 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E001",
+  "visibility": "benchmark_private",
+  "native_source": {
+    "dataset": "bigcodebench",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "materialized_item": "evaluation_assets/source_item.json",
+    "evaluator": "src/sragents/evaluate/datasets/bigcodebench/__init__.py",
+    "execution": "src/sragents/evaluate/datasets/bigcodebench/execution.py",
+    "sanitize": "src/sragents/evaluate/datasets/bigcodebench/sanitize.py"
+  },
+  "verifier": {
+    "type": "sra_bigcodebench_execution",
+    "implementation": "package_local_python",
+    "entrypoint": "l2_runtime.sra_bigcodebench:SraBigCodeBenchVerifier",
+    "contract": "evaluation_assets/verifier_contract.json",
+    "native_upstream_entrypoint": "sragents.evaluate.datasets.bigcodebench.evaluate",
+    "interface": "evaluate(raw_model_output, materialized_item) -> {extracted_answer, correct, result, details}",
+    "adapter_contract": "Sanitize/extract raw model output; concatenate native code_prompt, a function-body pass, and extracted code as in the pinned SRA evaluator; execute native tests with sandboxed untrusted_check; correct iff status == PASS.",
+    "solution_entry_point": "task_func",
+    "inputs": ["raw_model_output"],
+    "assets": [
+      "evaluation_assets/verifier_contract.json",
+      "evaluation_assets/source_item.json",
+      "evaluation_assets/code_prompt.txt",
+      "evaluation_assets/tests.py",
+      "evaluation_assets/reference_answer.txt"
+    ],
+    "resource_limits_from_native": {
+      "max_address_space_mb": 30720,
+      "max_data_mb": 30720,
+      "max_stack_mb": 10
+    }
+  },
+  "scoring": {
+    "method": "binary_pass",
+    "range": [0, 1],
+    "success_threshold": 1.0,
+    "episode_score_policy": "latest_interaction",
+    "interaction_score_source": "native_sra_bigcodebench",
+    "episode_score_policy_source": "project_terminal_interaction_policy",
+    "criteria": [
+      {
+        "id": "native_bigcodebench_pass",
+        "description": "The complete native unit-test suite finishes with SRA BigCodeBench status PASS.",
+        "measurement": "status_equals_PASS",
+        "weight": 1.0,
+        "partial_credit": false
+      }
+    ]
+  },
+  "gold": {
+    "mode": "materialized_files",
+    "native_item": "evaluation_assets/source_item.json",
+    "reference_answer": "evaluation_assets/reference_answer.txt",
+    "reference_answer_format": "function_body",
+    "known_correct_raw_output_assembly": "code_prompt + reference_answer",
+    "code_prompt": "evaluation_assets/code_prompt.txt",
+    "tests": "evaluation_assets/tests.py",
+    "gold_skill_ids": ["bigcodebench_094", "bigcodebench_138", "bigcodebench_013"],
+    "gold_skill_ids_affect_episode_score": false
+  },
+  "feedback": {
+    "source": "project_interaction_wrapper_over_native_result",
+    "native_output_fields": ["extracted_answer", "correct", "result", "details"],
+    "visible_to_agent": "pass_fail_timeout_only",
+    "allowed_categories": ["pass", "fail", "timeout"],
+    "exposed_fields": ["normalized_result"],
+    "hide": ["extracted_answer", "details", "tests", "reference_answer", "gold_skill_ids"],
+    "note": "SRA does not define multi-Interaction disclosure. The project wrapper exposes only the native result category and withholds gold-bearing content."
+  }
+}

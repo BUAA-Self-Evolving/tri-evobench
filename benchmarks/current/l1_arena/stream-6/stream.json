@@ -1,0 +1,430 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_6",
+  "directory": "stream-6",
+  "source_scenario_id": "prd1a",
+  "category": "prd",
+  "category_name": "Product and operations",
+  "profile": "Product compliance, platform operations, commerce, support, and experimentation",
+  "theme": "FTC健康声明实质性核实 (prd1a) — VitaCore ProBio+ Daily 产品发布合规审查，17 轮 exec_check，2 次 update（含双层 supersede），5 条 preference（P1-P5），难度向量 V1/V2/V3/V4/V5/V6/V7/V8/V9/V10。真实来源：FTC Health Products Compliance Guidance Dec 2022 (https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance)；16 CFR Part 255 Endorsement Guides 2023 (https://www.law.cornell.edu/cfr/text/16/part-255)；16 CFR Part 465 Consumer Reviews Rule (https://www.law.cornell.edu/cfr/text/16/part-465)；FTC Policy Statement on Advertising Substantiation (https://www.ftc.gov/legal-library/browse/ftc-policy-statement-regarding-advertising-substantiation)；16 CFR Part 323 Made in USA Rule (https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-323)；16 CFR Part 260 Green Guides (https://www.law.cornell.edu/cfr/text/16/part-260)",
+  "domain": "product_compliance",
+  "domain_zh": "产品合规",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "product_compliance": 17,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "health_claim_compliance.compliance_assessment": 6,
+      "health_claim_compliance.final_signoff": 1,
+      "health_claim_compliance.policy_analysis": 1,
+      "health_claim_compliance.report_generation": 4,
+      "health_claim_compliance.source_verification": 1,
+      "health_claim_compliance.state_update": 2,
+      "health_claim_compliance.test_creation": 1,
+      "health_claim_compliance.timeline_reconstruction": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 19,
+  "task_layout": "turn{1..19}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 2,
+    "workspace_exec": 15
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 2,
+  "runtime_update_id_count": 4,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 32,
+      "size_bytes": 466935,
+      "tree_sha256": "4d280216ed5b15ec11e3b78791601b7dcfcf4d0abacecc29495649822d61cb41"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 12773,
+      "tree_sha256": "40db89d4210e9708e635446506d0ff7e32d9c7eaa9a8577948c8739bee8e1fd7"
+    },
+    "evaluation_scripts": {
+      "file_count": 18,
+      "size_bytes": 44590,
+      "tree_sha256": "b88e2e6ad72b203d2b11fe091cfe5d04f5f89cc8865180af6cd011a7f01677db"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.policy_analysis",
+        "subtag_zh": "健康声明合规·政策分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "prd1a:q7",
+      "source_round_id": "q7",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.source_verification",
+        "subtag_zh": "健康声明合规·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.compliance_assessment",
+        "subtag_zh": "健康声明合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.report_generation",
+        "subtag_zh": "健康声明合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.state_update",
+        "subtag_zh": "健康声明合规·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "prd1a:q11",
+      "source_round_id": "q11",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.test_creation",
+        "subtag_zh": "健康声明合规·测试编写",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q12",
+      "source_round_id": "q12",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.state_update",
+        "subtag_zh": "健康声明合规·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.report_generation",
+        "subtag_zh": "健康声明合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.report_generation",
+        "subtag_zh": "健康声明合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.final_signoff",
+        "subtag_zh": "健康声明合规·最终签核",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.report_generation",
+        "subtag_zh": "健康声明合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "prd1a:q17",
+      "source_round_id": "q17",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "product_compliance",
+        "domain_zh": "产品合规",
+        "subtag": "health_claim_compliance.timeline_reconstruction",
+        "subtag_zh": "健康声明合规·时间线重建",
+        "is_noise": false
+      }
+    }
+  ]
+}

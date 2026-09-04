@@ -1,0 +1,9 @@
+    data = []
+
+    for i in range(len(x)):
+        data.append(np.concatenate((x[i], y[i])))
+
+    df = pd.DataFrame(data, index=labels)
+    ax = sns.heatmap(df, cmap='coolwarm')
+    
+    return ax, df

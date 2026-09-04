@@ -1,0 +1,8 @@
+from random import randint
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+# Constants
+TEAMS = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']
+PENALTY_COST = 1000  # in dollars
+def task_func(goals, penalties):

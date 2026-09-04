@@ -1,0 +1,76 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "declared Agent assets",
+      "persistent workspace after declared patches"
+    ],
+    "note": "Do not mount stream.json or evaluation files into the Agent-visible Workspace; similarity metadata contains private gold-skill grouping labels."
+  },
+  "source": {
+    "benchmark": "SRA-Bench / SR-Agents",
+    "upstream_url": "https://github.com/oneal2000/SR-Agents.git",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "dataset": "bigcodebench",
+    "split": null,
+    "license": "MIT (immediate SRA-Bench source); Apache-2.0 (BigCodeBench lineage)",
+    "license_file": "SOURCE_LICENSE.txt",
+    "additional_license_files": ["BIGCODEBENCH_LICENSE.txt"],
+    "lineage": {
+      "derived_benchmark": "BigCodeBench",
+      "upstream_url": "https://github.com/bigcode-project/bigcodebench",
+      "license": "Apache-2.0"
+    }
+  },
+  "similarity_rule": {
+    "type": "same_gold_skill_and_narrow_workflow",
+    "value": "bigcodebench_094",
+    "explanation": "Both native items carry bigcodebench_094 and require pandas DataFrame construction or transformation followed by a visualization object."
+  },
+  "adaptation_scope": {
+    "included": "SRA BigCodeBench end-task application items and native execution scoring",
+    "excluded": [
+      "SRA candidate skill corpus",
+      "retrieval and reranking configuration",
+      "Recall@K and nDCG@K retrieval metrics"
+    ],
+    "reason": "The first data-only L2 pilot tests same-skill grouping, persistent Stream state, and end-task scoring; it does not claim to reproduce SRA's separate retrieval benchmark."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace_then_apply_patch",
+    "user_simulator_scope": "episode",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "note": "Pilot uses ascending source instance IDs without random shuffling; fixed random seeds are deferred to the 50+ Episode experiment.",
+    "episode_order": ["E001", "E002"]
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "runner": "l2_runtime.runner:StreamRunner",
+    "model_protocol": "openai_chat_completions",
+    "user_simulator": "bounded_retry_template",
+    "episode_result_policy": "latest_interaction",
+    "learner_update": "llm_memory_summary",
+    "persistent_state_path": "workspace/.l2_state/",
+    "model_response_artifact": "model-response-0.1 JSON",
+    "unsafe_local_execution_requires_opt_in": true,
+    "note": "The demo uses process isolation and resource limits, not a security-grade code Sandbox."
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json"
+  ]
+}

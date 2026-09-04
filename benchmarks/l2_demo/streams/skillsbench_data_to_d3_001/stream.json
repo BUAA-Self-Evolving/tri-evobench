@@ -1,0 +1,64 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "skillsbench_data_to_d3_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "declared Episode assets",
+      "workspace/"
+    ],
+    "private": [
+      "evaluation.json",
+      "evaluation_assets/",
+      "stream similarity metadata"
+    ]
+  },
+  "source": {
+    "benchmark": "SkillsBench",
+    "upstream_url": "https://github.com/benchflow-ai/skillsbench.git",
+    "revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "license": "Apache-2.0",
+    "license_file": "SOURCE_LICENSE.txt",
+    "data_license_notes": "SOURCE_DATA_LICENSES.md"
+  },
+  "similarity_rule": {
+    "type": "native_plus_derived_data_format_variants",
+    "value": "data-to-d3; workflow=D3 stock bubble chart + linked table; data_format=CSV/JSON/TSV",
+    "explanation": "E001 is the native SkillsBench data-to-d3 item. E002/E003 are deterministic data-format variants derived from the same materialized Apache-2.0 fixture and marked as derived variants."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "episode_order": [
+      "E001",
+      "E002",
+      "E003"
+    ],
+    "note": "Native data-to-d3 followed by fixed derived JSON and TSV variants."
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "adapter_status": "package_local_artifact_verifier_smoke",
+    "episode_result_policy": "latest_interaction",
+    "max_interactions": 3,
+    "submission_contract": "Workspace output/ directory",
+    "note": "The current shared text/code runner is not a terminal/browser agent runner; use the package-local verifier smoke until runtime migration."
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json",
+    "episodes/E003/episode.json"
+  ]
+}

@@ -14,8 +14,9 @@ Hermes 前台 memory 工具绕过状态冻结、judge 输出基数及恢复问�
 
 ## 数据包
 
-请向项目负责人取得本次使用的两个原始压缩包，并解压为以下结构。
-本次代码更新不上传外部数据包、API key、付费运行日志或检查点。
+本次使用的两个数据包已随仓库提交，`DATA_ROOT` 即 `benchmarks/current`，无需另外下载压缩包。
+全部数据版本见 [数据包目录](../benchmarks/README.md)，文件完整性可用
+`python tools/dataset_inventory.py --check` 检查。API key、付费运行日志和检查点不上传。
 不要用仓库旧 `benchmarks/l1_life_v2` 替代本次 `l1_arena`。
 
 ```text
@@ -47,8 +48,8 @@ docker build -t trievo-skillopt:matrix-current -f baseline/adapters/skillopt/Doc
 docker build -t trievo-trace2skill:matrix-current -f baseline/adapters/trace2skill/Dockerfile .
 python -m pytest tests -q
 python tools/prepare_matrix_configs.py --output tmp/matrix-config
-python -m trievo_bench.l2_compat --package /path/to/DATA_ROOT/L2_Demo_V2 --inspect
-python tools/validate_arena_packages.py /path/to/DATA_ROOT/l1_arena
+python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V2 --inspect
+python tools/validate_arena_packages.py benchmarks/current/l1_arena
 ```
 
 生成配置默认使用 `deepseek-v4-flash` / `https://cf.api.fan/v1`，thinking 关闭。
@@ -65,7 +66,7 @@ PowerShell（用自己的 key；不要提交或共享 key）：
 $env:TRIEVO_API_KEY = '<your-api-key>'
 $env:TRIEVO_BASE_URL = 'https://cf.api.fan/v1'
 $env:TRIEVO_MODEL = 'deepseek-v4-flash'
-python tools/run_new_package_matrix.py --packages 'D:/DATA_ROOT' --config-dir tmp/matrix-config --root runs/my-matrix
+python tools/run_new_package_matrix.py --packages benchmarks/current --config-dir tmp/matrix-config --root runs/my-matrix
 ```
 
 Linux/macOS 的环境变量设置：
@@ -74,7 +75,7 @@ Linux/macOS 的环境变量设置：
 read -s -p 'API key: ' TRIEVO_API_KEY; export TRIEVO_API_KEY
 export TRIEVO_BASE_URL=https://cf.api.fan/v1
 export TRIEVO_MODEL=deepseek-v4-flash
-python tools/run_new_package_matrix.py --packages /path/to/DATA_ROOT --config-dir tmp/matrix-config --root runs/my-matrix
+python tools/run_new_package_matrix.py --packages benchmarks/current --config-dir tmp/matrix-config --root runs/my-matrix
 ```
 
 不加 `--gate` 或 `--only` 才是完整矩阵。首次换机器建议先加 `--gate` 做有费用的连通检查；

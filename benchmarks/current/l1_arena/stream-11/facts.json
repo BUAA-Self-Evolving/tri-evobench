@@ -1,0 +1,112 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_11",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "prd5",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All output files must be written to the `output/` subdirectory. Never write deliverables to the workspace root directory.",
+      "source": "standing_system_context",
+      "checker_criterion": "all output files in output/ subdirectory"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "Python scripts must use functional style, with each function containing a Google-style docstring.",
+      "source": "standing_system_context",
+      "checker_criterion": "Python scripts in functional style with Google docstrings"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "All JSON output files must have fields sorted in alphabetical order.",
+      "source": "standing_system_context",
+      "checker_criterion": "JSON output fields in alphabetical order"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "judgment outputs include reason field",
+      "source": "preference_checker_contract"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "diagnostic reports include confidence_level field (high/medium/low)",
+      "source": "preference_checker_contract"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "slack_dm_cathy_5c0ccad0-ed3c-37fd-e4dc-ab7dfeaf04af.jsonl",
+          "size_bytes": 852,
+          "sha256": "cde55daeb65f04c3c7d1685466dc0e57e10ba0590d800d1d7914455caa9871cc"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "experiments/exp003_pricing_page/results_raw_v2.csv",
+          "size_bytes": 28023,
+          "sha256": "f80f7555a79eaceb1a07b97a0a7a17ee468f73d281443174bee600c3896c5ed0"
+        },
+        {
+          "action": "new",
+          "target": "experiments/exp003_pricing_page/exp003_bot_audit_log.csv",
+          "size_bytes": 62846,
+          "sha256": "bda9d763399c620884f727ab4807bf4beda2227bbf8d7d77f8d3d6cb281f670b"
+        },
+        {
+          "action": "new",
+          "target": "experiments/exp003_pricing_page/analysis_report_FINAL_v2.md",
+          "size_bytes": 1355,
+          "sha256": "4ee0c13e1a443cda30adbe43376ebdd89c56f8f0507bb7402a127d8823c8bb4d"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "email_vp_cfo_1ddd082c-a8c1-ff6b-b0e8-dd5098017886.jsonl",
+          "size_bytes": 998,
+          "sha256": "bd3da00898c9594dc1e775eb957a84a056c5ec16a791a75e7d4642c8b6e7ed11"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "data/q4_segment_analysis.csv",
+          "size_bytes": 139346,
+          "sha256": "937d178a147f2fe8b84dab4f6081491f5447a3a48f82ce4ff6e0a2e7fed5d168"
+        },
+        {
+          "action": "new",
+          "target": "docs/correction_notice_20231115.md",
+          "size_bytes": 1076,
+          "sha256": "e1ccb02ced4ea199e756c0b0c49967c83429fc70ef1b483939381a38d5c9ff28"
+        }
+      ]
+    }
+  ]
+}

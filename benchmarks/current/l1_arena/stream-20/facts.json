@@ -1,0 +1,112 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_20",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sec3a",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "all JSON output must use snake_case field names exclusively (no camelCase/PascalCase).",
+      "source": "standing_system_context",
+      "checker_criterion": "all JSON output uses snake_case field names (no camelCase/PascalCase)"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "all JSON deliverables must carry a top-level 'schema_version' field set to \"1.0\".",
+      "source": "standing_system_context",
+      "checker_criterion": "all JSON deliverables carry top-level schema_version == \"1.0\""
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "all regulatory citations must include the specific sub-paragraph (e.g., 'Rule 15c3-5(b)', not 'Rule 15c3-5'). Partial citations are non-compliant.",
+      "source": "standing_system_context",
+      "checker_criterion": "regulatory citations include specific sub-paragraph (e.g., 'Rule 15c3-5(b)')"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "corrective action plan (CAP) items must each include an 'owner' field identifying the responsible party.",
+      "source": "standing_system_context",
+      "checker_criterion": "CAP items each include an owner field"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "regulatory submission JSON top-level field order must be: incident_date, rule_violated, financial_impact, remediation_count, submission_date.",
+      "source": "standing_system_context",
+      "checker_criterion": "regulatory submission JSON field order: incident_date → rule_violated → financial_impact → remediation_count → submission_date"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 11,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulatory/sec_inquiry_letter_20241105.md",
+          "size_bytes": 3937,
+          "sha256": "7eea7894d5a900634e3048a1fb80a49efea964bde04a5c109be085a088678cf2"
+        },
+        {
+          "action": "new",
+          "target": "incident/affected_orders_detail.csv",
+          "size_bytes": 433996,
+          "sha256": "7e808779f40ef84a1ffebce7b0964b3b81e70d9bced509041da1c3ff8ed25af1"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulatory/legal_counsel_memo_20241106.md",
+          "size_bytes": 4642,
+          "sha256": "0506f8a5844d503a3bd50527e78686ce4e3ff42855e6e70536ada4a96b42e6f4"
+        },
+        {
+          "action": "new",
+          "target": "regulatory/revised_field_spec_v2.md",
+          "size_bytes": 2942,
+          "sha256": "744c18c982f212f124a10c076bc8c7fb059c2926b1d48b601f3df12e554e00e9"
+        },
+        {
+          "action": "new",
+          "target": "incident/vwap_reference_20241103.csv",
+          "size_bytes": 201407,
+          "sha256": "53c242e411f25195dc1c10507f1d419b6b8e27d182ccc4d0d9f5841edfb8f559"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_workspace",
+      "type": "workspace",
+      "first_applied_turn": 17,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulatory/sec_backtest_template.py",
+          "size_bytes": 105899,
+          "sha256": "35f0f84b881204ef4b9d2d4e74a5ee180323ac613c24dc128c741e575c585c51"
+        },
+        {
+          "action": "new",
+          "target": "regulatory/sec_formal_investigation_notice_20241107.md",
+          "size_bytes": 3545,
+          "sha256": "92fcdf68341163db30f3d61f63b99dacf1e8c456d7d631f23b5bba0cd22cca77"
+        },
+        {
+          "action": "new",
+          "target": "regulatory/compliance_remediation_matrix.csv",
+          "size_bytes": 118378,
+          "sha256": "b5a470617242b6207651e7f2eaee9646a8121c5e15839a9b8763c53647dd31cb"
+        }
+      ]
+    }
+  ]
+}

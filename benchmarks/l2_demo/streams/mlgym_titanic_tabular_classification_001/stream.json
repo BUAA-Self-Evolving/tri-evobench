@@ -1,0 +1,64 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "mlgym_titanic_tabular_classification_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "workspace/"
+    ],
+    "note": "Never mount evaluation_assets/ground_truth.csv into the Agent workspace."
+  },
+  "source": {
+    "benchmark": "MLGym",
+    "upstream_url": "https://github.com/facebookresearch/MLGym.git",
+    "revision": "9d40c1b5035202018cd7091fb4e83a9c68b377c0",
+    "dataset": "Titanic",
+    "split": "repository train/test split",
+    "license": "CC-BY-NC-4.0 (majority repository license)",
+    "license_file": "SOURCE_LICENSE.txt"
+  },
+  "similarity_rule": {
+    "type": "same_tabular_prediction_workflow",
+    "value": "CSVSubmissionTasks + binary classification + accuracy",
+    "explanation": "E001 preserves the native Titanic task; E002/E003 are deterministic disjoint PassengerId test-slice variants with the same train data, label, metric, and verifier contract."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace_then_apply_patch",
+    "user_simulator_scope": "episode",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "episode_order": [
+      "E001",
+      "E002",
+      "E003"
+    ],
+    "note": "E001 native full split, followed by fixed derived test slices."
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "runner": "l2_runtime.runner:StreamRunner",
+    "model_protocol": "openai_chat_completions",
+    "user_simulator": "bounded_retry_template",
+    "episode_result_policy": "latest_interaction",
+    "learner_update": "llm_memory_summary",
+    "persistent_state_path": "workspace/.l2_state/",
+    "model_response_artifact": "model-response-0.1 JSON",
+    "unsafe_local_execution_requires_opt_in": true
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json",
+    "episodes/E003/episode.json"
+  ]
+}

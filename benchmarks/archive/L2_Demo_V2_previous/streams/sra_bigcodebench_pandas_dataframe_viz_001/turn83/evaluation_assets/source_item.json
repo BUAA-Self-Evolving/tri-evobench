@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00607",
+  "dataset": "bigcodebench",
+  "question": "Remove rows from a dataframe based on column values and generate random scatter plots.\nThe function should output with:\n    pd.DataFrame: The DataFrame after removal of specified rows.\n    list: A list containing matplotlib Axes objects of the generated plots.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import sample\n# Constants for column names to use in plots\nCOLUMNS = ['A', 'B', 'C', 'D', 'E']\ndef task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_073",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "\n    # Ensure tuple elements match DataFrame columns for removal\n    df = df[~df.apply(tuple, axis=1).isin(tuples)]\n\n    # Generate random plots\n    plots = []\n    for _ in range(n_plots):\n        selected_columns = sample(COLUMNS, 2)\n        ax = df.plot(x=selected_columns[0], y=selected_columns[1], kind='scatter')\n        plots.append(ax)\n\n    plt.show()\n\n    return df, plots",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import sample\n# Constants for column names to use in plots\nCOLUMNS = ['A', 'B', 'C', 'D', 'E']\ndef task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):\n",
+    "test": "import unittest\nfrom unittest.mock import patch\nimport numpy as np\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.df = pd.DataFrame(np.random.randint(0, 100, size=(100, 5)), columns=COLUMNS)\n        self.tuples = [(self.df.iloc[0].values), (self.df.iloc[1].values)]\n    def test_no_plots_generated(self):\n        \"\"\"Test case with zero plots requested.\"\"\"\n        _, plots = task_func(self.df, [], 0)  # Request 0 plots.\n        self.assertEqual(len(plots), 0, \"No plots should be generated when n_plots is 0.\")\n    def test_plot_generation(self):\n        _, plots = task_func(self.df, [], 3)\n        self.assertEqual(len(plots), 3, \"Should generate exactly 3 plots.\")\n    @patch('matplotlib.pyplot.show')\n    def test_empty_dataframe(self, mock_show):\n        empty_df = pd.DataFrame(columns=COLUMNS)\n        modified_df, plots = task_func(empty_df, [], 2)\n        self.assertTrue(modified_df.empty, \"DataFrame should be empty.\")\n        self.assertEqual(len(plots), 2, \"Should attempt to generate 2 plots even for an empty DataFrame.\")\n    def test_no_row_removal(self):\n        modified_df, _ = task_func(self.df, [(999, 999, 999, 999, 999)], 0)\n        self.assertEqual(len(modified_df), len(self.df), \"No rows should be removed.\")\n    def test_random_plot_columns(self):\n        _, plots = task_func(self.df, [], 1)\n        # Assuming task_func generates at least one plot and adds it to the list,\n        # access the first plot for testing.\n        first_plot = plots[0]\n        plot_columns = [first_plot.get_xlabel(), first_plot.get_ylabel()]\n        self.assertIn(plot_columns[0], COLUMNS, \"X-axis should be from COLUMNS.\")\n        self.assertIn(plot_columns[1], COLUMNS, \"Y-axis should be from COLUMNS.\")",
+    "entry_point": "task_func"
+  }
+}

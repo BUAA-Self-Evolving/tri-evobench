@@ -1,0 +1,55 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "skilllearn_stock_data_visualization_001",
+  "episode_id": "E003",
+  "source_provenance": {
+    "benchmark": "SkillLearnBench",
+    "revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "instance_id": "stock-data-visualization-3",
+    "source_pointer": "tasks/stock-data-visualization/stock-data-visualization-3",
+    "extraction": "instruction.md + task.toml + environment/data + tests + solution"
+  },
+  "agent_view": {
+    "request": "Build the D3 v6 stock bubble-chart and linked table application specified in assets/request.md. All paths in that request are relative to the persistent Stream Workspace.",
+    "request_file": "assets/request.md",
+    "assets": [
+      "workspace/episodes/E003/data/stock-descriptions.tsv",
+      "workspace/episodes/E003/data/indiv-stock/"
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem",
+      "browser"
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": [],
+    "note": "This Episode continues in the Stream Workspace; its input fixture is namespaced rather than applied through a reset."
+  },
+  "materialization": {
+    "content_mode": "copied_and_path_rewritten",
+    "copied_files": [
+      "workspace/episodes/E003/data/stock-descriptions.tsv",
+      "workspace/episodes/E003/data/indiv-stock/ (50 files)",
+      "episodes/E003/assets/request.md"
+    ],
+    "path_rewrites": [
+      {
+        "upstream": "/root/data",
+        "package_workspace": "episodes/E003/data"
+      },
+      {
+        "upstream": "/root/output",
+        "package_workspace": "output"
+      }
+    ],
+    "runtime_dependency_on_upstream_checkout": false
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "retry_feedback": "bounded verifier category only"
+  },
+  "evaluation_ref": "evaluation.json"
+}

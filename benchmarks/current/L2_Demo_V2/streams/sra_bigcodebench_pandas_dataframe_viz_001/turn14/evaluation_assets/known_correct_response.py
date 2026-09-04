@@ -1,0 +1,21 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+def task_func(temperatures):
+    try:
+        if temperatures.empty or not isinstance(temperatures, pd.DataFrame):
+            raise ValueError("Input temperatures must be a non-empty pandas DataFrame.")
+
+        # Setting the font to Arial
+        font = {'sans-serif': 'Arial', 'family': 'sans-serif'}
+        plt.rc('font', **font)
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(temperatures.index, temperatures['temperature'])
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Temperature (°C)')
+        ax.set_title('Daily Temperatures in New York')
+
+        return ax
+
+    except Exception as e:
+        raise ValueError(f"An error occurred: {e}")

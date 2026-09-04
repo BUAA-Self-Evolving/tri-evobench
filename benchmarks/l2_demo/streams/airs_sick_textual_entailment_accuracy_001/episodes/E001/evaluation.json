@@ -1,0 +1,66 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E001",
+  "visibility": "benchmark_private",
+  "native_source": {
+    "metadata": "evaluation_assets/source_metadata.yaml",
+    "task_prompt": "evaluation_assets/project_description.md",
+    "evaluator": "evaluation_assets/native_evaluate.py",
+    "test_labels": "evaluation_assets/test_labels.csv"
+  },
+  "verifier": {
+    "type": "airs_textual_classification_accuracy",
+    "implementation": "package_local_python",
+    "entrypoint": "l2_runtime.airs_sick:AirsSickAccuracyVerifier",
+    "interface": "verify(raw_model_output, episode_dir) -> VerifyResult",
+    "inputs": [
+      "raw_model_output",
+      "workspace/data/train.csv",
+      "workspace/data/validation.csv",
+      "workspace/data/test.csv"
+    ],
+    "assets": [
+      "evaluation_assets/test_labels.csv",
+      "evaluation_assets/native_evaluate.py",
+      "evaluation_assets/source_metadata.yaml"
+    ]
+  },
+  "scoring": {
+    "method": "native_accuracy",
+    "range": [
+      0,
+      1
+    ],
+    "success_threshold": 0.1451284,
+    "success_threshold_source": "native metadata.logging_info.estimated_worst_score",
+    "episode_score_policy": "latest_interaction",
+    "criteria": [
+      {
+        "id": "native_sick_accuracy",
+        "description": "submission.csv is valid for native full SICK test split and native Accuracy meets or exceeds the AIRS metadata estimated_worst_score.",
+        "measurement": "Accuracy",
+        "weight": 1.0,
+        "partial_credit": true
+      }
+    ]
+  },
+  "gold": {
+    "mode": "materialized_files",
+    "test_labels": "evaluation_assets/test_labels.csv",
+    "known_correct": "evaluation_assets/known_correct.py",
+    "known_broken": "evaluation_assets/known_broken.py"
+  },
+  "feedback": {
+    "visible_to_agent": "pass_fail_timeout_only",
+    "allowed_categories": [
+      "pass",
+      "fail",
+      "timeout"
+    ],
+    "hide": [
+      "test_labels",
+      "per_row_correctness",
+      "reference_script"
+    ]
+  }
+}

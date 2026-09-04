@@ -1,0 +1,20 @@
+
+    if not isinstance(df, pd.DataFrame) or not all(col in df.columns for col in ['group', 'date', 'value']):
+        raise ValueError("Invalid 'df': must be a DataFrame with 'group', 'date', and 'value' columns.")
+
+    df['date'] = df['date'].apply(lambda x: x.toordinal())
+    X = df[['date']]
+    y = df['value']
+
+    model = LinearRegression()
+    model.fit(X, y)
+    y_pred = model.predict(X)
+
+    fig, ax = plt.subplots()
+    ax.scatter(X, y, color='red')
+    ax.plot(X, y_pred, color='blue')
+    ax.set_title('Value vs Date (Linear Regression Prediction)')
+    ax.set_xlabel('Date (ordinal)')
+    ax.set_ylabel('Value')
+
+    return model, y_pred, ax

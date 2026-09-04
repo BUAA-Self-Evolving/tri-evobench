@@ -1,0 +1,127 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_19",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sec2",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "every JSON deliverable must include a top-level `extracted_at` field (ISO-8601 UTC timestamp).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "every JSON deliverable must include a top-level `operator` field (person/system executing).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "deliverable file naming convention: q{NN}_{descriptor}.{ext} with descriptor in all-lowercase underscore-separated words.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Slack channel summaries must use three H2 sections: ## Impact / ## Actions Taken / ## Next Steps.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "Technical decision documents must include a standalone ## Rationale section.",
+      "source": "standing_system_context"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "feishu_incident_response_7240acd0-6e0a-70a1-9987-368873930655.jsonl",
+          "size_bytes": 1201,
+          "sha256": "8b0b4bd6add8daebcbd4bfc8c14606516c37f8eee9b606f5e9b0b06f337dbb11"
+        },
+        {
+          "action": "append",
+          "target": "slack_security_incidents_bdbaffe5-c3cf-48e1-92d6-84365ef6c259.jsonl",
+          "size_bytes": 630,
+          "sha256": "1ae74aef5afed880547f05fe1bb29409baf3bdae73c8f51ffe8b9e259b00df7c"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "incident/gitguardian_webhook_v2.json",
+          "size_bytes": 256160,
+          "sha256": "6b073d20afdfd6d6761f254551ca84fa9e6eef7683ef04395ec8b125495f5dc1"
+        },
+        {
+          "action": "new",
+          "target": "reports/impact_analysis_v2.md",
+          "size_bytes": 1130,
+          "sha256": "2cb57a317d5bf939c580c715f632da96dc5f7aadd0d90a5ac6b081bce28f855a"
+        },
+        {
+          "action": "new",
+          "target": "incident/cloudtrail_analysis_update1.json",
+          "size_bytes": 459413,
+          "sha256": "0d9fe23a7c38746460475194f0aa8ebe8996443df6866a2287436be30593d65d"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "email_liwei_management_a81fbc55-8063-bcc3-2113-9050ec01d761.jsonl",
+          "size_bytes": 884,
+          "sha256": "461b445f6ba2f5bf349501c900bd105b5ac2f9d9ddb7568fda844950f5b6df39"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "incident/circleci_style_postmortem_FINAL.md",
+          "size_bytes": 3212,
+          "sha256": "a5fac5c4a37c24c94cabe20e44ca3886417a0c2dbcdca28f766838727a4cb895"
+        },
+        {
+          "action": "new",
+          "target": "communications/email/vendor_circleci_advisory_v2.eml",
+          "size_bytes": 1109,
+          "sha256": "b36865aa31f88a603f35271cde6983982d93edb5e2a538e87484ce800be26ce4"
+        },
+        {
+          "action": "new",
+          "target": "scripts/rotate_aws_key.sh",
+          "size_bytes": 2237,
+          "sha256": "5e94252cd46516a60c97d05e1a6bdfafed79a1355f0f13e4d568d96422f99d2c"
+        },
+        {
+          "action": "new",
+          "target": "incident/forensics_analysis_update2.json",
+          "size_bytes": 354340,
+          "sha256": "eb5e0e1d957e92fcfc11aa4209de201eac7088fd85db3caadd0f9328570498c4"
+        }
+      ]
+    }
+  ]
+}

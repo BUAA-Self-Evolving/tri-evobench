@@ -1,0 +1,17 @@
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("Input must be a DataFrame")
+    if df.empty:
+        raise ValueError("DataFrame is empty")
+
+    pca = PCA(n_components=2)
+    principal_components = pca.fit_transform(df)
+
+    pca_df = pd.DataFrame(data=principal_components, columns=['Principal Component 1', 'Principal Component 2'])
+
+    fig, ax = plt.subplots()
+    ax.scatter(pca_df['Principal Component 1'], pca_df['Principal Component 2'])
+    ax.set_xlabel('Principal Component 1')
+    ax.set_ylabel('Principal Component 2')
+    ax.set_title('2 Component PCA')
+
+    return pca_df, ax

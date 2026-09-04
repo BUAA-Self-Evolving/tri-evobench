@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00165",
+  "dataset": "bigcodebench",
+  "question": "Create a DataFrame containing random integer values within a specified range for categories 'A' through 'E', and visualize this data with a stacked bar chart.\nThe function should output with:\n    matplotlib.figure.Figure: The matplotlib Figure object containing the plotted data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_rows=5, rand_range=(0, 100)):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_073",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "    labels = ['A', 'B', 'C', 'D', 'E']\n    data = pd.DataFrame({label: [randint(rand_range[0], rand_range[1]) for _ in range(num_rows)] for label in labels})\n\n    fig, ax = plt.subplots()\n\n    data.plot(kind='bar', stacked=True, ax=ax)\n\n    return fig",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_rows=5, rand_range=(0, 100)):\n",
+    "test": "import unittest\nimport pandas as pd\nfrom matplotlib.figure import Figure\nLABELS = ['A', 'B', 'C', 'D', 'E']\nclass TestCases(unittest.TestCase):\n    def test_case_1(self):\n        fig = task_func()\n        self.assertIsInstance(fig, Figure)\n        ax = fig.axes[0]\n        self.assertEqual(len(ax.patches), 5 * len(LABELS))  # 5 bars for each category\n    def test_case_2(self):\n        fig = task_func(num_rows=10)\n        self.assertIsInstance(fig, Figure)\n        ax = fig.axes[0]\n        self.assertEqual(len(ax.patches), 10 * len(LABELS))  # 10 bars for each category\n    def test_case_3(self):\n        fig = task_func(rand_range=(10, 50))\n        self.assertIsInstance(fig, Figure)\n        ax = fig.axes[0]\n        for bar in ax.patches:\n            self.assertTrue(10 <= bar.get_height() <= 50)\n    def test_case_4(self):\n        fig = task_func(num_rows=3, rand_range=(20, 30))\n        self.assertIsInstance(fig, Figure)\n        ax = fig.axes[0]\n        self.assertEqual(len(ax.patches), 3 * len(LABELS))  # 3 bars for each category\n        for bar in ax.patches:\n            self.assertTrue(20 <= bar.get_height() <= 30)\n    def test_case_5(self):\n        fig = task_func(num_rows=7, rand_range=(5, 15))\n        self.assertIsInstance(fig, Figure)\n        ax = fig.axes[0]\n        self.assertEqual(len(ax.patches), 7 * len(LABELS))  # 7 bars for each category\n        for bar in ax.patches:\n            self.assertTrue(5 <= bar.get_height() <= 15)",
+    "entry_point": "task_func"
+  }
+}

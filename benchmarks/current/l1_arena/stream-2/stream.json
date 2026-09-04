@@ -1,0 +1,410 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_2",
+  "directory": "stream-2",
+  "source_scenario_id": "eng2",
+  "category": "eng",
+  "category_name": "Engineering and infrastructure",
+  "profile": "Software, data, SRE, database, and CI/CD engineering",
+  "theme": "NYC TLC Yellow Taxi 2023 pipeline migration & data-quality (Bronze/Silver/Gold) — 16 exec_check rounds, 2 updates (incl. VendorID=6 supersede), 5 preference rules P1-P5, difficulty vectors V2/V4/V5/V6/V7/V8/V9/V10. Real sources: NYC Open Data 2023 Yellow Taxi (https://data.cityofnewyork.us/Transportation/2023-Yellow-Taxi-Trip-Data/4b4i-vvec); Data dictionary (https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf); MTA congestion pricing 2025-01-05 (https://www.mta.info/fares-tolls/tolls/congestion-relief-zone/taxi-fhv-tolls).",
+  "domain": "engineering",
+  "domain_zh": "工程",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "engineering": 16,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "taxi_pipeline_migration.code_remediation": 2,
+      "taxi_pipeline_migration.data_pipeline": 4,
+      "taxi_pipeline_migration.data_quality_analysis": 4,
+      "taxi_pipeline_migration.final_signoff": 1,
+      "taxi_pipeline_migration.metric_calculation": 3,
+      "taxi_pipeline_migration.report_generation": 1,
+      "taxi_pipeline_migration.source_verification": 1,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 18,
+  "task_layout": "turn{1..18}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 2,
+    "workspace_exec": 14
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 2,
+  "runtime_update_id_count": 4,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 17,
+      "size_bytes": 348040,
+      "tree_sha256": "da3c9ac495e0b00c049d459e7e0fb1b06c4470569e186f5250c44e4fda5cbd15"
+    },
+    "session_store": {
+      "file_count": 6,
+      "size_bytes": 7536,
+      "tree_sha256": "2830caa7aa364b68562f1733e5c7d26e3843b012ec16f7577d4e56e7d5891c7f"
+    },
+    "evaluation_scripts": {
+      "file_count": 17,
+      "size_bytes": 47697,
+      "tree_sha256": "1059dfdebf059cd9a62efc071a913127d9e4539118b76485b21c5ebd05ed0fc5"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.metric_calculation",
+        "subtag_zh": "出租车数据管线迁移·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_pipeline",
+        "subtag_zh": "出租车数据管线迁移·数据管线处理",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q3",
+      "source_round_id": "q3",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.code_remediation",
+        "subtag_zh": "出租车数据管线迁移·代码与配置整改",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_quality_analysis",
+        "subtag_zh": "出租车数据管线迁移·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_quality_analysis",
+        "subtag_zh": "出租车数据管线迁移·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.source_verification",
+        "subtag_zh": "出租车数据管线迁移·来源核验",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "eng2:q7",
+      "source_round_id": "q7",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_quality_analysis",
+        "subtag_zh": "出租车数据管线迁移·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.code_remediation",
+        "subtag_zh": "出租车数据管线迁移·代码与配置整改",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_pipeline",
+        "subtag_zh": "出租车数据管线迁移·数据管线处理",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_pipeline",
+        "subtag_zh": "出租车数据管线迁移·数据管线处理",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "eng2:q11",
+      "source_round_id": "q11",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_pipeline",
+        "subtag_zh": "出租车数据管线迁移·数据管线处理",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q12",
+      "source_round_id": "q12",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.metric_calculation",
+        "subtag_zh": "出租车数据管线迁移·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.data_quality_analysis",
+        "subtag_zh": "出租车数据管线迁移·数据质量分析",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q14",
+      "source_round_id": "q14",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.metric_calculation",
+        "subtag_zh": "出租车数据管线迁移·指标计算",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.report_generation",
+        "subtag_zh": "出租车数据管线迁移·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "eng2:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "engineering",
+        "domain_zh": "工程",
+        "subtag": "taxi_pipeline_migration.final_signoff",
+        "subtag_zh": "出租车数据管线迁移·最终签核",
+        "is_noise": false
+      }
+    }
+  ]
+}

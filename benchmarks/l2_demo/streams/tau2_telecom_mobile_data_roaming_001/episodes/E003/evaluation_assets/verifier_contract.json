@@ -1,0 +1,52 @@
+{
+  "contract_version": "demo-0.1",
+  "executable": true,
+  "implementation_owner": "l2_demo/runtime",
+  "runtime_entrypoint": "l2_runtime.tau2_telecom:Tau2TelecomVerifier",
+  "native_semantics": {
+    "source": "tau2-bench Telecom EnvironmentEvaluator",
+    "upstream_symbol": "tau2.evaluator.evaluator_env.EnvironmentEvaluator",
+    "revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "reward_basis": [
+      "ENV_ASSERTION"
+    ]
+  },
+  "inputs": {
+    "raw_model_output": "A strict tau2-telecom-trajectory-0.1 JSON object, optionally enclosed in a single JSON Markdown fence.",
+    "source_item": "source_item.json",
+    "known_correct_response": "known_correct_response.json"
+  },
+  "response_schema": {
+    "schema_version": "tau2-telecom-trajectory-0.1",
+    "assistant_message": "string; retained as dialogue content but not scored because COMMUNICATE is absent from reward_basis",
+    "tool_calls": [
+      {
+        "requestor": "user",
+        "name": "check_network_status | toggle_roaming | run_speed_test",
+        "arguments": {}
+      }
+    ],
+    "additional_fields": false,
+    "maximum_tool_calls": 16
+  },
+  "procedure": [
+    "Parse and validate the strict JSON response contract.",
+    "Create the selected item's relevant default Telecom state and apply its native initialization_actions in order.",
+    "Replay every declared user-tool call in order. toggle_roaming is a state toggle, not an action-presence shortcut; read tools do not modify state.",
+    "Evaluate every native env_assertion against the resulting relevant state.",
+    "Multiply assertion rewards as native ENV_ASSERTION aggregation does; return pass and score 1 only if every assertion is met."
+  ],
+  "interaction_score": {
+    "pass": 1,
+    "fail": 0,
+    "partial_credit": false
+  },
+  "non_goals": [
+    "This compact adapter does not reproduce the upstream live half-duplex orchestrator or LLM user simulator.",
+    "It implements only tools and state fields reachable and score-relevant for this materialized item.",
+    "It does not add ACTION or COMMUNICATE rewards that are absent from the selected item's reward_basis."
+  ],
+  "terminal_policy": "latest_interaction",
+  "schema_version": "tau2-telecom-trajectory-0.1",
+  "episode_id": "E003"
+}

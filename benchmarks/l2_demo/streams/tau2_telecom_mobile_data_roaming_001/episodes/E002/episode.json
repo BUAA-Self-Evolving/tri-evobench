@@ -1,0 +1,75 @@
+{
+  "schema_version": "demo-0.1",
+  "episode_id": "E002",
+  "stream_id": "tau2_telecom_mobile_data_roaming_001",
+  "index": 2,
+  "source_provenance": {
+    "instance_id": "[mobile_data_issue]user_abroad_roaming_disabled_on[PERSONA:Easy]",
+    "dataset": "telecom/tasks_small.json",
+    "revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "path": "data/tau2/domains/telecom/tasks_small.json",
+    "selector": "/1",
+    "variant_type": "native"
+  },
+  "materialization": {
+    "mode": "adapted_inline_with_private_environment_fixture",
+    "runtime_dependency_on_upstream": false,
+    "copied_files_scope": "agent_visible_policy_and_benchmark_private_native_assets",
+    "copied_files": [
+      "assets/mobile_data_roaming_policy.md",
+      "evaluation_assets/source_item.json",
+      "evaluation_assets/known_correct_response.json",
+      "evaluation_assets/verifier_contract.json"
+    ],
+    "path_rewrites": []
+  },
+  "agent_view": {
+    "request": "You are a telecom support agent helping John Smith (555-123-2002), who is currently abroad in France. His mobile data is not working properly or is very slow, he has no Wi-Fi, and he considers the issue resolved only when a speed test reports excellent internet speed. This is the upstream Easy persona variant. The phone-side Data Roaming toggle is already on, but the carrier line is not roaming-enabled. A speed test is not excellent until the account-side roaming permission is enabled. Follow the supplied mobile-data/roaming support policy, tell the user what to do, and represent the tool calls that carry out your guidance. Return only one JSON object with exactly this shape: {\"schema_version\":\"tau2-telecom-trajectory-0.1\",\"assistant_message\":\"your support response\",\"tool_calls\":[{\"requestor\":\"user or assistant\",\"name\":\"tool name\",\"arguments\":{}}]}. Tool calls execute in listed order. Do not add fields or Markdown prose. Read-only checks are optional; the final submitted trajectory must leave the issue resolved. Use the assistant-side enable_roaming tool if the policy requires changing the carrier line roaming permission.",
+    "assets": [
+      "assets/mobile_data_roaming_policy.md"
+    ],
+    "available_tools": [
+      {
+        "requestor": "user",
+        "name": "check_network_status",
+        "arguments": {},
+        "effect": "Read phone mobile-data and roaming settings; no state change."
+      },
+      {
+        "requestor": "user",
+        "name": "toggle_roaming",
+        "arguments": {},
+        "effect": "Toggle phone Data Roaming and search for the network again."
+      },
+      {
+        "requestor": "user",
+        "name": "run_speed_test",
+        "arguments": {},
+        "effect": "Read current mobile internet speed and quality; no state change."
+      },
+      {
+        "requestor": "assistant",
+        "name": "enable_roaming",
+        "arguments": {
+          "customer_id": "C1001",
+          "line_id": "L1002"
+        },
+        "effect": "Enable the carrier-side roaming permission for John's line."
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue",
+    "workspace_patch": [],
+    "note": "The Stream Workspace continues; this Episode's Telecom environment seed remains benchmark-private verifier state."
+  },
+  "interaction_policy": {
+    "max_interactions": 3,
+    "stop_on_success": true,
+    "feedback": "pass_fail_only"
+  },
+  "evaluation_ref": "evaluation.json",
+  "expected_outputs": [
+    "A tau2-telecom-trajectory-0.1 JSON object containing an assistant message and an ordered list of declared tool calls."
+  ]
+}

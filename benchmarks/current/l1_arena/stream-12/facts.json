@@ -1,0 +1,150 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_12",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sci1a",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All report files named `YYYY-MM-DD_caseid_type.md` format.",
+      "source": "standing_system_context",
+      "checker_criterion": "report files named YYYY-MM-DD_caseid_type.md"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "All formal case reports must contain four sections: Background / Evidence / Classification / Recommendation.",
+      "source": "standing_system_context",
+      "checker_criterion": "formal reports contain Background/Evidence/Classification/Recommendation"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "All JSON deliverables carry a top-level `schema_version` field set to \"1.0\".",
+      "source": "standing_system_context",
+      "checker_criterion": "every JSON deliverable carries top-level schema_version == \"1.0\""
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Abstract / Executive Summary in any report must not exceed 300 words.",
+      "source": "standing_system_context",
+      "checker_criterion": "Abstract/Executive Summary <= 300 words"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "Each retracted paper must list both the original DOI and retraction-notice DOI separately.",
+      "source": "standing_system_context",
+      "checker_criterion": "each retracted paper lists both original_doi and retraction_doi separately"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "rio_team_slack_738c62e7-c7c7-fb18-18ea-848b5a835a9c.jsonl",
+          "size_bytes": 1091,
+          "sha256": "03904fba1dbc1428fab6ef911f504a95e5b68f85cb3edaec9d9f79fe3c2914fe"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "cases/dfci/institution_response/settlement_summary.md",
+          "size_bytes": 1465,
+          "sha256": "85769754dce9408b98c84b13b5b67ce8a463ec16ee18587258f6ed2bac703b75"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/papers_flagged_v2.csv",
+          "size_bytes": 9586,
+          "sha256": "b2ccab00ba40381eec95ad6194fafc9c5aeda18fe32b4955e06b503b37330d23"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/institution_response/nih_ori_investigation_notice.md",
+          "size_bytes": 1174,
+          "sha256": "ba373c2653e6e910ec9a796a991fac5829f607253f7b835fd83fe68d633eb128"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/image_analysis/papers_analysis_batch2.tsv",
+          "size_bytes": 108671,
+          "sha256": "0305f4d18047451b755bf50784ad24309ad879c510fcb44107a8e3893e73ee32"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/dfci_extended_case_record.md",
+          "size_bytes": 108348,
+          "sha256": "111e0158f343466e3535aa02bdb9793ecb9801d4910ee63c9bdfedff444f3fa8"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "legal_brief_feishu_34fb9586-f7b9-81df-cd7d-205b92837b97.jsonl",
+          "size_bytes": 815,
+          "sha256": "d454c9ba4243e4ff3a9e7ee1ffe5e2638e2382a495511ea76bfdbbbca36dc701"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 15,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "cases/dfci/researcher_id_clarification.md",
+          "size_bytes": 1652,
+          "sha256": "6e811d367a0228e137229ec960f477069961553c5226e0602704f346804bcde4"
+        },
+        {
+          "action": "new",
+          "target": "communications/email/legal_memo_researcher1.md",
+          "size_bytes": 961,
+          "sha256": "baec293506ebd95b31afb963eae430edeaf35dc6357397a5004510af30094124"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/institution_response/dfci_official_statement_v2.md",
+          "size_bytes": 7952,
+          "sha256": "6ad4f4aaaba99d9097250848ca4e981abc0a04b3890fc515833d8456645006bc"
+        },
+        {
+          "action": "new",
+          "target": "cases/surgisphere/surgisphere_comparison_case.md",
+          "size_bytes": 7100,
+          "sha256": "92e75917289a5b732a73215600b0fa9e430d522087873341b95ece53237bb47a"
+        },
+        {
+          "action": "new",
+          "target": "cases/dfci/image_analysis/anderson_deep_analysis.tsv",
+          "size_bytes": 95793,
+          "sha256": "815adefd004b8ca78fc51e97fa32c7bd6a8649472921e436202e673950e171fd"
+        },
+        {
+          "action": "new",
+          "target": "communications/email/legal_correspondence_archive.md",
+          "size_bytes": 110427,
+          "sha256": "47f9238ff6393827369a0eaa4eb0d1242dfd1e7dda5514e3cb8db84360a7c407"
+        }
+      ]
+    }
+  ]
+}

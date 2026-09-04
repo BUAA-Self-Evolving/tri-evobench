@@ -1,0 +1,10 @@
+    df = pd.DataFrame(data, columns=COLUMNS)
+    analyzed_df = df.groupby(COLUMNS[:-1])[COLUMNS[-1]].nunique().reset_index()
+
+    # Adjusting the plotting logic
+    fig, ax = plt.subplots()
+    ax.plot(analyzed_df[COLUMNS[:-1]].astype(str).agg('-'.join, axis=1), analyzed_df[COLUMNS[-1]])
+    ax.set_xlabel('-'.join(COLUMNS[:-1]))
+    ax.set_ylabel(COLUMNS[-1])
+
+    return analyzed_df, ax

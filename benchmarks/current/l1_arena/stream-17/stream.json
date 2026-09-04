@@ -1,0 +1,412 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_17",
+  "directory": "stream-17",
+  "source_scenario_id": "sci5",
+  "category": "sci",
+  "category_name": "Research, healthcare, legal, and people operations",
+  "profile": "Research integrity, healthcare safety, contracts, and employment compliance",
+  "theme": "HelixDyne Software HR compliance crisis: PIP duration dispute (21-day pip_v1 violates 30-day company policy in HR Handbook §4.3), FMLA/ADEA/OWBPA analysis for employee Marcus Webb (terminated during active FMLA protection window), and multi-state WARN Act compliance analysis (federal/Cal-WARN/NYS) for a 58→31 employee restructuring. 16 exec_check rounds, 3 updates (Update 2 supersedes NYS WARN v1 analysis), 4 preference rules (P1–P4), difficulty vectors V1/V2/V3/V4/V5/V6/V7/V8/V9/V10. Real sources: 29 U.S.C. § 2101 (https://www.law.cornell.edu/uscode/text/29/2101); Cal-WARN CA DIR (https://www.dir.ca.gov/dlse/cal-warnact.html); 29 CFR § 825.110 FMLA (https://www.law.cornell.edu/cfr/text/29/825.110); EEOC OWBPA Q&A (https://www.eeoc.gov/laws/guidance/qa-understanding-waivers-discrimination-claims-employee-severance-agreements).",
+  "domain": "legal_and_hr",
+  "domain_zh": "法律与人力",
+  "tag_taxonomy_version": "l1_arena_domain_tags/1.1",
+  "tag_counts": {
+    "domains": {
+      "legal_and_hr": 16,
+      "unrelated_noise": 2
+    },
+    "subtags": {
+      "employment_compliance.compliance_assessment": 8,
+      "employment_compliance.final_signoff": 1,
+      "employment_compliance.report_generation": 3,
+      "employment_compliance.risk_assessment": 1,
+      "employment_compliance.state_update": 1,
+      "employment_compliance.timeline_reconstruction": 2,
+      "unrelated_noise.exact_arithmetic": 1,
+      "unrelated_noise.one_turn_format_override": 1
+    }
+  },
+  "turn_count": 18,
+  "task_layout": "turn{1..18}/task.json",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "distractor": 2,
+    "dynamic_update_exec": 3,
+    "workspace_exec": 13
+  },
+  "preference_rule_count": 5,
+  "dynamic_update_wave_count": 3,
+  "runtime_update_id_count": 6,
+  "seed_integrity": {
+    "workspace": {
+      "file_count": 31,
+      "size_bytes": 431684,
+      "tree_sha256": "b105fafe87815e25c8d3a65a264e3797b3de7b35b45815762dabf1fed607bf35"
+    },
+    "session_store": {
+      "file_count": 7,
+      "size_bytes": 11473,
+      "tree_sha256": "924c76fbe53a9f5c9900a05975ea46fdbedd3b16547dd3c99961d9760424087e"
+    },
+    "evaluation_scripts": {
+      "file_count": 17,
+      "size_bytes": 39843,
+      "tree_sha256": "a8059e06df39afecee93bec47d083500927d8dead4c764b59328ecc98afa910f"
+    }
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q1",
+      "source_round_id": "q1",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q2",
+      "source_round_id": "q2",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci5:q3",
+      "source_round_id": "q3",
+      "update_ids": [
+        "upd1_sessions",
+        "upd1_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.timeline_reconstruction",
+        "subtag_zh": "劳动用工合规·时间线重建",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q4",
+      "source_round_id": "q4",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.risk_assessment",
+        "subtag_zh": "劳动用工合规·风险评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q5",
+      "source_round_id": "q5",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "unrelated_exact_qa",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.exact_arithmetic",
+        "subtag_zh": "无关噪音·精确算术",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q6",
+      "source_round_id": "q6",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q7",
+      "source_round_id": "q7",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q8",
+      "source_round_id": "q8",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q9",
+      "source_round_id": "q9",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.timeline_reconstruction",
+        "subtag_zh": "劳动用工合规·时间线重建",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q10",
+      "source_round_id": "q10",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.report_generation",
+        "subtag_zh": "劳动用工合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "distractor",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "noise",
+      "source_task_id": null,
+      "source_round_id": null,
+      "update_ids": [],
+      "has_preference_check": false,
+      "noise_kind": "one_turn_format_override",
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "unrelated_noise",
+        "domain_zh": "无关噪音",
+        "subtag": "unrelated_noise.one_turn_format_override",
+        "subtag_zh": "无关噪音·单轮格式覆盖",
+        "is_noise": true
+      }
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q11",
+      "source_round_id": "q11",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.report_generation",
+        "subtag_zh": "劳动用工合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci5:q12",
+      "source_round_id": "q12",
+      "update_ids": [
+        "upd2_sessions",
+        "upd2_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.state_update",
+        "subtag_zh": "劳动用工合规·状态更新与更正",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q13",
+      "source_round_id": "q13",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "dynamic_update_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "update_application",
+      "source_task_id": "sci5:q14",
+      "source_round_id": "q14",
+      "update_ids": [
+        "upd3_sessions",
+        "upd3_workspace"
+      ],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.compliance_assessment",
+        "subtag_zh": "劳动用工合规·合规评估",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q15",
+      "source_round_id": "q15",
+      "update_ids": [],
+      "has_preference_check": true,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.report_generation",
+        "subtag_zh": "劳动用工合规·报告与文档生成",
+        "is_noise": false
+      }
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "workspace_exec",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "sci5:q16",
+      "source_round_id": "q16",
+      "update_ids": [],
+      "has_preference_check": false,
+      "tag": {
+        "taxonomy_version": "l1_arena_domain_tags/1.1",
+        "domain": "legal_and_hr",
+        "domain_zh": "法律与人力",
+        "subtag": "employment_compliance.final_signoff",
+        "subtag_zh": "劳动用工合规·最终签核",
+        "is_noise": false
+      }
+    }
+  ]
+}

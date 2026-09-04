@@ -1,0 +1,937 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+  "directory": "sra_bigcodebench_pandas_dataframe_viz_001",
+  "profile": "L2 task family adapted from SRA-Bench / SR-Agents",
+  "theme": "One hundred selected native BigCodeBench items share pandas DataFrame transformation plus a Matplotlib or Seaborn visualization workflow.",
+  "turn_count": 100,
+  "task_layout": "turn_directories",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "capability_application": 100
+  },
+  "fact_thread_count": 0,
+  "capability": {
+    "capability_id": "pandas_dataframe_visualization",
+    "family": "code_generation_and_data_visualization",
+    "relation_type": "same_gold_skill_and_narrow_workflow",
+    "description": "One hundred selected native BigCodeBench items share pandas skill bigcodebench_094 plus a Matplotlib or Seaborn visualization skill and require a local, self-contained DataFrame visualization workflow."
+  },
+  "ordering": {
+    "method": "fixed_seed_shuffle",
+    "seed": 20260828,
+    "turn_order": [
+      "turn1",
+      "turn2",
+      "turn3",
+      "turn4",
+      "turn5",
+      "turn6",
+      "turn7",
+      "turn8",
+      "turn9",
+      "turn10",
+      "turn11",
+      "turn12",
+      "turn13",
+      "turn14",
+      "turn15",
+      "turn16",
+      "turn17",
+      "turn18",
+      "turn19",
+      "turn20",
+      "turn21",
+      "turn22",
+      "turn23",
+      "turn24",
+      "turn25",
+      "turn26",
+      "turn27",
+      "turn28",
+      "turn29",
+      "turn30",
+      "turn31",
+      "turn32",
+      "turn33",
+      "turn34",
+      "turn35",
+      "turn36",
+      "turn37",
+      "turn38",
+      "turn39",
+      "turn40",
+      "turn41",
+      "turn42",
+      "turn43",
+      "turn44",
+      "turn45",
+      "turn46",
+      "turn47",
+      "turn48",
+      "turn49",
+      "turn50",
+      "turn51",
+      "turn52",
+      "turn53",
+      "turn54",
+      "turn55",
+      "turn56",
+      "turn57",
+      "turn58",
+      "turn59",
+      "turn60",
+      "turn61",
+      "turn62",
+      "turn63",
+      "turn64",
+      "turn65",
+      "turn66",
+      "turn67",
+      "turn68",
+      "turn69",
+      "turn70",
+      "turn71",
+      "turn72",
+      "turn73",
+      "turn74",
+      "turn75",
+      "turn76",
+      "turn77",
+      "turn78",
+      "turn79",
+      "turn80",
+      "turn81",
+      "turn82",
+      "turn83",
+      "turn84",
+      "turn85",
+      "turn86",
+      "turn87",
+      "turn88",
+      "turn89",
+      "turn90",
+      "turn91",
+      "turn92",
+      "turn93",
+      "turn94",
+      "turn95",
+      "turn96",
+      "turn97",
+      "turn98",
+      "turn99",
+      "turn100"
+    ],
+    "note": "The semantically filtered 100-item set is ordered by the frozen SHA-256 seed procedure in selection.json; selection and ordering are separate."
+  },
+  "execution_requirements": {
+    "network": "disabled",
+    "path_scope": "agent_workspace",
+    "max_interactions": 3,
+    "max_tool_calls_per_interaction": 20,
+    "turn_timeout_seconds": 900,
+    "max_output_tokens": 12000
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "bigcodebench_01037"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00613"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00919"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00296"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00208"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00057"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00109"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00065"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00165"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00523"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00160"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00920"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00942"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00103"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00616"
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00138"
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00063"
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00341"
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00515"
+    },
+    {
+      "turn_id": "turn20",
+      "turn_index": 20,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_01002"
+    },
+    {
+      "turn_id": "turn21",
+      "turn_index": 21,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00009"
+    },
+    {
+      "turn_id": "turn22",
+      "turn_index": 22,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00559"
+    },
+    {
+      "turn_id": "turn23",
+      "turn_index": 23,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01060"
+    },
+    {
+      "turn_id": "turn24",
+      "turn_index": 24,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00304"
+    },
+    {
+      "turn_id": "turn25",
+      "turn_index": 25,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00064"
+    },
+    {
+      "turn_id": "turn26",
+      "turn_index": 26,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00614"
+    },
+    {
+      "turn_id": "turn27",
+      "turn_index": 27,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00428"
+    },
+    {
+      "turn_id": "turn28",
+      "turn_index": 28,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00230"
+    },
+    {
+      "turn_id": "turn29",
+      "turn_index": 29,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01024"
+    },
+    {
+      "turn_id": "turn30",
+      "turn_index": 30,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00966"
+    },
+    {
+      "turn_id": "turn31",
+      "turn_index": 31,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01023"
+    },
+    {
+      "turn_id": "turn32",
+      "turn_index": 32,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00099"
+    },
+    {
+      "turn_id": "turn33",
+      "turn_index": 33,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00066"
+    },
+    {
+      "turn_id": "turn34",
+      "turn_index": 34,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00605"
+    },
+    {
+      "turn_id": "turn35",
+      "turn_index": 35,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00139"
+    },
+    {
+      "turn_id": "turn36",
+      "turn_index": 36,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00038"
+    },
+    {
+      "turn_id": "turn37",
+      "turn_index": 37,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00092"
+    },
+    {
+      "turn_id": "turn38",
+      "turn_index": 38,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00345"
+    },
+    {
+      "turn_id": "turn39",
+      "turn_index": 39,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00164"
+    },
+    {
+      "turn_id": "turn40",
+      "turn_index": 40,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00020"
+    },
+    {
+      "turn_id": "turn41",
+      "turn_index": 41,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00302"
+    },
+    {
+      "turn_id": "turn42",
+      "turn_index": 42,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01025"
+    },
+    {
+      "turn_id": "turn43",
+      "turn_index": 43,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00102"
+    },
+    {
+      "turn_id": "turn44",
+      "turn_index": 44,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00521"
+    },
+    {
+      "turn_id": "turn45",
+      "turn_index": 45,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00168"
+    },
+    {
+      "turn_id": "turn46",
+      "turn_index": 46,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01053"
+    },
+    {
+      "turn_id": "turn47",
+      "turn_index": 47,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00639"
+    },
+    {
+      "turn_id": "turn48",
+      "turn_index": 48,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00156"
+    },
+    {
+      "turn_id": "turn49",
+      "turn_index": 49,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00636"
+    },
+    {
+      "turn_id": "turn50",
+      "turn_index": 50,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00133"
+    },
+    {
+      "turn_id": "turn51",
+      "turn_index": 51,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01062"
+    },
+    {
+      "turn_id": "turn52",
+      "turn_index": 52,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00068"
+    },
+    {
+      "turn_id": "turn53",
+      "turn_index": 53,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00456"
+    },
+    {
+      "turn_id": "turn54",
+      "turn_index": 54,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00155"
+    },
+    {
+      "turn_id": "turn55",
+      "turn_index": 55,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01001"
+    },
+    {
+      "turn_id": "turn56",
+      "turn_index": 56,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01052"
+    },
+    {
+      "turn_id": "turn57",
+      "turn_index": 57,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00167"
+    },
+    {
+      "turn_id": "turn58",
+      "turn_index": 58,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00104"
+    },
+    {
+      "turn_id": "turn59",
+      "turn_index": 59,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00427"
+    },
+    {
+      "turn_id": "turn60",
+      "turn_index": 60,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00449"
+    },
+    {
+      "turn_id": "turn61",
+      "turn_index": 61,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00904"
+    },
+    {
+      "turn_id": "turn62",
+      "turn_index": 62,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00588"
+    },
+    {
+      "turn_id": "turn63",
+      "turn_index": 63,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00105"
+    },
+    {
+      "turn_id": "turn64",
+      "turn_index": 64,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00107"
+    },
+    {
+      "turn_id": "turn65",
+      "turn_index": 65,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00298"
+    },
+    {
+      "turn_id": "turn66",
+      "turn_index": 66,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00134"
+    },
+    {
+      "turn_id": "turn67",
+      "turn_index": 67,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00916"
+    },
+    {
+      "turn_id": "turn68",
+      "turn_index": 68,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00343"
+    },
+    {
+      "turn_id": "turn69",
+      "turn_index": 69,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01011"
+    },
+    {
+      "turn_id": "turn70",
+      "turn_index": 70,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_01081"
+    },
+    {
+      "turn_id": "turn71",
+      "turn_index": 71,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00110"
+    },
+    {
+      "turn_id": "turn72",
+      "turn_index": 72,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01036"
+    },
+    {
+      "turn_id": "turn73",
+      "turn_index": 73,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01043"
+    },
+    {
+      "turn_id": "turn74",
+      "turn_index": 74,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00354"
+    },
+    {
+      "turn_id": "turn75",
+      "turn_index": 75,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00661"
+    },
+    {
+      "turn_id": "turn76",
+      "turn_index": 76,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00519"
+    },
+    {
+      "turn_id": "turn77",
+      "turn_index": 77,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00551"
+    },
+    {
+      "turn_id": "turn78",
+      "turn_index": 78,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00640"
+    },
+    {
+      "turn_id": "turn79",
+      "turn_index": 79,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00968"
+    },
+    {
+      "turn_id": "turn80",
+      "turn_index": 80,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00618"
+    },
+    {
+      "turn_id": "turn81",
+      "turn_index": 81,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00264"
+    },
+    {
+      "turn_id": "turn82",
+      "turn_index": 82,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00567"
+    },
+    {
+      "turn_id": "turn83",
+      "turn_index": 83,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00607"
+    },
+    {
+      "turn_id": "turn84",
+      "turn_index": 84,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01079"
+    },
+    {
+      "turn_id": "turn85",
+      "turn_index": 85,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01083"
+    },
+    {
+      "turn_id": "turn86",
+      "turn_index": 86,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00610"
+    },
+    {
+      "turn_id": "turn87",
+      "turn_index": 87,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00506"
+    },
+    {
+      "turn_id": "turn88",
+      "turn_index": 88,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01069"
+    },
+    {
+      "turn_id": "turn89",
+      "turn_index": 89,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00135"
+    },
+    {
+      "turn_id": "turn90",
+      "turn_index": 90,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00040"
+    },
+    {
+      "turn_id": "turn91",
+      "turn_index": 91,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00042"
+    },
+    {
+      "turn_id": "turn92",
+      "turn_index": 92,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00041"
+    },
+    {
+      "turn_id": "turn93",
+      "turn_index": 93,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00513"
+    },
+    {
+      "turn_id": "turn94",
+      "turn_index": 94,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00477"
+    },
+    {
+      "turn_id": "turn95",
+      "turn_index": 95,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00469"
+    },
+    {
+      "turn_id": "turn96",
+      "turn_index": 96,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00568"
+    },
+    {
+      "turn_id": "turn97",
+      "turn_index": 97,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00136"
+    },
+    {
+      "turn_id": "turn98",
+      "turn_index": 98,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00560"
+    },
+    {
+      "turn_id": "turn99",
+      "turn_index": 99,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00106"
+    },
+    {
+      "turn_id": "turn100",
+      "turn_index": 100,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00514"
+    }
+  ]
+}

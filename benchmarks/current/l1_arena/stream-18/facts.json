@@ -1,0 +1,190 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_18",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sec1",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All JSON outputs use 2-space indent; top-level fields sorted alphabetically.",
+      "source": "standing_system_context",
+      "checker_criterion": "JSON 2-space indent, top-level fields alphabetically ordered."
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "CVE IDs in technical reports formatted as CVE-YYYY-NNNNN (hyphenated, uppercase).",
+      "source": "standing_system_context",
+      "checker_criterion": "CVE IDs formatted as CVE-YYYY-NNNNN (hyphenated, uppercase)."
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "All work product filenames use snake_case (no camelCase, no hyphens in filenames).",
+      "source": "standing_system_context",
+      "checker_criterion": "Work product filenames use snake_case."
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Progress reports and inventories grouped by environment (prod/staging/dev), prod first.",
+      "source": "standing_system_context",
+      "checker_criterion": "Progress/inventory reports grouped prod/staging/dev, prod first."
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "Executive summaries must include a standalone TL;DR paragraph (≤200 words).",
+      "source": "standing_system_context",
+      "checker_criterion": "Executive summaries contain standalone TL;DR paragraph ≤200 words."
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "feishu_sre_bob_dm_9b0da4d4-a551-6358-0fd1-e78615d0809f.jsonl",
+          "size_bytes": 518,
+          "sha256": "5dd3256520a6b57164a3eb2ae6d595563873c1c19c329b19c545562c6f3538ef"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "assets/advisories/redhat_RHSA-2024-4340.json",
+          "size_bytes": 782,
+          "sha256": "95bfe453aab0e07ca55fe894b624048bdcc50d85efd6075d48b51a6124a572f7"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/rhel8_inventory.csv",
+          "size_bytes": 10497,
+          "sha256": "541fca02f3da18182d4ad73aa95c2fde47ac91191a09216c5ad15c755b0d779d"
+        },
+        {
+          "action": "new",
+          "target": "assets/advisories/rhel8_openssh_versions.md",
+          "size_bytes": 966,
+          "sha256": "22063862399f082ba593412d3eb4230537255ca64f645bb2a6f00e2695c34af0"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/shodan_export_supplement_2024-07-05.json",
+          "size_bytes": 109556,
+          "sha256": "33054f11a72c86ceb615c4ef23b5db5697293640889280a1ec7db032083398a4"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "email_management_adfbb4b3-76a8-0a2a-3f2e-8c26e5a5518b.jsonl",
+          "size_bytes": 1258,
+          "sha256": "363bc3f03be3d80d7910f42eaa52885c972a61052b63850372bf896d846d749e"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "assets/advisories/security_committee_decision.md",
+          "size_bytes": 2122,
+          "sha256": "fcf86e81e45932a0ee96bd36bb7f287a975757c5dcca3bd6f3bb493c08562d6d"
+        },
+        {
+          "action": "new",
+          "target": "assets/advisories/maxstartups_guidance.md",
+          "size_bytes": 2215,
+          "sha256": "4209e4100e40cebb9240124b4962809b6a156f7aeeb84de5eaa7c3088b06e7a5"
+        },
+        {
+          "action": "new",
+          "target": "assets/advisories/redhat_maxstartups_solution.txt",
+          "size_bytes": 1637,
+          "sha256": "491439336ed7795c306a2583cec6b218256ab11d018aa98ee77feb5f713aab33"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/patch_tracking_v2.csv",
+          "size_bytes": 141607,
+          "sha256": "c4590d6616cd66f5c9cc36ba64a4506d4a54a97637faf4eac64422ce10afc460"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/dos_test_log_20240706.txt",
+          "size_bytes": 48945,
+          "sha256": "65e2b67b9b2d6f6caf8a76368ebd6003727cadbd92528bb75ae2eb592ddf9ef7"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_sessions",
+      "type": "session",
+      "first_applied_turn": 16,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "slack_security_alerts_655de8b8-5293-f12b-04fc-c4bd8162e046.jsonl",
+          "size_bytes": 741,
+          "sha256": "c72cb25c80cfd261d6fc3e44a04739e354d1e53a92438288584d48657d4973c1"
+        }
+      ]
+    },
+    {
+      "update_id": "upd3_workspace",
+      "type": "workspace",
+      "first_applied_turn": 16,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "assets/advisories/CVE-2024-6409_detail.json",
+          "size_bytes": 1506,
+          "sha256": "6d424a43e200f78ba23cf178c140c4826f5d70b9f73332b338b55a6731c09a9d"
+        },
+        {
+          "action": "new",
+          "target": "assets/advisories/openssh_dual_cve_matrix.md",
+          "size_bytes": 2227,
+          "sha256": "1b558de81df4e4a05e22e9481d53922ac33943c583714859cb594ca5a8b49375"
+        },
+        {
+          "action": "new",
+          "target": "assets/advisories/extended_exploit_analysis.md",
+          "size_bytes": 2838,
+          "sha256": "65c9a339f6ed5a149ec979c27b02d85911d450a1f751c96995aca7499434df11"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/dual_cve_scan_results.csv",
+          "size_bytes": 51201,
+          "sha256": "a30d824fed4c3be888a7bd9a1340285926c8b16dfb9478214754e01f26deefa7"
+        },
+        {
+          "action": "new",
+          "target": "assets/scan_results/version_analysis_report.txt",
+          "size_bytes": 27963,
+          "sha256": "811f1f830c744e5409bc1c9f108f18fb2923fcd0fd605065849ecfded6a5eddf"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-native-verifier-result.schema.json",
+  "title": "L2 Native Verifier Result V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verifier_id", "status", "score", "checks", "artifacts", "public_summary", "private_diagnostics", "error"],
+  "properties": {
+    "schema_version": {"const": "l2_native_verifier_result/1.0"},
+    "verifier_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["pass", "fail", "partial", "error"]},
+    "score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "metric": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "raw_value", "raw_direction", "normalized_value"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "raw_value": {"type": "number"},
+            "raw_direction": {"enum": ["maximize", "minimize"]},
+            "normalized_value": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status", "score", "evidence"],
+        "properties": {
+          "check_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["pass", "fail", "partial", "error", "not_applicable"]},
+          "score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+          "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "exists", "sha256"],
+        "properties": {
+          "path": {"$ref": "#/$defs/workspacePath"},
+          "exists": {"type": "boolean"},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "public_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_category", "observable_deficiencies"],
+      "properties": {
+        "result_category": {"enum": ["pass", "fail", "partial", "error"]},
+        "observable_deficiencies": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "private_diagnostics": {"type": "object"},
+    "error": {"type": ["string", "null"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "error"}}}, "then": {"properties": {"score": {"type": "null"}, "error": {"type": "string", "minLength": 1}}}},
+    {"if": {"properties": {"status": {"enum": ["pass", "fail", "partial"]}}}, "then": {"properties": {"score": {"type": "number"}, "error": {"type": "null"}}}}
+  ],
+  "$defs": {
+    "workspacePath": {"type": "string", "pattern": "^agent_workspace/(?!.*(?:^|/)\\.\\.(?:/|$))[^/].*$"}
+  }
+}

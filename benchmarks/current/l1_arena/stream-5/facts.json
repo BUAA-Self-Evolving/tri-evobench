@@ -1,0 +1,97 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_5",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "eng5",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All JSON output files use snake_case field names (never camelCase).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "All Markdown document headings at level 1 and 2 use bilingual format: `# 中文标题 / English Title`.",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "Before modifying any config file, backup the original with `.bak` suffix in the same directory (e.g., `ci.yml` → `ci.yml.bak`).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "GitLab CI configurations must be organized by stage into separate files under `.gitlab/ci/` (never consolidate all jobs into root `.gitlab-ci.yml`).",
+      "source": "standing_system_context"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "All Python scripts carry a version comment in the header: `# version: X.Y`.",
+      "source": "standing_system_context"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "email_update_apr2025_51357aa1-fc7a-a5c8-d850-3d891bb10c28.jsonl",
+          "size_bytes": 848,
+          "sha256": "9d531175226f44dbd6ff6f96098ff388e5b83b7d6e07f3df08809d3a78633604"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "chat_history/email_update_apr2025.eml",
+          "size_bytes": 179444,
+          "sha256": "4f583484f05d703e3c5f7f283e0d041d882bcde40e98226c6b3a2e5d89387c19"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "feishu_group_cicd_dd51f8ac-34bb-f417-9f5e-7f685ecfe2a9.jsonl",
+          "size_bytes": 936,
+          "sha256": "e512285fb248ef4dbdfcbb1e04ef38977e0660afba27271f3a7a438d0722f8f6"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": ".gitlab/ci/build_updated.yml",
+          "size_bytes": 1385,
+          "sha256": "7015903081139c7e40910896c66c7a3d32964692ebd99d02384915028c0a5362"
+        },
+        {
+          "action": "new",
+          "target": "chat_history/feishu_group_nov_update.jsonl",
+          "size_bytes": 110472,
+          "sha256": "15a9313d646e908ee4a98188997256db85390cb848a1f6c1a3818835be14963c"
+        }
+      ]
+    }
+  ]
+}

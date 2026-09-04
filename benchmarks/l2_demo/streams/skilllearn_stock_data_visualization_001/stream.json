@@ -1,0 +1,64 @@
+{
+  "schema_version": "demo-0.1",
+  "stream_id": "skilllearn_stock_data_visualization_001",
+  "level": "L2",
+  "access_policy": {
+    "manifest_visibility": "benchmark_runtime_private",
+    "agent_visible": [
+      "episode.json.agent_view",
+      "declared Episode assets",
+      "workspace/"
+    ],
+    "private": [
+      "evaluation.json",
+      "evaluation_assets/",
+      "stream similarity metadata"
+    ]
+  },
+  "source": {
+    "benchmark": "SkillLearnBench",
+    "upstream_url": "https://github.com/cxcscmu/SkillLearnBench.git",
+    "revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "license": "MIT",
+    "license_file": "SOURCE_LICENSE.txt",
+    "data_license_notes": "SOURCE_DATA_LICENSES.md"
+  },
+  "similarity_rule": {
+    "type": "native_sibling_stock_visualization",
+    "value": "stock-data-visualization-{1,2,3}; workflow=D3 stock bubble chart + linked table; data_format=CSV/JSON/TSV",
+    "explanation": "Three native SkillLearnBench sibling instances share the same D3 stock visualization workflow and differ by controlled input data format."
+  },
+  "lifecycle": {
+    "sandbox_scope": "stream",
+    "workspace_scope": "stream",
+    "new_workspace_on": "next_stream",
+    "episode_transition": "keep_workspace",
+    "verifier_scope": "interaction"
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "episode_order": [
+      "E001",
+      "E002",
+      "E003"
+    ],
+    "note": "Fixed order over native sibling instances stock-data-visualization-1/2/3."
+  },
+  "workspace": {
+    "initial_snapshot": "workspace/",
+    "content_mode": "materialized"
+  },
+  "runtime": {
+    "adapter_status": "package_local_artifact_verifier_smoke",
+    "episode_result_policy": "latest_interaction",
+    "max_interactions": 3,
+    "submission_contract": "Workspace output/ directory",
+    "note": "The current shared text/code runner is not a terminal/browser agent runner; use the package-local verifier smoke until runtime migration."
+  },
+  "episodes": [
+    "episodes/E001/episode.json",
+    "episodes/E002/episode.json",
+    "episodes/E003/episode.json"
+  ]
+}

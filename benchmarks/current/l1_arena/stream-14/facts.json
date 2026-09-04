@@ -1,0 +1,144 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_14",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "sci2",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "All 5-Why analyses must be presented as Markdown tables (not prose paragraphs).",
+      "source": "standing_system_context",
+      "checker_criterion": "5-Why analyses must use Markdown table format (| Why # | Question | Finding |)"
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "Fishbone (Ishikawa) diagrams must use exactly the Six-M classification (Man/Machine/Material/Method/Environment/Measurement).",
+      "source": "standing_system_context",
+      "checker_criterion": "Fishbone JSON must use exactly Six-M categories as keys under 'categories'"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "MDR-related documents must follow FDA MedWatch Form 3500A section structure (Sections A through G) — do not use custom section names.",
+      "source": "standing_system_context",
+      "checker_criterion": "MDR documents must contain Section A through Section G headings"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Executive Summary documents must include a YAML frontmatter block with fields: date, author, recall_cases, classification.",
+      "source": "standing_system_context",
+      "checker_criterion": "Executive Summary must contain YAML frontmatter with date/author/recall_cases/classification"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "Final report files must follow the naming convention: final_rca_report_YYYYMMDD.md (use the actual production date, not a placeholder).",
+      "source": "standing_system_context",
+      "checker_criterion": "Final report files must match naming pattern final_rca_report_YYYYMMDD.md"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "feishu_fsn_revision_742bbb23-2ff7-9591-5692-89a79d6df3b6.jsonl",
+          "size_bytes": 1086,
+          "sha256": "28582231482ec3266e7e1d20fa5872c829bb6c32e89d0e219c29e3d7acb134c5"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 9,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/field_safety_notice_revised_v2.md",
+          "size_bytes": 3203,
+          "sha256": "3b6cb3f4bc23dff63a54c8243ccc48c87d60e162ed436ae920ba99d58c7acc5e"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/hospital_implementation_guide.md",
+          "size_bytes": 3060,
+          "sha256": "6b30b2da46047fb94c597e2ca4eddad2260d090eb9b5283059cfcdb3fdf3bdd2"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/technical_analysis_battery_soc.md",
+          "size_bytes": 5429,
+          "sha256": "1df8d2e74b265093a4a36852f97cf2020a31e179b085c4a0e7d5099d6732a193"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/ivenix_battery_assessment_full.csv",
+          "size_bytes": 42505,
+          "sha256": "0611fdafe6e4d654808a4c90c8a17868593efef7ecd3a10b58a88781acbaae97"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/ivenix_field_data_full.csv",
+          "size_bytes": 43542,
+          "sha256": "d988453583b5c7778582b833d160527a3f7974b251ea2804684bfeaaccce3ccc"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "email_update2_supersede_96b7b9e9-b3c1-26d2-9a7e-90c25845929c.jsonl",
+          "size_bytes": 2216,
+          "sha256": "67594bdd691559b0a6df178c252bb95b8337fd6bcbe5039b0433e90ed997146f"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 14,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulations/regulatory_guidance_supplement.md",
+          "size_bytes": 3215,
+          "sha256": "24f557af7f0da6a88c4fd1845fd6fae73a24958032462750df3b79fcf3922f63"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_B_ivenix/capa_validation_requirements.md",
+          "size_bytes": 2605,
+          "sha256": "91ed5d19c2eb697f344be676e746127e21bfe7e88a3b5ba59d34357502abd798"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_A_nimbus/nimbus_distribution_verification.md",
+          "size_bytes": 2926,
+          "sha256": "0a4f9de32387f5e0e9df1649bea31b1e549d60694937fb7346a1a6b94a904e83"
+        },
+        {
+          "action": "new",
+          "target": "cases/case_A_nimbus/nimbus_complaint_analysis_extended.csv",
+          "size_bytes": 100705,
+          "sha256": "32ec0cc151bd316e5eedb5332f4a0f07ace9aaf7ad2763cab05dadbb273aa17d"
+        },
+        {
+          "action": "new",
+          "target": "cases/capa_tracking_extended.csv",
+          "size_bytes": 25660,
+          "sha256": "29154d9dfbd4d9709c2cf4ef1216337866399a00936173fffc57a133e5343e19"
+        }
+      ]
+    }
+  ]
+}

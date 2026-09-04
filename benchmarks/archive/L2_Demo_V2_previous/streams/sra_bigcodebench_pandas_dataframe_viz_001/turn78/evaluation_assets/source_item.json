@@ -1,0 +1,17 @@
+{
+  "instance_id": "bigcodebench_00640",
+  "dataset": "bigcodebench",
+  "question": "Generate a DataFrame representing monthly sales of products and visualize the total sales. The function creates a DataFrame where each row represents a month, each column represents a product, and cell values represent sales figures. It then plots the total sales per product across all months using both a line plot and a heatmap for visualization. The function also displays: - A line plot showing the total sales per product. - A heatmap visualizing sales figures across products and months.\nThe function should output with:\n    pd.DataFrame: A DataFrame with randomly generated sales figures for each product over 12 months.\nYou should write self-contained code starting with:\n```\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\ndef task_func():\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_137",
+    "bigcodebench_138",
+    "bigcodebench_013"
+  ],
+  "eval_data": {
+    "answer": "    sales = np.random.randint(100, 1001, size=(len(MONTHS), len(PRODUCTS)))\n    df = pd.DataFrame(sales, index=MONTHS, columns=PRODUCTS)\n\n    # Visualizations\n    total_sales = df.sum()\n    plt.figure(figsize=(10, 5))\n    total_sales.plot(kind='line', title='Total Sales per Product')\n    plt.ylabel('Total Sales')\n    plt.show()\n\n    plt.figure(figsize=(10, 8))\n    sns.heatmap(df, annot=True, fmt=\"d\", cmap='viridis')\n    plt.title('Monthly Sales per Product')\n    plt.show()\n\n    return df",
+    "code_prompt": "import matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\ndef task_func():\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    def test_dataframe_shape(self):\n        \"\"\"Test if the DataFrame has the correct shape.\"\"\"\n        df = task_func()\n        self.assertEqual(df.shape, (12, 5))  # 12 months and 5 products\n    def test_dataframe_columns(self):\n        \"\"\"Test if the DataFrame has the correct column names.\"\"\"\n        df = task_func()\n        expected_columns = PRODUCTS\n        self.assertListEqual(list(df.columns), expected_columns)\n    def test_dataframe_index(self):\n        \"\"\"Test if the DataFrame has the correct index.\"\"\"\n        df = task_func()\n        expected_index = MONTHS\n        self.assertListEqual(list(df.index), expected_index)\n    def test_sales_range(self):\n        \"\"\"Test if sales figures are within the expected range.\"\"\"\n        df = task_func()\n        self.assertTrue((df >= 100).all().all() and (df <= 1000).all().all())\n    def test_returns_dataframe(self):\n        \"\"\"Test if the function returns a pandas DataFrame.\"\"\"\n        df = task_func()\n        self.assertIsInstance(df, pd.DataFrame)",
+    "entry_point": "task_func"
+  }
+}

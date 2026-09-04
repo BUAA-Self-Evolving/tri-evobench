@@ -1,0 +1,87 @@
+{
+  "turn_id": "turn5",
+  "stream_id": "l1_pm_aurora_seed_001",
+  "task_type": "document_polishing",
+  "user_message": "帮我润色工作空间 docs/abstract.txt 里那篇英文论文摘要（这是我们合作项目的投稿摘要）。要求：1）提高学术表达的地道程度和可读性，但不得改变任何技术主张和结论；2）保留 \\textsc{IntentAnony} 等所有 LaTeX 命令和专有名词不变；3）保持单一摘要段落的格式，长度变化不超过原文的 ±15%（原文约 1550 字符）；4）把润色后的版本存成新文件 docs/abstract_polished.txt，不要覆盖原文件；5）最后用中文简短说明你改了哪几类问题。",
+  "available_tools": [
+    "file.create_file"
+  ],
+  "workspace_files": [
+    "agent_workspace/docs/abstract.txt"
+  ],
+  "original_length_chars": 1551,
+  "max_iterations": 3,
+  "evaluate": {
+    "type": "llm_as_judge",
+    "judge_config": {
+      "model": "gpt-4o",
+      "temperature": 0,
+      "score_range": [
+        0,
+        1
+      ],
+      "score_granularity": "continuous_0.05",
+      "output_format": {
+        "type": "json",
+        "fields": [
+          "score",
+          "per_check",
+          "rationale"
+        ],
+        "score_parser": "float(json.score)，非法输出重试一次，仍非法按 0 记"
+      },
+      "judge_prompt": "你是资深学术写作评审员。对 Agent 润色后的论文摘要打 0-1 连续分（精确 0.05）。\n\n【原文】\n{original_text}\n\n【润色稿】\n{polished_text}\n\n【Agent 的中文修改说明】\n{final_response}\n\n【标准答案（GT，供对比辅助判分）】\n{gt}\n\n【用户请求】\n{user_message}\n\n【评分维度】\nA. 学术地道度与可读性提升幅度（0.35）：是否真正更流畅、更符合学术惯例，而非同义替换凑数；\nB. 技术主张零漂移（0.35）：每句的主张、限定词（under the evaluated settings / without implying）、结论强度必须与原文一致，任何增强/弱化/新增/删减主张都扣分；\nC. 术语与 LaTeX 完整性（0.2）：\\textsc{IntentAnony}、数据集名、基线方法名不被改写；\nD. 中文说明准确、简短 ≤3 句（0.1）。\n\n【评分规则】\n- B 维度若发现任何主张漂移，B 记 0 并在 rationale 指出具体句子；\n- 只输出 JSON：{\"score\": <0-1>, \"per_dimension\": {\"A\":..,\"B\":..,\"C\":..,\"D\":..}, \"rationale\": \"一句话\"}",
+      "inputs": [
+        "final_response",
+        "tool_calls",
+        "final_state",
+        "gt",
+        "user_message"
+      ]
+    },
+    "scoring": {
+      "method": "llm_judge_continuous",
+      "range": [
+        0,
+        1
+      ],
+      "continuous": true
+    },
+    "gt": {
+      "polished_reference": "见 workspace docs/ 下原文；合格润色 = 表达更地道流畅但技术主张零漂移",
+      "must_preserve_claims": [
+        "intent relevance 仅作 utility constraint，不改变隐私属性判断",
+        "在 Personal Reddit 和 SynthPAI 上优于 masking/paraphrasing/LLM 匿名化基线",
+        "跨模型评估显示攻击者与数据集依赖的显著差异，残余推理风险持续存在",
+        "结论限定于 evaluated settings，不暗示对 intent 相关目标的保护"
+      ],
+      "hard_constraints": [
+        "\\textsc{IntentAnony} 等 LaTeX 命令与专名原样保留",
+        "单一段落，长度 1318-1784 字符（±15%）",
+        "新文件 docs/abstract_polished.txt，不得覆盖 abstract.txt"
+      ]
+    }
+  },
+  "iteration_policy": {
+    "max_iterations": 3,
+    "iter_score_0_threshold": 0.8,
+    "stop_rules": [
+      "若第 0 次迭代得分 >= 0.8，直接通过，不再迭代",
+      "若某次迭代得分 >= 0.8，停止迭代并记为 pass",
+      "若得分 <= 上一次迭代得分（无改进），提前停止，取最高分",
+      "3 次迭代后仍未达标，取 3 次中的最高分作为最终分"
+    ],
+    "feedback_to_agent": "反馈 verifier 未过项 + judge 低分维度与 rationale（不展示满分范文）"
+  },
+  "gold_reference": {
+    "must_preserve_claims": [
+      "intent relevance 仅作为 utility constraint，不改变隐私属性判断",
+      "在 Personal Reddit 和 SynthPAI 上优于 masking/paraphrasing/LLM 匿名化基线",
+      "跨模型评估显示攻击者与数据集依赖的显著差异，残余推理风险持续存在",
+      "结论限定于 evaluated settings，不暗示对 intent 相关目标的保护"
+    ],
+    "files_unchanged": [
+      "agent_workspace/docs/abstract.txt"
+    ]
+  }
+}

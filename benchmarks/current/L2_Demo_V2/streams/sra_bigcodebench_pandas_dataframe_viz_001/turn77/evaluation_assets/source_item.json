@@ -1,0 +1,17 @@
+{
+  "instance_id": "bigcodebench_00551",
+  "dataset": "bigcodebench",
+  "question": "Given a nested list of menu items, this function flattens the list and visualizes the frequency of each menu item using a seaborn barplot.\nThe function should output with:\n    matplotlib.axes.Axes: An Axes object representing the visualization, or None if there are no items to plot.\nYou should write self-contained code starting with:\n```\nfrom collections import Counter\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\ndef task_func(list_of_menuitems):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_105",
+    "bigcodebench_138",
+    "bigcodebench_013"
+  ],
+  "eval_data": {
+    "answer": "    if not list_of_menuitems or not any(list_of_menuitems):\n        print(\"No items to plot.\")\n        return None\n\n    # Flatten the nested list into a single list of items\n    flat_list = [item for sublist in list_of_menuitems for item in sublist]\n    if not flat_list:\n        print(\"No items to plot.\")\n        return None\n\n    # Count the occurrence of each item\n    counter = Counter(flat_list)\n\n    # Convert the counter to a DataFrame\n    df = pd.DataFrame(counter.items(), columns=['Item', 'Count'])\n\n    # Ensure there is data to plot\n    if df.empty:\n        print(\"No items to plot.\")\n        return None\n\n    # Create a seaborn barplot\n    sns.set(style=\"whitegrid\")\n    ax = sns.barplot(x=\"Count\", y=\"Item\", data=df, palette=\"viridis\")\n\n    plt.tight_layout()  # Adjust the layout to make room for the item labels\n    return ax",
+    "code_prompt": "from collections import Counter\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\ndef task_func(list_of_menuitems):\n",
+    "test": "import unittest\nimport matplotlib\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        # Set up any repeated data here\n        self.menu_items = [['Pizza', 'Burger'], ['Pizza', 'Coke'], ['Pasta', 'Coke']]\n    def test_return_type(self):\n        \"\"\"Test that the function returns a matplotlib Axes object.\"\"\"\n        ax = task_func(self.menu_items)\n        self.assertTrue(isinstance(ax, matplotlib.axes.Axes))\n    def test_empty_list(self):\n        \"\"\"Test the function with an empty list, expecting None as there's nothing to plot.\"\"\"\n        ax = task_func([])\n        self.assertIsNone(ax)\n    def test_single_item_list(self):\n        \"\"\"Test the function with a list containing a single menu item.\"\"\"\n        ax = task_func([['Pizza']])\n        self.assertTrue(isinstance(ax, matplotlib.axes.Axes))\n        # Checks for correct item count can be added if needed\n    def test_identical_items_list(self):\n        \"\"\"Test the function with a list where all items are identical.\"\"\"\n        ax = task_func([['Burger'], ['Burger'], ['Burger']])\n        self.assertTrue(isinstance(ax, matplotlib.axes.Axes))\n        # Could verify that 'Burger' is the only item and its count is correct\n    def test_multiple_items_same_count(self):\n        \"\"\"Test the function with a list where multiple items have the same count.\"\"\"\n        ax = task_func([['Soda', 'Water'], ['Soda', 'Water']])\n        self.assertTrue(isinstance(ax, matplotlib.axes.Axes))",
+    "entry_point": "task_func"
+  }
+}

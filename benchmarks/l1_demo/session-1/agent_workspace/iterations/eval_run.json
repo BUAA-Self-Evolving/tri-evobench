@@ -1,0 +1,30 @@
+{
+  "agent": "canned",
+  "judge": "MOCK(无key)",
+  "results": [
+    {
+      "turn": "turn4",
+      "type": "rule_verifier",
+      "passed": true,
+      "best_score": 1.0,
+      "best_iteration": 1,
+      "engine": "verify.py",
+      "history": [
+        {
+          "iteration": 0,
+          "engine": "verify.py",
+          "score": 0.275,
+          "user_message_head": "帮我分析一下 Aurora 最近四个迭代（S24–S27）的质量数据，工作空间里有 sprint_metrics.csv",
+          "response_head": "crm-core 模块问题较多，建议加强测试。"
+        },
+        {
+          "iteration": 1,
+          "engine": "verify.py",
+          "score": 1.0,
+          "user_message_head": "帮我分析一下 Aurora 最近四个迭代（S24–S27）的质量数据，工作空间里有 sprint_metrics.csv",
+          "response_head": "先确认口径：以 P0 缺陷数为主。汇总：S24 缺陷 35 个、P0 3 个；S25 缺陷 32 个、P0 3 个；S26 缺陷 23 个、P0 1 个；S27"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "stream_id": "tau2_telecom_mobile_data_roaming_001",
+  "directory": "tau2_telecom_mobile_data_roaming_001",
+  "profile": "L2 task family adapted from tau2-bench Telecom",
+  "theme": "Three pinned native Telecom mobile-data/roaming siblings share the same user, issue, reward basis, and roaming/data troubleshooting procedure while varying phone-side and carrier-side roaming state.",
+  "turn_count": 10,
+  "task_layout": "turn_directories",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "capability_application": 10
+  },
+  "fact_thread_count": 0,
+  "capability": {
+    "capability_id": "telecom_roaming_troubleshooting",
+    "family": "tool_mediated_customer_support",
+    "relation_type": "same_domain_purpose_and_procedure",
+    "description": "Ten native Telecom troubleshooting tasks share mobile-data/no-service diagnosis and repair procedures while varying phone-side and carrier-side state."
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "turn_order": [
+      "turn1",
+      "turn2",
+      "turn3",
+      "turn4",
+      "turn5",
+      "turn6",
+      "turn7",
+      "turn8",
+      "turn9",
+      "turn10"
+    ],
+    "note": "Pinned tasks_small.json /0, /1, /2 in fixed order."
+  },
+  "execution_requirements": {
+    "network": "disabled",
+    "path_scope": "agent_workspace",
+    "max_interactions": 3,
+    "max_tool_calls_per_interaction": 20,
+    "turn_timeout_seconds": 900,
+    "max_output_tokens": 12000
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "[mobile_data_issue]user_abroad_roaming_enabled_off[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]user_abroad_roaming_disabled_on[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]user_abroad_roaming_disabled_off[PERSONA:Hard]"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]data_mode_off[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]bad_network_preference[PERSONA:Hard]"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]bad_vpn[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "[mobile_data_issue]data_usage_exceeded[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_on[PERSONA:Easy]"
+    }
+  ]
+}

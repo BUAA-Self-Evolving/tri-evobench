@@ -1,0 +1,20 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+def task_func(df):
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        raise ValueError("Input must be a non-empty DataFrame.")
+    
+    last_col_name = df.columns[-1]
+    scaler = MinMaxScaler()
+    normalized_values = scaler.fit_transform(df[[last_col_name]])
+    normalized_df = df.copy()
+    normalized_df[last_col_name] = normalized_values.flatten()
+    
+    fig, ax = plt.subplots()
+    ax.plot(normalized_df.index, normalized_df[last_col_name])
+    ax.set_title(f'Normalized Data of {last_col_name}')
+    ax.set_xlabel("Index")
+    ax.set_ylabel("Normalized Value")
+
+    return normalized_df, ax

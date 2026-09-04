@@ -1,0 +1,7 @@
+    z_scores = zscore(data_matrix, axis=1)
+    feature_columns = ["Feature " + str(i + 1) for i in range(data_matrix.shape[1])]
+    df = pd.DataFrame(z_scores, columns=feature_columns)
+    df["Mean"] = df.mean(axis=1)
+    correlation_matrix = df.corr()
+    ax = sns.heatmap(correlation_matrix, annot=True, fmt=".2f")
+    return df, ax

@@ -1,0 +1,6 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from random import sample
+# Constants for column names to use in plots
+COLUMNS = ['A', 'B', 'C', 'D', 'E']
+def task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):

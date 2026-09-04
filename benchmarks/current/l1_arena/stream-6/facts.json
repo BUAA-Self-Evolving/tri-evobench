@@ -1,0 +1,112 @@
+{
+  "schema_version": "l1_arena/1.5",
+  "stream_id": "l1_arena_stream_6",
+  "visibility": "evaluator_only",
+  "source_scenario_id": "prd1a",
+  "standing_preferences": [
+    {
+      "rule_id": "P1",
+      "criterion": "Every JSON output file must carry a top-level field `schema_version` set to \"1.0\" — the compliance registry rejects untagged files.",
+      "source": "standing_system_context",
+      "checker_criterion": "Every JSON output must carry top-level schema_version == \"1.0\""
+    },
+    {
+      "rule_id": "P2",
+      "criterion": "Every compliance issue entry must carry an `ftc_citation` field with format exactly \"16 CFR §XXX.X\" (§ symbol, section number).",
+      "source": "standing_system_context",
+      "checker_criterion": "Every compliance issue entry must carry ftc_citation in \"16 CFR §XXX.X\" format"
+    },
+    {
+      "rule_id": "P3",
+      "criterion": "Markdown reports use H1=document title, H2=claim category, H3=specific provision",
+      "source": "preference_checker_contract"
+    },
+    {
+      "rule_id": "P4",
+      "criterion": "Prohibited terms table must include severity column (high/medium/low)",
+      "source": "preference_checker_contract"
+    },
+    {
+      "rule_id": "P5",
+      "criterion": "All files under `final/` must follow the naming pattern `{document_type}_final_YYYYMMDD.{ext}`. For this review (date: 20260603), use `press_release_final_20260603.md` and `signoff_final_20260603.txt`.",
+      "source": "standing_system_context",
+      "checker_criterion": "All files under final/ must follow {document_type}_final_YYYYMMDD.{ext} naming"
+    }
+  ],
+  "dynamic_updates": [
+    {
+      "update_id": "upd1_sessions",
+      "type": "session",
+      "first_applied_turn": 8,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "cco_ceo_feishu_86264739-8abe-5da9-1ef4-66aad2fab467.jsonl",
+          "size_bytes": 1626,
+          "sha256": "9e05607178fa69030057a5a12b0059093b0f3532be8ca666ccd5f346dd4cd977"
+        }
+      ]
+    },
+    {
+      "update_id": "upd1_workspace",
+      "type": "workspace",
+      "first_applied_turn": 8,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulatory/ftc_penalty_offenses_brief_v1.md",
+          "size_bytes": 2135,
+          "sha256": "01397b32afbb19f949d2421bbaa8b8f6e9b3c8b1ea046a7869fcc1dfbcbb77d9"
+        },
+        {
+          "action": "new",
+          "target": "research/ftc_670_companies_penalty_offenses.csv",
+          "size_bytes": 265007,
+          "sha256": "ba4b14031e2043130cf9a71c453ded0b2af45ca7006a72cbf697914e22b121fe"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_sessions",
+      "type": "session",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "append",
+          "target": "external_audit_email_994ae835-630d-5952-6e01-8498632e3e9a.jsonl",
+          "size_bytes": 3571,
+          "sha256": "4e5124dddc9284cbb278efe6502c8fd66ac04c099f22fe35127189b218d11d2c"
+        }
+      ]
+    },
+    {
+      "update_id": "upd2_workspace",
+      "type": "workspace",
+      "first_applied_turn": 13,
+      "status": "referenced",
+      "files": [
+        {
+          "action": "new",
+          "target": "regulatory/ftc_enforcement_cases_2024.md",
+          "size_bytes": 4591,
+          "sha256": "e059feab0bf2cb3c25632e7c25ea7099199b340f66d63aeebe79a139747b6e4d"
+        },
+        {
+          "action": "new",
+          "target": "research/green_claims_test_reports.md",
+          "size_bytes": 3573,
+          "sha256": "2ee81010ce991c5e43b199f112362498dc491cd3800118092dcc7bff5b0888d7"
+        },
+        {
+          "action": "new",
+          "target": "research/clinical_evidence_assessment_database.csv",
+          "size_bytes": 110813,
+          "sha256": "ce9a66742d27a2a8f15949af3837d645e81da7a4bca50237af51cbc9e57b5976"
+        }
+      ]
+    }
+  ]
+}
