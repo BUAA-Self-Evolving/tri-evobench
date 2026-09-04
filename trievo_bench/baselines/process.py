@@ -31,6 +31,8 @@ from .base import (
     UsageDetails,
 )
 from .manifest import BaselineManifest
+from ..docker_proxy import DockerProxyBridge, is_docker_command
+from ..docker_volume import DockerVolumeMirror
 
 
 class BaselineProtocolError(RuntimeError):
@@ -203,6 +205,10 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._cleanup_command: list[str] | None = None
         self._template_values: dict[str, str] | None = None
         self._resume_state_archive = resume_state_archive.resolve() if resume_state_archive else None
+        self._docker_proxy_bridge: DockerProxyBridge | None = None
+        self._docker_proxy_bridge_used = False
+        self._state_volume: DockerVolumeMirror | None = None
+        self._docker_volume_transport_used = False
 
     def set_resume_state_archive(self, archive: Path) -> None:
         """Select a saved learning-state archive before the flow starts."""
@@ -216,27 +222,44 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._verify_source_revision()
         self._flow = context
         self._state_dir = Path(tempfile.mkdtemp(prefix=f"trievo-{_safe_name(self.baseline_id)}-state-"))
-        self._seed_state()
 
-        variables = self._template_variables(context)
-        self._template_values = variables
-        adapter = self.manifest.adapter
-        command = [_render(item, variables) for item in adapter["command"]]
-        command[0] = _resolve_executable(command[0])
-        cleanup = adapter.get("cleanup_command")
-        self._cleanup_command = (
-            [_render(item, variables) for item in cleanup]
-            if isinstance(cleanup, list) and all(isinstance(item, str) for item in cleanup)
-            else None
-        )
-        if self._cleanup_command:
-            self._cleanup_command[0] = _resolve_executable(self._cleanup_command[0])
-        cwd_value = _render(str(adapter.get("cwd", "{repo_root}")), variables)
-        cwd = Path(cwd_value)
-        if not cwd.is_absolute():
-            cwd = self.repo_root / cwd
-        env = self._build_environment(variables)
-        timeout = float(adapter.get("timeout_seconds", 900))
+        try:
+            self._seed_state()
+            adapter = self.manifest.adapter
+            if context.workspace_mount is not None and is_docker_command(adapter["command"]):
+                self._state_volume = DockerVolumeMirror.create(
+                    self._state_dir,
+                    role=f"{self.baseline_id}-state",
+                )
+                self._docker_volume_transport_used = True
+            variables = self._template_variables(context)
+            self._template_values = variables
+            command = [_render(item, variables) for item in adapter["command"]]
+            command[0] = _resolve_executable(command[0])
+            cleanup = adapter.get("cleanup_command")
+            self._cleanup_command = (
+                [_render(item, variables) for item in cleanup]
+                if isinstance(cleanup, list) and all(isinstance(item, str) for item in cleanup)
+                else None
+            )
+            if self._cleanup_command:
+                self._cleanup_command[0] = _resolve_executable(self._cleanup_command[0])
+            cwd_value = _render(str(adapter.get("cwd", "{repo_root}")), variables)
+            cwd = Path(cwd_value)
+            if not cwd.is_absolute():
+                cwd = self.repo_root / cwd
+            env = self._build_environment(variables)
+            if is_docker_command(command):
+                self._docker_proxy_bridge = DockerProxyBridge.from_environment()
+                self._docker_proxy_bridge_used = self._docker_proxy_bridge.active
+                env.update(self._docker_proxy_bridge.environment)
+            timeout = float(adapter.get("timeout_seconds", 900))
+        except BaseException:
+            try:
+                self.end_flow()
+            except BaseException:
+                pass
+            raise
         try:
             self._transport = NdjsonProcess(
                 command,
@@ -273,7 +296,10 @@ class ProcessBaselineRuntime(BaselineRuntime):
             self._adapter_metadata = {**initialized, **started}
             self._stable_state = self._capture_state(include_bytes=True)
         except Exception:
-            self.end_flow()
+            try:
+                self.end_flow()
+            except BaseException:
+                pass
             raise
 
     def start_turn(self, context: TurnContext) -> None:
@@ -370,6 +396,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 "turn_id": context.turn_id,
                 "trajectory": context.trajectory,
                 "feedback": context.feedback,
+                "update_enabled": context.update_enabled,
+                "skip_reason": context.skip_reason,
             },
             timeout=timeout,
         )
@@ -425,8 +453,13 @@ class ProcessBaselineRuntime(BaselineRuntime):
     def end_flow(self) -> None:
         transport = self._transport
         final_snapshot = BaselineSnapshot()
+        snapshot_ready = self._state_dir is None
+        cleanup_errors: list[BaseException] = []
         try:
-            self._ensure_stable_state("before end_flow")
+            try:
+                self._ensure_stable_state("before end_flow")
+            except BaseException as exc:
+                cleanup_errors.append(exc)
             if transport is not None and transport.process.poll() is None:
                 try:
                     transport.request("end_flow", {}, timeout=30)
@@ -434,9 +467,16 @@ class ProcessBaselineRuntime(BaselineRuntime):
                     pass
         finally:
             if self._state_dir is not None:
-                final_snapshot = self.snapshot_state()
+                try:
+                    final_snapshot = self.snapshot_state()
+                    snapshot_ready = True
+                except BaseException as exc:
+                    cleanup_errors.append(exc)
             if transport is not None:
-                transport.close()
+                try:
+                    transport.close()
+                except BaseException as exc:
+                    cleanup_errors.append(exc)
             if self._cleanup_command is not None:
                 try:
                     subprocess.run(
@@ -449,11 +489,30 @@ class ProcessBaselineRuntime(BaselineRuntime):
                         errors="replace",
                         timeout=30,
                     )
-                except (FileNotFoundError, OSError, subprocess.TimeoutExpired):
-                    pass
+                except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as exc:
+                    cleanup_errors.append(exc)
+            if self._docker_proxy_bridge is not None:
+                try:
+                    self._docker_proxy_bridge.close()
+                except BaseException as exc:
+                    cleanup_errors.append(exc)
+                self._docker_proxy_bridge = None
             self._transport = None
-            if self._flow is not None and self._state_dir is not None:
-                self._export_state(self._flow.output_dir, final_snapshot)
+            if (
+                snapshot_ready
+                and self._flow is not None
+                and self._state_dir is not None
+            ):
+                try:
+                    self._export_state(self._flow.output_dir, final_snapshot)
+                except BaseException as exc:
+                    cleanup_errors.append(exc)
+            if self._state_volume is not None:
+                try:
+                    self._state_volume.close()
+                except BaseException as exc:
+                    cleanup_errors.append(exc)
+                self._state_volume = None
             if self._state_dir is not None:
                 shutil.rmtree(self._state_dir, ignore_errors=True)
             self._state_dir = None
@@ -463,6 +522,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
             self._cleanup_command = None
             self._template_values = None
             self._semantic_state = {}
+        if cleanup_errors:
+            raise cleanup_errors[0]
 
     def metadata(self) -> dict[str, Any]:
         source = self.manifest.source
@@ -478,6 +539,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
             "evolution_policy": self.manifest.evolution.get("policy", "turn_boundary"),
             "capabilities": list(self.manifest.raw.get("capabilities", [])),
             "adapter_metadata": self._adapter_metadata,
+            "docker_proxy_bridge": self._docker_proxy_bridge_used,
+            "docker_volume_transport": self._docker_volume_transport_used,
         }
 
     def _request(self, method: str, params: dict[str, Any], timeout: float | None = None) -> dict[str, Any]:
@@ -498,7 +561,13 @@ class ProcessBaselineRuntime(BaselineRuntime):
         variables = {
             "repo_root": str(self.repo_root),
             "workspace": str(context.workspace.resolve()),
+            "workspace_mount": context.workspace_mount or str(context.workspace.resolve()),
             "state_dir": str(self._state_dir.resolve()),
+            "state_mount": (
+                self._state_volume.volume_name
+                if self._state_volume is not None
+                else str(self._state_dir.resolve())
+            ),
             "flow_id": context.flow_id,
             "flow_name": _safe_name(context.flow_id),
             "instance_id": uuid.uuid4().hex[:12],
@@ -520,6 +589,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
             "LC_ALL",
             "TMPDIR",
             "DOCKER_HOST",
+            "DOCKER_API_VERSION",
             "XDG_RUNTIME_DIR",
             "SSL_CERT_FILE",
             "SSL_CERT_DIR",
@@ -585,6 +655,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
         root = self._state_dir
         if root is None or not root.exists():
             return _StateCapture({}, BaselineSnapshot())
+        if self._state_volume is not None:
+            self._state_volume.sync_to_host()
         captured: dict[str, bytes] = {}
         metadata: list[dict[str, Any]] = []
         patterns = [
@@ -642,6 +714,8 @@ class ProcessBaselineRuntime(BaselineRuntime):
             target = self._state_dir / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(content)
+        if self._state_volume is not None:
+            self._state_volume.sync_from_host()
 
     def _ensure_stable_state(self, phase: str, *, interaction_error: bool = False) -> None:
         if not bool(self.manifest.state.get("enforce_turn_freeze", False)):
@@ -670,16 +744,19 @@ class ProcessBaselineRuntime(BaselineRuntime):
         # checking individual descendants is too late because mkdir can fail
         # on an intermediate directory first. Always use the short zip file on
         # Windows and retain the directory form on POSIX hosts.
+        # The zip is the portable, exact checkpoint/export form on every host.
+        # Keeping it cross-platform also means a Linux-produced run can be moved
+        # to a Windows reviewer without rebuilding a deep directory tree.
+        archive = output_dir / "baseline_state.zip"
+        with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+            for relative, path in state_files:
+                try:
+                    if path.is_file():
+                        bundle.write(path, arcname=relative)
+                except FileNotFoundError:
+                    continue
         use_zip = os.name == "nt"
         if use_zip:
-            archive = output_dir / "baseline_state.zip"
-            with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
-                for relative, path in state_files:
-                    try:
-                        if path.is_file():
-                            bundle.write(path, arcname=relative)
-                    except FileNotFoundError:
-                        continue
             # Keep the traditional directory form for short paths so existing
             # consumers remain compatible. Deep entries are already preserved
             # losslessly in the zip above; skip only entries rejected by the

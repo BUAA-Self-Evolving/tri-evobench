@@ -33,7 +33,8 @@ Tri-EvoBench Runner
               └── 其他框架 bridge
                       │
                       ▼
-               共享 /workspace
+               逻辑 /workspace
+          （bind mount 或 named volume）
 ```
 
 主要代码位置：
@@ -76,8 +77,9 @@ Tri-EvoBench Runner
 
 ### 3.4 `evolve`
 
-- 每个 Turn 恰好调用一次。
+- 每个 Turn 恰好跨过一次 evolution barrier。
 - 输入仅包含公开 trajectory 和公开 Judge feedback。
+- `EvolutionContext.update_enabled=false` 时 Adapter 必须只完成 barrier，不得写入 Memory、Skill、history 或其他 SUT 持久状态；Reset/Frozen 和 evaluator error 使用这一通用路径。
 - `verifier_details`、`oracle_update`、隐藏评测文件不会进入外部 baseline 协议。
 - Flow/Turn 的任意 `metadata` 默认视为私有；只有 `metadata.public` 子对象会传给 baseline。
 - `evolve` 返回前，所有持久状态更新和后台任务必须完成。
@@ -484,12 +486,22 @@ trievo-bench --spec <benchmark.json> --baseline <baseline-id>
 
 当前版本已经实现参数化 baseline 选择、独立进程/容器隔离、Flow 级共享 workspace、Hermes 严格 Turn evolution gate、学习状态冻结检测和恢复、隐藏 verifier 数据隔离、Token 计量和状态快照。
 
-当前 baseline 容器和任务 sandbox 容器通过宿主 workspace volume 共享文件。Hermes 的 shell 命令运行在 Hermes 容器，而不是任务 sandbox 容器。因此：
+baseline、任务 sandbox 和 verifier 都使用同一个逻辑 `/workspace`。普通主机通过宿主 bind mount
+传输；daemon 看不到 checkout 路径的嵌套/rootless 环境，可由 TaskStream Runtime 使用
+daemon-owned named volume 和 `docker cp` 传输。两种方式不改变 `BaselineRuntime 1.0` 生命周期。
+Hermes 的 shell 命令运行在 Hermes 容器，而不是任务 sandbox 容器。因此：
 
 - 文件生成、编辑和由 verifier 在任务容器中执行测试的 benchmark 可以直接使用。
 - 如果 Agent 自己必须使用任务镜像中的专用编译器、服务或系统依赖，需要让 Hermes Adapter 镜像基于对应任务镜像构建，或继续实现 `SandboxToolGateway`，将 terminal/process 调用转发到任务容器。
 
 建议下一阶段把 `SandboxToolGateway` 定义为独立本地 RPC 服务，并在各 Adapter 中仅替换终端/文件 backend。该扩展不会改变 `BaselineRuntime 1.0`，也不会影响 `--baseline` 切换方式。
+
+Tri-EvoBench 当前继续使用自己的轻量 Runtime，不依赖 Harbor。长期边界是让 Tri-EvoBench 只负责
+Benchmark contract、Flow/Turn/Interaction、Reset/Frozen/Evolving、Judge/verifier 编排和结果记录；
+容器创建、Workspace transport、网络策略与 teardown 由可替换的 environment backend 负责。
+当前 Docker CLI 是第一个 backend，未来可以增加 Harbor backend，把相同生命周期映射到 Harbor
+task/environment/verifier，而不改 L1/L2 数据合同或 baseline NDJSON 协议。此处只是迁移边界，
+不代表仓库已经实现或验证 Harbor。
 
 ## 10. SkillOpt 接入
 

@@ -8,6 +8,7 @@ import unittest
 import zipfile
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 from trievo_bench.baselines.hermes_bridge import (
     HermesBridge,
@@ -280,6 +281,30 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(usage["total_tokens"], 19)
         self.assertEqual(usage["reasoning_tokens"], 5)
         self.assertEqual(usage["api_calls"], 2)
+
+    def test_hermes_crosses_barrier_without_review_when_update_is_disabled(self) -> None:
+        bridge = HermesBridge()
+        bridge._state = SimpleNamespace(agent=SimpleNamespace())
+        bridge._turn_id = "turn-1"
+        bridge._turn_evolved = False
+        bridge._policy = "turn_boundary"
+        bridge._background_review_usage = lambda _agent: {}
+
+        result = bridge.evolve({
+            "turn_id": "turn-1",
+            "trajectory": [{"response": "done"}],
+            "feedback": [{"score": 1.0}],
+            "update_enabled": False,
+            "skip_reason": "condition:frozen",
+        })
+
+        self.assertTrue(result["completed"])
+        self.assertEqual(result["events"], [{
+            "type": "evolution.skipped",
+            "policy": "turn_boundary",
+            "reason": "condition:frozen",
+        }])
+        self.assertTrue(bridge._turn_evolved)
 
     def test_hermes_l1_protocol_keeps_only_visible_text_and_normalizes_fact_aliases(self) -> None:
         visible, state_update, calls, events, actions = _extract_l1_protocol(

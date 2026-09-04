@@ -18,6 +18,7 @@ class L2AgentLimitsTest(unittest.TestCase):
         self.assertEqual(limits.max_tool_calls, 8)
         self.assertEqual(limits.terminal_timeout_seconds, 90)
         self.assertEqual(limits.episode_timeout_seconds, 480)
+        self.assertEqual(limits.max_output_tokens, 12000)
         self.assertEqual(limits.evolution_max_model_calls, 4)
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -26,6 +27,7 @@ class L2AgentLimitsTest(unittest.TestCase):
 
         self.assertIn("at most 10 model calls", prompt)
         self.assertIn("8 tool calls", prompt)
+        self.assertIn("12000 output tokens", prompt)
         self.assertIn("90 seconds", prompt)
         self.assertIn("480 seconds total", prompt)
         self.assertIn("records it as a failure", prompt)
@@ -45,10 +47,12 @@ class L2AgentLimitsTest(unittest.TestCase):
             "max_tool_calls": 8,
             "terminal_timeout_seconds": 90,
             "episode_timeout_seconds": 480,
+            "max_output_tokens": 12000,
             "evolution_max_model_calls": 4,
             "evolution_timeout_seconds": 120,
         }})
         self.assertEqual(parsed["max_tool_calls"], 8)
+        self.assertEqual(parsed["max_output_tokens"], 12000)
         self.assertEqual(_parse_l2_agent_limits({"agent_limits": {
             "max_model_calls": 3,
             "max_tool_calls": 1,
@@ -74,12 +78,23 @@ class L2AgentLimitsTest(unittest.TestCase):
                 "evaluation": {
                     "submission_contract": {"source_binding": "submission"},
                     "native_verifier": {
+                        "verifier_id": "test-verifier",
                         "entrypoint": "evaluation_assets/verifier.py",
                         "input_bindings": [{"name": "submission", "source": "workspace", "path": "answer.txt"}],
                     },
                 },
             }
-            completed = SimpleNamespace(returncode=0, stdout='{"status":"fail","score":0}\n', stderr="")
+            completed = SimpleNamespace(
+                returncode=0,
+                stdout=(
+                    '{"schema_version":"l2_native_verifier_result/1.0",'
+                    '"verifier_id":"test-verifier","status":"fail","score":0,'
+                    '"checks":[],"artifacts":[],"public_summary":'
+                    '{"result_category":"fail","observable_deficiencies":["missing"]},'
+                    '"private_diagnostics":{},"error":null}\n'
+                ),
+                stderr="",
+            )
             with patch("trievo_bench.l2_agent.subprocess.run", return_value=completed) as run:
                 result = runner._verify_taskstream(task=task, turn_dir=turn_dir, workspace=workspace, reply=BaselineReply())
             self.assertIn("-i", run.call_args.args[0])

@@ -5,12 +5,31 @@ import argparse
 import json
 from pathlib import Path
 
+PROXY_ENV_NAMES = (
+    "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY",
+    "http_proxy", "https_proxy", "no_proxy",
+)
+
+
+def _add_passthrough_env(command, names):
+    image = command.pop()
+    existing = {
+        command[index + 1]
+        for index, value in enumerate(command[:-1])
+        if value == "-e"
+    }
+    for name in names:
+        if name not in existing:
+            command.extend(["-e", name])
+    command.append(image)
+    return command
+
 
 def generate(output: Path, model: str, base_url: str):
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     repo = Path(__file__).resolve().parents[1]
-    limits = {"max_model_calls": 24, "max_tool_calls": 24, "episode_timeout_seconds": 900}
+    limits = {"max_model_calls": 24, "max_tool_calls": 20, "episode_timeout_seconds": 900}
 
     def save(name, value):
         (output / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -26,6 +45,7 @@ def generate(output: Path, model: str, base_url: str):
         else:
             command.append(original[index])
             index += 1
+    command = _add_passthrough_env(command, PROXY_ENV_NAMES)
     for level, cap in (("l1", 1200), ("l2", 4000)):
         seed = output / f"hermes-{level}-seed"
         seed.mkdir(exist_ok=True)
@@ -55,8 +75,8 @@ def generate(output: Path, model: str, base_url: str):
     ):
         container = f"trievo-{agent}-{{instance_id}}"
         command = ["docker", "run", "--rm", "-i", "--name", container,
-                   "-v", "{workspace}:/workspace", "-v", "{state_dir}:/state"]
-        for name in env_names + ["TRIEVO_BASE_URL", "TRIEVO_API_KEY", "TRIEVO_MODEL", "TRIEVO_THINKING"]:
+                   "-v", "{workspace_mount}:/workspace", "-v", "{state_mount}:/state"]
+        for name in env_names + ["TRIEVO_BASE_URL", "TRIEVO_API_KEY", "TRIEVO_MODEL", "TRIEVO_THINKING", *PROXY_ENV_NAMES]:
             command.extend(["-e", name])
         command.append(image)
         save(f"tmp_{agent}_docker.override.json", {

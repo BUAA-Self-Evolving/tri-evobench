@@ -304,7 +304,13 @@ class SkillOptBridge:
         policy = self.evolution_policy
         events: list[dict[str, Any]] = []
         changed_files: list[str] = []
-        if policy == "disabled":
+        if not bool(params.get("update_enabled", True)):
+            events.append({
+                "type": "evolution.skipped",
+                "policy": policy,
+                "reason": str(params.get("skip_reason") or "run_condition"),
+            })
+        elif policy == "disabled":
             events.append({"type": "evolution.skipped", "policy": policy})
         else:
             trajectory = params.get("trajectory", [])

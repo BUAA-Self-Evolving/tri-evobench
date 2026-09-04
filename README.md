@@ -43,28 +43,29 @@ Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baselin
 - Flow 内共享 Sandbox，支持本地和 Ubuntu Docker 后端
 - 通过 manifest 和独立 Adapter 参数化切换 Agent baseline
 - 支持程序 Verifier、Python Verifier 和 LLM Judge
-- 支持 frozen、raw-replay、evolving、oracle-update learner
+- L2 TaskStream 支持匹配的 reset、frozen、evolving reference conditions
+- 旧 spec runner 继续支持 frozen、raw-replay、evolving、oracle-update learner
 - 支持 L1 session/turn 数据和 L2 Stream/Episode 数据
 - 保存完整 Interaction trace、Sandbox snapshot、状态和 token usage
 
 ## Installation
 
 ```bash
-git clone git@github.com:s7777777h/tri-evobench.git
+git clone git@github.com:BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-python -m venv .venv
+git submodule update --init baseline/hermes-agent
+uv sync --frozen --group dev
 ```
 
 ```powershell
 # Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e .
+uv sync --frozen --group dev
+uv run --frozen python -m pytest tests -q
 ```
 
 ```bash
-# Linux / macOS
-source .venv/bin/activate
-python -m pip install -e .
+# Linux / macOS；命令均在隔离的项目 .venv 中执行
+uv run --frozen python -m pytest tests -q
 ```
 
 Python 版本要求：3.11+。Docker 在 Docker Sandbox、Hermes 等容器 baseline 和 L2 运行时需要。
@@ -76,7 +77,7 @@ $env:TRIEVO_API_KEY = '<your-api-key>'
 $env:TRIEVO_BASE_URL = 'https://api.deepseek.com'
 $env:TRIEVO_MODEL = '<model-id>'
 
-trievo-bench --spec examples/deepseek_smoke.json --output runs/model-smoke --max-total-tokens 3000000
+uv run --frozen trievo-bench --spec examples/deepseek_smoke.json --output runs/model-smoke --max-total-tokens 3000000
 ```
 
 ## Ubuntu Sandbox
@@ -131,7 +132,7 @@ python -m trievo_bench.l1_life_compat `
 
 ## L2
 
-最新的 L1 Arena / L2 Demo V2（task-stream 格式）及 Hermes、SkillOpt、Trace2Skill
+最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及 Hermes、SkillOpt、Trace2Skill
 三智能体完整矩阵，请使用 [当前版本运行指南](docs/current-matrix.md)。
 指南包含从源码构建 Docker、可移植配置、完整日志与检查点恢复；下方命令仍适用于旧版 episode 数据包。
 
@@ -142,21 +143,28 @@ docker build -t trievo-l2:0.1 -f sandbox/l2/Dockerfile .
 ```
 
 ```powershell
-$env:L2_API_KEY = '<your-api-key>'
+$env:TRIEVO_API_KEY = '<your-api-key>'
+$env:TRIEVO_BASE_URL = 'https://api.deepseek.com/v1'
+$env:TRIEVO_MODEL = '<model-id>'
 
-python -m trievo_bench.l2_compat `
+uv run --frozen python -m trievo_bench.l2_compat `
   --package '<path-to-l2_demo>' `
   --inspect
 
-python -m trievo_bench.l2_compat `
+uv run --frozen python -m trievo_bench.l2_compat `
   --package '<path-to-l2_demo>' `
   --stream 'tau2_telecom_mobile_data_roaming_001' `
+  --baseline hermes `
+  --baseline-config '<path-to-generated-override.json>' `
+  --condition evolving `
   --image trievo-l2:0.1 `
-  --model '<model-id>' `
-  --api-base 'https://api.deepseek.com/v1' `
   --allow-generated-code `
   --output runs/l2
 ```
+
+正式 evolution gain 需要在同一冻结配置下分别运行 `reset`、`frozen`、`evolving`。
+Evaluator/control-plane 错误会写成 `evaluation_status=evaluation_error`、`turn_score=null`，
+默认停止并保留可恢复 checkpoint，不会记作 Agent 0 分。
 
 Browser-smoke Stream 使用：
 
