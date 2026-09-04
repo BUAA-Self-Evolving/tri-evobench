@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import shutil
+from .process import run_bounded
 
 # Add parent src to path for react_agent imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -35,7 +36,7 @@ def create_bash_tool(working_dir: str, timeout: int = 120):
         try:
             docker_exe = os.environ.get("DOCKER_EXE") or shutil.which("docker")
             if os.name == "nt" and docker_exe:
-                result = subprocess.run(
+                result = run_bounded(
                     [
                         docker_exe, "run", "--rm",
                         "-v", f"{os.path.abspath(working_dir)}:/workspace",
@@ -49,7 +50,7 @@ def create_bash_tool(working_dir: str, timeout: int = 120):
                     timeout=timeout,
                 )
             else:
-                result = subprocess.run(
+                result = run_bounded(
                     command,
                     shell=True,
                     cwd=working_dir,

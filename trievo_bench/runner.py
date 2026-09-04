@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
+import shutil
+import tempfile
 import time
+import zipfile
 from dataclasses import asdict, dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .baselines import (
@@ -22,7 +26,8 @@ from .model import TokenBudget, client_from_config
 from .sandbox import Sandbox, create_sandbox
 from .spec import BenchmarkSpec, FlowSpec, TurnSpec, load_spec
 from .user_sim import UserSimulator
-from .verifier import CheckResult, DeterministicVerifier, L1LifeJudge, LLMJudge, PythonVerifier
+from .verifier import CheckResult, DeterministicVerifier, ExecVerifier, L1LifeJudge, LLMJudge, PythonVerifier
+from .arena_runtime import ArenaVerifier, apply_updates as apply_arena_updates
 
 
 @dataclass
@@ -55,6 +60,44 @@ class TurnRecord:
     evolution: dict[str, Any] = field(default_factory=dict)
 
 
+def _archive_tree(source: Path, archive: Path) -> None:
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        for path in source.rglob("*"):
+            if path.is_file() and not path.is_symlink():
+                bundle.write(path, arcname=path.relative_to(source).as_posix())
+
+
+def _restore_tree_archive(archive: Path, target: Path) -> None:
+    with zipfile.ZipFile(archive) as bundle:
+        for name in bundle.namelist():
+            relative = PurePosixPath(name)
+            if relative.is_absolute() or ".." in relative.parts:
+                raise ValueError(f"unsafe workspace checkpoint entry: {name}")
+            destination = target.joinpath(*relative.parts)
+            if name.endswith("/"):
+                destination.mkdir(parents=True, exist_ok=True)
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_bytes(bundle.read(name))
+
+
+def _load_turn_records(path: Path) -> list[TurnRecord]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise ValueError(f"invalid completed turn records: {path}")
+    records: list[TurnRecord] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            raise ValueError(f"invalid completed turn record: {path}")
+        interactions = [InteractionRecord(**row) for row in item.get("interactions", [])]
+        records.append(TurnRecord(
+            turn_id=str(item["turn_id"]), score=float(item["score"]), passed=bool(item["passed"]),
+            interactions=interactions, evolution=dict(item.get("evolution", {})),
+        ))
+    return records
+
+
 class Runner:
     def __init__(
         self,
@@ -71,6 +114,8 @@ class Runner:
         baseline_manifest: str | None = None,
         baseline_config: dict[str, Any] | None = None,
         repo_root: Path | None = None,
+        resume_checkpoint: Path | None = None,
+        fail_fast_infrastructure: bool = False,
     ) -> None:
         self.spec = spec
         self.output_dir = output_dir
@@ -80,6 +125,8 @@ class Runner:
         self.learner_mode = learner_mode
         self.budget = TokenBudget(max_total_tokens or int(spec.benchmark.get("max_total_tokens", 3_000_000)))
         self.repo_root = (repo_root or Path(__file__).resolve().parents[1]).resolve()
+        self.resume_checkpoint = resume_checkpoint.resolve() if resume_checkpoint else None
+        self.fail_fast_infrastructure = fail_fast_infrastructure
         self.baseline_id, resolved_manifest, runtime_overrides = resolve_baseline_selection(
             spec,
             baseline_override=baseline,
@@ -105,6 +152,7 @@ class Runner:
             self.client = client_from_config(merged, self.budget)
         self.program_verifier = DeterministicVerifier()
         self.python_verifier = PythonVerifier()
+        self.exec_verifier = ExecVerifier()
         if self.judge_mode not in {"deterministic", "llm", "hybrid"}:
             raise ValueError(f"unsupported judge type: {self.judge_mode}")
         # Program verifiers remain reusable and stateless. LLM judges are
@@ -115,9 +163,37 @@ class Runner:
         started = time.time()
         flow_dir = self.output_dir / flow.id
         flow_dir.mkdir(parents=True, exist_ok=True)
+        self._active_trace_path = flow_dir / "live_trace.jsonl"
         sandbox = create_sandbox(flow.sandbox, self.backend, self.image)
         turn_records: list[TurnRecord] = []
         runtime_started = False
+        resume_index = 0
+        if self.resume_checkpoint is not None:
+            checkpoint_meta = self.resume_checkpoint / "checkpoint.json"
+            checkpoint_workspace = self.resume_checkpoint / "workspace.zip"
+            checkpoint_state = self.resume_checkpoint / "baseline_state.zip"
+            checkpoint_turns = self.resume_checkpoint / "completed_turns.json"
+            if not all(path.is_file() for path in (checkpoint_meta, checkpoint_workspace, checkpoint_state, checkpoint_turns)):
+                raise ValueError(f"invalid resume checkpoint: {self.resume_checkpoint}")
+            checkpoint_data = json.loads(checkpoint_meta.read_text(encoding="utf-8"))
+            if checkpoint_data.get("flow_id") != flow.id or checkpoint_data.get("baseline", self.baseline_id) != self.baseline_id:
+                raise ValueError("checkpoint flow/baseline identity mismatch")
+            resume_index = int(checkpoint_data["next_turn_index"])
+            restored = Path(tempfile.mkdtemp(prefix="trievo-l1-resume-"))
+            try:
+                _restore_tree_archive(checkpoint_workspace, restored)
+                sandbox.setup({"host_copy": str(restored)})
+            finally:
+                shutil.rmtree(restored, ignore_errors=True)
+            turn_records = _load_turn_records(checkpoint_turns)
+            if [record.turn_id for record in turn_records] != [turn.id for turn in flow.turns[:resume_index]]:
+                raise ValueError("checkpoint completed prefix differs from requested stream")
+            self.budget.used = int(checkpoint_data.get("token_budget", {}).get("used", 0))
+            self.budget.calls = int(checkpoint_data.get("token_budget", {}).get("calls", 0))
+            set_resume = getattr(self.runtime, "set_resume_state_archive", None)
+            if not callable(set_resume):
+                raise ValueError(f"baseline {self.baseline_id} does not support exact checkpoint resume")
+            set_resume(checkpoint_state)
         try:
             self.runtime.start_flow(
                 FlowContext(
@@ -128,8 +204,11 @@ class Runner:
                 )
             )
             runtime_started = True
-            for turn in flow.turns:
+            for index, turn in enumerate(flow.turns):
+                if index < resume_index:
+                    continue
                 turn_records.append(self._run_turn(turn, sandbox))
+                self._save_checkpoint(flow_dir, flow, index, turn, sandbox, turn_records)
             final_snapshot = self.runtime.snapshot_state()
         finally:
             try:
@@ -160,8 +239,36 @@ class Runner:
                     stream.write(json.dumps({"flow_id": flow.id, "turn_id": record.turn_id, **asdict(interaction)}, ensure_ascii=False) + "\n")
         return result
 
+    def _save_checkpoint(self, flow_dir: Path, flow: FlowSpec, index: int, turn: TurnSpec, sandbox: Sandbox, turn_records: list[TurnRecord]) -> None:
+        """Persist the exact post-turn workspace for selective reruns."""
+        flow_key = hashlib.sha256(flow.id.encode("utf-8")).hexdigest()[:10]
+        root = self.output_dir / "_checkpoints" / flow_key / f"t{index + 1:04d}"
+        root.mkdir(parents=True, exist_ok=True)
+        # DockerSandbox uses a host bind mount for /workspace, so copying the
+        # host-side path is both exact and reliable on Windows.  `docker cp`
+        # can materialize transient/dangling entries while an agent is still
+        # finishing filesystem operations, which made checkpoint creation
+        # fail even though the turn itself had succeeded.
+        source = sandbox.workspace_path()
+        _archive_tree(source, root / "workspace.zip")
+        save_state = getattr(self.runtime, "save_checkpoint_state", None)
+        exact_baseline_state = callable(save_state)
+        if exact_baseline_state:
+            save_state(root / "baseline_state.zip")
+        else:
+            with zipfile.ZipFile(root / "baseline_state.zip", "w"):
+                pass
+        (root / "completed_turns.json").write_text(
+            json.dumps([asdict(record) for record in turn_records], ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        (root / "checkpoint.json").write_text(
+            json.dumps({"flow_id": flow.id, "baseline": self.baseline_id, "completed_turn_index": index, "next_turn_index": index + 1, "turn_id": turn.id, "token_budget": asdict(self.budget), "exact_baseline_state": exact_baseline_state}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
     def _run_turn(self, turn: TurnSpec, sandbox: Sandbox) -> TurnRecord:
         sandbox.setup(turn.setup)
+        apply_arena_updates(turn.setup, sandbox.workspace_path())
         self.runtime.start_turn(
             TurnContext(
                 turn_id=turn.id,
@@ -170,12 +277,15 @@ class Runner:
                 metadata=self._public_metadata(turn.metadata),
             )
         )
-        user = UserSimulator(turn.user, turn.request)
+        user_client = client_from_config({**self.spec.agent, "thinking": "disabled"}, self.budget) if turn.user.get("llm_post_failure") else None
+        user = UserSimulator(turn.user, turn.request, client=user_client)
         request = user.initial_request
         history: list[dict[str, Any]] = []
         interactions: list[InteractionRecord] = []
         all_events: list[dict[str, Any]] = []
         all_tool_calls: list[dict[str, Any]] = []
+        turn_workspace_before = sandbox.snapshot()
+        turn_state_before = self.runtime.snapshot_state().state
         for index in range(1, turn.max_interactions + 1):
             agent_sandbox = sandbox.snapshot()
             state_before = self.runtime.snapshot_state().state
@@ -247,6 +357,9 @@ class Runner:
                     "workspace_before": workspace_before,
                     "workspace_after": self._workspace_evidence(sandbox) if turn.verifier.get("type") == "l1_life_judge" else sandbox.snapshot(),
                 }
+                if turn.verifier.get("type") == "l1_arena":
+                    trajectory["workspace_before"] = turn_workspace_before
+                    trajectory["state_before"] = turn_state_before
                 try:
                     check = self._evaluate(turn.verifier, reply.text, sandbox, trajectory)
                 except RuntimeError as exc:
@@ -273,10 +386,16 @@ class Runner:
                 workspace_before,
             )
             interactions.append(interaction)
+            if hasattr(self, "_active_trace_path"):
+                with self._active_trace_path.open("a", encoding="utf-8") as trace:
+                    trace.write(json.dumps({"turn_id": turn.id, **asdict(interaction)}, ensure_ascii=False) + "\n")
+            if self.fail_fast_infrastructure and (model_error or check.details.get("type") in {"verifier_model_error", "exec_verifier_timeout"}):
+                raise RuntimeError(f"evaluation infrastructure failed in {turn.id}: {check.feedback}")
             history.extend([{"role": "user", "content": request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": check.feedback}])
-            if check.score >= turn.success_threshold:
+            if check.passed and check.score >= turn.success_threshold:
                 break
-            request = user.next_request(history=history, feedback=check.feedback)
+            if index < turn.max_interactions:
+                request = user.next_request(history=history, feedback=check.feedback)
         trajectory = [self._public_interaction(item) for item in interactions]
         feedback = [
             {
@@ -294,6 +413,13 @@ class Runner:
         # score, or the final Interaction's score when the Turn is unsuccessful.
         # Do not select the historical maximum: that would hide later failures.
         final = interactions[-1]
+        if turn.verifier.get("type") == "l1_arena" and turn.verifier["evaluation"]["primary_evaluation"]["type"] == "deterministic_response_check":
+            post_evolution = ArenaVerifier().evaluate(turn.verifier, final.response, sandbox, {
+                "tool_calls": all_tool_calls, "workspace_before": turn_workspace_before, "workspace_after": sandbox.snapshot(),
+                "state_before": turn_state_before, "state_after": self.runtime.snapshot_state().state,
+            })
+            final.score, final.passed = post_evolution.score, post_evolution.passed
+            final.feedback, final.verifier_details = post_evolution.feedback, post_evolution.details
         return TurnRecord(turn.id, final.score, final.passed, interactions, evolution.to_dict())
 
     @staticmethod
@@ -342,6 +468,10 @@ class Runner:
             return L1LifeJudge(self.client).evaluate(verifier, response, sandbox, trajectory)
         if verifier_type == "python_verifier":
             return self.python_verifier.evaluate(verifier, response, sandbox, trajectory)
+        if verifier_type == "exec_verifier":
+            return self.exec_verifier.evaluate(verifier, response, sandbox, trajectory)
+        if verifier_type == "l1_arena":
+            return ArenaVerifier().evaluate(verifier, response, sandbox, trajectory)
         return self.program_verifier.evaluate(verifier, response, sandbox)
 
     def _apply_actions(self, actions: list[dict[str, Any]], sandbox: Sandbox) -> None:

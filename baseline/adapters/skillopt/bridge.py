@@ -5,6 +5,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -14,6 +15,23 @@ from typing import Any
 
 
 RUNTIME_PROTOCOL_VERSION = "1.0"
+
+
+def _run_bounded(command, *, timeout, **kwargs):
+    if os.name != "posix":
+        return subprocess.run(command, timeout=timeout, **kwargs)
+    kwargs.pop("capture_output", None)
+    with subprocess.Popen(command, start_new_session=True, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE, **kwargs) as process:
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+            return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+        finally:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.wait()
 
 
 class SkillOptBridge:
@@ -119,7 +137,7 @@ class SkillOptBridge:
             raise RuntimeError("SkillOpt interaction request is empty")
         skill = self.skill_file.read_text(encoding="utf-8")
         system, user = self._build_prompt(skill, request, params)
-        from skillopt.model import chat_target, is_target_exec_backend
+        from skillopt.model import chat_target, chat_target_messages, is_target_exec_backend
 
         before = self._token_summary()
         if is_target_exec_backend():
@@ -146,22 +164,22 @@ class SkillOptBridge:
                 reasoning_effort=self.config.get("reasoning_effort"),
                 timeout=_optional_int(self.config.get("exec_timeout")),
             )
-        after = self._token_summary()
-        usage = _usage_from_mapping(raw_usage)
-        tracker_usage = _usage_delta(before, after)
-        if tracker_usage["total_tokens"] or tracker_usage["api_calls"]:
-            usage = tracker_usage
-        self._last_summary = after
         raw_text = str(text or "")
         from trievo_bench.model import parse_reply
 
         parsed = parse_reply(raw_text)
         parsed = _unwrap_nested_l1_reply(parsed)
+        protocol_task = _looks_like_l1_protocol_task(request, self.turn_metadata)
+        if not protocol_task and not parsed.actions and not parsed.tool_calls:
+            # Detect native textual tool envelopes before deciding that the
+            # output needs a formatting retry. Otherwise a valid Read/Write
+            # call is discarded and replaced by a second paid completion.
+            parsed.tool_calls = _extract_native_tool_calls(raw_text)
         # Some reasoning models follow the task content but ignore the outer
         # action envelope. Give them one bounded formatting retry before the
         # interaction is returned, so a plain-language claim cannot silently
         # become a successful no-op.
-        if (_looks_like_workspace_task(request) or _looks_like_l1_protocol_task(request, self.turn_metadata)) \
+        if (_looks_like_workspace_task(request) or protocol_task) \
                 and not parsed.actions and not parsed.tool_calls and not is_target_exec_backend():
             repair_user = (
                 f"{user}\n\n## Required correction\n"
@@ -182,19 +200,54 @@ class SkillOptBridge:
                 raw_text = str(retry_text)
                 parsed = parse_reply(raw_text)
                 parsed = _unwrap_nested_l1_reply(parsed)
-        if _looks_like_l1_protocol_task(request, self.turn_metadata) and not parsed.tool_calls:
+        if protocol_task and not parsed.tool_calls:
             parsed.tool_calls = _extract_l1_tool_calls(raw_text)
         executed_tool_calls = list(parsed.tool_calls)
-        if not _looks_like_l1_protocol_task(request, self.turn_metadata):
-            dsml_calls = _extract_dsml_tool_calls(raw_text)
-            if not dsml_calls:
-                dsml_calls = _extract_structured_tool_calls(raw_text)
-            if not dsml_calls:
-                dsml_calls = _extract_fenced_python_calls(raw_text)
-            for call in dsml_calls:
-                call["observation"] = _execute_dsml_tool(call, self.workspace, self.config)
-            if dsml_calls:
-                executed_tool_calls = dsml_calls
+        if not protocol_task:
+            native_calls = _extract_native_tool_calls(raw_text) or _normalize_native_tool_calls(parsed.tool_calls)
+            executed_tool_calls = []
+            tool_messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ]
+            max_tool_rounds = max(1, min(int(self.options.get("native_tool_rounds", 8)), 16))
+            max_tool_calls = int(self.turn_metadata.get("agent_limits", {}).get("max_tool_calls", 100))
+            for tool_round in range(max_tool_rounds):
+                if not native_calls or len(executed_tool_calls) >= max_tool_calls:
+                    break
+                round_calls: list[dict[str, Any]] = []
+                for call in native_calls:
+                    if len(executed_tool_calls) >= max_tool_calls:
+                        break
+                    executed = dict(call)
+                    try:
+                        executed["observation"] = _execute_dsml_tool(executed, self.workspace, self.config)
+                    except (OSError, ValueError, KeyError) as exc:
+                        # Invalid paths/arguments are model-visible tool
+                        # results, not transport failures that abort a turn.
+                        executed["observation"] = f"[tool error] {type(exc).__name__}: {exc}"
+                    round_calls.append(executed)
+                    executed_tool_calls.append(executed)
+                # Textual tool envelopes are not native SDK tool calls, so
+                # feed observations back as an explicit user message and let
+                # the target continue within this one benchmark Interaction.
+                tool_messages.extend([
+                    {"role": "assistant", "content": raw_text},
+                    {"role": "user", "content": _tool_observation_prompt(round_calls)},
+                ])
+                if tool_round + 1 >= max_tool_rounds or len(executed_tool_calls) >= max_tool_calls:
+                    break
+                next_text, raw_usage = chat_target_messages(
+                    messages=tool_messages,
+                    max_completion_tokens=int(self.config.get("max_completion_tokens", 16384)),
+                    retries=int(self.options.get("retries", 3)),
+                    stage="target_tool_loop",
+                    reasoning_effort=self.config.get("reasoning_effort"),
+                    timeout=_optional_int(self.config.get("exec_timeout")),
+                )
+                raw_text = str(next_text or "")
+                parsed = _unwrap_nested_l1_reply(parse_reply(raw_text))
+                native_calls = _extract_native_tool_calls(raw_text) or _normalize_native_tool_calls(parsed.tool_calls)
         executed_actions: list[dict[str, Any]] = []
         action_events: list[dict[str, Any]] = []
         action_error: str | None = None
@@ -216,6 +269,12 @@ class SkillOptBridge:
             response_text = _extract_answer(raw_text)
         if not response_text:
             response_text = raw_text
+        after = self._token_summary()
+        usage = _usage_from_mapping(raw_usage)
+        tracker_usage = _usage_delta(before, after)
+        if tracker_usage["total_tokens"] or tracker_usage["api_calls"]:
+            usage = tracker_usage
+        self._last_summary = after
         return {
             "text": response_text,
             "actions": executed_actions,
@@ -713,9 +772,21 @@ def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None =
     hand calls back to the benchmark runner for auditable execution.
     """
     if isinstance(metadata, dict):
-        public = metadata.get("public")
-        if isinstance(public, dict) and public.get("source_format") == "l1_demo_task_json":
+        source_format = metadata.get("source_format")
+        if source_format == "l1_demo_task_json":
             return True
+        if source_format in {"l1_arena_task_json", "l2_taskstream_task_json"}:
+            return False
+        public = metadata.get("public")
+        if isinstance(public, dict):
+            source_format = public.get("source_format")
+            if source_format == "l1_demo_task_json":
+                return True
+            # Arena/TaskStream packages expose native filesystem tools.  They
+            # must be executed inside the baseline container, not returned to
+            # the deterministic simulated-tool runner.
+            if source_format in {"l1_arena_task_json", "l2_taskstream_task_json"}:
+                return False
     text = str(request).lower()
     return "可调用的模拟工具" in text or "available tools" in text
 
@@ -746,9 +817,51 @@ def _extract_l1_tool_calls(text: str) -> list[dict[str, Any]]:
 def _extract_dsml_tool_calls(text: str) -> list[dict[str, Any]]:
     """Parse DeepSeek's native DSML tool-call envelope emitted by SkillOpt."""
     calls: list[dict[str, Any]] = []
-    pattern = r'<｜｜DSML｜｜invoke\s+name="([^"]+)"[^>]*>.*?<｜｜DSML｜｜parameter\s+name="([^"]+)">\s*(.*?)\s*</｜｜DSML｜｜parameter>.*?</｜｜DSML｜｜invoke>'
-    for name, parameter, value in re.findall(pattern, str(text or ""), flags=re.DOTALL):
-        calls.append({"name": name, "arguments": {parameter: value.strip()}})
+    pattern = r'<｜｜DSML｜｜invoke\s+name="([^"]+)"[^>]*>(.*?)</｜｜DSML｜｜invoke>'
+    for name, body in re.findall(pattern, str(text or ""), flags=re.DOTALL):
+        args = {
+            parameter: value.strip()
+            for parameter, value in re.findall(
+                r'<｜｜DSML｜｜parameter\s+name="([^"]+)"[^>]*>\s*(.*?)\s*</｜｜DSML｜｜parameter>',
+                body,
+                flags=re.DOTALL,
+            )
+        }
+        calls.append({"name": name, "arguments": args})
+    return calls
+
+
+def _extract_xml_action_calls(text: str) -> list[dict[str, Any]]:
+    """Parse SkillOpt's legacy ``<actions type=...>`` native envelope."""
+    calls: list[dict[str, Any]] = []
+    for name, body in re.findall(r'<actions\s+type="([^"]+)"\s*>(.*?)</actions>', str(text or ""), flags=re.DOTALL | re.IGNORECASE):
+        args: dict[str, Any] = {}
+        for key, value in re.findall(r'<([A-Za-z_][A-Za-z0-9_]*)>(.*?)</\1>', body, flags=re.DOTALL):
+            args[key] = value.strip()
+        calls.append({"name": name, "arguments": args})
+    return calls
+
+
+def _extract_tool_use_calls(text: str) -> list[dict[str, Any]]:
+    """Parse the common ``<tool_uses><tool_use>`` textual envelope.
+
+    Several OpenAI-compatible reasoning models emit the Claude-style wrapper
+    even when tools were described in the prompt rather than passed through
+    the API's native ``tools`` field.
+    """
+    calls: list[dict[str, Any]] = []
+    for body in re.findall(r"<tool_use\b[^>]*>(.*?)</tool_use>", str(text or ""), flags=re.DOTALL | re.IGNORECASE):
+        name_match = re.search(r"<tool_name>\s*(.*?)\s*</tool_name>", body, flags=re.DOTALL | re.IGNORECASE)
+        if not name_match:
+            continue
+        args: dict[str, Any] = {}
+        for key, value in re.findall(
+            r'<parameter\s+name=["\']([^"\']+)["\'][^>]*>\s*(.*?)\s*</parameter>',
+            body,
+            flags=re.DOTALL | re.IGNORECASE,
+        ):
+            args[key] = value.strip()
+        calls.append({"name": name_match.group(1).strip(), "arguments": args})
     return calls
 
 
@@ -774,15 +887,108 @@ def _extract_fenced_python_calls(text: str) -> list[dict[str, Any]]:
     return [{"name": "python", "arguments": {"code": block.strip()}} for block in blocks if block.strip()]
 
 
+def _extract_native_tool_calls(text: str) -> list[dict[str, Any]]:
+    for extractor in (
+        _extract_dsml_tool_calls,
+        _extract_xml_action_calls,
+        _extract_tool_use_calls,
+        _extract_structured_tool_calls,
+        _extract_fenced_python_calls,
+    ):
+        calls = extractor(text)
+        if calls:
+            return calls
+    return []
+
+
+def _normalize_native_tool_calls(calls: Any) -> list[dict[str, Any]]:
+    normalized: list[dict[str, Any]] = []
+    for call in calls if isinstance(calls, list) else []:
+        if not isinstance(call, dict):
+            continue
+        name = call.get("name") or call.get("tool")
+        arguments = call.get("arguments", call.get("parameters", call.get("params", {})))
+        if name and isinstance(arguments, dict):
+            normalized.append({"name": str(name), "arguments": dict(arguments)})
+    return normalized
+
+
+def _tool_observation_prompt(calls: list[dict[str, Any]]) -> str:
+    rows: list[dict[str, Any]] = []
+    for call in calls:
+        observation = str(call.get("observation", ""))
+        if len(observation) > 24_000:
+            observation = observation[:24_000] + "\n[observation truncated by adapter]"
+        rows.append({
+            "name": call.get("name"),
+            "arguments": call.get("arguments", {}),
+            "observation": observation,
+        })
+    return (
+        "## Tool results\n"
+        + json.dumps(rows, ensure_ascii=False)
+        + "\nContinue the task using these results. Call another tool if needed; "
+          "otherwise create the required artifact and finish."
+    )
+
+
 def _execute_dsml_tool(call: dict[str, Any], workspace: Path | None, config: dict[str, Any]) -> str:
     if workspace is None:
         return "[tool error] workspace unavailable"
     name = str(call.get("name", ""))
     args = call.get("arguments", {})
+    # SkillOpt emits both lowercase DSML tools and Arena's capitalized native
+    # tools.  Handle the file operations directly in the mounted workspace.
+    canonical = name.lower()
+    # L2 TaskStream exposes provider-neutral ``terminal`` and ``filesystem``
+    # tools.  SkillOpt's native executor historically understood only its
+    # Bash/Read/Write aliases, so otherwise-valid calls were recorded without
+    # ever touching the workspace.
+    if canonical == "terminal":
+        canonical = "bash"
+    if canonical == "filesystem":
+        operation = str(args.get("operation", "")).strip().lower()
+        if not operation and (args.get("path") or args.get("file_path")):
+            operation = "read_file"
+        filesystem_aliases = {
+            "read_file": "read",
+            "write_file": "write",
+            "edit_file": "edit",
+            "list_directory": "ls",
+            "list_dir": "ls",
+            "glob": "glob",
+            "grep": "grep",
+        }
+        canonical = filesystem_aliases.get(operation, operation)
+    if canonical in {"read", "ls", "glob", "grep"}:
+        target = _workspace_path(workspace, str(args.get("file_path") or args.get("path") or "."))
+        if canonical == "read":
+            if target.is_dir():
+                return "\n".join(sorted(item.name for item in target.iterdir()))
+            return target.read_text(encoding="utf-8")
+        if canonical == "ls":
+            return "\n".join(sorted(item.name for item in target.iterdir()))
+        if canonical == "glob":
+            pattern = str(args.get("pattern", "**/*"))
+            return "\n".join(str(p.relative_to(workspace)).replace("\\", "/") for p in workspace.glob(pattern))
+        pattern = str(args.get("pattern", ""))
+        return "\n".join(f"{p}:{i+1}:{line.rstrip()}" for p in workspace.rglob("*") if p.is_file() for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines()) if pattern.lower() in line.lower())
+    if canonical in {"write", "edit"}:
+        target = _workspace_path(workspace, str(args.get("file_path") or args.get("path") or ""))
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if canonical == "write":
+            target.write_text(str(args.get("content", "")), encoding="utf-8")
+        else:
+            target.write_text(target.read_text(encoding="utf-8").replace(str(args.get("old_string", "")), str(args.get("new_string", ""))), encoding="utf-8")
+        return "[tool completed]"
+    if canonical == "bash":
+        name = "bash"
+    elif canonical == "python":
+        name = "python"
     if name not in {"python", "bash"}:
         return f"[tool unsupported] {name}"
     key = "code" if name == "python" else "command"
-    program = str(args.get(key, ""))
+    program = str(args.get(key) or (args.get("cmd") if name == "bash" else "") or "")
     if not program:
         return "[tool error] empty program"
     command = [sys.executable, "-c", program] if name == "python" else ["bash", "-lc", program]
@@ -792,7 +998,7 @@ def _execute_dsml_tool(call: dict[str, Any], workspace: Path | None, config: dic
         inner = ["python3", "-c", program] if name == "python" else ["bash", "-lc", program]
         command = [docker_exe, "run", "--rm", "-v", f"{workspace.resolve()}:/workspace", "-w", "/workspace", image, *inner]
     try:
-        result = subprocess.run(
+        result = _run_bounded(
             command,
             cwd=None if (os.name == "nt" and docker_exe) else str(workspace),
             capture_output=True,

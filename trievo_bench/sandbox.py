@@ -27,6 +27,12 @@ def _safe_relative(path: str) -> str:
 
 class Sandbox:
     def setup(self, setup: dict[str, Any]) -> None:
+        host_copy = setup.get("host_copy")
+        if host_copy:
+            copier = getattr(self, "_copy_host_workspace", None)
+            if copier is None:
+                raise SandboxError("host_copy setup is supported only by sandboxes with a shared workspace")
+            copier(Path(str(host_copy)))
         for item in setup.get("files", []):
             self.write_file(item["path"], str(item.get("content", "")))
         for path in setup.get("remove", []):
@@ -77,6 +83,17 @@ class LocalSandbox(Sandbox):
         target = self._resolve(path)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
+
+    def _copy_host_workspace(self, source: Path) -> None:
+        if not source.is_dir():
+            raise SandboxError(f"host_copy source does not exist: {source}")
+        destination = self.root / "workspace"
+        for item in source.iterdir():
+            target = destination / item.name
+            if item.is_dir():
+                shutil.copytree(item, target, dirs_exist_ok=True)
+            else:
+                shutil.copy2(item, target)
 
     def read_file(self, path: str) -> str:
         return self._resolve(path).read_text(encoding="utf-8")
@@ -136,6 +153,19 @@ class DockerSandbox(Sandbox):
 
     def _run_exec(self, command: list[str]) -> str:
         return self._run(["docker", "exec", self.name, *command])
+
+    def _copy_host_workspace(self, source: Path) -> None:
+        if not source.is_dir():
+            raise SandboxError(f"host_copy source does not exist: {source}")
+        # The bind-mounted workspace is already visible to both the host and
+        # container.  Copying here avoids constructing one enormous `docker
+        # exec ... base64` command for Arena's documentation-heavy fixtures.
+        for item in source.iterdir():
+            target = self._host_workspace / item.name
+            if item.is_dir():
+                shutil.copytree(item, target, dirs_exist_ok=True)
+            else:
+                shutil.copy2(item, target)
 
     def write_file(self, path: str, content: str) -> None:
         virtual = _safe_relative(path)

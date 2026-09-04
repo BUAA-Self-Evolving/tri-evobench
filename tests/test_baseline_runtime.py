@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 import zipfile
+from dataclasses import replace
 from pathlib import Path
 
 from trievo_bench.baselines.hermes_bridge import (
@@ -28,6 +29,22 @@ from trievo_bench.verifier import LLMJudge
 
 
 class BaselineRuntimeTest(unittest.TestCase):
+    def test_checkpoint_resume_retains_prefix_and_learning_state(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = self._spec()
+            flow = spec.flows[0]
+            flow.turns.append(replace(flow.turns[0], id="process-turn-2"))
+            manifest = self._manifest(root)
+            original = Runner(spec, output_dir=root / "first", baseline="fake", baseline_manifest=str(manifest)).run(flow)
+            checkpoint = next((root / "first" / "_checkpoints").glob("*/t0001"))
+            resumed = Runner(spec, output_dir=root / "resumed", baseline="fake", baseline_manifest=str(manifest), resume_checkpoint=checkpoint).run(flow)
+            self.assertEqual([row["turn_id"] for row in resumed["turns"]], ["process-turn", "process-turn-2"])
+            self.assertEqual(resumed["turns"][0], original["turns"][0])
+            live = (root / "resumed" / flow.id / "live_trace.jsonl").read_text(encoding="utf-8")
+            self.assertNotIn('"turn_id": "process-turn"', live)
+            self.assertEqual(resumed["token_budget"]["used"], original["token_budget"]["used"])
+
     def _manifest(
         self,
         root: Path,

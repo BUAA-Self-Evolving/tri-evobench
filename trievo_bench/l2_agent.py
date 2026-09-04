@@ -13,21 +13,28 @@ import json
 import os
 import shutil
 import subprocess
+import tempfile
 import time
+import zipfile
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
 from uuid import uuid4
 
-from .baselines.base import EvolutionContext, FlowContext, InteractionContext, TurnContext
+from .baselines.base import BaselineReply, EvolutionContext, FlowContext, InteractionContext, TurnContext, UsageDetails
 from .baselines.manifest import BaselineManifest, find_manifest, load_manifest, merge_mappings
 from .baselines.process import ProcessBaselineRuntime
-from .model import TokenBudget
+from .model import TokenBudget, client_from_config
+from .verifier import L1LifeJudge
 
 
 class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
+
+
+def _restored_reply(value: dict[str, Any]) -> BaselineReply:
+    return BaselineReply(**{**value, "usage": UsageDetails.from_mapping(value.get("usage"))})
 
 
 @dataclass(frozen=True)
@@ -53,6 +60,7 @@ class L2AgentRunOptions:
     verifier_image: str
     browser_verifier_image: str
     repo_root: Path
+    resume_checkpoint: Path | None = None
 
 
 class L2AgentStreamRunner:
@@ -68,6 +76,12 @@ class L2AgentStreamRunner:
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
+        # L2-Demo-V2 uses the self-contained TaskStream contract.  Keep the
+        # legacy episode runner below unchanged, but route the new contract to
+        # its native-verifier carrier instead of pretending that turn*/task.json
+        # is the old episode.json/evaluation.json layout.
+        if manifest.get("schema_version") == "l2_taskstream/1.0":
+            return self._run_taskstream(manifest)
         if manifest.get("level") != "L2":
             raise L2AgentRunError(f"{self.options.stream_id} is not an L2 stream")
         if manifest.get("stream_id") != self.options.stream_id:
@@ -165,7 +179,340 @@ class L2AgentStreamRunner:
             _write_json(run_dir / "report.json", report)
         return report
 
-    def _create_runtime(self) -> ProcessBaselineRuntime:
+    def _run_taskstream(self, manifest: dict[str, Any]) -> dict[str, Any]:
+        """Execute one L2-Demo-V2 TaskStream with its package-local verifier.
+
+        TaskStream turns carry their own transition and native-verifier
+        contracts.  The agent still uses the same BaselineRuntime protocol as
+        legacy L2, while the verifier receives the declared path/inline carrier
+        over stdin and never receives private evaluation files in its prompt.
+        """
+        ordering = manifest.get("ordering", {})
+        turn_order = ordering.get("turn_order") if isinstance(ordering, dict) else None
+        if not isinstance(turn_order, list) or not all(isinstance(item, str) for item in turn_order):
+            raise L2AgentRunError("TaskStream ordering.turn_order is invalid")
+        run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
+        output_root = self.options.output_root.resolve()
+        run_dir = output_root / self.options.stream_id / run_id
+        run_dir.mkdir(parents=True, exist_ok=False)
+        agent_workspace = _under(self.stream_dir, str(manifest.get("agent_workspace", "agent_workspace")))
+        resume_index = 0
+        resume_state_archive: Path | None = None
+        completed_turns: list[dict[str, Any]] = []
+        resume_pending = None
+        workspace = Path(tempfile.mkdtemp(prefix="trievo-l2-work-"))
+        if self.options.resume_checkpoint is not None:
+            checkpoint = self.options.resume_checkpoint.resolve()
+            metadata_path = checkpoint / "checkpoint.json"
+            checkpoint_workspace = checkpoint / "workspace.zip"
+            resume_state_archive = checkpoint / "baseline_state.zip"
+            checkpoint_turns = checkpoint / "completed_turns.json"
+            if not all(path.is_file() for path in (metadata_path, checkpoint_workspace, resume_state_archive, checkpoint_turns)):
+                raise L2AgentRunError(f"invalid resume checkpoint: {checkpoint}")
+            checkpoint_metadata = _load_json(metadata_path)
+            if checkpoint_metadata.get("stream_id") != self.options.stream_id:
+                raise L2AgentRunError("checkpoint stream identity mismatch")
+            if checkpoint_metadata.get("baseline", self.options.baseline) != self.options.baseline:
+                raise L2AgentRunError("checkpoint baseline identity mismatch")
+            if checkpoint_metadata.get("phase") == "adjudicate":
+                resume_pending = _load_json(checkpoint / "evidence.json")
+            resume_index = int(checkpoint_metadata["next_turn_index"])
+            loaded_turns = json.loads(checkpoint_turns.read_text(encoding="utf-8"))
+            if not isinstance(loaded_turns, list) or len(loaded_turns) != resume_index:
+                raise L2AgentRunError(f"invalid completed turn records: {checkpoint_turns}")
+            completed_turns = loaded_turns
+            if [turn.get("turn_id") for turn in completed_turns] != turn_order[:resume_index]:
+                raise L2AgentRunError("checkpoint completed prefix differs from requested stream")
+            prior_traces = list(output_root.glob(f"{self.options.stream_id}/*-{checkpoint.parent.name}/trace.jsonl"))
+            for completed in completed_turns:
+                if not Path(str(completed.get("trace_file", ""))).is_absolute() and prior_traces:
+                    completed["trace_file"] = str(prior_traces[0])
+            self.budget.used = int(checkpoint_metadata.get("token_budget", {}).get("used", 0))
+            self.budget.calls = int(checkpoint_metadata.get("token_budget", {}).get("calls", 0))
+            _restore_tree_archive(checkpoint_workspace, workspace)
+        else:
+            shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
+        self._runtime = self._create_runtime(resume_state_archive)
+        report: dict[str, Any] = {
+            "schema_version": "l2-agent-runtime-0.2-taskstream",
+            "run_id": run_id,
+            "stream_id": self.options.stream_id,
+            "baseline": self.options.baseline,
+            "started_at": datetime.now(UTC).isoformat(),
+            "turns": completed_turns,
+            "success": False,
+            "token_budget": asdict(self.budget),
+            "work_limits": asdict(self.work_limits),
+        }
+        trace_path = run_dir / "trace.jsonl"
+        started = time.monotonic()
+        runtime_started = False
+        try:
+            self._runtime.start_flow(
+                FlowContext(
+                    flow_id=self.options.stream_id,
+                    workspace=workspace,
+                    output_dir=run_dir,
+                    metadata={"level": "L2", "schema_version": "l2_taskstream/1.0", "stream_id": self.options.stream_id},
+                )
+            )
+            runtime_started = True
+            for turn_index, turn_id in enumerate(turn_order):
+                if turn_index < resume_index:
+                    continue
+                turn_dir = _under(self.stream_dir, turn_id)
+                task = _load_json(turn_dir / "task.json")
+                if task.get("stream_id") != self.options.stream_id or task.get("turn_id") != turn_id:
+                    raise L2AgentRunError(f"TaskStream identity mismatch for {turn_id}")
+                if resume_pending is None:
+                    self._apply_taskstream_transition(task, turn_dir, workspace)
+                request = _taskstream_request(task, self.work_limits)
+                simulator = task.get("user_simulator")
+                max_interactions = 1 + max(0, int(simulator.get("max_generated_messages", 0))) if isinstance(simulator, dict) else 1
+                self._runtime.start_turn(
+                    TurnContext(
+                        turn_id,
+                        request,
+                        max_interactions,
+                        {"level": "L2", "schema_version": "l2_taskstream/1.0", "source_format": "l2_taskstream_task_json", "stream_id": self.options.stream_id, "agent_limits": asdict(self.work_limits)},
+                    )
+                )
+                interactions: list[dict[str, Any]] = list(resume_pending["interactions"]) if resume_pending else []
+                history: list[dict[str, Any]] = list(resume_pending["history"]) if resume_pending else []
+                current_request = resume_pending["request"] if resume_pending else request
+                final_score = 0.0
+                final_category = "fail"
+                passed = False
+                first_interaction = int(resume_pending["interaction_index"]) if resume_pending else 1
+                for interaction_index in range(first_interaction, max_interactions + 1):
+                    before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
+                    reply = BaselineReply()
+                    try:
+                        reply = _restored_reply(resume_pending["reply"]) if resume_pending else self._runtime.interact(
+                            InteractionContext(
+                                turn_id=turn_id,
+                                interaction_index=interaction_index,
+                                request=current_request,
+                                history=history,
+                                sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
+                                remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                            )
+                        )
+                        # Durable stage evidence survives judge/parser failures. Never
+                        # discard a paid agent execution when evaluator work fails.
+                        stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                        pending = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"p{turn_index:04d}-{interaction_index:02d}"
+                        pending.mkdir(parents=True, exist_ok=True)
+                        _archive_tree(workspace, pending / "workspace.zip")
+                        self._runtime.save_checkpoint_state(pending / "baseline_state.zip")
+                        _write_json(pending / "evidence.json", {
+                            "turn_id": turn_id, "turn_index": turn_index,
+                            "interaction_index": interaction_index, "request": current_request,
+                            "reply": asdict(reply), "history": history, "interactions": interactions,
+                            "before_files": before_files, "token_budget": asdict(self.budget),
+                        })
+                        _write_json(pending / "completed_turns.json", report["turns"])
+                        _write_json(pending / "checkpoint.json", {
+                            "phase": "adjudicate", "stream_id": self.options.stream_id,
+                            "baseline": self.options.baseline, "next_turn_index": turn_index,
+                            "interaction_index": interaction_index, "token_budget": asdict(self.budget),
+                        })
+                        resume_pending = None
+                        verification = self._verify_taskstream(
+                            task=task,
+                            turn_dir=turn_dir,
+                            workspace=workspace,
+                            reply=reply,
+                        )
+                        if verification["category"] != "error":
+                            verification["judge"] = self._judge_taskstream(
+                                task, reply, verification, interaction_index, history,
+                                before_files, _workspace_digest(workspace),
+                            )
+                    except Exception as exc:
+                        verification = {"category": "error", "score": 0.0, "details": {"type": "runtime_error", "error": str(exc)}}
+                    final_score = float(verification.get("judge", {}).get("score", verification.get("score")) or 0.0)
+                    final_category = str(verification.get("category", "error"))
+                    passed = final_score >= float(task.get("evaluation", {}).get("success_policy", {}).get("turn_score_threshold", 1.0))
+                    if final_category != "error":
+                        final_category = "pass" if passed else "fail"
+                    after_files = _workspace_digest(workspace)
+                    record = {
+                        "turn_id": turn_id,
+                        "interaction_index": interaction_index,
+                        "request": current_request,
+                        "response": reply.text,
+                        "tool_calls": reply.tool_calls,
+                        "events": reply.events,
+                        "usage": reply.usage.to_dict(),
+                        "workspace_changes": _changed_workspace_files(before_files, after_files),
+                        "verifier": verification,
+                        "score": final_score,
+                        "passed": passed,
+                    }
+                    interactions.append(record)
+                    with trace_path.open("a", encoding="utf-8") as trace:
+                        trace.write(json.dumps(record, ensure_ascii=False) + "\n")
+                    if final_category == "error":
+                        raise L2AgentRunError(f"framework failure in {turn_id}: {verification.get('details')}")
+                    history.extend([{"role": "user", "content": current_request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": _bounded_feedback(final_category)}])
+                    if passed or interaction_index >= max_interactions or not _taskstream_retryable(task, verification):
+                        break
+                    current_request = self._taskstream_followup(task, history, reply.text, final_category)
+                evolution = self._runtime.evolve(
+                    EvolutionContext(
+                        turn_id=turn_id,
+                        trajectory=[_public_taskstream_trajectory(item) for item in interactions],
+                        feedback=[{"interaction_index": item["interaction_index"], "score": item["score"], "passed": item["passed"], "feedback": _bounded_feedback(str(item["verifier"].get("category", "error")))} for item in interactions],
+                    )
+                )
+                evolution_record = {"record_type": "evolution", "turn_id": turn_id, "evolution": evolution.to_dict()}
+                with trace_path.open("a", encoding="utf-8") as trace:
+                    trace.write(json.dumps(evolution_record, ensure_ascii=False) + "\n")
+                report["turns"].append({
+                    "turn_id": turn_id,
+                    "passed": passed and evolution.completed,
+                    "final_score": final_score,
+                    "final_category": final_category if evolution.completed else "evolution_limit",
+                    "interaction_count": len(interactions),
+                    "trace_file": str(trace_path),
+                    "evolution": evolution.to_dict(),
+                })
+                report["token_budget"] = asdict(self.budget)
+                _write_json(run_dir / "report.json", report)
+                stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"t{turn_index + 1:04d}"
+                checkpoint.mkdir(parents=True, exist_ok=True)
+                _archive_tree(workspace, checkpoint / "workspace.zip")
+                self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
+                report["turns"][-1]["checkpoint"] = str(checkpoint)
+                _write_json(checkpoint / "completed_turns.json", report["turns"])
+                _write_json(checkpoint / "checkpoint.json", {"stream_id": self.options.stream_id, "baseline": self.options.baseline, "turn_id": turn_id, "completed_turn_index": turn_index, "next_turn_index": turn_index + 1, "token_budget": asdict(self.budget)})
+                _write_json(run_dir / "report.json", report)
+            report["success"] = len(report["turns"]) == len(turn_order) and all(item["passed"] for item in report["turns"])
+        except BaseException as exc:
+            report["error"] = f"{type(exc).__name__}: {exc}"
+            _archive_tree(workspace, run_dir / "error_workspace.zip")
+            raise
+        finally:
+            if runtime_started and self._runtime is not None:
+                try:
+                    self._runtime.end_flow()
+                except BaseException as exc:
+                    report["cleanup_error"] = f"{type(exc).__name__}: {exc}"
+            report["finished_at"] = datetime.now(UTC).isoformat()
+            report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
+            report["token_budget"] = asdict(self.budget)
+            report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
+            _write_json(run_dir / "report.json", report)
+            shutil.rmtree(workspace, ignore_errors=True)
+        return report
+
+    def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
+        transition = task.get("workspace_transition", {})
+        if not isinstance(transition, dict) or transition.get("mode") not in {"continue", "continue_with_patch"}:
+            raise L2AgentRunError("unsupported TaskStream workspace transition")
+        for operation in transition.get("operations", []):
+            if not isinstance(operation, dict) or operation.get("op") != "copy":
+                raise L2AgentRunError("TaskStream currently supports copy transitions only")
+            source = _under(turn_dir, str(operation.get("source", "")))
+            target_name = str(operation.get("target", "")).removeprefix("agent_workspace/")
+            target = _under(workspace, target_name)
+            if target.exists():
+                raise L2AgentRunError(f"TaskStream transition target already exists: {target_name}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if source.is_dir():
+                shutil.copytree(source, target)
+            else:
+                shutil.copy2(source, target)
+
+    def _verify_taskstream(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
+        evaluation = task.get("evaluation", {})
+        native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
+        entrypoint = native.get("entrypoint")
+        if not isinstance(entrypoint, str):
+            return {"category": "error", "score": 0.0, "details": {"type": "missing_native_verifier"}}
+        contract = evaluation.get("submission_contract", {})
+        source = str(contract.get("source_binding", "submission"))
+        declared = next((item for item in native.get("input_bindings", []) if item.get("name") == source), None)
+        if not isinstance(declared, dict):
+            return {"category": "error", "score": 0.0, "details": {"type": "missing_submission_binding"}}
+        if declared.get("source") == "workspace":
+            submission = {"kind": "path", "path": declared.get("path")}
+        else:
+            submission = {"kind": "inline", "value": reply.text}
+        request = {"schema_version": "l2_native_verifier_request/1.0", "bindings": {"submission": submission}}
+        package_root = self.options.package_dir.resolve()
+        verifier = _under(turn_dir, entrypoint)
+        verifier_rel = verifier.relative_to(package_root).as_posix()
+        contract_path = verifier.parent / "verifier_contract.json"
+        requires_browser = contract_path.is_file() and "playwright" in contract_path.read_text(encoding="utf-8").lower()
+        verifier_image = self.options.browser_verifier_image if requires_browser else self.options.verifier_image
+        command = [
+            _docker_executable(), "run", "--rm", "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+            "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
+            "-v", f"{package_root}:/opt/l2_demo:ro", "-v", f"{workspace}:/workspace",
+            "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
+            verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
+        ]
+        completed = subprocess.run(command, input=json.dumps(request, ensure_ascii=False), text=True, encoding="utf-8", errors="replace", capture_output=True, check=False, timeout=300)
+        if completed.returncode != 0:
+            return {"category": "error", "score": 0.0, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
+        try:
+            result = json.loads(completed.stdout.strip().splitlines()[-1])
+        except (json.JSONDecodeError, IndexError) as exc:
+            return {"category": "error", "score": 0.0, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
+        return {"category": str(result.get("status", result.get("category", "error"))), "score": float(result.get("score") or 0.0), "details": result.get("private_diagnostics", result.get("details", {})), "native_result": result}
+
+    def _judge_taskstream(self, task: dict[str, Any], reply: BaselineReply, native: dict[str, Any], interaction_index: int, history: list[dict[str, Any]], before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
+        evaluation = task["evaluation"]
+        config = evaluation.get("judge_config", {})
+        if evaluation.get("type") != "llm_as_judge" or not config.get("judge_prompt"):
+            raise L2AgentRunError("TaskStream requires its declared reference judge")
+        route = config.get("rubric_route", {})
+        routed = {}
+        for key in ("domain_rubric", "benchmark_rubric"):
+            relative = route.get(key, {}).get("path")
+            routed[key] = _under(self.package_dir, relative).read_text(encoding="utf-8") if relative else ""
+        values = {
+            **routed, "interaction_index": interaction_index,
+            "evaluation_profile": evaluation.get("evaluation_profile"),
+            "metric_profile": evaluation.get("metric_profile", {}),
+            "native_verifier_result": native["native_result"],
+            "workspace_diff": {"changed_files": _changed_workspace_files(before, after)},
+            "workspace_transition_record": task.get("workspace_transition", {}),
+            "execution_error": None, "resource_usage": reply.usage.to_dict(),
+        }
+        check = {**evaluation, "stream_id": task["stream_id"], "turn_id": task["turn_id"],
+                 "turn_type": task.get("turn_type"), "turn_origin": task.get("turn_origin"),
+                 "agent_input": task.get("agent_input", {}), "judge_prompt": config["judge_prompt"],
+                 "prompt_values": values, "max_output_tokens": 4096,
+                 "pass_threshold": evaluation.get("success_policy", {}).get("turn_score_threshold", 1.0)}
+        trajectory = {"interactions": history, "tool_calls": reply.tool_calls,
+                      "tool_results": [item.get("observation", item.get("result")) for item in reply.tool_calls],
+                      "workspace_before": before, "workspace_after": after}
+        result = L1LifeJudge(client_from_config({"thinking": "disabled"}, self.budget)).evaluate(check, reply.text, None, trajectory)
+        if result.details.get("type") == "l1_life_judge_parse_error":
+            raise L2AgentRunError(f"invalid reference judge output: {result.details}")
+        return {"score": result.score, "passed": result.passed, "feedback": result.feedback, "details": result.details}
+
+    def _taskstream_followup(self, task: dict[str, Any], history: list[dict[str, Any]], response: str, category: str) -> str:
+        config = task.get("user_simulator", {})
+        prompt = L1LifeJudge._render(str(config.get("simulator_prompt", "")), {
+            "agent_input": task.get("agent_input", {}), "interaction_transcript": history,
+            "latest_agent_response": response, "bounded_evaluation_feedback": _bounded_feedback(category),
+        })
+        text = client_from_config({"thinking": "disabled"}, self.budget).complete(
+            [{"role": "system", "content": "Follow the bounded public user-simulator contract. Return JSON only."},
+             {"role": "user", "content": prompt}], max_tokens=1024, json_mode=True,
+        )
+        result = L1LifeJudge._parse(text)
+        message = result.get("next_user_message")
+        if not isinstance(message, str) or not message.strip():
+            raise L2AgentRunError("invalid user-simulator output")
+        return message
+
+    def _create_runtime(self, resume_state_archive: Path | None = None) -> ProcessBaselineRuntime:
         # L2 uses the same BaselineRuntime protocol as L1.  Resolve the
         # selected adapter from its registered manifest so Hermes, SkillOpt,
         # and Trace2Skill can be compared under one evaluator.  Previously
@@ -177,7 +524,12 @@ class L2AgentStreamRunner:
             {"evolution": {"policy": "turn_boundary", "timeout_seconds": self.work_limits.evolution_timeout_seconds}},
         )
         manifest = load_manifest(manifest_path).with_overrides(overrides)
-        return ProcessBaselineRuntime(manifest, budget=self.budget, repo_root=self.options.repo_root)
+        return ProcessBaselineRuntime(
+            manifest,
+            budget=self.budget,
+            repo_root=self.options.repo_root,
+            resume_state_archive=resume_state_archive,
+        )
 
     def _run_episode(
         self,
@@ -450,6 +802,29 @@ def _under(root: Path, relative: str) -> Path:
     return candidate
 
 
+def _archive_tree(source: Path, archive: Path) -> None:
+    """Archive a workspace without materializing deep checkpoint paths."""
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        for path in source.rglob("*"):
+            if path.is_file() and not path.is_symlink():
+                bundle.write(path, arcname=path.relative_to(source).as_posix())
+
+
+def _restore_tree_archive(archive: Path, target: Path) -> None:
+    with zipfile.ZipFile(archive) as bundle:
+        for name in bundle.namelist():
+            relative = PurePosixPath(name)
+            if relative.is_absolute() or ".." in relative.parts:
+                raise L2AgentRunError(f"unsafe workspace checkpoint entry: {name}")
+            destination = target.joinpath(*relative.parts)
+            if name.endswith("/"):
+                destination.mkdir(parents=True, exist_ok=True)
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(bundle.read(name))
+
+
 def _agent_request(episode_dir: Path, agent_view: Any, limits: L2AgentWorkLimits) -> str:
     if not isinstance(agent_view, dict):
         raise L2AgentRunError("episode agent_view must be an object")
@@ -488,6 +863,52 @@ def _agent_request(episode_dir: Path, agent_view: Any, limits: L2AgentWorkLimits
         else:
             parts.append(f"\n<WORKSPACE_ASSET path={json.dumps(asset)} />")
     return "\n".join(parts)
+
+
+def _taskstream_request(task: dict[str, Any], limits: L2AgentWorkLimits | None = None) -> str:
+    agent_input = task.get("agent_input")
+    if not isinstance(agent_input, dict) or not isinstance(agent_input.get("messages"), list):
+        raise L2AgentRunError(f"{task.get('turn_id', '<unknown>')} agent_input.messages is required")
+    messages = agent_input["messages"]
+    transcript = "\n\n".join(
+        f"{str(item.get('role', 'user')).upper()}:\n{str(item.get('content', ''))}"
+        for item in messages if isinstance(item, dict)
+    )
+    if not transcript.strip():
+        raise L2AgentRunError(f"{task.get('turn_id', '<unknown>')} has an empty public transcript")
+    tools = agent_input.get("available_tools", [])
+    assets = agent_input.get("assets", [])
+    return "\n".join([
+        "You are a real task agent with terminal tools and a persistent /workspace directory.",
+        "Complete the public task by inspecting and editing only /workspace. Do not seek private evaluation assets.",
+        "The current TaskStream turn is self-contained; prior public messages are included below in order.",
+        (f"Per-interaction resource ceiling: {limits.max_model_calls} model calls, {limits.max_tool_calls} tool calls, "
+         f"{limits.terminal_timeout_seconds} seconds per terminal command, {limits.episode_timeout_seconds} seconds total. "
+         "Finish the required artifact before the tool budget is exhausted." if limits else ""),
+        "\nPUBLIC TRANSCRIPT:\n" + transcript,
+        "\nAVAILABLE TOOLS:\n" + json.dumps(tools, ensure_ascii=False, indent=2),
+        "\nDECLARED WORKSPACE ASSETS:\n" + json.dumps(assets, ensure_ascii=False, indent=2),
+        "Return the requested deliverable in your final response and leave required files in /workspace.",
+    ])
+
+
+def _public_taskstream_trajectory(item: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "interaction_index": item.get("interaction_index"),
+        "request": item.get("request"),
+        "response": item.get("response"),
+        "tool_calls": item.get("tool_calls", []),
+        "events": item.get("events", []),
+        "workspace_changes": item.get("workspace_changes", []),
+        "score": item.get("score"),
+        "passed": item.get("passed"),
+    }
+
+
+def _taskstream_retryable(task: dict[str, Any], verification: dict[str, Any]) -> bool:
+    # AutoResearch's native ``pass`` means a valid submission, even when its
+    # metric is low.  That is explicitly not retryable under this contract.
+    return verification.get("native_result", {}).get("status") == "fail"
 
 
 def _public_sidecar(episode_dir: Path, relative: str) -> Path:

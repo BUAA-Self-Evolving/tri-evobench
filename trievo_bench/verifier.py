@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import json
 import importlib.util
+import os
+import subprocess
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
-from .sandbox import Sandbox
+from .sandbox import Sandbox, DockerSandbox
 
 
 @dataclass
@@ -191,14 +195,22 @@ class L1LifeJudge:
             "expected_workspace_effect": check.get("expected_workspace_effect"),
             "gt": check.get("gt", {}),
         }
+        values.update(check.get("prompt_values", {}))
         prompt = self._render(str(check.get("judge_prompt", "")), values)
+        expected_ids = [str(item["check_id"]) for item in check.get("checks", [])]
+        source_indices = list(range(1, len(check.get("rubrics", {}).get("source_rubrics", [])) + 1))
+        prompt += ("\n[EXACT OUTPUT CARDINALITY]\nRequired check_ids: " + json.dumps(expected_ids)
+                   + ". Required source rubric indices: " + json.dumps(source_indices)
+                   + ". When no source rubrics are declared, source_rubric_scores MUST be []. "
+                   "The sample object in the template illustrates shape, not additional rubrics.")
         max_tokens = int(check.get("max_output_tokens", 12000))
         result: dict[str, Any] | None = None
         scores: dict[str, float | None] | None = None
         source_scores: dict[int, float | None] | None = None
         last_error = "unknown judge parse error"
+        attempts = []
         for attempt in range(2):
-            retry_note = "" if attempt == 0 else (
+            retry_note = "" if attempt == 0 else ("\nValidation error: " + last_error +
                 "\n\n[RETRY AFTER INVALID OUTPUT]\n"
                 "Return the required JSON object again. Every score must be exactly 0, 0.5, 1, or null; "
                 "include every required check_id and every required source-rubric index exactly once."
@@ -206,12 +218,13 @@ class L1LifeJudge:
             try:
                 text = self.client.complete(
                     [
-                        {"role": "system", "content": "You are a strict L1-Life reference evaluator. Return JSON only."},
+                        {"role": "system", "content": "You are a strict reference evaluator. Return JSON only."},
                         {"role": "user", "content": prompt + retry_note},
                     ],
                     max_tokens=max_tokens,
                     json_mode=True,
                 )
+                attempts.append(text)
             except RuntimeError:
                 raise
             except Exception as exc:
@@ -223,7 +236,9 @@ class L1LifeJudge:
             except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
                 last_error = str(exc)
         if result is None or scores is None or source_scores is None:
-            return self._invalid(last_error)
+            invalid = self._invalid(last_error)
+            invalid.details["raw_attempts"] = attempts
+            return invalid
         total = self._aggregate(scores, source_scores, check)
         threshold = float(check.get("pass_threshold", 1.0))
         failed_dimensions = [
@@ -241,8 +256,11 @@ class L1LifeJudge:
                 "check_scores": scores,
                 "source_rubric_scores": source_scores,
                 "rationale": str(result.get("rationale", ""))[:1000],
+                "raw_result": result,
+                "raw_attempts": attempts,
             },
         )
+
 
     @staticmethod
     def _render(template: str, values: dict[str, Any]) -> str:
@@ -334,3 +352,39 @@ class L1LifeJudge:
             feedback="L1-Life judge returned invalid output; retry is allowed.",
             details={"type": "l1_life_judge_parse_error", "error": error[:1000]},
         )
+
+
+class ExecVerifier:
+    """Run a package-owned command-line checker against the exported workspace."""
+
+    def evaluate(self, check: dict[str, Any], response: str, sandbox: Sandbox, trajectory: Any = None) -> CheckResult:
+        script = str(check["path"])
+        workspace = sandbox.export_workspace()
+        timeout = max(1.0, float(check.get("timeout", 30)))
+        command = [sys.executable, script, str(workspace)]
+        if isinstance(sandbox, DockerSandbox):
+            checker = Path(script).resolve()
+            command = ["docker", "run", "--rm", "--network", "none", "--cap-drop", "ALL",
+                       "--security-opt", "no-new-privileges", "--memory", "4g", "--cpus", "2",
+                       "-v", f"{checker.parent}:/verifier:ro", "-v", f"{workspace}:/workspace:ro",
+                       os.environ.get("TRIEVO_VERIFIER_IMAGE", "trievo-l2:0.1"),
+                       "python", f"/verifier/{checker.name}", "/workspace"]
+        command.extend(str(value) for value in check.get("extra_args", []))
+        try:
+            completed = subprocess.run(
+                command, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=timeout, check=False,
+            )
+            passed = completed.returncode == int(check.get("expect_exit", 0))
+            details = {"type": "exec_verifier", "returncode": completed.returncode,
+                       "stdout": completed.stdout[-4000:], "stderr": completed.stderr[-4000:]}
+        except subprocess.TimeoutExpired as exc:
+            passed = False
+            details = {"type": "exec_verifier_timeout", "timeout": timeout,
+                       "stdout": str(exc.stdout or "")[-4000:], "stderr": str(exc.stderr or "")[-4000:]}
+        finally:
+            sandbox.cleanup_export(workspace)
+        score = 1.0 if passed else 0.0
+        return CheckResult(score=score, passed=score >= float(check.get("pass_threshold", 1.0)),
+                           feedback="Executable package verifier passed." if passed else "Executable package verifier failed.",
+                           details=details)

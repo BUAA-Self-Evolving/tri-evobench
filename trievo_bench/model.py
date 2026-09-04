@@ -82,10 +82,14 @@ def parse_reply(text: str) -> ModelReply:
             actions.append({"op": "remove", "path": path})
     tool_calls = payload.get("tool_calls", payload.get("tools", []))
     events = payload.get("events", [])
+    raw_state_update = payload.get("state_update", payload.get("state", {}))
+    # Model-produced JSON is untrusted protocol input. A list/string here used
+    # to make ``dict(...)`` raise and discard an otherwise usable response.
+    state_update = raw_state_update if isinstance(raw_state_update, dict) else {}
     return ModelReply(
         text=str(payload.get("response", payload.get("text", text))),
         actions=actions,
-        state_update=dict(payload.get("state_update", payload.get("state", {}))),
+        state_update=dict(state_update),
         tool_calls=list(tool_calls) if isinstance(tool_calls, list) else [],
         events=list(events) if isinstance(events, list) else [],
         raw=payload,

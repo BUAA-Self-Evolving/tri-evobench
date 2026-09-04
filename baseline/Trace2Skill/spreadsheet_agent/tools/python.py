@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import sys
+from .process import run_bounded
 
 from react_agent import tool
 
@@ -37,7 +38,7 @@ def create_python_tool(working_dir: str, timeout: int = 120):
                     "python3", "-c", code,
                 ]
                 cwd = None
-            result = subprocess.run(
+            result = run_bounded(
                 command,
                 cwd=cwd,
                 capture_output=True,

@@ -179,7 +179,14 @@ class _StateCapture:
 class ProcessBaselineRuntime(BaselineRuntime):
     """Out-of-process runtime used by Hermes and future agent frameworks."""
 
-    def __init__(self, manifest: BaselineManifest, *, budget: TokenBudget, repo_root: Path) -> None:
+    def __init__(
+        self,
+        manifest: BaselineManifest,
+        *,
+        budget: TokenBudget,
+        repo_root: Path,
+        resume_state_archive: Path | None = None,
+    ) -> None:
         self.manifest = manifest
         self.baseline_id = manifest.baseline_id
         self.budget = budget
@@ -195,6 +202,13 @@ class ProcessBaselineRuntime(BaselineRuntime):
         self._stable_state: _StateCapture | None = None
         self._cleanup_command: list[str] | None = None
         self._template_values: dict[str, str] | None = None
+        self._resume_state_archive = resume_state_archive.resolve() if resume_state_archive else None
+
+    def set_resume_state_archive(self, archive: Path) -> None:
+        """Select a saved learning-state archive before the flow starts."""
+        if self._transport is not None:
+            raise RuntimeError("cannot change resume state after baseline flow start")
+        self._resume_state_archive = archive.resolve()
 
     def start_flow(self, context: FlowContext) -> None:
         if self._transport is not None:
@@ -396,6 +410,18 @@ class ProcessBaselineRuntime(BaselineRuntime):
     def snapshot_state(self) -> BaselineSnapshot:
         return self._capture_state(include_bytes=False).snapshot
 
+    def save_checkpoint_state(self, archive: Path) -> None:
+        """Persist exact learning state in a short, portable zip archive."""
+        capture = self._capture_state(include_bytes=True)
+        archive.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+            for relative, content in capture.files.items():
+                bundle.writestr(relative, content)
+            bundle.writestr(
+                ".trievo_semantic_state.json",
+                json.dumps(self._semantic_state, ensure_ascii=False),
+            )
+
     def end_flow(self) -> None:
         transport = self._transport
         final_snapshot = BaselineSnapshot()
@@ -519,27 +545,41 @@ class ProcessBaselineRuntime(BaselineRuntime):
         (self._state_dir / "home").mkdir(parents=True, exist_ok=True)
         state = self.manifest.state
         seed_from = state.get("seed_from")
-        if not seed_from:
-            return
-        variables = {"repo_root": str(self.repo_root)}
-        for key, value in self.manifest.options.items():
-            name = str(key)
-            if name not in variables and isinstance(value, (str, int, float, bool)):
-                variables[name] = str(value)
-        seed_root = Path(_render(str(seed_from), variables)).expanduser().resolve()
-        if not seed_root.is_dir():
-            raise BaselineProtocolError(f"baseline state seed directory not found: {seed_root}")
-        for relative in state.get("seed_files", ["config.yaml"]):
-            safe_relative = _safe_relative_state_path(str(relative))
-            source = seed_root / safe_relative
-            if not source.exists():
-                continue
-            target = self._state_dir / safe_relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            if source.is_dir():
-                shutil.copytree(source, target, dirs_exist_ok=True)
-            else:
-                shutil.copy2(source, target)
+        if seed_from:
+            variables = {"repo_root": str(self.repo_root)}
+            for key, value in self.manifest.options.items():
+                name = str(key)
+                if name not in variables and isinstance(value, (str, int, float, bool)):
+                    variables[name] = str(value)
+            seed_root = Path(_render(str(seed_from), variables)).expanduser().resolve()
+            if not seed_root.is_dir():
+                raise BaselineProtocolError(f"baseline state seed directory not found: {seed_root}")
+            for relative in state.get("seed_files", ["config.yaml"]):
+                safe_relative = _safe_relative_state_path(str(relative))
+                source = seed_root / safe_relative
+                if not source.exists():
+                    continue
+                target = self._state_dir / safe_relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if source.is_dir():
+                    shutil.copytree(source, target, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(source, target)
+        if self._resume_state_archive is not None:
+            if not self._resume_state_archive.is_file():
+                raise BaselineProtocolError(
+                    f"baseline resume-state archive not found: {self._resume_state_archive}"
+                )
+            with zipfile.ZipFile(self._resume_state_archive) as bundle:
+                for name in bundle.namelist():
+                    if name == ".trievo_semantic_state.json":
+                        raw = json.loads(bundle.read(name).decode("utf-8"))
+                        self._semantic_state = raw if isinstance(raw, dict) else {}
+                        continue
+                    relative = _safe_relative_state_path(name)
+                    target = self._state_dir / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(bundle.read(name))
 
     def _capture_state(self, *, include_bytes: bool) -> _StateCapture:
         root = self._state_dir
@@ -669,10 +709,18 @@ class ProcessBaselineRuntime(BaselineRuntime):
                     shutil.copy2(path, target)
                 except FileNotFoundError:
                     continue
-        (output_dir / "baseline_state_snapshot.json").write_text(
-            json.dumps(snapshot.to_dict(), ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        # The run directory can exceed Win32 MAX_PATH even when report and
+        # trace files were created successfully.  State is already preserved
+        # in baseline_state.zip in that case; do not turn a completed run into
+        # a teardown failure merely because the optional JSON sidecar cannot
+        # be created at the deeply nested path.
+        try:
+            (output_dir / "baseline_state_snapshot.json").write_text(
+                json.dumps(snapshot.to_dict(), ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except (FileNotFoundError, OSError):
+            pass
 
     def _verify_source_revision(self) -> None:
         source = self.manifest.source

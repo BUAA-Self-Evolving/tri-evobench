@@ -5,7 +5,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from baseline.adapters.skillopt.bridge import SkillOptBridge, _looks_like_workspace_task, _trajectory_results
+from baseline.adapters.skillopt.bridge import (
+    SkillOptBridge,
+    _execute_dsml_tool,
+    _extract_dsml_tool_calls,
+    _extract_tool_use_calls,
+    _looks_like_l1_protocol_task,
+    _looks_like_workspace_task,
+    _trajectory_results,
+)
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.spec import BenchmarkSpec
@@ -96,6 +104,55 @@ class SkillOptBaselineContractTest(unittest.TestCase):
     def test_workspace_task_detection(self) -> None:
         self.assertTrue(_looks_like_workspace_task("Create /workspace/a.txt"))
         self.assertFalse(_looks_like_workspace_task("Answer the question in one sentence."))
+        self.assertFalse(_looks_like_l1_protocol_task(
+            "AVAILABLE TOOLS: terminal, filesystem",
+            {"source_format": "l2_taskstream_task_json"},
+        ))
+
+    def test_l2_filesystem_tool_aliases_execute_in_workspace(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            written = _execute_dsml_tool({
+                "name": "filesystem",
+                "arguments": {"operation": "write_file", "path": "/workspace/result.txt", "content": "ok"},
+            }, workspace, {})
+            read = _execute_dsml_tool({
+                "name": "filesystem",
+                "arguments": {"path": "/workspace/result.txt"},
+            }, workspace, {})
+            self.assertEqual(written, "[tool completed]")
+            self.assertEqual(read, "ok")
+            self.assertIn("result.txt", _execute_dsml_tool({
+                "name": "filesystem", "arguments": {"path": "/workspace"},
+            }, workspace, {}))
+
+    def test_claude_style_text_tool_envelope_is_parsed(self) -> None:
+        text = """<tool_uses><tool_use><tool_name>Write</tool_name>
+        <parameter name="file_path">/workspace/analysis/result.json</parameter>
+        <parameter name="content">{"ok": true}</parameter>
+        </tool_use></tool_uses>"""
+        self.assertEqual(
+            _extract_tool_use_calls(text),
+            [{
+                "name": "Write",
+                "arguments": {
+                    "file_path": "/workspace/analysis/result.json",
+                    "content": '{"ok": true}',
+                },
+            }],
+        )
+
+    def test_dsml_parser_keeps_all_parameters(self) -> None:
+        text = (
+            '<｜｜DSML｜｜invoke name="Write">'
+            '<｜｜DSML｜｜parameter name="file_path" string="true">/workspace/a.json</｜｜DSML｜｜parameter>'
+            '<｜｜DSML｜｜parameter name="content" string="true">{"ok": true}</｜｜DSML｜｜parameter>'
+            '</｜｜DSML｜｜invoke>'
+        )
+        self.assertEqual(
+            _extract_dsml_tool_calls(text),
+            [{"name": "Write", "arguments": {"file_path": "/workspace/a.json", "content": '{"ok": true}'}}],
+        )
 
 
 if __name__ == "__main__":

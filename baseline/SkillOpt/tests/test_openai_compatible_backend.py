@@ -28,6 +28,55 @@ class _Client:
         self.chat = SimpleNamespace(completions=recorder)
 
 
+def test_content_text_accepts_responses_style_parts() -> None:
+    content = [
+        {"type": "output_text", "text": "first "},
+        SimpleNamespace(text={"value": "second"}),
+    ]
+
+    assert backend._content_text(content) == "first second"
+
+
+def test_hidden_reasoning_without_visible_answer_fails_without_retry(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class HiddenOnlyRecorder:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def create(self, **kwargs: Any) -> Any:
+            del kwargs
+            self.calls += 1
+            message = SimpleNamespace(
+                content=None,
+                tool_calls=[],
+                reasoning_content="hidden reasoning consumed the output budget",
+            )
+            usage = SimpleNamespace(prompt_tokens=2, completion_tokens=4096, total_tokens=4098)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=message, finish_reason="length")],
+                usage=usage,
+            )
+
+    recorder = HiddenOnlyRecorder()
+    monkeypatch.setattr(backend, "_get_client", lambda role: _Client(recorder))
+
+    with pytest.raises(RuntimeError, match=r"empty visible assistant content.*reasoning_chars=43"):
+        backend.chat_target("system", "user", retries=3)
+
+    assert recorder.calls == 1
+
+
+def test_thinking_disable_is_forwarded(monkeypatch: pytest.MonkeyPatch) -> None:
+    recorder = _CompletionRecorder()
+    monkeypatch.setattr(backend, "_get_client", lambda role: _Client(recorder))
+    monkeypatch.setenv("TRIEVO_THINKING", "disabled")
+
+    backend.chat_target("system", "user", retries=1)
+
+    assert recorder.calls[0]["extra_body"] == {"thinking": {"type": "disabled"}}
+
+
 @pytest.fixture(autouse=True)
 def isolate_backend_state(monkeypatch: pytest.MonkeyPatch):
     optimizer_backend = backend_config.get_optimizer_backend()

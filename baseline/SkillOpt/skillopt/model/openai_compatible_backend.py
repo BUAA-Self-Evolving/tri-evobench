@@ -129,6 +129,61 @@ def _sanitize_for_transport(value: Any) -> Any:
     return value
 
 
+def _content_text(content: Any) -> str:
+    """Normalize text returned by OpenAI-compatible providers."""
+    if isinstance(content, str):
+        return content
+    if not isinstance(content, list):
+        return ""
+
+    parts: list[str] = []
+    for part in content:
+        if isinstance(part, str):
+            parts.append(part)
+            continue
+        if isinstance(part, dict):
+            value = part.get("text")
+        else:
+            value = getattr(part, "text", None)
+        if isinstance(value, str):
+            parts.append(value)
+        elif isinstance(value, dict) and isinstance(value.get("value"), str):
+            parts.append(value["value"])
+    return "".join(parts)
+
+
+def _message_dump(message: Any) -> dict[str, Any]:
+    if isinstance(message, dict):
+        return message
+    model_dump = getattr(message, "model_dump", None)
+    if callable(model_dump):
+        try:
+            dumped = model_dump()
+            if isinstance(dumped, dict):
+                return dumped
+        except Exception:  # noqa: BLE001 - diagnostics must not hide response
+            pass
+    raw = getattr(message, "__dict__", None)
+    return raw if isinstance(raw, dict) else {}
+
+
+def _reasoning_length(message: Any) -> int:
+    """Return hidden-reasoning size for diagnostics without exposing it."""
+    dumped = _message_dump(message)
+    for key in ("reasoning_content", "reasoning", "thinking", "analysis"):
+        value = dumped.get(key)
+        if isinstance(value, str):
+            return len(value)
+        text = _content_text(value)
+        if text:
+            return len(text)
+    return 0
+
+
+class EmptyAssistantContentError(RuntimeError):
+    """A completed response contained neither visible text nor tool calls."""
+
+
 def _config_for(role: str) -> OpenAICompatibleConfig:
     return OPTIMIZER_CONFIG if role == "optimizer" else TARGET_CONFIG
 
@@ -231,8 +286,9 @@ def _chat_messages_impl(
                 raise RuntimeError(
                     f"OpenAI-compatible API returned no choices: {resp!r}"
                 )
-            message = choices[0].message
-            text = message.content or ""
+            choice = choices[0]
+            message = choice.message
+            text = _content_text(getattr(message, "content", None))
             usage_info = usage_from_openai_usage(getattr(resp, "usage", None))
             tracker.record(
                 stage,
@@ -241,7 +297,24 @@ def _chat_messages_impl(
             )
             if return_message:
                 return compat_message_from_chat_message(message), usage_info
+            if not text.strip():
+                tool_calls = getattr(message, "tool_calls", None) or []
+                finish_reason = getattr(choice, "finish_reason", None) or "unknown"
+                reasoning_chars = _reasoning_length(message)
+                details = (
+                    f"finish_reason={finish_reason!r}, "
+                    f"reasoning_chars={reasoning_chars}, tool_calls={len(tool_calls)}"
+                )
+                raise EmptyAssistantContentError(
+                    "OpenAI-compatible API returned empty visible assistant content "
+                    f"({details}). For reasoning models, pass "
+                    "TRIEVO_THINKING=disabled to the adapter container."
+                )
             return text, usage_info
+        except EmptyAssistantContentError as e:
+            # A hidden-only/length-exhausted response is deterministic for
+            # this request. Replaying it spends another full output budget.
+            raise RuntimeError(str(e)) from e
         except Exception as e:  # noqa: BLE001
             last_err = e
             time.sleep(min(2 ** attempt, 30))

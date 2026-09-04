@@ -43,3 +43,7 @@ Thumbs.db
 # Local Docker/runtime state
 .docker/
 .l2_state/
+
+# Machine-local matrix configuration (regenerate with tools/prepare_matrix_configs.py)
+tmp_*.override.json
+start_probe_runs.ps1

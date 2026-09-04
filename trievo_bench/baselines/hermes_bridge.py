@@ -32,6 +32,7 @@ class HermesBridge:
         self._limit_state: dict[str, Any] = {}
         self._l1_tools: list[str] = []
         self._is_l1_turn = False
+        self._is_taskstream_turn = False
         self._is_l1_life_turn = False
         self._l1_state: dict[str, Any] = {}
 
@@ -106,9 +107,10 @@ class HermesBridge:
         metadata = params.get("metadata")
         self._l1_tools = [str(item) for item in metadata.get("available_tools", [])] if isinstance(metadata, dict) and isinstance(metadata.get("available_tools"), list) else []
         self._is_l1_turn = _is_l1_metadata(metadata)
+        self._is_taskstream_turn = _is_taskstream_metadata(metadata)
         self._is_l1_life_turn = _is_l1_life_metadata(metadata)
         semantic_state = params.get("semantic_state", {})
-        self._l1_state = dict(semantic_state) if self._is_l1_turn and isinstance(semantic_state, dict) else {}
+        self._l1_state = dict(semantic_state) if self._is_l1_turn and not self._is_taskstream_turn and isinstance(semantic_state, dict) else {}
         # DeepSeek Flash V4 exposes hidden reasoning by default.  The
         # benchmark track requested here is the non-thinking track, so apply
         # the provider-neutral Hermes control to every turn (including L2 and
@@ -127,7 +129,8 @@ class HermesBridge:
             # Hermes' large native tool schema here both wastes context and
             # invites the model to mutate the real workspace instead of using
             # the auditable simulated interface.
-            agent.valid_tool_names = set()
+            if not self._is_taskstream_turn:
+                agent.valid_tool_names = set()
             # Hermes' normal interactive UX retries length-truncated output
             # and then asks for a summary.  Those are extra model calls that
             # bypass L1's max_interactions contract, so return the partial
@@ -138,7 +141,7 @@ class HermesBridge:
             # Hermes reserves one no-tools call to request a concise final
             # answer after its iteration budget is depleted.  Leave that
             # grace call inside the benchmark's advertised model-call cap.
-            if not self._is_l1_turn:
+            if not self._is_l1_turn or self._is_taskstream_turn:
                 agent.max_iterations = max(1, self._turn_limits["max_model_calls"] - 1)
             agent.run_budget_seconds = float(self._turn_limits["episode_timeout_seconds"])
             agent._trievo_evolution_limits = {
@@ -158,7 +161,7 @@ class HermesBridge:
             raise RuntimeError("Hermes interaction request is empty")
         self._events = []
         self._tool_calls = []
-        if self._is_l1_turn:
+        if self._is_l1_turn and not self._is_taskstream_turn:
             request = (
                 _l1_protocol_prompt(self._l1_tools, self._is_l1_life_turn)
                 + _l1_readonly_workspace_context(Path(self._workspace or state.cwd))
@@ -187,22 +190,33 @@ class HermesBridge:
         limit_reasons = list(dict.fromkeys(limit_reasons))
         if result.get("failed") and not result.get("final_response"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
-        text, state_update, simulated_calls, protocol_events, actions = _extract_l1_protocol(
-            str(result.get("final_response", "")), self._l1_tools
-        )
-        actions = _complete_l1_file_actions(simulated_calls, actions)
-        self._l1_state = _merge_l1_state(self._l1_state, state_update)
+        if self._is_taskstream_turn:
+            # TaskStream is a bounded native-tool interaction.  It shares the
+            # one-iteration limit with L1, but its evaluator expects Hermes'
+            # ordinary final text and callback tool trace, not TRIEVO protocol
+            # lines or simulated side effects.
+            text = str(result.get("final_response", ""))
+            state_update = {}
+            simulated_calls = []
+            protocol_events = []
+            actions = []
+        else:
+            text, state_update, simulated_calls, protocol_events, actions = _extract_l1_protocol(
+                str(result.get("final_response", "")), self._l1_tools
+            )
+            actions = _complete_l1_file_actions(simulated_calls, actions)
+            self._l1_state = _merge_l1_state(self._l1_state, state_update)
         return {
             "text": text,
             "actions": actions if self._is_l1_turn else [],
             # L1 side effects are exclusively evaluator-owned protocol lines.
             # Ignore native Hermes callbacks, including malformed speculative
             # calls, so they cannot create duplicate simulated events.
-            "events": protocol_events if self._is_l1_turn else self._events,
-            "tool_calls": simulated_calls if self._is_l1_turn else self._tool_calls,
+            "events": protocol_events if (self._is_l1_turn and not self._is_taskstream_turn) else self._events,
+            "tool_calls": simulated_calls if (self._is_l1_turn and not self._is_taskstream_turn) else self._tool_calls,
             "state_update": state_update,
-            "tool_calls_are_executed": not bool(simulated_calls) if self._is_l1_turn else True,
-            "actions_are_executed": not bool(actions) if self._is_l1_turn else True,
+            "tool_calls_are_executed": not bool(simulated_calls) if (self._is_l1_turn and not self._is_taskstream_turn) else True,
+            "actions_are_executed": not bool(actions) if (self._is_l1_turn and not self._is_taskstream_turn) else True,
             "usage": usage,
             "raw": {
                 "completed": bool(result.get("completed", False)),
@@ -334,6 +348,7 @@ class HermesBridge:
         self._limit_state = {}
         self._l1_tools = []
         self._is_l1_turn = False
+        self._is_taskstream_turn = False
         self._is_l1_life_turn = False
         self._l1_state = {}
 
@@ -382,7 +397,7 @@ class HermesBridge:
     @contextlib.contextmanager
     def _foreground_policy(self, agent: Any, session_id: str, cwd: str, limits: dict[str, int]):
         from hermes_cli.plugins import clear_thread_tool_whitelist, set_thread_tool_whitelist
-        from tools import terminal_tool
+        from tools import terminal_tool, memory_tool
 
         allowed = set(getattr(agent, "valid_tool_names", set()) or set())
         if self._policy == "turn_boundary":
@@ -390,6 +405,12 @@ class HermesBridge:
         previous_approval = terminal_tool._get_approval_callback()
         previous_terminal_timeout = os.environ.get("TERMINAL_TIMEOUT")
         previous_terminal_handler = terminal_tool.terminal_tool
+        previous_memory_handler = memory_tool.memory_tool
+
+        def frozen_memory(*args: Any, **kwargs: Any) -> str:
+            # Hermes routes built-in memory directly, bypassing the plugin
+            # whitelist. Guard that entrypoint too, including worker threads.
+            return json.dumps({"success": False, "error": "Persistent memory is read-only during task execution; learning is allowed only at the turn boundary."})
 
         def approval_callback(*args: Any, **kwargs: Any) -> str:
             return self._approval_policy
@@ -445,6 +466,7 @@ class HermesBridge:
                 os.environ["TERMINAL_TIMEOUT"] = str(limits["terminal_timeout_seconds"])
                 terminal_tool.terminal_tool = limited_terminal
             if self._policy == "turn_boundary":
+                memory_tool.memory_tool = frozen_memory
                 set_thread_tool_whitelist(
                     allowed,
                     deny_msg_fmt=(
@@ -457,6 +479,7 @@ class HermesBridge:
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
             terminal_tool.terminal_tool = previous_terminal_handler
+            memory_tool.memory_tool = previous_memory_handler
             if previous_terminal_timeout is None:
                 os.environ.pop("TERMINAL_TIMEOUT", None)
             else:
@@ -585,7 +608,23 @@ def _l1_protocol_prompt(available_tools: list[str], l1_life: bool = False) -> st
 def _is_l1_metadata(metadata: Any) -> bool:
     """Identify L1 explicitly, including read-only turns without any tools."""
 
-    return isinstance(metadata, dict) and metadata.get("source_format") in {"l1_demo_task_json", "l1_life_v2_task_json"}
+    return isinstance(metadata, dict) and metadata.get("source_format") in {
+        "l1_demo_task_json",
+        "l1_life_v2_task_json",
+        # L2-Demo-V2 TaskStream uses the same one-Interaction/explicit
+        # evaluator boundary as the L1 protocol adapter.  Marking it here
+        # prevents Hermes' native continuation loop from consuming the whole
+        # L2 Interaction budget before the package verifier can run.
+        "l2_taskstream_task_json",
+        "l1_arena_task_json",
+    }
+
+
+def _is_taskstream_metadata(metadata: Any) -> bool:
+    return isinstance(metadata, dict) and metadata.get("source_format") in {
+        "l2_taskstream_task_json",
+        "l1_arena_task_json",
+    }
 
 
 def _is_l1_life_metadata(metadata: Any) -> bool:

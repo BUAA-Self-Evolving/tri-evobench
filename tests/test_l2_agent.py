@@ -3,9 +3,12 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
+from trievo_bench.baselines.base import BaselineReply
 from trievo_bench.baselines.hermes_bridge import _parse_l2_agent_limits
-from trievo_bench.l2_agent import L2AgentRunError, _agent_request, _limit_reasons, _work_limits
+from trievo_bench.l2_agent import L2AgentRunError, L2AgentStreamRunner, _agent_request, _limit_reasons, _work_limits
 
 
 class L2AgentLimitsTest(unittest.TestCase):
@@ -56,6 +59,32 @@ class L2AgentLimitsTest(unittest.TestCase):
         }})["evolution_max_model_calls"], 2)
         self.assertEqual(_limit_reasons({"limit_exhausted": True, "limit_reasons": ["max_tool_calls"]}), ["max_tool_calls"])
         self.assertEqual(_limit_reasons({"limit_exhausted": False}), [])
+
+    def test_taskstream_verifier_keeps_stdin_open_for_request(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            turn_dir = root / "streams" / "s" / "turn1"
+            (turn_dir / "evaluation_assets").mkdir(parents=True)
+            (turn_dir / "evaluation_assets" / "verifier.py").write_text("", encoding="utf-8")
+            workspace = root / "workspace"
+            workspace.mkdir()
+            runner = object.__new__(L2AgentStreamRunner)
+            runner.options = SimpleNamespace(package_dir=root, verifier_image="verifier:test")
+            task = {
+                "evaluation": {
+                    "submission_contract": {"source_binding": "submission"},
+                    "native_verifier": {
+                        "entrypoint": "evaluation_assets/verifier.py",
+                        "input_bindings": [{"name": "submission", "source": "workspace", "path": "answer.txt"}],
+                    },
+                },
+            }
+            completed = SimpleNamespace(returncode=0, stdout='{"status":"fail","score":0}\n', stderr="")
+            with patch("trievo_bench.l2_agent.subprocess.run", return_value=completed) as run:
+                result = runner._verify_taskstream(task=task, turn_dir=turn_dir, workspace=workspace, reply=BaselineReply())
+            self.assertIn("-i", run.call_args.args[0])
+            self.assertIn("l2_native_verifier_request/1.0", run.call_args.kwargs["input"])
+            self.assertEqual(result["category"], "fail")
 
 
 if __name__ == "__main__":

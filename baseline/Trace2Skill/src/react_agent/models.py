@@ -191,6 +191,7 @@ class OpenAIClient(LLMClient):
         """
         self.model = model
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.usage_totals = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self.base_url = base_url or os.getenv("OPENAI_BASE_URL")
         self.retry_times = retry_times
         
@@ -364,6 +365,14 @@ class OpenAIClient(LLMClient):
         
         # Send request
         response = self._send_request_with_retry(openai_messages, config)
+        provider_usage = getattr(response, "usage", None)
+        if provider_usage is not None:
+            usage = provider_usage.model_dump() if hasattr(provider_usage, "model_dump") else provider_usage
+            if isinstance(usage, dict):
+                with self._cache_lock:
+                    self.usage_totals["input_tokens"] += int(usage.get("prompt_tokens") or 0)
+                    self.usage_totals["output_tokens"] += int(usage.get("completion_tokens") or 0)
+                    self.usage_totals["total_tokens"] += int(usage.get("total_tokens") or 0)
         reply, reasoning_content = self._parse_response(response)
         
         # Cache the response

@@ -231,6 +231,7 @@ def main() -> None:
     parser.add_argument("--baseline-config", help="JSON/YAML overrides for the agent baseline manifest")
     parser.add_argument("--max-total-tokens", type=int, default=2_000_000)
     parser.add_argument("--browser-image", default="trievo-l2-browser:0.1")
+    parser.add_argument("--resume-checkpoint", help="post-turn checkpoint directory; rerun only subsequent TaskStream turns")
     args = parser.parse_args()
     inventory = inspect_l2_package(args.package)
     if args.inspect:
@@ -254,6 +255,7 @@ def main() -> None:
                 verifier_image=args.image,
                 browser_verifier_image=args.browser_image,
                 repo_root=Path(__file__).resolve().parents[1],
+                resume_checkpoint=Path(args.resume_checkpoint) if args.resume_checkpoint else None,
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))

@@ -161,6 +161,7 @@ class Trace2SkillBridge:
 
         agent = self._get_agent()
         target_calls_before = self._clients.get("target").calls if self._clients.get("target") else 0
+        target_usage_before = dict(getattr(self._clients.get("target"), "usage_totals", {}))
         context = self._build_context(request, params)
         result = agent.run(context)
         steps = getattr(getattr(agent, "_agent", None), "_last_steps", [])
@@ -172,9 +173,7 @@ class Trace2SkillBridge:
             answer = error
         target_calls_after = self._clients.get("target").calls if self._clients.get("target") else 0
         usage = {
-            "input_tokens": 0,
-            "output_tokens": 0,
-            "total_tokens": 0,
+            **_usage_delta(self._clients.get("target"), target_usage_before),
             "api_calls": max(0, target_calls_after - target_calls_before),
         }
         return {
@@ -198,6 +197,7 @@ class Trace2SkillBridge:
 
         client = self._get_client("target")
         before_calls = client.calls
+        before_usage = dict(getattr(client, "usage_totals", {}))
         metadata = self.turn_metadata.get("public", {})
         available = metadata.get("available_tools", []) if isinstance(metadata, dict) else []
         system = (
@@ -239,7 +239,7 @@ class Trace2SkillBridge:
             "actions": parsed.actions,
             "events": parsed.events,
             "tool_calls": parsed.tool_calls,
-            "usage": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "api_calls": max(0, client.calls - before_calls)},
+            "usage": {**_usage_delta(client, before_usage), "api_calls": max(0, client.calls - before_calls)},
             "actions_are_executed": False,
             "tool_calls_are_executed": False,
             "raw": {"protocol": "l1_json", "model_response": str(raw or ""), "parsed_response": parsed.raw},
@@ -258,6 +258,7 @@ class Trace2SkillBridge:
         events: list[dict[str, Any]] = []
         evolution_client = self._clients.get("evolution")
         before_calls = evolution_client.calls if evolution_client else 0
+        before_usage = dict(getattr(evolution_client, "usage_totals", {}))
         if self.evolution_policy == "disabled":
             events.append({"type": "evolution.skipped", "policy": self.evolution_policy})
         else:
@@ -286,9 +287,7 @@ class Trace2SkillBridge:
             "completed": True,
             "events": events,
             "usage": {
-                "input_tokens": 0,
-                "output_tokens": 0,
-                "total_tokens": 0,
+                **_usage_delta(evolution_client, before_usage),
                 "api_calls": evolution_calls,
             },
         }
@@ -528,6 +527,12 @@ class Trace2SkillBridge:
         )
 
 
+def _usage_delta(client: Any, before: dict[str, Any]) -> dict[str, int]:
+    after = getattr(client, "usage_totals", {})
+    return {key: max(0, int(after.get(key, 0)) - int(before.get(key, 0)))
+            for key in ("input_tokens", "output_tokens", "total_tokens")}
+
+
 def _build_client(options: dict[str, Any], repo_root: Path, stage: str) -> Any:
     source_root = _trace2skill_root(repo_root)
     if str(source_root) not in sys.path:
@@ -621,9 +626,12 @@ def _select_agent_name(options: dict[str, Any], turn_metadata: dict[str, Any]) -
 
 def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None = None) -> bool:
     if isinstance(metadata, dict):
-        public = metadata.get("public")
-        if isinstance(public, dict) and public.get("source_format") == "l1_demo_task_json":
+        public = metadata.get("public", metadata)
+        source_format = public.get("source_format") if isinstance(public, dict) else None
+        if source_format == "l1_demo_task_json":
             return True
+        if source_format in {"l1_arena_task_json", "l2_taskstream_task_json"}:
+            return False
     text = str(request).lower()
     return "可调用的模拟工具" in text or "available tools" in text
 
