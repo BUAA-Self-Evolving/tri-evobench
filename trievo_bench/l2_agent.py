@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 import time
 import zipfile
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -25,8 +25,23 @@ from uuid import uuid4
 from .baselines.base import BaselineReply, EvolutionContext, FlowContext, InteractionContext, TurnContext, UsageDetails
 from .baselines.manifest import BaselineManifest, find_manifest, load_manifest, merge_mappings
 from .baselines.process import ProcessBaselineRuntime
+from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationStatus
+from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
 from .model import TokenBudget, client_from_config
+from .run_conditions import RunCondition, parse_run_condition
 from .verifier import L1LifeJudge
+
+
+_VERIFIER_PROXY_ENV_NAMES = (
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "NO_PROXY",
+    "ALL_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "no_proxy",
+    "all_proxy",
+)
 
 
 class L2AgentRunError(RuntimeError):
@@ -45,6 +60,7 @@ class L2AgentWorkLimits:
     max_tool_calls: int = 8
     terminal_timeout_seconds: int = 90
     episode_timeout_seconds: int = 480
+    max_output_tokens: int = 12000
     evolution_timeout_seconds: int = 120
     evolution_max_model_calls: int = 4
 
@@ -61,6 +77,8 @@ class L2AgentRunOptions:
     browser_verifier_image: str
     repo_root: Path
     resume_checkpoint: Path | None = None
+    condition: str | RunCondition = RunCondition.EVOLVING
+    evaluation_error_policy: str = "stop"
 
 
 class L2AgentStreamRunner:
@@ -73,15 +91,30 @@ class L2AgentStreamRunner:
         self.budget = TokenBudget(options.max_total_tokens)
         self._runtime: ProcessBaselineRuntime | None = None
         self.work_limits = _work_limits(options.baseline_overrides)
+        self.condition = parse_run_condition(
+            options.condition,
+            default=RunCondition.EVOLVING,
+        )
+        if options.evaluation_error_policy not in {"stop", "continue"}:
+            raise L2AgentRunError(
+                "evaluation_error_policy must be 'stop' or 'continue'"
+            )
+        self.evaluation_error_policy = options.evaluation_error_policy
+        self._workspace_volume: DockerVolumeMirror | None = None
+        self._package_volume: DockerVolumeMirror | None = None
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
-        # L2-Demo-V2 uses the self-contained TaskStream contract.  Keep the
+        # Materialized L2 releases use the self-contained TaskStream contract. Keep the
         # legacy episode runner below unchanged, but route the new contract to
         # its native-verifier carrier instead of pretending that turn*/task.json
         # is the old episode.json/evaluation.json layout.
         if manifest.get("schema_version") == "l2_taskstream/1.0":
             return self._run_taskstream(manifest)
+        if self.condition is not RunCondition.EVOLVING:
+            raise L2AgentRunError(
+                "reset/frozen reference conditions require l2_taskstream/1.0"
+            )
         if manifest.get("level") != "L2":
             raise L2AgentRunError(f"{self.options.stream_id} is not an L2 stream")
         if manifest.get("stream_id") != self.options.stream_id:
@@ -180,7 +213,7 @@ class L2AgentStreamRunner:
         return report
 
     def _run_taskstream(self, manifest: dict[str, Any]) -> dict[str, Any]:
-        """Execute one L2-Demo-V2 TaskStream with its package-local verifier.
+        """Execute one l2_taskstream/1.0 Stream with its package-local verifier.
 
         TaskStream turns carry their own transition and native-verifier
         contracts.  The agent still uses the same BaselineRuntime protocol as
@@ -191,11 +224,20 @@ class L2AgentStreamRunner:
         turn_order = ordering.get("turn_order") if isinstance(ordering, dict) else None
         if not isinstance(turn_order, list) or not all(isinstance(item, str) for item in turn_order):
             raise L2AgentRunError("TaskStream ordering.turn_order is invalid")
+        if manifest.get("stream_id") != self.options.stream_id:
+            raise L2AgentRunError("TaskStream stream id does not match stream directory")
+        execution_requirements = _execution_requirements(manifest)
+        self.work_limits = _effective_work_limits(
+            self.work_limits,
+            execution_requirements,
+        )
         run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
         output_root = self.options.output_root.resolve()
         run_dir = output_root / self.options.stream_id / run_id
         run_dir.mkdir(parents=True, exist_ok=False)
         agent_workspace = _under(self.stream_dir, str(manifest.get("agent_workspace", "agent_workspace")))
+        if not agent_workspace.is_dir():
+            raise L2AgentRunError("TaskStream agent_workspace seed is missing")
         resume_index = 0
         resume_state_archive: Path | None = None
         completed_turns: list[dict[str, Any]] = []
@@ -214,6 +256,16 @@ class L2AgentStreamRunner:
                 raise L2AgentRunError("checkpoint stream identity mismatch")
             if checkpoint_metadata.get("baseline", self.options.baseline) != self.options.baseline:
                 raise L2AgentRunError("checkpoint baseline identity mismatch")
+            checkpoint_condition = str(
+                checkpoint_metadata.get("condition", RunCondition.EVOLVING.value)
+            )
+            if checkpoint_condition != self.condition.value:
+                raise L2AgentRunError("checkpoint run condition mismatch")
+            checkpoint_error_policy = str(
+                checkpoint_metadata.get("evaluation_error_policy", "stop")
+            )
+            if checkpoint_error_policy != self.evaluation_error_policy:
+                raise L2AgentRunError("checkpoint evaluation error policy mismatch")
             if checkpoint_metadata.get("phase") == "adjudicate":
                 resume_pending = _load_json(checkpoint / "evidence.json")
             resume_index = int(checkpoint_metadata["next_turn_index"])
@@ -229,34 +281,50 @@ class L2AgentStreamRunner:
                     completed["trace_file"] = str(prior_traces[0])
             self.budget.used = int(checkpoint_metadata.get("token_budget", {}).get("used", 0))
             self.budget.calls = int(checkpoint_metadata.get("token_budget", {}).get("calls", 0))
-            _restore_tree_archive(checkpoint_workspace, workspace)
+            if resume_pending is not None or self.condition is not RunCondition.RESET:
+                _restore_tree_archive(checkpoint_workspace, workspace)
+            else:
+                shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
         else:
             shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
-        self._runtime = self._create_runtime(resume_state_archive)
+        volume_transport = docker_volume_transport_enabled()
         report: dict[str, Any] = {
             "schema_version": "l2-agent-runtime-0.2-taskstream",
             "run_id": run_id,
             "stream_id": self.options.stream_id,
             "baseline": self.options.baseline,
+            "condition": self.condition.value,
             "started_at": datetime.now(UTC).isoformat(),
             "turns": completed_turns,
             "success": False,
             "token_budget": asdict(self.budget),
             "work_limits": asdict(self.work_limits),
+            "run_configuration": {
+                "condition": self.condition.value,
+                "evaluation_error_policy": self.evaluation_error_policy,
+                "execution_requirements": execution_requirements,
+                "effective_work_limits": asdict(self.work_limits),
+                "docker_volume_transport": volume_transport,
+            },
         }
         trace_path = run_dir / "trace.jsonl"
         started = time.monotonic()
         runtime_started = False
         try:
-            self._runtime.start_flow(
-                FlowContext(
-                    flow_id=self.options.stream_id,
-                    workspace=workspace,
-                    output_dir=run_dir,
-                    metadata={"level": "L2", "schema_version": "l2_taskstream/1.0", "stream_id": self.options.stream_id},
+            if volume_transport:
+                self._start_taskstream_volume_transport(workspace)
+            if self.condition is not RunCondition.RESET or resume_pending is not None:
+                self._start_taskstream_runtime(
+                    workspace,
+                    run_dir,
+                    resume_state_archive=resume_state_archive,
+                    runtime_output_dir=(
+                        run_dir / "runtime_segments" / f"t{resume_index + 1:04d}"
+                        if self.condition is RunCondition.RESET
+                        else None
+                    ),
                 )
-            )
-            runtime_started = True
+                runtime_started = True
             for turn_index, turn_id in enumerate(turn_order):
                 if turn_index < resume_index:
                     continue
@@ -265,113 +333,297 @@ class L2AgentStreamRunner:
                 if task.get("stream_id") != self.options.stream_id or task.get("turn_id") != turn_id:
                     raise L2AgentRunError(f"TaskStream identity mismatch for {turn_id}")
                 if resume_pending is None:
+                    if self.condition is RunCondition.RESET:
+                        if runtime_started and self._runtime is not None:
+                            self._runtime.end_flow()
+                            runtime_started = False
+                        _replace_tree(agent_workspace, workspace)
                     self._apply_taskstream_transition(task, turn_dir, workspace)
+                    self._sync_workspace_to_volume()
+                    if self.condition is RunCondition.RESET:
+                        self._start_taskstream_runtime(
+                            workspace,
+                            run_dir,
+                            runtime_output_dir=(
+                                run_dir / "runtime_segments" / f"t{turn_index + 1:04d}"
+                            ),
+                        )
+                        runtime_started = True
+                sequence_role = _validate_taskstream_turn_identity(
+                    manifest,
+                    task,
+                    turn_index=turn_index + 1,
+                    turn_id=turn_id,
+                )
                 request = _taskstream_request(task, self.work_limits)
                 simulator = task.get("user_simulator")
-                max_interactions = 1 + max(0, int(simulator.get("max_generated_messages", 0))) if isinstance(simulator, dict) else 1
+                simulator_interactions = (
+                    1 + max(0, int(simulator.get("max_generated_messages", 0)))
+                    if isinstance(simulator, dict)
+                    else 1
+                )
+                max_interactions = min(
+                    int(execution_requirements["max_interactions"]),
+                    simulator_interactions,
+                )
+                if self._runtime is None:
+                    raise L2AgentRunError("baseline runtime is not initialized")
                 self._runtime.start_turn(
                     TurnContext(
                         turn_id,
                         request,
                         max_interactions,
-                        {"level": "L2", "schema_version": "l2_taskstream/1.0", "source_format": "l2_taskstream_task_json", "stream_id": self.options.stream_id, "agent_limits": asdict(self.work_limits)},
+                        {
+                            "level": "L2",
+                            "schema_version": "l2_taskstream/1.0",
+                            "source_format": "l2_taskstream_task_json",
+                            "stream_id": self.options.stream_id,
+                            "condition": self.condition.value,
+                            "agent_limits": asdict(self.work_limits),
+                            "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
+                        },
                     )
                 )
                 interactions: list[dict[str, Any]] = list(resume_pending["interactions"]) if resume_pending else []
                 history: list[dict[str, Any]] = list(resume_pending["history"]) if resume_pending else []
                 current_request = resume_pending["request"] if resume_pending else request
-                final_score = 0.0
+                final_score: float | None = None
                 final_category = "fail"
-                passed = False
+                terminal_outcome: EvaluationOutcome | None = None
                 first_interaction = int(resume_pending["interaction_index"]) if resume_pending else 1
                 for interaction_index in range(first_interaction, max_interactions + 1):
+                    interaction_request = current_request
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
-                    reply = BaselineReply()
-                    try:
-                        reply = _restored_reply(resume_pending["reply"]) if resume_pending else self._runtime.interact(
+                    if resume_pending:
+                        reply = _restored_reply(resume_pending["reply"])
+                    else:
+                        reply = self._runtime.interact(
                             InteractionContext(
                                 turn_id=turn_id,
                                 interaction_index=interaction_index,
-                                request=current_request,
+                                request=interaction_request,
                                 history=history,
                                 sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
                                 remaining_token_budget=max(0, self.budget.limit - self.budget.used),
                             )
                         )
-                        # Durable stage evidence survives judge/parser failures. Never
-                        # discard a paid agent execution when evaluator work fails.
-                        stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
-                        pending = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"p{turn_index:04d}-{interaction_index:02d}"
-                        pending.mkdir(parents=True, exist_ok=True)
-                        _archive_tree(workspace, pending / "workspace.zip")
-                        self._runtime.save_checkpoint_state(pending / "baseline_state.zip")
-                        _write_json(pending / "evidence.json", {
-                            "turn_id": turn_id, "turn_index": turn_index,
-                            "interaction_index": interaction_index, "request": current_request,
-                            "reply": asdict(reply), "history": history, "interactions": interactions,
-                            "before_files": before_files, "token_budget": asdict(self.budget),
-                        })
-                        _write_json(pending / "completed_turns.json", report["turns"])
-                        _write_json(pending / "checkpoint.json", {
-                            "phase": "adjudicate", "stream_id": self.options.stream_id,
-                            "baseline": self.options.baseline, "next_turn_index": turn_index,
-                            "interaction_index": interaction_index, "token_budget": asdict(self.budget),
-                        })
-                        resume_pending = None
+                        self._sync_workspace_from_volume()
+                    # Durable stage evidence survives verifier/Judge/Simulator
+                    # failures. A resume can reuse this paid Agent execution.
+                    stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                    pending = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"p{turn_index:04d}-{interaction_index:02d}"
+                    pending.mkdir(parents=True, exist_ok=True)
+                    _archive_tree(workspace, pending / "workspace.zip")
+                    self._runtime.save_checkpoint_state(pending / "baseline_state.zip")
+                    _write_json(pending / "evidence.json", {
+                        "turn_id": turn_id, "turn_index": turn_index,
+                        "interaction_index": interaction_index, "request": interaction_request,
+                        "reply": asdict(reply), "history": history, "interactions": interactions,
+                        "before_files": before_files, "token_budget": asdict(self.budget),
+                    })
+                    _write_json(pending / "completed_turns.json", report["turns"])
+                    _write_json(pending / "checkpoint.json", {
+                        "phase": "adjudicate", "stream_id": self.options.stream_id,
+                        "baseline": self.options.baseline, "condition": self.condition.value,
+                        "evaluation_error_policy": self.evaluation_error_policy,
+                        "next_turn_index": turn_index, "interaction_index": interaction_index,
+                        "token_budget": asdict(self.budget),
+                    })
+                    resume_pending = None
+                    limit_reasons = _limit_reasons(reply.raw)
+                    if limit_reasons:
+                        verification = _runtime_limit_failure(", ".join(limit_reasons))
+                        outcome = EvaluationOutcome.scored(
+                            turn_score=0.0,
+                            passed=False,
+                            bounded_feedback=BoundedFeedback(
+                                failed_dimensions=("resource_limit",),
+                                observable_deficiency=(
+                                    "The task attempt exhausted its declared public work budget."
+                                ),
+                                public_result_category="fail",
+                            ),
+                            audit_details={"work_limit": verification},
+                        )
+                    else:
                         verification = self._verify_taskstream(
                             task=task,
                             turn_dir=turn_dir,
                             workspace=workspace,
                             reply=reply,
                         )
-                        if verification["category"] != "error":
-                            verification["judge"] = self._judge_taskstream(
-                                task, reply, verification, interaction_index, history,
-                                before_files, _workspace_digest(workspace),
+                        if verification["category"] == "error":
+                            outcome = EvaluationOutcome.evaluation_error(
+                                private_diagnostics={
+                                    "stage": "native_verifier",
+                                    "details": verification.get("details", {}),
+                                },
+                                audit_details={"native_verifier": verification},
                             )
-                    except Exception as exc:
-                        verification = {"category": "error", "score": 0.0, "details": {"type": "runtime_error", "error": str(exc)}}
-                    final_score = float(verification.get("judge", {}).get("score", verification.get("score")) or 0.0)
-                    final_category = str(verification.get("category", "error"))
-                    passed = final_score >= float(task.get("evaluation", {}).get("success_policy", {}).get("turn_score_threshold", 1.0))
-                    if final_category != "error":
-                        final_category = "pass" if passed else "fail"
+                        else:
+                            try:
+                                verification["judge"] = self._judge_taskstream(
+                                    task, reply, verification, interaction_index, history,
+                                    before_files, _workspace_digest(workspace),
+                                )
+                            except Exception as exc:
+                                verification["judge_error"] = {
+                                    "type": type(exc).__name__,
+                                    "error": str(exc),
+                                }
+                                outcome = EvaluationOutcome.evaluation_error(
+                                    private_diagnostics={
+                                        "stage": "judge",
+                                        "type": type(exc).__name__,
+                                        "error": str(exc),
+                                    },
+                                    audit_details={"native_verifier": verification},
+                                )
+                            else:
+                                score = float(verification["judge"]["score"])
+                                threshold = float(
+                                    task.get("evaluation", {})
+                                    .get("success_policy", {})
+                                    .get("turn_score_threshold", 1.0)
+                                )
+                                passed = score >= threshold
+                                feedback = None if passed else _project_bounded_feedback(task, verification)
+                                outcome = EvaluationOutcome.scored(
+                                    turn_score=score,
+                                    passed=passed,
+                                    bounded_feedback=feedback,
+                                    private_diagnostics={
+                                        "native": verification.get("details", {}),
+                                        "judge": verification["judge"].get("details", {}),
+                                    },
+                                    audit_details={"verification": verification},
+                                )
+                    final_score = outcome.turn_score
+                    final_category = (
+                        "error"
+                        if outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
+                        else "execution_limit"
+                        if verification.get("category") == "execution_limit"
+                        else "pass" if outcome.passed else "fail"
+                    )
+                    interaction_outcome = outcome
                     after_files = _workspace_digest(workspace)
+                    public_feedback = outcome.bounded_feedback_mapping()
+                    interaction_feedback = public_feedback
+                    next_history = list(history)
+                    if outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR:
+                        next_history.extend([
+                            {"role": "user", "content": interaction_request},
+                            {"role": "assistant", "content": reply.text},
+                            {
+                                "role": "judge",
+                                "content": json.dumps(public_feedback, ensure_ascii=False)
+                                if public_feedback is not None
+                                else "Task succeeded.",
+                            },
+                        ])
+                    simulator_audit: dict[str, Any] | None = None
+                    should_retry = (
+                        outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
+                        and not bool(outcome.passed)
+                        and interaction_index < max_interactions
+                        and _taskstream_retryable(task, verification)
+                    )
+                    if should_retry:
+                        simulator_audit = self._taskstream_followup(
+                            task,
+                            next_history,
+                            reply.text,
+                            public_feedback,
+                        )
+                        if simulator_audit["status"] == "ok":
+                            current_request = str(simulator_audit["parsed"]["next_user_message"])
+                        else:
+                            outcome = EvaluationOutcome.evaluation_error(
+                                private_diagnostics={
+                                    "stage": "user_simulator",
+                                    "error": str(simulator_audit.get("error", "invalid output")),
+                                },
+                                audit_details={
+                                    "verification": verification,
+                                    "user_simulator": simulator_audit,
+                                },
+                            )
+                            final_score = None
+                            final_category = "error"
+                            should_retry = False
+                    if final_category not in {"error", "execution_limit"}:
+                        final_category = "pass" if interaction_outcome.passed else "fail"
                     record = {
                         "turn_id": turn_id,
                         "interaction_index": interaction_index,
-                        "request": current_request,
+                        "request": interaction_request,
                         "response": reply.text,
                         "tool_calls": reply.tool_calls,
                         "events": reply.events,
                         "usage": reply.usage.to_dict(),
                         "workspace_changes": _changed_workspace_files(before_files, after_files),
                         "verifier": verification,
-                        "score": final_score,
-                        "passed": passed,
+                        "score": interaction_outcome.turn_score,
+                        "passed": interaction_outcome.passed,
+                        "evaluation_status": interaction_outcome.evaluation_status.value,
+                        "bounded_feedback": interaction_feedback,
                     }
+                    if simulator_audit is not None:
+                        record["user_simulator"] = simulator_audit
+                    if outcome is not interaction_outcome:
+                        record["terminal_evaluation_error"] = outcome.to_mapping()
                     interactions.append(record)
                     with trace_path.open("a", encoding="utf-8") as trace:
                         trace.write(json.dumps(record, ensure_ascii=False) + "\n")
-                    if final_category == "error":
-                        raise L2AgentRunError(f"framework failure in {turn_id}: {verification.get('details')}")
-                    history.extend([{"role": "user", "content": current_request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": _bounded_feedback(final_category)}])
-                    if passed or interaction_index >= max_interactions or not _taskstream_retryable(task, verification):
+                    terminal_outcome = outcome
+                    if outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR:
                         break
-                    current_request = self._taskstream_followup(task, history, reply.text, final_category)
+                    history = next_history
+                    if not should_retry:
+                        break
+                if terminal_outcome is None:
+                    raise L2AgentRunError(f"TaskStream turn {turn_id} produced no terminal outcome")
+                evolution_enabled = (
+                    self.condition.policy.sut_evolution_enabled
+                    and terminal_outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
+                )
                 evolution = self._runtime.evolve(
                     EvolutionContext(
                         turn_id=turn_id,
                         trajectory=[_public_taskstream_trajectory(item) for item in interactions],
-                        feedback=[{"interaction_index": item["interaction_index"], "score": item["score"], "passed": item["passed"], "feedback": _bounded_feedback(str(item["verifier"].get("category", "error")))} for item in interactions],
+                        feedback=[{
+                            "interaction_index": item["interaction_index"],
+                            "score": item["score"],
+                            "passed": item["passed"],
+                            "feedback": item.get("bounded_feedback"),
+                        } for item in interactions if item.get("evaluation_status") != "evaluation_error"],
+                        update_enabled=evolution_enabled,
+                        skip_reason=(
+                            "evaluation_error"
+                            if terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
+                            else f"condition:{self.condition.value}"
+                        ),
                     )
                 )
+                self._sync_workspace_from_volume()
                 evolution_record = {"record_type": "evolution", "turn_id": turn_id, "evolution": evolution.to_dict()}
                 with trace_path.open("a", encoding="utf-8") as trace:
                     trace.write(json.dumps(evolution_record, ensure_ascii=False) + "\n")
+                turn_passed = (
+                    bool(terminal_outcome.passed) and evolution.completed
+                    if terminal_outcome.passed is not None
+                    else None
+                )
                 report["turns"].append({
+                    "condition": self.condition.value,
+                    "stream_id": self.options.stream_id,
                     "turn_id": turn_id,
-                    "passed": passed and evolution.completed,
+                    "turn_index": turn_index + 1,
+                    "sequence_role": sequence_role,
+                    "turn_score": terminal_outcome.turn_score,
+                    "evaluation_status": terminal_outcome.evaluation_status.value,
+                    "passed": turn_passed,
                     "final_score": final_score,
                     "final_category": final_category if evolution.completed else "evolution_limit",
                     "interaction_count": len(interactions),
@@ -387,11 +639,39 @@ class L2AgentStreamRunner:
                 self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
                 report["turns"][-1]["checkpoint"] = str(checkpoint)
                 _write_json(checkpoint / "completed_turns.json", report["turns"])
-                _write_json(checkpoint / "checkpoint.json", {"stream_id": self.options.stream_id, "baseline": self.options.baseline, "turn_id": turn_id, "completed_turn_index": turn_index, "next_turn_index": turn_index + 1, "token_budget": asdict(self.budget)})
+                _write_json(checkpoint / "checkpoint.json", {
+                    "stream_id": self.options.stream_id,
+                    "baseline": self.options.baseline,
+                    "condition": self.condition.value,
+                    "evaluation_error_policy": self.evaluation_error_policy,
+                    "turn_id": turn_id,
+                    "completed_turn_index": turn_index,
+                    "next_turn_index": turn_index + 1,
+                    "token_budget": asdict(self.budget),
+                })
                 _write_json(run_dir / "report.json", report)
-            report["success"] = len(report["turns"]) == len(turn_order) and all(item["passed"] for item in report["turns"])
+                if (
+                    terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
+                    and self.evaluation_error_policy == "stop"
+                ):
+                    raise L2AgentRunError(
+                        f"evaluation_error in {turn_id}: "
+                        f"{_evaluation_error_summary(terminal_outcome.private_diagnostics)}; "
+                        f"resume from {pending} after repairing the evaluator"
+                    )
+            report["completed"] = len(report["turns"]) == len(turn_order)
+            report["evaluation_complete"] = all(
+                item.get("evaluation_status") != "evaluation_error"
+                for item in report["turns"]
+            )
+            report["success"] = (
+                report["completed"]
+                and report["evaluation_complete"]
+                and all(item.get("passed") is True for item in report["turns"])
+            )
         except BaseException as exc:
             report["error"] = f"{type(exc).__name__}: {exc}"
+            self._sync_workspace_from_volume(best_effort=True)
             _archive_tree(workspace, run_dir / "error_workspace.zip")
             raise
         finally:
@@ -405,8 +685,47 @@ class L2AgentStreamRunner:
             report["token_budget"] = asdict(self.budget)
             report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
             _write_json(run_dir / "report.json", report)
+            self._close_taskstream_volume_transport()
             shutil.rmtree(workspace, ignore_errors=True)
         return report
+
+    def _start_taskstream_volume_transport(self, workspace: Path) -> None:
+        if self._workspace_volume is not None or self._package_volume is not None:
+            raise L2AgentRunError("TaskStream Docker volume transport already started")
+        try:
+            self._workspace_volume = DockerVolumeMirror.create(
+                workspace,
+                role="l2-workspace",
+            )
+            self._package_volume = DockerVolumeMirror.create(
+                self.package_dir,
+                role="l2-package",
+                writable_uid=0,
+                writable_gid=0,
+            )
+        except BaseException:
+            self._close_taskstream_volume_transport()
+            raise
+
+    def _sync_workspace_to_volume(self) -> None:
+        if self._workspace_volume is not None:
+            self._workspace_volume.sync_from_host()
+
+    def _sync_workspace_from_volume(self, *, best_effort: bool = False) -> None:
+        if self._workspace_volume is None:
+            return
+        try:
+            self._workspace_volume.sync_to_host()
+        except BaseException:
+            if not best_effort:
+                raise
+
+    def _close_taskstream_volume_transport(self) -> None:
+        for mirror in (self._package_volume, self._workspace_volume):
+            if mirror is not None:
+                mirror.close()
+        self._package_volume = None
+        self._workspace_volume = None
 
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
@@ -431,38 +750,129 @@ class L2AgentStreamRunner:
         native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
         entrypoint = native.get("entrypoint")
         if not isinstance(entrypoint, str):
-            return {"category": "error", "score": 0.0, "details": {"type": "missing_native_verifier"}}
+            return {"category": "error", "score": None, "details": {"type": "missing_native_verifier"}}
         contract = evaluation.get("submission_contract", {})
         source = str(contract.get("source_binding", "submission"))
         declared = next((item for item in native.get("input_bindings", []) if item.get("name") == source), None)
         if not isinstance(declared, dict):
-            return {"category": "error", "score": 0.0, "details": {"type": "missing_submission_binding"}}
-        if declared.get("source") == "workspace":
-            submission = {"kind": "path", "path": declared.get("path")}
-        else:
-            submission = {"kind": "inline", "value": reply.text}
-        request = {"schema_version": "l2_native_verifier_request/1.0", "bindings": {"submission": submission}}
+            return {"category": "error", "score": None, "details": {"type": "missing_submission_binding"}}
+        bindings: dict[str, dict[str, Any]] = {}
+        for binding in native.get("input_bindings", []):
+            if not isinstance(binding, dict) or not isinstance(binding.get("name"), str):
+                return {"category": "error", "score": None, "details": {"type": "invalid_native_binding"}}
+            binding_name = str(binding["name"])
+            binding_source = binding.get("source")
+            if binding_source in {"workspace", "evaluation_assets"}:
+                bindings[binding_name] = {"kind": "path", "path": binding.get("path")}
+            elif binding_source == "interaction_record" and binding.get("path") == "final_response":
+                bindings[binding_name] = {"kind": "inline", "value": reply.text}
+            else:
+                return {
+                    "category": "error",
+                    "score": None,
+                    "details": {
+                        "type": "unsupported_native_binding",
+                        "name": binding_name,
+                        "source": binding_source,
+                        "path": binding.get("path"),
+                    },
+                }
+        request = {
+            "schema_version": "l2_native_verifier_request/1.0",
+            "bindings": bindings,
+        }
         package_root = self.options.package_dir.resolve()
         verifier = _under(turn_dir, entrypoint)
         verifier_rel = verifier.relative_to(package_root).as_posix()
         contract_path = verifier.parent / "verifier_contract.json"
         requires_browser = contract_path.is_file() and "playwright" in contract_path.read_text(encoding="utf-8").lower()
         verifier_image = self.options.browser_verifier_image if requires_browser else self.options.verifier_image
+        package_volume = getattr(self, "_package_volume", None)
+        workspace_volume = getattr(self, "_workspace_volume", None)
+        package_mount = (
+            package_volume.mount("/opt/l2_demo", read_only=True)
+            if package_volume is not None
+            else f"{package_root}:/opt/l2_demo:ro"
+        )
+        workspace_mount = (
+            workspace_volume.mount("/workspace")
+            if workspace_volume is not None
+            else f"{workspace}:/workspace"
+        )
+        blocked_proxy_environment = [
+            item
+            for name in _VERIFIER_PROXY_ENV_NAMES
+            for item in ("-e", f"{name}=")
+        ]
         command = [
             _docker_executable(), "run", "--rm", "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
-            "-v", f"{package_root}:/opt/l2_demo:ro", "-v", f"{workspace}:/workspace",
+            "-v", package_mount, "-v", workspace_mount,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
+            *blocked_proxy_environment,
             verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
         ]
-        completed = subprocess.run(command, input=json.dumps(request, ensure_ascii=False), text=True, encoding="utf-8", errors="replace", capture_output=True, check=False, timeout=300)
+        timeout = int(native.get("timeout_seconds", 300))
+        try:
+            completed = subprocess.run(
+                command,
+                input=json.dumps(request, ensure_ascii=False),
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                capture_output=True,
+                check=False,
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return {
+                "category": "error",
+                "score": None,
+                "details": {
+                    "type": "verifier_timeout",
+                    "timeout_seconds": timeout,
+                    "stdout": str(exc.stdout or "")[-4000:],
+                    "stderr": str(exc.stderr or "")[-4000:],
+                },
+            }
+        except (OSError, ValueError) as exc:
+            return {
+                "category": "error",
+                "score": None,
+                "details": {
+                    "type": "verifier_runtime_error",
+                    "error": f"{type(exc).__name__}: {exc}",
+                },
+            }
         if completed.returncode != 0:
-            return {"category": "error", "score": 0.0, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
+            return {"category": "error", "score": None, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
         try:
             result = json.loads(completed.stdout.strip().splitlines()[-1])
         except (json.JSONDecodeError, IndexError) as exc:
-            return {"category": "error", "score": 0.0, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
-        return {"category": str(result.get("status", result.get("category", "error"))), "score": float(result.get("score") or 0.0), "details": result.get("private_diagnostics", result.get("details", {})), "native_result": result}
+            return {"category": "error", "score": None, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
+        error = _native_result_error(native, result)
+        if error:
+            return {
+                "category": "error",
+                "score": None,
+                "details": {"type": "invalid_verifier_output", "error": error},
+                "native_result": result,
+            }
+        category = str(result["status"])
+        return {
+            "category": category,
+            "score": None if category == "error" else float(result["score"]),
+            "details": (
+                {
+                    "type": "native_verifier_error",
+                    "error": result.get("error"),
+                    "private_diagnostics": result.get("private_diagnostics", {}),
+                }
+                if category == "error"
+                else result.get("private_diagnostics", {})
+            ),
+            "native_result": result,
+        }
 
     def _judge_taskstream(self, task: dict[str, Any], reply: BaselineReply, native: dict[str, Any], interaction_index: int, history: list[dict[str, Any]], before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
         evaluation = task["evaluation"]
@@ -494,23 +904,81 @@ class L2AgentStreamRunner:
         result = L1LifeJudge(client_from_config({"thinking": "disabled"}, self.budget)).evaluate(check, reply.text, None, trajectory)
         if result.details.get("type") == "l1_life_judge_parse_error":
             raise L2AgentRunError(f"invalid reference judge output: {result.details}")
+        component_values = [
+            *result.details.get("check_scores", {}).values(),
+            *result.details.get("source_rubric_scores", {}).values(),
+        ]
+        if component_values and all(value is None for value in component_values):
+            raise L2AgentRunError("reference judge returned only null components")
         return {"score": result.score, "passed": result.passed, "feedback": result.feedback, "details": result.details}
 
-    def _taskstream_followup(self, task: dict[str, Any], history: list[dict[str, Any]], response: str, category: str) -> str:
+    def _taskstream_followup(
+        self,
+        task: dict[str, Any],
+        history: list[dict[str, Any]],
+        response: str,
+        bounded_feedback: dict[str, Any] | None,
+    ) -> dict[str, Any]:
         config = task.get("user_simulator", {})
-        prompt = L1LifeJudge._render(str(config.get("simulator_prompt", "")), {
-            "agent_input": task.get("agent_input", {}), "interaction_transcript": history,
-            "latest_agent_response": response, "bounded_evaluation_feedback": _bounded_feedback(category),
-        })
-        text = client_from_config({"thinking": "disabled"}, self.budget).complete(
-            [{"role": "system", "content": "Follow the bounded public user-simulator contract. Return JSON only."},
-             {"role": "user", "content": prompt}], max_tokens=1024, json_mode=True,
+        attempts: list[str] = []
+        last_error = "unknown user-simulator output error"
+        for attempt in range(2):
+            try:
+                prompt = L1LifeJudge._render(str(config.get("simulator_prompt", "")), {
+                    "agent_input": task.get("agent_input", {}),
+                    "interaction_transcript": history,
+                    "latest_agent_response": response,
+                    "bounded_evaluation_feedback": bounded_feedback,
+                })
+                if attempt:
+                    prompt += (
+                        "\n\n[REPAIR]\nThe prior output was invalid: "
+                        + last_error
+                        + "\nReturn exactly one valid l2_user_simulator_output/1.0 JSON object."
+                    )
+                text = client_from_config({"thinking": "disabled"}, self.budget).complete(
+                    [{"role": "system", "content": "Follow the bounded public user-simulator contract. Return JSON only."},
+                     {"role": "user", "content": prompt}], max_tokens=1024, json_mode=True,
+                )
+                attempts.append(text)
+                result = L1LifeJudge._parse(text)
+                error = _user_simulator_output_error(result)
+                if error:
+                    raise ValueError(error)
+                return {"status": "ok", "raw_attempts": attempts, "parsed": result}
+            except Exception as exc:
+                last_error = f"{type(exc).__name__}: {exc}"
+        return {"status": "error", "raw_attempts": attempts, "error": last_error}
+
+    def _start_taskstream_runtime(
+        self,
+        workspace: Path,
+        run_dir: Path,
+        *,
+        resume_state_archive: Path | None = None,
+        runtime_output_dir: Path | None = None,
+    ) -> None:
+        output_dir = runtime_output_dir or run_dir
+        output_dir.mkdir(parents=True, exist_ok=True)
+        self._runtime = self._create_runtime(resume_state_archive)
+        self._runtime.start_flow(
+            FlowContext(
+                flow_id=self.options.stream_id,
+                workspace=workspace,
+                output_dir=output_dir,
+                metadata={
+                    "level": "L2",
+                    "schema_version": "l2_taskstream/1.0",
+                    "stream_id": self.options.stream_id,
+                    "condition": self.condition.value,
+                },
+                workspace_mount=(
+                    self._workspace_volume.volume_name
+                    if self._workspace_volume is not None
+                    else None
+                ),
+            )
         )
-        result = L1LifeJudge._parse(text)
-        message = result.get("next_user_message")
-        if not isinstance(message, str) or not message.strip():
-            raise L2AgentRunError("invalid user-simulator output")
-        return message
 
     def _create_runtime(self, resume_state_archive: Path | None = None) -> ProcessBaselineRuntime:
         # L2 uses the same BaselineRuntime protocol as L1.  Resolve the
@@ -519,11 +987,35 @@ class L2AgentStreamRunner:
         # this method hard-coded Hermes, making the advertised three-agent L2
         # matrix impossible to run.
         manifest_path = find_manifest(self.options.baseline, self.options.repo_root)
+        policy = "turn_boundary" if self.condition.policy.sut_evolution_enabled else "disabled"
         overrides = merge_mappings(
             self.options.baseline_overrides,
-            {"evolution": {"policy": "turn_boundary", "timeout_seconds": self.work_limits.evolution_timeout_seconds}},
+            {
+                "evolution": {
+                    "policy": policy,
+                    "timeout_seconds": self.work_limits.evolution_timeout_seconds,
+                },
+                "options": {"l2_agent_limits": asdict(self.work_limits)},
+            },
         )
         manifest = load_manifest(manifest_path).with_overrides(overrides)
+        options = manifest.options
+        if self.options.baseline == "skillopt":
+            current = int(options.get("max_completion_tokens", self.work_limits.max_output_tokens))
+            manifest = manifest.with_overrides({
+                "options": {"max_completion_tokens": min(current, self.work_limits.max_output_tokens)}
+            })
+        elif self.options.baseline == "trace2skill":
+            current = int(options.get("max_turns", self.work_limits.max_tool_calls))
+            manifest = manifest.with_overrides({
+                "options": {
+                    "max_turns": min(current, self.work_limits.max_tool_calls),
+                    "max_tokens": min(
+                        int(options.get("max_tokens", self.work_limits.max_output_tokens)),
+                        self.work_limits.max_output_tokens,
+                    ),
+                }
+            })
         return ProcessBaselineRuntime(
             manifest,
             budget=self.budget,
@@ -837,6 +1329,7 @@ def _agent_request(episode_dir: Path, agent_view: Any, limits: L2AgentWorkLimits
         (
             "This Episode has a hard work budget enforced by the evaluator: at most "
             f"{limits.max_model_calls} model calls, {limits.max_tool_calls} tool calls, "
+            f"{limits.max_output_tokens} output tokens, "
             f"{limits.terminal_timeout_seconds} seconds for each terminal command, and "
             f"{limits.episode_timeout_seconds} seconds total. Reaching any limit immediately "
             "ends this Episode and records it as a failure. Do not run exhaustive parameter "
@@ -883,7 +1376,8 @@ def _taskstream_request(task: dict[str, Any], limits: L2AgentWorkLimits | None =
         "Complete the public task by inspecting and editing only /workspace. Do not seek private evaluation assets.",
         "The current TaskStream turn is self-contained; prior public messages are included below in order.",
         (f"Per-interaction resource ceiling: {limits.max_model_calls} model calls, {limits.max_tool_calls} tool calls, "
-         f"{limits.terminal_timeout_seconds} seconds per terminal command, {limits.episode_timeout_seconds} seconds total. "
+         f"{limits.max_output_tokens} output tokens, {limits.terminal_timeout_seconds} seconds per terminal command, "
+         f"{limits.episode_timeout_seconds} seconds total. "
          "Finish the required artifact before the tool budget is exhausted." if limits else ""),
         "\nPUBLIC TRANSCRIPT:\n" + transcript,
         "\nAVAILABLE TOOLS:\n" + json.dumps(tools, ensure_ascii=False, indent=2),
@@ -906,9 +1400,22 @@ def _public_taskstream_trajectory(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def _taskstream_retryable(task: dict[str, Any], verification: dict[str, Any]) -> bool:
-    # AutoResearch's native ``pass`` means a valid submission, even when its
-    # metric is low.  That is explicitly not retryable under this contract.
-    return verification.get("native_result", {}).get("status") == "fail"
+    native_status = verification.get("native_result", {}).get("status")
+    if native_status == "error" or verification.get("category") == "error":
+        return False
+    evaluation = task.get("evaluation", {})
+    profile = evaluation.get("evaluation_profile", "general") if isinstance(evaluation, dict) else "general"
+    if profile == "auto_research":
+        # A native pass means the artifact was valid and measurable. Its metric
+        # may still be low, but Contract V1 terminates that Interaction.
+        return native_status == "fail"
+    threshold = float(evaluation.get("success_policy", {}).get("turn_score_threshold", 1.0))
+    judge_score = verification.get("judge", {}).get("score")
+    return native_status in {"fail", "partial"} or (
+        isinstance(judge_score, (int, float))
+        and not isinstance(judge_score, bool)
+        and float(judge_score) < threshold
+    )
 
 
 def _public_sidecar(episode_dir: Path, relative: str) -> Path:
@@ -992,6 +1499,7 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
         "max_tool_calls": (1, 100),
         "terminal_timeout_seconds": (1, 600),
         "episode_timeout_seconds": (30, 3600),
+        "max_output_tokens": (1, 1_000_000),
         "evolution_timeout_seconds": (10, 900),
         "evolution_max_model_calls": (1, 16),
     }
@@ -1011,6 +1519,206 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
     if values["episode_timeout_seconds"] <= values["terminal_timeout_seconds"]:
         raise L2AgentRunError("Episode time limit must exceed the terminal-command time limit")
     return L2AgentWorkLimits(**values)
+
+
+def _execution_requirements(manifest: dict[str, Any]) -> dict[str, Any]:
+    raw = manifest.get("execution_requirements")
+    if not isinstance(raw, dict):
+        raise L2AgentRunError("TaskStream execution_requirements is required")
+    if raw.get("network") != "disabled":
+        raise L2AgentRunError("TaskStream execution_requirements.network must be disabled")
+    if raw.get("path_scope") != "agent_workspace":
+        raise L2AgentRunError("TaskStream execution_requirements.path_scope must be agent_workspace")
+    result: dict[str, Any] = {
+        "network": "disabled",
+        "path_scope": "agent_workspace",
+    }
+    for name in (
+        "max_interactions",
+        "max_tool_calls_per_interaction",
+        "turn_timeout_seconds",
+        "max_output_tokens",
+    ):
+        value = raw.get(name)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            raise L2AgentRunError(f"execution_requirements.{name} must be a positive integer")
+        result[name] = value
+    if result["max_interactions"] > 3:
+        raise L2AgentRunError("execution_requirements.max_interactions must not exceed 3")
+    return result
+
+
+def _effective_work_limits(
+    configured: L2AgentWorkLimits,
+    requirements: dict[str, Any],
+) -> L2AgentWorkLimits:
+    episode_timeout = min(
+        configured.episode_timeout_seconds,
+        int(requirements["turn_timeout_seconds"]),
+    )
+    if episode_timeout < 2:
+        raise L2AgentRunError("turn_timeout_seconds must allow a positive terminal timeout")
+    return replace(
+        configured,
+        max_tool_calls=min(
+            configured.max_tool_calls,
+            int(requirements["max_tool_calls_per_interaction"]),
+        ),
+        terminal_timeout_seconds=min(
+            configured.terminal_timeout_seconds,
+            episode_timeout - 1,
+        ),
+        episode_timeout_seconds=episode_timeout,
+        max_output_tokens=min(
+            configured.max_output_tokens,
+            int(requirements["max_output_tokens"]),
+        ),
+    )
+
+
+def _validate_taskstream_turn_identity(
+    manifest: dict[str, Any],
+    task: dict[str, Any],
+    *,
+    turn_index: int,
+    turn_id: str,
+) -> str:
+    summaries = manifest.get("turns")
+    if not isinstance(summaries, list) or len(summaries) != len(
+        manifest.get("ordering", {}).get("turn_order", [])
+    ):
+        raise L2AgentRunError("TaskStream turns must match ordering.turn_order")
+    summary = summaries[turn_index - 1]
+    if not isinstance(summary, dict):
+        raise L2AgentRunError(f"TaskStream turn summary {turn_index} is invalid")
+    sequence_role = task.get("sequence_role")
+    if sequence_role not in {"learning", "application", "probe", "replay", "noise"}:
+        raise L2AgentRunError(f"TaskStream {turn_id} has an invalid sequence_role")
+    identity = (turn_id, turn_index, sequence_role)
+    task_identity = (task.get("turn_id"), task.get("turn_index"), task.get("sequence_role"))
+    summary_identity = (
+        summary.get("turn_id"),
+        summary.get("turn_index"),
+        summary.get("sequence_role"),
+    )
+    if task_identity != identity or summary_identity != identity:
+        raise L2AgentRunError(
+            f"TaskStream identity/sequence_role mismatch for {turn_id}"
+        )
+    return str(sequence_role)
+
+
+def _replace_tree(seed: Path, target: Path) -> None:
+    """Rebuild one already-isolated runtime Workspace from its frozen seed."""
+
+    if target.exists():
+        shutil.rmtree(target)
+    target.mkdir(parents=True, exist_ok=False)
+    shutil.copytree(seed, target, dirs_exist_ok=True)
+
+
+def _native_result_error(native: dict[str, Any], result: Any) -> str | None:
+    if not isinstance(result, dict):
+        return "native verifier result must be an object"
+    if result.get("schema_version") != "l2_native_verifier_result/1.0":
+        return "unexpected native verifier result schema_version"
+    if result.get("verifier_id") != native.get("verifier_id"):
+        return "native verifier result identity mismatch"
+    status = result.get("status")
+    if status not in {"pass", "fail", "partial", "error"}:
+        return "native verifier result has an invalid status"
+    score = result.get("score")
+    if status == "error":
+        if score is not None or not isinstance(result.get("error"), str) or not result["error"]:
+            return "native verifier error must have score=null and a non-empty error"
+    elif (
+        not isinstance(score, (int, float))
+        or isinstance(score, bool)
+        or not 0.0 <= float(score) <= 1.0
+        or result.get("error") is not None
+    ):
+        return "scored native verifier result must have score in [0,1] and error=null"
+    public_summary = result.get("public_summary")
+    if not isinstance(public_summary, dict) or not isinstance(
+        public_summary.get("observable_deficiencies"), list
+    ):
+        return "native verifier result must include public_summary"
+    return None
+
+
+def _project_bounded_feedback(
+    task: dict[str, Any],
+    verification: dict[str, Any],
+) -> BoundedFeedback:
+    evaluation = task.get("evaluation", {})
+    checks = evaluation.get("checks", []) if isinstance(evaluation, dict) else []
+    scores = verification.get("judge", {}).get("details", {}).get("check_scores", {})
+    failed_dimensions: list[str] = []
+    if isinstance(scores, dict):
+        for check in checks:
+            if not isinstance(check, dict):
+                continue
+            score = scores.get(str(check.get("check_id")))
+            if score is not None and float(score) < 1.0:
+                failed_dimensions.append(
+                    str(check.get("dimension") or check.get("check_id") or "task_success")
+                )
+    native = verification.get("native_result", {})
+    public_summary = native.get("public_summary", {}) if isinstance(native, dict) else {}
+    deficiencies = public_summary.get("observable_deficiencies", []) if isinstance(public_summary, dict) else []
+    if not failed_dimensions:
+        failed_dimensions = ["task_success"]
+    observable = next(
+        (str(item) for item in deficiencies if isinstance(item, str) and item.strip()),
+        "The observable result did not satisfy all declared public requirements.",
+    )
+    category = public_summary.get("result_category") if isinstance(public_summary, dict) else None
+    if category not in {"fail", "partial"}:
+        category = "fail"
+    return BoundedFeedback(
+        failed_dimensions=tuple(dict.fromkeys(failed_dimensions)),
+        observable_deficiency=observable,
+        public_result_category=str(category),
+    )
+
+
+def _user_simulator_output_error(result: Any) -> str | None:
+    if not isinstance(result, dict):
+        return "User Simulator output must be an object"
+    allowed = {"schema_version", "next_user_message", "rationale_category"}
+    if set(result) != allowed:
+        return "User Simulator output has missing or unknown fields"
+    if result.get("schema_version") != "l2_user_simulator_output/1.0":
+        return "User Simulator output has an invalid schema_version"
+    message = result.get("next_user_message")
+    if not isinstance(message, str) or not message.strip():
+        return "User Simulator next_user_message must be non-empty"
+    if result.get("rationale_category") not in {
+        "incomplete_task",
+        "incorrect_result",
+        "invalid_artifact",
+        "missing_evidence",
+        "execution_error",
+        "unanswered_requirement",
+    }:
+        return "User Simulator rationale_category is invalid"
+    return None
+
+
+def _evaluation_error_summary(details: Any) -> str:
+    if not isinstance(details, dict):
+        return "evaluator failure"
+    if isinstance(details.get("error"), str) and details["error"]:
+        return str(details["error"])
+    nested = details.get("details")
+    if isinstance(nested, dict):
+        if isinstance(nested.get("error"), str) and nested["error"]:
+            return str(nested["error"])
+        if isinstance(nested.get("type"), str) and nested["type"]:
+            return str(nested["type"])
+    if isinstance(details.get("stage"), str):
+        return str(details["stage"])
+    return "evaluator failure"
 
 
 def _limit_reasons(raw: Any) -> list[str]:

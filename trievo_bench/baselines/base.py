@@ -61,6 +61,7 @@ class FlowContext:
     workspace: Path
     output_dir: Path
     metadata: dict[str, Any] = field(default_factory=dict)
+    workspace_mount: str | None = None
 
 
 @dataclass(frozen=True)
@@ -105,6 +106,8 @@ class EvolutionContext:
     turn_id: str
     trajectory: list[dict[str, Any]]
     feedback: list[dict[str, Any]]
+    update_enabled: bool = True
+    skip_reason: str | None = None
 
 
 @dataclass

@@ -9,6 +9,9 @@ description = "Specification-driven runtime for a self-evolution agent benchmark
 requires-python = ">=3.11"
 dependencies = []
 
+[dependency-groups]
+dev = ["pytest>=8.3,<9"]
+
 [project.scripts]
 trievo-bench = "trievo_bench.runner:main"
 
@@ -17,3 +20,6 @@ include = ["trievo_bench*"]
 
 [tool.setuptools.package-data]
 "trievo_bench.baselines" = ["manifests/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

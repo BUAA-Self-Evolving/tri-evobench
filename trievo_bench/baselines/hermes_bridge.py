@@ -144,6 +144,14 @@ class HermesBridge:
             if not self._is_l1_turn or self._is_taskstream_turn:
                 agent.max_iterations = max(1, self._turn_limits["max_model_calls"] - 1)
             agent.run_budget_seconds = float(self._turn_limits["episode_timeout_seconds"])
+            output_cap = self._turn_limits.get("max_output_tokens")
+            if output_cap is not None:
+                configured = getattr(agent, "max_tokens", None)
+                agent.max_tokens = (
+                    int(output_cap)
+                    if configured is None
+                    else min(int(configured), int(output_cap))
+                )
             agent._trievo_evolution_limits = {
                 "max_model_calls": self._turn_limits["evolution_max_model_calls"],
                 "timeout_seconds": self._turn_limits["evolution_timeout_seconds"],
@@ -159,6 +167,9 @@ class HermesBridge:
         request = str(params.get("request", ""))
         if not request:
             raise RuntimeError("Hermes interaction request is empty")
+        # Contract limits are per Interaction, not cumulative across all retry
+        # messages in the Turn.
+        self._limit_state = {"tool_starts": 0, "reasons": []}
         self._events = []
         self._tool_calls = []
         if self._is_l1_turn and not self._is_taskstream_turn:
@@ -238,7 +249,13 @@ class HermesBridge:
         before_usage = self._background_review_usage(agent)
         events: list[dict[str, Any]] = []
 
-        if self._policy == "turn_boundary":
+        if not bool(params.get("update_enabled", True)):
+            events.append({
+                "type": "evolution.skipped",
+                "policy": self._policy,
+                "reason": str(params.get("skip_reason") or "run_condition"),
+            })
+        elif self._policy == "turn_boundary":
             evolution_timeout = float(
                 self._turn_limits.get("evolution_timeout_seconds", self._review_timeout)
             )
@@ -832,6 +849,19 @@ def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
                 f"agent_limits.{name} must be between {minimum} and {maximum}"
             )
         result[name] = parsed
+    if "max_output_tokens" in raw:
+        value = raw["max_output_tokens"]
+        if isinstance(value, bool):
+            raise RuntimeError("agent_limits.max_output_tokens must be an integer")
+        try:
+            parsed = int(value)
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError("agent_limits.max_output_tokens must be an integer") from exc
+        if not 1 <= parsed <= 1_000_000:
+            raise RuntimeError(
+                "agent_limits.max_output_tokens must be between 1 and 1000000"
+            )
+        result["max_output_tokens"] = parsed
     return result
 
 

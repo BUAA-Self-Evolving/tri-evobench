@@ -1,7 +1,14 @@
 ARG BASE_IMAGE=python:3.11-slim
 FROM ${BASE_IMAGE}
 
-RUN apt-get update \
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG APT_ORIGIN=http://deb.debian.org
+
+ENV PIP_DEFAULT_TIMEOUT=120 \
+    PIP_RETRIES=10
+
+RUN sed -i "s|http://deb.debian.org|${APT_ORIGIN}|g" /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
     && apt-get install -y --no-install-recommends bash ca-certificates curl git ripgrep \
     && rm -rf /var/lib/apt/lists/*
 

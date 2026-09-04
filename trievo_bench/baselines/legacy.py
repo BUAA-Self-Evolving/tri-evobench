@@ -57,6 +57,15 @@ class LegacyActionRuntime(BaselineRuntime):
 
     def evolve(self, context: EvolutionContext) -> EvolutionResult:
         before = self.snapshot_state()
+        if not context.update_enabled:
+            return EvolutionResult(
+                events=[{
+                    "type": "evolution.skipped",
+                    "reason": context.skip_reason or "run_condition",
+                }],
+                state_before=before,
+                state_after=before,
+            )
         turn = self._turns.get(context.turn_id)
         if turn is None:
             raise RuntimeError(f"unknown legacy turn: {context.turn_id}")

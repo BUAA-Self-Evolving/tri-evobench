@@ -249,6 +249,21 @@ class Trace2SkillBridge:
         self._require_turn(str(params.get("turn_id", "")))
         if self.state_dir is None or self.skill_dir is None:
             raise RuntimeError("Trace2Skill state is unavailable")
+        if not bool(params.get("update_enabled", True)):
+            reason = str(params.get("skip_reason") or "run_condition")
+            self.turn_id = ""
+            self.turn_metadata = {}
+            self._agent = None
+            self._clients = {}
+            return {
+                "completed": True,
+                "events": [{
+                    "type": "evolution.skipped",
+                    "policy": self.evolution_policy,
+                    "reason": reason,
+                }],
+                "usage": {},
+            }
         history_dir = self.state_dir / "history" / _safe_name(self.turn_id)
         history_dir.mkdir(parents=True, exist_ok=True)
         trajectory = _sanitize_trajectory(params.get("trajectory", []))

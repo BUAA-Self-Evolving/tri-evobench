@@ -14,6 +14,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+L2_CONDITIONS = ("reset", "frozen", "evolving")
+
 
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -30,24 +32,129 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def jobs(repo: Path, root: Path, packages: Path | None = None):
+def _l1_manifests(package: Path):
+    return sorted(
+        package.glob("stream-*/stream.json"),
+        key=lambda p: int(p.parent.name.split("-")[-1]),
+    )
+
+
+def _l2_manifests(package: Path):
+    return sorted((package / "streams").glob("*/stream.json"))
+
+
+def _resolve_l1_package(packages: Path, explicit: Path | None) -> Path:
+    if explicit is not None:
+        return explicit
+    return packages / "l1_arena"
+
+
+def _resolve_l2_package(packages: Path, explicit: Path | None) -> Path:
+    if explicit is not None:
+        return explicit
+    if _l2_manifests(packages):
+        return packages
+    candidates = sorted(
+        child for child in packages.iterdir()
+        if child.is_dir() and child.name != "l1_arena" and _l2_manifests(child)
+    ) if packages.is_dir() else []
+    if len(candidates) == 1:
+        return candidates[0]
+    if not candidates:
+        return packages / "L2_Demo_V2"
+    names = ", ".join(str(path) for path in candidates)
+    raise ValueError(f"multiple L2 packages found; pass --l2-package explicitly: {names}")
+
+
+def _turn_roles(manifest: dict):
+    roles = {}
+    for item in manifest.get("turns", []):
+        if isinstance(item, dict) and item.get("turn_id") and item.get("sequence_role"):
+            roles[str(item["turn_id"])] = str(item["sequence_role"])
+    return roles
+
+
+def jobs(
+    repo: Path,
+    root: Path,
+    packages: Path | None = None,
+    *,
+    l1_package: Path | None = None,
+    l2_package: Path | None = None,
+    l2_conditions: tuple[str, ...] | list[str] | None = None,
+):
     if packages is None:
         local_packages = repo.parent / "new-packages-20260903"
         packages = local_packages if local_packages.is_dir() else repo / "benchmarks/current"
+    l1 = _resolve_l1_package(packages, l1_package)
+    l2 = _resolve_l2_package(packages, l2_package)
+    conditions = tuple(l2_conditions or ("evolving",))
+    unknown = sorted(set(conditions) - set(L2_CONDITIONS))
+    if unknown:
+        raise ValueError(f"unknown L2 condition(s): {unknown}")
     rows = []
-    for level, package in (("l2", packages / "L2_Demo_V2"), ("l1", packages / "l1_arena")):
-        manifests = sorted((package / "streams").glob("*/stream.json")) if level == "l2" else sorted(package.glob("stream-*/stream.json"), key=lambda p: int(p.parent.name.split("-")[-1]))
+    for level, package in (("l2", l2), ("l1", l1)):
+        manifests = _l2_manifests(package) if level == "l2" else _l1_manifests(package)
         if not manifests:
             raise ValueError(f"No {level} stream manifests found in {package}")
         for index, path in enumerate(manifests, 1):
             manifest = load(path)
             turns = manifest["ordering"]["turn_order"] if level == "l2" else [item["turn_id"] for item in manifest["turns"]]
-            for agent in ("hermes", "skillopt", "trace2skill"):
-                rows.append({"id": f"{level}/{agent}/s{index:02d}", "level": level, "agent": agent,
-                             "package": str(package), "stream": path.parent.name,
-                             "flow_id": manifest["stream_id"], "turns": turns,
-                             "output": str(root / level / agent / f"s{index:02d}")})
+            row_conditions = conditions if level == "l2" else (None,)
+            for condition in row_conditions:
+                for agent in ("hermes", "skillopt", "trace2skill"):
+                    if condition:
+                        job_id = f"{level}/{condition}/{agent}/s{index:02d}"
+                        output = root / level / condition / agent / f"s{index:02d}"
+                    else:
+                        job_id = f"{level}/{agent}/s{index:02d}"
+                        output = root / level / agent / f"s{index:02d}"
+                    rows.append({"id": job_id, "level": level, "agent": agent,
+                                 "package": str(package), "stream": path.parent.name,
+                                 "flow_id": manifest["stream_id"], "turns": turns,
+                                 "condition": condition, "turn_roles": _turn_roles(manifest),
+                                 "output": str(output)})
     return rows
+
+
+def _turn_score(turn: dict):
+    return turn.get("turn_score", turn.get("final_score", turn.get("score")))
+
+
+def _report_condition(report: dict, turns: list[dict]):
+    condition = report.get("condition", report.get("run_condition"))
+    turn_conditions = {turn.get("condition") for turn in turns if turn.get("condition")}
+    if len(turn_conditions) > 1:
+        return "__mixed__"
+    if condition and turn_conditions and condition not in turn_conditions:
+        return "__mixed__"
+    return condition or (next(iter(turn_conditions)) if turn_conditions else None)
+
+
+def _report_matches_row(row: dict, report: dict) -> bool:
+    turns = report.get("turns", [])
+    if report.get("stream_id", report.get("flow_id")) != row["flow_id"]:
+        return False
+    if [turn.get("turn_id") for turn in turns] != row["turns"]:
+        return False
+    if report.get("error") or report.get("cleanup_error"):
+        return False
+    if row["level"] == "l2":
+        condition = _report_condition(report, turns)
+        # Reports produced before the condition field existed are evolving runs.
+        if condition is None:
+            if row.get("condition") != "evolving":
+                return False
+        elif condition != row.get("condition"):
+            return False
+    for turn in turns:
+        if turn.get("final_category") == "error":
+            return False
+        if turn.get("evaluation_status") == "evaluation_error":
+            return False
+        if _turn_score(turn) is None:
+            return False
+    return True
 
 
 def report_for(row):
@@ -55,10 +162,7 @@ def report_for(row):
     candidates = list(output.glob("*/summary.json")) if row["level"] == "l1" else list(output.glob("*/*/report.json"))
     for path in sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True):
         report = load(path)
-        turns = report.get("turns", [])
-        if [turn.get("turn_id") for turn in turns] == row["turns"] and not report.get("error") and not report.get("cleanup_error"):
-            if any(turn.get("final_category") == "error" for turn in turns):
-                continue
+        if _report_matches_row(row, report):
             return path, report
     return None, None
 
@@ -71,6 +175,13 @@ def latest_checkpoint(row):
             continue
         if data.get("stream_id", data.get("flow_id")) != row["flow_id"]:
             continue
+        if row["level"] == "l2":
+            checkpoint_condition = data.get("condition", data.get("run_condition"))
+            if checkpoint_condition is None:
+                if row.get("condition") != "evolving":
+                    continue
+            elif checkpoint_condition != row.get("condition"):
+                continue
         if all((path.parent / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
             candidates.append((int(data["next_turn_index"]), path.stat().st_mtime, path.parent))
     return max(candidates)[2] if candidates else None
@@ -88,26 +199,86 @@ def command(repo, row, checkpoint, config_dir=None):
     if row["level"] == "l1":
         args += ["--turns", ",".join(row["turns"]), "--backend", "docker", "--image", "trievo-ubuntu:22.04"]
     else:
-        args += ["--image", "trievo-l2:0.1", "--browser-image", "trievo-l2-browser:0.1", "--allow-generated-code"]
+        args += ["--condition", row["condition"], "--image", "trievo-l2:0.1", "--browser-image", "trievo-l2-browser:0.1", "--allow-generated-code"]
     if checkpoint:
         args += ["--resume-checkpoint", str(checkpoint)]
     return args
 
 
+def l2_reports_to_aggregation_records(report_rows):
+    records = []
+    seen_conditions = set()
+    for row, report in report_rows:
+        if row.get("level") != "l2":
+            continue
+        turns = report.get("turns", [])
+        if not _report_matches_row(row, report):
+            raise ValueError(f"report does not match row: {row.get('id')}")
+        condition = row.get("condition")
+        seen_conditions.add(condition)
+        roles = row.get("turn_roles", {})
+        for index, turn in enumerate(turns, 1):
+            turn_id = str(turn["turn_id"])
+            stream_id = str(turn.get("stream_id", row["flow_id"]))
+            if stream_id != row["flow_id"]:
+                raise ValueError(f"stream identity mismatch for {row.get('id')}/{turn_id}")
+            sequence_role = turn.get("sequence_role", roles.get(turn_id))
+            if not sequence_role:
+                raise ValueError(f"missing sequence_role for {row.get('id')}/{turn_id}")
+            records.append({
+                "condition": condition,
+                "stream_id": stream_id,
+                "turn_id": turn_id,
+                "turn_index": int(turn.get("turn_index", index)),
+                "sequence_role": sequence_role,
+                "turn_score": float(_turn_score(turn)),
+                "evaluation_status": turn.get("evaluation_status", "scored"),
+            })
+    missing = set(L2_CONDITIONS) - seen_conditions
+    if missing:
+        raise ValueError(f"missing required L2 condition report(s): {sorted(missing)}")
+    return records
+
+
+def matched_l2_aggregations(rows):
+    """Return formal matched aggregates only for fully completed baseline cells."""
+
+    from trievo_bench.evolution_aggregation import aggregate_matched_runs
+
+    result = {}
+    for agent in ("hermes", "skillopt", "trace2skill"):
+        selected = [row for row in rows if row["level"] == "l2" and row["agent"] == agent]
+        if {row.get("condition") for row in selected} != set(L2_CONDITIONS):
+            continue
+        report_rows = []
+        for row in selected:
+            _, report = report_for(row)
+            if report is None:
+                break
+            report_rows.append((row, report))
+        else:
+            result[agent] = aggregate_matched_runs(
+                l2_reports_to_aggregation_records(report_rows)
+            )
+    return result
+
+
 def matrix(rows):
     cells = []
     for agent in ("hermes", "skillopt", "trace2skill"):
-        for level in ("l1", "l2"):
-            selected = [row for row in rows if row["agent"] == agent and row["level"] == level]
+        datasets = [("l1", None)] + [("l2", condition) for condition in L2_CONDITIONS if any(row["level"] == "l2" and row.get("condition") == condition for row in rows)]
+        for level, condition in datasets:
+            selected = [row for row in rows if row["agent"] == agent and row["level"] == level and row.get("condition") == condition]
             scores = []
             passed = 0
             for row in selected:
                 _, report = report_for(row)
                 if report:
                     for turn in report["turns"]:
-                        scores.append(float(turn.get("final_score", turn.get("score", 0))))
+                        scores.append(float(_turn_score(turn)))
                         passed += bool(turn.get("passed"))
-            cells.append({"agent": agent, "dataset": level, "completed_turns": len(scores),
+            dataset = level if condition is None else f"{level}:{condition}"
+            cells.append({"agent": agent, "dataset": dataset, "condition": condition, "completed_turns": len(scores),
                           "expected_turns": sum(len(row["turns"]) for row in selected), "passed_turns": passed,
                           "mean_score": sum(scores) / len(scores) if scores else None})
     return cells
@@ -116,7 +287,10 @@ def matrix(rows):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default="runs/mx24/full")
-    parser.add_argument("--packages", type=Path, help="directory containing l1_arena/ and L2_Demo_V2/")
+    parser.add_argument("--packages", type=Path, help="legacy parent directory containing l1_arena/ and one L2 package")
+    parser.add_argument("--l1-package", type=Path, help="explicit L1 package directory")
+    parser.add_argument("--l2-package", type=Path, help="explicit L2 package directory")
+    parser.add_argument("--l2-condition", action="append", choices=L2_CONDITIONS, help="L2 condition to run; repeat for reset/frozen/evolving")
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
@@ -147,7 +321,14 @@ def main():
             fcntl.flock(_driver_lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError:
             raise SystemExit("another matrix driver already holds this output root")
-    all_rows = jobs(repo, root, args.packages.resolve() if args.packages else None)
+    all_rows = jobs(
+        repo,
+        root,
+        args.packages.resolve() if args.packages else None,
+        l1_package=args.l1_package.resolve() if args.l1_package else None,
+        l2_package=args.l2_package.resolve() if args.l2_package else None,
+        l2_conditions=tuple(args.l2_condition) if args.l2_condition else None,
+    )
     config_dir = args.config_dir.resolve() if args.config_dir else repo
     selected = [row for row in all_rows if row["id"] == args.only] if args.only else all_rows
     if args.gate:
@@ -186,9 +367,17 @@ def main():
         state.update(updated_at=now(), matrix=matrix(all_rows))
         save(status_path, state)
         print(f"COMPLETED {row['id']}", flush=True)
-    state.update(status="gate_completed" if (args.gate or args.only) else "completed", finished_at=now(), matrix=matrix(all_rows))
+    aggregations = matched_l2_aggregations(all_rows)
+    state.update(
+        status="gate_completed" if (args.gate or args.only) else "completed",
+        finished_at=now(),
+        matrix=matrix(all_rows),
+        l2_evolution_aggregations=aggregations,
+    )
     save(status_path, state)
     save(root / "result_matrix.json", state["matrix"])
+    if aggregations:
+        save(root / "l2_evolution_aggregations.json", aggregations)
     return 0
 
 

@@ -69,7 +69,7 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
         stream_id = manifest.get("stream_id")
         if stream_id != stream_dir.name:
             raise L2SpecError(f"{stream_dir.name}: stream_id must match its directory")
-        # L2_Demo_V2 uses the versioned TaskStream contract.  It keeps each
+        # Versioned TaskStream releases keep each
         # turn self-contained (turn*/task.json) instead of the legacy
         # stream.json -> episodes/*/episode.json indirection.  Validate its
         # public shape here so the package can be inventoried by the same CLI
@@ -80,17 +80,36 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
             turns = manifest.get("turns")
             if not isinstance(workspace_name, str) or not workspace_name:
                 raise L2SpecError(f"{stream_id}: agent_workspace is required")
+            workspace_seed = _under(stream_dir, workspace_name)
+            if not workspace_seed.is_dir():
+                raise L2SpecError(f"{stream_id}: agent_workspace seed is missing")
             if not isinstance(ordering, dict) or not isinstance(ordering.get("turn_order"), list):
                 raise L2SpecError(f"{stream_id}: ordering.turn_order is required")
             if not isinstance(turns, list) or len(turns) != len(ordering["turn_order"]):
                 raise L2SpecError(f"{stream_id}: turns must match turn_order")
-            for item in ordering["turn_order"]:
+            _validate_taskstream_execution_requirements(stream_id, manifest)
+            for turn_index, item in enumerate(ordering["turn_order"], start=1):
                 if not isinstance(item, str):
                     raise L2SpecError(f"{stream_id}: turn ids must be text")
                 task_path = _under(stream_dir, item + "/task.json")
                 task = _load_json(task_path)
-                if task.get("stream_id") != stream_id or task.get("turn_id") != item:
+                summary = turns[turn_index - 1]
+                if not isinstance(summary, dict):
+                    raise L2SpecError(f"{stream_id}/{item}: invalid turn summary")
+                sequence_role = task.get("sequence_role")
+                identity = (item, turn_index, sequence_role)
+                if (
+                    task.get("stream_id") != stream_id
+                    or (task.get("turn_id"), task.get("turn_index"), sequence_role) != identity
+                    or (
+                        summary.get("turn_id"),
+                        summary.get("turn_index"),
+                        summary.get("sequence_role"),
+                    ) != identity
+                ):
                     raise L2SpecError(f"{stream_id}/{item}: identity mismatch")
+                if sequence_role not in {"learning", "application", "probe", "replay", "noise"}:
+                    raise L2SpecError(f"{stream_id}/{item}: invalid sequence_role")
                 agent_input = task.get("agent_input")
                 if not isinstance(agent_input, dict) or not isinstance(agent_input.get("messages"), list):
                     raise L2SpecError(f"{stream_id}/{item}: agent_input.messages is required")
@@ -100,6 +119,7 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
                 evaluation = task.get("evaluation")
                 if not isinstance(evaluation, dict) or evaluation.get("native_verifier", {}).get("required") is not True:
                     raise L2SpecError(f"{stream_id}/{item}: native verifier declaration is required")
+                _validate_taskstream_transition(stream_dir, task_path.parent, workspace_seed, task)
             result.append(L2StreamInfo(str(stream_id), len(turns), "taskstream", workspace_name))
             continue
         if manifest.get("level") != "L2":
@@ -153,6 +173,57 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
     if not result:
         raise L2SpecError(f"no L2 streams found in {streams_root}")
     return result
+
+
+def _validate_taskstream_execution_requirements(
+    stream_id: str,
+    manifest: dict[str, Any],
+) -> None:
+    requirements = manifest.get("execution_requirements")
+    if not isinstance(requirements, dict):
+        raise L2SpecError(f"{stream_id}: execution_requirements is required")
+    if requirements.get("network") != "disabled" or requirements.get("path_scope") != "agent_workspace":
+        raise L2SpecError(f"{stream_id}: unsupported network or path_scope requirement")
+    for name in (
+        "max_interactions",
+        "max_tool_calls_per_interaction",
+        "turn_timeout_seconds",
+        "max_output_tokens",
+    ):
+        value = requirements.get(name)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            raise L2SpecError(f"{stream_id}: execution_requirements.{name} must be positive")
+    if requirements["max_interactions"] > 3:
+        raise L2SpecError(f"{stream_id}: max_interactions exceeds Runtime support")
+
+
+def _validate_taskstream_transition(
+    stream_dir: Path,
+    turn_dir: Path,
+    workspace_seed: Path,
+    task: dict[str, Any],
+) -> None:
+    transition = task.get("workspace_transition")
+    if not isinstance(transition, dict) or transition.get("mode") not in {
+        "continue",
+        "continue_with_patch",
+    }:
+        raise L2SpecError(f"{task.get('stream_id')}/{task.get('turn_id')}: unsupported transition")
+    operations = transition.get("operations", [])
+    if not isinstance(operations, list):
+        raise L2SpecError(f"{task.get('stream_id')}/{task.get('turn_id')}: operations must be a list")
+    for operation in operations:
+        if not isinstance(operation, dict) or operation.get("op") != "copy":
+            raise L2SpecError(
+                f"{task.get('stream_id')}/{task.get('turn_id')}: Runtime supports copy operations only"
+            )
+        source = _under(turn_dir, str(operation.get("source", "")))
+        if not source.exists():
+            raise L2SpecError(f"missing transition source: {source}")
+        target = str(operation.get("target", ""))
+        if not target.startswith("agent_workspace/"):
+            raise L2SpecError(f"transition target must be agent_workspace-relative: {target}")
+        _under(workspace_seed, target.removeprefix("agent_workspace/"))
 
 
 def run_l2_in_docker(
@@ -232,6 +303,18 @@ def main() -> None:
     parser.add_argument("--max-total-tokens", type=int, default=2_000_000)
     parser.add_argument("--browser-image", default="trievo-l2-browser:0.1")
     parser.add_argument("--resume-checkpoint", help="post-turn checkpoint directory; rerun only subsequent TaskStream turns")
+    parser.add_argument(
+        "--condition",
+        choices=["reset", "frozen", "evolving"],
+        default="evolving",
+        help="matched reference-run condition; the legacy default remains evolving",
+    )
+    parser.add_argument(
+        "--evaluation-error-policy",
+        choices=["stop", "continue"],
+        default="stop",
+        help="freeze whether an evaluator control-plane error stops or skips the Turn",
+    )
     args = parser.parse_args()
     inventory = inspect_l2_package(args.package)
     if args.inspect:
@@ -256,6 +339,8 @@ def main() -> None:
                 browser_verifier_image=args.browser_image,
                 repo_root=Path(__file__).resolve().parents[1],
                 resume_checkpoint=Path(args.resume_checkpoint) if args.resume_checkpoint else None,
+                condition=args.condition,
+                evaluation_error_policy=args.evaluation_error_policy,
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))

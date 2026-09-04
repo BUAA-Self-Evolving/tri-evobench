@@ -12,7 +12,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Sync locked test environment
+        run: uv sync --frozen --group dev
       - name: Compile
-        run: python -m compileall -q trievo_bench
+        run: uv run --frozen python -m compileall -q trievo_bench baseline/adapters tools tests
       - name: Unit tests
-        run: python -m unittest discover -s tests -v
+        run: uv run --frozen python -m pytest tests -q

@@ -1,11 +1,17 @@
 FROM python:3.11-slim
 
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG APT_ORIGIN=http://deb.debian.org
+
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    MPLBACKEND=Agg
+    MPLBACKEND=Agg \
+    PIP_DEFAULT_TIMEOUT=120 \
+    PIP_RETRIES=10
 
-RUN apt-get update \
+RUN sed -i "s|http://deb.debian.org|${APT_ORIGIN}|g" /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates coreutils \
     && rm -rf /var/lib/apt/lists/*
 

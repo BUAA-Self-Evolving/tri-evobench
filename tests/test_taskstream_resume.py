@@ -12,12 +12,32 @@ def test_resume_judge_failure_reuses_paid_reply_and_completed_prefix(tmp_path, m
     package = tmp_path / 'package'
     stream = package / 'streams/s'
     (stream / 'agent_workspace').mkdir(parents=True)
-    manifest = {'schema_version': 'l2_taskstream/1.0', 'ordering': {'turn_order': ['turn1', 'turn2']}}
+    manifest = {
+        'schema_version': 'l2_taskstream/1.0',
+        'stream_id': 's',
+        'agent_workspace': 'agent_workspace',
+        'ordering': {'turn_order': ['turn1', 'turn2']},
+        'execution_requirements': {
+            'network': 'disabled', 'path_scope': 'agent_workspace',
+            'max_interactions': 3, 'max_tool_calls_per_interaction': 20,
+            'turn_timeout_seconds': 900, 'max_output_tokens': 12000,
+        },
+        'turns': [
+            {'turn_id': turn, 'turn_index': index, 'sequence_role': role}
+            for index, (turn, role) in enumerate(
+                [('turn1', 'learning'), ('turn2', 'probe')], start=1
+            )
+        ],
+    }
     (stream / 'stream.json').write_text(json.dumps(manifest))
-    for turn in ('turn1', 'turn2'):
+    for index, (turn, role) in enumerate(
+        [('turn1', 'learning'), ('turn2', 'probe')], start=1
+    ):
         (stream / turn).mkdir()
         (stream / turn / 'task.json').write_text(json.dumps({
-            'stream_id': 's', 'turn_id': turn, 'agent_input': {'messages': [{'role': 'user', 'content': 'write result'}]},
+            'stream_id': 's', 'turn_id': turn, 'turn_index': index,
+            'sequence_role': role,
+            'agent_input': {'messages': [{'role': 'user', 'content': 'write result'}]},
             'workspace_transition': {'mode': 'continue'}, 'evaluation': {'success_policy': {'turn_score_threshold': 1}},
         }))
     calls = []
