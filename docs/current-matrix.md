@@ -79,6 +79,17 @@ Python/科学计算依赖，同时仍会安装并校验各 baseline 自己的依
 Hermes 配置使用 DeepSeek-compatible provider；其他供应商需要按其兼容性调整，不能假定通用。
 配置中不保存 key，且去除了作者的固定 `host.docker.internal:7890` 代理。
 
+L2 的默认单次模型输出上限为 `12000`，与当前 V3 `execution_requirements` 一致；Hermes L1
+仍保留 `1200`，SkillOpt L1 仍保留 `4096`。配置生成器可用 `--l2-max-output-tokens` 生成较低的
+参数试验，但大于数据包声明值的配置仍会被 Runtime 截到数据包上限。`32000`/`40000` 只适合
+验证 provider 是否接受大请求，不能在未修改数据包版本的情况下冒充正式 V3 条件。
+
+中转站运行默认给 benchmark 自有 Judge/User Simulator client 配置 `150s` 单请求 timeout 和
+最多 `4` 次额外 transport retry；只重试连接中断、残缺响应、`408/409/429` 与 `5xx` 等瞬时故障，
+不重试普通 `4xx`、空答案或 schema/任务失败。Hermes 的生成配置写入相同 timeout/retry 数值；
+SkillOpt、Trace2Skill 保留各自 SDK/adapter 的 call 内重试。transport retry 不增加 benchmark
+Interaction，也不能在工具副作用已经发生后重跑整个 Turn。
+
 ### 受限网络与嵌套 rootless Docker
 
 普通 Linux 主机默认继续使用 bind mount，代理桥默认关闭。若宿主代理只监听 loopback，而 baseline
@@ -129,6 +140,9 @@ Linux/macOS 的环境变量设置：
 read -s -p 'API key: ' TRIEVO_API_KEY; export TRIEVO_API_KEY
 export TRIEVO_BASE_URL=https://cf.api.fan/v1
 export TRIEVO_MODEL=deepseek-v4-flash
+export TRIEVO_THINKING=disabled
+export TRIEVO_API_TIMEOUT_SECONDS=150
+export TRIEVO_API_MAX_RETRIES=4
 uv run --frozen python tools/run_new_package_matrix.py \
   --l1-package benchmarks/current/l1_arena \
   --l2-package /path/to/extracted/L2_Demo_V3 \
