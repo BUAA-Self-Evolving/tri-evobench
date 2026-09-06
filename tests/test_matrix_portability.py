@@ -8,7 +8,7 @@ from tools.run_new_package_matrix import command, jobs
 
 
 def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
-    output = generate(tmp_path / "configs", "deepseek-v4-flash", "https://example.test/v1")
+    output = generate(tmp_path / "configs", "gpt-5.6-terra", "https://example.test/v1")
     files = list(output.glob("*.override.json"))
     assert len(files) == 5
     for path in files:
@@ -33,7 +33,11 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     hermes_l2 = (output / "hermes-l2-seed/config.yaml").read_text()
     assert "max_tokens: 1200" in hermes_l1
     assert "max_tokens: 12000" in hermes_l2
+    assert "provider: custom" in hermes_l2
+    assert "provider: deepseek" not in hermes_l2
+    assert "reasoning_effort: none" in hermes_l2
     assert "api_max_retries: 4" in hermes_l2
+    assert "providers:\n  custom:\n    request_timeout_seconds: 150" in hermes_l2
     assert "request_timeout_seconds: 150" in hermes_l2
 
     skillopt_l1 = json.loads((output / "tmp_skillopt_docker.override.json").read_text())

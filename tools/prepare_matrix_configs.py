@@ -69,12 +69,14 @@ def generate(
         seed = output / f"hermes-{level}-seed"
         seed.mkdir(exist_ok=True)
         # JSON scalars are valid YAML; no credentials are written to disk.
+        # A relay can expose arbitrary model IDs.  Hermes' first-party DeepSeek
+        # provider normalizes unknown IDs, so route relay traffic as custom.
         (seed / "config.yaml").write_text(
-            f"model:\n  default: {json.dumps(model)}\n  provider: deepseek\n"
+            f"model:\n  default: {json.dumps(model)}\n  provider: custom\n"
             f"  base_url: {json.dumps(base_url)}\n  max_tokens: {cap}\n"
             "auxiliary:\n  title_generation:\n    enabled: false\n"
-            f"agent:\n  api_max_retries: {api_max_retries}\n"
-            f"providers:\n  deepseek:\n    request_timeout_seconds: {api_timeout_seconds}\n",
+            f"agent:\n  reasoning_effort: none\n  api_max_retries: {api_max_retries}\n"
+            f"providers:\n  custom:\n    request_timeout_seconds: {api_timeout_seconds}\n",
             encoding="utf-8",
         )
         save(f"tmp_hermes_cf_{level}.override.json", {
