@@ -76,7 +76,9 @@ def generate(
             f"  base_url: {json.dumps(base_url)}\n  max_tokens: {cap}\n"
             "auxiliary:\n  title_generation:\n    enabled: false\n"
             f"agent:\n  reasoning_effort: none\n  api_max_retries: {api_max_retries}\n"
-            f"providers:\n  custom:\n    request_timeout_seconds: {api_timeout_seconds}\n",
+            f"providers:\n  custom:\n    base_url: {json.dumps(base_url)}\n"
+            "    key_env: OPENAI_API_KEY\n    api_mode: chat_completions\n"
+            f"    request_timeout_seconds: {api_timeout_seconds}\n",
             encoding="utf-8",
         )
         save(f"tmp_hermes_cf_{level}.override.json", {

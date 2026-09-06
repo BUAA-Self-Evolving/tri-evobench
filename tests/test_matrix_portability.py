@@ -37,7 +37,9 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert "provider: deepseek" not in hermes_l2
     assert "reasoning_effort: none" in hermes_l2
     assert "api_max_retries: 4" in hermes_l2
-    assert "providers:\n  custom:\n    request_timeout_seconds: 150" in hermes_l2
+    assert "providers:\n  custom:\n    base_url: \"https://example.test/v1\"" in hermes_l2
+    assert "key_env: OPENAI_API_KEY" in hermes_l2
+    assert "api_mode: chat_completions" in hermes_l2
     assert "request_timeout_seconds: 150" in hermes_l2
 
     skillopt_l1 = json.loads((output / "tmp_skillopt_docker.override.json").read_text())
