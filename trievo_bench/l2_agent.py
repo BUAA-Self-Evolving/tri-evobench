@@ -763,7 +763,19 @@ class L2AgentStreamRunner:
             binding_name = str(binding["name"])
             binding_source = binding.get("source")
             if binding_source in {"workspace", "evaluation_assets"}:
-                bindings[binding_name] = {"kind": "path", "path": binding.get("path")}
+                binding_path = binding.get("path")
+                if not isinstance(binding_path, str) or not binding_path:
+                    return {
+                        "category": "error",
+                        "score": None,
+                        "details": {
+                            "type": "invalid_native_binding",
+                            "name": binding_name,
+                            "source": binding_source,
+                            "reason": "path must be a non-empty string",
+                        },
+                    }
+                bindings[binding_name] = {"kind": "path", "path": binding_path}
             elif binding_source == "interaction_record" and binding.get("path") == "final_response":
                 bindings[binding_name] = {"kind": "inline", "value": reply.text}
             else:

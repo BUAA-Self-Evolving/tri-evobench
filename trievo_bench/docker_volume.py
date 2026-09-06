@@ -36,8 +36,9 @@ def docker_volume_transport_enabled(
         return True
     if raw in _FALSE_VALUES:
         return False
+    accepted = ", ".join(repr(value) for value in sorted(_TRUE_VALUES | _FALSE_VALUES))
     raise DockerVolumeError(
-        "TRIEVO_DOCKER_VOLUME_TRANSPORT must be off or required"
+        f"TRIEVO_DOCKER_VOLUME_TRANSPORT must be one of: {accepted}"
     )
 
 
