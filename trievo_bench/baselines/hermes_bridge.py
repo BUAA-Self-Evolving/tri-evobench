@@ -215,7 +215,10 @@ class HermesBridge:
         if self._turn_limits and int(result.get("api_calls", 0) or 0) >= self._turn_limits["max_model_calls"]:
             limit_reasons.append("max_model_calls")
         limit_reasons = list(dict.fromkeys(limit_reasons))
-        if result.get("failed") and not result.get("final_response"):
+        # Hermes attaches a human-facing final_response to provider, timeout,
+        # policy, and context failures.  It is diagnostic text, not a model
+        # submission; evaluating it would consume a benchmark Interaction.
+        if result.get("failed"):
             raise RuntimeError(str(result.get("error") or "Hermes conversation failed"))
         if self._is_taskstream_turn:
             # TaskStream is a bounded native-tool interaction.  It shares the

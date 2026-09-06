@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import subprocess
 import sys
@@ -273,6 +274,29 @@ class BaselineRuntimeTest(unittest.TestCase):
             "thinking": {"type": "disabled"},
             "reasoning": {"enabled": False},
         })
+
+    def test_hermes_failed_conversation_is_not_a_benchmark_response(self) -> None:
+        result = {
+            "failed": True,
+            "completed": False,
+            "final_response": "API call failed after 4 retries",
+            "error": "provider connect timeout",
+            "messages": [],
+            "api_calls": 4,
+        }
+        agent = SimpleNamespace(run_conversation=lambda **_kwargs: result)
+        state = SimpleNamespace(agent=agent, history=[], session_id="session-1", cwd="/workspace")
+        bridge = HermesBridge()
+        bridge._state = state
+        bridge._turn_id = "turn-1"
+        bridge._workspace = "/workspace"
+        bridge._is_taskstream_turn = True
+        bridge._manager = SimpleNamespace(save_session=lambda _session_id: None)
+        bridge._install_callbacks = lambda *_args: None
+        bridge._foreground_policy = lambda *_args: contextlib.nullcontext()
+
+        with self.assertRaisesRegex(RuntimeError, "provider connect timeout"):
+            bridge.interact({"turn_id": "turn-1", "request": "Do the task"})
 
     def test_hermes_background_usage_counts_cache_tokens(self) -> None:
         class Connection:
