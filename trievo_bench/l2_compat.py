@@ -313,7 +313,7 @@ def main() -> None:
         "--evaluation-error-policy",
         choices=["stop", "continue"],
         default="stop",
-        help="freeze whether an evaluator control-plane error stops or skips the Turn",
+        help="choose whether an evaluator control-plane error stops the run or skips the Turn",
     )
     args = parser.parse_args()
     inventory = inspect_l2_package(args.package)

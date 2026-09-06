@@ -101,6 +101,54 @@ class L2AgentLimitsTest(unittest.TestCase):
             self.assertIn("l2_native_verifier_request/1.0", run.call_args.kwargs["input"])
             self.assertEqual(result["category"], "fail")
 
+    def test_taskstream_verifier_rejects_invalid_path_binding_before_docker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            turn_dir = root / "streams" / "s" / "turn1"
+            (turn_dir / "evaluation_assets").mkdir(parents=True)
+            (turn_dir / "evaluation_assets" / "verifier.py").write_text("", encoding="utf-8")
+            workspace = root / "workspace"
+            workspace.mkdir()
+            runner = object.__new__(L2AgentStreamRunner)
+            runner.options = SimpleNamespace(package_dir=root, verifier_image="verifier:test")
+
+            invalid_paths = {
+                "missing": {},
+                "empty": {"path": ""},
+                "non-string": {"path": 7},
+            }
+            for case, path_field in invalid_paths.items():
+                binding = {
+                    "name": "submission",
+                    "source": "workspace",
+                    **path_field,
+                }
+                task = {
+                    "evaluation": {
+                        "submission_contract": {"source_binding": "submission"},
+                        "native_verifier": {
+                            "verifier_id": "test-verifier",
+                            "entrypoint": "evaluation_assets/verifier.py",
+                            "input_bindings": [binding],
+                        },
+                    },
+                }
+                with self.subTest(case=case), patch("trievo_bench.l2_agent.subprocess.run") as run:
+                    result = runner._verify_taskstream(
+                        task=task,
+                        turn_dir=turn_dir,
+                        workspace=workspace,
+                        reply=BaselineReply(),
+                    )
+
+                run.assert_not_called()
+                self.assertEqual(result["category"], "error")
+                self.assertIsNone(result["score"])
+                self.assertEqual(result["details"]["type"], "invalid_native_binding")
+                self.assertEqual(result["details"]["name"], "submission")
+                self.assertEqual(result["details"]["source"], "workspace")
+                self.assertEqual(result["details"]["reason"], "path must be a non-empty string")
+
 
 if __name__ == "__main__":
     unittest.main()

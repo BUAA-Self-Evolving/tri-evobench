@@ -24,10 +24,12 @@ def test_volume_transport_is_explicit_and_fail_closed():
     assert docker_volume_transport_enabled(
         {"TRIEVO_DOCKER_VOLUME_TRANSPORT": "required"}
     )
-    with pytest.raises(DockerVolumeError, match="must be off or required"):
+    with pytest.raises(DockerVolumeError, match="must be one of") as exc_info:
         docker_volume_transport_enabled(
             {"TRIEVO_DOCKER_VOLUME_TRANSPORT": "sometimes"}
         )
+    for accepted in ("''", "'0'", "'1'", "'disabled'", "'off'", "'required'", "'yes'"):
+        assert accepted in str(exc_info.value)
 
 
 def test_volume_mirror_uses_daemon_owned_volume_and_docker_cp(tmp_path, monkeypatch):
