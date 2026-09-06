@@ -78,6 +78,8 @@ def generate(
             f"agent:\n  reasoning_effort: none\n  api_max_retries: {api_max_retries}\n"
             f"providers:\n  custom:\n    base_url: {json.dumps(base_url)}\n"
             "    key_env: OPENAI_API_KEY\n    api_mode: chat_completions\n"
+            "    extra_body:\n      thinking:\n        type: disabled\n"
+            "      reasoning:\n        enabled: false\n"
             f"    request_timeout_seconds: {api_timeout_seconds}\n",
             encoding="utf-8",
         )
