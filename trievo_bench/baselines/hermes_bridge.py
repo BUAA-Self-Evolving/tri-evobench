@@ -25,6 +25,7 @@ class HermesBridge:
         self._policy = "turn_boundary"
         self._review_timeout = 900.0
         self._approval_policy = "session"
+        self._thinking = ""
         self._last_usage: dict[str, float] = {}
         self._events: list[dict[str, Any]] = []
         self._tool_calls: list[dict[str, Any]] = []
@@ -58,10 +59,13 @@ class HermesBridge:
             self._review_timeout = float(evolution.get("timeout_seconds", 900))
         if isinstance(options, dict):
             self._approval_policy = str(options.get("approval_policy", "session"))
+            self._thinking = str(options.get("thinking", "")).strip().lower()
         if self._policy not in {"turn_boundary", "native", "disabled"}:
             raise RuntimeError(f"unsupported Hermes evolution policy: {self._policy}")
         if self._approval_policy not in {"once", "session", "always", "deny"}:
             raise RuntimeError(f"unsupported Hermes approval policy: {self._approval_policy}")
+        if self._thinking not in {"", "disabled"}:
+            raise RuntimeError(f"unsupported Hermes thinking mode: {self._thinking}")
         return {
             "protocol_version": RUNTIME_PROTOCOL_VERSION,
             "adapter": "hermes-session-manager",
@@ -116,6 +120,18 @@ class HermesBridge:
         # the provider-neutral Hermes control to every turn (including L2 and
         # the same-model evolution fork), not only the L1 protocol path.
         agent.reasoning_config = {"enabled": False}
+        if self._thinking == "disabled":
+            # Hermes' ACP SessionManager currently keeps provider credentials
+            # but drops custom-provider request_overrides.  Reapply the
+            # benchmark's explicit wire control without modifying upstream.
+            request_overrides = dict(getattr(agent, "request_overrides", {}) or {})
+            extra_body = dict(request_overrides.get("extra_body", {}) or {})
+            extra_body.update({
+                "thinking": {"type": "disabled"},
+                "reasoning": {"enabled": False},
+            })
+            request_overrides["extra_body"] = extra_body
+            agent.request_overrides = request_overrides
         if self._is_l1_turn:
             # L1 already controls retries through max_interactions.  Give the
             # framework exactly one foreground decision per Interaction: an

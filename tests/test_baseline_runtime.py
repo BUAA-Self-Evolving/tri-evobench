@@ -253,6 +253,27 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(second["total_tokens"], 75)
         self.assertEqual(second["api_calls"], 2)
 
+    def test_hermes_explicit_disabled_thinking_reaches_acp_request_overrides(self) -> None:
+        agent = SimpleNamespace(request_overrides={"extra_body": {"existing": True}})
+        state = SimpleNamespace(agent=agent, session_id="session-1")
+        bridge = HermesBridge()
+        bridge.initialize({
+            "protocol_version": "1.0",
+            "evolution": {"policy": "disabled"},
+            "options": {"thinking": "disabled"},
+        })
+        bridge._manager = SimpleNamespace(create_session=lambda **_kwargs: state)
+        bridge._workspace = "/workspace"
+
+        bridge.start_turn({"turn_id": "turn-1", "metadata": {}})
+
+        self.assertEqual(agent.reasoning_config, {"enabled": False})
+        self.assertEqual(agent.request_overrides["extra_body"], {
+            "existing": True,
+            "thinking": {"type": "disabled"},
+            "reasoning": {"enabled": False},
+        })
+
     def test_hermes_background_usage_counts_cache_tokens(self) -> None:
         class Connection:
             def execute(self, query, params):

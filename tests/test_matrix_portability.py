@@ -23,6 +23,7 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
         if "hermes" in path.name:
             assert not any("host.docker.internal:7890" in arg for arg in config["adapter"]["command"])
             assert (Path(config["state"]["seed_from"]) / "config.yaml").is_file()
+            assert config["options"]["thinking"] == "disabled"
         else:
             assert config["environment"]["set"]["TRIEVO_THINKING"] == "disabled"
             assert "TRIEVO_API_TIMEOUT_SECONDS" in config["adapter"]["command"]

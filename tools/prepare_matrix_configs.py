@@ -87,6 +87,7 @@ def generate(
             "adapter": {"command": command},
             "state": {"seed_from": str(seed), "seed_files": ["config.yaml"]},
             "options": {"image": "trievo-hermes:matrix-current", "approval_policy": "session",
+                        "thinking": "disabled",
                         "l2_agent_limits": limits},
         })
 
