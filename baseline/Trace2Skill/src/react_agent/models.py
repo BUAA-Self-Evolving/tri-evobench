@@ -193,7 +193,10 @@ class OpenAIClient(LLMClient):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.usage_totals = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self.base_url = base_url or os.getenv("OPENAI_BASE_URL")
-        self.retry_times = retry_times
+        # Explicit runner policy belongs to the SDK's single-request retry
+        # layer, not a multiplier around several independently retried calls.
+        api_retries = os.environ.get("TRIEVO_API_MAX_RETRIES")
+        self.retry_times = retry_times if api_retries is None else ()
         
         if not self.api_key:
             raise ValueError(
@@ -211,6 +214,10 @@ class OpenAIClient(LLMClient):
         from openai import OpenAI, AsyncOpenAI
         
         client_kwargs = {"api_key": self.api_key, "timeout": timeout}
+        if "TRIEVO_API_TIMEOUT_SECONDS" in os.environ:
+            client_kwargs["timeout"] = float(os.environ["TRIEVO_API_TIMEOUT_SECONDS"])
+        if api_retries is not None:
+            client_kwargs["max_retries"] = int(api_retries)
         if self.base_url:
             client_kwargs["base_url"] = self.base_url
         

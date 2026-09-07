@@ -189,13 +189,17 @@ def _config_for(role: str) -> OpenAICompatibleConfig:
 
 
 def _build_client(config: OpenAICompatibleConfig) -> OpenAI:
+    transport = {}
+    if "TRIEVO_API_MAX_RETRIES" in os.environ:
+        transport["max_retries"] = int(os.environ["TRIEVO_API_MAX_RETRIES"])
     return OpenAI(
         base_url=config.base_url.rstrip("/") or _DEFAULT_BASE_URL,
         # Some OpenAI-compatible servers (Ollama, vLLM, local proxies) do not
         # require an API key. The SDK still expects a non-empty string, so fall
         # back to a harmless placeholder when none is configured.
         api_key=config.api_key or "dummy",
-        timeout=config.timeout_seconds,
+        timeout=float(os.environ.get("TRIEVO_API_TIMEOUT_SECONDS", config.timeout_seconds)),
+        **transport,
     )
 
 
@@ -274,9 +278,15 @@ def _chat_messages_impl(
         kwargs["tools"] = _sanitize_for_transport(tools)
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
-    if timeout is not None:
+    if "TRIEVO_API_TIMEOUT_SECONDS" in os.environ:
+        # Tool execution deadlines must not override the API transport budget.
+        kwargs["timeout"] = float(os.environ["TRIEVO_API_TIMEOUT_SECONDS"])
+    elif timeout is not None:
         kwargs["timeout"] = timeout
 
+    if "TRIEVO_API_MAX_RETRIES" in os.environ:
+        # The SDK owns the bounded retries inside this one model request.
+        retries = 1
     last_err: Exception | None = None
     for attempt in range(retries):
         try:

@@ -229,10 +229,10 @@ def command(repo, row, checkpoint, config_dir=None):
     config_root = Path(config_dir or repo)
     if row["agent"] == "hermes":
         config = f"tmp_hermes_cf_{row['level']}.override.json"
-    elif row["agent"] == "skillopt" and row["level"] == "l2":
-        config = "tmp_skillopt_docker_l2.override.json"
+    elif row["agent"] in {"skillopt", "trace2skill"} and row["level"] == "l2":
+        config = f"tmp_{row['agent']}_docker_l2.override.json"
         if not (config_root / config).is_file():
-            config = "tmp_skillopt_docker.override.json"
+            config = f"tmp_{row['agent']}_docker.override.json"
     else:
         config = f"tmp_{row['agent']}_docker.override.json"
     # Stream length must not silently determine the per-turn resource allowance.

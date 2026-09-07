@@ -132,6 +132,21 @@ def generate(
                 "options": {
                     **config["options"],
                     "max_completion_tokens": l2_max_output_tokens,
+                    "openai_compatible_max_tokens": l2_max_output_tokens,
+                },
+            })
+        else:
+            save("tmp_trace2skill_docker_l2.override.json", {
+                **config,
+                "options": {
+                    **config["options"],
+                    "request_timeout": api_timeout_seconds,
+                    "max_tokens": l2_max_output_tokens,
+                    "evolution_max_tokens": l2_max_output_tokens,
+                    "generation_config": {
+                        **config["options"]["generation_config"],
+                        "max_tokens": l2_max_output_tokens,
+                    },
                 },
             })
     return output
