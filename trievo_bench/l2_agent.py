@@ -79,6 +79,10 @@ class L2AgentRunOptions:
     resume_checkpoint: Path | None = None
     condition: str | RunCondition = RunCondition.EVOLVING
     evaluation_error_policy: str = "stop"
+    retry_interrupted_run_id: str | None = None
+    stop_after_turn: str | None = None
+    retry_authorization: Path | None = None
+    retry_job_id: str | None = None
 
 
 class L2AgentStreamRunner:
@@ -100,6 +104,12 @@ class L2AgentStreamRunner:
                 "evaluation_error_policy must be 'stop' or 'continue'"
             )
         self.evaluation_error_policy = options.evaluation_error_policy
+        if options.retry_interrupted_run_id and self.condition is not RunCondition.RESET:
+            raise L2AgentRunError("interrupted Interaction retry is only supported for reset TaskStream runs")
+        if options.retry_interrupted_run_id and (options.resume_checkpoint is None or not options.stop_after_turn):
+            raise L2AgentRunError("interrupted Interaction retry requires a resume checkpoint and stop-after-turn")
+        if options.retry_interrupted_run_id and not options.retry_job_id:
+            raise L2AgentRunError("interrupted Interaction retry requires a matrix job id")
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
 
@@ -242,6 +252,7 @@ class L2AgentStreamRunner:
         resume_state_archive: Path | None = None
         completed_turns: list[dict[str, Any]] = []
         resume_pending = None
+        resume_interrupted = False
         workspace = Path(tempfile.mkdtemp(prefix="trievo-l2-work-"))
         if self.options.resume_checkpoint is not None:
             checkpoint = self.options.resume_checkpoint.resolve()
@@ -266,8 +277,32 @@ class L2AgentStreamRunner:
             )
             if checkpoint_error_policy != self.evaluation_error_policy:
                 raise L2AgentRunError("checkpoint evaluation error policy mismatch")
+            if self.options.retry_interrupted_run_id:
+                _claim_retry_authorization(
+                    self.options.retry_authorization,
+                    failed_run_id=self.options.retry_interrupted_run_id,
+                    turn_id=str(self.options.stop_after_turn),
+                    checkpoint=checkpoint,
+                    job_id=str(self.options.retry_job_id),
+                    stream_id=self.options.stream_id,
+                    baseline=self.options.baseline,
+                    condition=self.condition.value,
+                )
             if checkpoint_metadata.get("phase") == "adjudicate":
                 resume_pending = _load_json(checkpoint / "evidence.json")
+            elif checkpoint_metadata.get("phase") == "interact_started":
+                expected_run = str(checkpoint_metadata.get("run_id", ""))
+                expected_turn = str(checkpoint_metadata.get("turn_id", ""))
+                if int(checkpoint_metadata.get("interaction_index", -1)) != 1:
+                    raise L2AgentRunError("interrupted Interaction retry only supports the first Interaction")
+                if (
+                    not self.options.retry_interrupted_run_id
+                    or self.options.retry_interrupted_run_id != expected_run
+                ):
+                    raise L2AgentRunError("interrupted Interaction checkpoint requires explicit retry authorization")
+                if self.options.stop_after_turn and self.options.stop_after_turn != expected_turn:
+                    raise L2AgentRunError("interrupted retry stop-after-turn mismatch")
+                resume_interrupted = True
             resume_index = int(checkpoint_metadata["next_turn_index"])
             loaded_turns = json.loads(checkpoint_turns.read_text(encoding="utf-8"))
             if not isinstance(loaded_turns, list) or len(loaded_turns) != resume_index:
@@ -281,7 +316,7 @@ class L2AgentStreamRunner:
                     completed["trace_file"] = str(prior_traces[0])
             self.budget.used = int(checkpoint_metadata.get("token_budget", {}).get("used", 0))
             self.budget.calls = int(checkpoint_metadata.get("token_budget", {}).get("calls", 0))
-            if resume_pending is not None or self.condition is not RunCondition.RESET:
+            if resume_pending is not None or resume_interrupted or self.condition is not RunCondition.RESET:
                 _restore_tree_archive(checkpoint_workspace, workspace)
             else:
                 shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
@@ -313,7 +348,7 @@ class L2AgentStreamRunner:
         try:
             if volume_transport:
                 self._start_taskstream_volume_transport(workspace)
-            if self.condition is not RunCondition.RESET or resume_pending is not None:
+            if self.condition is not RunCondition.RESET or resume_pending is not None or resume_interrupted:
                 self._start_taskstream_runtime(
                     workspace,
                     run_dir,
@@ -332,7 +367,7 @@ class L2AgentStreamRunner:
                 task = _load_json(turn_dir / "task.json")
                 if task.get("stream_id") != self.options.stream_id or task.get("turn_id") != turn_id:
                     raise L2AgentRunError(f"TaskStream identity mismatch for {turn_id}")
-                if resume_pending is None:
+                if resume_pending is None and not resume_interrupted:
                     if self.condition is RunCondition.RESET:
                         if runtime_started and self._runtime is not None:
                             self._runtime.end_flow()
@@ -394,9 +429,23 @@ class L2AgentStreamRunner:
                 for interaction_index in range(first_interaction, max_interactions + 1):
                     interaction_request = current_request
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
+                    stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                    started_checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"i{turn_index:04d}-{interaction_index:02d}"
                     if resume_pending:
                         reply = _restored_reply(resume_pending["reply"])
                     else:
+                        started_checkpoint.mkdir(parents=True, exist_ok=True)
+                        _archive_tree(workspace, started_checkpoint / "workspace.zip")
+                        self._runtime.save_checkpoint_state(started_checkpoint / "baseline_state.zip")
+                        _write_json(started_checkpoint / "completed_turns.json", report["turns"])
+                        _write_json(started_checkpoint / "checkpoint.json", {
+                            "phase": "interact_started", "stream_id": self.options.stream_id,
+                            "baseline": self.options.baseline, "condition": self.condition.value,
+                            "evaluation_error_policy": self.evaluation_error_policy,
+                            "run_id": run_id, "turn_id": turn_id,
+                            "next_turn_index": turn_index, "interaction_index": interaction_index,
+                            "token_budget": asdict(self.budget),
+                        })
                         reply = self._runtime.interact(
                             InteractionContext(
                                 turn_id=turn_id,
@@ -426,9 +475,17 @@ class L2AgentStreamRunner:
                         "phase": "adjudicate", "stream_id": self.options.stream_id,
                         "baseline": self.options.baseline, "condition": self.condition.value,
                         "evaluation_error_policy": self.evaluation_error_policy,
+                        "run_id": run_id, "turn_id": turn_id,
                         "next_turn_index": turn_index, "interaction_index": interaction_index,
                         "token_budget": asdict(self.budget),
                     })
+                    if not resume_pending:
+                        started_metadata_path = started_checkpoint / "checkpoint.json"
+                        if started_metadata_path.is_file():
+                            started_metadata = _load_json(started_metadata_path)
+                            started_metadata["invalidated"] = True
+                            started_metadata["superseded_by"] = str(pending)
+                            _write_json(started_metadata_path, started_metadata)
                     resume_pending = None
                     limit_reasons = _limit_reasons(reply.raw)
                     if limit_reasons:
@@ -582,6 +639,7 @@ class L2AgentStreamRunner:
                     history = next_history
                     if not should_retry:
                         break
+                resume_interrupted = False
                 if terminal_outcome is None:
                     raise L2AgentRunError(f"TaskStream turn {turn_id} produced no terminal outcome")
                 evolution_enabled = (
@@ -659,6 +717,9 @@ class L2AgentStreamRunner:
                         f"{_evaluation_error_summary(terminal_outcome.private_diagnostics)}; "
                         f"resume from {pending} after repairing the evaluator"
                     )
+                if self.options.stop_after_turn == turn_id:
+                    report["stopped_after_turn"] = turn_id
+                    break
             report["completed"] = len(report["turns"]) == len(turn_order)
             report["evaluation_complete"] = all(
                 item.get("evaluation_status") != "evaluation_error"
@@ -1745,6 +1806,65 @@ def _runtime_limit_failure(reason: str, detail: str | None = None) -> dict[str, 
     if detail:
         details["detail"] = detail
     return {"category": "execution_limit", "score": 0.0, "details": details}
+
+
+def _claim_retry_authorization(
+    path: Path | None,
+    *,
+    failed_run_id: str,
+    turn_id: str,
+    checkpoint: Path,
+    job_id: str,
+    stream_id: str,
+    baseline: str,
+    condition: str,
+) -> None:
+    if path is None:
+        raise L2AgentRunError("interrupted retry requires a consumed authorization ledger")
+    auth_path = path.resolve()
+    try:
+        data = _load_json(auth_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise L2AgentRunError("invalid interrupted retry authorization ledger") from exc
+    if data.get("status") != "consumed":
+        raise L2AgentRunError("interrupted retry authorization ledger was not consumed")
+    if str(data.get("failed_run_id", "")) != failed_run_id:
+        raise L2AgentRunError("interrupted retry authorization run mismatch")
+    if str(data.get("turn_id", "")) != turn_id:
+        raise L2AgentRunError("interrupted retry authorization turn mismatch")
+    if str(data.get("job", "")) != job_id:
+        raise L2AgentRunError("interrupted retry authorization job mismatch")
+    if str(data.get("stream_id", "")) != stream_id:
+        raise L2AgentRunError("interrupted retry authorization stream mismatch")
+    if str(data.get("baseline", "")) != baseline:
+        raise L2AgentRunError("interrupted retry authorization baseline mismatch")
+    if str(data.get("condition", "")) != condition:
+        raise L2AgentRunError("interrupted retry authorization condition mismatch")
+    if Path(str(data.get("checkpoint", ""))).resolve() != checkpoint.resolve():
+        raise L2AgentRunError("interrupted retry authorization checkpoint mismatch")
+    source_run_dir = Path(str(data.get("source_run_dir", ""))).resolve()
+    if not source_run_dir.is_dir():
+        raise L2AgentRunError("interrupted retry authorization source run directory is invalid")
+    claim_path = source_run_dir / f"interrupted-retry-{failed_run_id}-{turn_id}.runner-claim.json"
+    claim = {
+        "status": "executing",
+        "claimed_at": datetime.now(UTC).isoformat(),
+        "pid": os.getpid(),
+        "failed_run_id": failed_run_id,
+        "turn_id": turn_id,
+        "job": job_id,
+        "stream_id": stream_id,
+        "baseline": baseline,
+        "condition": condition,
+        "checkpoint": str(checkpoint.resolve()),
+    }
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    try:
+        fd = os.open(claim_path, flags, 0o600)
+    except FileExistsError as exc:
+        raise L2AgentRunError("interrupted retry authorization was already claimed") from exc
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        stream.write(json.dumps(claim, ensure_ascii=False, indent=2) + "\n")
 
 
 def _public_trajectory(record: dict[str, Any]) -> dict[str, Any]:

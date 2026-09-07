@@ -303,6 +303,10 @@ def main() -> None:
     parser.add_argument("--max-total-tokens", type=int, default=2_000_000)
     parser.add_argument("--browser-image", default="trievo-l2-browser:0.1")
     parser.add_argument("--resume-checkpoint", help="post-turn checkpoint directory; rerun only subsequent TaskStream turns")
+    parser.add_argument("--retry-interrupted-run", help="exact failed run_id authorized for one interrupted TaskStream retry")
+    parser.add_argument("--retry-authorization", type=Path, help="consumed one-shot authorization ledger for --retry-interrupted-run")
+    parser.add_argument("--retry-job", help="matrix job id bound to the consumed retry authorization")
+    parser.add_argument("--stop-after-turn", help="stop after completing this TaskStream turn")
     parser.add_argument(
         "--condition",
         choices=["reset", "frozen", "evolving"],
@@ -325,6 +329,12 @@ def main() -> None:
     if args.baseline:
         if not args.allow_generated_code:
             raise SystemExit("L2 real-agent execution requires --allow-generated-code")
+        if args.retry_interrupted_run and args.retry_authorization is None:
+            raise SystemExit("--retry-interrupted-run requires --retry-authorization")
+        if args.retry_interrupted_run and (not args.resume_checkpoint or not args.stop_after_turn):
+            raise SystemExit("--retry-interrupted-run requires --resume-checkpoint and --stop-after-turn")
+        if args.retry_interrupted_run and not args.retry_job:
+            raise SystemExit("--retry-interrupted-run requires --retry-job")
         from .l2_agent import L2AgentRunOptions, load_baseline_overrides, run_l2_agent_stream
 
         report = run_l2_agent_stream(
@@ -341,6 +351,10 @@ def main() -> None:
                 resume_checkpoint=Path(args.resume_checkpoint) if args.resume_checkpoint else None,
                 condition=args.condition,
                 evaluation_error_policy=args.evaluation_error_policy,
+                retry_interrupted_run_id=args.retry_interrupted_run,
+                stop_after_turn=args.stop_after_turn,
+                retry_authorization=args.retry_authorization,
+                retry_job_id=args.retry_job,
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))
