@@ -10,7 +10,7 @@ from tools.run_new_package_matrix import command, jobs
 def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     output = generate(tmp_path / "configs", "gpt-5.6-terra", "https://example.test/v1")
     files = list(output.glob("*.override.json"))
-    assert len(files) == 5
+    assert len(files) == 6
     for path in files:
         config = json.loads(path.read_text())
         assert config["adapter"]["command"][0] == "docker"
@@ -50,6 +50,15 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert skillopt_l1["options"]["max_completion_tokens"] == 4096
     assert skillopt_l2["options"]["max_completion_tokens"] == 12000
     assert skillopt_l2["options"]["l2_agent_limits"]["max_output_tokens"] == 12000
+    assert skillopt_l2["options"]["openai_compatible_max_tokens"] == 12000
+    assert "openai_compatible_max_tokens" not in skillopt_l1["options"]
+    trace_l2 = json.loads((output / "tmp_trace2skill_docker_l2.override.json").read_text())
+    trace_l1 = json.loads((output / "tmp_trace2skill_docker.override.json").read_text())
+    assert trace_l2["options"]["max_tokens"] == 12000
+    assert trace_l2["options"]["evolution_max_tokens"] == 12000
+    assert trace_l2["options"]["generation_config"]["max_tokens"] == 12000
+    assert trace_l2["options"]["request_timeout"] == 150
+    assert "max_tokens" not in trace_l1["options"]["generation_config"]
 
 
 def test_explicit_package_and_config_paths(tmp_path):
@@ -74,15 +83,21 @@ def test_explicit_package_and_config_paths(tmp_path):
     l1_args = command(tmp_path, skillopt_l1, None, config_dir)
     assert l2_args[l2_args.index("--baseline-config") + 1].endswith("tmp_skillopt_docker_l2.override.json")
     assert l1_args[l1_args.index("--baseline-config") + 1].endswith("tmp_skillopt_docker.override.json")
+    for level in ("l1", "l2"):
+        row = next(row for row in rows if row["level"] == level and row["agent"] == "trace2skill")
+        args = command(tmp_path, row, None, config_dir)
+        suffix = "_l2" if level == "l2" else ""
+        assert args[args.index("--baseline-config") + 1].endswith(f"tmp_trace2skill_docker{suffix}.override.json")
 
 
-def test_l2_skillopt_falls_back_to_legacy_generated_config(tmp_path):
+@pytest.mark.parametrize("agent", ["skillopt", "trace2skill"])
+def test_l2_agents_fall_back_to_legacy_generated_config(tmp_path, agent):
     config_dir = tmp_path / "old-config"
     config_dir.mkdir()
-    legacy = config_dir / "tmp_skillopt_docker.override.json"
+    legacy = config_dir / f"tmp_{agent}_docker.override.json"
     legacy.write_text("{}", encoding="utf-8")
     row = {
-        "agent": "skillopt", "level": "l2", "package": "pkg", "stream": "s",
+        "agent": agent, "level": "l2", "package": "pkg", "stream": "s",
         "output": "out", "turns": ["turn1"], "condition": "evolving",
     }
 
