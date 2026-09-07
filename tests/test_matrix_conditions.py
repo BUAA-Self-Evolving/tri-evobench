@@ -276,7 +276,8 @@ def test_interrupted_retry_prefers_saved_adjudication_over_started_marker(tmp_pa
         prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
 
 
-def test_interrupted_retry_consumes_authorization_and_uses_exact_prefix_checkpoint(tmp_path):
+@pytest.mark.parametrize("unrelated_marker", [None, ("older-run", "turn2"), ("20260907T000000Z-deadbeef", "turn1")])
+def test_interrupted_retry_consumes_authorization_and_uses_exact_prefix_checkpoint(tmp_path, unrelated_marker):
     row = jobs(
         tmp_path,
         tmp_path / "results",
@@ -310,6 +311,14 @@ def test_interrupted_retry_consumes_authorization_and_uses_exact_prefix_checkpoi
         "allowed_additional_attempts": 1,
         "preserve_valid_turns": [1],
     })
+
+    if unrelated_marker:
+        _write_json(Path(row["output"]) / "_checkpoints/key/unrelated/i0000-01/checkpoint.json", {
+            "phase": "interact_started", "invalidated": True,
+            "stream_id": "sra", "baseline": "hermes", "condition": "reset",
+            "run_id": unrelated_marker[0], "turn_id": unrelated_marker[1],
+            "next_turn_index": 1, "interaction_index": 1,
+        })
 
     selected_checkpoint, run_id, stop_after_turn = prepare_interrupted_retry(
         row,

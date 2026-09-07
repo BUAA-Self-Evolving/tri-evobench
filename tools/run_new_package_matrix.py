@@ -328,10 +328,10 @@ def _find_interrupted_checkpoint(row, run_id, turn_id):
                     if isinstance(evidence, dict) and isinstance(evidence.get("reply"), dict):
                         raise ValueError("interrupted retry has saved adjudication evidence")
             continue
-        if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
-            raise ValueError("interrupted retry has saved adjudication evidence")
         if data.get("run_id") != run_id or data.get("turn_id") != turn_id:
             continue
+        if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
+            raise ValueError("interrupted retry has saved adjudication evidence")
         if int(data.get("next_turn_index", -1)) != expected_index:
             continue
         if int(data.get("interaction_index", -1)) != 1:
