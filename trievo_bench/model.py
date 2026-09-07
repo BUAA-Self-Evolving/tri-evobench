@@ -1,13 +1,37 @@
 from __future__ import annotations
 
+import http.client
 import json
+import logging
 import os
 import re
+import ssl
 import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Any
+
+
+logger = logging.getLogger(__name__)
+
+
+class _TransientModelResponseError(RuntimeError):
+    """A successful HTTP response did not contain one usable model message."""
+
+
+_RETRYABLE_HTTP_STATUS = {408, 409, 429, 500, 502, 503, 504}
+_RETRYABLE_TRANSPORT_ERRORS = (
+    urllib.error.URLError,
+    http.client.IncompleteRead,
+    http.client.RemoteDisconnected,
+    http.client.BadStatusLine,
+    TimeoutError,
+    ConnectionError,
+    ssl.SSLError,
+    UnicodeDecodeError,
+    _TransientModelResponseError,
+)
 
 
 class TokenBudgetExceeded(RuntimeError):
@@ -116,13 +140,74 @@ def _parse_loose_action(text: str) -> list[dict[str, Any]]:
 class OpenAICompatibleClient:
     """Small dependency-free client for OpenAI-compatible chat-completions APIs."""
 
-    def __init__(self, *, base_url: str, api_key: str, model: str, budget: TokenBudget, timeout: int = 120, thinking: str | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        base_url: str,
+        api_key: str,
+        model: str,
+        budget: TokenBudget,
+        timeout: int = 120,
+        thinking: str | None = None,
+        max_retries: int = 2,
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.model = model
         self.budget = budget
         self.timeout = timeout
         self.thinking = thinking
+        self.max_retries = max_retries
+
+    @staticmethod
+    def _retry_delay(attempt: int, error: BaseException) -> float:
+        if isinstance(error, urllib.error.HTTPError):
+            retry_after = error.headers.get("Retry-After") if error.headers else None
+            if retry_after:
+                try:
+                    return min(60.0, max(0.0, float(retry_after)))
+                except ValueError:
+                    pass
+        return min(30.0, float(2 ** (attempt + 1)))
+
+    def _wait_for_retry(self, attempt: int, error: BaseException) -> None:
+        delay = self._retry_delay(attempt, error)
+        logger.warning(
+            "Transient model request failure; retrying attempt %d/%d in %.1fs (%s)",
+            attempt + 2,
+            self.max_retries + 1,
+            delay,
+            type(error).__name__,
+        )
+        time.sleep(delay)
+
+    @staticmethod
+    def _message_from_result(result: Any) -> dict[str, Any]:
+        if not isinstance(result, dict):
+            raise _TransientModelResponseError("response root is not an object")
+        choices = result.get("choices")
+        if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+            raise _TransientModelResponseError("response has no usable choice")
+        message = choices[0].get("message")
+        if not isinstance(message, dict):
+            raise _TransientModelResponseError("response choice has no usable message")
+        usage = result.get("usage", {})
+        if usage is not None and not isinstance(usage, dict):
+            raise _TransientModelResponseError("response usage is not an object")
+        return message
+
+    def _record_reported_usage(self, result: Any) -> bool:
+        if not isinstance(result, dict) or not isinstance(result.get("usage"), dict):
+            return False
+        total = result["usage"].get("total_tokens")
+        try:
+            parsed = int(total)
+        except (TypeError, ValueError):
+            return False
+        if parsed < 0:
+            return False
+        self.budget.record(parsed, calls=0)
+        return True
 
     def complete(self, messages: list[dict[str, str]], max_tokens: int = 1024, json_mode: bool = False) -> str:
         serialized = json.dumps(messages, ensure_ascii=False)
@@ -144,14 +229,23 @@ class OpenAICompatibleClient:
             method="POST",
         )
         result: dict[str, Any] | None = None
-        for attempt in range(3):
+        message: dict[str, Any] | None = None
+        result_usage_recorded = False
+        for attempt in range(self.max_retries + 1):
+            # Provider attempts are infrastructure accounting, not benchmark
+            # Interactions. Count failed attempts even when they report no usage.
+            self.budget.record(0, calls=1)
             try:
                 with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                    result = json.loads(response.read().decode("utf-8"))
+                    candidate = json.loads(response.read().decode("utf-8"))
+                attempt_usage_recorded = self._record_reported_usage(candidate)
+                message = self._message_from_result(candidate)
+                result = candidate
+                result_usage_recorded = attempt_usage_recorded
                 break
             except urllib.error.HTTPError as exc:
-                if exc.code in {429, 500, 502, 503, 504} and attempt < 2:
-                    time.sleep(2 * (attempt + 1))
+                if exc.code in _RETRYABLE_HTTP_STATUS and attempt < self.max_retries:
+                    self._wait_for_retry(attempt, exc)
                     continue
                 try:
                     detail = exc.read().decode("utf-8", errors="replace")[:500]
@@ -159,19 +253,18 @@ class OpenAICompatibleClient:
                     detail = ""
                 suffix = f": {detail}" if detail else ""
                 raise RuntimeError(f"OpenAI-compatible model request failed (HTTP {exc.code}){suffix}") from exc
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-                if attempt < 1:
-                    time.sleep(2)
+            except (*_RETRYABLE_TRANSPORT_ERRORS, json.JSONDecodeError) as exc:
+                if attempt < self.max_retries:
+                    self._wait_for_retry(attempt, exc)
                     continue
                 raise RuntimeError("OpenAI-compatible model request failed") from exc
-        if result is None:
+        if result is None or message is None:
             raise RuntimeError("OpenAI-compatible model request failed after retries")
-        usage = result.get("usage", {})
-        total = usage.get("total_tokens")
-        if total is None:
-            total = estimate_tokens(serialized) + estimate_tokens(str(result))
-        self.budget.record(int(total))
-        message = result["choices"][0]["message"]
+        if not result_usage_recorded:
+            self.budget.record(
+                estimate_tokens(serialized) + estimate_tokens(str(result)),
+                calls=0,
+            )
         content = message.get("content")
         if isinstance(content, list):
             content = "".join(str(part.get("text", part)) if isinstance(part, dict) else str(part) for part in content)
@@ -189,4 +282,18 @@ def client_from_config(config: dict[str, Any], budget: TokenBudget) -> OpenAICom
     if not api_key:
         raise RuntimeError("missing API key: set TRIEVO_API_KEY or agent/judge api_key")
     thinking = str(config.get("thinking") or os.environ.get("TRIEVO_THINKING", "")).lower() or None
-    return OpenAICompatibleClient(base_url=base_url, api_key=api_key, model=model, budget=budget, timeout=int(config.get("timeout", 120)), thinking=thinking)
+    timeout = int(config.get("timeout") or os.environ.get("TRIEVO_API_TIMEOUT_SECONDS", 120))
+    max_retries = int(config.get("max_retries") if config.get("max_retries") is not None else os.environ.get("TRIEVO_API_MAX_RETRIES", 2))
+    if not 1 <= timeout <= 3600:
+        raise ValueError("model timeout must be between 1 and 3600 seconds")
+    if not 0 <= max_retries <= 20:
+        raise ValueError("model max_retries must be between 0 and 20")
+    return OpenAICompatibleClient(
+        base_url=base_url,
+        api_key=api_key,
+        model=model,
+        budget=budget,
+        timeout=timeout,
+        thinking=thinking,
+        max_retries=max_retries,
+    )

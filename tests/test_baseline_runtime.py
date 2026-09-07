@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import subprocess
 import sys
@@ -252,6 +253,50 @@ class BaselineRuntimeTest(unittest.TestCase):
         self.assertEqual(first["total_tokens"], 120)
         self.assertEqual(second["total_tokens"], 75)
         self.assertEqual(second["api_calls"], 2)
+
+    def test_hermes_explicit_disabled_thinking_reaches_acp_request_overrides(self) -> None:
+        agent = SimpleNamespace(request_overrides={"extra_body": {"existing": True}})
+        state = SimpleNamespace(agent=agent, session_id="session-1")
+        bridge = HermesBridge()
+        bridge.initialize({
+            "protocol_version": "1.0",
+            "evolution": {"policy": "disabled"},
+            "options": {"thinking": "disabled"},
+        })
+        bridge._manager = SimpleNamespace(create_session=lambda **_kwargs: state)
+        bridge._workspace = "/workspace"
+
+        bridge.start_turn({"turn_id": "turn-1", "metadata": {}})
+
+        self.assertEqual(agent.reasoning_config, {"enabled": False})
+        self.assertEqual(agent.request_overrides["extra_body"], {
+            "existing": True,
+            "thinking": {"type": "disabled"},
+            "reasoning": {"enabled": False},
+        })
+
+    def test_hermes_failed_conversation_is_not_a_benchmark_response(self) -> None:
+        result = {
+            "failed": True,
+            "completed": False,
+            "final_response": "API call failed after 4 retries",
+            "error": "provider connect timeout",
+            "messages": [],
+            "api_calls": 4,
+        }
+        agent = SimpleNamespace(run_conversation=lambda **_kwargs: result)
+        state = SimpleNamespace(agent=agent, history=[], session_id="session-1", cwd="/workspace")
+        bridge = HermesBridge()
+        bridge._state = state
+        bridge._turn_id = "turn-1"
+        bridge._workspace = "/workspace"
+        bridge._is_taskstream_turn = True
+        bridge._manager = SimpleNamespace(save_session=lambda _session_id: None)
+        bridge._install_callbacks = lambda *_args: None
+        bridge._foreground_policy = lambda *_args: contextlib.nullcontext()
+
+        with self.assertRaisesRegex(RuntimeError, "provider connect timeout"):
+            bridge.interact({"turn_id": "turn-1", "request": "Do the task"})
 
     def test_hermes_background_usage_counts_cache_tokens(self) -> None:
         class Connection:

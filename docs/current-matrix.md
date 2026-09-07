@@ -76,8 +76,20 @@ Python/科学计算依赖，同时仍会安装并校验各 baseline 自己的依
 
 生成配置默认使用 `deepseek-v4-flash` / `https://cf.api.fan/v1`，thinking 关闭。
 更换地址时同时给配置生成器传 `--base-url` 并设置下面的 `TRIEVO_BASE_URL`；模型同理。
-Hermes 配置使用 DeepSeek-compatible provider；其他供应商需要按其兼容性调整，不能假定通用。
+配置生成器把中转站模型写入 Hermes 的 named custom provider，避免 Hermes 的 first-party
+DeepSeek provider 把未知模型 ID 归一化为其他 DeepSeek 模型；直连官方 provider 时仍应按其原生配置处理。
 配置中不保存 key，且去除了作者的固定 `host.docker.internal:7890` 代理。
+
+L2 的默认单次模型输出上限为 `12000`，与当前 V3 `execution_requirements` 一致；Hermes L1
+仍保留 `1200`，SkillOpt L1 仍保留 `4096`。配置生成器可用 `--l2-max-output-tokens` 生成较低的
+参数试验，但大于数据包声明值的配置仍会被 Runtime 截到数据包上限。`32000`/`40000` 只适合
+验证 provider 是否接受大请求，不能在未修改数据包版本的情况下冒充正式 V3 条件。
+
+中转站运行默认给 benchmark 自有 Judge/User Simulator client 配置 `150s` 单请求 timeout 和
+最多 `4` 次额外 transport retry；只重试连接中断、残缺响应、`408/409/429` 与 `5xx` 等瞬时故障，
+不重试普通 `4xx`、空答案或 schema/任务失败。Hermes 的生成配置写入相同 timeout/retry 数值；
+SkillOpt、Trace2Skill 保留各自 SDK/adapter 的 call 内重试。transport retry 不增加 benchmark
+Interaction，也不能在工具副作用已经发生后重跑整个 Turn。
 
 ### 受限网络与嵌套 rootless Docker
 
@@ -94,6 +106,11 @@ export TRIEVO_DOCKER_PROXY_RANGE='<observed-container-source-cidr>'
 `TRIEVO_DOCKER_PROXY_RANGE` 必须来自一次容器侧连通预检，不能用作者机器的地址；带用户名或密码的
 proxy URL 会被拒绝。必要时可用 `TRIEVO_DOCKER_PROXY_HOST` 覆盖监听地址，这仍是机器本地配置，
 不得写进仓库。
+
+`TRIEVO_DOCKER_PROXY_BRIDGE=off` 只关闭 bridge，不会删除宿主环境中原有的 proxy 变量。如果宿主
+使用容器无法访问的 loopback proxy，而目标 API 又能从 baseline 容器直连，应在启动 Runtime 前
+显式 `unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy`，并先做一次容器内连通
+检查；不要把某台机器观察到的 proxy 地址或 CIDR 固化进配置。
 
 若 Docker daemon 看不到 checkout 所在的宿主路径，bind mount 会静默得到空目录。此时给 Docker CLI
 配置该机器实际可用的 `DOCKER_HOST`，并启用：
@@ -129,6 +146,9 @@ Linux/macOS 的环境变量设置：
 read -s -p 'API key: ' TRIEVO_API_KEY; export TRIEVO_API_KEY
 export TRIEVO_BASE_URL=https://cf.api.fan/v1
 export TRIEVO_MODEL=deepseek-v4-flash
+export TRIEVO_THINKING=disabled
+export TRIEVO_API_TIMEOUT_SECONDS=150
+export TRIEVO_API_MAX_RETRIES=4
 uv run --frozen python tools/run_new_package_matrix.py \
   --l1-package benchmarks/current/l1_arena \
   --l2-package /path/to/extracted/L2_Demo_V3 \

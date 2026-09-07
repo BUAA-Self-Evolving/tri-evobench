@@ -188,13 +188,21 @@ def latest_checkpoint(row):
 
 
 def command(repo, row, checkpoint, config_dir=None):
-    config = f"tmp_hermes_cf_{row['level']}.override.json" if row["agent"] == "hermes" else f"tmp_{row['agent']}_docker.override.json"
+    config_root = Path(config_dir or repo)
+    if row["agent"] == "hermes":
+        config = f"tmp_hermes_cf_{row['level']}.override.json"
+    elif row["agent"] == "skillopt" and row["level"] == "l2":
+        config = "tmp_skillopt_docker_l2.override.json"
+        if not (config_root / config).is_file():
+            config = "tmp_skillopt_docker.override.json"
+    else:
+        config = f"tmp_{row['agent']}_docker.override.json"
     # Stream length must not silently determine the per-turn resource allowance.
     # This is an aggregate guard; model/tool/time limits remain unchanged.
     stream_token_limit = max(10_000_000, 3_000_000 * len(row["turns"]))
     args = [sys.executable, "-m", f"trievo_bench.{row['level']}_" + ("arena_compat" if row["level"] == "l1" else "compat"),
             "--package", row["package"], "--stream", row["stream"], "--output", row["output"],
-            "--baseline", row["agent"], "--baseline-config", str((config_dir or repo) / config),
+            "--baseline", row["agent"], "--baseline-config", str(config_root / config),
             "--max-total-tokens", str(stream_token_limit)]
     if row["level"] == "l1":
         args += ["--turns", ",".join(row["turns"]), "--backend", "docker", "--image", "trievo-ubuntu:22.04"]
@@ -303,6 +311,10 @@ def main():
     for name in ("OPENAI_BASE_URL", "OPENAI_COMPATIBLE_BASE_URL", "TARGET_OPENAI_COMPATIBLE_BASE_URL", "DEEPSEEK_BASE_URL"):
         os.environ[name] = os.environ.get("TRIEVO_BASE_URL", "https://cf.api.fan/v1")
     os.environ["TRIEVO_THINKING"] = "disabled"
+    # Keep transport retries inside one model call so a relay failure never
+    # consumes another benchmark Interaction or repeats workspace side effects.
+    os.environ.setdefault("TRIEVO_API_TIMEOUT_SECONDS", "150")
+    os.environ.setdefault("TRIEVO_API_MAX_RETRIES", "4")
     root = (repo / args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
     # Retain an OS-owned lock for this process; stale files do not block resume.
