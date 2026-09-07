@@ -171,6 +171,19 @@ def report_for(row):
     return None, None
 
 
+def report_for_interrupted_retry(row, stop_after_turn):
+    output = Path(row["output"])
+    if stop_after_turn not in row["turns"]:
+        return None, None
+    end = row["turns"].index(stop_after_turn) + 1
+    prefix = {**row, "turns": row["turns"][:end]}
+    for path in sorted(output.glob("*/*/report.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        report = load(path)
+        if report.get("stopped_after_turn") == stop_after_turn and _report_matches_row(prefix, report):
+            return path, report
+    return None, None
+
+
 def latest_checkpoint(row):
     candidates = []
     unsafe_frontier = (-1, 0)
@@ -186,6 +199,14 @@ def latest_checkpoint(row):
                 if row.get("condition") != "evolving":
                     continue
             elif checkpoint_condition != row.get("condition"):
+                continue
+            if data.get("phase") == "interact_started":
+                if _started_marker_has_same_run_pending(row, path.parent, data):
+                    continue
+                unsafe_frontier = max(
+                    unsafe_frontier,
+                    (int(data.get("next_turn_index", 0)), 2),
+                )
                 continue
         if all((path.parent / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
             index = int(data["next_turn_index"])
@@ -225,7 +246,227 @@ def latest_checkpoint(row):
     return selected[3] if selected else None
 
 
-def command(repo, row, checkpoint, config_dir=None):
+def _run_dir_for_retry(row, value):
+    candidate = Path(value).expanduser()
+    if candidate.exists():
+        run_dir = candidate.resolve()
+        if run_dir.is_file():
+            run_dir = run_dir.parent
+    else:
+        matches = [
+            path.parent
+            for path in Path(row["output"]).glob(f"{row['flow_id']}/{value}/report.json")
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"retry run not found or ambiguous under row output: {value}")
+        run_dir = matches[0].resolve()
+    output = Path(row["output"]).resolve()
+    if output != run_dir and output not in run_dir.parents:
+        raise ValueError("retry run path is outside the selected row output")
+    return run_dir
+
+
+def _checkpoint_preserves_prefix(row, checkpoint, expected_index):
+    checkpoint = Path(checkpoint).resolve()
+    output = Path(row["output"]).resolve()
+    if output != checkpoint and output not in checkpoint.parents:
+        raise ValueError("retry checkpoint path is outside the selected row output")
+    if not all((checkpoint / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
+        raise ValueError("retry checkpoint is missing required archives")
+    data = load(checkpoint / "checkpoint.json")
+    if data.get("invalidated"):
+        raise ValueError("retry checkpoint is invalidated")
+    if data.get("non_resumable"):
+        raise ValueError("retry checkpoint is non-resumable")
+    turns = load(checkpoint / "completed_turns.json")
+    condition = data.get("condition", data.get("run_condition"))
+    report = {"stream_id": row["flow_id"], "condition": condition, "turns": turns}
+    prefix = {**row, "turns": row["turns"][:expected_index]}
+    if data.get("stream_id", data.get("flow_id")) != row["flow_id"]:
+        raise ValueError("retry checkpoint stream identity mismatch")
+    if data.get("baseline", row["agent"]) != row["agent"]:
+        raise ValueError("retry checkpoint baseline identity mismatch")
+    if condition != row.get("condition"):
+        raise ValueError("retry checkpoint condition mismatch")
+    if int(data.get("next_turn_index", -1)) != expected_index:
+        raise ValueError("retry checkpoint turn frontier mismatch")
+    if not (isinstance(turns, list) and len(turns) == expected_index and _report_matches_row(prefix, report)):
+        raise ValueError("retry checkpoint does not preserve the completed prefix")
+
+
+def _find_completed_prefix_checkpoint(row, expected_index):
+    candidates = []
+    for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
+        data = load(path)
+        if data.get("phase") in {"adjudicate", "interact_started"}:
+            continue
+        if int(data.get("next_turn_index", -1)) != expected_index:
+            continue
+        try:
+            _checkpoint_preserves_prefix(row, path.parent, expected_index)
+        except (OSError, ValueError, TypeError, AttributeError):
+            continue
+        candidates.append((path.stat().st_mtime, path.parent))
+    return max(candidates)[1] if candidates else None
+
+
+def _find_interrupted_checkpoint(row, run_id, turn_id):
+    expected_index = row["turns"].index(turn_id)
+    candidates = []
+    for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
+        data = load(path)
+        if data.get("phase") != "interact_started":
+            if (
+                data.get("phase") == "adjudicate"
+                and data.get("run_id") == run_id
+                and data.get("turn_id") == turn_id
+                and int(data.get("next_turn_index", -1)) == expected_index
+            ):
+                evidence_path = path.parent / "evidence.json"
+                if evidence_path.is_file():
+                    evidence = load(evidence_path)
+                    if isinstance(evidence, dict) and isinstance(evidence.get("reply"), dict):
+                        raise ValueError("interrupted retry has saved adjudication evidence")
+            continue
+        if data.get("run_id") != run_id or data.get("turn_id") != turn_id:
+            continue
+        if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
+            raise ValueError("interrupted retry has saved adjudication evidence")
+        if int(data.get("next_turn_index", -1)) != expected_index:
+            continue
+        if int(data.get("interaction_index", -1)) != 1:
+            raise ValueError("interrupted retry only supports the first Interaction")
+        candidates.append((path.stat().st_mtime, path.parent))
+    if not candidates:
+        return None
+    checkpoint = max(candidates)[1]
+    _checkpoint_preserves_prefix(row, checkpoint, expected_index)
+    return checkpoint
+
+
+def _started_marker_has_same_run_pending(row, checkpoint, data):
+    turn_id = data.get("turn_id")
+    turn_index = int(data.get("next_turn_index", -1))
+    interaction_index = int(data.get("interaction_index", -1))
+    if not (0 <= turn_index < len(row["turns"]) and row["turns"][turn_index] == turn_id):
+        return False
+    pending = Path(checkpoint).parent / f"p{turn_index:04d}-{interaction_index:02d}"
+    metadata_path = pending / "checkpoint.json"
+    evidence_path = pending / "evidence.json"
+    if not (metadata_path.is_file() and evidence_path.is_file()):
+        return False
+    if not all((pending / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
+        return False
+    try:
+        metadata = load(metadata_path)
+        evidence = load(evidence_path)
+        _checkpoint_preserves_prefix(row, pending, turn_index)
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False
+    return (
+        metadata.get("phase") == "adjudicate"
+        and metadata.get("stream_id") == row["flow_id"]
+        and metadata.get("condition") == row.get("condition")
+        and metadata.get("run_id") == data.get("run_id")
+        and metadata.get("turn_id") == turn_id
+        and int(metadata.get("next_turn_index", -1)) == turn_index
+        and int(metadata.get("interaction_index", -1)) == interaction_index
+        and evidence.get("turn_id") == turn_id
+        and evidence.get("turn_index") == turn_index
+        and int(evidence.get("interaction_index", -1)) == interaction_index
+        and isinstance(evidence.get("reply"), dict)
+    )
+
+
+def _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index):
+    receipt_path = Path(run_dir) / "timeout-recovery.json"
+    if not receipt_path.is_file():
+        return False
+    try:
+        receipt = load(receipt_path)
+    except (OSError, ValueError, TypeError):
+        return False
+    turns = report.get("turns", [])
+    if not (isinstance(turns, list) and len(turns) > target_index and isinstance(turns[target_index], dict)):
+        return False
+    target = turns[target_index]
+    return (
+        receipt.get("status") == "admitted"
+        and receipt.get("turn_id") == turn_id
+        and int(receipt.get("turn_index", -1)) == target_index + 1
+        and Path(str(receipt.get("source_report", ""))).resolve() == (Path(run_dir) / "report.json").resolve()
+        and str(receipt.get("checkpoint", ""))
+        and str(report.get("error", "")) == "recovered_interact_timeout: admitted as execution_limit; resume from checkpoint"
+        and target.get("turn_id") == turn_id
+        and target.get("final_category") == "execution_limit"
+        and target.get("evaluation_status") == "failed"
+        and target.get("turn_score") == 0.0
+        and target.get("evolution", {}).get("completed") is False
+        and {"type": "evolution.skipped", "reason": "runtime_unavailable"} in target.get("evolution", {}).get("events", [])
+    )
+
+
+def prepare_interrupted_retry(row, retry_run, authorization_path):
+    if row["level"] != "l2":
+        raise ValueError("interrupted retry is only supported for L2 rows")
+    if row.get("condition") != "reset":
+        raise ValueError("interrupted retry is only supported for reset L2 rows")
+    if authorization_path is None:
+        raise ValueError("--retry-authorization is required with --retry-interrupted-run")
+    auth_path = Path(authorization_path).resolve()
+    auth = load(auth_path)
+    if auth.get("status") != "authorized_not_consumed":
+        raise ValueError("interrupted retry authorization is already consumed or invalid")
+    if auth.get("job") != row["id"]:
+        raise ValueError("interrupted retry authorization job mismatch")
+    if int(auth.get("allowed_additional_attempts", 0)) != 1:
+        raise ValueError("interrupted retry authorization must allow exactly one attempt")
+    run_dir = _run_dir_for_retry(row, retry_run)
+    report = load(run_dir / "report.json")
+    run_id = str(report.get("run_id", ""))
+    turn_id = str(auth.get("turn_id", ""))
+    if run_id != str(auth.get("failed_run_id", "")):
+        raise ValueError("interrupted retry authorization failed_run_id mismatch")
+    if report.get("stream_id") != row["flow_id"] or report.get("baseline") != row["agent"]:
+        raise ValueError("interrupted retry report identity mismatch")
+    if _report_condition(report, report.get("turns", [])) != row.get("condition"):
+        raise ValueError("interrupted retry report condition mismatch")
+    if turn_id not in row["turns"]:
+        raise ValueError("interrupted retry turn is not in the selected row")
+    target_index = row["turns"].index(turn_id)
+    turns = report.get("turns", [])
+    if _report_matches_row(row, report):
+        raise ValueError("interrupted retry would replay a valid completed report")
+    valid_receipt = _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index)
+    if len(turns) > target_index and not valid_receipt:
+        raise ValueError("interrupted retry would replay an already recorded turn")
+    checkpoint = _find_interrupted_checkpoint(row, run_id, turn_id)
+    if checkpoint is None:
+        preserve_valid_turns = auth.get("preserve_valid_turns", [])
+        if not isinstance(preserve_valid_turns, list) or len(preserve_valid_turns) != target_index:
+            raise ValueError("legacy interrupted retry requires an authorized completed prefix")
+        if str(report.get("error", "")) != "BaselineProtocolError: baseline adapter timed out during interact" and not valid_receipt:
+            raise ValueError("interrupted retry report is not an interact interruption")
+        checkpoint = _find_completed_prefix_checkpoint(row, target_index)
+        if checkpoint is None:
+            raise ValueError("no exact completed-prefix checkpoint for interrupted retry")
+    consumed = {
+        **auth,
+        "status": "consumed",
+        "consumed_at": now(),
+        "consumed_by_pid": os.getpid(),
+        "checkpoint": str(checkpoint),
+        "source_run_dir": str(run_dir),
+        "job": row["id"],
+        "stream_id": row["flow_id"],
+        "baseline": row["agent"],
+        "condition": row["condition"],
+    }
+    save(auth_path, consumed)
+    return checkpoint, run_id, turn_id
+
+
+def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=None, retry_authorization=None, stop_after_turn=None):
     config_root = Path(config_dir or repo)
     if row["agent"] == "hermes":
         config = f"tmp_hermes_cf_{row['level']}.override.json"
@@ -248,6 +489,14 @@ def command(repo, row, checkpoint, config_dir=None):
         args += ["--condition", row["condition"], "--image", "trievo-l2:0.1", "--browser-image", "trievo-l2-browser:0.1", "--allow-generated-code"]
     if checkpoint:
         args += ["--resume-checkpoint", str(checkpoint)]
+    if retry_interrupted_run:
+        args += ["--retry-interrupted-run", str(retry_interrupted_run)]
+    if retry_authorization:
+        args += ["--retry-authorization", str(retry_authorization)]
+    if retry_interrupted_run:
+        args += ["--retry-job", row["id"]]
+    if stop_after_turn:
+        args += ["--stop-after-turn", str(stop_after_turn)]
     return args
 
 
@@ -341,6 +590,8 @@ def main():
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
+    parser.add_argument("--retry-interrupted-run", help="exact failed run_id or run/report path for one authorized L2 interrupted-turn retry")
+    parser.add_argument("--retry-authorization", type=Path, help="one-shot authorization ledger JSON for --retry-interrupted-run")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     if not os.environ.get("TRIEVO_API_KEY"):
@@ -387,34 +638,67 @@ def main():
         selected = selected[:3]
     if not selected:
         raise SystemExit("no matching job")
+    if args.retry_interrupted_run and len(selected) != 1:
+        raise SystemExit("--retry-interrupted-run requires one selected job")
     state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected}
     status_path = root / "matrix_status.json"
     save(status_path, state)
     for row in selected:
-        report_path, report = report_for(row)
-        if report:
-            row.update(status="completed", report=str(report_path))
-            continue
-        checkpoint = latest_checkpoint(row)
+        retry_run_id = None
+        stop_after_turn = None
+        if args.retry_interrupted_run:
+            checkpoint, retry_run_id, stop_after_turn = prepare_interrupted_retry(
+                row,
+                args.retry_interrupted_run,
+                args.retry_authorization,
+            )
+        else:
+            report_path, report = report_for(row)
+            if report:
+                row.update(status="completed", report=str(report_path))
+                continue
+            checkpoint = latest_checkpoint(row)
         output = Path(row["output"])
         output.mkdir(parents=True, exist_ok=True)
         log = output / f"driver-{int(time.time())}.log"
         row.update(status="running", started_at=now(), checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
         with log.open("w", encoding="utf-8") as stream:
-            child = subprocess.Popen(command(repo, row, checkpoint, config_dir), cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
+            child = subprocess.Popen(
+                command(
+                    repo,
+                    row,
+                    checkpoint,
+                    config_dir,
+                    retry_interrupted_run=retry_run_id,
+                    retry_authorization=args.retry_authorization,
+                    stop_after_turn=stop_after_turn,
+                ),
+                cwd=repo,
+                stdout=stream,
+                stderr=subprocess.STDOUT,
+            )
             row["pid"] = child.pid
             state.update(current_job=row["id"], updated_at=now())
             save(status_path, state)
             while child.poll() is None:
                 time.sleep(2)
             code = child.returncode
-        report_path, report = report_for(row)
+        if stop_after_turn:
+            report_path, report = report_for_interrupted_retry(row, stop_after_turn)
+        else:
+            report_path, report = report_for(row)
         if code != 0 or report is None:
             row.update(status="paused_error", returncode=code, finished_at=now())
             state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
             save(status_path, state)
             print(f"STOPPED {row['id']}: inspect {log}", flush=True)
             return 1
+        if stop_after_turn:
+            row.update(status="interrupted_retry_completed", report=str(report_path), finished_at=now())
+            state.update(status="interrupted_retry_completed", updated_at=now(), matrix=matrix(all_rows))
+            save(status_path, state)
+            print(f"RETRY_COMPLETED {row['id']} through {stop_after_turn}", flush=True)
+            return 0
         row.update(status="completed", report=str(report_path), finished_at=now())
         state.update(updated_at=now(), matrix=matrix(all_rows))
         save(status_path, state)
