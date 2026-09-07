@@ -110,6 +110,7 @@ def test_legacy_evolving_reports_and_checkpoints_still_match(tmp_path):
         (checkpoint / name).parent.mkdir(parents=True, exist_ok=True)
         (checkpoint / name).write_bytes(b"")
     _write_json(checkpoint / "checkpoint.json", {"stream_id": "sra", "baseline": "hermes", "next_turn_index": 1})
+    _write_json(checkpoint / "completed_turns.json", _report()["turns"][:1])
     assert latest_checkpoint(evolving) == checkpoint
 
     copied = Path(reset["output"]) / "_checkpoints/key/run/t0001"

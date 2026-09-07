@@ -284,6 +284,58 @@ def test_evaluator_error_stop_records_null_turn_then_raises(tmp_path, monkeypatc
     assert report["turns"][0]["evaluation_status"] == "evaluation_error"
 
 
+@pytest.mark.parametrize("condition", ["reset", "frozen", "evolving"])
+def test_matrix_resume_rejudges_saved_reply_without_repeating_agent_side_effects(tmp_path, monkeypatch, condition):
+    from dataclasses import replace
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=1)
+    runtimes = _install_fake_runtime(monkeypatch)
+    output = tmp_path / "out"
+    options = _options(package, output, condition)
+
+    def failed_judge(*_args, **_kwargs):
+        raise RuntimeError("model request failed (HTTP 524)")
+
+    monkeypatch.setattr(L2AgentStreamRunner, "_judge_taskstream", failed_judge)
+    with pytest.raises(L2AgentRunError, match="HTTP 524"):
+        L2AgentStreamRunner(options).run()
+
+    row = {"level": "l2", "agent": "hermes", "condition": condition, "flow_id": "stream-a",
+           "turns": ["turn1"], "output": str(output)}
+    checkpoint = latest_checkpoint(row)
+    assert json.loads((checkpoint / "checkpoint.json").read_text())["phase"] == "adjudicate"
+
+    def repaired_judge(self, task, reply, *_args, **_kwargs):
+        assert task["turn_id"] == "turn1"
+        assert reply.text == "done turn1"
+        assert (self._runtime.workspace / "generated-turn1.txt").read_text() == "done"
+        return {"score": 1.0, "passed": True, "feedback": "public",
+                "details": {"check_scores": {"task_completion": 1.0}}}
+
+    monkeypatch.setattr(L2AgentStreamRunner, "_judge_taskstream", repaired_judge)
+    report = L2AgentStreamRunner(replace(options, resume_checkpoint=checkpoint)).run()
+    assert report["completed"] and report["evaluation_complete"]
+    assert report["turns"][0]["turn_score"] == 1.0
+    assert sum(len(runtime.visible_before_interact) for runtime in runtimes) == 1
+
+
+def test_matrix_refuses_error_checkpoint_without_saved_adjudication_evidence(tmp_path, monkeypatch):
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=1)
+    _install_fake_runtime(monkeypatch, verifier_error=True)
+    output = tmp_path / "out"
+    with pytest.raises(L2AgentRunError):
+        L2AgentStreamRunner(_options(package, output, "reset")).run()
+    for path in output.glob("_checkpoints/*/*/p*/evidence.json"):
+        path.unlink()
+    row = {"level": "l2", "agent": "hermes", "condition": "reset", "flow_id": "stream-a",
+           "turns": ["turn1"], "output": str(output)}
+    with pytest.raises(ValueError, match="safe.*checkpoint"):
+        latest_checkpoint(row)
+
+
 def test_user_simulator_failure_does_not_start_another_interaction(tmp_path, monkeypatch):
     package = _package(tmp_path, turns=1, simulator_messages=2)
     runtimes = _install_fake_runtime(monkeypatch, judge_score=0.5)

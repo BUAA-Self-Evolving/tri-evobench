@@ -20,7 +20,7 @@ class _TransientModelResponseError(RuntimeError):
     """A successful HTTP response did not contain one usable model message."""
 
 
-_RETRYABLE_HTTP_STATUS = {408, 409, 429, 500, 502, 503, 504}
+_RETRYABLE_HTTP_STATUS = {408, 409, 429, 500, 502, 503, 504, 524}
 _RETRYABLE_TRANSPORT_ERRORS = (
     urllib.error.URLError,
     http.client.IncompleteRead,

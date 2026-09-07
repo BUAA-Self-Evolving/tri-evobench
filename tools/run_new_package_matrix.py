@@ -173,6 +173,7 @@ def report_for(row):
 
 def latest_checkpoint(row):
     candidates = []
+    unsafe_frontier = (-1, 0)
     for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
         data = load(path)
         if data.get("invalidated"):
@@ -187,8 +188,41 @@ def latest_checkpoint(row):
             elif checkpoint_condition != row.get("condition"):
                 continue
         if all((path.parent / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
-            candidates.append((int(data["next_turn_index"]), path.stat().st_mtime, path.parent))
-    return max(candidates)[2] if candidates else None
+            index = int(data["next_turn_index"])
+            pending = data.get("phase") == "adjudicate"
+            if row["level"] == "l2":
+                position = (index, int(pending))
+                try:
+                    turns = load(path.parent / "completed_turns.json")
+                    prefix = {**row, "turns": row["turns"][:index]}
+                    report = {"stream_id": row["flow_id"], "condition": checkpoint_condition, "turns": turns}
+                    if not (0 <= index <= len(row["turns"]) and isinstance(turns, list)
+                            and len(turns) == index and _report_matches_row(prefix, report)):
+                        # An errored final Turn is not completed progress. Its
+                        # saved adjudication reply is the earliest safe resume.
+                        if isinstance(turns, list) and any(
+                            isinstance(turn, dict) and (turn.get("evaluation_status") == "evaluation_error"
+                                                       or _turn_score(turn) is None)
+                            for turn in turns
+                        ):
+                            position = (max(0, index - 1), 1)
+                        raise ValueError("invalid completed prefix")
+                    if pending:
+                        evidence = load(path.parent / "evidence.json")
+                        if not (index < len(row["turns"]) and isinstance(evidence, dict)
+                                and evidence.get("turn_id") == row["turns"][index]
+                                and evidence.get("turn_index") == index
+                                and isinstance(evidence.get("reply"), dict)):
+                            raise ValueError("invalid adjudication evidence")
+                except (OSError, ValueError, TypeError, AttributeError):
+                    unsafe_frontier = max(unsafe_frontier, position)
+                    continue
+            stage = int(pending) if row["level"] == "l2" else 0
+            candidates.append((index, stage, path.stat().st_mtime, path.parent))
+    selected = max(candidates) if candidates else None
+    if row["level"] == "l2" and unsafe_frontier > (selected[:2] if selected else (-1, 0)):
+        raise ValueError("no safe L2 checkpoint preserves the latest Agent execution; inspect saved adjudication evidence")
+    return selected[3] if selected else None
 
 
 def command(repo, row, checkpoint, config_dir=None):
