@@ -396,6 +396,174 @@ def test_agent_work_limit_is_a_scored_failure_without_running_evaluator(tmp_path
     assert turn["interaction_count"] == 1
 
 
+def test_reset_taskstream_interact_timeout_is_scored_and_next_turn_starts_fresh(tmp_path, monkeypatch):
+    package = _package(tmp_path, turns=2)
+    runtimes = _install_fake_runtime(monkeypatch)
+    calls = 0
+    original_interact = _Runtime.interact
+
+    def first_timeout_then_success(self, _context):
+        nonlocal calls
+        assert self.workspace is not None
+        calls += 1
+        if calls == 1:
+            (self.workspace / "partial-timeout.txt").write_text("partial", encoding="utf-8")
+            raise TimeoutError("simulated hard episode timeout")
+        return original_interact(self, _context)
+
+    monkeypatch.setattr(_Runtime, "interact", first_timeout_then_success)
+    monkeypatch.setattr(
+        L2AgentStreamRunner,
+        "_verify_taskstream",
+        lambda *_args, **_kwargs: {
+            "category": "pass",
+            "score": 1.0,
+            "details": {},
+            "native_result": {
+                "status": "pass",
+                "score": 1.0,
+                "public_summary": {
+                    "result_category": "pass",
+                    "observable_deficiencies": [],
+                },
+            },
+        },
+    )
+
+    report = L2AgentStreamRunner(_options(package, tmp_path / "out-timeout", "reset")).run()
+
+    assert report["completed"] is True
+    assert report["evaluation_complete"] is True
+    assert [turn["turn_score"] for turn in report["turns"]] == [0.0, 1.0]
+    assert [turn["final_category"] for turn in report["turns"]] == ["execution_limit", "pass"]
+    assert [turn["evaluation_status"] for turn in report["turns"]] == ["failed", "passed"]
+    assert len(runtimes) == 2
+    assert "partial-timeout.txt" not in runtimes[-1].visible_before_interact[-1]
+    timeout_checkpoint = Path(report["turns"][0]["checkpoint"])
+    assert timeout_checkpoint.is_dir()
+    assert (timeout_checkpoint / "workspace.zip").is_file()
+    assert (timeout_checkpoint / "baseline_state.zip").is_file()
+
+
+def test_taskstream_interact_non_timeout_exception_still_fails_fast(tmp_path, monkeypatch):
+    package = _package(tmp_path, turns=1)
+    _install_fake_runtime(monkeypatch)
+
+    def protocol_error(self, _context):
+        assert self.workspace is not None
+        raise RuntimeError("adapter emitted malformed result")
+
+    monkeypatch.setattr(_Runtime, "interact", protocol_error)
+    output = tmp_path / "out-non-timeout"
+
+    with pytest.raises(RuntimeError, match="malformed"):
+        L2AgentStreamRunner(_options(package, output, "reset")).run()
+
+    report_path = next(output.glob("stream-a/*/report.json"))
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["turns"] == []
+    assert "malformed" in report["error"]
+
+
+def test_reset_taskstream_timeout_stops_if_runtime_cleanup_fails(tmp_path, monkeypatch):
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=2)
+    _install_fake_runtime(monkeypatch)
+
+    def timeout_interact(self, _context):
+        assert self.workspace is not None
+        raise TimeoutError("simulated hard episode timeout")
+
+    def cleanup_fails(self):
+        raise RuntimeError("cleanup failed")
+
+    monkeypatch.setattr(_Runtime, "interact", timeout_interact)
+    monkeypatch.setattr(_Runtime, "end_flow", cleanup_fails)
+    output = tmp_path / "out-cleanup"
+
+    with pytest.raises(L2AgentRunError, match="cleanup failed"):
+        L2AgentStreamRunner(_options(package, output, "reset")).run()
+
+    report_path = next(output.glob("stream-a/*/report.json"))
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert len(report["turns"]) == 1
+    assert report["turns"][0]["final_category"] == "execution_limit"
+    assert "cleanup failed" in report["error"]
+    checkpoint = Path(report["turns"][0]["checkpoint"])
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text(encoding="utf-8"))
+    assert metadata["non_resumable"] is True
+    assert metadata["non_resumable_reason"] == "runtime cleanup failed after interact timeout"
+    row = {
+        "level": "l2",
+        "agent": "hermes",
+        "condition": "reset",
+        "flow_id": "stream-a",
+        "turns": ["turn1", "turn2"],
+        "output": str(output),
+    }
+    with pytest.raises(ValueError, match="safe L2 checkpoint"):
+        latest_checkpoint(row)
+
+
+@pytest.mark.parametrize("condition", ["frozen", "evolving"])
+def test_persistent_taskstream_interact_timeout_records_turn_then_stops(tmp_path, monkeypatch, condition):
+    from dataclasses import replace
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=2)
+    _install_fake_runtime(monkeypatch)
+
+    def timeout_interact(self, _context):
+        assert self.workspace is not None
+        (self.workspace / "partial-timeout.txt").write_text("partial", encoding="utf-8")
+        raise TimeoutError("simulated hard episode timeout")
+
+    monkeypatch.setattr(_Runtime, "interact", timeout_interact)
+
+    output = tmp_path / "out-persistent-timeout"
+    with pytest.raises(L2AgentRunError, match="persistent L2 conditions"):
+        L2AgentStreamRunner(_options(package, output, condition)).run()
+
+    report_path = next(output.glob("stream-a/*/report.json"))
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert len(report["turns"]) == 1
+    assert report["turns"][0]["turn_score"] == 0.0
+    assert report["turns"][0]["evaluation_status"] == "failed"
+    assert report["turns"][0]["final_category"] == "execution_limit"
+    checkpoint = Path(report["turns"][0]["checkpoint"])
+    assert json.loads((checkpoint / "checkpoint.json").read_text())["non_resumable"] is True
+    older = output / "_checkpoints" / "older" / "run" / "t0001"
+    older.mkdir(parents=True)
+    for name in ("workspace.zip", "baseline_state.zip"):
+        with zipfile.ZipFile(older / name, "w"):
+            pass
+    _write_json(older / "completed_turns.json", report["turns"])
+    _write_json(older / "checkpoint.json", {
+        "stream_id": "stream-a",
+        "baseline": "hermes",
+        "condition": condition,
+        "evaluation_error_policy": "stop",
+        "turn_id": "turn1",
+        "completed_turn_index": 0,
+        "next_turn_index": 1,
+    })
+    row = {
+        "level": "l2",
+        "agent": "hermes",
+        "condition": condition,
+        "flow_id": "stream-a",
+        "turns": ["turn1", "turn2"],
+        "output": str(output),
+    }
+    with pytest.raises(ValueError, match="safe L2 checkpoint"):
+        latest_checkpoint(row)
+    with pytest.raises(L2AgentRunError, match="non-resumable"):
+        L2AgentStreamRunner(
+            replace(_options(package, tmp_path / "resume-out", condition), resume_checkpoint=checkpoint)
+        ).run()
+
+
 def test_general_judge_only_failure_retries_but_auto_research_valid_low_does_not():
     general = {
         "evaluation": {

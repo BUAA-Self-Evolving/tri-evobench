@@ -187,6 +187,12 @@ def latest_checkpoint(row):
                     continue
             elif checkpoint_condition != row.get("condition"):
                 continue
+            if data.get("non_resumable"):
+                unsafe_frontier = max(
+                    unsafe_frontier,
+                    (int(data.get("next_turn_index", 0)), 1),
+                )
+                continue
         if all((path.parent / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
             index = int(data["next_turn_index"])
             pending = data.get("phase") == "adjudicate"

@@ -22,9 +22,17 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from uuid import uuid4
 
-from .baselines.base import BaselineReply, EvolutionContext, FlowContext, InteractionContext, TurnContext, UsageDetails
+from .baselines.base import (
+    BaselineReply,
+    EvolutionContext,
+    EvolutionResult,
+    FlowContext,
+    InteractionContext,
+    TurnContext,
+    UsageDetails,
+)
 from .baselines.manifest import BaselineManifest, find_manifest, load_manifest, merge_mappings
-from .baselines.process import ProcessBaselineRuntime
+from .baselines.process import BaselineProtocolError, ProcessBaselineRuntime
 from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationStatus
 from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
 from .model import TokenBudget, client_from_config
@@ -266,6 +274,8 @@ class L2AgentStreamRunner:
             )
             if checkpoint_error_policy != self.evaluation_error_policy:
                 raise L2AgentRunError("checkpoint evaluation error policy mismatch")
+            if checkpoint_metadata.get("non_resumable"):
+                raise L2AgentRunError("checkpoint is marked non-resumable")
             if checkpoint_metadata.get("phase") == "adjudicate":
                 resume_pending = _load_json(checkpoint / "evidence.json")
             resume_index = int(checkpoint_metadata["next_turn_index"])
@@ -390,28 +400,79 @@ class L2AgentStreamRunner:
                 final_score: float | None = None
                 final_category = "fail"
                 terminal_outcome: EvaluationOutcome | None = None
+                runtime_usable = True
+                runtime_cleanup_error: BaseException | None = None
                 first_interaction = int(resume_pending["interaction_index"]) if resume_pending else 1
                 for interaction_index in range(first_interaction, max_interactions + 1):
                     interaction_request = current_request
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
+                    stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                    pending = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"p{turn_index:04d}-{interaction_index:02d}"
                     if resume_pending:
                         reply = _restored_reply(resume_pending["reply"])
                     else:
-                        reply = self._runtime.interact(
-                            InteractionContext(
-                                turn_id=turn_id,
-                                interaction_index=interaction_index,
-                                request=interaction_request,
-                                history=history,
-                                sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
-                                remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                        try:
+                            reply = self._runtime.interact(
+                                InteractionContext(
+                                    turn_id=turn_id,
+                                    interaction_index=interaction_index,
+                                    request=interaction_request,
+                                    history=history,
+                                    sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
+                                    remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                                )
                             )
-                        )
-                        self._sync_workspace_from_volume()
+                        except Exception as exc:
+                            if not _is_interact_timeout(exc):
+                                raise
+                            self._sync_workspace_from_volume(best_effort=True)
+                            verification = _runtime_limit_failure("episode_timeout", str(exc))
+                            outcome = EvaluationOutcome.scored(
+                                turn_score=0.0,
+                                passed=False,
+                                bounded_feedback=BoundedFeedback(
+                                    failed_dimensions=("resource_limit",),
+                                    observable_deficiency=(
+                                        "The task attempt exhausted its declared public work budget."
+                                    ),
+                                    public_result_category="fail",
+                                ),
+                                audit_details={"work_limit": verification},
+                            )
+                            after_files = _workspace_digest(workspace)
+                            record = {
+                                "turn_id": turn_id,
+                                "interaction_index": interaction_index,
+                                "request": interaction_request,
+                                "response": "",
+                                "tool_calls": [],
+                                "events": [{"type": "work_limit.reached", "reason": "episode_timeout"}],
+                                "usage": {},
+                                "workspace_changes": _changed_workspace_files(before_files, after_files),
+                                "verifier": verification,
+                                "score": 0.0,
+                                "passed": False,
+                                "evaluation_status": outcome.evaluation_status.value,
+                                "bounded_feedback": outcome.bounded_feedback_mapping(),
+                            }
+                            interactions.append(record)
+                            with trace_path.open("a", encoding="utf-8") as trace:
+                                trace.write(json.dumps(record, ensure_ascii=False) + "\n")
+                            terminal_outcome = outcome
+                            final_score = 0.0
+                            final_category = "execution_limit"
+                            runtime_usable = False
+                            if self.condition is RunCondition.RESET and self._runtime is not None:
+                                try:
+                                    self._runtime.end_flow()
+                                except BaseException as cleanup_exc:
+                                    runtime_cleanup_error = cleanup_exc
+                                runtime_started = False
+                            break
+                        else:
+                            self._sync_workspace_from_volume()
                     # Durable stage evidence survives verifier/Judge/Simulator
                     # failures. A resume can reuse this paid Agent execution.
-                    stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
-                    pending = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"p{turn_index:04d}-{interaction_index:02d}"
                     pending.mkdir(parents=True, exist_ok=True)
                     _archive_tree(workspace, pending / "workspace.zip")
                     self._runtime.save_checkpoint_state(pending / "baseline_state.zip")
@@ -584,29 +645,35 @@ class L2AgentStreamRunner:
                         break
                 if terminal_outcome is None:
                     raise L2AgentRunError(f"TaskStream turn {turn_id} produced no terminal outcome")
-                evolution_enabled = (
-                    self.condition.policy.sut_evolution_enabled
-                    and terminal_outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
-                )
-                evolution = self._runtime.evolve(
-                    EvolutionContext(
-                        turn_id=turn_id,
-                        trajectory=[_public_taskstream_trajectory(item) for item in interactions],
-                        feedback=[{
-                            "interaction_index": item["interaction_index"],
-                            "score": item["score"],
-                            "passed": item["passed"],
-                            "feedback": item.get("bounded_feedback"),
-                        } for item in interactions if item.get("evaluation_status") != "evaluation_error"],
-                        update_enabled=evolution_enabled,
-                        skip_reason=(
-                            "evaluation_error"
-                            if terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
-                            else f"condition:{self.condition.value}"
-                        ),
+                if runtime_usable:
+                    evolution_enabled = (
+                        self.condition.policy.sut_evolution_enabled
+                        and terminal_outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
                     )
-                )
-                self._sync_workspace_from_volume()
+                    evolution = self._runtime.evolve(
+                        EvolutionContext(
+                            turn_id=turn_id,
+                            trajectory=[_public_taskstream_trajectory(item) for item in interactions],
+                            feedback=[{
+                                "interaction_index": item["interaction_index"],
+                                "score": item["score"],
+                                "passed": item["passed"],
+                                "feedback": item.get("bounded_feedback"),
+                            } for item in interactions if item.get("evaluation_status") != "evaluation_error"],
+                            update_enabled=evolution_enabled,
+                            skip_reason=(
+                                "evaluation_error"
+                                if terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
+                                else f"condition:{self.condition.value}"
+                            ),
+                        )
+                    )
+                    self._sync_workspace_from_volume()
+                else:
+                    evolution = EvolutionResult(
+                        completed=False,
+                        events=[{"type": "evolution.skipped", "reason": "runtime_unavailable"}],
+                    )
                 evolution_record = {"record_type": "evolution", "turn_id": turn_id, "evolution": evolution.to_dict()}
                 with trace_path.open("a", encoding="utf-8") as trace:
                     trace.write(json.dumps(evolution_record, ensure_ascii=False) + "\n")
@@ -625,7 +692,11 @@ class L2AgentStreamRunner:
                     "evaluation_status": terminal_outcome.evaluation_status.value,
                     "passed": turn_passed,
                     "final_score": final_score,
-                    "final_category": final_category if evolution.completed else "evolution_limit",
+                    "final_category": (
+                        final_category
+                        if final_category == "execution_limit" or evolution.completed
+                        else "evolution_limit"
+                    ),
                     "interaction_count": len(interactions),
                     "trace_file": str(trace_path),
                     "evolution": evolution.to_dict(),
@@ -636,10 +707,14 @@ class L2AgentStreamRunner:
                 checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"t{turn_index + 1:04d}"
                 checkpoint.mkdir(parents=True, exist_ok=True)
                 _archive_tree(workspace, checkpoint / "workspace.zip")
-                self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
+                if runtime_usable:
+                    self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
+                else:
+                    with zipfile.ZipFile(checkpoint / "baseline_state.zip", "w", compression=zipfile.ZIP_DEFLATED):
+                        pass
                 report["turns"][-1]["checkpoint"] = str(checkpoint)
                 _write_json(checkpoint / "completed_turns.json", report["turns"])
-                _write_json(checkpoint / "checkpoint.json", {
+                checkpoint_metadata = {
                     "stream_id": self.options.stream_id,
                     "baseline": self.options.baseline,
                     "condition": self.condition.value,
@@ -648,8 +723,28 @@ class L2AgentStreamRunner:
                     "completed_turn_index": turn_index,
                     "next_turn_index": turn_index + 1,
                     "token_budget": asdict(self.budget),
-                })
+                }
+                if not runtime_usable and (
+                    self.condition is not RunCondition.RESET or runtime_cleanup_error is not None
+                ):
+                    checkpoint_metadata["non_resumable"] = True
+                    checkpoint_metadata["non_resumable_reason"] = (
+                        "runtime cleanup failed after interact timeout"
+                        if runtime_cleanup_error is not None
+                        else "persistent runtime unavailable after interact timeout"
+                    )
+                _write_json(checkpoint / "checkpoint.json", checkpoint_metadata)
                 _write_json(run_dir / "report.json", report)
+                if runtime_cleanup_error is not None:
+                    raise L2AgentRunError(
+                        f"baseline runtime timed out in {turn_id} and cleanup failed: "
+                        f"{type(runtime_cleanup_error).__name__}: {runtime_cleanup_error}"
+                    )
+                if not runtime_usable and self.condition is not RunCondition.RESET:
+                    raise L2AgentRunError(
+                        f"baseline runtime timed out in {turn_id}; "
+                        "persistent L2 conditions cannot safely continue without runtime state"
+                    )
                 if (
                     terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
                     and self.evaluation_error_policy == "stop"
@@ -1745,6 +1840,16 @@ def _runtime_limit_failure(reason: str, detail: str | None = None) -> dict[str, 
     if detail:
         details["detail"] = detail
     return {"category": "execution_limit", "score": 0.0, "details": details}
+
+
+def _is_interact_timeout(exc: BaseException) -> bool:
+    return (
+        isinstance(exc, TimeoutError)
+        or (
+            isinstance(exc, BaselineProtocolError)
+            and str(exc) == "baseline adapter timed out during interact"
+        )
+    )
 
 
 def _public_trajectory(record: dict[str, Any]) -> dict[str, Any]:
