@@ -825,7 +825,9 @@ def run_parallel(
     if len(active) > concurrency:
         raise ValueError("adopted workers exceed concurrency")
     skipped = {"blocked_recovery", "deferred_storage", "needs_attention", "paused_error"}
-    pending = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") not in skipped)
+    pending = deque(row for row in selected
+                    if row["id"] not in adopted_ids and row.get("status") not in skipped
+                    and not (row.get("status") == "completed" and _has_matching_report(row)))
     deferred = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") == "deferred_storage")
     exhausted = False
     failed = False
