@@ -1,4 +1,4 @@
-"""Serial, checkpoint-aware driver for the 2026-09-03 package matrix.
+"""Bounded-concurrency, checkpoint-aware driver for the 2026-09-03 package matrix.
 
 The evaluator owns fail-fast decisions; this driver never retries a failed
 paid run blindly. A heartbeat can repair the issue and restart this command.
@@ -89,7 +89,7 @@ def jobs(
     if packages is None:
         local_packages = repo.parent / "new-packages-20260903"
         packages = local_packages if local_packages.is_dir() else repo / "benchmarks/current"
-    conditions = tuple(l2_conditions or ("evolving",))
+    conditions = tuple(dict.fromkeys(l2_conditions or ("evolving",)))
     unknown = sorted(set(conditions) - set(L2_CONDITIONS))
     if unknown:
         raise ValueError(f"unknown L2 condition(s): {unknown}")
@@ -552,6 +552,14 @@ def matched_l2_aggregations(rows):
                 break
             report_rows.append((row, report))
         else:
+            profiles = {
+                turn.get("timing_profile", "dataset")
+                for _, report in report_rows for turn in report.get("turns", [])
+            }
+            if len(profiles) > 1:
+                # Recovery may preserve completed results from the old 900s
+                # profile. Do not label mixed timing budgets as matched gain.
+                continue
             result[agent] = aggregate_matched_runs(
                 l2_reports_to_aggregation_records(report_rows)
             )
@@ -579,6 +587,137 @@ def matrix(rows):
     return cells
 
 
+class AdoptedProcess:
+    """Track an existing Linux worker without signaling or replaying it."""
+    def __init__(self, row):
+        self.pid = int(row["pid"])
+        if "process_start_ticks" not in row:
+            raise ValueError("adopted worker receipt missing process_start_ticks")
+        self.started = str(row["process_start_ticks"])
+        cmd = Path(f"/proc/{self.pid}/cmdline").read_bytes().split(b"\0")
+        if b"trievo_bench.l2_compat" not in cmd or str(row["output"]).encode() not in cmd:
+            raise ValueError("adopted process identity mismatch")
+        if self.poll() is not None:
+            raise ValueError("adopted worker is no longer running")
+
+    def poll(self):
+        try:
+            fields = Path(f"/proc/{self.pid}/stat").read_text().rsplit(")", 1)[1].split()
+        except FileNotFoundError:
+            return 0  # Success still requires a complete matching report.
+        return None if fields[0] != "Z" and fields[19] == self.started else 0
+
+
+def process_start_ticks(pid):
+    if os.name != "posix":
+        return None
+    try:
+        fields = Path(f"/proc/{int(pid)}/stat").read_text().rsplit(")", 1)[1].split()
+    except (FileNotFoundError, IndexError, ValueError):
+        return None
+    if not fields or fields[0] == "Z":
+        return None
+    return fields[19] if len(fields) > 19 else None
+
+
+def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concurrency, job_error_policy="stop"):
+    """One writer, isolated child per job; drain in-flight jobs on failure."""
+    if job_error_policy not in {"stop", "continue"}:
+        raise ValueError("job_error_policy must be stop or continue")
+    identities = [row["id"] for row in selected]
+    outputs = [str(Path(row["output"]).resolve()) for row in selected]
+    if len(set(identities)) != len(identities) or len(set(outputs)) != len(outputs):
+        raise ValueError("parallel jobs must have unique ids and output directories")
+    active = []
+    adopted_ids = set()
+    for receipt in state.pop("adopted_rows", []):
+        row = next(row for row in selected if row["id"] == receipt["id"])
+        if row["output"] != receipt["output"]:
+            raise ValueError("adopted output mismatch")
+        child = AdoptedProcess(receipt)
+        row.update(receipt)
+        row["status"] = "running"
+        active.append((row, child, open(os.devnull, "w")))
+        adopted_ids.add(row["id"])
+    if len(active) > concurrency:
+        raise ValueError("adopted workers exceed concurrency")
+    pending = iter(row for row in selected if row["id"] not in adopted_ids)
+    exhausted = False
+    failed = False
+
+    def publish():
+        state.update(updated_at=now(), active_jobs=[row["id"] for row, _, _ in active],
+                     current_job=active[0][0]["id"] if active else None)
+        save(status_path, state)
+
+    while active or not exhausted:
+        # Observe exits before admitting replacements (fail-fast admission).
+        for row, child, stream in list(active):
+            code = child.poll()
+            if code is None:
+                continue
+            stream.close()
+            active.remove((row, child, stream))
+            try:
+                report_path, report = report_for(row)
+            except Exception as error:
+                report_path, report = None, None
+                row["error"] = str(error)
+            row.update(returncode=code, finished_at=now())
+            if code != 0 or report is None:
+                row["status"] = "paused_error"
+                failed = True
+                state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+                print(f"STOPPED {row['id']}: inspect {row['log']}", flush=True)
+            else:
+                row.update(status="completed", report=str(report_path))
+                print(f"COMPLETED {row['id']}", flush=True)
+            publish()
+        if failed and job_error_policy == "stop":
+            exhausted = True
+        while not exhausted and len(active) < concurrency:
+            row = next(pending, None)
+            if row is None:
+                exhausted = True
+                break
+            stream = None
+            try:
+                report_path, report = report_for(row)
+                if report:
+                    row.update(status="completed", report=str(report_path))
+                    publish()
+                    continue
+                checkpoint = latest_checkpoint(row)
+                output = Path(row["output"])
+                output.mkdir(parents=True, exist_ok=True)
+                log = output / f"driver-{time.time_ns()}.log"
+                row.update(status="running", started_at=now(),
+                           checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+                stream = log.open("w", encoding="utf-8")
+                child = subprocess.Popen(command(repo, row, checkpoint, config_dir),
+                                         cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
+                row["pid"] = child.pid
+                start_ticks = process_start_ticks(child.pid)
+                if start_ticks is not None:
+                    row["process_start_ticks"] = start_ticks
+                active.append((row, child, stream))
+            except Exception as error:
+                if stream is not None:
+                    stream.close()
+                row.update(status="paused_error", error=str(error), finished_at=now())
+                failed = True
+                exhausted = job_error_policy == "stop"
+                state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+            publish()
+        if active:
+            time.sleep(2)
+    if failed:
+        state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+        save(status_path, state)
+        return 1
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default="runs/mx24/full")
@@ -588,6 +727,9 @@ def main():
     parser.add_argument("--level", choices=("l1", "l2"), help="select one level; default runs both L1 and L2")
     parser.add_argument("--l2-condition", action="append", choices=L2_CONDITIONS, help="L2 condition to run; repeat for reset/frozen/evolving")
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
+    parser.add_argument("--adopt-state", type=Path, help="explicit saved worker handoff; old dispatcher must be stopped")
+    parser.add_argument("--concurrency", type=int, help="maximum simultaneous jobs; default matrix-execution.json concurrency, or 1")
+    parser.add_argument("--job-error-policy", choices=("stop", "continue"), default="stop", help="parallel job failure policy; default stop preserves fail-fast admission")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
     parser.add_argument("--retry-interrupted-run", help="exact failed run_id or run/report path for one authorized L2 interrupted-turn retry")
@@ -607,6 +749,15 @@ def main():
     os.environ.setdefault("TRIEVO_API_MAX_RETRIES", "4")
     root = (repo / args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
+    execution_path = root / "matrix-execution.json"
+    concurrency = args.concurrency
+    if concurrency is None:
+        concurrency = load(execution_path).get("concurrency", 1) if execution_path.exists() else 1
+    if isinstance(concurrency, bool) or not isinstance(concurrency, int) or concurrency < 1:
+        parser.error("concurrency must be a positive integer")
+    if args.retry_interrupted_run:
+        concurrency = 1  # One authorization always binds exactly one attempt.
+
     # Retain an OS-owned lock for this process; stale files do not block resume.
     global _driver_lock
     _driver_lock = (root / "driver.lock").open("a+b")
@@ -640,69 +791,83 @@ def main():
         raise SystemExit("no matching job")
     if args.retry_interrupted_run and len(selected) != 1:
         raise SystemExit("--retry-interrupted-run requires one selected job")
-    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected}
+    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected, "concurrency": concurrency, "job_error_policy": args.job_error_policy, "phase": "gate" if args.gate else ("only" if args.only else "full")}
+    if args.adopt_state:
+        if concurrency < 2 or args.retry_interrupted_run or args.gate or args.only:
+            parser.error("adoption requires a parallel full invocation")
+        state["adopted_rows"] = [row for row in load(args.adopt_state)["jobs"]
+                                 if row.get("status", "running") == "running"]
+        for row in state["adopted_rows"]:
+            if row["id"] not in {job["id"] for job in selected}:
+                parser.error("adopted job is not selected")
+            AdoptedProcess(row)
     status_path = root / "matrix_status.json"
     save(status_path, state)
-    for row in selected:
-        retry_run_id = None
-        stop_after_turn = None
-        if args.retry_interrupted_run:
-            checkpoint, retry_run_id, stop_after_turn = prepare_interrupted_retry(
-                row,
-                args.retry_interrupted_run,
-                args.retry_authorization,
-            )
-        else:
-            report_path, report = report_for(row)
-            if report:
-                row.update(status="completed", report=str(report_path))
-                continue
-            checkpoint = latest_checkpoint(row)
-        output = Path(row["output"])
-        output.mkdir(parents=True, exist_ok=True)
-        log = output / f"driver-{int(time.time())}.log"
-        row.update(status="running", started_at=now(), checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
-        with log.open("w", encoding="utf-8") as stream:
-            child = subprocess.Popen(
-                command(
-                    repo,
+    if concurrency > 1:
+        code = run_parallel(repo, selected, all_rows, config_dir, state, status_path, concurrency, args.job_error_policy)
+        if code:
+            return code
+    else:
+        for row in selected:
+            retry_run_id = None
+            stop_after_turn = None
+            if args.retry_interrupted_run:
+                checkpoint, retry_run_id, stop_after_turn = prepare_interrupted_retry(
                     row,
-                    checkpoint,
-                    config_dir,
-                    retry_interrupted_run=retry_run_id,
-                    retry_authorization=args.retry_authorization,
-                    stop_after_turn=stop_after_turn,
-                ),
-                cwd=repo,
-                stdout=stream,
-                stderr=subprocess.STDOUT,
-            )
-            row["pid"] = child.pid
-            state.update(current_job=row["id"], updated_at=now())
+                    args.retry_interrupted_run,
+                    args.retry_authorization,
+                )
+            else:
+                report_path, report = report_for(row)
+                if report:
+                    row.update(status="completed", report=str(report_path))
+                    continue
+                checkpoint = latest_checkpoint(row)
+            output = Path(row["output"])
+            output.mkdir(parents=True, exist_ok=True)
+            log = output / f"driver-{int(time.time())}.log"
+            row.update(status="running", started_at=now(), checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+            with log.open("w", encoding="utf-8") as stream:
+                child = subprocess.Popen(
+                    command(
+                        repo,
+                        row,
+                        checkpoint,
+                        config_dir,
+                        retry_interrupted_run=retry_run_id,
+                        retry_authorization=args.retry_authorization,
+                        stop_after_turn=stop_after_turn,
+                    ),
+                    cwd=repo,
+                    stdout=stream,
+                    stderr=subprocess.STDOUT,
+                )
+                row["pid"] = child.pid
+                state.update(current_job=row["id"], updated_at=now())
+                save(status_path, state)
+                while child.poll() is None:
+                    time.sleep(2)
+                code = child.returncode
+            if stop_after_turn:
+                report_path, report = report_for_interrupted_retry(row, stop_after_turn)
+            else:
+                report_path, report = report_for(row)
+            if code != 0 or report is None:
+                row.update(status="paused_error", returncode=code, finished_at=now())
+                state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+                save(status_path, state)
+                print(f"STOPPED {row['id']}: inspect {log}", flush=True)
+                return 1
+            if stop_after_turn:
+                row.update(status="interrupted_retry_completed", report=str(report_path), finished_at=now())
+                state.update(status="interrupted_retry_completed", updated_at=now(), matrix=matrix(all_rows))
+                save(status_path, state)
+                print(f"RETRY_COMPLETED {row['id']} through {stop_after_turn}", flush=True)
+                return 0
+            row.update(status="completed", report=str(report_path), finished_at=now())
+            state.update(updated_at=now(), matrix=matrix(all_rows))
             save(status_path, state)
-            while child.poll() is None:
-                time.sleep(2)
-            code = child.returncode
-        if stop_after_turn:
-            report_path, report = report_for_interrupted_retry(row, stop_after_turn)
-        else:
-            report_path, report = report_for(row)
-        if code != 0 or report is None:
-            row.update(status="paused_error", returncode=code, finished_at=now())
-            state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
-            save(status_path, state)
-            print(f"STOPPED {row['id']}: inspect {log}", flush=True)
-            return 1
-        if stop_after_turn:
-            row.update(status="interrupted_retry_completed", report=str(report_path), finished_at=now())
-            state.update(status="interrupted_retry_completed", updated_at=now(), matrix=matrix(all_rows))
-            save(status_path, state)
-            print(f"RETRY_COMPLETED {row['id']} through {stop_after_turn}", flush=True)
-            return 0
-        row.update(status="completed", report=str(report_path), finished_at=now())
-        state.update(updated_at=now(), matrix=matrix(all_rows))
-        save(status_path, state)
-        print(f"COMPLETED {row['id']}", flush=True)
+            print(f"COMPLETED {row['id']}", flush=True)
     aggregations = matched_l2_aggregations(all_rows)
     state.update(
         status="gate_completed" if (args.gate or args.only) else "completed",

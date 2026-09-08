@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -17,6 +18,25 @@ from dataclasses import dataclass, field
 from typing import Any
 
 log = logging.getLogger(__name__)
+_RETRYABLE_HTTP_STATUS = {408, 409, 429, *range(500, 600)}
+_TRANSPORT_ERROR_NAMES = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "ConnectError",
+    "ConnectTimeout",
+    "ConnectionError",
+    "ConnectionTimeout",
+    "NetworkError",
+    "PoolTimeout",
+    "ReadError",
+    "ReadTimeout",
+    "RemoteProtocolError",
+    "Timeout",
+    "TimeoutException",
+    "WriteError",
+    "WriteTimeout",
+}
+_MAX_BACKOFF_SECONDS = 60.0
 
 
 class RequestContextLengthExceeded(RuntimeError):
@@ -50,6 +70,59 @@ def _is_context_length_bad_request(exc: Exception) -> bool:
         and "context length" in message
         and "maximum input length" in message
     )
+
+
+def _slow_provider_enabled() -> bool:
+    return str(os.environ.get("TRIEVO_SLOW_PROVIDER", "")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _api_timeout(default: float | None) -> float | None:
+    raw = os.environ.get("TRIEVO_API_TIMEOUT_SECONDS")
+    if raw is None or not raw.strip():
+        return default
+    value = float(raw.strip())
+    if not 1 <= value <= 3600:
+        raise ValueError("TRIEVO_API_TIMEOUT_SECONDS must be between 1 and 3600")
+    return value
+
+
+def _api_max_retries(default: int) -> int:
+    if not _slow_provider_enabled():
+        return max(0, default)
+    raw = os.environ.get("TRIEVO_API_MAX_RETRIES", "20").strip()
+    value = int(raw) if raw else 20
+    if not 0 <= value <= 100:
+        raise ValueError("TRIEVO_API_MAX_RETRIES must be between 0 and 100")
+    return value
+
+
+def _http_status(exc: Exception) -> int | None:
+    for attr in ("status_code", "code"):
+        value = getattr(exc, attr, None)
+        if isinstance(value, int):
+            return value
+    response = getattr(exc, "response", None)
+    value = getattr(response, "status_code", None)
+    return value if isinstance(value, int) else None
+
+
+def _is_retryable_provider_error(exc: Exception) -> bool:
+    status = _http_status(exc)
+    if status is not None:
+        return status in _RETRYABLE_HTTP_STATUS
+    if isinstance(exc, (TimeoutError, ConnectionError, OSError)):
+        return True
+    return type(exc).__name__ in _TRANSPORT_ERROR_NAMES
+
+
+def _retry_delay(attempt: int) -> float:
+    base = min(2 ** max(0, attempt), _MAX_BACKOFF_SECONDS)
+    return min(_MAX_BACKOFF_SECONDS, base + random.uniform(0.0, min(1.0, base * 0.1)))
 
 
 @dataclass
@@ -193,10 +266,9 @@ class OpenAIClient(LLMClient):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.usage_totals = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self.base_url = base_url or os.getenv("OPENAI_BASE_URL")
-        # Explicit runner policy belongs to the SDK's single-request retry
-        # layer, not a multiplier around several independently retried calls.
-        api_retries = os.environ.get("TRIEVO_API_MAX_RETRIES")
-        self.retry_times = retry_times if api_retries is None else ()
+        self._api_max_retries = _api_max_retries(len(retry_times))
+        self.retry_times = retry_times
+        self._slow_provider = _slow_provider_enabled()
         
         if not self.api_key:
             raise ValueError(
@@ -213,11 +285,11 @@ class OpenAIClient(LLMClient):
         # Lazy import to avoid requiring openai if not used
         from openai import OpenAI, AsyncOpenAI
         
-        client_kwargs = {"api_key": self.api_key, "timeout": timeout}
-        if "TRIEVO_API_TIMEOUT_SECONDS" in os.environ:
-            client_kwargs["timeout"] = float(os.environ["TRIEVO_API_TIMEOUT_SECONDS"])
-        if api_retries is not None:
-            client_kwargs["max_retries"] = int(api_retries)
+        client_kwargs = {
+            "api_key": self.api_key,
+            "timeout": _api_timeout(timeout),
+            "max_retries": 0,
+        }
         if self.base_url:
             client_kwargs["base_url"] = self.base_url
         
@@ -270,7 +342,8 @@ class OpenAIClient(LLMClient):
     
     def _send_request_with_retry(self, messages: list[dict], config: dict):
         """Send request with retry logic."""
-        for i, wait_time in enumerate(self.retry_times):
+        attempts = self._api_max_retries + 1
+        for attempt in range(attempts):
             try:
                 return self._client.chat.completions.create(
                     model=self.model,
@@ -280,18 +353,25 @@ class OpenAIClient(LLMClient):
             except Exception as e:
                 if _is_context_length_bad_request(e):
                     raise RequestContextLengthExceeded(_extract_openai_error_message(e)) from e
+                if attempt >= attempts - 1 or not _is_retryable_provider_error(e):
+                    raise
+                wait_time = (
+                    _retry_delay(attempt)
+                    if self._slow_provider
+                    else float(self.retry_times[attempt])
+                )
+                status = _http_status(e)
                 log.warning(
-                    f"Request failed: {e}. Retry #{i+1}/{len(self.retry_times)} "
-                    f"after {wait_time} seconds."
+                    "OpenAI-compatible model request retry "
+                    "attempt=%s/%s status=%s error=%s sleep=%.2fs",
+                    attempt + 1,
+                    attempts,
+                    status if status is not None else "transport",
+                    type(e).__name__,
+                    wait_time,
                 )
                 time.sleep(wait_time)
-        
-        # Final attempt without catch
-        return self._client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            **config,
-        )
+        raise RuntimeError("unreachable OpenAI-compatible retry loop state")
     
     def _get_async_client(self):
         if self._async_client is None:
@@ -302,8 +382,9 @@ class OpenAIClient(LLMClient):
     async def _send_request_with_retry_async(self, messages: list[dict], config: dict):
         """Async version of send request with retry logic."""
         import asyncio
-        
-        for i, wait_time in enumerate(self.retry_times):
+
+        attempts = self._api_max_retries + 1
+        for attempt in range(attempts):
             try:
                 return await self._get_async_client().chat.completions.create(
                     model=self.model,
@@ -313,18 +394,25 @@ class OpenAIClient(LLMClient):
             except Exception as e:
                 if _is_context_length_bad_request(e):
                     raise RequestContextLengthExceeded(_extract_openai_error_message(e)) from e
+                if attempt >= attempts - 1 or not _is_retryable_provider_error(e):
+                    raise
+                wait_time = (
+                    _retry_delay(attempt)
+                    if self._slow_provider
+                    else float(self.retry_times[attempt])
+                )
+                status = _http_status(e)
                 log.warning(
-                    f"Request failed: {e}. Retry #{i+1}/{len(self.retry_times)} "
-                    f"after {wait_time} seconds."
+                    "OpenAI-compatible model request retry "
+                    "attempt=%s/%s status=%s error=%s sleep=%.2fs",
+                    attempt + 1,
+                    attempts,
+                    status if status is not None else "transport",
+                    type(e).__name__,
+                    wait_time,
                 )
                 await asyncio.sleep(wait_time)
-        
-        # Final attempt without catch
-        return await self._get_async_client().chat.completions.create(
-            model=self.model,
-            messages=messages,
-            **config,
-        )
+        raise RuntimeError("unreachable OpenAI-compatible retry loop state")
 
     async def aclose(self) -> None:
         """Close async client resources if initialized.

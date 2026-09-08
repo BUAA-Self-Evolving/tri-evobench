@@ -7,6 +7,7 @@ import os
 import re
 import ssl
 import time
+import random
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
@@ -20,7 +21,7 @@ class _TransientModelResponseError(RuntimeError):
     """A successful HTTP response did not contain one usable model message."""
 
 
-_RETRYABLE_HTTP_STATUS = {408, 409, 429, 500, 502, 503, 504, 524}
+_RETRYABLE_HTTP_STATUS = {408, 409, 429, *range(500, 600)}
 _RETRYABLE_TRANSPORT_ERRORS = (
     urllib.error.URLError,
     http.client.IncompleteRead,
@@ -172,6 +173,8 @@ class OpenAICompatibleClient:
 
     def _wait_for_retry(self, attempt: int, error: BaseException) -> None:
         delay = self._retry_delay(attempt, error)
+        if os.environ.get("TRIEVO_SLOW_PROVIDER") == "1":
+            delay += random.uniform(0, min(5.0, delay / 4))
         logger.warning(
             "Transient model request failure; retrying attempt %d/%d in %.1fs (%s)",
             attempt + 2,
@@ -286,8 +289,8 @@ def client_from_config(config: dict[str, Any], budget: TokenBudget) -> OpenAICom
     max_retries = int(config.get("max_retries") if config.get("max_retries") is not None else os.environ.get("TRIEVO_API_MAX_RETRIES", 2))
     if not 1 <= timeout <= 3600:
         raise ValueError("model timeout must be between 1 and 3600 seconds")
-    if not 0 <= max_retries <= 20:
-        raise ValueError("model max_retries must be between 0 and 20")
+    if not 0 <= max_retries <= (100 if os.environ.get("TRIEVO_SLOW_PROVIDER") == "1" else 20):
+        raise ValueError("model max_retries exceeds the configured retry range")
     return OpenAICompatibleClient(
         base_url=base_url,
         api_key=api_key,

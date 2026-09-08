@@ -94,6 +94,9 @@ class L2AgentStreamRunner:
         self.stream_dir = self.package_dir / "streams" / options.stream_id
         self.budget = TokenBudget(options.max_total_tokens)
         self._runtime: ProcessBaselineRuntime | None = None
+        self.slow_provider = options.baseline_overrides.get("options", {}).get("slow_provider", False)
+        if not isinstance(self.slow_provider, bool):
+            raise L2AgentRunError("options.slow_provider must be a boolean")
         self.work_limits = _work_limits(options.baseline_overrides)
         self.condition = parse_run_condition(
             options.condition,
@@ -240,6 +243,7 @@ class L2AgentStreamRunner:
         self.work_limits = _effective_work_limits(
             self.work_limits,
             execution_requirements,
+            slow_provider=self.slow_provider,
         )
         run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
         output_root = self.options.output_root.resolve()
@@ -339,6 +343,8 @@ class L2AgentStreamRunner:
                 "evaluation_error_policy": self.evaluation_error_policy,
                 "execution_requirements": execution_requirements,
                 "effective_work_limits": asdict(self.work_limits),
+                "timing_profile": "slow_provider" if self.slow_provider else "dataset",
+                "dataset_wall_time_overridden": self.work_limits.episode_timeout_seconds > int(execution_requirements["turn_timeout_seconds"]),
                 "docker_volume_transport": volume_transport,
             },
         }
@@ -416,6 +422,7 @@ class L2AgentStreamRunner:
                             "condition": self.condition.value,
                             "agent_limits": asdict(self.work_limits),
                             "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
+                            "slow_provider": self.slow_provider,
                         },
                     )
                 )
@@ -679,6 +686,7 @@ class L2AgentStreamRunner:
                     "turn_id": turn_id,
                     "turn_index": turn_index + 1,
                     "sequence_role": sequence_role,
+                    "timing_profile": "slow_provider" if self.slow_provider else "dataset",
                     "turn_score": terminal_outcome.turn_score,
                     "evaluation_status": terminal_outcome.evaluation_status.value,
                     "passed": turn_passed,
@@ -1132,6 +1140,7 @@ class L2AgentStreamRunner:
                     "level": "L2",
                     "l2_agent_limits": asdict(self.work_limits),
                     "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
+                            "slow_provider": self.slow_provider,
                 },
             )
         )
@@ -1571,9 +1580,9 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
         "max_model_calls": (2, 100),
         "max_tool_calls": (1, 100),
         "terminal_timeout_seconds": (1, 600),
-        "episode_timeout_seconds": (30, 3600),
+        "episode_timeout_seconds": (30, 86400 if raw_options.get("slow_provider") is True else 3600),
         "max_output_tokens": (1, 1_000_000),
-        "evolution_timeout_seconds": (10, 900),
+        "evolution_timeout_seconds": (10, 86400 if raw_options.get("slow_provider") is True else 900),
         "evolution_max_model_calls": (1, 16),
     }
     for name, (minimum, maximum) in ranges.items():
@@ -1624,8 +1633,10 @@ def _execution_requirements(manifest: dict[str, Any]) -> dict[str, Any]:
 def _effective_work_limits(
     configured: L2AgentWorkLimits,
     requirements: dict[str, Any],
+    *,
+    slow_provider: bool = False,
 ) -> L2AgentWorkLimits:
-    episode_timeout = min(
+    episode_timeout = configured.episode_timeout_seconds if slow_provider else min(
         configured.episode_timeout_seconds,
         int(requirements["turn_timeout_seconds"]),
     )
