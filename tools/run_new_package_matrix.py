@@ -11,10 +11,12 @@ import os
 import subprocess
 import sys
 import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
 L2_CONDITIONS = ("reset", "frozen", "evolving")
+
 
 
 def load(path: Path):
@@ -620,7 +622,188 @@ def process_start_ticks(pid):
     return fields[19] if len(fields) > 19 else None
 
 
-def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concurrency, job_error_policy="stop"):
+def storage_gate_from_environment():
+    if os.environ.get("TRIEVO_STORAGE_GUARD") != "1":
+        return None
+    from trievo_bench.storage_recovery import StorageGate
+    return StorageGate.from_environment()
+
+
+def _log_tail(path, limit=16384):
+    try:
+        data = Path(path).read_bytes()
+    except (OSError, TypeError):
+        return ""
+    return data[-limit:].decode("utf-8", errors="replace")
+
+
+def _storage_error_text(row):
+    return " ".join(
+        str(value) for value in (
+            row.get("error"),
+            row.get("storage_error"),
+            _log_tail(row.get("log")),
+        )
+    )
+
+
+def _is_storage_error(row, storage_gate=None):
+    text = _storage_error_text(row)
+    checker = getattr(storage_gate, "is_storage_error", None) if storage_gate is not None else None
+    if callable(checker):
+        return bool(checker(text))
+    from trievo_bench.storage_recovery import is_storage_error
+    return is_storage_error(text)
+
+
+def _storage_error_summary(row):
+    text = " ".join(
+        str(value) for value in (
+            row.get("error"),
+            row.get("storage_error"),
+            _log_tail(row.get("log"), limit=2000),
+        )
+    ).strip()
+    return text[:1000] if text else "storage-related worker failure"
+
+
+def _has_completed_turns(row):
+    output = Path(row["output"])
+    return any(path.is_file() for path in output.glob("_checkpoints/**/completed_turns.json"))
+
+
+def _has_any_checkpoint_history(row):
+    output = Path(row["output"])
+    checkpoint_root = output / "_checkpoints"
+    return checkpoint_root.exists() and any(checkpoint_root.rglob("*"))
+
+
+def _is_pre_model_initialization_storage_failure(row):
+    text = _storage_error_text(row)
+    return (
+        "_start_taskstream_volume_transport" in text
+        and not _has_any_checkpoint_history(row)
+    )
+
+
+def _defer_storage_recovery(row, storage_retry_limit, allow_pre_model_initialization=False):
+    retry_count = int(row.get("retry_count", 0))
+    if retry_count >= storage_retry_limit:
+        row.update(status="needs_attention", recovery_reason="storage retry limit exceeded")
+        return False
+    try:
+        checkpoint = latest_checkpoint(row)
+        recovery_mode = "checkpoint"
+    except Exception as error:
+        row["recovery_error"] = str(error)
+        row.update(status="blocked_recovery", recovery_reason="unsafe storage recovery checkpoint")
+        return False
+    if checkpoint is None and not allow_pre_model_initialization:
+        row.update(status="blocked_recovery", recovery_reason="missing safe storage recovery checkpoint")
+        return False
+    if checkpoint is None and allow_pre_model_initialization:
+        recovery_mode = "pre_model_initialization"
+    row["retry_count"] = retry_count + 1
+    row["checkpoint"] = str(checkpoint) if checkpoint else None
+    row["status"] = "deferred_storage"
+    row["recovery_mode"] = recovery_mode
+    row.setdefault("attempt_history", []).append({
+        "event": "deferred_storage",
+        "at": now(),
+        "retry_count": row["retry_count"],
+        "checkpoint": row["checkpoint"],
+    })
+    return True
+
+
+def _has_matching_report(row):
+    try:
+        return report_for(row)[1] is not None
+    except Exception:
+        return False
+
+
+def _prepare_recovered_storage_rows(selected, storage_gate, storage_retry_limit):
+    if storage_gate is None:
+        return
+    for row in selected:
+        if row.get("status") != "paused_error" or not _is_storage_error(row, storage_gate):
+            continue
+        reason = _storage_error_summary(row)
+        row["storage_error"] = reason
+        if _defer_storage_recovery(
+            row,
+            storage_retry_limit,
+            allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+        ):
+            row.setdefault("attempt_history", []).append({
+                "event": "recover_storage_errors",
+                "at": now(),
+                "retry_count": int(row.get("retry_count", 0)),
+                "checkpoint": row.get("checkpoint"),
+            })
+
+
+def _same_job_identity(row, prior):
+    return all(row.get(field) == prior.get(field) for field in ("id", "output", "package", "condition", "turns"))
+
+
+def _restore_prior_storage_state(selected, prior_state):
+    prior_rows = {row.get("id"): row for row in prior_state.get("jobs", [])}
+    preserved_fields = {
+        "attempt_history",
+        "retry_count",
+        "storage_error",
+        "recovery_error",
+        "recovery_mode",
+        "recovery_reason",
+        "status",
+        "checkpoint",
+        "log",
+        "error",
+        "started_at",
+        "finished_at",
+        "pid",
+        "process_start_ticks",
+        "returncode",
+    }
+    for row in selected:
+        prior = prior_rows.get(row["id"])
+        if not prior or not _same_job_identity(row, prior):
+            continue
+        for field in preserved_fields:
+            if field in prior:
+                row[field] = prior[field]
+        if prior.get("status") and not prior.get("attempt_history"):
+            row["attempt_history"] = [{
+                "event": "restored_prior_status",
+                "at": now(),
+                "status": prior.get("status"),
+                "started_at": prior.get("started_at"),
+                "finished_at": prior.get("finished_at"),
+                "pid": prior.get("pid"),
+                "log": prior.get("log"),
+                "error": prior.get("error"),
+            }]
+
+
+def _clear_stale_attempt_error(row):
+    for field in ("error", "storage_error", "recovery_error", "returncode", "finished_at", "pid", "process_start_ticks"):
+        row.pop(field, None)
+
+
+def run_parallel(
+    repo,
+    selected,
+    all_rows,
+    config_dir,
+    state,
+    status_path,
+    concurrency,
+    job_error_policy="stop",
+    storage_gate=None,
+    storage_retry_limit=5,
+):
     """One writer, isolated child per job; drain in-flight jobs on failure."""
     if job_error_policy not in {"stop", "continue"}:
         raise ValueError("job_error_policy must be stop or continue")
@@ -641,16 +824,48 @@ def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concu
         adopted_ids.add(row["id"])
     if len(active) > concurrency:
         raise ValueError("adopted workers exceed concurrency")
-    pending = iter(row for row in selected if row["id"] not in adopted_ids)
+    skipped = {"blocked_recovery", "deferred_storage", "needs_attention", "paused_error"}
+    pending = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") not in skipped)
+    deferred = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") == "deferred_storage")
     exhausted = False
     failed = False
 
     def publish():
         state.update(updated_at=now(), active_jobs=[row["id"] for row, _, _ in active],
-                     current_job=active[0][0]["id"] if active else None)
+                     current_job=active[0][0]["id"] if active else None,
+                     target_concurrency=concurrency,
+                     pending_count=len(pending),
+                     queued_count=len(pending) + len(deferred),
+                     pending_job_ids=[row["id"] for row in pending],
+                     deferred_job_ids=[row["id"] for row in deferred],
+                     deferred_jobs=[{
+                         "id": row["id"],
+                         "retry_count": int(row.get("retry_count", 0)),
+                         "checkpoint": row.get("checkpoint"),
+                         "recovery_mode": row.get("recovery_mode"),
+                     } for row in deferred],
+                     blocked_jobs=[{
+                         "id": row["id"],
+                         "status": row.get("status"),
+                         "reason": row.get("recovery_reason"),
+                     } for row in selected if row.get("status") in {"blocked_recovery", "needs_attention"}])
         save(status_path, state)
 
-    while active or not exhausted:
+    def next_pending():
+        if deferred:
+            return deferred.popleft()
+        if pending:
+            return pending.popleft()
+        return None
+
+    while active or not exhausted or deferred:
+        if storage_gate is not None:
+            state["storage_health"] = storage_gate.check()
+            if not state["storage_health"].get("healthy", False):
+                state["status"] = "paused_storage"
+            elif state.get("status") == "paused_storage":
+                state["status"] = "running_with_errors" if failed else "running"
+            publish()
         # Observe exits before admitting replacements (fail-fast admission).
         for row, child, stream in list(active):
             code = child.poll()
@@ -665,18 +880,49 @@ def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concu
                 row["error"] = str(error)
             row.update(returncode=code, finished_at=now())
             if code != 0 or report is None:
-                row["status"] = "paused_error"
-                failed = True
-                state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
-                print(f"STOPPED {row['id']}: inspect {row['log']}", flush=True)
+                if storage_gate is not None and _is_storage_error(row, storage_gate):
+                    reason = _storage_error_summary(row)
+                    storage_gate.trip(reason)
+                    row["storage_error"] = reason
+                    if _defer_storage_recovery(
+                        row,
+                        storage_retry_limit,
+                        allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+                    ):
+                        deferred.append(row)
+                        state["status"] = "paused_storage"
+                    else:
+                        failed = True
+                    print(f"STORAGE_PAUSED {row['id']}: inspect {row['log']}", flush=True)
+                else:
+                    row["status"] = "paused_error"
+                    failed = True
+                    state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+                    print(f"STOPPED {row['id']}: inspect {row['log']}", flush=True)
             else:
                 row.update(status="completed", report=str(report_path))
                 print(f"COMPLETED {row['id']}", flush=True)
             publish()
         if failed and job_error_policy == "stop":
             exhausted = True
+            if not active:
+                # Persist queued/deferred work, but do not spin forever on it
+                # when explicit fail-fast policy forbids further admission.
+                publish()
+                break
         while not exhausted and len(active) < concurrency:
-            row = next(pending, None)
+            if not pending and not deferred:
+                exhausted = True
+                break
+            if storage_gate is not None:
+                # A just-reaped worker may have tripped the shared gate after
+                # the loop's initial sample. Never admit on that stale sample.
+                state["storage_health"] = storage_gate.check()
+                if not state["storage_health"].get("healthy", False):
+                    state["status"] = "paused_storage"
+                    publish()
+                    break
+            row = next_pending()
             if row is None:
                 exhausted = True
                 break
@@ -691,8 +937,15 @@ def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concu
                 output = Path(row["output"])
                 output.mkdir(parents=True, exist_ok=True)
                 log = output / f"driver-{time.time_ns()}.log"
+                _clear_stale_attempt_error(row)
                 row.update(status="running", started_at=now(),
                            checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+                row.setdefault("attempt_history", []).append({
+                    "event": "launch",
+                    "at": row["started_at"],
+                    "retry_count": int(row.get("retry_count", 0)),
+                    "checkpoint": row["checkpoint"],
+                })
                 stream = log.open("w", encoding="utf-8")
                 child = subprocess.Popen(command(repo, row, checkpoint, config_dir),
                                          cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
@@ -705,14 +958,31 @@ def run_parallel(repo, selected, all_rows, config_dir, state, status_path, concu
                 if stream is not None:
                     stream.close()
                 row.update(status="paused_error", error=str(error), finished_at=now())
-                failed = True
-                exhausted = job_error_policy == "stop"
-                state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+                if storage_gate is not None and _is_storage_error(row, storage_gate):
+                    storage_gate.trip(str(error))
+                    row["storage_error"] = str(error)
+                    if _defer_storage_recovery(row, storage_retry_limit, allow_pre_model_initialization=True):
+                        deferred.append(row)
+                        state["status"] = "paused_storage"
+                    else:
+                        failed = True
+                else:
+                    failed = True
+                    exhausted = job_error_policy == "stop"
+                    state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
             publish()
         if active:
             time.sleep(2)
+        elif storage_gate is not None and (pending or deferred) and not exhausted:
+            time.sleep(2)
+    incomplete = [row for row in selected if not _has_matching_report(row) and row.get("status") != "completed"]
     if failed:
         state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+        save(status_path, state)
+        return 1
+    if incomplete:
+        state.update(status="needs_attention", updated_at=now(), matrix=matrix(all_rows),
+                     incomplete_job_ids=[row["id"] for row in incomplete])
         save(status_path, state)
         return 1
     return 0
@@ -730,6 +1000,9 @@ def main():
     parser.add_argument("--adopt-state", type=Path, help="explicit saved worker handoff; old dispatcher must be stopped")
     parser.add_argument("--concurrency", type=int, help="maximum simultaneous jobs; default matrix-execution.json concurrency, or 1")
     parser.add_argument("--job-error-policy", choices=("stop", "continue"), default="stop", help="parallel job failure policy; default stop preserves fail-fast admission")
+    parser.add_argument("--storage-guard", action="store_true", help="enable shared storage health gate for parallel admission")
+    parser.add_argument("--storage-retry-limit", type=int, default=5, help="maximum deferred storage recovery attempts per job")
+    parser.add_argument("--recover-storage-errors", action="store_true", help="reclassify previous storage paused_error rows for guarded recovery")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
     parser.add_argument("--retry-interrupted-run", help="exact failed run_id or run/report path for one authorized L2 interrupted-turn retry")
@@ -750,6 +1023,7 @@ def main():
     root = (repo / args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
     execution_path = root / "matrix-execution.json"
+    status_path = root / "matrix_status.json"
     concurrency = args.concurrency
     if concurrency is None:
         concurrency = load(execution_path).get("concurrency", 1) if execution_path.exists() else 1
@@ -757,6 +1031,10 @@ def main():
         parser.error("concurrency must be a positive integer")
     if args.retry_interrupted_run:
         concurrency = 1  # One authorization always binds exactly one attempt.
+    if args.storage_retry_limit < 0:
+        parser.error("storage retry limit must be non-negative")
+    if args.storage_guard:
+        os.environ["TRIEVO_STORAGE_GUARD"] = "1"
 
     # Retain an OS-owned lock for this process; stale files do not block resume.
     global _driver_lock
@@ -791,7 +1069,29 @@ def main():
         raise SystemExit("no matching job")
     if args.retry_interrupted_run and len(selected) != 1:
         raise SystemExit("--retry-interrupted-run requires one selected job")
+    if args.recover_storage_errors and not args.storage_guard:
+        parser.error("--recover-storage-errors requires --storage-guard")
+    storage_gate = storage_gate_from_environment() if args.storage_guard else None
+    if args.storage_guard and storage_gate is None:
+        raise SystemExit("--storage-guard requested but StorageGate.from_environment() returned no gate")
+    prior_state = load(status_path) if status_path.exists() and args.storage_guard else {}
+    if prior_state:
+        _restore_prior_storage_state(selected, prior_state)
+    if args.recover_storage_errors:
+        _prepare_recovered_storage_rows(selected, storage_gate, args.storage_retry_limit)
     state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected, "concurrency": concurrency, "job_error_policy": args.job_error_policy, "phase": "gate" if args.gate else ("only" if args.only else "full")}
+    if args.storage_guard and not args.adopt_state:
+        survivors = [row for row in selected
+                     if row.get("status") == "running" and row.get("process_start_ticks")
+                     and process_start_ticks(row.get("pid")) == str(row["process_start_ticks"])]
+        if survivors:
+            if concurrency < 2 or args.retry_interrupted_run or args.gate or args.only:
+                parser.error("live workers require a full parallel resume")
+            # The output lock is held; adopt verified survivors instead of
+            # issuing duplicate work after a dispatcher-only restart.
+            for row in survivors:
+                AdoptedProcess(row)
+            state["adopted_rows"] = survivors
     if args.adopt_state:
         if concurrency < 2 or args.retry_interrupted_run or args.gate or args.only:
             parser.error("adoption requires a parallel full invocation")
@@ -801,10 +1101,20 @@ def main():
             if row["id"] not in {job["id"] for job in selected}:
                 parser.error("adopted job is not selected")
             AdoptedProcess(row)
-    status_path = root / "matrix_status.json"
     save(status_path, state)
     if concurrency > 1:
-        code = run_parallel(repo, selected, all_rows, config_dir, state, status_path, concurrency, args.job_error_policy)
+        code = run_parallel(
+            repo,
+            selected,
+            all_rows,
+            config_dir,
+            state,
+            status_path,
+            concurrency,
+            args.job_error_policy,
+            storage_gate=storage_gate,
+            storage_retry_limit=args.storage_retry_limit,
+        )
         if code:
             return code
     else:

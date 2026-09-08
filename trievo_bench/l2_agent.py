@@ -115,6 +115,7 @@ class L2AgentStreamRunner:
             raise L2AgentRunError("interrupted Interaction retry requires a matrix job id")
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
+        self._storage_gate = _storage_gate_from_environment()
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
@@ -435,6 +436,12 @@ class L2AgentStreamRunner:
                 first_interaction = int(resume_pending["interaction_index"]) if resume_pending else 1
                 for interaction_index in range(first_interaction, max_interactions + 1):
                     interaction_request = current_request
+                    if not resume_pending:
+                        self._wait_for_storage(
+                            phase="interaction",
+                            turn_id=turn_id,
+                            interaction_index=interaction_index,
+                        )
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
                     stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
                     started_checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"i{turn_index:04d}-{interaction_index:02d}"
@@ -462,6 +469,20 @@ class L2AgentStreamRunner:
                                 sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
                                 remaining_token_budget=max(0, self.budget.limit - self.budget.used),
                             )
+                        )
+                        self._write_reply_received_checkpoint(
+                            output_root=output_root,
+                            stream_key=stream_key,
+                            run_id=run_id,
+                            turn_id=turn_id,
+                            turn_index=turn_index,
+                            interaction_index=interaction_index,
+                            interaction_request=interaction_request,
+                            reply=reply,
+                            history=history,
+                            interactions=interactions,
+                            before_files=before_files,
+                            report=report,
                         )
                         self._sync_workspace_from_volume()
                     # Durable stage evidence survives verifier/Judge/Simulator
@@ -653,6 +674,11 @@ class L2AgentStreamRunner:
                     self.condition.policy.sut_evolution_enabled
                     and terminal_outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
                 )
+                self._wait_for_storage(
+                    phase="evolution",
+                    turn_id=turn_id,
+                    interaction_index=len(interactions),
+                )
                 evolution = self._runtime.evolve(
                     EvolutionContext(
                         turn_id=turn_id,
@@ -788,6 +814,68 @@ class L2AgentStreamRunner:
         except BaseException:
             if not best_effort:
                 raise
+
+    def _wait_for_storage(
+        self,
+        *,
+        phase: str,
+        turn_id: str,
+        interaction_index: int | None = None,
+    ) -> None:
+        gate = self._storage_gate
+        if gate is None:
+            return
+        gate.wait()
+
+    def _write_reply_received_checkpoint(
+        self,
+        *,
+        output_root: Path,
+        stream_key: str,
+        run_id: str,
+        turn_id: str,
+        turn_index: int,
+        interaction_index: int,
+        interaction_request: str,
+        reply: BaselineReply,
+        history: list[dict[str, Any]],
+        interactions: list[dict[str, Any]],
+        before_files: dict[str, Any],
+        report: dict[str, Any],
+    ) -> None:
+        if self._runtime is None:
+            raise L2AgentRunError("baseline runtime is not initialized")
+        checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"r{turn_index:04d}-{interaction_index:02d}"
+        checkpoint.mkdir(parents=True, exist_ok=True)
+        # Persist the reply before *any* Docker state/workspace copy can wait
+        # or fail. This is evidence only; the normal adjudication checkpoint
+        # below still requires the synchronized workspace and state archive.
+        _write_json(checkpoint / "reply_received.json", {
+            "turn_id": turn_id,
+            "turn_index": turn_index,
+            "interaction_index": interaction_index,
+            "request": interaction_request,
+            "reply": asdict(reply),
+            "history": history,
+            "interactions": interactions,
+            "before_files": before_files,
+            "token_budget": asdict(self.budget),
+        })
+        _write_json(checkpoint / "completed_turns.json", report["turns"])
+        _write_json(checkpoint / "checkpoint.json", {
+            "phase": "reply_received",
+            "stream_id": self.options.stream_id,
+            "baseline": self.options.baseline,
+            "condition": self.condition.value,
+            "evaluation_error_policy": self.evaluation_error_policy,
+            "run_id": run_id,
+            "turn_id": turn_id,
+            "next_turn_index": turn_index,
+            "interaction_index": interaction_index,
+            "token_budget": asdict(self.budget),
+            "workspace_synced": False,
+            "resume_safe": False,
+        })
 
     def _close_taskstream_volume_transport(self) -> None:
         for mirror in (self._package_volume, self._workspace_volume):
@@ -1893,6 +1981,11 @@ def _public_trajectory(record: dict[str, Any]) -> dict[str, Any]:
 
 def _write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _storage_gate_from_environment():
+    from .storage_recovery import from_environment
+    return from_environment()
 
 
 def _docker_executable() -> str:
