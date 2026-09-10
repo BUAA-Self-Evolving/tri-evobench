@@ -30,6 +30,23 @@ trievo-bench --spec <benchmark.json> --baseline trace2skill \
 
 也可以直接在 benchmark spec 中设置 `baseline.type` 为 `trace2skill`。通过 override 的 `options.agent` 可切换 `cli_skill_preloaded`/`cli_only`，并可调整 `model`、`max_turns`、`temperature`、`skill`、`skill_name`、`evolution_batch_size`、`max_workers` 等参数。
 
+Prime Agent 与 Adaptive Auto-Harness 也已通过同一 Runtime 注册，可只改 baseline 超参数切换：
+
+```bash
+docker build -t trievo-prime-agent:0.1 -f baseline/adapters/prime_agent/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline prime-agent \
+  --baseline-config examples/prime-agent-baseline.override.json --output runs/prime-agent
+
+docker build -t trievo-adaptive-auto-harness:0.1 \
+  -f baseline/adapters/adaptive_auto_harness/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline adaptive-auto-harness \
+  --baseline-config examples/adaptive-auto-harness.override.json \
+  --output runs/adaptive-auto-harness
+```
+
+也可在 spec 中分别设置 `baseline.type` 为 `prime-agent` 或 `adaptive-auto-harness`。两者都使用
+Turn 级新会话、Flow 级学习状态、Turn 末显式演化 barrier 和增量 Token 计量。
+
 ```bash
 docker build -t trievo-hermes:0.1 -f baseline/adapters/hermes/Dockerfile .
 # 先将 override 中的 seed_from 改成干净 Hermes 配置目录的绝对路径
@@ -53,7 +70,7 @@ Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baselin
 ```bash
 git clone git@github.com:BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-git submodule update --init baseline/hermes-agent
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness
 uv sync --frozen --group dev
 ```
 
@@ -132,8 +149,8 @@ python -m trievo_bench.l1_life_compat `
 
 ## L2
 
-最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及 Hermes、SkillOpt、Trace2Skill
-三智能体完整矩阵，请使用 [当前版本运行指南](docs/current-matrix.md)。
+最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及五种框架 baseline
+完整矩阵，请使用 [当前版本运行指南](docs/current-matrix.md)。
 指南包含从源码构建 Docker、可移植配置、完整日志与检查点恢复；下方命令仍适用于旧版 episode 数据包。
 
 L2 adapter 用于检查和运行带私有 evaluator 边界的 Stream/Episode 数据包。

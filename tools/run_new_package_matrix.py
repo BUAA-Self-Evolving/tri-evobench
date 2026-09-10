@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 L2_CONDITIONS = ("reset", "frozen", "evolving")
+BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness")
 
 
 
@@ -108,7 +109,7 @@ def jobs(
             turns = manifest["ordering"]["turn_order"] if level == "l2" else [item["turn_id"] for item in manifest["turns"]]
             row_conditions = conditions if level == "l2" else (None,)
             for condition in row_conditions:
-                for agent in ("hermes", "skillopt", "trace2skill"):
+                for agent in BASELINES:
                     if condition:
                         job_id = f"{level}/{condition}/{agent}/s{index:02d}"
                         output = root / level / condition / agent / f"s{index:02d}"
@@ -616,7 +617,7 @@ def matched_l2_aggregations(rows):
     from trievo_bench.evolution_aggregation import aggregate_matched_runs
 
     result = {}
-    for agent in ("hermes", "skillopt", "trace2skill"):
+    for agent in BASELINES:
         selected = [row for row in rows if row["level"] == "l2" and row["agent"] == agent]
         if {row.get("condition") for row in selected} != set(L2_CONDITIONS):
             continue
@@ -643,7 +644,7 @@ def matched_l2_aggregations(rows):
 
 def matrix(rows):
     cells = []
-    for agent in ("hermes", "skillopt", "trace2skill"):
+    for agent in BASELINES:
         datasets = [("l1", None)] + [("l2", condition) for condition in L2_CONDITIONS if any(row["level"] == "l2" and row.get("condition") == condition for row in rows)]
         for level, condition in datasets:
             selected = [row for row in rows if row["agent"] == agent and row["level"] == level and row.get("condition") == condition]

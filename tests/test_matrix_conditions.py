@@ -62,9 +62,11 @@ def test_three_l2_conditions_are_in_rows_outputs_and_commands(tmp_path):
         l2_conditions=("reset", "frozen", "evolving"),
     )
     l2_rows = [row for row in rows if row["level"] == "l2"]
-    assert len(l2_rows) == 9
+    assert len(l2_rows) == 15
     assert {row["condition"] for row in l2_rows} == {"reset", "frozen", "evolving"}
     assert "l2/reset/hermes/s01" in {row["id"] for row in l2_rows}
+    assert "l2/frozen/prime-agent/s01" in {row["id"] for row in l2_rows}
+    assert "l2/evolving/adaptive-auto-harness/s01" in {row["id"] for row in l2_rows}
     assert str(tmp_path / "results/l2/reset/hermes/s01") in {row["output"] for row in l2_rows}
 
     reset = next(row for row in l2_rows if row["id"] == "l2/reset/hermes/s01")

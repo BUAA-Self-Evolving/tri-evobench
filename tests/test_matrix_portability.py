@@ -10,7 +10,7 @@ from tools.run_new_package_matrix import command, jobs
 def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     output = generate(tmp_path / "configs", "gpt-5.6-terra", "https://example.test/v1")
     files = list(output.glob("*.override.json"))
-    assert len(files) == 6
+    assert len(files) == 8
     for path in files:
         config = json.loads(path.read_text())
         assert config["adapter"]["command"][0] == "docker"
@@ -24,7 +24,7 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
             assert not any("host.docker.internal:7890" in arg for arg in config["adapter"]["command"])
             assert (Path(config["state"]["seed_from"]) / "config.yaml").is_file()
             assert config["options"]["thinking"] == "disabled"
-        else:
+        elif "prime-agent" not in path.name:
             assert config["environment"]["set"]["TRIEVO_THINKING"] == "disabled"
             assert "TRIEVO_API_TIMEOUT_SECONDS" in config["adapter"]["command"]
             assert "TRIEVO_API_MAX_RETRIES" in config["adapter"]["command"]
@@ -62,6 +62,10 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert "max_tokens" not in trace_l1["options"]["generation_config"]
     assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
     assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
+    prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
+    adaptive = json.loads((output / "tmp_adaptive-auto-harness_docker.override.json").read_text())
+    assert prime["options"]["base_url"] == "https://example.test/v1"
+    assert adaptive["options"]["evolver_base_url"] == "https://example.test/v1"
 
 
 def test_generated_configs_accept_candidate_bound_image_tags(tmp_path):
@@ -106,7 +110,7 @@ def test_explicit_package_and_config_paths(tmp_path):
         (directory / "stream.json").write_text(json.dumps(manifest))
     config_dir = generate(tmp_path / "configs", "deepseek-v4-flash", "https://example.test/v1")
     rows = jobs(tmp_path, tmp_path / "results", l1_package=packages / "l1_arena", l2_package=packages / "L2_Demo_V3")
-    assert len(rows) == 6
+    assert len(rows) == 10
     args = command(tmp_path, rows[0], None, config_dir)
     assert args[args.index("--baseline-config") + 1] == str(config_dir / "tmp_hermes_cf_l2.override.json")
     assert rows[0]["package"] == str(packages / "L2_Demo_V3")

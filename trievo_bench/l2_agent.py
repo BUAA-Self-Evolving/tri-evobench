@@ -1213,9 +1213,8 @@ class L2AgentStreamRunner:
     def _create_runtime(self, resume_state_archive: Path | None = None) -> ProcessBaselineRuntime:
         # L2 uses the same BaselineRuntime protocol as L1.  Resolve the
         # selected adapter from its registered manifest so Hermes, SkillOpt,
-        # and Trace2Skill can be compared under one evaluator.  Previously
-        # this method hard-coded Hermes, making the advertised three-agent L2
-        # matrix impossible to run.
+        # Trace2Skill, Prime Agent, and Adaptive Auto-Harness can be compared
+        # under one evaluator. Previously this method hard-coded Hermes.
         manifest_path = find_manifest(self.options.baseline, self.options.repo_root)
         policy = "turn_boundary" if self.condition.policy.sut_evolution_enabled else "disabled"
         overrides = merge_mappings(
@@ -1242,6 +1241,32 @@ class L2AgentStreamRunner:
                     "max_turns": min(current, self.work_limits.max_tool_calls),
                     "max_tokens": min(
                         int(options.get("max_tokens", self.work_limits.max_output_tokens)),
+                        self.work_limits.max_output_tokens,
+                    ),
+                }
+            })
+        elif self.options.baseline == "prime-agent":
+            manifest = manifest.with_overrides({
+                "options": {
+                    "max_output_tokens": min(
+                        int(options.get("max_output_tokens", self.work_limits.max_output_tokens)),
+                        self.work_limits.max_output_tokens,
+                    ),
+                }
+            })
+        elif self.options.baseline == "adaptive-auto-harness":
+            manifest = manifest.with_overrides({
+                "options": {
+                    "max_steps": min(
+                        int(options.get("max_steps", self.work_limits.max_tool_calls)),
+                        self.work_limits.max_tool_calls,
+                    ),
+                    "max_output_tokens": min(
+                        int(options.get("max_output_tokens", self.work_limits.max_output_tokens)),
+                        self.work_limits.max_output_tokens,
+                    ),
+                    "evolver_max_tokens": min(
+                        int(options.get("evolver_max_tokens", self.work_limits.max_output_tokens)),
                         self.work_limits.max_output_tokens,
                     ),
                 }

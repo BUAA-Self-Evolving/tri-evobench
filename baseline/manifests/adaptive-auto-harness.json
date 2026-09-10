@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "id": "adaptive-auto-harness",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-i",
+      "--name",
+      "trievo-adaptive-auto-harness-{instance_id}",
+      "--user",
+      "{uid}:{gid}",
+      "--cap-drop",
+      "ALL",
+      "--security-opt",
+      "no-new-privileges",
+      "--pids-limit",
+      "512",
+      "--memory",
+      "8g",
+      "--cpus",
+      "4",
+      "-v",
+      "{workspace_mount}:/workspace",
+      "-v",
+      "{state_mount}:/agent-state",
+      "-e",
+      "HOME=/agent-state/home",
+      "-e",
+      "OPENAI_API_KEY",
+      "-e",
+      "OPENAI_BASE_URL",
+      "-e",
+      "TRIEVO_API_KEY",
+      "-e",
+      "TRIEVO_BASE_URL",
+      "-e",
+      "TRIEVO_MODEL",
+      "-e",
+      "HTTP_PROXY",
+      "-e",
+      "HTTPS_PROXY",
+      "-e",
+      "NO_PROXY",
+      "-e",
+      "http_proxy",
+      "-e",
+      "https_proxy",
+      "-e",
+      "no_proxy",
+      "{image}"
+    ],
+    "cleanup_command": [
+      "docker",
+      "rm",
+      "-f",
+      "trievo-adaptive-auto-harness-{instance_id}"
+    ]
+  },
+  "source": {
+    "path": "baseline/adaptive-auto-harness",
+    "revision": "17bc9ebb7d4d142af1b109b43ef160031967cc9a"
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY",
+      "OPENAI_BASE_URL",
+      "TRIEVO_API_KEY",
+      "TRIEVO_BASE_URL",
+      "TRIEVO_MODEL",
+      "HTTP_PROXY",
+      "HTTPS_PROXY",
+      "NO_PROXY",
+      "http_proxy",
+      "https_proxy",
+      "no_proxy"
+    ]
+  },
+  "workspace": {
+    "mode": "shared_volume",
+    "adapter_path": "/workspace"
+  },
+  "state": {
+    "scope": "flow",
+    "adapter_path": "/agent-state",
+    "paths": [
+      "manifest.yaml",
+      "prompts/**/*",
+      "skills/**/*",
+      "memory/**/*",
+      "tools/**/*",
+      "evolution/history/**/*"
+    ],
+    "enforce_turn_freeze": true
+  },
+  "evolution": {
+    "policy": "turn_boundary",
+    "timeout_seconds": 900
+  },
+  "options": {
+    "image": "trievo-adaptive-auto-harness:0.1",
+    "model": "gpt-5.5",
+    "base_url": "",
+    "api_key_env": "TRIEVO_API_KEY",
+    "temperature": 0.0,
+    "max_output_tokens": 4096,
+    "max_steps": 24,
+    "tool_timeout": 120,
+    "evolver_model": "gpt-5.5",
+    "evolver_base_url": "",
+    "evolver_api_key_env": "TRIEVO_API_KEY",
+    "evolver_temperature": 0.0,
+    "evolver_max_tokens": 4096,
+    "evolve_prompts": true,
+    "evolve_skills": true,
+    "evolve_memory": true,
+    "evolve_tools": false,
+    "allow_revision_mismatch": false
+  },
+  "capabilities": [
+    "direct_workspace",
+    "terminal",
+    "filesystem_contract",
+    "prompt_evolution",
+    "skill_evolution",
+    "memory_evolution",
+    "tool_calls",
+    "usage",
+    "evolution_barrier"
+  ]
+}
