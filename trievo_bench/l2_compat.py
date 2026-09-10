@@ -298,7 +298,13 @@ def main() -> None:
     parser.add_argument("--api-base")
     parser.add_argument("--reasoning-effort", default="medium")
     parser.add_argument("--allow-generated-code", action="store_true")
-    parser.add_argument("--baseline", help="run L2 through a real agent baseline (currently: hermes)")
+    parser.add_argument(
+        "--baseline",
+        help=(
+            "run L2 through a registered agent baseline "
+            "(hermes, skillopt, trace2skill, prime-agent, or adaptive-auto-harness)"
+        ),
+    )
     parser.add_argument("--baseline-config", help="JSON/YAML overrides for the agent baseline manifest")
     parser.add_argument("--max-total-tokens", type=int, default=2_000_000)
     parser.add_argument("--browser-image", default="trievo-l2-browser:0.1")

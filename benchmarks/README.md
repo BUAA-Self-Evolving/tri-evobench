@@ -26,7 +26,7 @@ python tools/dataset_inventory.py --check
 python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V2 --inspect
 ```
 
-执行最新三智能体矩阵请看 [运行指南](../docs/current-matrix.md)，传入
+执行最新五种 baseline 矩阵请看 [运行指南](../docs/current-matrix.md)，传入
 `--packages benchmarks/current`。`SHA256_MANIFEST.json` 记录各版本每个文件的大小和摘要。
 
 保留各数据包自带的来源和许可说明；仓库代码许可不覆盖上游数据、素材的独立使用限制。

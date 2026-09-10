@@ -564,3 +564,45 @@ trievo-bench --spec <benchmark.json> --baseline trace2skill \
   --baseline-config examples/trace2skill-docker.override.json \
   --output runs/trace2skill
 ```
+
+## 12. Prime Agent 接入
+
+`baseline/prime-agent` 固定为 manifest 中记录的上游 commit，并通过 Prime Agent 原生 JSONL RPC
+接入。每个 Turn 启动一个新 RPC Session，Interaction 通过 `prompt` 执行，工具直接操作共享
+`/workspace`；Turn 结束时由 Runtime 单独调用 `refine`，把公开 trajectory 和 Judge feedback 写入
+Flow 级 continual harness。前台提示明确禁止 `refine.run` 和 harness 写操作，Runtime 还会通过状态
+hash 冻结检查阻止绕过 Turn barrier。
+
+```bash
+git submodule update --init baseline/prime-agent
+docker build -t trievo-prime-agent:0.1 -f baseline/adapters/prime_agent/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline prime-agent \
+  --baseline-config examples/prime-agent-baseline.override.json \
+  --output runs/prime-agent
+```
+
+常用超参数位于 `options`：`provider`、`model`、`thinking`、`max_output_tokens`。使用兼容
+OpenAI 的自定义服务时设置 `base_url`、`api=openai-completions` 和 `api_key_env`；示例见
+`examples/prime-agent-openai-compatible.override.json`。学习状态只导出
+`prime-home/harness/`，Session、Python REPL 状态和运行配置不会作为学习状态带到下一 Flow。
+
+## 13. Adaptive Auto-Harness 接入
+
+`baseline/adaptive-auto-harness` 固定为 A-Evolve 上游 commit。Bridge 使用其 `BaseAgent` /
+`AgentWorkspace` 文件系统契约加载 prompt、skills、memory，并用通用终端 agent 直接完成任务；
+Turn 末通过上游 `AEvolveEngine.evolve` 执行一次演化，禁用额外 trial 和隐藏 evaluator 输入。
+Runner 只传公开 trajectory 与公开 feedback，提案只能更新 manifest 声明的 prompt、skill、memory
+和可选工具 registry 文件。
+
+```bash
+git submodule update --init baseline/adaptive-auto-harness
+docker build -t trievo-adaptive-auto-harness:0.1 \
+  -f baseline/adapters/adaptive_auto_harness/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline adaptive-auto-harness \
+  --baseline-config examples/adaptive-auto-harness.override.json \
+  --output runs/adaptive-auto-harness
+```
+
+常用超参数为 `model`、`base_url`、`max_steps`、`tool_timeout`、`evolver_model`、
+`evolver_max_tokens`，以及 `evolve_prompts`、`evolve_skills`、`evolve_memory`、`evolve_tools`。
+设置 `evolution.policy=disabled` 或运行 frozen/reset condition 时只跨过 barrier，不更新学习状态。

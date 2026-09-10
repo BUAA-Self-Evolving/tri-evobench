@@ -102,6 +102,18 @@ def generate(
         ("trace2skill", "trievo-trace2skill:matrix-current", ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
          {"model": model, "max_turns": 24, "request_timeout": 120, "tool_timeout": 90,
           "generation_config": {"thinking": {"type": "disabled"}}}),
+        ("prime-agent", "trievo-prime-agent:matrix-current", ["OPENAI_API_KEY"],
+         {"provider": "trievo", "model": model, "base_url": base_url,
+          "api": "openai-completions", "api_key_env": "TRIEVO_API_KEY",
+          "thinking": "off", "reasoning": False, "max_output_tokens": 4096}),
+        ("adaptive-auto-harness", "trievo-adaptive-auto-harness:matrix-current",
+         ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
+         {"model": model, "base_url": base_url, "api_key_env": "TRIEVO_API_KEY",
+          "max_output_tokens": 4096, "max_steps": 20, "tool_timeout": 90,
+          "evolver_model": model, "evolver_base_url": base_url,
+          "evolver_api_key_env": "TRIEVO_API_KEY", "evolver_max_tokens": 4096,
+          "evolve_prompts": True, "evolve_skills": True,
+          "evolve_memory": True, "evolve_tools": False}),
     ):
         container = f"trievo-{agent}-{{instance_id}}"
         command = ["docker", "run", "--rm", "-i", "--name", container,

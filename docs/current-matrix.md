@@ -1,10 +1,10 @@
-# L1 Arena / L2 TaskStream：三智能体 Runtime 与 matched conditions
+# L1 Arena / L2 TaskStream：五种 baseline Runtime 与 matched conditions
 
 ## 支持范围与验证状态
 
 本版本支持 `l2_taskstream/1.0`，数据目录名不参与协议判断，因此仓库内 Demo V2 与外部
 Demo V3 都走同一条 Runtime；同时保留旧版 episode 格式适配。
-支持 Hermes、SkillOpt、Trace2Skill 的真实 Docker 工具执行、独立 Docker 私有验证、
+支持 Hermes、SkillOpt、Trace2Skill、Prime Agent、Adaptive Auto-Harness 的真实 Docker 工具执行、独立 Docker 私有验证、
 L2 原始 rubric 的 LLM judge、用户反馈交互，以及跨 turn 的自进化状态。
 L1 Arena 使用数据集规定的任务/偏好检查与更新顺序。
 
@@ -44,7 +44,7 @@ DATA_ROOT/
 任务及 verifier 使用 CPU 容器。镜像构建需要下载依赖和浏览器，预留足够磁盘空间。
 
 ```bash
-git submodule update --init baseline/hermes-agent
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness
 uv sync --frozen --group dev
 docker info
 docker build -t trievo-l2:0.1 -f sandbox/l2/Dockerfile .
@@ -52,13 +52,15 @@ docker build -t trievo-l2-browser:0.1 -f sandbox/l2/Dockerfile.browser .
 docker build -t trievo-hermes:matrix-current -f baseline/adapters/hermes/Dockerfile .
 docker build -t trievo-skillopt:matrix-current -f baseline/adapters/skillopt/Dockerfile .
 docker build -t trievo-trace2skill:matrix-current -f baseline/adapters/trace2skill/Dockerfile .
+docker build -t trievo-prime-agent:matrix-current -f baseline/adapters/prime_agent/Dockerfile .
+docker build -t trievo-adaptive-auto-harness:matrix-current -f baseline/adapters/adaptive_auto_harness/Dockerfile .
 uv run --frozen python -m pytest tests -q
 uv run --frozen python tools/prepare_matrix_configs.py --output tmp/matrix-config
 uv run --frozen python -m trievo_bench.l2_compat --package <extracted-l2-package> --inspect
 uv run --frozen python tools/validate_arena_packages.py benchmarks/current/l1_arena
 ```
 
-以上正好构建三种 baseline image 和两个 verifier image。只有运行 L1 Docker sandbox 时才额外构建：
+以上构建五种 baseline image 和两个 verifier image。只有运行 L1 Docker sandbox 时才额外构建：
 
 ```bash
 docker build -t trievo-ubuntu:22.04 -f sandbox/ubuntu/Dockerfile .
@@ -67,7 +69,7 @@ docker build -t trievo-ubuntu:22.04 -f sandbox/ubuntu/Dockerfile .
 这些 Dockerfile 默认使用官方 Debian/PyPI 源。受限网络可以给基础 verifier 和 baseline
 传公开的 `APT_ORIGIN`，并给包含 pip 步骤的 image 传 `PIP_INDEX_URL`；browser image 会继承
 基础 verifier 的 APT 源。不要把含凭据的私有源写进仓库。
-三个 baseline Dockerfile 还支持 `BASE_IMAGE`；可指向已构建的 `trievo-l2:0.1`，复用相同的
+五个 baseline Dockerfile 还支持 `BASE_IMAGE`；可指向已构建的 `trievo-l2:0.1`，复用相同的
 Python/科学计算依赖，同时仍会安装并校验各 baseline 自己的依赖。
 `PLAYWRIGHT_DOWNLOAD_HOST` 可让 browser build 使用操作者信任的 Playwright archive cache；
 默认仍使用 Playwright 自己的下载地址和 fallback。browser 的 Python 包、系统库和浏览器下载分层，
@@ -188,7 +190,7 @@ uv run --frozen python tools/run_new_package_matrix.py \
 
 ## 当前隔离边界
 
-Native verifier 容器明确使用 `--network none`，且 package 只读、Workspace 单独挂载。三种 baseline
+Native verifier 容器明确使用 `--network none`，且 package 只读、Workspace 单独挂载。五种 baseline
 容器仍需联网调用远端模型 API；当前版本尚未把模型网络与 task tool 网络拆成独立 Tool Gateway，
 因此不能宣称已经在进程层完全强制 `execution_requirements.network=disabled`。该限制不影响本次
 V3 的数据读取、Workspace transition、评分和 matched condition smoke，但正式公开运行前仍需补齐。
