@@ -8,6 +8,7 @@ from types import SimpleNamespace
 
 from baseline.adapters.trace2skill.bridge import (
     Trace2SkillBridge,
+    _adapt_final_response_carrier,
     _normalize_generation_config,
     _select_agent_name,
     _steps_to_trace,
@@ -187,6 +188,69 @@ class Trace2SkillBaselineContractTest(unittest.TestCase):
         self.assertTrue(result.is_action)
         self.assertEqual(result.action.name, "bash")
         self.assertEqual(result.action.arguments, {"command": "ls -la /workspace"})
+
+    def test_react_converter_prefers_action_over_same_response_task_complete(self) -> None:
+        response = (
+            "I need to create the artifact before finishing.\n"
+            "Action:\n"
+            '{"name": "bash", "arguments": {"command": "mkdir -p /workspace/output && echo ok > /workspace/output/result.txt"}}\n'
+            "\nACTION: TASK_COMPLETE"
+        )
+        result = ReActConverter().parse_response(response)
+        self.assertTrue(result.is_action)
+        self.assertEqual(result.action.name, "bash")
+        self.assertIn("/workspace/output/result.txt", result.action.arguments["command"])
+
+    def test_react_converter_fails_closed_on_malformed_action_with_task_complete(self) -> None:
+        response = (
+            "Action:\n"
+            '{"name": "bash", "arguments": {"command": "echo missing brace"}\n'
+            "\nACTION: TASK_COMPLETE"
+        )
+        result = ReActConverter().parse_response(response)
+        self.assertTrue(result.is_format_error)
+
+    def test_final_python_action_is_transparently_carried_to_final_response(self) -> None:
+        source = "import pandas as pd\ndef task_func(s1, s2):\n    return s1, s2\n"
+        answer, audit = _adapt_final_response_carrier(
+            "None",
+            [{"name": "python", "arguments": {"code": source}}],
+            {"submission_contract": {"mode": "final_response", "payload_kind": "python_source"}},
+        )
+        self.assertEqual(answer, source)
+        self.assertEqual(audit["type"], "executed_python_action_to_final_response")
+        self.assertNotIn(source, audit)
+
+    def test_embedded_tau2_json_is_not_rewritten_to_satisfy_strict_carrier(self) -> None:
+        payload = {
+            "schema_version": "tau2-telecom-trajectory-0.1",
+            "assistant_message": "done",
+            "tool_calls": [],
+        }
+        answer, audit = _adapt_final_response_carrier(
+            "Completed.\n" + json.dumps(payload),
+            [],
+            {"submission_contract": {"mode": "final_response", "payload_kind": "json_tool_trajectory"}},
+        )
+        self.assertEqual(answer, "Completed.\n" + json.dumps(payload))
+        self.assertIsNone(audit)
+
+        unchanged, no_audit = _adapt_final_response_carrier(
+            json.dumps({"trajectory": []}),
+            [],
+            {"submission_contract": {"mode": "final_response", "payload_kind": "json_tool_trajectory"}},
+        )
+        self.assertEqual(json.loads(unchanged), {"trajectory": []})
+        self.assertIsNone(no_audit)
+
+    def test_tau2_file_reference_does_not_replace_invalid_final_response(self) -> None:
+        answer, audit = _adapt_final_response_carrier(
+            "The trajectory is saved in /workspace/trajectory.json.",
+            [],
+            {"submission_contract": {"mode": "final_response", "payload_kind": "json_tool_trajectory"}},
+        )
+        self.assertEqual(answer, "The trajectory is saved in /workspace/trajectory.json.")
+        self.assertIsNone(audit)
 
 
 if __name__ == "__main__":

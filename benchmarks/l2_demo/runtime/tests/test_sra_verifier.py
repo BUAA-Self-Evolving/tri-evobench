@@ -42,6 +42,29 @@ class SraBigCodeBenchVerifierTests(unittest.TestCase):
                 self.assertEqual(bad_result.category, "fail")
                 self.assertEqual(bad_result.score, 0.0)
 
+    def test_final_response_contract_accepts_direct_python_source(self):
+        episode_dir = STREAM_ROOT / "episodes" / "E001"
+        assets = episode_dir / "evaluation_assets"
+        raw_code = (assets / "code_prompt.txt").read_text() + (
+            assets / "reference_answer.txt"
+        ).read_text()
+
+        result = self.verifier.verify(raw_code, episode_dir)
+        self.assertEqual((result.category, result.score), ("pass", 1.0))
+
+    def test_invalid_submission_sanitizes_to_stable_fail_not_evaluator_error(self):
+        episode_dir = STREAM_ROOT / "episodes" / "E001"
+
+        for invalid_source in (
+            "this is not Python code",
+            "```python\nthis is still not Python\n```",
+            "def unrelated():\n    return 1\n",
+        ):
+            with self.subTest(invalid_source=invalid_source):
+                result = self.verifier.verify(invalid_source, episode_dir)
+                self.assertEqual((result.category, result.score), ("fail", 0.0))
+                self.assertNotEqual(result.category, "error")
+
     def test_body_only_gold_is_not_mislabeled_as_raw_model_output(self):
         evaluation = json.loads(
             (STREAM_ROOT / "episodes/E001/evaluation.json").read_text()

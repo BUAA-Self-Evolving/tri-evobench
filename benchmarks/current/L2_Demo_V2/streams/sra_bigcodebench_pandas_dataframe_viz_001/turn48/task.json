@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Normalizes a given dataset using MinMax scaling and calculates the average of each row. This average is then added as a new column 'Average' to the resulting DataFrame. The function also visualizes these averages in a plot.\nThe function should output with:\n    DataFrame: A pandas DataFrame where data is normalized, with an additional column 'Average' representing the\n    mean of each row.\n    Axes: A matplotlib Axes object showing a bar subplot of the average values across the dataset.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\ndef task_func(data):\n```"
+        "content": "Normalizes a given dataset using MinMax scaling and calculates the average of each row. This average is then added as a new column 'Average' to the resulting DataFrame. The function also visualizes these averages in a plot.\nThe function should output with:\n    DataFrame: A pandas DataFrame where data is normalized, with an additional column 'Average' representing the\n    mean of each row.\n    Axes: A matplotlib Axes object showing a bar subplot of the average values across the dataset.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\ndef task_func(data):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

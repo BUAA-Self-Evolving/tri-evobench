@@ -25,6 +25,7 @@ it can be selected as the optimizer and/or target backend and routed through
 from __future__ import annotations
 
 import os
+import random
 import threading
 import time
 from dataclasses import dataclass
@@ -44,6 +45,25 @@ BACKEND_NAME = "openai_compatible"
 # A neutral, widely-available default. Real deployments should set the model
 # explicitly (e.g. "deepseek-chat", "llama-3.3-70b-versatile", "qwen2.5:7b").
 _DEFAULT_BASE_URL = "https://api.openai.com/v1"
+_RETRYABLE_HTTP_STATUS = {408, 409, 429, *range(500, 600)}
+_TRANSPORT_ERROR_NAMES = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "ConnectError",
+    "ConnectTimeout",
+    "ConnectionError",
+    "ConnectionTimeout",
+    "NetworkError",
+    "PoolTimeout",
+    "ReadError",
+    "ReadTimeout",
+    "RemoteProtocolError",
+    "Timeout",
+    "TimeoutException",
+    "WriteError",
+    "WriteTimeout",
+}
+_MAX_BACKOFF_SECONDS = 60.0
 
 
 @dataclass
@@ -68,6 +88,64 @@ def _parse_int(value: Any, default: int) -> int:
         return default
     raw = str(value).strip()
     return int(raw) if raw else default
+
+
+def _parse_env_int(name: str, default: int, minimum: int, maximum: int) -> int:
+    raw = os.environ.get(name)
+    value = default if raw is None or not str(raw).strip() else int(str(raw).strip())
+    if not minimum <= value <= maximum:
+        raise ValueError(f"{name} must be between {minimum} and {maximum}")
+    return value
+
+
+def _slow_provider_enabled() -> bool:
+    return str(os.environ.get("TRIEVO_SLOW_PROVIDER", "")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _api_timeout(default: float) -> float:
+    raw = os.environ.get("TRIEVO_API_TIMEOUT_SECONDS")
+    if raw is None or not str(raw).strip():
+        return float(default)
+    value = float(str(raw).strip())
+    if not 1 <= value <= 3600:
+        raise ValueError("TRIEVO_API_TIMEOUT_SECONDS must be between 1 and 3600")
+    return value
+
+
+def _configured_retry_attempts(default_attempts: int) -> int:
+    if not _slow_provider_enabled():
+        return max(1, int(default_attempts))
+    retries = _parse_env_int("TRIEVO_API_MAX_RETRIES", 20, 0, 100)
+    return retries + 1
+
+
+def _http_status(exc: Exception) -> int | None:
+    for attr in ("status_code", "code"):
+        value = getattr(exc, attr, None)
+        if isinstance(value, int):
+            return value
+    response = getattr(exc, "response", None)
+    value = getattr(response, "status_code", None)
+    return value if isinstance(value, int) else None
+
+
+def _is_retryable_provider_error(exc: Exception) -> bool:
+    status = _http_status(exc)
+    if status is not None:
+        return status in _RETRYABLE_HTTP_STATUS
+    if isinstance(exc, (TimeoutError, ConnectionError, OSError)):
+        return True
+    return type(exc).__name__ in _TRANSPORT_ERROR_NAMES
+
+
+def _retry_delay(attempt: int) -> float:
+    base = min(2 ** max(0, attempt), _MAX_BACKOFF_SECONDS)
+    return min(_MAX_BACKOFF_SECONDS, base + random.uniform(0.0, min(1.0, base * 0.1)))
 
 
 def _role_env(role: str, key: str, default: str) -> str:
@@ -195,7 +273,8 @@ def _build_client(config: OpenAICompatibleConfig) -> OpenAI:
         # require an API key. The SDK still expects a non-empty string, so fall
         # back to a harmless placeholder when none is configured.
         api_key=config.api_key or "dummy",
-        timeout=config.timeout_seconds,
+        timeout=_api_timeout(config.timeout_seconds),
+        max_retries=0,
     )
 
 
@@ -274,11 +353,15 @@ def _chat_messages_impl(
         kwargs["tools"] = _sanitize_for_transport(tools)
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
-    if timeout is not None:
+    if "TRIEVO_API_TIMEOUT_SECONDS" in os.environ:
+        # Tool execution deadlines must not override the API transport budget.
+        kwargs["timeout"] = _api_timeout(config.timeout_seconds)
+    elif timeout is not None:
         kwargs["timeout"] = timeout
 
+    attempts = _configured_retry_attempts(retries)
     last_err: Exception | None = None
-    for attempt in range(retries):
+    for attempt in range(attempts):
         try:
             resp = client.chat.completions.create(**kwargs)
             choices = getattr(resp, "choices", None) or []
@@ -317,9 +400,20 @@ def _chat_messages_impl(
             raise RuntimeError(str(e)) from e
         except Exception as e:  # noqa: BLE001
             last_err = e
-            time.sleep(min(2 ** attempt, 30))
+            if attempt >= attempts - 1 or not _is_retryable_provider_error(e):
+                break
+            delay = _retry_delay(attempt)
+            status = _http_status(e)
+            print(
+                "OpenAI-compatible model request retry "
+                f"role={role} stage={stage} attempt={attempt + 1}/{attempts} "
+                f"status={status if status is not None else 'transport'} "
+                f"error={type(e).__name__} sleep={delay:.2f}s",
+                flush=True,
+            )
+            time.sleep(delay)
     raise RuntimeError(
-        f"OpenAI-compatible chat call failed after {retries} retries: {last_err}"
+        f"OpenAI-compatible chat call failed after {attempts} attempts: {last_err}"
     )
 
 

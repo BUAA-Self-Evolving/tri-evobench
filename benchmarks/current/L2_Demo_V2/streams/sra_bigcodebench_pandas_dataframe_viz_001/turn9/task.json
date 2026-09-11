@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Create a DataFrame containing random integer values within a specified range for categories 'A' through 'E', and visualize this data with a stacked bar chart.\nThe function should output with:\n    matplotlib.figure.Figure: The matplotlib Figure object containing the plotted data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_rows=5, rand_range=(0, 100)):\n```"
+        "content": "Create a DataFrame containing random integer values within a specified range for categories 'A' through 'E', and visualize this data with a stacked bar chart.\nThe function should output with:\n    matplotlib.figure.Figure: The matplotlib Figure object containing the plotted data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_rows=5, rand_range=(0, 100)):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

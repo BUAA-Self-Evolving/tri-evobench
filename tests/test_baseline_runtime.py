@@ -5,11 +5,13 @@ import json
 import subprocess
 import sys
 import tempfile
+import types
 import unittest
 import zipfile
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from trievo_bench.baselines.hermes_bridge import (
     HermesBridge,
@@ -31,6 +33,49 @@ from trievo_bench.verifier import LLMJudge
 
 
 class BaselineRuntimeTest(unittest.TestCase):
+    def test_hermes_foreground_removes_learning_tools_from_worker_dispatch(self) -> None:
+        whitelist_calls = []
+        plugins = types.ModuleType("hermes_cli.plugins")
+        plugins.set_thread_tool_whitelist = (
+            lambda allowed, **_kwargs: whitelist_calls.append(set(allowed))
+        )
+        plugins.clear_thread_tool_whitelist = lambda: whitelist_calls.append(None)
+        hermes_cli = types.ModuleType("hermes_cli")
+        hermes_cli.plugins = plugins
+
+        terminal = types.ModuleType("tools.terminal_tool")
+        terminal._get_approval_callback = lambda: None
+        terminal.set_approval_callback = lambda _callback: None
+        terminal.terminal_tool = lambda *_args, **_kwargs: "ok"
+        memory = types.ModuleType("tools.memory_tool")
+        memory.memory_tool = lambda *_args, **_kwargs: "ok"
+        tools_module = types.ModuleType("tools")
+        tools_module.terminal_tool = terminal
+        tools_module.memory_tool = memory
+
+        agent = SimpleNamespace(
+            valid_tool_names={"terminal", "memory", "skill_manage", "session_search"}
+        )
+        bridge = HermesBridge()
+        bridge._policy = "turn_boundary"
+        modules = {
+            "hermes_cli": hermes_cli,
+            "hermes_cli.plugins": plugins,
+            "tools": tools_module,
+            "tools.terminal_tool": terminal,
+            "tools.memory_tool": memory,
+        }
+        with patch.dict(sys.modules, modules):
+            with bridge._foreground_policy(agent, "session-1", "/workspace", {}):
+                self.assertEqual(agent.valid_tool_names, {"terminal"})
+                self.assertEqual(whitelist_calls[-1], {"terminal"})
+
+        self.assertEqual(
+            agent.valid_tool_names,
+            {"terminal", "memory", "skill_manage", "session_search"},
+        )
+        self.assertIsNone(whitelist_calls[-1])
+
     def test_checkpoint_resume_retains_prefix_and_learning_state(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

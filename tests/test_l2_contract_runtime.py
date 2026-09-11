@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import zipfile
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -284,6 +285,58 @@ def test_evaluator_error_stop_records_null_turn_then_raises(tmp_path, monkeypatc
     assert report["turns"][0]["evaluation_status"] == "evaluation_error"
 
 
+@pytest.mark.parametrize("condition", ["reset", "frozen", "evolving"])
+def test_matrix_resume_rejudges_saved_reply_without_repeating_agent_side_effects(tmp_path, monkeypatch, condition):
+    from dataclasses import replace
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=1)
+    runtimes = _install_fake_runtime(monkeypatch)
+    output = tmp_path / "out"
+    options = _options(package, output, condition)
+
+    def failed_judge(*_args, **_kwargs):
+        raise RuntimeError("model request failed (HTTP 524)")
+
+    monkeypatch.setattr(L2AgentStreamRunner, "_judge_taskstream", failed_judge)
+    with pytest.raises(L2AgentRunError, match="HTTP 524"):
+        L2AgentStreamRunner(options).run()
+
+    row = {"level": "l2", "agent": "hermes", "condition": condition, "flow_id": "stream-a",
+           "turns": ["turn1"], "output": str(output)}
+    checkpoint = latest_checkpoint(row)
+    assert json.loads((checkpoint / "checkpoint.json").read_text())["phase"] == "adjudicate"
+
+    def repaired_judge(self, task, reply, *_args, **_kwargs):
+        assert task["turn_id"] == "turn1"
+        assert reply.text == "done turn1"
+        assert (self._runtime.workspace / "generated-turn1.txt").read_text() == "done"
+        return {"score": 1.0, "passed": True, "feedback": "public",
+                "details": {"check_scores": {"task_completion": 1.0}}}
+
+    monkeypatch.setattr(L2AgentStreamRunner, "_judge_taskstream", repaired_judge)
+    report = L2AgentStreamRunner(replace(options, resume_checkpoint=checkpoint)).run()
+    assert report["completed"] and report["evaluation_complete"]
+    assert report["turns"][0]["turn_score"] == 1.0
+    assert sum(len(runtime.visible_before_interact) for runtime in runtimes) == 1
+
+
+def test_matrix_refuses_error_checkpoint_without_saved_adjudication_evidence(tmp_path, monkeypatch):
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=1)
+    _install_fake_runtime(monkeypatch, verifier_error=True)
+    output = tmp_path / "out"
+    with pytest.raises(L2AgentRunError):
+        L2AgentStreamRunner(_options(package, output, "reset")).run()
+    for path in output.glob("_checkpoints/*/*/p*/evidence.json"):
+        path.unlink()
+    row = {"level": "l2", "agent": "hermes", "condition": "reset", "flow_id": "stream-a",
+           "turns": ["turn1"], "output": str(output)}
+    with pytest.raises(ValueError, match="safe.*checkpoint"):
+        latest_checkpoint(row)
+
+
 def test_user_simulator_failure_does_not_start_another_interaction(tmp_path, monkeypatch):
     package = _package(tmp_path, turns=1, simulator_messages=2)
     runtimes = _install_fake_runtime(monkeypatch, judge_score=0.5)
@@ -342,6 +395,194 @@ def test_agent_work_limit_is_a_scored_failure_without_running_evaluator(tmp_path
     assert turn["evaluation_status"] == "failed"
     assert turn["final_category"] == "execution_limit"
     assert turn["interaction_count"] == 1
+
+
+def _interact_started_checkpoint(output: Path, turn_id: str) -> Path:
+    matches = []
+    for path in output.glob("_checkpoints/*/*/i*/checkpoint.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if data.get("phase") == "interact_started" and data.get("turn_id") == turn_id:
+            matches.append((data.get("invalidated") is True, path.parent))
+    assert matches
+    return sorted(matches)[0][1]
+
+
+def test_taskstream_interact_started_marker_survives_process_crash(tmp_path, monkeypatch):
+    from tools.run_new_package_matrix import latest_checkpoint
+
+    package = _package(tmp_path, turns=2)
+    _install_fake_runtime(monkeypatch)
+    original_interact = _Runtime.interact
+
+    def crash_on_turn2(self, context):
+        if self.turn == "turn2":
+            assert self.workspace is not None
+            (self.workspace / "partial-turn2.txt").write_text("partial", encoding="utf-8")
+            raise RuntimeError("child process vanished")
+        return original_interact(self, context)
+
+    monkeypatch.setattr(_Runtime, "interact", crash_on_turn2)
+    output = tmp_path / "out-crash"
+
+    with pytest.raises(RuntimeError, match="vanished"):
+        L2AgentStreamRunner(_options(package, output, "reset")).run()
+
+    checkpoint = _interact_started_checkpoint(output, "turn2")
+    turn1_started = _interact_started_checkpoint(output, "turn1")
+    assert json.loads((turn1_started / "checkpoint.json").read_text(encoding="utf-8"))["invalidated"] is True
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text(encoding="utf-8"))
+    assert metadata["phase"] == "interact_started"
+    assert metadata.get("invalidated") is not True
+    assert metadata["next_turn_index"] == 1
+    assert not (checkpoint / "evidence.json").exists()
+    assert json.loads((checkpoint / "completed_turns.json").read_text(encoding="utf-8"))[0]["turn_id"] == "turn1"
+    row = {"level": "l2", "agent": "hermes", "condition": "reset", "flow_id": "stream-a",
+           "turns": ["turn1", "turn2"], "output": str(output)}
+    with pytest.raises(ValueError, match="safe L2 checkpoint"):
+        latest_checkpoint(row)
+
+
+def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_turn(tmp_path, monkeypatch):
+    package = _package(tmp_path, turns=3)
+    runtimes = _install_fake_runtime(monkeypatch)
+    original_interact = _Runtime.interact
+    crashed = False
+
+    def crash_once_on_turn2(self, context):
+        nonlocal crashed
+        if self.turn == "turn2" and not crashed:
+            crashed = True
+            raise RuntimeError("child process vanished")
+        return original_interact(self, context)
+
+    monkeypatch.setattr(_Runtime, "interact", crash_once_on_turn2)
+    output = tmp_path / "out-retry"
+    options = _options(package, output, "reset")
+    with pytest.raises(RuntimeError, match="vanished"):
+        L2AgentStreamRunner(options).run()
+    checkpoint = _interact_started_checkpoint(output, "turn2")
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text(encoding="utf-8"))
+
+    with pytest.raises(L2AgentRunError, match="explicit retry authorization"):
+        L2AgentStreamRunner(replace(options, resume_checkpoint=checkpoint)).run()
+    authorization = tmp_path / "retry-authorization.json"
+    _write_json(authorization, {
+        "status": "consumed",
+        "failed_run_id": metadata["run_id"],
+        "turn_id": "turn2",
+        "checkpoint": str(checkpoint),
+        "job": "l2/reset/hermes/s01",
+        "stream_id": "stream-a",
+        "baseline": "hermes",
+        "condition": "reset",
+        "source_run_dir": str(output),
+    })
+    with pytest.raises(L2AgentRunError, match="turn mismatch"):
+        L2AgentStreamRunner(
+            replace(
+                options,
+                resume_checkpoint=checkpoint,
+                retry_interrupted_run_id=metadata["run_id"],
+                stop_after_turn="turn3",
+                retry_authorization=authorization,
+                retry_job_id="l2/reset/hermes/s01",
+            )
+        ).run()
+
+    report = L2AgentStreamRunner(
+        replace(
+            options,
+            resume_checkpoint=checkpoint,
+            retry_interrupted_run_id=metadata["run_id"],
+            stop_after_turn="turn2",
+            retry_authorization=authorization,
+            retry_job_id="l2/reset/hermes/s01",
+        )
+    ).run()
+
+    assert report["stopped_after_turn"] == "turn2"
+    assert [turn["turn_id"] for turn in report["turns"]] == ["turn1", "turn2"]
+    assert all(turn["turn_score"] == 1.0 for turn in report["turns"])
+    assert sum(len(runtime.visible_before_interact) for runtime in runtimes) == 2
+    with pytest.raises(L2AgentRunError, match="already claimed"):
+        L2AgentStreamRunner(
+            replace(
+                options,
+                resume_checkpoint=checkpoint,
+                retry_interrupted_run_id=metadata["run_id"],
+                stop_after_turn="turn2",
+                retry_authorization=authorization,
+                retry_job_id="l2/reset/hermes/s01",
+            )
+        ).run()
+    copied_authorization = tmp_path / "retry-authorization-copy.json"
+    copied_authorization.write_text(authorization.read_text(encoding="utf-8"), encoding="utf-8")
+    with pytest.raises(L2AgentRunError, match="already claimed"):
+        L2AgentStreamRunner(
+            replace(
+                options,
+                resume_checkpoint=checkpoint,
+                retry_interrupted_run_id=metadata["run_id"],
+                stop_after_turn="turn2",
+                retry_authorization=copied_authorization,
+                retry_job_id="l2/reset/hermes/s01",
+            )
+        ).run()
+
+
+def test_interrupted_marker_retry_rejects_later_interaction(tmp_path, monkeypatch):
+    package = _package(tmp_path, turns=1, simulator_messages=2)
+    _install_fake_runtime(monkeypatch, judge_score=0.5)
+    output = tmp_path / "out-second-interaction"
+    options = _options(package, output, "reset")
+
+    def crash_on_second_interaction(self, context):
+        if context.interaction_index == 2:
+            raise RuntimeError("child process vanished")
+        return BaselineReply(text="try again", usage=UsageDetails(total_tokens=10, api_calls=1))
+
+    monkeypatch.setattr(_Runtime, "interact", crash_on_second_interaction)
+    monkeypatch.setattr(
+        L2AgentStreamRunner,
+        "_taskstream_followup",
+        lambda *_args, **_kwargs: {
+            "status": "ok",
+            "raw_attempts": [],
+            "parsed": {
+                "schema_version": "l2_user_simulator_output/1.0",
+                "next_user_message": "try again",
+                "rationale_category": "incorrect_result",
+            },
+        },
+    )
+    with pytest.raises(RuntimeError, match="vanished"):
+        L2AgentStreamRunner(options).run()
+    checkpoint = _interact_started_checkpoint(output, "turn1")
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text(encoding="utf-8"))
+    assert metadata["interaction_index"] == 2
+    authorization = tmp_path / "retry-second.json"
+    _write_json(authorization, {
+        "status": "consumed",
+        "failed_run_id": metadata["run_id"],
+        "turn_id": "turn1",
+        "checkpoint": str(checkpoint),
+        "job": "l2/reset/hermes/s01",
+        "stream_id": "stream-a",
+        "baseline": "hermes",
+        "condition": "reset",
+        "source_run_dir": str(output),
+    })
+    with pytest.raises(L2AgentRunError, match="first Interaction"):
+        L2AgentStreamRunner(
+            replace(
+                options,
+                resume_checkpoint=checkpoint,
+                retry_interrupted_run_id=metadata["run_id"],
+                stop_after_turn="turn1",
+                retry_authorization=authorization,
+                retry_job_id="l2/reset/hermes/s01",
+            )
+        ).run()
 
 
 def test_general_judge_only_failure_retries_but_auto_research_valid_low_does_not():
@@ -531,8 +772,7 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
             return f"{self.volume_name}:{target}{':ro' if read_only else ''}"
 
     def run(command, **kwargs):
-        captured["command"] = command
-        captured["kwargs"] = kwargs
+        captured.setdefault("calls", []).append((command, kwargs))
         result = {
             "schema_version": "l2_native_verifier_result/1.0",
             "verifier_id": "native-test",
@@ -561,8 +801,9 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
         reply=BaselineReply(text="answer"),
     )
 
-    command = captured["command"]
+    command, verifier_kwargs = captured["calls"][0]
     assert result["category"] == "pass"
+    assert verifier_kwargs["input"]
     assert "--network" in command
     assert command[command.index("--network") + 1] == "none"
     assert "package-volume:/opt/l2_demo:ro" in command

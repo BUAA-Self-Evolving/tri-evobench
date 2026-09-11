@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Draw a bar chart of the counts of each unique value in the 'value' column of a pandas DataFrame and return the Axes object. Empty DataFrame will return an empty bar chart.\nNote that: This function use \"Value Distribution\" for the plot title. This function use \"Value\" and \"Count\" as the xlabel and ylabel respectively.\nThe function should raise the exception for: The function will raise a ValueError is input df is not a DataFrame.\nThe function should output with:\n    Axes: The matplotlib Axes object of the bar chart.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df):\n```"
+        "content": "Draw a bar chart of the counts of each unique value in the 'value' column of a pandas DataFrame and return the Axes object. Empty DataFrame will return an empty bar chart.\nNote that: This function use \"Value Distribution\" for the plot title. This function use \"Value\" and \"Count\" as the xlabel and ylabel respectively.\nThe function should raise the exception for: The function will raise a ValueError is input df is not a DataFrame.\nThe function should output with:\n    Axes: The matplotlib Axes object of the bar chart.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

@@ -133,3 +133,32 @@ def test_client_from_config_reads_relay_retry_environment(monkeypatch: pytest.Mo
 
     assert client.timeout == 150
     assert client.max_retries == 4
+
+
+@pytest.mark.parametrize("exhausted", [False, True])
+def test_relay_524_retries_only_the_same_model_request(monkeypatch, exhausted):
+    requests = []
+
+    def urlopen(request, timeout):
+        requests.append((request.data, timeout))
+        if exhausted or len(requests) == 1:
+            raise urllib.error.HTTPError(request.full_url, 524, "timeout", {}, io.BytesIO(b"gateway timeout"))
+        return _success_response()
+
+    monkeypatch.setattr("trievo_bench.model.urllib.request.urlopen", urlopen)
+    monkeypatch.setattr("trievo_bench.model.time.sleep", lambda _: None)
+    client = OpenAICompatibleClient(
+        base_url="https://example.test/v1", api_key="test-secret", model="test-model",
+        budget=TokenBudget(50000), timeout=150, max_retries=4, thinking="disabled",
+    )
+    if exhausted:
+        with pytest.raises(RuntimeError, match="HTTP 524"):
+            client.complete([{"role": "user", "content": "judge the saved reply"}], max_tokens=12000)
+    else:
+        assert client.complete([{"role": "user", "content": "judge the saved reply"}], max_tokens=12000) == "ok"
+    assert len(requests) == (5 if exhausted else 2)
+    assert client.budget.calls == len(requests)
+    assert all(item == requests[0] for item in requests)
+    payload = json.loads(requests[0][0])
+    assert payload["max_tokens"] == 12000
+    assert payload["thinking"] == {"type": "disabled"}

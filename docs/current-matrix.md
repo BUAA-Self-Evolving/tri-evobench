@@ -182,7 +182,22 @@ uv run --frozen python tools/run_new_package_matrix.py \
 不要删除 trace、检查点，不要为了得到更高分反复重跑失败答案。
 
 恢复不是任意指令级快照：检查点保存的是公共交互、文件和声明的持久化状态，不是活动 OS 进程。
-如果异常发生在回复写入检查点之前，只能从最近有效检查点重做未保存的交互，不能承诺零重复费用。
+每次调用 Interaction 前会持久化 `phase=interact_started` 标记。若进程在回复保存前退出，
+默认恢复会停住，不能因存在更早的完成前缀就默默重放已有 Workspace 副作用。
+
+操作者明确批准某个 reset Turn 的首次 Interaction 中断后，可以对单个 `--only` job 使用
+`--retry-interrupted-run <失败 run ID 或目录> --retry-authorization <外部授权 JSON>`。
+授权必须绑定 job、失败 run、Turn 和一次额外尝试，并在启动前消耗；子进程只重试目标 Turn，
+在该 Turn 完成后停止。该操作可能重复中断尝试已经支付的调用费用，不能承诺零重复费用。
+已保存的判分证据继续使用 `phase=adjudicate` 恢复，不需要重跑 Interaction；合法低分不能由此重试。
+持续状态条件及后续 Interaction 的中断不能套用这一恢复办法，也不会因超时而自动制造一个合法分数。
+
+若 reset 的后续 Turn 已有真实完整结果，可显式调用 `tools/merge_l2_reset_retry.py`，传入
+`--retry-report`、`--suffix-report`、`--stream-manifest`、`--target-turn`、`--output-root`，
+仅替换标记为 `runtime_unavailable` 的超时补记项，将目标重试结果与原样保留的后续结果
+合并到新 report/checkpoint；不会替换已有真实得分答案。工具检查 reset 身份、完整顺序、
+前缀、trace、限额和非重复预算增量；拒绝未完成、状态不可信或由 timeout 人工补出的结果。
+它不调用 baseline、verifier 或模型，也不覆盖输入文件。应在该 job 的运行器结束后操作。
 模型端网络中断和评分端中断需区分；不要降低 rubric 或放开状态冻结来绕过错误。
 驱动负责故障停队，但不自动修改代码；应由操作者持续查看日志并审核修复。
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import functools
 import json
 import os
 import sys
@@ -81,6 +82,9 @@ class HermesBridge:
             raise RuntimeError("HERMES_HOME must be set for an isolated Hermes flow")
         hermes_home.mkdir(parents=True, exist_ok=True)
         if self._session_manager_factory is None:
+            if os.environ.get("TRIEVO_SLOW_PROVIDER") == "1":
+                from run_agent import AIAgent
+                _install_slow_provider_policy(AIAgent)
             from acp_adapter.session import SessionManager
 
             self._manager = SessionManager()
@@ -103,6 +107,8 @@ class HermesBridge:
             self._close_current_session()
         state = self._manager.create_session(cwd=self._workspace)
         agent = state.agent
+        if (params.get("metadata") or {}).get("slow_provider") is True:
+            _configure_slow_provider_agent(agent)
         agent.skip_background_review = self._policy != "native"
         if self._policy == "turn_boundary":
             agent._memory_nudge_interval = 0
@@ -435,7 +441,10 @@ class HermesBridge:
         from hermes_cli.plugins import clear_thread_tool_whitelist, set_thread_tool_whitelist
         from tools import terminal_tool, memory_tool
 
-        allowed = set(getattr(agent, "valid_tool_names", set()) or set())
+        previous_valid_tool_names = set(
+            getattr(agent, "valid_tool_names", set()) or set()
+        )
+        allowed = set(previous_valid_tool_names)
         if self._policy == "turn_boundary":
             allowed.difference_update({"memory", "skill_manage", "session_search"})
         previous_approval = terminal_tool._get_approval_callback()
@@ -502,6 +511,11 @@ class HermesBridge:
                 os.environ["TERMINAL_TIMEOUT"] = str(limits["terminal_timeout_seconds"])
                 terminal_tool.terminal_tool = limited_terminal
             if self._policy == "turn_boundary":
+                # The plugin whitelist is thread-local and Hermes may dispatch
+                # parallel tool calls on worker threads. Remove learning-state
+                # tools from the agent schema/dispatcher as the process-wide
+                # foreground boundary, then restore them for evolve().
+                agent.valid_tool_names = allowed
                 memory_tool.memory_tool = frozen_memory
                 set_thread_tool_whitelist(
                     allowed,
@@ -514,6 +528,7 @@ class HermesBridge:
         finally:
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
+                agent.valid_tool_names = previous_valid_tool_names
             terminal_tool.terminal_tool = previous_terminal_handler
             memory_tool.memory_tool = previous_memory_handler
             if previous_terminal_timeout is None:
@@ -850,9 +865,9 @@ def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
         "max_model_calls": (2, 100),
         "max_tool_calls": (1, 100),
         "terminal_timeout_seconds": (1, 600),
-        "episode_timeout_seconds": (30, 3600),
+        "episode_timeout_seconds": (30, 86400 if metadata.get("slow_provider") is True else 3600),
         "evolution_max_model_calls": (1, 16),
-        "evolution_timeout_seconds": (10, 900),
+        "evolution_timeout_seconds": (10, 86400 if metadata.get("slow_provider") is True else 900),
     }
     result: dict[str, int] = {}
     for name, (minimum, maximum) in fields.items():
@@ -942,6 +957,38 @@ def main() -> None:
         protocol_stdout.flush()
         if method == "end_flow":
             break
+
+
+
+
+def _install_slow_provider_policy(agent_class):
+    # Background review constructs a fresh AIAgent. Cover that constructor as
+    # well as foreground sessions; scoped to this isolated adapter process.
+    original = agent_class.__init__
+    if getattr(original, "_trievo_slow_provider", False):
+        return
+
+    @functools.wraps(original)
+    def initialize(agent, *args, **kwargs):
+        original(agent, *args, **kwargs)
+        _configure_slow_provider_agent(agent)
+
+    initialize._trievo_slow_provider = True
+    agent_class.__init__ = initialize
+
+
+def _configure_slow_provider_agent(agent):
+    """Apply transport policy without editing resumed, frozen learning state."""
+    timeout = int(os.environ.get("TRIEVO_API_TIMEOUT_SECONDS", "600"))
+    retries = int(os.environ.get("TRIEVO_API_MAX_RETRIES", "20"))
+    if not 1 <= timeout <= 3600 or not 0 <= retries <= 100:
+        raise RuntimeError("invalid slow-provider request policy")
+    agent._api_max_retries = retries + 1  # Hermes counts total attempts.
+    agent._resolved_api_call_timeout = lambda: float(timeout)
+    agent._resolved_api_call_stale_timeout_base = lambda: (float(timeout), False)
+    client = getattr(agent, "client", None)
+    if client is not None and hasattr(client, "max_retries"):
+        client.max_retries = 0
 
 
 if __name__ == "__main__":

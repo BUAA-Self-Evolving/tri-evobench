@@ -33,6 +33,10 @@ def generate(
     l2_max_output_tokens: int = 12000,
     api_timeout_seconds: int = 150,
     api_max_retries: int = 4,
+    hermes_image: str = "trievo-hermes:matrix-current",
+    skillopt_image: str = "trievo-skillopt:matrix-current",
+    trace2skill_image: str = "trievo-trace2skill:matrix-current",
+    inherit_proxy: bool = True,
 ):
     if not 1 <= l2_max_output_tokens <= 1_000_000:
         raise ValueError("l2_max_output_tokens must be between 1 and 1000000")
@@ -49,6 +53,10 @@ def generate(
         "episode_timeout_seconds": 900,
         "max_output_tokens": l2_max_output_tokens,
     }
+    # The repaired SkillsBench package declares a 40-call ceiling. Other
+    # streams keep their package-local 20-call ceiling through
+    # _effective_work_limits(), so this does not silently widen them.
+    l2_limits = {**limits, "max_tool_calls": 40}
 
     def save(name, value):
         (output / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -59,12 +67,15 @@ def generate(
     index = 0
     while index < len(original):
         # Do not assume this workstation's proxy exists on collaborators' hosts.
-        if original[index] == "-e" and original[index + 1].startswith(("HTTP_PROXY=", "HTTPS_PROXY=", "NO_PROXY=")):
+        if original[index] == "-e" and any(
+            original[index + 1] == name or original[index + 1].startswith(name + "=")
+            for name in PROXY_ENV_NAMES
+        ):
             index += 2
         else:
             command.append(original[index])
             index += 1
-    command = _add_passthrough_env(command, PROXY_ENV_NAMES)
+    command = _add_passthrough_env(command, PROXY_ENV_NAMES if inherit_proxy else ())
     for level, cap in (("l1", 1200), ("l2", l2_max_output_tokens)):
         seed = output / f"hermes-{level}-seed"
         seed.mkdir(exist_ok=True)
@@ -86,20 +97,20 @@ def generate(
         save(f"tmp_hermes_cf_{level}.override.json", {
             "adapter": {"command": command},
             "state": {"seed_from": str(seed), "seed_files": ["config.yaml"]},
-            "options": {"image": "trievo-hermes:matrix-current", "approval_policy": "session",
+            "options": {"image": hermes_image, "approval_policy": "session",
                         "thinking": "disabled",
-                        "l2_agent_limits": limits},
+                        "l2_agent_limits": l2_limits if level == "l2" else limits},
         })
 
     for agent, image, env_names, options in (
-        ("skillopt", "trievo-skillopt:matrix-current",
+        ("skillopt", skillopt_image,
          ["OPENAI_COMPATIBLE_BASE_URL", "OPENAI_COMPATIBLE_API_KEY", "OPENAI_COMPATIBLE_MODEL",
           "TARGET_OPENAI_COMPATIBLE_BASE_URL", "TARGET_OPENAI_COMPATIBLE_API_KEY", "TARGET_OPENAI_COMPATIBLE_MODEL"],
          {"target_model": model, "optimizer_model": model, "target_backend": "openai_compatible",
           "optimizer_backend": "openai_compatible", "openai_compatible_base_url": base_url,
           "openai_compatible_model": model, "max_completion_tokens": 4096,
           "native_tool_rounds": 16, "exec_timeout": 90, "retries": 1}),
-        ("trace2skill", "trievo-trace2skill:matrix-current", ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
+        ("trace2skill", trace2skill_image, ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
          {"model": model, "max_turns": 24, "request_timeout": 120, "tool_timeout": 90,
           "generation_config": {"thinking": {"type": "disabled"}}}),
     ):
@@ -113,7 +124,7 @@ def generate(
             "TRIEVO_THINKING",
             "TRIEVO_API_TIMEOUT_SECONDS",
             "TRIEVO_API_MAX_RETRIES",
-            *PROXY_ENV_NAMES,
+            *(PROXY_ENV_NAMES if inherit_proxy else ()),
         ]:
             command.extend(["-e", name])
         command.append(image)
@@ -131,7 +142,24 @@ def generate(
                 **config,
                 "options": {
                     **config["options"],
+                    "l2_agent_limits": l2_limits,
                     "max_completion_tokens": l2_max_output_tokens,
+                    "openai_compatible_max_tokens": l2_max_output_tokens,
+                },
+            })
+        else:
+            save("tmp_trace2skill_docker_l2.override.json", {
+                **config,
+                "options": {
+                    **config["options"],
+                    "l2_agent_limits": l2_limits,
+                    "request_timeout": api_timeout_seconds,
+                    "max_tokens": l2_max_output_tokens,
+                    "evolution_max_tokens": l2_max_output_tokens,
+                    "generation_config": {
+                        **config["options"]["generation_config"],
+                        "max_tokens": l2_max_output_tokens,
+                    },
                 },
             })
     return output
@@ -145,6 +173,14 @@ def main():
     parser.add_argument("--l2-max-output-tokens", type=int, default=12000)
     parser.add_argument("--api-timeout-seconds", type=int, default=150)
     parser.add_argument("--api-max-retries", type=int, default=4)
+    parser.add_argument("--hermes-image", default="trievo-hermes:matrix-current")
+    parser.add_argument("--skillopt-image", default="trievo-skillopt:matrix-current")
+    parser.add_argument("--trace2skill-image", default="trievo-trace2skill:matrix-current")
+    parser.add_argument(
+        "--direct-api",
+        action="store_true",
+        help="do not inherit host proxy variables into baseline containers",
+    )
     args = parser.parse_args()
     print(generate(
         args.output,
@@ -153,6 +189,10 @@ def main():
         l2_max_output_tokens=args.l2_max_output_tokens,
         api_timeout_seconds=args.api_timeout_seconds,
         api_max_retries=args.api_max_retries,
+        hermes_image=args.hermes_image,
+        skillopt_image=args.skillopt_image,
+        trace2skill_image=args.trace2skill_image,
+        inherit_proxy=not args.direct_api,
     ))
 
 

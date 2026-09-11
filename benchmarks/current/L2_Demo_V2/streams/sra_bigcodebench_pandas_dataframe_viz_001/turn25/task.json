@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "You are given a list of elements. Each element is a list with the same length as COLUMNS, representing one row a dataframe df to create. Visualize the distribution of different values in a column \"col3\" of a pandas DataFrame df, grouped by \"col1\" and \"col2,\" using a heatmap.\nThe function should output with:\n    tuple:\n    pandas.DataFrame: The DataFrame of the analyzed data.\n    plt.Axes: The heatmap visualization.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n# Constants\nCOLUMNS = ['col1', 'col2', 'col3']\ndef task_func(data):\n```"
+        "content": "You are given a list of elements. Each element is a list with the same length as COLUMNS, representing one row a dataframe df to create. Visualize the distribution of different values in a column \"col3\" of a pandas DataFrame df, grouped by \"col1\" and \"col2,\" using a heatmap.\nThe function should output with:\n    tuple:\n    pandas.DataFrame: The DataFrame of the analyzed data.\n    plt.Axes: The heatmap visualization.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n# Constants\nCOLUMNS = ['col1', 'col2', 'col3']\ndef task_func(data):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

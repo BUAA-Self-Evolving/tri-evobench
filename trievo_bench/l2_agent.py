@@ -43,6 +43,15 @@ _VERIFIER_PROXY_ENV_NAMES = (
     "all_proxy",
 )
 
+# A package verifier may use its declared timeout internally to return a
+# deterministic timeout/fail result. The Docker transport must outlive that
+# deadline long enough to serialize the result and tear down Chromium.
+_VERIFIER_TRANSPORT_GRACE_SECONDS = 30
+
+
+def _verifier_transport_timeout(native_timeout_seconds: int) -> int:
+    return native_timeout_seconds + _VERIFIER_TRANSPORT_GRACE_SECONDS
+
 
 class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
@@ -79,6 +88,10 @@ class L2AgentRunOptions:
     resume_checkpoint: Path | None = None
     condition: str | RunCondition = RunCondition.EVOLVING
     evaluation_error_policy: str = "stop"
+    retry_interrupted_run_id: str | None = None
+    stop_after_turn: str | None = None
+    retry_authorization: Path | None = None
+    retry_job_id: str | None = None
 
 
 class L2AgentStreamRunner:
@@ -90,6 +103,9 @@ class L2AgentStreamRunner:
         self.stream_dir = self.package_dir / "streams" / options.stream_id
         self.budget = TokenBudget(options.max_total_tokens)
         self._runtime: ProcessBaselineRuntime | None = None
+        self.slow_provider = options.baseline_overrides.get("options", {}).get("slow_provider", False)
+        if not isinstance(self.slow_provider, bool):
+            raise L2AgentRunError("options.slow_provider must be a boolean")
         self.work_limits = _work_limits(options.baseline_overrides)
         self.condition = parse_run_condition(
             options.condition,
@@ -100,8 +116,17 @@ class L2AgentStreamRunner:
                 "evaluation_error_policy must be 'stop' or 'continue'"
             )
         self.evaluation_error_policy = options.evaluation_error_policy
+        self.budget_profile = _budget_profile(options.baseline_overrides)
+        self._applied_stream_limit_overrides: list[dict[str, Any]] = []
+        if options.retry_interrupted_run_id and self.condition is not RunCondition.RESET:
+            raise L2AgentRunError("interrupted Interaction retry is only supported for reset TaskStream runs")
+        if options.retry_interrupted_run_id and (options.resume_checkpoint is None or not options.stop_after_turn):
+            raise L2AgentRunError("interrupted Interaction retry requires a resume checkpoint and stop-after-turn")
+        if options.retry_interrupted_run_id and not options.retry_job_id:
+            raise L2AgentRunError("interrupted Interaction retry requires a matrix job id")
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
+        self._storage_gate = _storage_gate_from_environment()
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
@@ -227,9 +252,22 @@ class L2AgentStreamRunner:
         if manifest.get("stream_id") != self.options.stream_id:
             raise L2AgentRunError("TaskStream stream id does not match stream directory")
         execution_requirements = _execution_requirements(manifest)
+        tool_catalog = _taskstream_tool_catalog(self.package_dir)
+        stream_carriers = _stream_submission_carriers(self.stream_dir, turn_order)
         self.work_limits = _effective_work_limits(
             self.work_limits,
             execution_requirements,
+            slow_provider=self.slow_provider,
+        )
+        self.work_limits = _apply_stream_limit_overrides(
+            configured=self.work_limits,
+            overrides=self.options.baseline_overrides,
+            baseline=self.options.baseline,
+            stream_id=self.options.stream_id,
+            carriers=stream_carriers,
+            execution_requirements=execution_requirements,
+            budget_profile=self.budget_profile,
+            applied=self._applied_stream_limit_overrides,
         )
         run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
         output_root = self.options.output_root.resolve()
@@ -242,6 +280,7 @@ class L2AgentStreamRunner:
         resume_state_archive: Path | None = None
         completed_turns: list[dict[str, Any]] = []
         resume_pending = None
+        resume_interrupted = False
         workspace = Path(tempfile.mkdtemp(prefix="trievo-l2-work-"))
         if self.options.resume_checkpoint is not None:
             checkpoint = self.options.resume_checkpoint.resolve()
@@ -266,8 +305,32 @@ class L2AgentStreamRunner:
             )
             if checkpoint_error_policy != self.evaluation_error_policy:
                 raise L2AgentRunError("checkpoint evaluation error policy mismatch")
+            if self.options.retry_interrupted_run_id:
+                _claim_retry_authorization(
+                    self.options.retry_authorization,
+                    failed_run_id=self.options.retry_interrupted_run_id,
+                    turn_id=str(self.options.stop_after_turn),
+                    checkpoint=checkpoint,
+                    job_id=str(self.options.retry_job_id),
+                    stream_id=self.options.stream_id,
+                    baseline=self.options.baseline,
+                    condition=self.condition.value,
+                )
             if checkpoint_metadata.get("phase") == "adjudicate":
                 resume_pending = _load_json(checkpoint / "evidence.json")
+            elif checkpoint_metadata.get("phase") == "interact_started":
+                expected_run = str(checkpoint_metadata.get("run_id", ""))
+                expected_turn = str(checkpoint_metadata.get("turn_id", ""))
+                if int(checkpoint_metadata.get("interaction_index", -1)) != 1:
+                    raise L2AgentRunError("interrupted Interaction retry only supports the first Interaction")
+                if (
+                    not self.options.retry_interrupted_run_id
+                    or self.options.retry_interrupted_run_id != expected_run
+                ):
+                    raise L2AgentRunError("interrupted Interaction checkpoint requires explicit retry authorization")
+                if self.options.stop_after_turn and self.options.stop_after_turn != expected_turn:
+                    raise L2AgentRunError("interrupted retry stop-after-turn mismatch")
+                resume_interrupted = True
             resume_index = int(checkpoint_metadata["next_turn_index"])
             loaded_turns = json.loads(checkpoint_turns.read_text(encoding="utf-8"))
             if not isinstance(loaded_turns, list) or len(loaded_turns) != resume_index:
@@ -281,7 +344,7 @@ class L2AgentStreamRunner:
                     completed["trace_file"] = str(prior_traces[0])
             self.budget.used = int(checkpoint_metadata.get("token_budget", {}).get("used", 0))
             self.budget.calls = int(checkpoint_metadata.get("token_budget", {}).get("calls", 0))
-            if resume_pending is not None or self.condition is not RunCondition.RESET:
+            if resume_pending is not None or resume_interrupted or self.condition is not RunCondition.RESET:
                 _restore_tree_archive(checkpoint_workspace, workspace)
             else:
                 shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
@@ -301,9 +364,14 @@ class L2AgentStreamRunner:
             "work_limits": asdict(self.work_limits),
             "run_configuration": {
                 "condition": self.condition.value,
+                "budget_profile": self.budget_profile,
                 "evaluation_error_policy": self.evaluation_error_policy,
                 "execution_requirements": execution_requirements,
                 "effective_work_limits": asdict(self.work_limits),
+                "submission_carriers": list(stream_carriers),
+                "stream_limit_overrides": list(self._applied_stream_limit_overrides),
+                "timing_profile": "slow_provider" if self.slow_provider else "dataset",
+                "dataset_wall_time_overridden": self.work_limits.episode_timeout_seconds > int(execution_requirements["turn_timeout_seconds"]),
                 "docker_volume_transport": volume_transport,
             },
         }
@@ -313,7 +381,7 @@ class L2AgentStreamRunner:
         try:
             if volume_transport:
                 self._start_taskstream_volume_transport(workspace)
-            if self.condition is not RunCondition.RESET or resume_pending is not None:
+            if self.condition is not RunCondition.RESET or resume_pending is not None or resume_interrupted:
                 self._start_taskstream_runtime(
                     workspace,
                     run_dir,
@@ -332,7 +400,7 @@ class L2AgentStreamRunner:
                 task = _load_json(turn_dir / "task.json")
                 if task.get("stream_id") != self.options.stream_id or task.get("turn_id") != turn_id:
                     raise L2AgentRunError(f"TaskStream identity mismatch for {turn_id}")
-                if resume_pending is None:
+                if resume_pending is None and not resume_interrupted:
                     if self.condition is RunCondition.RESET:
                         if runtime_started and self._runtime is not None:
                             self._runtime.end_flow()
@@ -355,7 +423,7 @@ class L2AgentStreamRunner:
                     turn_index=turn_index + 1,
                     turn_id=turn_id,
                 )
-                request = _taskstream_request(task, self.work_limits)
+                request = _taskstream_request(task, self.work_limits, tool_catalog=tool_catalog)
                 simulator = task.get("user_simulator")
                 simulator_interactions = (
                     1 + max(0, int(simulator.get("max_generated_messages", 0)))
@@ -380,7 +448,10 @@ class L2AgentStreamRunner:
                             "stream_id": self.options.stream_id,
                             "condition": self.condition.value,
                             "agent_limits": asdict(self.work_limits),
+                            "submission_contract": _public_submission_contract(task),
+                            "available_tools": _public_taskstream_tools(task, tool_catalog),
                             "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
+                            "slow_provider": self.slow_provider,
                         },
                     )
                 )
@@ -393,10 +464,30 @@ class L2AgentStreamRunner:
                 first_interaction = int(resume_pending["interaction_index"]) if resume_pending else 1
                 for interaction_index in range(first_interaction, max_interactions + 1):
                     interaction_request = current_request
+                    if not resume_pending:
+                        self._wait_for_storage(
+                            phase="interaction",
+                            turn_id=turn_id,
+                            interaction_index=interaction_index,
+                        )
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
+                    stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
+                    started_checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"i{turn_index:04d}-{interaction_index:02d}"
                     if resume_pending:
                         reply = _restored_reply(resume_pending["reply"])
                     else:
+                        started_checkpoint.mkdir(parents=True, exist_ok=True)
+                        _archive_tree(workspace, started_checkpoint / "workspace.zip")
+                        self._runtime.save_checkpoint_state(started_checkpoint / "baseline_state.zip")
+                        _write_json(started_checkpoint / "completed_turns.json", report["turns"])
+                        _write_json(started_checkpoint / "checkpoint.json", {
+                            "phase": "interact_started", "stream_id": self.options.stream_id,
+                            "baseline": self.options.baseline, "condition": self.condition.value,
+                            "evaluation_error_policy": self.evaluation_error_policy,
+                            "run_id": run_id, "turn_id": turn_id,
+                            "next_turn_index": turn_index, "interaction_index": interaction_index,
+                            "token_budget": asdict(self.budget),
+                        })
                         reply = self._runtime.interact(
                             InteractionContext(
                                 turn_id=turn_id,
@@ -406,6 +497,20 @@ class L2AgentStreamRunner:
                                 sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
                                 remaining_token_budget=max(0, self.budget.limit - self.budget.used),
                             )
+                        )
+                        self._write_reply_received_checkpoint(
+                            output_root=output_root,
+                            stream_key=stream_key,
+                            run_id=run_id,
+                            turn_id=turn_id,
+                            turn_index=turn_index,
+                            interaction_index=interaction_index,
+                            interaction_request=interaction_request,
+                            reply=reply,
+                            history=history,
+                            interactions=interactions,
+                            before_files=before_files,
+                            report=report,
                         )
                         self._sync_workspace_from_volume()
                     # Durable stage evidence survives verifier/Judge/Simulator
@@ -426,9 +531,17 @@ class L2AgentStreamRunner:
                         "phase": "adjudicate", "stream_id": self.options.stream_id,
                         "baseline": self.options.baseline, "condition": self.condition.value,
                         "evaluation_error_policy": self.evaluation_error_policy,
+                        "run_id": run_id, "turn_id": turn_id,
                         "next_turn_index": turn_index, "interaction_index": interaction_index,
                         "token_budget": asdict(self.budget),
                     })
+                    if not resume_pending:
+                        started_metadata_path = started_checkpoint / "checkpoint.json"
+                        if started_metadata_path.is_file():
+                            started_metadata = _load_json(started_metadata_path)
+                            started_metadata["invalidated"] = True
+                            started_metadata["superseded_by"] = str(pending)
+                            _write_json(started_metadata_path, started_metadata)
                     resume_pending = None
                     limit_reasons = _limit_reasons(reply.raw)
                     if limit_reasons:
@@ -582,11 +695,17 @@ class L2AgentStreamRunner:
                     history = next_history
                     if not should_retry:
                         break
+                resume_interrupted = False
                 if terminal_outcome is None:
                     raise L2AgentRunError(f"TaskStream turn {turn_id} produced no terminal outcome")
                 evolution_enabled = (
                     self.condition.policy.sut_evolution_enabled
                     and terminal_outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
+                )
+                self._wait_for_storage(
+                    phase="evolution",
+                    turn_id=turn_id,
+                    interaction_index=len(interactions),
                 )
                 evolution = self._runtime.evolve(
                     EvolutionContext(
@@ -621,6 +740,7 @@ class L2AgentStreamRunner:
                     "turn_id": turn_id,
                     "turn_index": turn_index + 1,
                     "sequence_role": sequence_role,
+                    "timing_profile": "slow_provider" if self.slow_provider else "dataset",
                     "turn_score": terminal_outcome.turn_score,
                     "evaluation_status": terminal_outcome.evaluation_status.value,
                     "passed": turn_passed,
@@ -659,6 +779,9 @@ class L2AgentStreamRunner:
                         f"{_evaluation_error_summary(terminal_outcome.private_diagnostics)}; "
                         f"resume from {pending} after repairing the evaluator"
                     )
+                if self.options.stop_after_turn == turn_id:
+                    report["stopped_after_turn"] = turn_id
+                    break
             report["completed"] = len(report["turns"]) == len(turn_order)
             report["evaluation_complete"] = all(
                 item.get("evaluation_status") != "evaluation_error"
@@ -719,6 +842,68 @@ class L2AgentStreamRunner:
         except BaseException:
             if not best_effort:
                 raise
+
+    def _wait_for_storage(
+        self,
+        *,
+        phase: str,
+        turn_id: str,
+        interaction_index: int | None = None,
+    ) -> None:
+        gate = self._storage_gate
+        if gate is None:
+            return
+        gate.wait()
+
+    def _write_reply_received_checkpoint(
+        self,
+        *,
+        output_root: Path,
+        stream_key: str,
+        run_id: str,
+        turn_id: str,
+        turn_index: int,
+        interaction_index: int,
+        interaction_request: str,
+        reply: BaselineReply,
+        history: list[dict[str, Any]],
+        interactions: list[dict[str, Any]],
+        before_files: dict[str, Any],
+        report: dict[str, Any],
+    ) -> None:
+        if self._runtime is None:
+            raise L2AgentRunError("baseline runtime is not initialized")
+        checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"r{turn_index:04d}-{interaction_index:02d}"
+        checkpoint.mkdir(parents=True, exist_ok=True)
+        # Persist the reply before *any* Docker state/workspace copy can wait
+        # or fail. This is evidence only; the normal adjudication checkpoint
+        # below still requires the synchronized workspace and state archive.
+        _write_json(checkpoint / "reply_received.json", {
+            "turn_id": turn_id,
+            "turn_index": turn_index,
+            "interaction_index": interaction_index,
+            "request": interaction_request,
+            "reply": asdict(reply),
+            "history": history,
+            "interactions": interactions,
+            "before_files": before_files,
+            "token_budget": asdict(self.budget),
+        })
+        _write_json(checkpoint / "completed_turns.json", report["turns"])
+        _write_json(checkpoint / "checkpoint.json", {
+            "phase": "reply_received",
+            "stream_id": self.options.stream_id,
+            "baseline": self.options.baseline,
+            "condition": self.condition.value,
+            "evaluation_error_policy": self.evaluation_error_policy,
+            "run_id": run_id,
+            "turn_id": turn_id,
+            "next_turn_index": turn_index,
+            "interaction_index": interaction_index,
+            "token_budget": asdict(self.budget),
+            "workspace_synced": False,
+            "resume_safe": False,
+        })
 
     def _close_taskstream_volume_transport(self) -> None:
         for mirror in (self._package_volume, self._workspace_volume):
@@ -816,8 +1001,9 @@ class L2AgentStreamRunner:
             for name in _VERIFIER_PROXY_ENV_NAMES
             for item in ("-e", f"{name}=")
         ]
+        verifier_container = f"trievo-l2-verifier-{uuid4().hex[:12]}"
         command = [
-            _docker_executable(), "run", "--rm", "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+            _docker_executable(), "run", "--name", verifier_container, "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
             "-v", package_mount, "-v", workspace_mount,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
@@ -825,6 +1011,7 @@ class L2AgentStreamRunner:
             verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
         ]
         timeout = int(native.get("timeout_seconds", 300))
+        transport_timeout = _verifier_transport_timeout(timeout)
         try:
             completed = subprocess.run(
                 command,
@@ -834,7 +1021,7 @@ class L2AgentStreamRunner:
                 errors="replace",
                 capture_output=True,
                 check=False,
-                timeout=timeout,
+                timeout=transport_timeout,
             )
         except subprocess.TimeoutExpired as exc:
             return {
@@ -843,6 +1030,7 @@ class L2AgentStreamRunner:
                 "details": {
                     "type": "verifier_timeout",
                     "timeout_seconds": timeout,
+                    "transport_timeout_seconds": transport_timeout,
                     "stdout": str(exc.stdout or "")[-4000:],
                     "stderr": str(exc.stderr or "")[-4000:],
                 },
@@ -856,6 +1044,30 @@ class L2AgentStreamRunner:
                     "error": f"{type(exc).__name__}: {exc}",
                 },
             }
+        finally:
+            # Some rootless Docker 24 installations lose attached stdout even
+            # though the container log driver retained it. Keep the container
+            # until logs are collected, then always remove the exact name.
+            if "completed" in locals() and completed.returncode == 0 and not completed.stdout.strip():
+                logs = subprocess.run(
+                    [_docker_executable(), "logs", verifier_container],
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    capture_output=True,
+                    check=False,
+                )
+                if logs.returncode == 0:
+                    completed.stdout = logs.stdout
+                    completed.stderr = completed.stderr or logs.stderr
+            subprocess.run(
+                [_docker_executable(), "rm", "-f", verifier_container],
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                capture_output=True,
+                check=False,
+            )
         if completed.returncode != 0:
             return {"category": "error", "score": None, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
         try:
@@ -1071,6 +1283,7 @@ class L2AgentStreamRunner:
                     "level": "L2",
                     "l2_agent_limits": asdict(self.work_limits),
                     "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
+                            "slow_provider": self.slow_provider,
                 },
             )
         )
@@ -1370,7 +1583,12 @@ def _agent_request(episode_dir: Path, agent_view: Any, limits: L2AgentWorkLimits
     return "\n".join(parts)
 
 
-def _taskstream_request(task: dict[str, Any], limits: L2AgentWorkLimits | None = None) -> str:
+def _taskstream_request(
+    task: dict[str, Any],
+    limits: L2AgentWorkLimits | None = None,
+    *,
+    tool_catalog: dict[str, Any] | None = None,
+) -> str:
     agent_input = task.get("agent_input")
     if not isinstance(agent_input, dict) or not isinstance(agent_input.get("messages"), list):
         raise L2AgentRunError(f"{task.get('turn_id', '<unknown>')} agent_input.messages is required")
@@ -1381,8 +1599,9 @@ def _taskstream_request(task: dict[str, Any], limits: L2AgentWorkLimits | None =
     )
     if not transcript.strip():
         raise L2AgentRunError(f"{task.get('turn_id', '<unknown>')} has an empty public transcript")
-    tools = agent_input.get("available_tools", [])
+    tools = _public_taskstream_tools(task, tool_catalog or {})
     assets = agent_input.get("assets", [])
+    carrier_instruction = _public_submission_instruction(task)
     return "\n".join([
         "You are a real task agent with terminal tools and a persistent /workspace directory.",
         "Complete the public task by inspecting and editing only /workspace. Do not seek private evaluation assets.",
@@ -1394,8 +1613,65 @@ def _taskstream_request(task: dict[str, Any], limits: L2AgentWorkLimits | None =
         "\nPUBLIC TRANSCRIPT:\n" + transcript,
         "\nAVAILABLE TOOLS:\n" + json.dumps(tools, ensure_ascii=False, indent=2),
         "\nDECLARED WORKSPACE ASSETS:\n" + json.dumps(assets, ensure_ascii=False, indent=2),
-        "Return the requested deliverable in your final response and leave required files in /workspace.",
+        carrier_instruction,
     ])
+
+
+def _public_submission_instruction(task: dict[str, Any]) -> str:
+    """Project only the public output carrier, never private verifier data."""
+
+    contract = _public_submission_contract(task)
+    mode = contract.get("mode")
+    payload_kind = contract.get("payload_kind")
+    if mode == "workspace_artifact":
+        paths = contract.get("required_paths", [])
+        suffix = f" Required verifier-visible path(s): {', '.join(paths)}." if paths else ""
+        return (
+            "SUBMISSION CONTRACT: create the requested artifact in /workspace using actual tool calls; "
+            "a prose claim or final-response-only substitute is not a submission."
+            + suffix
+        )
+    if mode == "final_response" and payload_kind == "python_source":
+        return (
+            "SUBMISSION CONTRACT: your final response itself must be only the complete Python source code. "
+            "Do not return a summary or file link, and do not rely on a Workspace file as the submission."
+        )
+    if mode == "final_response" and payload_kind == "json_tool_trajectory":
+        return (
+            "SUBMISSION CONTRACT: your final response itself must be one strict JSON object with exactly "
+            "the keys schema_version, assistant_message, and tool_calls. schema_version must be "
+            "tau2-telecom-trajectory-0.1. Every tool_calls item must contain exactly requestor, name, and "
+            "arguments; requestor is user or assistant, and name must come from AVAILABLE TOOLS. Do not "
+            "emit user_tool_calls, assistant_tool_calls, nested chat messages, tool results, extra keys, "
+            "Markdown fences, Thought/Action protocol text, or prose outside the JSON object."
+        )
+    return "Return the requested deliverable in your final response and leave required files in /workspace."
+
+
+def _taskstream_tool_catalog(package_dir: Path) -> dict[str, Any]:
+    path = package_dir / "tools.json"
+    # Synthetic/unit packages created before Contract V1 may omit the catalog;
+    # retain name-only tools for backward-compatible smoke execution.
+    if not path.is_file():
+        return {}
+    raw = _load_json(path)
+    if raw.get("schema_version") != "l2_tools/1.0" or not isinstance(raw.get("tools"), dict):
+        raise L2AgentRunError(f"invalid TaskStream tool catalog: {path}")
+    return dict(raw["tools"])
+
+
+def _public_taskstream_tools(task: dict[str, Any], catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    agent_input = task.get("agent_input", {})
+    names = agent_input.get("available_tools", []) if isinstance(agent_input, dict) else []
+    if not isinstance(names, list) or not all(isinstance(name, str) for name in names):
+        raise L2AgentRunError("agent_input.available_tools must be a list of tool names")
+    selected: list[dict[str, Any]] = []
+    for name in names:
+        definition = catalog.get(name)
+        if catalog and not isinstance(definition, dict):
+            raise L2AgentRunError(f"TaskStream tool {name!r} is missing from tools.json")
+        selected.append({"name": name, **(definition if isinstance(definition, dict) else {})})
+    return selected
 
 
 def _public_taskstream_trajectory(item: dict[str, Any]) -> dict[str, Any]:
@@ -1510,9 +1786,9 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
         "max_model_calls": (2, 100),
         "max_tool_calls": (1, 100),
         "terminal_timeout_seconds": (1, 600),
-        "episode_timeout_seconds": (30, 3600),
+        "episode_timeout_seconds": (30, 86400 if raw_options.get("slow_provider") is True else 3600),
         "max_output_tokens": (1, 1_000_000),
-        "evolution_timeout_seconds": (10, 900),
+        "evolution_timeout_seconds": (10, 86400 if raw_options.get("slow_provider") is True else 900),
         "evolution_max_model_calls": (1, 16),
     }
     for name, (minimum, maximum) in ranges.items():
@@ -1531,6 +1807,14 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
     if values["episode_timeout_seconds"] <= values["terminal_timeout_seconds"]:
         raise L2AgentRunError("Episode time limit must exceed the terminal-command time limit")
     return L2AgentWorkLimits(**values)
+
+
+def _budget_profile(overrides: dict[str, Any]) -> str:
+    raw_options = overrides.get("options", {}) if isinstance(overrides, dict) else {}
+    profile = raw_options.get("budget_profile", "formal") if isinstance(raw_options, dict) else "formal"
+    if profile not in {"formal", "qualification"}:
+        raise L2AgentRunError("options.budget_profile must be 'formal' or 'qualification'")
+    return str(profile)
 
 
 def _execution_requirements(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -1560,11 +1844,150 @@ def _execution_requirements(manifest: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _public_submission_contract(task: dict[str, Any]) -> dict[str, Any]:
+    evaluation = task.get("evaluation", {})
+    if not isinstance(evaluation, dict):
+        return {}
+    contract = evaluation.get("submission_contract", {})
+    native = evaluation.get("native_verifier", {})
+    if not isinstance(contract, dict) or not isinstance(native, dict):
+        return {}
+    result: dict[str, Any] = {}
+    mode = contract.get("mode")
+    if isinstance(mode, str) and mode:
+        result["mode"] = mode
+    payload_kind = contract.get("payload_kind")
+    if isinstance(payload_kind, str) and payload_kind:
+        result["payload_kind"] = payload_kind
+    source = str(contract.get("source_binding", "submission"))
+    if source:
+        result["source_binding"] = source
+    bindings = native.get("input_bindings", [])
+    declared = next(
+        (
+            item for item in bindings
+            if isinstance(item, dict) and item.get("name") == source
+        ),
+        None,
+    )
+    if not isinstance(declared, dict) or declared.get("source") != "workspace":
+        return result
+    raw_path = declared.get("path")
+    if not isinstance(raw_path, str) or not raw_path:
+        return result
+    path = PurePosixPath(raw_path)
+    if path.is_absolute() or ".." in path.parts:
+        return result
+    if path.parts and path.parts[0] == "agent_workspace":
+        path = PurePosixPath(*path.parts[1:])
+    display_path = "/workspace" + (f"/{path.as_posix()}" if path.as_posix() != "." else "")
+    result["required_paths"] = [display_path]
+    return result
+
+
+def _stream_submission_carriers(stream_dir: Path, turn_order: list[str]) -> tuple[str, ...]:
+    carriers: set[str] = set()
+    for turn_id in turn_order:
+        task = _load_json(_under(stream_dir, f"{turn_id}/task.json"))
+        evaluation = task.get("evaluation", {})
+        contract = evaluation.get("submission_contract", {}) if isinstance(evaluation, dict) else {}
+        mode = contract.get("mode")
+        if isinstance(mode, str) and mode:
+            carriers.add(mode)
+            continue
+        source = str(contract.get("source_binding", "submission"))
+        native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
+        bindings = native.get("input_bindings", []) if isinstance(native, dict) else []
+        declared = next((item for item in bindings if isinstance(item, dict) and item.get("name") == source), None)
+        binding_source = declared.get("source") if isinstance(declared, dict) else None
+        if binding_source == "interaction_record":
+            carriers.add("final_response")
+        elif binding_source == "workspace":
+            carriers.add("workspace_artifact")
+        else:
+            carriers.add("unknown")
+    return tuple(sorted(carriers))
+
+
+def _apply_stream_limit_overrides(
+    *,
+    configured: L2AgentWorkLimits,
+    overrides: dict[str, Any],
+    baseline: str,
+    stream_id: str,
+    carriers: tuple[str, ...],
+    execution_requirements: dict[str, Any],
+    budget_profile: str,
+    applied: list[dict[str, Any]],
+) -> L2AgentWorkLimits:
+    raw_options = overrides.get("options", {}) if isinstance(overrides, dict) else {}
+    raw = raw_options.get("l2_stream_limit_overrides", []) if isinstance(raw_options, dict) else []
+    if raw in (None, []):
+        return configured
+    if not isinstance(raw, list):
+        raise L2AgentRunError("options.l2_stream_limit_overrides must be a list")
+    values = asdict(configured)
+    allowed_fields = set(values)
+    formal_caps = {
+        "max_tool_calls": int(execution_requirements["max_tool_calls_per_interaction"]),
+        "max_output_tokens": int(execution_requirements["max_output_tokens"]),
+        "episode_timeout_seconds": int(execution_requirements["turn_timeout_seconds"]),
+    }
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise L2AgentRunError("each l2_stream_limit_overrides entry must be an object")
+        if item.get("stream_id") not in {stream_id, "*"}:
+            continue
+        if item.get("baseline", baseline) not in {baseline, "*"}:
+            continue
+        carrier = item.get("carrier", "*")
+        if carrier != "*" and carrier not in carriers:
+            continue
+        limits = item.get("limits")
+        if not isinstance(limits, dict) or not limits:
+            raise L2AgentRunError("l2_stream_limit_overrides.limits must be a non-empty object")
+        normalized: dict[str, int] = {}
+        for name, value in limits.items():
+            if name not in allowed_fields:
+                raise L2AgentRunError(f"unsupported stream limit override: {name}")
+            if isinstance(value, bool):
+                raise L2AgentRunError(f"stream limit override {name} must be an integer")
+            try:
+                parsed = int(value)
+            except (TypeError, ValueError) as exc:
+                raise L2AgentRunError(f"stream limit override {name} must be an integer") from exc
+            if parsed < 1:
+                raise L2AgentRunError(f"stream limit override {name} must be positive")
+            if (
+                budget_profile == "formal"
+                and name in formal_caps
+                and parsed > formal_caps[name]
+            ):
+                raise L2AgentRunError(
+                    f"formal stream limit override for {stream_id}/{carrier} exceeds execution_requirements.{name}"
+                )
+            normalized[name] = parsed
+        values.update(normalized)
+        applied.append({
+            "index": index,
+            "stream_id": item.get("stream_id"),
+            "baseline": item.get("baseline", baseline),
+            "carrier": carrier,
+            "limits": normalized,
+            "budget_profile": budget_profile,
+        })
+    if values["episode_timeout_seconds"] <= values["terminal_timeout_seconds"]:
+        raise L2AgentRunError("Episode time limit must exceed the terminal-command time limit")
+    return L2AgentWorkLimits(**values)
+
+
 def _effective_work_limits(
     configured: L2AgentWorkLimits,
     requirements: dict[str, Any],
+    *,
+    slow_provider: bool = False,
 ) -> L2AgentWorkLimits:
-    episode_timeout = min(
+    episode_timeout = configured.episode_timeout_seconds if slow_provider else min(
         configured.episode_timeout_seconds,
         int(requirements["turn_timeout_seconds"]),
     )
@@ -1747,6 +2170,65 @@ def _runtime_limit_failure(reason: str, detail: str | None = None) -> dict[str, 
     return {"category": "execution_limit", "score": 0.0, "details": details}
 
 
+def _claim_retry_authorization(
+    path: Path | None,
+    *,
+    failed_run_id: str,
+    turn_id: str,
+    checkpoint: Path,
+    job_id: str,
+    stream_id: str,
+    baseline: str,
+    condition: str,
+) -> None:
+    if path is None:
+        raise L2AgentRunError("interrupted retry requires a consumed authorization ledger")
+    auth_path = path.resolve()
+    try:
+        data = _load_json(auth_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise L2AgentRunError("invalid interrupted retry authorization ledger") from exc
+    if data.get("status") != "consumed":
+        raise L2AgentRunError("interrupted retry authorization ledger was not consumed")
+    if str(data.get("failed_run_id", "")) != failed_run_id:
+        raise L2AgentRunError("interrupted retry authorization run mismatch")
+    if str(data.get("turn_id", "")) != turn_id:
+        raise L2AgentRunError("interrupted retry authorization turn mismatch")
+    if str(data.get("job", "")) != job_id:
+        raise L2AgentRunError("interrupted retry authorization job mismatch")
+    if str(data.get("stream_id", "")) != stream_id:
+        raise L2AgentRunError("interrupted retry authorization stream mismatch")
+    if str(data.get("baseline", "")) != baseline:
+        raise L2AgentRunError("interrupted retry authorization baseline mismatch")
+    if str(data.get("condition", "")) != condition:
+        raise L2AgentRunError("interrupted retry authorization condition mismatch")
+    if Path(str(data.get("checkpoint", ""))).resolve() != checkpoint.resolve():
+        raise L2AgentRunError("interrupted retry authorization checkpoint mismatch")
+    source_run_dir = Path(str(data.get("source_run_dir", ""))).resolve()
+    if not source_run_dir.is_dir():
+        raise L2AgentRunError("interrupted retry authorization source run directory is invalid")
+    claim_path = source_run_dir / f"interrupted-retry-{failed_run_id}-{turn_id}.runner-claim.json"
+    claim = {
+        "status": "executing",
+        "claimed_at": datetime.now(UTC).isoformat(),
+        "pid": os.getpid(),
+        "failed_run_id": failed_run_id,
+        "turn_id": turn_id,
+        "job": job_id,
+        "stream_id": stream_id,
+        "baseline": baseline,
+        "condition": condition,
+        "checkpoint": str(checkpoint.resolve()),
+    }
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    try:
+        fd = os.open(claim_path, flags, 0o600)
+    except FileExistsError as exc:
+        raise L2AgentRunError("interrupted retry authorization was already claimed") from exc
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        stream.write(json.dumps(claim, ensure_ascii=False, indent=2) + "\n")
+
+
 def _public_trajectory(record: dict[str, Any]) -> dict[str, Any]:
     return {
         "interaction_index": record["interaction_index"],
@@ -1762,6 +2244,11 @@ def _public_trajectory(record: dict[str, Any]) -> dict[str, Any]:
 
 def _write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _storage_gate_from_environment():
+    from .storage_recovery import from_environment
+    return from_environment()
 
 
 def _docker_executable() -> str:

@@ -170,6 +170,7 @@ class SkillOptBridge:
         parsed = parse_reply(raw_text)
         parsed = _unwrap_nested_l1_reply(parsed)
         protocol_task = _looks_like_l1_protocol_task(request, self.turn_metadata)
+        workspace_artifact_required = _requires_parseable_workspace_artifact(request, self.turn_metadata)
         if not protocol_task and not parsed.actions and not parsed.tool_calls:
             # Detect native textual tool envelopes before deciding that the
             # output needs a formatting retry. Otherwise a valid Read/Write
@@ -179,7 +180,7 @@ class SkillOptBridge:
         # action envelope. Give them one bounded formatting retry before the
         # interaction is returned, so a plain-language claim cannot silently
         # become a successful no-op.
-        if (_looks_like_workspace_task(request) or protocol_task) \
+        if (_looks_like_workspace_task(request) or workspace_artifact_required or protocol_task) \
                 and not parsed.actions and not parsed.tool_calls and not is_target_exec_backend():
             repair_user = (
                 f"{user}\n\n## Required correction\n"
@@ -264,6 +265,19 @@ class SkillOptBridge:
                 action_error = str(exc)
                 action_events.append({"type": "action.failed", "error": action_error})
                 break
+        actions_are_executed = True
+        if workspace_artifact_required and not parsed.actions and not executed_tool_calls:
+            action_error = (
+                "workspace artifact task produced no parseable action or tool call; "
+                "expected a Write/filesystem/terminal call or JSON actions writing under /workspace"
+            )
+            executed_actions.append({
+                "op": "parse_error",
+                "path": "/workspace",
+                "error": action_error,
+            })
+            action_events.append({"type": "action.failed", "error": action_error})
+            actions_are_executed = False
         response_text = parsed.text
         if str(self.config.get("env", "")) == "searchqa" and not parsed.actions:
             response_text = _extract_answer(raw_text)
@@ -281,7 +295,7 @@ class SkillOptBridge:
             "events": [{"type": "target.completed"}, *action_events],
             "tool_calls": executed_tool_calls,
             "usage": usage,
-            "actions_are_executed": True,
+            "actions_are_executed": actions_are_executed,
             # L1's deterministic runner owns simulated tool execution.
             "tool_calls_are_executed": not _looks_like_l1_protocol_task(request, self.turn_metadata),
             "raw": {
@@ -377,6 +391,7 @@ class SkillOptBridge:
             "skill_update_mode", "use_skill_aware_reflection", "skill_aware_appendix_source",
             "seed", "merge_batch_size", "rewrite_reasoning_effort", "rewrite_max_completion_tokens",
             "openai_compatible_base_url", "openai_compatible_api_key", "openai_compatible_model",
+            "openai_compatible_max_tokens",
             "optimizer_openai_compatible_base_url", "optimizer_openai_compatible_api_key",
             "optimizer_openai_compatible_model", "target_openai_compatible_base_url",
             "target_openai_compatible_api_key", "target_openai_compatible_model",
@@ -451,6 +466,7 @@ class SkillOptBridge:
             base_url=self.config.get("openai_compatible_base_url"),
             api_key=self.config.get("openai_compatible_api_key"),
             model=self.config.get("openai_compatible_model"),
+            max_tokens=self.config.get("openai_compatible_max_tokens"),
             optimizer_base_url=self.config.get("optimizer_openai_compatible_base_url"),
             optimizer_api_key=self.config.get("optimizer_openai_compatible_api_key"),
             optimizer_model=self.config.get("optimizer_openai_compatible_model"),
@@ -486,12 +502,18 @@ class SkillOptBridge:
         output_rule = ""
         action_task = _looks_like_workspace_task(request)
         protocol_task = _looks_like_l1_protocol_task(request, self.turn_metadata)
+        contract_paths = _workspace_contract_paths(request, self.turn_metadata)
         if action_task:
             output_rule = (
                 " Return exactly one JSON object with keys `response` and `actions`. "
                 "Each action must be `{\\\"op\\\":\\\"write_file\\\",\\\"path\\\":\\\"/workspace/...\\\",\\\"content\\\":\\\"...\\\"}` "
                 "or `{\\\"op\\\":\\\"remove\\\",\\\"path\\\":\\\"/workspace/...\\\"}`. "
                 "Use `actions: []` when no file change is required. Do not claim a file was changed unless it appears in actions."
+            )
+        if contract_paths:
+            output_rule += (
+                " Workspace artifact contract: required verifier-visible paths are "
+                f"{', '.join(contract_paths)}. Create missing parent directories and write artifacts there with a parseable action or tool call."
             )
         elif environment == "searchqa":
             output_rule = " Return the answer inside <answer>...</answer> tags."
@@ -766,6 +788,122 @@ def _looks_like_workspace_task(request: str) -> bool:
         "删除文件",
     )
     return any(marker in text for marker in markers)
+
+
+def _is_l2_taskstream_metadata(metadata: dict[str, Any] | None) -> bool:
+    if not isinstance(metadata, dict):
+        return False
+    if metadata.get("source_format") == "l2_taskstream_task_json":
+        return True
+    public = metadata.get("public")
+    return isinstance(public, dict) and public.get("source_format") == "l2_taskstream_task_json"
+
+
+def _workspace_contract_paths(request: str, metadata: dict[str, Any] | None = None) -> list[str]:
+    text = str(request or "")
+    metadata_paths = _metadata_required_workspace_paths(metadata)
+    if metadata_paths:
+        return metadata_paths
+    paths: set[str] = {
+        match.rstrip(".,;:)'\"`]")
+        for match in re.findall(r"/workspace/[A-Za-z0-9_./=-]+", text)
+    }
+    if (
+        not paths
+        and _is_l2_taskstream_metadata(metadata)
+        and _requires_parseable_workspace_artifact(text, metadata)
+        and _has_output_artifact_evidence(text, metadata)
+    ):
+        paths.add("/workspace/output")
+    return sorted(paths)
+
+
+def _metadata_required_workspace_paths(metadata: dict[str, Any] | None) -> list[str]:
+    if not isinstance(metadata, dict):
+        return []
+    candidates: list[Any] = [metadata.get("required_paths")]
+    contract = metadata.get("submission_contract")
+    if isinstance(contract, dict):
+        candidates.append(contract.get("required_paths"))
+    public = metadata.get("public")
+    if isinstance(public, dict):
+        candidates.append(public.get("required_paths"))
+        public_contract = public.get("submission_contract")
+        if isinstance(public_contract, dict):
+            candidates.append(public_contract.get("required_paths"))
+    paths: set[str] = set()
+    for candidate in candidates:
+        for path in candidate if isinstance(candidate, list) else []:
+            normalized = _normalize_workspace_contract_path(path)
+            if normalized:
+                paths.add(normalized)
+    return sorted(paths)
+
+
+def _normalize_workspace_contract_path(value: Any) -> str | None:
+    raw = str(value or "").strip().replace("\\", "/")
+    if not raw:
+        return None
+    if raw == "/workspace" or raw.startswith("/workspace/"):
+        return raw.rstrip("/") or "/workspace"
+    path = raw.lstrip("/")
+    if path == "agent_workspace":
+        return "/workspace"
+    if path.startswith("agent_workspace/"):
+        return "/workspace/" + path[len("agent_workspace/"):]
+    return None
+
+
+def _has_output_artifact_evidence(request: str, metadata: dict[str, Any] | None = None) -> bool:
+    text = str(request or "").lower()
+    markers = (
+        "/workspace/output",
+        "agent_workspace/output",
+        "workspace output",
+        "output/",
+        "output directory",
+        "output folder",
+        "browser artifact",
+        "browser/file-artifact",
+        "skillsbench",
+        "data-to-d3",
+    )
+    if any(marker in text for marker in markers):
+        return True
+    if isinstance(metadata, dict):
+        contract = metadata.get("submission_contract")
+        if isinstance(contract, dict):
+            encoded = json.dumps(contract, ensure_ascii=False).lower()
+            return any(marker in encoded for marker in markers)
+    return False
+
+
+def _requires_parseable_workspace_artifact(request: str, metadata: dict[str, Any] | None = None) -> bool:
+    text = str(request or "").lower()
+    explicit_markers = (
+        "/workspace/output",
+        "workspace_artifact",
+        "workspace artifact",
+        "submission.csv",
+        "output file",
+        "artifact file",
+        "browser artifact",
+        "workspace output",
+        "save the file",
+        "save a file",
+        "write a file",
+        "create a file",
+        "write_file",
+        "filesystem.write",
+    )
+    if any(marker in text for marker in explicit_markers):
+        return True
+    if isinstance(metadata, dict):
+        item = metadata.get("item")
+        if isinstance(item, dict):
+            encoded = json.dumps(item, ensure_ascii=False).lower()
+            return any(marker in encoded for marker in explicit_markers)
+    return False
 
 
 def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None = None) -> bool:

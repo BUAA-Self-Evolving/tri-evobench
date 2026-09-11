@@ -22,7 +22,10 @@ def inventory(root):
             if not path.is_file():
                 continue
             relative = path.relative_to(directory)
-            if any(p in {"__pycache__", "__MACOSX", ".git", ".pytest_cache"} for p in relative.parts):
+            if any(
+                p in {"__pycache__", "__MACOSX", ".git", ".pytest_cache", ".venv"}
+                for p in relative.parts
+            ):
                 continue
             if path.name == ".DS_Store" or path.name.startswith("._") or path.suffix in {".pyc", ".pyo"}:
                 continue

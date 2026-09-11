@@ -1,4 +1,4 @@
-"""Serial, checkpoint-aware driver for the 2026-09-03 package matrix.
+"""Bounded-concurrency, checkpoint-aware driver for the 2026-09-03 package matrix.
 
 The evaluator owns fail-fast decisions; this driver never retries a failed
 paid run blindly. A heartbeat can repair the issue and restart this command.
@@ -11,10 +11,12 @@ import os
 import subprocess
 import sys
 import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
 L2_CONDITIONS = ("reset", "frozen", "evolving")
+
 
 
 def load(path: Path):
@@ -82,18 +84,22 @@ def jobs(
     l1_package: Path | None = None,
     l2_package: Path | None = None,
     l2_conditions: tuple[str, ...] | list[str] | None = None,
+    level: str | None = None,
 ):
+    if level not in (None, "l1", "l2"):
+        raise ValueError(f"unknown level: {level}")
     if packages is None:
         local_packages = repo.parent / "new-packages-20260903"
         packages = local_packages if local_packages.is_dir() else repo / "benchmarks/current"
-    l1 = _resolve_l1_package(packages, l1_package)
-    l2 = _resolve_l2_package(packages, l2_package)
-    conditions = tuple(l2_conditions or ("evolving",))
+    conditions = tuple(dict.fromkeys(l2_conditions or ("evolving",)))
     unknown = sorted(set(conditions) - set(L2_CONDITIONS))
     if unknown:
         raise ValueError(f"unknown L2 condition(s): {unknown}")
     rows = []
-    for level, package in (("l2", l2), ("l1", l1)):
+    selected_levels = (level,) if level else ("l2", "l1")
+    for level in selected_levels:
+        package = (_resolve_l2_package(packages, l2_package) if level == "l2"
+                   else _resolve_l1_package(packages, l1_package))
         manifests = _l2_manifests(package) if level == "l2" else _l1_manifests(package)
         if not manifests:
             raise ValueError(f"No {level} stream manifests found in {package}")
@@ -140,6 +146,9 @@ def _report_matches_row(row: dict, report: dict) -> bool:
     if report.get("error") or report.get("cleanup_error"):
         return False
     if row["level"] == "l2":
+        run_configuration = report.get("run_configuration", {})
+        if isinstance(run_configuration, dict) and run_configuration.get("budget_profile", "formal") != "formal":
+            return False
         condition = _report_condition(report, turns)
         # Reports produced before the condition field existed are evolving runs.
         if condition is None:
@@ -151,6 +160,8 @@ def _report_matches_row(row: dict, report: dict) -> bool:
         if turn.get("final_category") == "error":
             return False
         if turn.get("evaluation_status") == "evaluation_error":
+            return False
+        if turn.get("passed") is None:
             return False
         if _turn_score(turn) is None:
             return False
@@ -167,8 +178,22 @@ def report_for(row):
     return None, None
 
 
+def report_for_interrupted_retry(row, stop_after_turn):
+    output = Path(row["output"])
+    if stop_after_turn not in row["turns"]:
+        return None, None
+    end = row["turns"].index(stop_after_turn) + 1
+    prefix = {**row, "turns": row["turns"][:end]}
+    for path in sorted(output.glob("*/*/report.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        report = load(path)
+        if report.get("stopped_after_turn") == stop_after_turn and _report_matches_row(prefix, report):
+            return path, report
+    return None, None
+
+
 def latest_checkpoint(row):
     candidates = []
+    unsafe_frontier = (-1, 0)
     for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
         data = load(path)
         if data.get("invalidated"):
@@ -182,24 +207,290 @@ def latest_checkpoint(row):
                     continue
             elif checkpoint_condition != row.get("condition"):
                 continue
+            if data.get("phase") == "interact_started":
+                if _started_marker_has_same_run_pending(row, path.parent, data):
+                    continue
+                unsafe_frontier = max(
+                    unsafe_frontier,
+                    (int(data.get("next_turn_index", 0)), 2),
+                )
+                continue
         if all((path.parent / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
-            candidates.append((int(data["next_turn_index"]), path.stat().st_mtime, path.parent))
-    return max(candidates)[2] if candidates else None
+            index = int(data["next_turn_index"])
+            pending = data.get("phase") == "adjudicate"
+            if row["level"] == "l2":
+                position = (index, int(pending))
+                try:
+                    turns = load(path.parent / "completed_turns.json")
+                    prefix = {**row, "turns": row["turns"][:index]}
+                    report = {"stream_id": row["flow_id"], "condition": checkpoint_condition, "turns": turns}
+                    if not (0 <= index <= len(row["turns"]) and isinstance(turns, list)
+                            and len(turns) == index and _report_matches_row(prefix, report)):
+                        # An errored final Turn is not completed progress. Its
+                        # saved adjudication reply is the earliest safe resume.
+                        if isinstance(turns, list) and any(
+                            isinstance(turn, dict) and (turn.get("evaluation_status") == "evaluation_error"
+                                                       or _turn_score(turn) is None)
+                            for turn in turns
+                        ):
+                            position = (max(0, index - 1), 1)
+                        raise ValueError("invalid completed prefix")
+                    if pending:
+                        evidence = load(path.parent / "evidence.json")
+                        if not (index < len(row["turns"]) and isinstance(evidence, dict)
+                                and evidence.get("turn_id") == row["turns"][index]
+                                and evidence.get("turn_index") == index
+                                and isinstance(evidence.get("reply"), dict)):
+                            raise ValueError("invalid adjudication evidence")
+                except (OSError, ValueError, TypeError, AttributeError):
+                    unsafe_frontier = max(unsafe_frontier, position)
+                    continue
+            stage = int(pending) if row["level"] == "l2" else 0
+            candidates.append((index, stage, path.stat().st_mtime, path.parent))
+    selected = max(candidates) if candidates else None
+    if row["level"] == "l2" and unsafe_frontier > (selected[:2] if selected else (-1, 0)):
+        raise ValueError("no safe L2 checkpoint preserves the latest Agent execution; inspect saved adjudication evidence")
+    return selected[3] if selected else None
 
 
-def command(repo, row, checkpoint, config_dir=None):
+def _run_dir_for_retry(row, value):
+    candidate = Path(value).expanduser()
+    if candidate.exists():
+        run_dir = candidate.resolve()
+        if run_dir.is_file():
+            run_dir = run_dir.parent
+    else:
+        matches = [
+            path.parent
+            for path in Path(row["output"]).glob(f"{row['flow_id']}/{value}/report.json")
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"retry run not found or ambiguous under row output: {value}")
+        run_dir = matches[0].resolve()
+    output = Path(row["output"]).resolve()
+    if output != run_dir and output not in run_dir.parents:
+        raise ValueError("retry run path is outside the selected row output")
+    return run_dir
+
+
+def _checkpoint_preserves_prefix(row, checkpoint, expected_index):
+    checkpoint = Path(checkpoint).resolve()
+    output = Path(row["output"]).resolve()
+    if output != checkpoint and output not in checkpoint.parents:
+        raise ValueError("retry checkpoint path is outside the selected row output")
+    if not all((checkpoint / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
+        raise ValueError("retry checkpoint is missing required archives")
+    data = load(checkpoint / "checkpoint.json")
+    if data.get("invalidated"):
+        raise ValueError("retry checkpoint is invalidated")
+    if data.get("non_resumable"):
+        raise ValueError("retry checkpoint is non-resumable")
+    turns = load(checkpoint / "completed_turns.json")
+    condition = data.get("condition", data.get("run_condition"))
+    report = {"stream_id": row["flow_id"], "condition": condition, "turns": turns}
+    prefix = {**row, "turns": row["turns"][:expected_index]}
+    if data.get("stream_id", data.get("flow_id")) != row["flow_id"]:
+        raise ValueError("retry checkpoint stream identity mismatch")
+    if data.get("baseline", row["agent"]) != row["agent"]:
+        raise ValueError("retry checkpoint baseline identity mismatch")
+    if condition != row.get("condition"):
+        raise ValueError("retry checkpoint condition mismatch")
+    if int(data.get("next_turn_index", -1)) != expected_index:
+        raise ValueError("retry checkpoint turn frontier mismatch")
+    if not (isinstance(turns, list) and len(turns) == expected_index and _report_matches_row(prefix, report)):
+        raise ValueError("retry checkpoint does not preserve the completed prefix")
+
+
+def _find_completed_prefix_checkpoint(row, expected_index):
+    candidates = []
+    for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
+        data = load(path)
+        if data.get("phase") in {"adjudicate", "interact_started"}:
+            continue
+        if int(data.get("next_turn_index", -1)) != expected_index:
+            continue
+        try:
+            _checkpoint_preserves_prefix(row, path.parent, expected_index)
+        except (OSError, ValueError, TypeError, AttributeError):
+            continue
+        candidates.append((path.stat().st_mtime, path.parent))
+    return max(candidates)[1] if candidates else None
+
+
+def _find_interrupted_checkpoint(row, run_id, turn_id):
+    expected_index = row["turns"].index(turn_id)
+    candidates = []
+    for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
+        data = load(path)
+        if data.get("phase") != "interact_started":
+            if (
+                data.get("phase") == "adjudicate"
+                and data.get("run_id") == run_id
+                and data.get("turn_id") == turn_id
+                and int(data.get("next_turn_index", -1)) == expected_index
+            ):
+                evidence_path = path.parent / "evidence.json"
+                if evidence_path.is_file():
+                    evidence = load(evidence_path)
+                    if isinstance(evidence, dict) and isinstance(evidence.get("reply"), dict):
+                        raise ValueError("interrupted retry has saved adjudication evidence")
+            continue
+        if data.get("run_id") != run_id or data.get("turn_id") != turn_id:
+            continue
+        if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
+            raise ValueError("interrupted retry has saved adjudication evidence")
+        if int(data.get("next_turn_index", -1)) != expected_index:
+            continue
+        if int(data.get("interaction_index", -1)) != 1:
+            raise ValueError("interrupted retry only supports the first Interaction")
+        candidates.append((path.stat().st_mtime, path.parent))
+    if not candidates:
+        return None
+    checkpoint = max(candidates)[1]
+    _checkpoint_preserves_prefix(row, checkpoint, expected_index)
+    return checkpoint
+
+
+def _started_marker_has_same_run_pending(row, checkpoint, data):
+    turn_id = data.get("turn_id")
+    turn_index = int(data.get("next_turn_index", -1))
+    interaction_index = int(data.get("interaction_index", -1))
+    if not (0 <= turn_index < len(row["turns"]) and row["turns"][turn_index] == turn_id):
+        return False
+    pending = Path(checkpoint).parent / f"p{turn_index:04d}-{interaction_index:02d}"
+    metadata_path = pending / "checkpoint.json"
+    evidence_path = pending / "evidence.json"
+    if not (metadata_path.is_file() and evidence_path.is_file()):
+        return False
+    if not all((pending / name).is_file() for name in ("workspace.zip", "baseline_state.zip", "completed_turns.json")):
+        return False
+    try:
+        metadata = load(metadata_path)
+        evidence = load(evidence_path)
+        _checkpoint_preserves_prefix(row, pending, turn_index)
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False
+    return (
+        metadata.get("phase") == "adjudicate"
+        and metadata.get("stream_id") == row["flow_id"]
+        and metadata.get("condition") == row.get("condition")
+        and metadata.get("run_id") == data.get("run_id")
+        and metadata.get("turn_id") == turn_id
+        and int(metadata.get("next_turn_index", -1)) == turn_index
+        and int(metadata.get("interaction_index", -1)) == interaction_index
+        and evidence.get("turn_id") == turn_id
+        and evidence.get("turn_index") == turn_index
+        and int(evidence.get("interaction_index", -1)) == interaction_index
+        and isinstance(evidence.get("reply"), dict)
+    )
+
+
+def _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index):
+    receipt_path = Path(run_dir) / "timeout-recovery.json"
+    if not receipt_path.is_file():
+        return False
+    try:
+        receipt = load(receipt_path)
+    except (OSError, ValueError, TypeError):
+        return False
+    turns = report.get("turns", [])
+    if not (isinstance(turns, list) and len(turns) > target_index and isinstance(turns[target_index], dict)):
+        return False
+    target = turns[target_index]
+    return (
+        receipt.get("status") == "admitted"
+        and receipt.get("turn_id") == turn_id
+        and int(receipt.get("turn_index", -1)) == target_index + 1
+        and Path(str(receipt.get("source_report", ""))).resolve() == (Path(run_dir) / "report.json").resolve()
+        and str(receipt.get("checkpoint", ""))
+        and str(report.get("error", "")) == "recovered_interact_timeout: admitted as execution_limit; resume from checkpoint"
+        and target.get("turn_id") == turn_id
+        and target.get("final_category") == "execution_limit"
+        and target.get("evaluation_status") == "failed"
+        and target.get("turn_score") == 0.0
+        and target.get("evolution", {}).get("completed") is False
+        and {"type": "evolution.skipped", "reason": "runtime_unavailable"} in target.get("evolution", {}).get("events", [])
+    )
+
+
+def prepare_interrupted_retry(row, retry_run, authorization_path):
+    if row["level"] != "l2":
+        raise ValueError("interrupted retry is only supported for L2 rows")
+    if row.get("condition") != "reset":
+        raise ValueError("interrupted retry is only supported for reset L2 rows")
+    if authorization_path is None:
+        raise ValueError("--retry-authorization is required with --retry-interrupted-run")
+    auth_path = Path(authorization_path).resolve()
+    auth = load(auth_path)
+    if auth.get("status") != "authorized_not_consumed":
+        raise ValueError("interrupted retry authorization is already consumed or invalid")
+    if auth.get("job") != row["id"]:
+        raise ValueError("interrupted retry authorization job mismatch")
+    if int(auth.get("allowed_additional_attempts", 0)) != 1:
+        raise ValueError("interrupted retry authorization must allow exactly one attempt")
+    run_dir = _run_dir_for_retry(row, retry_run)
+    report = load(run_dir / "report.json")
+    run_id = str(report.get("run_id", ""))
+    turn_id = str(auth.get("turn_id", ""))
+    if run_id != str(auth.get("failed_run_id", "")):
+        raise ValueError("interrupted retry authorization failed_run_id mismatch")
+    if report.get("stream_id") != row["flow_id"] or report.get("baseline") != row["agent"]:
+        raise ValueError("interrupted retry report identity mismatch")
+    if _report_condition(report, report.get("turns", [])) != row.get("condition"):
+        raise ValueError("interrupted retry report condition mismatch")
+    if turn_id not in row["turns"]:
+        raise ValueError("interrupted retry turn is not in the selected row")
+    target_index = row["turns"].index(turn_id)
+    turns = report.get("turns", [])
+    if _report_matches_row(row, report):
+        raise ValueError("interrupted retry would replay a valid completed report")
+    valid_receipt = _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index)
+    if len(turns) > target_index and not valid_receipt:
+        raise ValueError("interrupted retry would replay an already recorded turn")
+    checkpoint = _find_interrupted_checkpoint(row, run_id, turn_id)
+    if checkpoint is None:
+        preserve_valid_turns = auth.get("preserve_valid_turns", [])
+        if not isinstance(preserve_valid_turns, list) or len(preserve_valid_turns) != target_index:
+            raise ValueError("legacy interrupted retry requires an authorized completed prefix")
+        if str(report.get("error", "")) != "BaselineProtocolError: baseline adapter timed out during interact" and not valid_receipt:
+            raise ValueError("interrupted retry report is not an interact interruption")
+        checkpoint = _find_completed_prefix_checkpoint(row, target_index)
+        if checkpoint is None:
+            raise ValueError("no exact completed-prefix checkpoint for interrupted retry")
+    consumed = {
+        **auth,
+        "status": "consumed",
+        "consumed_at": now(),
+        "consumed_by_pid": os.getpid(),
+        "checkpoint": str(checkpoint),
+        "source_run_dir": str(run_dir),
+        "job": row["id"],
+        "stream_id": row["flow_id"],
+        "baseline": row["agent"],
+        "condition": row["condition"],
+    }
+    save(auth_path, consumed)
+    return checkpoint, run_id, turn_id
+
+
+def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=None, retry_authorization=None, stop_after_turn=None):
     config_root = Path(config_dir or repo)
     if row["agent"] == "hermes":
         config = f"tmp_hermes_cf_{row['level']}.override.json"
-    elif row["agent"] == "skillopt" and row["level"] == "l2":
-        config = "tmp_skillopt_docker_l2.override.json"
+    elif row["agent"] in {"skillopt", "trace2skill"} and row["level"] == "l2":
+        config = f"tmp_{row['agent']}_docker_l2.override.json"
         if not (config_root / config).is_file():
-            config = "tmp_skillopt_docker.override.json"
+            config = f"tmp_{row['agent']}_docker.override.json"
     else:
         config = f"tmp_{row['agent']}_docker.override.json"
     # Stream length must not silently determine the per-turn resource allowance.
     # This is an aggregate guard; model/tool/time limits remain unchanged.
-    stream_token_limit = max(10_000_000, 3_000_000 * len(row["turns"]))
+    # This is a runaway guard, not a scientific per-Turn budget. Hermes can
+    # legitimately use roughly 3.8M tokens in a tool-heavy SkillsBench Turn
+    # once the explicit turn-boundary evolution pass is included, so retain
+    # headroom above the observed legal maximum. Per-Turn model/tool/output
+    # limits remain the actual comparable resource contract.
+    stream_token_limit = max(10_000_000, 5_000_000 * len(row["turns"]))
     args = [sys.executable, "-m", f"trievo_bench.{row['level']}_" + ("arena_compat" if row["level"] == "l1" else "compat"),
             "--package", row["package"], "--stream", row["stream"], "--output", row["output"],
             "--baseline", row["agent"], "--baseline-config", str(config_root / config),
@@ -210,6 +501,14 @@ def command(repo, row, checkpoint, config_dir=None):
         args += ["--condition", row["condition"], "--image", "trievo-l2:0.1", "--browser-image", "trievo-l2-browser:0.1", "--allow-generated-code"]
     if checkpoint:
         args += ["--resume-checkpoint", str(checkpoint)]
+    if retry_interrupted_run:
+        args += ["--retry-interrupted-run", str(retry_interrupted_run)]
+    if retry_authorization:
+        args += ["--retry-authorization", str(retry_authorization)]
+    if retry_interrupted_run:
+        args += ["--retry-job", row["id"]]
+    if stop_after_turn:
+        args += ["--stop-after-turn", str(stop_after_turn)]
     return args
 
 
@@ -265,6 +564,14 @@ def matched_l2_aggregations(rows):
                 break
             report_rows.append((row, report))
         else:
+            profiles = {
+                turn.get("timing_profile", "dataset")
+                for _, report in report_rows for turn in report.get("turns", [])
+            }
+            if len(profiles) > 1:
+                # Recovery may preserve completed results from the old 900s
+                # profile. Do not label mixed timing budgets as matched gain.
+                continue
             result[agent] = aggregate_matched_runs(
                 l2_reports_to_aggregation_records(report_rows)
             )
@@ -292,16 +599,430 @@ def matrix(rows):
     return cells
 
 
+class AdoptedProcess:
+    """Track an existing Linux worker without signaling or replaying it."""
+    def __init__(self, row):
+        self.pid = int(row["pid"])
+        if "process_start_ticks" not in row:
+            raise ValueError("adopted worker receipt missing process_start_ticks")
+        self.started = str(row["process_start_ticks"])
+        cmd = Path(f"/proc/{self.pid}/cmdline").read_bytes().split(b"\0")
+        if b"trievo_bench.l2_compat" not in cmd or str(row["output"]).encode() not in cmd:
+            raise ValueError("adopted process identity mismatch")
+        if self.poll() is not None:
+            raise ValueError("adopted worker is no longer running")
+
+    def poll(self):
+        try:
+            fields = Path(f"/proc/{self.pid}/stat").read_text().rsplit(")", 1)[1].split()
+        except FileNotFoundError:
+            return 0  # Success still requires a complete matching report.
+        return None if fields[0] != "Z" and fields[19] == self.started else 0
+
+
+def process_start_ticks(pid):
+    if os.name != "posix":
+        return None
+    try:
+        fields = Path(f"/proc/{int(pid)}/stat").read_text().rsplit(")", 1)[1].split()
+    except (FileNotFoundError, IndexError, ValueError):
+        return None
+    if not fields or fields[0] == "Z":
+        return None
+    return fields[19] if len(fields) > 19 else None
+
+
+def storage_gate_from_environment():
+    if os.environ.get("TRIEVO_STORAGE_GUARD") != "1":
+        return None
+    from trievo_bench.storage_recovery import StorageGate
+    return StorageGate.from_environment()
+
+
+def _log_tail(path, limit=16384):
+    try:
+        data = Path(path).read_bytes()
+    except (OSError, TypeError):
+        return ""
+    return data[-limit:].decode("utf-8", errors="replace")
+
+
+def _storage_error_text(row):
+    return " ".join(
+        str(value) for value in (
+            row.get("error"),
+            row.get("storage_error"),
+            _log_tail(row.get("log")),
+        )
+    )
+
+
+def _is_storage_error(row, storage_gate=None):
+    text = _storage_error_text(row)
+    checker = getattr(storage_gate, "is_storage_error", None) if storage_gate is not None else None
+    if callable(checker):
+        return bool(checker(text))
+    from trievo_bench.storage_recovery import is_storage_error
+    return is_storage_error(text)
+
+
+def _storage_error_summary(row):
+    text = " ".join(
+        str(value) for value in (
+            row.get("error"),
+            row.get("storage_error"),
+            _log_tail(row.get("log"), limit=2000),
+        )
+    ).strip()
+    return text[:1000] if text else "storage-related worker failure"
+
+
+def _has_completed_turns(row):
+    output = Path(row["output"])
+    return any(path.is_file() for path in output.glob("_checkpoints/**/completed_turns.json"))
+
+
+def _has_any_checkpoint_history(row):
+    output = Path(row["output"])
+    checkpoint_root = output / "_checkpoints"
+    return checkpoint_root.exists() and any(checkpoint_root.rglob("*"))
+
+
+def _is_pre_model_initialization_storage_failure(row):
+    text = _storage_error_text(row)
+    return (
+        "_start_taskstream_volume_transport" in text
+        and not _has_any_checkpoint_history(row)
+    )
+
+
+def _defer_storage_recovery(row, storage_retry_limit, allow_pre_model_initialization=False):
+    retry_count = int(row.get("retry_count", 0))
+    if retry_count >= storage_retry_limit:
+        row.update(status="needs_attention", recovery_reason="storage retry limit exceeded")
+        return False
+    try:
+        checkpoint = latest_checkpoint(row)
+        recovery_mode = "checkpoint"
+    except Exception as error:
+        row["recovery_error"] = str(error)
+        row.update(status="blocked_recovery", recovery_reason="unsafe storage recovery checkpoint")
+        return False
+    if checkpoint is None and not allow_pre_model_initialization:
+        row.update(status="blocked_recovery", recovery_reason="missing safe storage recovery checkpoint")
+        return False
+    if checkpoint is None and allow_pre_model_initialization:
+        recovery_mode = "pre_model_initialization"
+    row["retry_count"] = retry_count + 1
+    row["checkpoint"] = str(checkpoint) if checkpoint else None
+    row["status"] = "deferred_storage"
+    row["recovery_mode"] = recovery_mode
+    row.setdefault("attempt_history", []).append({
+        "event": "deferred_storage",
+        "at": now(),
+        "retry_count": row["retry_count"],
+        "checkpoint": row["checkpoint"],
+    })
+    return True
+
+
+def _has_matching_report(row):
+    try:
+        return report_for(row)[1] is not None
+    except Exception:
+        return False
+
+
+def _prepare_recovered_storage_rows(selected, storage_gate, storage_retry_limit):
+    if storage_gate is None:
+        return
+    for row in selected:
+        if row.get("status") != "paused_error" or not _is_storage_error(row, storage_gate):
+            continue
+        reason = _storage_error_summary(row)
+        row["storage_error"] = reason
+        if _defer_storage_recovery(
+            row,
+            storage_retry_limit,
+            allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+        ):
+            row.setdefault("attempt_history", []).append({
+                "event": "recover_storage_errors",
+                "at": now(),
+                "retry_count": int(row.get("retry_count", 0)),
+                "checkpoint": row.get("checkpoint"),
+            })
+
+
+def _same_job_identity(row, prior):
+    return all(row.get(field) == prior.get(field) for field in ("id", "output", "package", "condition", "turns"))
+
+
+def _restore_prior_storage_state(selected, prior_state):
+    prior_rows = {row.get("id"): row for row in prior_state.get("jobs", [])}
+    preserved_fields = {
+        "attempt_history",
+        "retry_count",
+        "storage_error",
+        "recovery_error",
+        "recovery_mode",
+        "recovery_reason",
+        "status",
+        "checkpoint",
+        "log",
+        "error",
+        "started_at",
+        "finished_at",
+        "pid",
+        "process_start_ticks",
+        "returncode",
+    }
+    for row in selected:
+        prior = prior_rows.get(row["id"])
+        if not prior or not _same_job_identity(row, prior):
+            continue
+        for field in preserved_fields:
+            if field in prior:
+                row[field] = prior[field]
+        if prior.get("status") and not prior.get("attempt_history"):
+            row["attempt_history"] = [{
+                "event": "restored_prior_status",
+                "at": now(),
+                "status": prior.get("status"),
+                "started_at": prior.get("started_at"),
+                "finished_at": prior.get("finished_at"),
+                "pid": prior.get("pid"),
+                "log": prior.get("log"),
+                "error": prior.get("error"),
+            }]
+
+
+def _clear_stale_attempt_error(row):
+    for field in ("error", "storage_error", "recovery_error", "returncode", "finished_at", "pid", "process_start_ticks"):
+        row.pop(field, None)
+
+
+def run_parallel(
+    repo,
+    selected,
+    all_rows,
+    config_dir,
+    state,
+    status_path,
+    concurrency,
+    job_error_policy="stop",
+    storage_gate=None,
+    storage_retry_limit=5,
+):
+    """One writer, isolated child per job; drain in-flight jobs on failure."""
+    if job_error_policy not in {"stop", "continue"}:
+        raise ValueError("job_error_policy must be stop or continue")
+    identities = [row["id"] for row in selected]
+    outputs = [str(Path(row["output"]).resolve()) for row in selected]
+    if len(set(identities)) != len(identities) or len(set(outputs)) != len(outputs):
+        raise ValueError("parallel jobs must have unique ids and output directories")
+    active = []
+    adopted_ids = set()
+    for receipt in state.pop("adopted_rows", []):
+        row = next(row for row in selected if row["id"] == receipt["id"])
+        if row["output"] != receipt["output"]:
+            raise ValueError("adopted output mismatch")
+        child = AdoptedProcess(receipt)
+        row.update(receipt)
+        row["status"] = "running"
+        active.append((row, child, open(os.devnull, "w")))
+        adopted_ids.add(row["id"])
+    if len(active) > concurrency:
+        raise ValueError("adopted workers exceed concurrency")
+    skipped = {"blocked_recovery", "deferred_storage", "needs_attention", "paused_error"}
+    pending = deque(row for row in selected
+                    if row["id"] not in adopted_ids and row.get("status") not in skipped
+                    and not (row.get("status") == "completed" and _has_matching_report(row)))
+    deferred = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") == "deferred_storage")
+    exhausted = False
+    failed = False
+
+    def publish():
+        state.update(updated_at=now(), active_jobs=[row["id"] for row, _, _ in active],
+                     current_job=active[0][0]["id"] if active else None,
+                     target_concurrency=concurrency,
+                     pending_count=len(pending),
+                     queued_count=len(pending) + len(deferred),
+                     pending_job_ids=[row["id"] for row in pending],
+                     deferred_job_ids=[row["id"] for row in deferred],
+                     deferred_jobs=[{
+                         "id": row["id"],
+                         "retry_count": int(row.get("retry_count", 0)),
+                         "checkpoint": row.get("checkpoint"),
+                         "recovery_mode": row.get("recovery_mode"),
+                     } for row in deferred],
+                     blocked_jobs=[{
+                         "id": row["id"],
+                         "status": row.get("status"),
+                         "reason": row.get("recovery_reason"),
+                     } for row in selected if row.get("status") in {"blocked_recovery", "needs_attention"}])
+        save(status_path, state)
+
+    def next_pending():
+        if deferred:
+            return deferred.popleft()
+        if pending:
+            return pending.popleft()
+        return None
+
+    while active or not exhausted or deferred:
+        if storage_gate is not None:
+            state["storage_health"] = storage_gate.check()
+            if not state["storage_health"].get("healthy", False):
+                state["status"] = "paused_storage"
+            elif state.get("status") == "paused_storage":
+                state["status"] = "running_with_errors" if failed else "running"
+            publish()
+        # Observe exits before admitting replacements (fail-fast admission).
+        for row, child, stream in list(active):
+            code = child.poll()
+            if code is None:
+                continue
+            stream.close()
+            active.remove((row, child, stream))
+            try:
+                report_path, report = report_for(row)
+            except Exception as error:
+                report_path, report = None, None
+                row["error"] = str(error)
+            row.update(returncode=code, finished_at=now())
+            if code != 0 or report is None:
+                if storage_gate is not None and _is_storage_error(row, storage_gate):
+                    reason = _storage_error_summary(row)
+                    storage_gate.trip(reason)
+                    row["storage_error"] = reason
+                    if _defer_storage_recovery(
+                        row,
+                        storage_retry_limit,
+                        allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+                    ):
+                        deferred.append(row)
+                        state["status"] = "paused_storage"
+                    else:
+                        failed = True
+                    print(f"STORAGE_PAUSED {row['id']}: inspect {row['log']}", flush=True)
+                else:
+                    row["status"] = "paused_error"
+                    failed = True
+                    state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+                    print(f"STOPPED {row['id']}: inspect {row['log']}", flush=True)
+            else:
+                row.update(status="completed", report=str(report_path))
+                print(f"COMPLETED {row['id']}", flush=True)
+            publish()
+        if failed and job_error_policy == "stop":
+            exhausted = True
+            if not active:
+                # Persist queued/deferred work, but do not spin forever on it
+                # when explicit fail-fast policy forbids further admission.
+                publish()
+                break
+        while not exhausted and len(active) < concurrency:
+            if not pending and not deferred:
+                exhausted = True
+                break
+            if storage_gate is not None:
+                # A just-reaped worker may have tripped the shared gate after
+                # the loop's initial sample. Never admit on that stale sample.
+                state["storage_health"] = storage_gate.check()
+                if not state["storage_health"].get("healthy", False):
+                    state["status"] = "paused_storage"
+                    publish()
+                    break
+            row = next_pending()
+            if row is None:
+                exhausted = True
+                break
+            stream = None
+            try:
+                report_path, report = report_for(row)
+                if report:
+                    row.update(status="completed", report=str(report_path))
+                    publish()
+                    continue
+                checkpoint = latest_checkpoint(row)
+                output = Path(row["output"])
+                output.mkdir(parents=True, exist_ok=True)
+                log = output / f"driver-{time.time_ns()}.log"
+                _clear_stale_attempt_error(row)
+                row.update(status="running", started_at=now(),
+                           checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+                row.setdefault("attempt_history", []).append({
+                    "event": "launch",
+                    "at": row["started_at"],
+                    "retry_count": int(row.get("retry_count", 0)),
+                    "checkpoint": row["checkpoint"],
+                })
+                stream = log.open("w", encoding="utf-8")
+                child = subprocess.Popen(command(repo, row, checkpoint, config_dir),
+                                         cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
+                row["pid"] = child.pid
+                start_ticks = process_start_ticks(child.pid)
+                if start_ticks is not None:
+                    row["process_start_ticks"] = start_ticks
+                active.append((row, child, stream))
+            except Exception as error:
+                if stream is not None:
+                    stream.close()
+                row.update(status="paused_error", error=str(error), finished_at=now())
+                if storage_gate is not None and _is_storage_error(row, storage_gate):
+                    storage_gate.trip(str(error))
+                    row["storage_error"] = str(error)
+                    if _defer_storage_recovery(
+                        row,
+                        storage_retry_limit,
+                        allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+                    ):
+                        deferred.append(row)
+                        state["status"] = "paused_storage"
+                    else:
+                        failed = True
+                else:
+                    failed = True
+                    exhausted = job_error_policy == "stop"
+                    state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
+            publish()
+        if active:
+            time.sleep(2)
+        elif storage_gate is not None and (pending or deferred) and not exhausted:
+            time.sleep(2)
+    incomplete = [row for row in selected if not _has_matching_report(row) and row.get("status") != "completed"]
+    if failed:
+        state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+        save(status_path, state)
+        return 1
+    if incomplete:
+        state.update(status="needs_attention", updated_at=now(), matrix=matrix(all_rows),
+                     incomplete_job_ids=[row["id"] for row in incomplete])
+        save(status_path, state)
+        return 1
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default="runs/mx24/full")
     parser.add_argument("--packages", type=Path, help="legacy parent directory containing l1_arena/ and one L2 package")
     parser.add_argument("--l1-package", type=Path, help="explicit L1 package directory")
     parser.add_argument("--l2-package", type=Path, help="explicit L2 package directory")
+    parser.add_argument("--level", choices=("l1", "l2"), help="select one level; default runs both L1 and L2")
     parser.add_argument("--l2-condition", action="append", choices=L2_CONDITIONS, help="L2 condition to run; repeat for reset/frozen/evolving")
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
+    parser.add_argument("--adopt-state", type=Path, help="explicit saved worker handoff; old dispatcher must be stopped")
+    parser.add_argument("--concurrency", type=int, help="maximum simultaneous jobs; default matrix-execution.json concurrency, or 1")
+    parser.add_argument("--job-error-policy", choices=("stop", "continue"), default="stop", help="parallel job failure policy; default stop preserves fail-fast admission")
+    parser.add_argument("--storage-guard", action="store_true", help="enable shared storage health gate for parallel admission")
+    parser.add_argument("--storage-retry-limit", type=int, default=5, help="maximum deferred storage recovery attempts per job")
+    parser.add_argument("--recover-storage-errors", action="store_true", help="reclassify previous storage paused_error rows for guarded recovery")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
+    parser.add_argument("--retry-interrupted-run", help="exact failed run_id or run/report path for one authorized L2 interrupted-turn retry")
+    parser.add_argument("--retry-authorization", type=Path, help="one-shot authorization ledger JSON for --retry-interrupted-run")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     if not os.environ.get("TRIEVO_API_KEY"):
@@ -317,6 +1038,20 @@ def main():
     os.environ.setdefault("TRIEVO_API_MAX_RETRIES", "4")
     root = (repo / args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
+    execution_path = root / "matrix-execution.json"
+    status_path = root / "matrix_status.json"
+    concurrency = args.concurrency
+    if concurrency is None:
+        concurrency = load(execution_path).get("concurrency", 1) if execution_path.exists() else 1
+    if isinstance(concurrency, bool) or not isinstance(concurrency, int) or concurrency < 1:
+        parser.error("concurrency must be a positive integer")
+    if args.retry_interrupted_run:
+        concurrency = 1  # One authorization always binds exactly one attempt.
+    if args.storage_retry_limit < 0:
+        parser.error("storage retry limit must be non-negative")
+    if args.storage_guard:
+        os.environ["TRIEVO_STORAGE_GUARD"] = "1"
+
     # Retain an OS-owned lock for this process; stale files do not block resume.
     global _driver_lock
     _driver_lock = (root / "driver.lock").open("a+b")
@@ -340,6 +1075,7 @@ def main():
         l1_package=args.l1_package.resolve() if args.l1_package else None,
         l2_package=args.l2_package.resolve() if args.l2_package else None,
         l2_conditions=tuple(args.l2_condition) if args.l2_condition else None,
+        level=args.level,
     )
     config_dir = args.config_dir.resolve() if args.config_dir else repo
     selected = [row for row in all_rows if row["id"] == args.only] if args.only else all_rows
@@ -347,38 +1083,117 @@ def main():
         selected = selected[:3]
     if not selected:
         raise SystemExit("no matching job")
-    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected}
-    status_path = root / "matrix_status.json"
+    if args.retry_interrupted_run and len(selected) != 1:
+        raise SystemExit("--retry-interrupted-run requires one selected job")
+    if args.recover_storage_errors and not args.storage_guard:
+        parser.error("--recover-storage-errors requires --storage-guard")
+    storage_gate = storage_gate_from_environment() if args.storage_guard else None
+    if args.storage_guard and storage_gate is None:
+        raise SystemExit("--storage-guard requested but StorageGate.from_environment() returned no gate")
+    prior_state = load(status_path) if status_path.exists() and args.storage_guard else {}
+    if prior_state:
+        _restore_prior_storage_state(selected, prior_state)
+    if args.recover_storage_errors:
+        _prepare_recovered_storage_rows(selected, storage_gate, args.storage_retry_limit)
+    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected, "concurrency": concurrency, "job_error_policy": args.job_error_policy, "phase": "gate" if args.gate else ("only" if args.only else "full")}
+    if args.storage_guard and not args.adopt_state:
+        survivors = [row for row in selected
+                     if row.get("status") == "running" and row.get("process_start_ticks")
+                     and process_start_ticks(row.get("pid")) == str(row["process_start_ticks"])]
+        if survivors:
+            if concurrency < 2 or args.retry_interrupted_run or args.gate or args.only:
+                parser.error("live workers require a full parallel resume")
+            # The output lock is held; adopt verified survivors instead of
+            # issuing duplicate work after a dispatcher-only restart.
+            for row in survivors:
+                AdoptedProcess(row)
+            state["adopted_rows"] = survivors
+    if args.adopt_state:
+        if concurrency < 2 or args.retry_interrupted_run or args.gate or args.only:
+            parser.error("adoption requires a parallel full invocation")
+        state["adopted_rows"] = [row for row in load(args.adopt_state)["jobs"]
+                                 if row.get("status", "running") == "running"]
+        for row in state["adopted_rows"]:
+            if row["id"] not in {job["id"] for job in selected}:
+                parser.error("adopted job is not selected")
+            AdoptedProcess(row)
     save(status_path, state)
-    for row in selected:
-        report_path, report = report_for(row)
-        if report:
-            row.update(status="completed", report=str(report_path))
-            continue
-        checkpoint = latest_checkpoint(row)
-        output = Path(row["output"])
-        output.mkdir(parents=True, exist_ok=True)
-        log = output / f"driver-{int(time.time())}.log"
-        row.update(status="running", started_at=now(), checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
-        with log.open("w", encoding="utf-8") as stream:
-            child = subprocess.Popen(command(repo, row, checkpoint, config_dir), cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
-            row["pid"] = child.pid
-            state.update(current_job=row["id"], updated_at=now())
+    if concurrency > 1:
+        code = run_parallel(
+            repo,
+            selected,
+            all_rows,
+            config_dir,
+            state,
+            status_path,
+            concurrency,
+            args.job_error_policy,
+            storage_gate=storage_gate,
+            storage_retry_limit=args.storage_retry_limit,
+        )
+        if code:
+            return code
+    else:
+        for row in selected:
+            retry_run_id = None
+            stop_after_turn = None
+            if args.retry_interrupted_run:
+                checkpoint, retry_run_id, stop_after_turn = prepare_interrupted_retry(
+                    row,
+                    args.retry_interrupted_run,
+                    args.retry_authorization,
+                )
+            else:
+                report_path, report = report_for(row)
+                if report:
+                    row.update(status="completed", report=str(report_path))
+                    continue
+                checkpoint = latest_checkpoint(row)
+            output = Path(row["output"])
+            output.mkdir(parents=True, exist_ok=True)
+            log = output / f"driver-{int(time.time())}.log"
+            row.update(status="running", started_at=now(), checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+            with log.open("w", encoding="utf-8") as stream:
+                child = subprocess.Popen(
+                    command(
+                        repo,
+                        row,
+                        checkpoint,
+                        config_dir,
+                        retry_interrupted_run=retry_run_id,
+                        retry_authorization=args.retry_authorization,
+                        stop_after_turn=stop_after_turn,
+                    ),
+                    cwd=repo,
+                    stdout=stream,
+                    stderr=subprocess.STDOUT,
+                )
+                row["pid"] = child.pid
+                state.update(current_job=row["id"], updated_at=now())
+                save(status_path, state)
+                while child.poll() is None:
+                    time.sleep(2)
+                code = child.returncode
+            if stop_after_turn:
+                report_path, report = report_for_interrupted_retry(row, stop_after_turn)
+            else:
+                report_path, report = report_for(row)
+            if code != 0 or report is None:
+                row.update(status="paused_error", returncode=code, finished_at=now())
+                state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+                save(status_path, state)
+                print(f"STOPPED {row['id']}: inspect {log}", flush=True)
+                return 1
+            if stop_after_turn:
+                row.update(status="interrupted_retry_completed", report=str(report_path), finished_at=now())
+                state.update(status="interrupted_retry_completed", updated_at=now(), matrix=matrix(all_rows))
+                save(status_path, state)
+                print(f"RETRY_COMPLETED {row['id']} through {stop_after_turn}", flush=True)
+                return 0
+            row.update(status="completed", report=str(report_path), finished_at=now())
+            state.update(updated_at=now(), matrix=matrix(all_rows))
             save(status_path, state)
-            while child.poll() is None:
-                time.sleep(2)
-            code = child.returncode
-        report_path, report = report_for(row)
-        if code != 0 or report is None:
-            row.update(status="paused_error", returncode=code, finished_at=now())
-            state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
-            save(status_path, state)
-            print(f"STOPPED {row['id']}: inspect {log}", flush=True)
-            return 1
-        row.update(status="completed", report=str(report_path), finished_at=now())
-        state.update(updated_at=now(), matrix=matrix(all_rows))
-        save(status_path, state)
-        print(f"COMPLETED {row['id']}", flush=True)
+            print(f"COMPLETED {row['id']}", flush=True)
     aggregations = matched_l2_aggregations(all_rows)
     state.update(
         status="gate_completed" if (args.gate or args.only) else "completed",

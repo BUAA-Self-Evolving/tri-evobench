@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Creates and return a heatmap of the cumulative sum of each column in a dictionary.\nNote that: Notes: Only numeric columns are considered for the heatmap. Non-numeric columns are ignored.\nThe function should raise the exception for: ValueError: If the DataFrame is empty or if no numeric columns are present.\nThe function should output with:\n    matplotlib.axes._axes.Axes: The Axes object of the Seaborn heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(data):\n```"
+        "content": "Creates and return a heatmap of the cumulative sum of each column in a dictionary.\nNote that: Notes: Only numeric columns are considered for the heatmap. Non-numeric columns are ignored.\nThe function should raise the exception for: ValueError: If the DataFrame is empty or if no numeric columns are present.\nThe function should output with:\n    matplotlib.axes._axes.Axes: The Axes object of the Seaborn heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(data):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

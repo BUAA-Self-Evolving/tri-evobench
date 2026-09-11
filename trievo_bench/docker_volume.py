@@ -14,9 +14,9 @@ import shutil
 import subprocess
 import tempfile
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Mapping
+from typing import Any, Mapping
 
 
 class DockerVolumeError(RuntimeError):
@@ -25,6 +25,14 @@ class DockerVolumeError(RuntimeError):
 
 _TRUE_VALUES = {"1", "true", "yes", "on", "required"}
 _FALSE_VALUES = {"", "0", "false", "no", "off", "disabled"}
+_MAX_STORAGE_COPY_FAILURES = 5
+_STORAGE_ERROR_PATTERNS = (
+    "no space left on device",
+    "error setting up pivot dir",
+    "input/output error",
+    "stale file handle",
+    "transport endpoint is not connected",
+)
 
 
 def docker_volume_transport_enabled(
@@ -54,6 +62,7 @@ class DockerVolumeMirror:
     uid: int
     gid: int
     _closed: bool = False
+    _storage_gate: Any | None = field(default=None, repr=False)
 
     @classmethod
     def create(
@@ -84,7 +93,16 @@ class DockerVolumeMirror:
         )
         uid = writable_uid if writable_uid is not None else _host_uid()
         gid = writable_gid if writable_gid is not None else _host_gid()
-        mirror = cls(source, safe_role, volume_name, carrier_name, image, uid, gid)
+        mirror = cls(
+            source,
+            safe_role,
+            volume_name,
+            carrier_name,
+            image,
+            uid,
+            gid,
+            _storage_gate=_storage_gate_from_environment(),
+        )
         try:
             mirror._create_resources()
             mirror.sync_from_host()
@@ -101,44 +119,52 @@ class DockerVolumeMirror:
 
     def sync_from_host(self) -> None:
         self._require_open()
-        _run_docker(
-            ["exec", self.carrier_name, "python", "-c", _CLEAR_VOLUME_SCRIPT]
-        )
-        _run_docker(["cp", f"{self.host_path}/.", f"{self.carrier_name}:/volume"])
-        _run_docker(
-            [
-                "exec",
-                self.carrier_name,
-                "chown",
-                "-R",
-                f"{self.uid}:{self.gid}",
-                "/volume",
-            ]
-        )
+
+        def copy() -> None:
+            _run_docker(
+                ["exec", self.carrier_name, "python", "-c", _CLEAR_VOLUME_SCRIPT]
+            )
+            _run_docker(["cp", f"{self.host_path}/.", f"{self.carrier_name}:/volume"])
+            _run_docker(
+                [
+                    "exec",
+                    self.carrier_name,
+                    "chown",
+                    "-R",
+                    f"{self.uid}:{self.gid}",
+                    "/volume",
+                ]
+            )
+
+        self._copy_with_storage_gate(copy)
 
     def sync_to_host(self) -> None:
         self._require_open()
-        staged = Path(
-            tempfile.mkdtemp(
-                prefix=f".{self.host_path.name}-docker-pull-",
-                dir=self.host_path.parent,
+
+        def copy() -> None:
+            staged = Path(
+                tempfile.mkdtemp(
+                    prefix=f".{self.host_path.name}-docker-pull-",
+                    dir=self.host_path.parent,
+                )
             )
-        )
-        backup = self.host_path.parent / (
-            f".{self.host_path.name}-docker-backup-{uuid.uuid4().hex[:12]}"
-        )
-        try:
-            _run_docker(["cp", f"{self.carrier_name}:/volume/.", str(staged)])
-            shutil.copystat(self.host_path, staged, follow_symlinks=False)
-            self.host_path.rename(backup)
+            backup = self.host_path.parent / (
+                f".{self.host_path.name}-docker-backup-{uuid.uuid4().hex[:12]}"
+            )
             try:
-                staged.rename(self.host_path)
-            except BaseException:
-                backup.rename(self.host_path)
-                raise
-            shutil.rmtree(backup, ignore_errors=True)
-        finally:
-            shutil.rmtree(staged, ignore_errors=True)
+                _run_docker(["cp", f"{self.carrier_name}:/volume/.", str(staged)])
+                shutil.copystat(self.host_path, staged, follow_symlinks=False)
+                self.host_path.rename(backup)
+                try:
+                    staged.rename(self.host_path)
+                except BaseException:
+                    backup.rename(self.host_path)
+                    raise
+                shutil.rmtree(backup, ignore_errors=True)
+            finally:
+                shutil.rmtree(staged, ignore_errors=True)
+
+        self._copy_with_storage_gate(copy)
 
     def close(self) -> None:
         if self._closed:
@@ -193,6 +219,25 @@ class DockerVolumeMirror:
         if self._closed:
             raise DockerVolumeError("Docker volume mirror is closed")
 
+    def _copy_with_storage_gate(self, operation) -> None:
+        gate = self._storage_gate
+        if gate is None:
+            operation()
+            return
+        failures = 0
+        while True:
+            gate.wait()
+            try:
+                operation()
+                return
+            except BaseException as exc:
+                if not _is_storage_error(exc):
+                    raise
+                failures += 1
+                gate.trip(str(exc))
+                if failures >= _MAX_STORAGE_COPY_FAILURES:
+                    raise
+
 
 _CLEAR_VOLUME_SCRIPT = """
 from pathlib import Path
@@ -242,6 +287,43 @@ def _run_docker(
             f"Docker volume command failed ({args[0]}): {detail.strip()}"
         )
     return completed
+
+
+def _storage_recovery_module():
+    try:
+        from . import storage_recovery  # type: ignore[attr-defined]
+    except ImportError:
+        if os.environ.get("TRIEVO_STORAGE_GUARD") == "1":
+            raise
+        return None
+    return storage_recovery
+
+
+def _storage_gate_from_environment():
+    module = _storage_recovery_module()
+    if module is None:
+        if os.environ.get("TRIEVO_STORAGE_GUARD") == "1":
+            raise DockerVolumeError("storage guard requested but unavailable")
+        return None
+    factory = getattr(module, "from_environment", None)
+    if callable(factory):
+        return factory()
+    storage_gate = getattr(module, "StorageGate", None)
+    class_factory = getattr(storage_gate, "from_environment", None)
+    if callable(class_factory):
+        return class_factory()
+    if os.environ.get("TRIEVO_STORAGE_GUARD") == "1":
+        raise DockerVolumeError("storage guard requested but factory unavailable")
+    return None
+
+
+def _is_storage_error(exc_or_str: BaseException | str) -> bool:
+    module = _storage_recovery_module()
+    detector = getattr(module, "is_storage_error", None) if module is not None else None
+    if callable(detector):
+        return bool(detector(exc_or_str))
+    text = str(exc_or_str).lower()
+    return any(pattern in text for pattern in _STORAGE_ERROR_PATTERNS)
 
 
 def _host_uid() -> int:

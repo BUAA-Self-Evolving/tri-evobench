@@ -10,16 +10,37 @@ It intentionally does not import the pinned upstream checkout at runtime.
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 
 from l2_runtime.verification import VerifyResult
 
 
-_FENCED_JSON = re.compile(r"^\s*```(?:json)?\s*(.*?)\s*```\s*$", re.DOTALL | re.IGNORECASE)
 _SCHEMA_VERSION = "tau2-telecom-trajectory-0.1"
 _MAX_TOOL_CALLS = 16
+RESPONSE_SCHEMA = {
+    "type": "object",
+    "required": ["schema_version", "assistant_message", "tool_calls"],
+    "additionalProperties": False,
+    "properties": {
+        "schema_version": {"const": _SCHEMA_VERSION},
+        "assistant_message": {"type": "string"},
+        "tool_calls": {
+            "type": "array",
+            "maxItems": _MAX_TOOL_CALLS,
+            "items": {
+                "type": "object",
+                "required": ["requestor", "name", "arguments"],
+                "additionalProperties": False,
+                "properties": {
+                    "requestor": {"enum": ["user", "assistant"]},
+                    "name": {"type": "string"},
+                    "arguments": {"type": "object"},
+                },
+            },
+        },
+    },
+}
 
 
 class Tau2TelecomVerifier:
@@ -70,9 +91,7 @@ class Tau2TelecomVerifier:
 
 
 def _parse_trajectory(raw: str) -> dict[str, Any]:
-    match = _FENCED_JSON.match(raw)
-    payload = match.group(1) if match else raw
-    trajectory = json.loads(payload)
+    trajectory = json.loads(raw)
     if not isinstance(trajectory, dict):
         raise ValueError("response must be a JSON object")
     if set(trajectory) != {"schema_version", "assistant_message", "tool_calls"}:

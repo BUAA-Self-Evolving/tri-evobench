@@ -29,7 +29,7 @@ def syntax_check(code, verbose=False):
 
 def code_extract(text: str) -> str:
     lines = text.split("\n")
-    longest_line_pair = (0, 0)
+    longest_line_pair = None
     longest_so_far = 0
 
     for i in range(len(lines)):
@@ -41,6 +41,8 @@ def code_extract(text: str) -> str:
                     longest_so_far = current_length
                     longest_line_pair = (i, j)
 
+    if longest_line_pair is None:
+        return ""
     return "\n".join(lines[longest_line_pair[0] : longest_line_pair[1] + 1])
 
 

@@ -18,7 +18,7 @@
     "path_rewrites": []
   },
   "agent_view": {
-    "request": "Read a CSV file, convert the string representations of dictionaries in a specific column ('dict_column') to Python dictionaries, and visualize the data with Seaborn's pairplot.\nThe function should output with:\n    tuple: A tuple containing:\n    df (DataFrame): The DataFrame after reading and processing the CSV file.\n    ax (PairGrid): Seaborn's PairGrid object after plotting.\nYou should write self-contained code starting with:\n```\nimport ast\nimport pandas as pd\nimport seaborn as sns\ndef task_func(csv_file):\n```",
+    "request": "Read a CSV file, convert the string representations of dictionaries in a specific column ('dict_column') to Python dictionaries, and visualize the data with Seaborn's pairplot.\nThe function should output with:\n    tuple: A tuple containing:\n    df (DataFrame): The DataFrame after reading and processing the CSV file.\n    ax (PairGrid): Seaborn's PairGrid object after plotting.\nYou should write self-contained code starting with:\n```\nimport ast\nimport pandas as pd\nimport seaborn as sns\ndef task_func(csv_file):\n```\nYour final response must contain only the complete self-contained Python source code. Do not write the solution to a Workspace file and return a summary or file link instead. Do not add prose outside the source code.",
     "assets": [],
     "available_tools": []
   },
@@ -33,6 +33,6 @@
   },
   "evaluation_ref": "evaluation.json",
   "expected_outputs": [
-    "Complete self-contained Python code containing task_func(csv_file); native SRA sanitization may extract it from a Markdown code fence."
+    "Complete self-contained Python source code containing task_func(csv_file), returned directly in the final response."
   ]
 }
