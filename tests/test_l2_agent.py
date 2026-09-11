@@ -19,11 +19,15 @@ from trievo_bench.l2_agent import (
     _public_submission_instruction,
     _public_taskstream_tools,
     _stream_submission_carriers,
+    _verifier_transport_timeout,
     _work_limits,
 )
 
 
 class L2AgentLimitsTest(unittest.TestCase):
+    def test_verifier_transport_outlives_native_timeout(self) -> None:
+        self.assertEqual(_verifier_transport_timeout(300), 330)
+
     def test_default_limits_are_bounded_and_visible_to_the_agent(self) -> None:
         limits = _work_limits({})
         self.assertEqual(limits.max_model_calls, 10)

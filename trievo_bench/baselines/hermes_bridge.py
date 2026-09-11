@@ -441,7 +441,10 @@ class HermesBridge:
         from hermes_cli.plugins import clear_thread_tool_whitelist, set_thread_tool_whitelist
         from tools import terminal_tool, memory_tool
 
-        allowed = set(getattr(agent, "valid_tool_names", set()) or set())
+        previous_valid_tool_names = set(
+            getattr(agent, "valid_tool_names", set()) or set()
+        )
+        allowed = set(previous_valid_tool_names)
         if self._policy == "turn_boundary":
             allowed.difference_update({"memory", "skill_manage", "session_search"})
         previous_approval = terminal_tool._get_approval_callback()
@@ -508,6 +511,11 @@ class HermesBridge:
                 os.environ["TERMINAL_TIMEOUT"] = str(limits["terminal_timeout_seconds"])
                 terminal_tool.terminal_tool = limited_terminal
             if self._policy == "turn_boundary":
+                # The plugin whitelist is thread-local and Hermes may dispatch
+                # parallel tool calls on worker threads. Remove learning-state
+                # tools from the agent schema/dispatcher as the process-wide
+                # foreground boundary, then restore them for evolve().
+                agent.valid_tool_names = allowed
                 memory_tool.memory_tool = frozen_memory
                 set_thread_tool_whitelist(
                     allowed,
@@ -520,6 +528,7 @@ class HermesBridge:
         finally:
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
+                agent.valid_tool_names = previous_valid_tool_names
             terminal_tool.terminal_tool = previous_terminal_handler
             memory_tool.memory_tool = previous_memory_handler
             if previous_terminal_timeout is None:

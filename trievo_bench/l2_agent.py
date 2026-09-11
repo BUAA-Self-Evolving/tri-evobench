@@ -43,6 +43,15 @@ _VERIFIER_PROXY_ENV_NAMES = (
     "all_proxy",
 )
 
+# A package verifier may use its declared timeout internally to return a
+# deterministic timeout/fail result. The Docker transport must outlive that
+# deadline long enough to serialize the result and tear down Chromium.
+_VERIFIER_TRANSPORT_GRACE_SECONDS = 30
+
+
+def _verifier_transport_timeout(native_timeout_seconds: int) -> int:
+    return native_timeout_seconds + _VERIFIER_TRANSPORT_GRACE_SECONDS
+
 
 class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
@@ -1002,6 +1011,7 @@ class L2AgentStreamRunner:
             verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
         ]
         timeout = int(native.get("timeout_seconds", 300))
+        transport_timeout = _verifier_transport_timeout(timeout)
         try:
             completed = subprocess.run(
                 command,
@@ -1011,7 +1021,7 @@ class L2AgentStreamRunner:
                 errors="replace",
                 capture_output=True,
                 check=False,
-                timeout=timeout,
+                timeout=transport_timeout,
             )
         except subprocess.TimeoutExpired as exc:
             return {
@@ -1020,6 +1030,7 @@ class L2AgentStreamRunner:
                 "details": {
                     "type": "verifier_timeout",
                     "timeout_seconds": timeout,
+                    "transport_timeout_seconds": transport_timeout,
                     "stdout": str(exc.stdout or "")[-4000:],
                     "stderr": str(exc.stderr or "")[-4000:],
                 },
