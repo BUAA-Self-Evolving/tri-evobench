@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Create a heatmap using the seaborn library for \"x\" as x-values and \"y\" as y-values with labels.\nThe function should output with:\n    ax (Axes): A seaborn heatmap object.\n    df (DataFrame): The dataframe used to create the heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\n# Constants\nLABELS = ['H\\u2082O', 'O\\u2082', 'CO\\u2082', 'N\\u2082', 'Ar']\ndef task_func(x, y, labels):\n```"
+        "content": "Create a heatmap using the seaborn library for \"x\" as x-values and \"y\" as y-values with labels.\nThe function should output with:\n    ax (Axes): A seaborn heatmap object.\n    df (DataFrame): The dataframe used to create the heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\n# Constants\nLABELS = ['H\\u2082O', 'O\\u2082', 'CO\\u2082', 'N\\u2082', 'Ar']\ndef task_func(x, y, labels):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

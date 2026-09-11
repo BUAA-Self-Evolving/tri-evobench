@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import os
 import re
@@ -171,6 +172,11 @@ class Trace2SkillBridge:
         error = str(result.get("error", "")) if isinstance(result, dict) else ""
         if not answer and error:
             answer = error
+        answer, carrier_adaptation = _adapt_final_response_carrier(
+            answer,
+            trace["tool_calls"],
+            self.turn_metadata,
+        )
         target_calls_after = self._clients.get("target").calls if self._clients.get("target") else 0
         usage = {
             **_usage_delta(self._clients.get("target"), target_usage_before),
@@ -188,6 +194,7 @@ class Trace2SkillBridge:
                 "turns": result.get("turns", 0) if isinstance(result, dict) else 0,
                 "error": error,
                 "steps": trace["steps"],
+                "carrier_adaptation": carrier_adaptation,
             },
         }
 
@@ -702,6 +709,44 @@ def _steps_to_trace(steps: Any) -> dict[str, Any]:
             "is_format_error": bool(getattr(step, "is_format_error", False)),
         })
     return {"steps": normalized_steps, "tool_calls": tool_calls, "events": events}
+
+
+def _adapt_final_response_carrier(
+    answer: str,
+    tool_calls: list[dict[str, Any]],
+    metadata: dict[str, Any] | None,
+) -> tuple[str, dict[str, Any] | None]:
+    """Bridge Trace2Skill's ReAct result into the declared public carrier.
+
+    The framework may return ``None`` after successfully executing its final
+    Python action. Adapt only that framework-level SRA carrier mismatch and
+    retain an audit record; never rewrite a model answer to satisfy a strict
+    native submission contract.
+    """
+
+    public = metadata.get("public", metadata) if isinstance(metadata, dict) else {}
+    contract = public.get("submission_contract", {}) if isinstance(public, dict) else {}
+    payload_kind = contract.get("payload_kind") if isinstance(contract, dict) else None
+    raw_answer = str(answer or "")
+
+    if payload_kind == "python_source":
+        if "def task_func" in raw_answer:
+            return raw_answer, None
+        candidates = [
+            str(call.get("arguments", {}).get("code", ""))
+            for call in tool_calls
+            if call.get("name") == "python" and isinstance(call.get("arguments"), dict)
+        ]
+        candidates = [code for code in candidates if "def task_func" in code]
+        if candidates:
+            source = max(candidates, key=len)
+            return source, {
+                "type": "executed_python_action_to_final_response",
+                "raw_answer": raw_answer,
+                "source_sha256": hashlib.sha256(source.encode("utf-8")).hexdigest(),
+            }
+
+    return raw_answer, None
 
 
 def _trajectory_records(trajectory: Any, feedback: Any) -> list[dict[str, Any]]:

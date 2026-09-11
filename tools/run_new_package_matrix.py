@@ -146,6 +146,9 @@ def _report_matches_row(row: dict, report: dict) -> bool:
     if report.get("error") or report.get("cleanup_error"):
         return False
     if row["level"] == "l2":
+        run_configuration = report.get("run_configuration", {})
+        if isinstance(run_configuration, dict) and run_configuration.get("budget_profile", "formal") != "formal":
+            return False
         condition = _report_condition(report, turns)
         # Reports produced before the condition field existed are evolving runs.
         if condition is None:
@@ -157,6 +160,8 @@ def _report_matches_row(row: dict, report: dict) -> bool:
         if turn.get("final_category") == "error":
             return False
         if turn.get("evaluation_status") == "evaluation_error":
+            return False
+        if turn.get("passed") is None:
             return False
         if _turn_score(turn) is None:
             return False
@@ -963,7 +968,11 @@ def run_parallel(
                 if storage_gate is not None and _is_storage_error(row, storage_gate):
                     storage_gate.trip(str(error))
                     row["storage_error"] = str(error)
-                    if _defer_storage_recovery(row, storage_retry_limit, allow_pre_model_initialization=True):
+                    if _defer_storage_recovery(
+                        row,
+                        storage_retry_limit,
+                        allow_pre_model_initialization=_is_pre_model_initialization_storage_failure(row),
+                    ):
                         deferred.append(row)
                         state["status"] = "paused_storage"
                     else:

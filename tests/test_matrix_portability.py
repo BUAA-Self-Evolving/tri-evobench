@@ -28,7 +28,8 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
             assert config["environment"]["set"]["TRIEVO_THINKING"] == "disabled"
             assert "TRIEVO_API_TIMEOUT_SECONDS" in config["adapter"]["command"]
             assert "TRIEVO_API_MAX_RETRIES" in config["adapter"]["command"]
-        assert config["options"]["l2_agent_limits"]["max_tool_calls"] == 20
+        expected_tool_limit = 40 if "_l2" in path.name or path.name == "tmp_hermes_cf_l2.override.json" else 20
+        assert config["options"]["l2_agent_limits"]["max_tool_calls"] == expected_tool_limit
 
     hermes_l1 = (output / "hermes-l1-seed/config.yaml").read_text()
     hermes_l2 = (output / "hermes-l2-seed/config.yaml").read_text()
@@ -59,6 +60,40 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert trace_l2["options"]["generation_config"]["max_tokens"] == 12000
     assert trace_l2["options"]["request_timeout"] == 150
     assert "max_tokens" not in trace_l1["options"]["generation_config"]
+    assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
+    assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
+
+
+def test_generated_configs_accept_candidate_bound_image_tags(tmp_path):
+    output = generate(
+        tmp_path / "configs",
+        "deepseek-flash",
+        "https://api.deepseek.com",
+        hermes_image="trievo-hermes:fixed",
+        skillopt_image="trievo-skillopt:fixed",
+        trace2skill_image="trievo-trace2skill:fixed",
+    )
+    hermes = json.loads((output / "tmp_hermes_cf_l2.override.json").read_text())
+    skillopt = json.loads((output / "tmp_skillopt_docker_l2.override.json").read_text())
+    trace = json.loads((output / "tmp_trace2skill_docker_l2.override.json").read_text())
+    assert hermes["options"]["image"] == "trievo-hermes:fixed"
+    assert skillopt["adapter"]["command"][-1] == "trievo-skillopt:fixed"
+    assert trace["adapter"]["command"][-1] == "trievo-trace2skill:fixed"
+
+
+def test_direct_api_configs_do_not_inherit_loopback_proxy(tmp_path):
+    output = generate(
+        tmp_path / "direct",
+        "deepseek-flash",
+        "https://api.deepseek.com",
+        inherit_proxy=False,
+    )
+    for path in output.glob("*.override.json"):
+        command = json.loads(path.read_text())["adapter"]["command"]
+        assert not any(name in command for name in (
+            "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY",
+            "http_proxy", "https_proxy", "no_proxy",
+        ))
 
 
 def test_explicit_package_and_config_paths(tmp_path):

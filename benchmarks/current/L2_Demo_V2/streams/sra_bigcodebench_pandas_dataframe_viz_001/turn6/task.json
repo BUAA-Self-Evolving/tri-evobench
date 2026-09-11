@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Create a heatmap of the correlation matrix of a DataFrame built from a CSV file. Round each correlation to 2 decimals.\nThe function should output with:\n    DataFrame: correlation dataframe where each row and each column correspond to a specific column.\n    matplotlib.axes.Axes: The Axes object of the plotted data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(csv_file_path: str, title: str):\n```"
+        "content": "Create a heatmap of the correlation matrix of a DataFrame built from a CSV file. Round each correlation to 2 decimals.\nThe function should output with:\n    DataFrame: correlation dataframe where each row and each column correspond to a specific column.\n    matplotlib.axes.Axes: The Axes object of the plotted data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(csv_file_path: str, title: str):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

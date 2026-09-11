@@ -226,6 +226,59 @@ def test_true_pre_model_volume_failure_can_defer_without_checkpoint(tmp_path, mo
     assert row["recovery_mode"] == "pre_model_initialization"
 
 
+def test_launch_storage_error_without_pre_model_marker_does_not_replay_without_checkpoint(tmp_path, monkeypatch):
+    row = dict(id="job", output=str(tmp_path / "job"))
+    gate = FakeGate()
+
+    monkeypatch.setattr(m, "latest_checkpoint", lambda row: None)
+    monkeypatch.setattr(m, "report_for", lambda row: (None, None))
+    monkeypatch.setattr(m, "matrix", lambda rows: [])
+    monkeypatch.setattr(m, "command", lambda repo, row, checkpoint, config: ["job"])
+    monkeypatch.setattr(
+        m.subprocess,
+        "Popen",
+        lambda args, **kwargs: (_ for _ in ()).throw(RuntimeError("docker volume command failed: no space left on device")),
+    )
+    monkeypatch.setattr(m.time, "sleep", lambda _: None)
+
+    state = {"jobs": [row]}
+    assert m.run_parallel(tmp_path, [row], [row], tmp_path, state, tmp_path / "status.json", 1, "continue", storage_gate=gate) == 1
+    assert row["status"] == "blocked_recovery"
+    assert row["recovery_reason"] == "missing safe storage recovery checkpoint"
+
+
+def test_launch_pre_model_volume_failure_can_retry_without_checkpoint(tmp_path, monkeypatch):
+    row = dict(id="job", output=str(tmp_path / "job"))
+    gate = FakeGate()
+    gate.recover_on_check = True
+    attempts = 0
+
+    monkeypatch.setattr(m, "latest_checkpoint", lambda row: None)
+    monkeypatch.setattr(m, "matrix", lambda rows: [])
+    monkeypatch.setattr(m, "command", lambda repo, row, checkpoint, config: ["job"])
+    monkeypatch.setattr(m, "process_start_ticks", lambda pid: str(pid * 10))
+    monkeypatch.setattr(m.time, "sleep", lambda _: None)
+
+    def report_for(row):
+        return ("done", {"ok": True}) if row.get("pid") else (None, None)
+
+    def popen(args, **kwargs):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise RuntimeError("Traceback in _start_taskstream_volume_transport: no space left on device")
+        return Child("job", 0)
+
+    monkeypatch.setattr(m, "report_for", report_for)
+    monkeypatch.setattr(m.subprocess, "Popen", popen)
+
+    state = {"jobs": [row]}
+    assert m.run_parallel(tmp_path, [row], [row], tmp_path, state, tmp_path / "status.json", 1, "continue", storage_gate=gate) == 0
+    assert attempts == 2
+    assert row["status"] == "completed"
+    assert row["recovery_mode"] == "pre_model_initialization"
+
+
 def test_recover_storage_errors_reclassifies_only_storage_paused_rows(tmp_path, monkeypatch):
     storage = dict(id="storage", output=str(tmp_path / "storage"), status="paused_error", error="docker volume command failed: no space left on device")
     other = dict(id="other", output=str(tmp_path / "other"), status="paused_error", error="reference judge returned empty output")

@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "This function plots a bar chart of monthly data values for a single year, with 'month' on the x-axis and 'value' on the y-axis.\nThe function should output with:\n    Axes object: A matplotlib.axes.Axes object representing the plot, with the title formatted as 'Monthly Data for yyyy', x label as 'Month', and y label as 'Value'.\nYou should write self-contained code starting with:\n```\nfrom datetime import datetime\nimport matplotlib.pyplot as plt\nimport pandas as pd\ndef task_func(data):\n```"
+        "content": "This function plots a bar chart of monthly data values for a single year, with 'month' on the x-axis and 'value' on the y-axis.\nThe function should output with:\n    Axes object: A matplotlib.axes.Axes object representing the plot, with the title formatted as 'Monthly Data for yyyy', x label as 'Month', and y label as 'Value'.\nYou should write self-contained code starting with:\n```\nfrom datetime import datetime\nimport matplotlib.pyplot as plt\nimport pandas as pd\ndef task_func(data):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

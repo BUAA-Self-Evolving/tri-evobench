@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Convert the 'date' column of a DataFrame to ordinal, perform KMeans clustering on 'date' and 'value' columns, and plot the clusters. Required names: x: 'Date (ordinal)' ylabel: 'Value' title: 'KMeans Clustering of Value vs Date'\nThe function should raise the exception for: ValueError: If the DataFrame is empty or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object containing the scatter plot of the clusters.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nfrom sklearn.cluster import KMeans\nimport matplotlib.pyplot as plt\ndef task_func(df, n_clusters=3, random_state=0):\n```"
+        "content": "Convert the 'date' column of a DataFrame to ordinal, perform KMeans clustering on 'date' and 'value' columns, and plot the clusters. Required names: x: 'Date (ordinal)' ylabel: 'Value' title: 'KMeans Clustering of Value vs Date'\nThe function should raise the exception for: ValueError: If the DataFrame is empty or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object containing the scatter plot of the clusters.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nfrom sklearn.cluster import KMeans\nimport matplotlib.pyplot as plt\ndef task_func(df, n_clusters=3, random_state=0):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

@@ -9,14 +9,14 @@
     "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f"
   },
   "inputs": {
-    "raw_model_output": "A complete self-contained Python answer containing task_func. Markdown fences are tolerated by the native sanitizer; a bare function body is not guaranteed to work.",
+    "raw_model_output": "Complete self-contained Python source containing task_func, supplied directly through the final response. Markdown fences may be sanitized; prose or unextractable source is an invalid submission scored fail/0.",
     "source_item": "source_item.json",
     "code_prompt": "code_prompt.txt",
     "tests": "tests.py",
     "reference_answer": "reference_answer.txt (function body; assemble with code_prompt for a known-correct raw output)"
   },
   "procedure": [
-    "Remove think tags and sanitize the raw model output using the native task_func entry point.",
+    "Sanitize Python source directly from the final response using the native task_func entry point; invalid or unextractable submissions return fail/0.",
     "Construct solution = code_prompt + newline + four-space-indented pass + newline + sanitized output.",
     "Run the complete tests.py suite in a temporary subprocess with the declared native resource limits.",
     "Return pass, fail, or timeout and a binary score; score is 1 if and only if result is pass."

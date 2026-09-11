@@ -89,6 +89,16 @@ def test_report_discovery_rejects_condition_mismatch_evaluator_error_and_null_sc
     _write_json(Path(row["output"]) / "run/sub/report.json", _report("reset", score=None))
     assert report_for(row) == (None, None)
 
+    qualification = _report("reset")
+    qualification["run_configuration"] = {"budget_profile": "qualification"}
+    _write_json(Path(row["output"]) / "run/sub/report.json", qualification)
+    assert report_for(row) == (None, None)
+
+    invalid_passed = _report("reset")
+    invalid_passed["turns"][0]["passed"] = None
+    _write_json(Path(row["output"]) / "run/sub/report.json", invalid_passed)
+    assert report_for(row) == (None, None)
+
     _write_json(Path(row["output"]) / "run/sub/report.json", _report("reset"))
     path, report = report_for(row)
     assert path is not None

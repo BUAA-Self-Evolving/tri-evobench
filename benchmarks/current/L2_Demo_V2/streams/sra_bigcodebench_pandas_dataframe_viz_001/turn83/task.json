@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Remove rows from a dataframe based on column values and generate random scatter plots.\nThe function should output with:\n    pd.DataFrame: The DataFrame after removal of specified rows.\n    list: A list containing matplotlib Axes objects of the generated plots.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import sample\n# Constants for column names to use in plots\nCOLUMNS = ['A', 'B', 'C', 'D', 'E']\ndef task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):\n```"
+        "content": "Remove rows from a dataframe based on column values and generate random scatter plots.\nThe function should output with:\n    pd.DataFrame: The DataFrame after removal of specified rows.\n    list: A list containing matplotlib Axes objects of the generated plots.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import sample\n# Constants for column names to use in plots\nCOLUMNS = ['A', 'B', 'C', 'D', 'E']\ndef task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

@@ -17,9 +17,9 @@
     "contract": "evaluation_assets/verifier_contract.json",
     "native_upstream_entrypoint": "sragents.evaluate.datasets.bigcodebench.evaluate",
     "interface": "evaluate(raw_model_output, materialized_item) -> {extracted_answer, correct, result, details}",
-    "adapter_contract": "Sanitize/extract raw model output; concatenate native code_prompt, a function-body pass, and extracted code as in the pinned SRA evaluator; execute native tests with sandboxed untrusted_check; correct iff status == PASS.",
+    "adapter_contract": "Sanitize/extract Python source directly from the final response; concatenate native code_prompt, a function-body pass, and extracted code as in the pinned SRA evaluator; execute native tests with sandboxed untrusted_check; correct iff status == PASS. Invalid source returns a stable task failure.",
     "solution_entry_point": "task_func",
-    "inputs": ["raw_model_output"],
+    "inputs": ["raw_model_output containing Python source"],
     "assets": [
       "evaluation_assets/verifier_contract.json",
       "evaluation_assets/source_item.json",
@@ -68,6 +68,6 @@
     "allowed_categories": ["pass", "fail", "timeout"],
     "exposed_fields": ["normalized_result"],
     "hide": ["extracted_answer", "details", "tests", "reference_answer", "gold_skill_ids"],
-    "note": "SRA does not define multi-Interaction disclosure. The project wrapper exposes only the native result category and withholds gold-bearing content."
+    "note": "SRA does not define multi-Interaction disclosure. The project wrapper exposes only the native result category and withholds gold-bearing content. Invalid or unextractable final-response source is a stable fail/0 submission, not an evaluator error."
   }
 }

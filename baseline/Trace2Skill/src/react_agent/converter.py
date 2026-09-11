@@ -320,10 +320,6 @@ class ReActConverter:
         Returns:
             ParseResult indicating action, task completion, or format error
         """
-        # Check for task completion signal
-        if TASK_COMPLETE_SIGNAL in response:
-            return ParseResult(type=ParseResultType.TASK_COMPLETE)
-
         # DeepSeek and some OpenAI-compatible gateways may emit their native
         # DSML tool-call envelope instead of the text Action format requested
         # by the prompt. The control-token bytes can be rendered as replacement
@@ -368,7 +364,10 @@ class ReActConverter:
                 ),
             )
 
-        # If there's no tool Action block, treat as a direct final answer.
+        # If there's no tool Action block, treat as a direct final answer.  This
+        # includes a bare TASK_COMPLETE signal, but deliberately happens after
+        # action-envelope parsing: a response that contains both an executable
+        # Action and ACTION: TASK_COMPLETE must run the Action first.
         # This keeps the agent usable for tasks that don't require tools and
         # matches the expectations in tests (a plain answer ends the run).
         if self.ACTION_MARKER not in response:

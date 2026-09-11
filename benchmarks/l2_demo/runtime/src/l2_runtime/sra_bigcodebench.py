@@ -27,7 +27,6 @@ _l2_result = unittest.TextTestRunner(verbosity=1).run(_l2_suite)
 raise SystemExit(0 if _l2_result.wasSuccessful() else 1)
 '''
 
-
 class SraBigCodeBenchVerifier:
     def __init__(
         self,
@@ -54,7 +53,12 @@ class SraBigCodeBenchVerifier:
         item = json.loads((assets / "source_item.json").read_text())
         eval_data = item["eval_data"]
         entrypoint = eval_data["entry_point"]
-        extracted = sanitize(raw_model_output, entrypoint=entrypoint)
+        try:
+            extracted = sanitize(raw_model_output, entrypoint=entrypoint)
+        except (SyntaxError, ValueError, TypeError) as exc:
+            return _invalid_submission(str(exc))
+        if not extracted.strip():
+            return _invalid_submission("final response did not contain extractable Python source")
         solution = eval_data["code_prompt"] + "\n    pass\n" + extracted
         test_code = (assets / "tests.py").read_text()
         script = solution + "\n" + test_code + "\n" + _TEST_HARNESS
@@ -98,6 +102,14 @@ class SraBigCodeBenchVerifier:
                 "stderr_tail": _tail(process.stderr),
             },
         )
+
+
+def _invalid_submission(error: str) -> VerifyResult:
+    return VerifyResult(
+        category="fail",
+        score=0.0,
+        details={"reason": "invalid_submission", "error": error},
+    )
 
 
 def _apply_resource_limits(limits: dict[str, int]) -> None:

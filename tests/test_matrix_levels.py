@@ -63,8 +63,16 @@ def test_cli_level_selects_before_gate_without_paid_calls(tmp_path):
         path = root / f"l2/reset/{agent}/s01/run/stream/report.json"
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps({"stream_id": "l2-0", "condition": "reset", "turns": [
-            {"turn_id": f"t{n}", "final_score": 0, "condition": "reset"} for n in range(10)
-        ]}))
+                {
+                    "turn_id": f"t{n}",
+                    "final_score": 0,
+                    "turn_score": 0,
+                    "passed": False,
+                    "evaluation_status": "failed",
+                    "condition": "reset",
+                }
+                for n in range(10)
+            ]}))
     import os
 
     result = subprocess.run([

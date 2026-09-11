@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Plot values from a list of dictionaries based on specified keys and return the plot as a Matplotlib Axes object. >>> ax = task_func(data, keys=['x', 'y']) >>> type(ax) <class 'matplotlib.axes._axes.Axes'>\nThe function should output with:\n    Matplotlib Axes object: The plot showing the values of specified keys from the input list of dictionaries.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(d, keys=['x', 'y', 'z']):\n```"
+        "content": "Plot values from a list of dictionaries based on specified keys and return the plot as a Matplotlib Axes object. >>> ax = task_func(data, keys=['x', 'y']) >>> type(ax) <class 'matplotlib.axes._axes.Axes'>\nThe function should output with:\n    Matplotlib Axes object: The plot showing the values of specified keys from the input list of dictionaries.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(d, keys=['x', 'y', 'z']):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

@@ -47,7 +47,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "This function takes a pandas DataFrame and standardizes its features using sklearn's StandardScaler, which standardizes features by removing the mean and scaling to unit variance. After standardization, it draws a histogram for each feature with 20 bins.\nThe function should output with:\n    standardized_data (pd.DataFrame): The standardized data.\n    axes_list (list): A list of matplotlib Axes objects representing the histograms for each feature.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import StandardScaler\ndef task_func(data: pd.DataFrame) -> (pd.DataFrame, list):\n```"
+        "content": "This function takes a pandas DataFrame and standardizes its features using sklearn's StandardScaler, which standardizes features by removing the mean and scaling to unit variance. After standardization, it draws a histogram for each feature with 20 bins.\nThe function should output with:\n    standardized_data (pd.DataFrame): The standardized data.\n    axes_list (list): A list of matplotlib Axes objects representing the histograms for each feature.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import StandardScaler\ndef task_func(data: pd.DataFrame) -> (pd.DataFrame, list):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

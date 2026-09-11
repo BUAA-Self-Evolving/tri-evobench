@@ -12,7 +12,7 @@
     ]
   },
   "inputs": {
-    "raw_model_output": "A strict tau2-telecom-trajectory-0.1 JSON object, optionally enclosed in a single JSON Markdown fence.",
+    "raw_model_output": "A strict tau2-telecom-trajectory-0.1 JSON object. Markdown fences, prose outside the JSON object, missing fields, extra fields, and undeclared tool calls are invalid trajectories scored fail/0.",
     "source_item": "source_item.json",
     "known_correct_response": "known_correct_response.json"
   },
@@ -27,6 +27,7 @@
       }
     ],
     "additional_fields": false,
+    "markdown_fences_allowed": false,
     "maximum_tool_calls": 16
   },
   "procedure": [

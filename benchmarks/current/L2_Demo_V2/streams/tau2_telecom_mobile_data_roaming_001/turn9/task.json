@@ -46,7 +46,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Resolve this Telecom support ticket by returning a JSON trajectory with schema_version `tau2-telecom-trajectory-0.1`, an assistant_message, and the user/assistant tool_calls needed to satisfy the customer. Ticket:\n\nThe user is experiencing issues with their mobile data. They are unable to use their phone to browse the internet, and the status bar shows 'No Service'. Customer name: John Smith, phone number: 555-123-2002, current location: abroad in France. They will consider the issue resolved when speed test returns excellent internet speed. They will not change their mobile data plan but they will refuel 2.0 GB of data if necessary."
+        "content": "Resolve this Telecom support ticket by returning a JSON trajectory with schema_version `tau2-telecom-trajectory-0.1`, an assistant_message, and the user/assistant tool_calls needed to satisfy the customer. Ticket:\n\nThe user is experiencing issues with their mobile data. They are unable to use their phone to browse the internet, and the status bar shows 'No Service'. Customer name: John Smith, phone number: 555-123-2002, current location: abroad in France. They will consider the issue resolved when speed test returns excellent internet speed. They will not change their mobile data plan but they will refuel 2.0 GB of data if necessary. Return one strict JSON object only; Markdown fences, Thought/Action protocol text, and prose outside the JSON object are invalid."
       }
     ],
     "available_tools": [

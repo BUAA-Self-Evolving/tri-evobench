@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import ModuleType
 
 from baseline.adapters.skillopt.bridge import (
     SkillOptBridge,
@@ -12,6 +14,7 @@ from baseline.adapters.skillopt.bridge import (
     _extract_tool_use_calls,
     _looks_like_l1_protocol_task,
     _looks_like_workspace_task,
+    _workspace_contract_paths,
     _trajectory_results,
 )
 from trievo_bench.baselines.manifest import load_manifest
@@ -153,6 +156,116 @@ class SkillOptBaselineContractTest(unittest.TestCase):
             _extract_dsml_tool_calls(text),
             [{"name": "Write", "arguments": {"file_path": "/workspace/a.json", "content": '{"ok": true}'}}],
         )
+
+    def test_l2_workspace_artifact_contract_names_output_path(self) -> None:
+        bridge = SkillOptBridge()
+        bridge.config = {"env": "generic"}
+        bridge.turn_metadata = {
+            "source_format": "l2_taskstream_task_json",
+            "submission_contract": {"required_paths": ["/workspace/output"]},
+        }
+        system, user = bridge._build_prompt(
+            "# skill",
+            "Create a workspace artifact with the answer.",
+            {"history": [], "sandbox": {}},
+        )
+        self.assertIn("/workspace/output", system)
+        self.assertIn("parseable action or tool call", system)
+        self.assertIn("Create a workspace artifact", user)
+        self.assertEqual(
+            _workspace_contract_paths(
+                "Create a workspace artifact with the answer.",
+                {
+                    "source_format": "l2_taskstream_task_json",
+                    "submission_contract": {"required_paths": ["/workspace/output"]},
+                },
+            ),
+            ["/workspace/output"],
+        )
+
+    def test_csv_submission_contract_does_not_add_output_path(self) -> None:
+        metadata = {
+            "source_format": "l2_taskstream_task_json",
+            "submission_contract": {
+                "mode": "workspace_artifact",
+                "required_paths": ["/workspace/episodes/E001/submission.csv"],
+            },
+        }
+        paths = _workspace_contract_paths("Create the workspace artifact submission.", metadata)
+        self.assertEqual(paths, ["/workspace/episodes/E001/submission.csv"])
+        self.assertNotIn("/workspace/output", paths)
+
+    def test_skillsbench_output_contract_adds_output_path(self) -> None:
+        self.assertEqual(
+            _workspace_contract_paths(
+                "SkillsBench data-to-d3 browser artifact must be saved in the workspace output directory.",
+                {"source_format": "l2_taskstream_task_json"},
+            ),
+            ["/workspace/output"],
+        )
+        self.assertEqual(
+            _workspace_contract_paths(
+                "Create the artifact.",
+                {
+                    "source_format": "l2_taskstream_task_json",
+                    "submission_contract": {"required_paths": ["agent_workspace/output"]},
+                },
+            ),
+            ["/workspace/output"],
+        )
+
+    def test_workspace_artifact_without_parseable_action_fails_closed(self) -> None:
+        skillopt_module = ModuleType("skillopt")
+        model_module = ModuleType("skillopt.model")
+        calls: list[str] = []
+
+        def fake_chat_target(**kwargs):
+            calls.append(str(kwargs.get("stage")))
+            return "I saved the required artifact in the workspace.", {"api_calls": 1}
+
+        model_module.chat_target = fake_chat_target
+        model_module.chat_target_messages = lambda **kwargs: ("", {})
+        model_module.is_target_exec_backend = lambda: False
+        previous_skillopt = sys.modules.get("skillopt")
+        previous_model = sys.modules.get("skillopt.model")
+        sys.modules["skillopt"] = skillopt_module
+        sys.modules["skillopt.model"] = model_module
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                bridge = SkillOptBridge()
+                bridge.workspace = root / "workspace"
+                bridge.workspace.mkdir()
+                bridge.skill_file = root / "skill.md"
+                bridge.skill_file.write_text("# skill\n", encoding="utf-8")
+                bridge.turn_id = "turn"
+                bridge.config = {"env": "generic", "max_completion_tokens": 1024}
+                bridge.options = {"retries": 0}
+                bridge.turn_metadata = {
+                    "source_format": "l2_taskstream_task_json",
+                    "submission_contract": {"required_paths": ["/workspace/output"]},
+                }
+                result = bridge.interact({
+                    "turn_id": "turn",
+                    "request": "Create a workspace artifact with the answer.",
+                    "history": [],
+                    "sandbox": {},
+                })
+        finally:
+            if previous_skillopt is None:
+                sys.modules.pop("skillopt", None)
+            else:
+                sys.modules["skillopt"] = previous_skillopt
+            if previous_model is None:
+                sys.modules.pop("skillopt.model", None)
+            else:
+                sys.modules["skillopt.model"] = previous_model
+
+        self.assertEqual(calls, ["target", "target_format_retry"])
+        self.assertFalse(result["actions_are_executed"])
+        self.assertEqual(result["actions"][0]["op"], "parse_error")
+        self.assertIn("no parseable action or tool call", result["raw"]["action_error"])
+        self.assertEqual(result["events"][-1]["type"], "action.failed")
 
 
 if __name__ == "__main__":

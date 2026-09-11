@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Draw a histogram of the last column of the DataFrame and return the plot.\nThe function should raise the exception for: ValueError: If the input is not a DataFrame, or if the DataFrame is empty.\nThe function should output with:\n    Axes: A Matplotlib Axes object representing the histogram of the last column. The histogram includes:\n    Title: 'Histogram of ' followed by the name of the last column.\n    X-axis label: 'Value'\n    Y-axis label: 'Frequency'\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df, bins=20):\n```"
+        "content": "Draw a histogram of the last column of the DataFrame and return the plot.\nThe function should raise the exception for: ValueError: If the input is not a DataFrame, or if the DataFrame is empty.\nThe function should output with:\n    Axes: A Matplotlib Axes object representing the histogram of the last column. The histogram includes:\n    Title: 'Histogram of ' followed by the name of the last column.\n    X-axis label: 'Value'\n    Y-axis label: 'Frequency'\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df, bins=20):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

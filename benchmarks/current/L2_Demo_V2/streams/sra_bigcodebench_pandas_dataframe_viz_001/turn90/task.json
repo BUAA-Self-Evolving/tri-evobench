@@ -47,7 +47,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Calculate the Z-values of a 2D data matrix, calculate the mean value of each row and then visualize the correlation matrix of the Z-values with a heatmap.\nThe function should output with:\n    tuple: A tuple containing:\n    pandas.DataFrame: A DataFrame with columns 'Feature 1', 'Feature 2', ..., 'Feature n' containing the Z-scores (per matrix row).\n    There is also an additional column 'Mean' the mean of z-score per row.\n    matplotlib.axes.Axes: The Axes object of the plotted heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nfrom scipy.stats import zscore\ndef task_func(data_matrix):\n```"
+        "content": "Calculate the Z-values of a 2D data matrix, calculate the mean value of each row and then visualize the correlation matrix of the Z-values with a heatmap.\nThe function should output with:\n    tuple: A tuple containing:\n    pandas.DataFrame: A DataFrame with columns 'Feature 1', 'Feature 2', ..., 'Feature n' containing the Z-scores (per matrix row).\n    There is also an additional column 'Mean' the mean of z-score per row.\n    matplotlib.axes.Axes: The Axes object of the plotted heatmap.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\nfrom scipy.stats import zscore\ndef task_func(data_matrix):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

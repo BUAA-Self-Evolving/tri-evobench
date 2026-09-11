@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from l2_runtime.tau2_telecom import Tau2TelecomVerifier
+from l2_runtime.tau2_telecom import RESPONSE_SCHEMA, Tau2TelecomVerifier
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -77,6 +77,35 @@ class Tau2TelecomVerifierTests(unittest.TestCase):
 
         self.assertEqual((result.category, result.score), ("fail", 0.0))
         self.assertEqual(result.details["reason"], "invalid_trajectory")
+
+    def test_strict_json_carrier_rejects_markdown_fences(self):
+        fenced = (
+            "```json\n"
+            + (STREAM_ROOT / "episodes/E001/evaluation_assets/known_correct_response.json").read_text()
+            + "\n```"
+        )
+
+        result = self.verifier.verify(fenced, STREAM_ROOT / "episodes" / "E001")
+
+        self.assertEqual((result.category, result.score), ("fail", 0.0))
+        self.assertEqual(result.details["reason"], "invalid_trajectory")
+
+    def test_response_schema_is_strict_and_matches_runtime_contract(self):
+        self.assertFalse(RESPONSE_SCHEMA["additionalProperties"])
+        self.assertEqual(
+            RESPONSE_SCHEMA["properties"]["schema_version"]["const"],
+            "tau2-telecom-trajectory-0.1",
+        )
+        self.assertEqual(
+            RESPONSE_SCHEMA["properties"]["tool_calls"]["maxItems"],
+            16,
+        )
+        call_schema = RESPONSE_SCHEMA["properties"]["tool_calls"]["items"]
+        self.assertFalse(call_schema["additionalProperties"])
+        self.assertEqual(
+            set(call_schema["properties"]["requestor"]["enum"]),
+            {"user", "assistant"},
+        )
 
 
 if __name__ == "__main__":

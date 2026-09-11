@@ -772,8 +772,7 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
             return f"{self.volume_name}:{target}{':ro' if read_only else ''}"
 
     def run(command, **kwargs):
-        captured["command"] = command
-        captured["kwargs"] = kwargs
+        captured.setdefault("calls", []).append((command, kwargs))
         result = {
             "schema_version": "l2_native_verifier_result/1.0",
             "verifier_id": "native-test",
@@ -802,8 +801,9 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
         reply=BaselineReply(text="answer"),
     )
 
-    command = captured["command"]
+    command, verifier_kwargs = captured["calls"][0]
     assert result["category"] == "pass"
+    assert verifier_kwargs["input"]
     assert "--network" in command
     assert command[command.index("--network") + 1] == "none"
     assert "package-volume:/opt/l2_demo:ro" in command
