@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import threading
 import types
 import unittest
 import zipfile
@@ -395,6 +396,163 @@ class BaselineRuntimeTest(unittest.TestCase):
             "reason": "condition:frozen",
         }])
         self.assertTrue(bridge._turn_evolved)
+
+    def test_hermes_evolution_waits_for_full_review_worker_exit(self) -> None:
+        request_done = threading.Event()
+        request_done.set()
+        allow_worker_exit = threading.Event()
+        join_started = threading.Event()
+
+        class ReviewRun:
+            outcome = {"api_calls": 1}
+
+            def __init__(self) -> None:
+                self.request_done = request_done
+
+            def cancel(self) -> None:
+                raise AssertionError("completed review must not be cancelled")
+
+        class ReviewWorker:
+            def join(self, timeout=None) -> None:
+                join_started.set()
+                allow_worker_exit.wait(timeout)
+
+            def is_alive(self) -> bool:
+                return not allow_worker_exit.is_set()
+
+        bridge = HermesBridge()
+        bridge._state = SimpleNamespace(agent=SimpleNamespace(), history=[])
+        bridge._turn_id = "turn-1"
+        bridge._turn_evolved = False
+        bridge._policy = "turn_boundary"
+        bridge._review_timeout = 10
+        bridge._background_review_usage = lambda _agent: {}
+        bridge._spawn_turn_boundary_review = lambda *_args, **_kwargs: (
+            ReviewRun(),
+            ReviewWorker(),
+        )
+        result = {}
+
+        caller = threading.Thread(
+            target=lambda: result.update(bridge.evolve({
+                "turn_id": "turn-1",
+                "trajectory": [{"response": "done"}],
+                "feedback": [{"score": 1.0}],
+                "update_enabled": True,
+            })),
+            daemon=True,
+        )
+        caller.start()
+
+        self.assertTrue(join_started.wait(1))
+        self.assertTrue(caller.is_alive())
+        self.assertFalse(bridge._turn_evolved)
+
+        allow_worker_exit.set()
+        caller.join(timeout=1)
+
+        self.assertFalse(caller.is_alive())
+        self.assertTrue(result["completed"])
+        self.assertTrue(bridge._turn_evolved)
+
+    def test_hermes_explicit_review_returns_exact_worker_handle(self) -> None:
+        review_run = SimpleNamespace(request_done=threading.Event())
+        worker_finished = threading.Event()
+        seen = {}
+
+        def prepare(agent):
+            seen["prepared_agent"] = agent
+            return review_run
+
+        def finish(agent, run):
+            seen["finished"] = (agent, run)
+            run.request_done.set()
+
+        def spawn(agent, messages, **kwargs):
+            seen["spawn"] = (agent, messages, kwargs)
+
+            def target():
+                finish(agent, kwargs["review_run"])
+                worker_finished.set()
+
+            return target, "prompt"
+
+        background_review = types.ModuleType("agent.background_review")
+        background_review.prepare_background_review_run = prepare
+        background_review.finish_background_review_run = finish
+        background_review.spawn_background_review_thread = spawn
+        agent_package = types.ModuleType("agent")
+        agent_package.__path__ = []
+        agent_package.background_review = background_review
+        thread_context = types.ModuleType("tools.thread_context")
+        thread_context.propagate_context_to_thread = lambda target: target
+        tools_package = types.ModuleType("tools")
+        tools_package.__path__ = []
+        tools_package.thread_context = thread_context
+        parent_agent = SimpleNamespace()
+
+        with patch.dict(sys.modules, {
+            "agent": agent_package,
+            "agent.background_review": background_review,
+            "tools": tools_package,
+            "tools.thread_context": thread_context,
+        }):
+            returned_run, worker = HermesBridge._spawn_turn_boundary_review(
+                parent_agent,
+                messages_snapshot=[{"role": "user", "content": "task"}],
+                focus="learn from feedback",
+            )
+            worker.join(timeout=1)
+
+        self.assertIs(returned_run, review_run)
+        self.assertFalse(worker.is_alive())
+        self.assertTrue(worker_finished.is_set())
+        self.assertIs(seen["prepared_agent"], parent_agent)
+        self.assertEqual(seen["spawn"][1], [{"role": "user", "content": "task"}])
+        self.assertEqual(seen["spawn"][2]["focus"], "learn from feedback")
+        self.assertIs(seen["spawn"][2]["review_run"], review_run)
+
+    def test_hermes_evolution_timeout_cannot_release_a_live_writer(self) -> None:
+        cancelled = []
+        request_done = threading.Event()
+        request_done.set()
+        review_run = SimpleNamespace(
+            request_done=request_done,
+            cancel=lambda: cancelled.append(True),
+        )
+
+        class LiveWorker:
+            def join(self, timeout=None) -> None:
+                pass
+
+            def is_alive(self) -> bool:
+                return True
+
+        bridge = HermesBridge()
+        bridge._state = SimpleNamespace(agent=SimpleNamespace(), history=[])
+        bridge._turn_id = "turn-1"
+        bridge._turn_evolved = False
+        bridge._policy = "turn_boundary"
+        bridge._review_timeout = 0
+        bridge._background_review_usage = lambda _agent: {}
+        bridge._spawn_turn_boundary_review = lambda *_args, **_kwargs: (
+            review_run,
+            LiveWorker(),
+        )
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "remained live after evolution timeout",
+        ):
+            bridge.evolve({
+                "turn_id": "turn-1",
+                "trajectory": [{"response": "done"}],
+                "feedback": [{"score": 1.0}],
+                "update_enabled": True,
+            })
+
+        self.assertEqual(cancelled, [True])
+        self.assertFalse(bridge._turn_evolved)
 
     def test_hermes_l1_protocol_keeps_only_visible_text_and_normalizes_fact_aliases(self) -> None:
         visible, state_update, calls, events, actions = _extract_l1_protocol(
