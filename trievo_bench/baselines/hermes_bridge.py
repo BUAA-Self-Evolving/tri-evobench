@@ -5,6 +5,7 @@ import functools
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 from pathlib import Path
@@ -285,21 +286,36 @@ class HermesBridge:
                 self._turn_limits.get("evolution_timeout_seconds", self._review_timeout)
             )
             focus = self._build_review_focus(params)
-            agent._spawn_background_review(
+            review_run, review_thread = self._spawn_turn_boundary_review(
+                agent,
                 messages_snapshot=list(state.history),
-                review_memory=True,
-                review_skills=True,
                 focus=focus,
             )
-            review_run = getattr(agent, "_background_review_run", None)
-            if review_run is None:
-                raise RuntimeError("Hermes did not create a background review run")
-            if not review_run.request_done.wait(timeout=evolution_timeout):
+            # Hermes' request_done event is deliberately published as soon as
+            # the provider-capable phase returns.  The worker can still be in
+            # action summarisation or teardown at that point, and those paths
+            # may finish persistent skill writes after the next Turn starts.
+            # The benchmark's evolution barrier is stronger: no foreground
+            # interaction may begin until the whole review worker has exited.
+            review_thread.join(timeout=evolution_timeout)
+            if review_thread.is_alive():
                 try:
-                    review_run.cancel()
+                    review_agent = review_run.cancel()
+                    if review_agent is not None:
+                        from agent.background_review import _interrupt_background_review
+
+                        _interrupt_background_review(review_agent)
                 except Exception:
                     pass
                 review_run.request_done.wait(timeout=5)
+                review_thread.join(timeout=5)
+                if review_thread.is_alive():
+                    # Returning would authorize the next foreground Turn while
+                    # this writer is still live. Fail closed so the process
+                    # runtime tears down the adapter/container instead.
+                    raise RuntimeError(
+                        "Hermes background review remained live after evolution timeout"
+                    )
                 after_usage = self._background_review_usage(agent)
                 self._turn_evolved = True
                 return {
@@ -351,6 +367,51 @@ class HermesBridge:
             "events": events,
             "usage": _subtract_usage(after_usage, before_usage),
         }
+
+    @staticmethod
+    def _spawn_turn_boundary_review(
+        agent: Any,
+        *,
+        messages_snapshot: list[dict[str, Any]],
+        focus: str,
+    ) -> tuple[Any, threading.Thread]:
+        """Start one explicit review and return its exact worker handle.
+
+        Hermes' public helper intentionally returns ``None`` because ordinary
+        interactive turns never join background reviews.  L2 turn-boundary
+        evolution has a different contract, so build the same upstream target
+        through Hermes' existing primitives and retain the thread handle for
+        the barrier instead of guessing from a request-phase event.
+        """
+        from agent.background_review import (
+            finish_background_review_run,
+            prepare_background_review_run,
+            spawn_background_review_thread,
+        )
+        from tools.thread_context import propagate_context_to_thread
+
+        review_run = prepare_background_review_run(agent)
+        if review_run is None:
+            raise RuntimeError("Hermes did not create a background review run")
+        try:
+            target, _prompt = spawn_background_review_thread(
+                agent,
+                messages_snapshot,
+                review_memory=True,
+                review_skills=True,
+                focus=focus,
+                review_run=review_run,
+            )
+            worker = threading.Thread(
+                target=propagate_context_to_thread(target),
+                daemon=True,
+                name="bg-review",
+            )
+            worker.start()
+        except Exception:
+            finish_background_review_run(agent, review_run)
+            raise
+        return review_run, worker
 
     def end_flow(self, params: dict[str, Any]) -> dict[str, Any]:
         self._close_current_session()
