@@ -39,7 +39,12 @@ class FileArtifactVerifier:
         native_test = assets / "native_test_outputs.py"
         started = time.monotonic()
 
-        with tempfile.TemporaryDirectory(prefix="l2-file-verifier-") as temp:
+        # Chromium may finish tearing down its profile after pytest exits.  This
+        # verifier runs in a disposable --rm container, so cleanup residue must not
+        # overwrite the already completed semantic result.
+        with tempfile.TemporaryDirectory(
+            prefix="l2-file-verifier-", ignore_cleanup_errors=True
+        ) as temp:
             temp_dir = Path(temp)
             adapted_test = temp_dir / "test_outputs.py"
             test_text = native_test.read_text()
