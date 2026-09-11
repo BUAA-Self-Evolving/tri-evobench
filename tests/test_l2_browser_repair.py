@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 
 MODULE_PATH = Path(__file__).parents[1] / "tools" / "repair_l2_browser_oracles.py"
@@ -31,6 +33,35 @@ class L2BrowserRepairTest(unittest.TestCase):
 
         self.assertEqual(json.loads(receipt.read_text())["repair_version"], REPAIR_VERSION)
         self.assertEqual(repair(package, check=True)["repair_version"], REPAIR_VERSION)
+
+    def test_materialized_native_timeout_is_a_scored_task_failure(self) -> None:
+        assets = (
+            Path(__file__).parents[1]
+            / "benchmarks/current/L2_Demo_V2/streams/skillsbench_data_to_d3_001"
+            / "turn1/evaluation_assets"
+        )
+        previous_native = sys.modules.pop("native_semantics", None)
+        sys.path.insert(0, str(assets))
+        try:
+            spec = importlib.util.spec_from_file_location(
+                "materialized_skillsbench_verifier_cli", assets / "verifier_cli.py"
+            )
+            assert spec is not None and spec.loader is not None
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            result = module.normalize_result(
+                "browser-verifier",
+                SimpleNamespace(category="timeout", score=0.0, details={"duration_ms": 300000}),
+                {"evaluation": {"evaluation_profile": "general"}},
+            )
+        finally:
+            sys.path.pop(0)
+            sys.modules.pop("native_semantics", None)
+            if previous_native is not None:
+                sys.modules["native_semantics"] = previous_native
+        self.assertEqual(result["status"], "fail")
+        self.assertEqual(result["score"], 0.0)
+        self.assertIsNone(result["error"])
 
     def _package(self, root: Path) -> None:
         oracle = repair_tool.ORACLE_REPLACEMENTS[0][0]

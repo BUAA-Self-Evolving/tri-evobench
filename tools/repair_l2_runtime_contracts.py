@@ -13,7 +13,7 @@ import json
 from pathlib import Path
 
 
-REPAIR_VERSION = "l2-runtime-seven-case-repair/1.2"
+REPAIR_VERSION = "l2-runtime-seven-case-repair/1.3"
 SRA_STREAM = "sra_bigcodebench_pandas_dataframe_viz_001"
 TAU2_STREAM = "tau2_telecom_mobile_data_roaming_001"
 SKILLSBENCH_STREAM = "skillsbench_data_to_d3_001"
@@ -79,6 +79,16 @@ BROWSER_TMPDIR_NEW = '''# Chromium may finish tearing down its profile after pyt
         with tempfile.TemporaryDirectory(
             prefix="l2-file-verifier-", ignore_cleanup_errors=True
         ) as temp:'''
+NATIVE_TIMEOUT_OLD = '''    if category == "timeout":
+        return error_result(verifier_id, "native verifier timed out", result.details)
+    if category not in {"pass", "fail"}:
+'''
+NATIVE_TIMEOUT_NEW = '''    # A NativeVerifier timeout is a completed semantic outcome with score 0.
+    # Docker transport timeouts remain evaluator errors in the outer runtime.
+    if category == "timeout":
+        category = "fail"
+    if category not in {"pass", "fail"}:
+'''
 
 
 def _replace_once(path: Path, old: str, new: str, *, check: bool) -> bool:
@@ -121,6 +131,7 @@ def _managed_paths(
     sra_turns: list[Path],
     tau2_turns: list[Path],
     browser_turns: dict[str, list[Path]],
+    all_turns: dict[str, list[Path]],
 ) -> list[Path]:
     paths: list[Path] = []
     for turn in sra_turns:
@@ -134,6 +145,9 @@ def _managed_paths(
     for turns in browser_turns.values():
         for turn in turns:
             paths.append(turn / "evaluation_assets" / "native_semantics.py")
+    for turns in all_turns.values():
+        for turn in turns:
+            paths.append(turn / "evaluation_assets" / "verifier_cli.py")
     paths.append(package / "streams" / SKILLSBENCH_STREAM / "stream.json")
     return paths
 
@@ -155,6 +169,12 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
     sra_turns = _turn_dirs(package, SRA_STREAM)
     tau2_turns = _turn_dirs(package, TAU2_STREAM)
     browser_turns = {stream_id: _turn_dirs(package, stream_id) for stream_id in BROWSER_STREAMS}
+    all_turns = {
+        str(stream["stream_id"]): _turn_dirs(package, str(stream["stream_id"]))
+        for stream in manifest.get("streams", [])
+    }
+    if not all_turns:
+        raise ValueError("package manifest does not declare streams")
     for turn in sra_turns:
         assets = turn / "evaluation_assets"
         for path, old, new in (
@@ -185,6 +205,12 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
             if _replace_once(native, BROWSER_TMPDIR_OLD, BROWSER_TMPDIR_NEW, check=check):
                 changes.append(str(native.relative_to(package)))
 
+    for turns in all_turns.values():
+        for turn in turns:
+            verifier_cli = turn / "evaluation_assets" / "verifier_cli.py"
+            if _replace_once(verifier_cli, NATIVE_TIMEOUT_OLD, NATIVE_TIMEOUT_NEW, check=check):
+                changes.append(str(verifier_cli.relative_to(package)))
+
     skillsbench_manifest = package / "streams" / SKILLSBENCH_STREAM / "stream.json"
     stream = json.loads(skillsbench_manifest.read_text(encoding="utf-8"))
     requirements = stream.get("execution_requirements", {})
@@ -197,7 +223,7 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
             )
 
     receipt = package / "runtime-repair.json"
-    managed_paths = _managed_paths(package, sra_turns, tau2_turns, browser_turns)
+    managed_paths = _managed_paths(package, sra_turns, tau2_turns, browser_turns, all_turns)
     managed_files = _managed_hashes(package, managed_paths)
     package_manifest_sha256 = hashlib.sha256((package / "manifest.json").read_bytes()).hexdigest()
     if check:
