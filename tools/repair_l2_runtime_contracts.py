@@ -13,10 +13,12 @@ import json
 from pathlib import Path
 
 
-REPAIR_VERSION = "l2-runtime-seven-case-repair/1.1"
+REPAIR_VERSION = "l2-runtime-seven-case-repair/1.2"
 SRA_STREAM = "sra_bigcodebench_pandas_dataframe_viz_001"
 TAU2_STREAM = "tau2_telecom_mobile_data_roaming_001"
 SKILLSBENCH_STREAM = "skillsbench_data_to_d3_001"
+SKILLLEARN_STREAM = "skilllearn_stock_data_visualization_001"
+BROWSER_STREAMS = (SKILLSBENCH_STREAM, SKILLLEARN_STREAM)
 
 SRA_SANITIZER_OLD = """    longest_line_pair = (0, 0)
     longest_so_far = 0
@@ -70,6 +72,13 @@ TAU2_FINAL_INSTRUCTION = (
     " Return one strict JSON object only; Markdown fences, Thought/Action protocol text,"
     " and prose outside the JSON object are invalid."
 )
+BROWSER_TMPDIR_OLD = 'with tempfile.TemporaryDirectory(prefix="l2-file-verifier-") as temp:'
+BROWSER_TMPDIR_NEW = '''# Chromium may finish tearing down its profile after pytest exits.  This
+        # verifier runs in a disposable --rm container, so cleanup residue must not
+        # overwrite the already completed semantic result.
+        with tempfile.TemporaryDirectory(
+            prefix="l2-file-verifier-", ignore_cleanup_errors=True
+        ) as temp:'''
 
 
 def _replace_once(path: Path, old: str, new: str, *, check: bool) -> bool:
@@ -107,7 +116,12 @@ def _append_message_instruction(task_path: Path, instruction: str, *, check: boo
     return True
 
 
-def _managed_paths(package: Path, sra_turns: list[Path], tau2_turns: list[Path]) -> list[Path]:
+def _managed_paths(
+    package: Path,
+    sra_turns: list[Path],
+    tau2_turns: list[Path],
+    browser_turns: dict[str, list[Path]],
+) -> list[Path]:
     paths: list[Path] = []
     for turn in sra_turns:
         paths.extend((
@@ -117,6 +131,9 @@ def _managed_paths(package: Path, sra_turns: list[Path], tau2_turns: list[Path])
         ))
     for turn in tau2_turns:
         paths.extend((turn / "evaluation_assets" / "native_semantics.py", turn / "task.json"))
+    for turns in browser_turns.values():
+        for turn in turns:
+            paths.append(turn / "evaluation_assets" / "native_semantics.py")
     paths.append(package / "streams" / SKILLSBENCH_STREAM / "stream.json")
     return paths
 
@@ -137,6 +154,7 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
 
     sra_turns = _turn_dirs(package, SRA_STREAM)
     tau2_turns = _turn_dirs(package, TAU2_STREAM)
+    browser_turns = {stream_id: _turn_dirs(package, stream_id) for stream_id in BROWSER_STREAMS}
     for turn in sra_turns:
         assets = turn / "evaluation_assets"
         for path, old, new in (
@@ -161,6 +179,12 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
         if _append_message_instruction(turn / "task.json", TAU2_FINAL_INSTRUCTION, check=check):
             changes.append(str((turn / "task.json").relative_to(package)))
 
+    for turns in browser_turns.values():
+        for turn in turns:
+            native = turn / "evaluation_assets" / "native_semantics.py"
+            if _replace_once(native, BROWSER_TMPDIR_OLD, BROWSER_TMPDIR_NEW, check=check):
+                changes.append(str(native.relative_to(package)))
+
     skillsbench_manifest = package / "streams" / SKILLSBENCH_STREAM / "stream.json"
     stream = json.loads(skillsbench_manifest.read_text(encoding="utf-8"))
     requirements = stream.get("execution_requirements", {})
@@ -173,7 +197,7 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
             )
 
     receipt = package / "runtime-repair.json"
-    managed_paths = _managed_paths(package, sra_turns, tau2_turns)
+    managed_paths = _managed_paths(package, sra_turns, tau2_turns, browser_turns)
     managed_files = _managed_hashes(package, managed_paths)
     package_manifest_sha256 = hashlib.sha256((package / "manifest.json").read_bytes()).hexdigest()
     if check:

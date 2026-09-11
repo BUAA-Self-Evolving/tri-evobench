@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,6 +15,23 @@ SPEC.loader.exec_module(repair_tool)
 
 
 class L2BrowserRepairTest(unittest.TestCase):
+    def test_canonical_browser_verifiers_ignore_ephemeral_cleanup_races(self) -> None:
+        repo = Path(__file__).parents[1]
+        for stream in repair_tool.STREAMS:
+            for verifier in (repo / "benchmarks/l2_demo/streams" / stream / "episodes").glob(
+                "*/evaluation_assets/verifier.py"
+            ):
+                self.assertIn("ignore_cleanup_errors=True", verifier.read_text(encoding="utf-8"))
+
+    def test_materialized_browser_verifiers_and_receipt_are_current(self) -> None:
+        repo = Path(__file__).parents[1]
+        package = repo / "benchmarks/current/L2_Demo_V2"
+        receipt = package / "runtime-repair.json"
+        from tools.repair_l2_runtime_contracts import REPAIR_VERSION, repair
+
+        self.assertEqual(json.loads(receipt.read_text())["repair_version"], REPAIR_VERSION)
+        self.assertEqual(repair(package, check=True)["repair_version"], REPAIR_VERSION)
+
     def _package(self, root: Path) -> None:
         oracle = repair_tool.ORACLE_REPLACEMENTS[0][0]
         verifier = "\n".join(old for old, _ in repair_tool.VERIFIER_REPLACEMENTS)
@@ -41,4 +59,3 @@ class L2BrowserRepairTest(unittest.TestCase):
                 )
                 for _, new in replacements:
                     self.assertIn(new, text)
-

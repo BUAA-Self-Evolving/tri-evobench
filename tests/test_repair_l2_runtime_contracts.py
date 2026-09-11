@@ -38,12 +38,21 @@ def _package(root: Path) -> Path:
         (turn / "evaluation_assets" / "native_semantics.py").write_text(prefix + "\ndef f():\n" + body)
         if sanitizer is not None:
             (turn / "evaluation_assets" / "sra_sanitize.py").write_text("def f():\n" + sanitizer)
-    skills = package / "streams" / "skillsbench_data_to_d3_001"
-    skills.mkdir(parents=True)
-    (skills / "stream.json").write_text(json.dumps({
-        "ordering": {"turn_order": []},
-        "execution_requirements": {"max_tool_calls_per_interaction": 20},
-    }))
+    for stream_id in (
+        "skillsbench_data_to_d3_001",
+        "skilllearn_stock_data_visualization_001",
+    ):
+        stream = package / "streams" / stream_id
+        turn = stream / "turn1"
+        (turn / "evaluation_assets").mkdir(parents=True)
+        requirements = {"max_tool_calls_per_interaction": 20} if stream_id == "skillsbench_data_to_d3_001" else {}
+        (stream / "stream.json").write_text(json.dumps({
+            "ordering": {"turn_order": ["turn1"]},
+            "execution_requirements": requirements,
+        }))
+        (turn / "evaluation_assets" / "native_semantics.py").write_text(
+            'with tempfile.TemporaryDirectory(prefix="l2-file-verifier-") as temp:\n    pass\n'
+        )
     return package
 
 
@@ -53,8 +62,11 @@ def test_repair_is_versioned_idempotent_and_enforces_carriers(tmp_path: Path) ->
     assert result["repair_version"] == REPAIR_VERSION
     receipt = json.loads((package / "runtime-repair.json").read_text())
     assert receipt["repair_version"] == REPAIR_VERSION
-    assert receipt["managed_file_count"] == 6
+    assert receipt["managed_file_count"] == 8
     assert json.loads((package / "streams/skillsbench_data_to_d3_001/stream.json").read_text())["execution_requirements"]["max_tool_calls_per_interaction"] == 40
+    for stream_id in ("skillsbench_data_to_d3_001", "skilllearn_stock_data_visualization_001"):
+        browser_native = package / "streams" / stream_id / "turn1/evaluation_assets/native_semantics.py"
+        assert "ignore_cleanup_errors=True" in browser_native.read_text()
     sra = (package / "streams/sra_bigcodebench_pandas_dataframe_viz_001/turn1")
     assert "invalid_submission" in (sra / "evaluation_assets/native_semantics.py").read_text()
     assert "only the complete self-contained Python source" in (sra / "task.json").read_text()
