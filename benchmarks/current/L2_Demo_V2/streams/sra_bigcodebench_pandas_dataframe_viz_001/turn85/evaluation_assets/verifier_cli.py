@@ -91,8 +91,10 @@ def resolve_submission(binding: dict, declared_binding: dict, turn_dir: Path) ->
 
 def normalize_result(verifier_id: str, result: object, task: dict) -> dict[str, object]:
     category = result.category
+    # A NativeVerifier timeout is a completed semantic outcome with score 0.
+    # Docker transport timeouts remain evaluator errors in the outer runtime.
     if category == "timeout":
-        return error_result(verifier_id, "native verifier timed out", result.details)
+        category = "fail"
     if category not in {"pass", "fail"}:
         return error_result(verifier_id, f"unknown verifier category: {category}")
     raw_score = float(result.score)
