@@ -2210,6 +2210,51 @@ def _claim_retry_authorization(
         raise L2AgentRunError("interrupted retry authorization condition mismatch")
     if Path(str(data.get("checkpoint", ""))).resolve() != checkpoint.resolve():
         raise L2AgentRunError("interrupted retry authorization checkpoint mismatch")
+    has_marker_binding = "interrupted_checkpoint" in data or "retry_interaction_index" in data
+    retry_interaction_index = int(data.get("retry_interaction_index", 1))
+    interrupted_checkpoint = Path(str(data.get("interrupted_checkpoint", checkpoint))).resolve()
+    if has_marker_binding:
+        if retry_interaction_index < 1:
+            raise L2AgentRunError("interrupted retry authorization interaction mismatch")
+        resume_metadata = _load_json(checkpoint / "checkpoint.json")
+        interrupted_metadata = _load_json(interrupted_checkpoint / "checkpoint.json")
+        if not (
+            interrupted_metadata.get("phase") == "interact_started"
+            and interrupted_metadata.get("run_id") == failed_run_id
+            and interrupted_metadata.get("turn_id") == turn_id
+            and int(interrupted_metadata.get("interaction_index", -1)) == retry_interaction_index
+            and interrupted_metadata.get("stream_id") == stream_id
+            and interrupted_metadata.get("baseline", baseline) == baseline
+            and interrupted_metadata.get("condition", condition) == condition
+        ):
+            raise L2AgentRunError("interrupted retry marker mismatch")
+    if has_marker_binding and retry_interaction_index > 1:
+        evidence_path = checkpoint / "evidence.json"
+        if not evidence_path.is_file():
+            raise L2AgentRunError("later interrupted retry lacks saved reply evidence")
+        evidence = _load_json(evidence_path)
+        if not (
+            checkpoint.parent == interrupted_checkpoint.parent
+            and resume_metadata.get("phase") == "adjudicate"
+            and resume_metadata.get("run_id") == failed_run_id
+            and resume_metadata.get("turn_id") == turn_id
+            and int(resume_metadata.get("interaction_index", -1)) == retry_interaction_index - 1
+            and evidence.get("turn_id") == turn_id
+            and int(evidence.get("interaction_index", -1)) == retry_interaction_index - 1
+            and isinstance(evidence.get("request"), str)
+            and isinstance(evidence.get("reply"), dict)
+            and isinstance(evidence.get("history"), list)
+            and isinstance(evidence.get("interactions"), list)
+            and len(evidence["interactions"]) == retry_interaction_index - 2
+            and isinstance(evidence.get("before_files"), dict)
+        ):
+            raise L2AgentRunError("later interrupted retry saved reply mismatch")
+        target = interrupted_checkpoint.parent
+        index = int(interrupted_metadata.get("next_turn_index", -1))
+        received = target / f"r{index:04d}-{retry_interaction_index:02d}"
+        pending = target / f"p{index:04d}-{retry_interaction_index:02d}"
+        if received.exists() or pending.exists():
+            raise L2AgentRunError("later interrupted retry target already has reply evidence")
     source_run_dir = Path(str(data.get("source_run_dir", ""))).resolve()
     if not source_run_dir.is_dir():
         raise L2AgentRunError("interrupted retry authorization source run directory is invalid")

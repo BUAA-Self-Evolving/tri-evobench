@@ -535,7 +535,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
         ).run()
 
 
-def test_interrupted_marker_retry_rejects_later_interaction(tmp_path, monkeypatch):
+def test_interrupted_marker_retry_reuses_prior_reply_and_only_calls_later_interaction(tmp_path, monkeypatch):
     package = _package(tmp_path, turns=1, simulator_messages=2)
     _install_fake_runtime(monkeypatch, judge_score=0.5)
     output = tmp_path / "out-second-interaction"
@@ -562,32 +562,60 @@ def test_interrupted_marker_retry_rejects_later_interaction(tmp_path, monkeypatc
     )
     with pytest.raises(RuntimeError, match="vanished"):
         L2AgentStreamRunner(options).run()
-    checkpoint = _interact_started_checkpoint(output, "turn1")
-    metadata = json.loads((checkpoint / "checkpoint.json").read_text(encoding="utf-8"))
+    interrupted = _interact_started_checkpoint(output, "turn1")
+    metadata = json.loads((interrupted / "checkpoint.json").read_text(encoding="utf-8"))
     assert metadata["interaction_index"] == 2
+    pending = interrupted.parent / "p0000-01"
+    assert json.loads((pending / "evidence.json").read_text(encoding="utf-8"))["reply"]["text"] == "try again"
     authorization = tmp_path / "retry-second.json"
     _write_json(authorization, {
         "status": "consumed",
         "failed_run_id": metadata["run_id"],
         "turn_id": "turn1",
-        "checkpoint": str(checkpoint),
+        "checkpoint": str(pending),
+        "interrupted_checkpoint": str(interrupted),
+        "retry_interaction_index": 2,
         "job": "l2/reset/hermes/s01",
         "stream_id": "stream-a",
         "baseline": "hermes",
         "condition": "reset",
         "source_run_dir": str(output),
     })
-    with pytest.raises(L2AgentRunError, match="first Interaction"):
-        L2AgentStreamRunner(
-            replace(
-                options,
-                resume_checkpoint=checkpoint,
-                retry_interrupted_run_id=metadata["run_id"],
-                stop_after_turn="turn1",
-                retry_authorization=authorization,
-                retry_job_id="l2/reset/hermes/s01",
-            )
-        ).run()
+    called_interactions = []
+
+    def finish_second(self, context):
+        called_interactions.append(context.interaction_index)
+        return BaselineReply(text="fixed", usage=UsageDetails(total_tokens=10, api_calls=1))
+
+    def judge_saved_then_fixed(_self, _task, reply, *_args, **_kwargs):
+        score = 1.0 if reply.text == "fixed" else 0.5
+        return {"score": score, "passed": score >= 0.8, "feedback": "public",
+                "details": {"check_scores": {"task_completion": score}}}
+
+    monkeypatch.setattr(_Runtime, "interact", finish_second)
+    monkeypatch.setattr(L2AgentStreamRunner, "_judge_taskstream", judge_saved_then_fixed)
+    report = L2AgentStreamRunner(
+        replace(
+            options,
+            resume_checkpoint=pending,
+            retry_interrupted_run_id=metadata["run_id"],
+            stop_after_turn="turn1",
+            retry_authorization=authorization,
+            retry_job_id="l2/reset/hermes/s01",
+        )
+    ).run()
+
+    assert called_interactions == [2]
+    assert report["stopped_after_turn"] == "turn1"
+    assert report["turns"][0]["interaction_count"] == 2
+    trace = [
+        json.loads(line)
+        for line in Path(report["turns"][0]["trace_file"]).read_text(encoding="utf-8").splitlines()
+    ]
+    interactions = [item for item in trace if item.get("interaction_index")]
+    assert [item["interaction_index"] for item in interactions] == [1, 2]
+    assert interactions[0]["response"] == "try again"
+    assert report["turns"][0]["turn_score"] == 1.0
 
 
 def test_general_judge_only_failure_retries_but_auto_research_valid_low_does_not():

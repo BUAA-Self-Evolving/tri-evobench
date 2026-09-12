@@ -269,8 +269,13 @@ def test_interrupted_retry_prefers_saved_adjudication_over_started_marker(tmp_pa
     with pytest.raises(ValueError, match="saved adjudication evidence"):
         prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
 
-    (pending / "evidence.json").unlink()
     started_metadata = json.loads((started / "checkpoint.json").read_text(encoding="utf-8"))
+    (started / "checkpoint.json").unlink()
+    with pytest.raises(ValueError, match="saved adjudication evidence"):
+        prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
+    _write_json(started / "checkpoint.json", started_metadata)
+
+    (pending / "evidence.json").unlink()
     started_metadata["invalidated"] = True
     _write_json(started / "checkpoint.json", started_metadata)
     _write_json(authorization, {
@@ -420,6 +425,105 @@ def test_interrupted_retry_accepts_evolving_started_marker_without_replaying_pre
     assert consumed["status"] == "consumed"
     assert consumed["condition"] == "evolving"
     assert consumed["checkpoint"] == str(started)
+
+
+def test_interrupted_retry_selects_prior_saved_reply_for_later_interaction(tmp_path):
+    row = jobs(
+        tmp_path,
+        tmp_path / "results",
+        _packages(tmp_path),
+        l2_conditions=("evolving",),
+    )[0]
+    run_id = "20260912T013553Z-f91f43ee"
+    run_dir = Path(row["output"]) / f"sra/{run_id}"
+    _write_json(run_dir / "report.json", {
+        "schema_version": "l2-agent-runtime-0.2-taskstream",
+        "run_id": run_id,
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "turns": _report("evolving")["turns"][:1],
+        "error": "BaselineProtocolError: baseline adapter timed out during interact",
+    })
+    root = Path(row["output"]) / "_checkpoints/key/f91f43ee"
+    pending = root / "p0001-01"
+    interrupted = root / "i0001-02"
+    for directory in (pending, interrupted):
+        for name in ("workspace.zip", "baseline_state.zip"):
+            _empty_zip(directory / name)
+        _write_json(directory / "completed_turns.json", _report("evolving")["turns"][:1])
+    identity = {
+        "stream_id": "sra", "baseline": "hermes", "condition": "evolving",
+        "run_id": run_id, "turn_id": "turn2", "next_turn_index": 1,
+    }
+    _write_json(pending / "checkpoint.json", {
+        **identity, "phase": "adjudicate", "interaction_index": 1,
+    })
+    _write_json(pending / "evidence.json", {
+        "turn_id": "turn2", "turn_index": 1, "interaction_index": 1,
+        "request": "complete turn2", "reply": {"text": "saved"},
+        "history": [], "interactions": [], "before_files": {},
+    })
+    _write_json(interrupted / "checkpoint.json", {
+        **identity, "phase": "interact_started", "interaction_index": 2,
+    })
+    authorization = tmp_path / "authorization-later.json"
+    _write_json(authorization, {
+        "status": "authorized_not_consumed", "job": row["id"],
+        "failed_run_id": run_id, "turn_id": "turn2",
+        "allowed_additional_attempts": 1, "preserve_valid_turns": [1],
+    })
+
+    checkpoint, selected_run, stop_after_turn = prepare_interrupted_retry(
+        row, run_id, authorization,
+    )
+
+    assert checkpoint == pending
+    assert selected_run == run_id
+    assert stop_after_turn == "turn2"
+    consumed = json.loads(authorization.read_text(encoding="utf-8"))
+    assert consumed["checkpoint"] == str(pending)
+    assert consumed["interrupted_checkpoint"] == str(interrupted)
+    assert consumed["retry_interaction_index"] == 2
+
+    evidence = json.loads((pending / "evidence.json").read_text(encoding="utf-8"))
+    del evidence["before_files"]
+    _write_json(pending / "evidence.json", evidence)
+    malformed = tmp_path / "authorization-later-malformed.json"
+    _write_json(malformed, {
+        "status": "authorized_not_consumed", "job": row["id"],
+        "failed_run_id": run_id, "turn_id": "turn2",
+        "allowed_additional_attempts": 1, "preserve_valid_turns": [1],
+    })
+    with pytest.raises(ValueError, match="evidence mismatch"):
+        prepare_interrupted_retry(row, run_id, malformed)
+    assert json.loads(malformed.read_text(encoding="utf-8"))["status"] == "authorized_not_consumed"
+    evidence["before_files"] = {}
+    _write_json(pending / "evidence.json", evidence)
+
+    for prefix, message in (("r", "reply_received evidence"), ("p", "saved adjudication evidence")):
+        partial = root / f"{prefix}0001-02"
+        partial.mkdir()
+        partial_auth = tmp_path / f"authorization-later-partial-{prefix}.json"
+        _write_json(partial_auth, {
+            "status": "authorized_not_consumed", "job": row["id"],
+            "failed_run_id": run_id, "turn_id": "turn2",
+            "allowed_additional_attempts": 1, "preserve_valid_turns": [1],
+        })
+        with pytest.raises(ValueError, match=message):
+            prepare_interrupted_retry(row, run_id, partial_auth)
+        assert json.loads(partial_auth.read_text(encoding="utf-8"))["status"] == "authorized_not_consumed"
+        partial.rmdir()
+
+    _write_json(root / "r0001-02/reply_received.json", {"reply": {"text": "already returned"}})
+    retry = tmp_path / "authorization-later-retry.json"
+    _write_json(retry, {
+        "status": "authorized_not_consumed", "job": row["id"],
+        "failed_run_id": run_id, "turn_id": "turn2",
+        "allowed_additional_attempts": 1, "preserve_valid_turns": [1],
+    })
+    with pytest.raises(ValueError, match="reply_received evidence"):
+        prepare_interrupted_retry(row, run_id, retry)
 
 
 def test_evolving_interrupted_retry_rejects_legacy_completed_prefix_fallback(tmp_path):

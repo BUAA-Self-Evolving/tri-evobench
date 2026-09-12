@@ -320,6 +320,7 @@ def _find_completed_prefix_checkpoint(row, expected_index):
 def _find_interrupted_checkpoint(row, run_id, turn_id):
     expected_index = row["turns"].index(turn_id)
     candidates = []
+    saved_adjudication = False
     for path in (Path(row["output"]) / "_checkpoints").rglob("checkpoint.json"):
         data = load(path)
         if data.get("phase") != "interact_started":
@@ -328,29 +329,63 @@ def _find_interrupted_checkpoint(row, run_id, turn_id):
                 and data.get("run_id") == run_id
                 and data.get("turn_id") == turn_id
                 and int(data.get("next_turn_index", -1)) == expected_index
+                and (path.parent / "evidence.json").exists()
             ):
-                evidence_path = path.parent / "evidence.json"
-                if evidence_path.is_file():
-                    evidence = load(evidence_path)
-                    if isinstance(evidence, dict) and isinstance(evidence.get("reply"), dict):
-                        raise ValueError("interrupted retry has saved adjudication evidence")
+                saved_adjudication = True
             continue
         if data.get("run_id") != run_id or data.get("turn_id") != turn_id:
             continue
-        if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
-            raise ValueError("interrupted retry has saved adjudication evidence")
-        if _started_marker_has_same_run_reply_evidence(path.parent, data):
-            raise ValueError("interrupted retry has saved reply_received evidence")
         if int(data.get("next_turn_index", -1)) != expected_index:
             continue
-        if int(data.get("interaction_index", -1)) != 1:
-            raise ValueError("interrupted retry only supports the first Interaction")
-        candidates.append((path.stat().st_mtime, path.parent))
+        interaction_index = int(data.get("interaction_index", -1))
+        if interaction_index < 1:
+            continue
+        candidates.append((interaction_index, path.stat().st_mtime, path.parent, data))
     if not candidates:
+        if saved_adjudication:
+            raise ValueError("interrupted retry has saved adjudication evidence")
         return None
-    checkpoint = max(candidates)[1]
-    _checkpoint_preserves_prefix(row, checkpoint, expected_index)
-    return checkpoint
+    interaction_index, _, interrupted, marker = max(candidates)
+    target_pending = interrupted.parent / f"p{expected_index:04d}-{interaction_index:02d}"
+    target_received = interrupted.parent / f"r{expected_index:04d}-{interaction_index:02d}"
+    if marker.get("invalidated") or target_pending.exists():
+        raise ValueError("interrupted retry has saved adjudication evidence")
+    if target_received.exists():
+        raise ValueError("interrupted retry has saved reply_received evidence")
+    _checkpoint_preserves_prefix(row, interrupted, expected_index)
+    if interaction_index == 1:
+        return interrupted, interrupted, interaction_index
+
+    # A later Interaction can be retried only by rewinding to the immediately
+    # preceding durable adjudication checkpoint. That checkpoint contains the
+    # already-paid Agent reply but predates Judge/Simulator work, so resuming it
+    # re-adjudicates the saved reply, regenerates the follow-up, and calls the
+    # Agent only for the unfinished Interaction.
+    pending = interrupted.parent / f"p{expected_index:04d}-{interaction_index - 1:02d}"
+    metadata_path = pending / "checkpoint.json"
+    evidence_path = pending / "evidence.json"
+    if not (metadata_path.is_file() and evidence_path.is_file()):
+        raise ValueError("later interrupted retry requires the preceding adjudication checkpoint")
+    metadata = load(metadata_path)
+    evidence = load(evidence_path)
+    _checkpoint_preserves_prefix(row, pending, expected_index)
+    if not (
+        metadata.get("phase") == "adjudicate"
+        and metadata.get("run_id") == run_id
+        and metadata.get("turn_id") == turn_id
+        and int(metadata.get("interaction_index", -1)) == interaction_index - 1
+        and evidence.get("turn_id") == turn_id
+        and int(evidence.get("turn_index", -1)) == expected_index
+        and int(evidence.get("interaction_index", -1)) == interaction_index - 1
+        and isinstance(evidence.get("request"), str)
+        and isinstance(evidence.get("reply"), dict)
+        and isinstance(evidence.get("history"), list)
+        and isinstance(evidence.get("interactions"), list)
+        and len(evidence["interactions"]) == interaction_index - 2
+        and isinstance(evidence.get("before_files"), dict)
+    ):
+        raise ValueError("later interrupted retry preceding adjudication evidence mismatch")
+    return pending, interrupted, interaction_index
 
 
 def _started_marker_has_same_run_pending(row, checkpoint, data):
@@ -464,8 +499,10 @@ def prepare_interrupted_retry(row, retry_run, authorization_path):
     valid_receipt = _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index)
     if len(turns) > target_index and not valid_receipt:
         raise ValueError("interrupted retry would replay an already recorded turn")
-    checkpoint = _find_interrupted_checkpoint(row, run_id, turn_id)
-    if checkpoint is None:
+    recovery = _find_interrupted_checkpoint(row, run_id, turn_id)
+    interrupted_checkpoint = None
+    retry_interaction_index = None
+    if recovery is None:
         if row.get("condition") == "evolving":
             raise ValueError(
                 "evolving interrupted retry requires an exact interact_started checkpoint"
@@ -478,6 +515,8 @@ def prepare_interrupted_retry(row, retry_run, authorization_path):
         checkpoint = _find_completed_prefix_checkpoint(row, target_index)
         if checkpoint is None:
             raise ValueError("no exact completed-prefix checkpoint for interrupted retry")
+    else:
+        checkpoint, interrupted_checkpoint, retry_interaction_index = recovery
     consumed = {
         **auth,
         "status": "consumed",
@@ -490,6 +529,9 @@ def prepare_interrupted_retry(row, retry_run, authorization_path):
         "baseline": row["agent"],
         "condition": row["condition"],
     }
+    if interrupted_checkpoint is not None:
+        consumed["interrupted_checkpoint"] = str(interrupted_checkpoint)
+        consumed["retry_interaction_index"] = retry_interaction_index
     save(auth_path, consumed)
     return checkpoint, run_id, turn_id
 
