@@ -16,6 +16,7 @@ from trievo_bench.l2_agent import (
     L2AgentStreamRunner,
     _project_bounded_feedback,
     _taskstream_retryable,
+    _user_simulator_output_error,
 )
 
 
@@ -363,6 +364,43 @@ def test_user_simulator_failure_does_not_start_another_interaction(tmp_path, mon
     assert interaction["score"] == 0.5
     assert interaction["evaluation_status"] == "failed"
     assert interaction["terminal_evaluation_error"]["turn_score"] is None
+
+
+def test_user_simulator_normalizes_requirement_coverage_to_canonical_enum(tmp_path, monkeypatch):
+    package = _package(tmp_path, turns=1, simulator_messages=1)
+    runner = L2AgentStreamRunner(_options(package, tmp_path / "out", "evolving"))
+    prompts = []
+
+    class Client:
+        def complete(self, messages, **_kwargs):
+            prompts.append(messages[-1]["content"])
+            return json.dumps({
+                "schema_version": "l2_user_simulator_output/1.0",
+                "next_user_message": "Please satisfy the missing requirement.",
+                "rationale_category": "requirement_coverage",
+            })
+
+    monkeypatch.setattr(l2_agent_module, "client_from_config", lambda *_args, **_kwargs: Client())
+    task = json.loads(
+        (package / "streams/stream-a/turn1/task.json").read_text(encoding="utf-8")
+    )
+    task["user_simulator"]["simulator_prompt"] = "Latest response: {latest_agent_response}"
+
+    result = runner._taskstream_followup(task, [], "partial", None)
+
+    assert result["status"] == "ok"
+    assert result["parsed"]["rationale_category"] == "unanswered_requirement"
+    assert result["normalizations"] == [{
+        "field": "rationale_category",
+        "source": "requirement_coverage",
+        "target": "unanswered_requirement",
+    }]
+    assert "unanswered_requirement" in prompts[0]
+    assert "requirement_coverage" not in prompts[0]
+    assert _user_simulator_output_error(result["parsed"]) is None
+    assert _user_simulator_output_error({
+        **result["parsed"], "rationale_category": "task_specific_category",
+    }) == "User Simulator rationale_category is invalid"
 
 
 def test_agent_work_limit_is_a_scored_failure_without_running_evaluator(tmp_path, monkeypatch):

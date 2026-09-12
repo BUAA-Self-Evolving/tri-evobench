@@ -48,6 +48,18 @@ _VERIFIER_PROXY_ENV_NAMES = (
 # deadline long enough to serialize the result and tear down Chromium.
 _VERIFIER_TRANSPORT_GRACE_SECONDS = 30
 
+USER_SIMULATOR_RATIONALE_CATEGORIES = (
+    "incomplete_task",
+    "incorrect_result",
+    "invalid_artifact",
+    "missing_evidence",
+    "execution_error",
+    "unanswered_requirement",
+)
+USER_SIMULATOR_RATIONALE_ALIASES = {
+    "requirement_coverage": "unanswered_requirement",
+}
+
 
 def _verifier_transport_timeout(native_timeout_seconds: int) -> int:
     return native_timeout_seconds + _VERIFIER_TRANSPORT_GRACE_SECONDS
@@ -1160,6 +1172,11 @@ class L2AgentStreamRunner:
                     "latest_agent_response": response,
                     "bounded_evaluation_feedback": bounded_feedback,
                 })
+                prompt += (
+                    "\n\nrationale_category must be exactly one of: "
+                    + ", ".join(USER_SIMULATOR_RATIONALE_CATEGORIES)
+                    + "."
+                )
                 if attempt:
                     prompt += (
                         "\n\n[REPAIR]\nThe prior output was invalid: "
@@ -1172,10 +1189,24 @@ class L2AgentStreamRunner:
                 )
                 attempts.append(text)
                 result = L1LifeJudge._parse(text)
+                normalization = None
+                if isinstance(result, dict):
+                    original_category = result.get("rationale_category")
+                    normalized_category = USER_SIMULATOR_RATIONALE_ALIASES.get(original_category)
+                    if normalized_category is not None:
+                        result = {**result, "rationale_category": normalized_category}
+                        normalization = {
+                            "field": "rationale_category",
+                            "source": original_category,
+                            "target": normalized_category,
+                        }
                 error = _user_simulator_output_error(result)
                 if error:
                     raise ValueError(error)
-                return {"status": "ok", "raw_attempts": attempts, "parsed": result}
+                audit = {"status": "ok", "raw_attempts": attempts, "parsed": result}
+                if normalization is not None:
+                    audit["normalizations"] = [normalization]
+                return audit
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {exc}"
         return {"status": "error", "raw_attempts": attempts, "error": last_error}
@@ -2134,14 +2165,7 @@ def _user_simulator_output_error(result: Any) -> str | None:
     message = result.get("next_user_message")
     if not isinstance(message, str) or not message.strip():
         return "User Simulator next_user_message must be non-empty"
-    if result.get("rationale_category") not in {
-        "incomplete_task",
-        "incorrect_result",
-        "invalid_artifact",
-        "missing_evidence",
-        "execution_error",
-        "unanswered_requirement",
-    }:
+    if result.get("rationale_category") not in USER_SIMULATOR_RATIONALE_CATEGORIES:
         return "User Simulator rationale_category is invalid"
     return None
 
