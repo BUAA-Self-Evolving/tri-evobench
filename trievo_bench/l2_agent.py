@@ -118,8 +118,14 @@ class L2AgentStreamRunner:
         self.evaluation_error_policy = options.evaluation_error_policy
         self.budget_profile = _budget_profile(options.baseline_overrides)
         self._applied_stream_limit_overrides: list[dict[str, Any]] = []
-        if options.retry_interrupted_run_id and self.condition is not RunCondition.RESET:
-            raise L2AgentRunError("interrupted Interaction retry is only supported for reset TaskStream runs")
+        if options.retry_interrupted_run_id and self.condition not in {
+            RunCondition.RESET,
+            RunCondition.EVOLVING,
+        }:
+            raise L2AgentRunError(
+                "interrupted Interaction retry is only supported for reset or "
+                "evolving TaskStream runs"
+            )
         if options.retry_interrupted_run_id and (options.resume_checkpoint is None or not options.stop_after_turn):
             raise L2AgentRunError("interrupted Interaction retry requires a resume checkpoint and stop-after-turn")
         if options.retry_interrupted_run_id and not options.retry_job_id:

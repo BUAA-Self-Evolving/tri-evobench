@@ -339,6 +339,8 @@ def _find_interrupted_checkpoint(row, run_id, turn_id):
             continue
         if data.get("invalidated") or _started_marker_has_same_run_pending(row, path.parent, data):
             raise ValueError("interrupted retry has saved adjudication evidence")
+        if _started_marker_has_same_run_reply_evidence(path.parent, data):
+            raise ValueError("interrupted retry has saved reply_received evidence")
         if int(data.get("next_turn_index", -1)) != expected_index:
             continue
         if int(data.get("interaction_index", -1)) != 1:
@@ -385,6 +387,19 @@ def _started_marker_has_same_run_pending(row, checkpoint, data):
     )
 
 
+def _started_marker_has_same_run_reply_evidence(checkpoint, data):
+    """Fail closed when the same Interaction may already have returned a reply."""
+    turn_index = int(data.get("next_turn_index", -1))
+    interaction_index = int(data.get("interaction_index", -1))
+    received = Path(checkpoint).parent / f"r{turn_index:04d}-{interaction_index:02d}"
+    # The r* directory is written only after interact() returns. Even a partial
+    # or corrupt marker means replay safety is unknown, so do not let missing
+    # JSON weaken the one-shot retry boundary.
+    return (received / "checkpoint.json").exists() or (
+        received / "reply_received.json"
+    ).exists()
+
+
 def _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index):
     receipt_path = Path(run_dir) / "timeout-recovery.json"
     if not receipt_path.is_file():
@@ -416,8 +431,10 @@ def _valid_timeout_recovery_receipt(run_dir, report, turn_id, target_index):
 def prepare_interrupted_retry(row, retry_run, authorization_path):
     if row["level"] != "l2":
         raise ValueError("interrupted retry is only supported for L2 rows")
-    if row.get("condition") != "reset":
-        raise ValueError("interrupted retry is only supported for reset L2 rows")
+    if row.get("condition") not in {"reset", "evolving"}:
+        raise ValueError(
+            "interrupted retry is only supported for reset or evolving L2 rows"
+        )
     if authorization_path is None:
         raise ValueError("--retry-authorization is required with --retry-interrupted-run")
     auth_path = Path(authorization_path).resolve()
@@ -449,6 +466,10 @@ def prepare_interrupted_retry(row, retry_run, authorization_path):
         raise ValueError("interrupted retry would replay an already recorded turn")
     checkpoint = _find_interrupted_checkpoint(row, run_id, turn_id)
     if checkpoint is None:
+        if row.get("condition") == "evolving":
+            raise ValueError(
+                "evolving interrupted retry requires an exact interact_started checkpoint"
+            )
         preserve_valid_turns = auth.get("preserve_valid_turns", [])
         if not isinstance(preserve_valid_turns, list) or len(preserve_valid_turns) != target_index:
             raise ValueError("legacy interrupted retry requires an authorized completed prefix")

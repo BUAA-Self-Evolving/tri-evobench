@@ -442,7 +442,12 @@ def test_taskstream_interact_started_marker_survives_process_crash(tmp_path, mon
         latest_checkpoint(row)
 
 
-def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_turn(tmp_path, monkeypatch):
+@pytest.mark.parametrize("condition", ["reset", "evolving"])
+def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_turn(
+    tmp_path,
+    monkeypatch,
+    condition,
+):
     package = _package(tmp_path, turns=3)
     runtimes = _install_fake_runtime(monkeypatch)
     original_interact = _Runtime.interact
@@ -457,7 +462,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
 
     monkeypatch.setattr(_Runtime, "interact", crash_once_on_turn2)
     output = tmp_path / "out-retry"
-    options = _options(package, output, "reset")
+    options = _options(package, output, condition)
     with pytest.raises(RuntimeError, match="vanished"):
         L2AgentStreamRunner(options).run()
     checkpoint = _interact_started_checkpoint(output, "turn2")
@@ -471,10 +476,10 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
         "failed_run_id": metadata["run_id"],
         "turn_id": "turn2",
         "checkpoint": str(checkpoint),
-        "job": "l2/reset/hermes/s01",
+        "job": f"l2/{condition}/hermes/s01",
         "stream_id": "stream-a",
         "baseline": "hermes",
-        "condition": "reset",
+        "condition": condition,
         "source_run_dir": str(output),
     })
     with pytest.raises(L2AgentRunError, match="turn mismatch"):
@@ -485,7 +490,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
                 retry_interrupted_run_id=metadata["run_id"],
                 stop_after_turn="turn3",
                 retry_authorization=authorization,
-                retry_job_id="l2/reset/hermes/s01",
+                retry_job_id=f"l2/{condition}/hermes/s01",
             )
         ).run()
 
@@ -496,7 +501,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
             retry_interrupted_run_id=metadata["run_id"],
             stop_after_turn="turn2",
             retry_authorization=authorization,
-            retry_job_id="l2/reset/hermes/s01",
+            retry_job_id=f"l2/{condition}/hermes/s01",
         )
     ).run()
 
@@ -512,7 +517,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
                 retry_interrupted_run_id=metadata["run_id"],
                 stop_after_turn="turn2",
                 retry_authorization=authorization,
-                retry_job_id="l2/reset/hermes/s01",
+                retry_job_id=f"l2/{condition}/hermes/s01",
             )
         ).run()
     copied_authorization = tmp_path / "retry-authorization-copy.json"
@@ -525,7 +530,7 @@ def test_interrupted_marker_resume_requires_exact_authorization_and_stops_after_
                 retry_interrupted_run_id=metadata["run_id"],
                 stop_after_turn="turn2",
                 retry_authorization=copied_authorization,
-                retry_job_id="l2/reset/hermes/s01",
+                retry_job_id=f"l2/{condition}/hermes/s01",
             )
         ).run()
 
