@@ -128,6 +128,7 @@ def generate(
     ):
         container = f"trievo-{agent}-{{instance_id}}"
         command = ["docker", "run", "--rm", "-i", "--name", container,
+                   "--user", "{uid}:{gid}",
                    "-v", "{workspace_mount}:/workspace", "-v", "{state_mount}:/state"]
         for name in env_names + [
             "TRIEVO_BASE_URL",
@@ -159,7 +160,7 @@ def generate(
                     "openai_compatible_max_tokens": l2_max_output_tokens,
                 },
             })
-        else:
+        elif agent == "trace2skill":
             save("tmp_trace2skill_docker_l2.override.json", {
                 **config,
                 "options": {

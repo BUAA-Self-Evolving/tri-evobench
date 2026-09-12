@@ -260,7 +260,10 @@ class OpenAICompatibleClient:
                 if attempt < self.max_retries:
                     self._wait_for_retry(attempt, exc)
                     continue
-                raise RuntimeError("OpenAI-compatible model request failed") from exc
+                raise RuntimeError(
+                    "OpenAI-compatible model request failed "
+                    f"({type(exc).__name__}: {exc})"
+                ) from exc
         if result is None or message is None:
             raise RuntimeError("OpenAI-compatible model request failed after retries")
         if not result_usage_recorded:

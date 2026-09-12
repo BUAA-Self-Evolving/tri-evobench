@@ -1,0 +1,4 @@
+FROM trievo-trace2skill:0.5
+
+COPY baseline/Trace2Skill/src/react_agent/models.py /opt/trievo/baseline/Trace2Skill/src/react_agent/models.py
+COPY baseline/adapters/trace2skill/bridge.py /opt/trievo/baseline/adapters/trace2skill/bridge.py

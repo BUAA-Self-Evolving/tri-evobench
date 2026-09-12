@@ -1,0 +1,359 @@
+{
+  "flow_id": "deepseek-flow-001",
+  "turn_id": "turn-profile-fact",
+  "index": 1,
+  "request": "Create /workspace/profile.txt. The file must contain name=Lin and 
+language=Chinese, with no Markdown.",
+  "response": "Created /workspace/profile.txt with the requested contents.",
+  "actions": [
+    {
+      "op": "write_file",
+      "path": "/workspace/profile.txt",
+      "bytes": 26
+    }
+  ],
+  "tool_calls": [],
+  "events": [
+    {
+      "type": "target.completed"
+    },
+    {
+      "type": "action.completed",
+      "op": "write_file",
+      "path": "/workspace/profile.txt"
+    }
+  ],
+  "state_update": {},
+  "action_error": null,
+  "score": 1.0,
+  "passed": true,
+  "feedback": "Task succeeded.",
+  "verifier_details": {
+    "children": [
+      {
+        "type": "file_contains",
+        "passed": true
+      },
+      {
+        "type": "file_contains",
+        "passed": true
+      }
+    ]
+  },
+  "sandbox": {
+    "backend": "docker",
+    "image": "trievo-ubuntu:22.04",
+    "files": [
+      {
+        "path": "/workspace/profile.txt",
+        "size": 28,
+        "sha256": "3cd1434c42a661d5eb2503821445ac63e004e97871b6f10b84f8c93c2e22e7c6"
+      }
+    ]
+  },
+  "state_keys": [
+    "skill.md"
+  ],
+  "usage": {
+    "input_tokens": 313,
+    "output_tokens": 107,
+    "cached_read_tokens": 0,
+    "cached_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 420,
+    "api_calls": 1,
+    "estimated_cost_usd": null
+  }
+}
+
+{
+  "flow_id": "deepseek-flow-001",
+  "turn_id": "turn-delayed-use",
+  "index": 1,
+  "request": "Use the shared Flow workspace. Read the existing profile fact name=Lin and create 
+/workspace/greeting.txt containing Hello Lin.",
+  "response": "Created /workspace/greeting.txt containing Hello Lin.",
+  "actions": [
+    {
+      "op": "write_file",
+      "path": "/workspace/greeting.txt",
+      "bytes": 10
+    }
+  ],
+  "tool_calls": [],
+  "events": [
+    {
+      "type": "target.completed"
+    },
+    {
+      "type": "action.completed",
+      "op": "write_file",
+      "path": "/workspace/greeting.txt"
+    }
+  ],
+  "state_update": {},
+  "action_error": null,
+  "score": 1.0,
+  "passed": true,
+  "feedback": "Task succeeded.",
+  "verifier_details": {
+    "type": "file_contains",
+    "passed": true
+  },
+  "sandbox": {
+    "backend": "docker",
+    "image": "trievo-ubuntu:22.04",
+    "files": [
+      {
+        "path": "/workspace/greeting.txt",
+        "size": 11,
+        "sha256": "30088eb0b337488c44c4f77e39f9dc5cf81011a38f23aa0480c95e17843fe897"
+      },
+      {
+        "path": "/workspace/profile.txt",
+        "size": 28,
+        "sha256": "3cd1434c42a661d5eb2503821445ac63e004e97871b6f10b84f8c93c2e22e7c6"
+      }
+    ]
+  },
+  "state_keys": [
+    "skill.md"
+  ],
+  "usage": {
+    "input_tokens": 378,
+    "output_tokens": 237,
+    "cached_read_tokens": 0,
+    "cached_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 615,
+    "api_calls": 1,
+    "estimated_cost_usd": null
+  }
+}
+
+{
+  "flow_id": "deepseek-flow-001",
+  "turn_id": "turn-config-repair",
+  "index": 1,
+  "request": "Repair /workspace/app.conf by changing mode=development to mode=production. 
+Preserve port=8080 and debug=false. Do not add Markdown.",
+  "response": "Updated /workspace/app.conf: mode=production, port=8080, debug=false.",
+  "actions": [
+    {
+      "op": "write_file",
+      "path": "/workspace/app.conf",
+      "bytes": 37
+    }
+  ],
+  "tool_calls": [],
+  "events": [
+    {
+      "type": "target.completed"
+    },
+    {
+      "type": "action.completed",
+      "op": "write_file",
+      "path": "/workspace/app.conf"
+    }
+  ],
+  "state_update": {},
+  "action_error": null,
+  "score": 1.0,
+  "passed": true,
+  "feedback": "Task succeeded.",
+  "verifier_details": {
+    "children": [
+      {
+        "type": "file_contains",
+        "passed": true
+      },
+      {
+        "type": "file_contains",
+        "passed": true
+      },
+      {
+        "type": "file_contains",
+        "passed": true
+      }
+    ]
+  },
+  "sandbox": {
+    "backend": "docker",
+    "image": "trievo-ubuntu:22.04",
+    "files": [
+      {
+        "path": "/workspace/app.conf",
+        "size": 39,
+        "sha256": "32a72e6eaebf54264fce0f94a8c206e911dab515d3dec3bb9adeec2db3eedfc5"
+      },
+      {
+        "path": "/workspace/greeting.txt",
+        "size": 11,
+        "sha256": "30088eb0b337488c44c4f77e39f9dc5cf81011a38f23aa0480c95e17843fe897"
+      },
+      {
+        "path": "/workspace/profile.txt",
+        "size": 28,
+        "sha256": "3cd1434c42a661d5eb2503821445ac63e004e97871b6f10b84f8c93c2e22e7c6"
+      }
+    ]
+  },
+  "state_keys": [
+    "skill.md"
+  ],
+  "usage": {
+    "input_tokens": 502,
+    "output_tokens": 702,
+    "cached_read_tokens": 0,
+    "cached_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 1204,
+    "api_calls": 1,
+    "estimated_cost_usd": null
+  }
+}
+
+{
+  "flow_id": "deepseek-flow-001",
+  "turn_id": "turn-json-artifact",
+  "index": 1,
+  "request": "Create /workspace/report.json as valid JSON with status ready, owner Lin, and 
+items equal to 2. Do not wrap it in Markdown.",
+  "response": "Created /workspace/report.json",
+  "actions": [
+    {
+      "op": "write_file",
+      "path": "/workspace/report.json",
+      "bytes": 42
+    }
+  ],
+  "tool_calls": [],
+  "events": [
+    {
+      "type": "target.completed"
+    },
+    {
+      "type": "action.completed",
+      "op": "write_file",
+      "path": "/workspace/report.json"
+    }
+  ],
+  "state_update": {},
+  "action_error": null,
+  "score": 1.0,
+  "passed": true,
+  "feedback": "Task succeeded.",
+  "verifier_details": {
+    "type": "json_file_equals",
+    "passed": true
+  },
+  "sandbox": {
+    "backend": "docker",
+    "image": "trievo-ubuntu:22.04",
+    "files": [
+      {
+        "path": "/workspace/app.conf",
+        "size": 39,
+        "sha256": "32a72e6eaebf54264fce0f94a8c206e911dab515d3dec3bb9adeec2db3eedfc5"
+      },
+      {
+        "path": "/workspace/greeting.txt",
+        "size": 11,
+        "sha256": "30088eb0b337488c44c4f77e39f9dc5cf81011a38f23aa0480c95e17843fe897"
+      },
+      {
+        "path": "/workspace/profile.txt",
+        "size": 28,
+        "sha256": "3cd1434c42a661d5eb2503821445ac63e004e97871b6f10b84f8c93c2e22e7c6"
+      },
+      {
+        "path": "/workspace/report.json",
+        "size": 42,
+        "sha256": "9fcc313c2ad68535a6429ccd80de796aea32cc7f88c6f3fc9b1a953466228c64"
+      }
+    ]
+  },
+  "state_keys": [
+    "skill.md"
+  ],
+  "usage": {
+    "input_tokens": 501,
+    "output_tokens": 165,
+    "cached_read_tokens": 0,
+    "cached_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 666,
+    "api_calls": 1,
+    "estimated_cost_usd": null
+  }
+}
+
+{
+  "flow_id": "deepseek-flow-001",
+  "turn_id": "turn-llm-judge",
+  "index": 1,
+  "request": "In one concise sentence, summarize the final state: owner Lin, status ready, and 
+two items. Do not invent other facts.",
+  "response": "The final state is owner Lin, status ready, and two items.",
+  "actions": [],
+  "tool_calls": [],
+  "events": [
+    {
+      "type": "target.completed"
+    }
+  ],
+  "state_update": {},
+  "action_error": null,
+  "score": 1.0,
+  "passed": true,
+  "feedback": "The response is one concise sentence and states all three required facts: owner 
+Lin, status ready, and two items.",
+  "verifier_details": {
+    "type": "llm",
+    "raw": {
+      "score": 1,
+      "passed": true,
+      "feedback": "The response is one concise sentence and states all three required facts: 
+owner Lin, status ready, and two items."
+    }
+  },
+  "sandbox": {
+    "backend": "docker",
+    "image": "trievo-ubuntu:22.04",
+    "files": [
+      {
+        "path": "/workspace/app.conf",
+        "size": 39,
+        "sha256": "32a72e6eaebf54264fce0f94a8c206e911dab515d3dec3bb9adeec2db3eedfc5"
+      },
+      {
+        "path": "/workspace/greeting.txt",
+        "size": 11,
+        "sha256": "30088eb0b337488c44c4f77e39f9dc5cf81011a38f23aa0480c95e17843fe897"
+      },
+      {
+        "path": "/workspace/profile.txt",
+        "size": 28,
+        "sha256": "3cd1434c42a661d5eb2503821445ac63e004e97871b6f10b84f8c93c2e22e7c6"
+      },
+      {
+        "path": "/workspace/report.json",
+        "size": 42,
+        "sha256": "9fcc313c2ad68535a6429ccd80de796aea32cc7f88c6f3fc9b1a953466228c64"
+      }
+    ]
+  },
+  "state_keys": [
+    "skill.md"
+  ],
+  "usage": {
+    "input_tokens": 475,
+    "output_tokens": 536,
+    "cached_read_tokens": 0,
+    "cached_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 1011,
+    "api_calls": 1,
+    "estimated_cost_usd": null
+  }
+}

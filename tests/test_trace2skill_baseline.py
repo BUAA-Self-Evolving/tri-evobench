@@ -18,11 +18,14 @@ from baseline.Trace2Skill.src.react_agent.converter import ReActConverter
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.spec import BenchmarkSpec
+from tools.prepare_matrix_configs import generate
 
 
 class Trace2SkillBaselineContractTest(unittest.TestCase):
     def test_active_docker_override_runs_as_host_user(self) -> None:
-        override = json.loads((Path(__file__).parents[1] / "tmp_trace2skill_docker.override.json").read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            output = generate(Path(tmp), "test-model", "https://example.invalid/v1")
+            override = json.loads((output / "tmp_trace2skill_docker.override.json").read_text())
         command = override["adapter"]["command"]
         self.assertEqual(command[command.index("--user") + 1], "{uid}:{gid}")
 
