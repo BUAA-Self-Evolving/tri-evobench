@@ -21,6 +21,22 @@ def test_parse_reply_ignores_malformed_state_update() -> None:
     assert reply.state_update == {}
 
 
+def test_parse_reply_accepts_legacy_top_level_action_array() -> None:
+    reply = parse_reply(json.dumps([
+        {
+            "type": "write",
+            "path": "/workspace/report.json",
+            "content": '{"status":"ready"}',
+        }
+    ]))
+
+    assert reply.actions == [{
+        "op": "write_file",
+        "path": "/workspace/report.json",
+        "content": '{"status":"ready"}',
+    }]
+
+
 class _Response:
     def __init__(self, payload: dict) -> None:
         self._body = json.dumps(payload).encode("utf-8")

@@ -6,6 +6,7 @@ from tools import run_new_package_matrix as m
 
 
 @pytest.mark.parametrize('limit', [1, 10, 20])
+@pytest.mark.skipif(sys.platform != "linux", reason="PID start ticks use Linux /proc")
 def test_real_children_overlap_bounded_and_skip_complete(tmp_path, monkeypatch, limit):
     rows = [dict(id=str(i), output=str(tmp_path / str(i))) for i in range(24)]
     (tmp_path / '0').mkdir()
@@ -106,6 +107,7 @@ def test_duplicate_jobs_rejected_before_any_launch(tmp_path, monkeypatch, duplic
         m.run_parallel(tmp_path, rows, rows, tmp_path, {}, tmp_path / 'status.json', 10)
 
 
+@pytest.mark.skipif(sys.platform != "linux", reason="worker adoption validates Linux /proc identity")
 def test_adopted_worker_receipt_occupies_slot_without_relaunch(tmp_path, monkeypatch):
     rows = [dict(id=str(i), output=str(tmp_path / str(i))) for i in range(3)]
     launched = []

@@ -1,0 +1,337 @@
+给维护runtime、复核旧运行的同学。 这份文档按故障症状查阅，不需要从头读完。先在索引找到报错，再进入同编号现场；每项都说明出错前发生了什么、错误落在哪个文件、哪个版本有该行为、后来怎样修、证据到哪里为止。
+旧矩阵在本文只用于还原infra、adapter和判分问题，不用于支持或否定自进化效果。 已删除旧均分比较、增长曲线和数据/streams分析。正文与附件report.md使用同一版内容。
+目标与边界
+L2的基本执行链是：加载任务与公开工具说明 → baseline执行工具/产物 → 保存reply与workspace → native verifier/Judge判分 → Turn结束后更新学习状态 → 下一Turn。故障可能发生在任一箭头上；“job跑完了”只说明某条执行流程结束，不证明每一步都忠实执行。
+1并发不等于没有并发问题。 它限制同时运行的job数，但Hermes后台review、Chromium清理、Docker输出回收依然会在一个job内部异步发生。parser、carrier、schema、判分分类与错误恢复也不因串行运行自动正确。是否影响同事那次运行，需要其真实代码、镜像、物化包和日志；目前尚未取得，本文不替他下结论。
+版本按以下含义阅读：故障版本是现场或源码比对确认存在该行为的版本，修复提交是实际Git diff中的变更；它们不自动等于“首次引入bug的提交”。部分问题出现在基于某个SHA的未提交补丁或容器中，会同时给出现场/部署记录，不把基线SHA冒充完整代码身份。所有源码链接固定到完整commit，行号属于那个版本。
+外部账户/磁盘故障、预算调整、上线前发现的缺口和controlled regression单独标类型，不能统称为代码bug。fail/0表示在已定义预算/规则下确定的任务失败；error/null表示未得到可信判定；数值存在也不能掩盖错误carrier或合成评分。
+本轮进展
+故障索引：每行对应下方一项现场还原
+以下25条记录包含真实运行事故、配置/合同调整、发布前review发现和受控故障注入。最后一列只说明在1个job并发下是否仍可能触发，不代表已经确认同事遭遇该问题。
+编号
+先找这个症状
+故障代码/环境 → 修复
+单并发也可能触发
+I01
+请求只跑L2，驱动却没有L2-only入口
+70505bcf → ee218bee
+会
+I02
+launcher里填了API参数，baseline内部SDK却没按它执行
+5d6691b2 → f92f433f
+会
+I03
+Turn12已经有Agent输出，却在Judge的HTTP524后失去安全恢复入口
+ee218bee → 5d6691b2
+会
+I04
+没有收到Turn14回复，却一度被恢复脚本补成0分
+228b3612 → 79cecfb4 + 5e81dc33
+会
+I05
+单个慢job让整个矩阵停止补位，恢复又可能认错PID
+5e81dc33基线 + 部署补丁 → 0e4ffce0
+部分
+I06
+Docker盘已经坏了，调度器还把待运行job逐个送进去失败
+0e4ffce0 → d6a02af4
+会
+I07
+完成的job被算进待恢复队列，看板夸大剩余工作
+d6a02af4 → 6c5ddf01
+恢复时会
+I08
+Trace2Skill说了Action，parser却先看见TASK_COMPLETE而直接结束
+6c5ddf01 → 73085507
+会
+I09
+SkillOpt生成了index.html，但生成在verifier不收的目录
+6c5ddf01 → 73085507
+会
+I10
+Hermes连续生成网页产物，却每个Turn都卡在20次工具上限
+6c5ddf01 + 旧包20 → 73085507 + 修复包40
+会
+I11
+SRA代码已经写出，却把“已实现”的说明文字交给Python编译
+6c5ddf01 → 73085507
+会
+I12
+SRA的sanitizer被不合法源码打崩，任务失败变成评测器error
+6c5ddf01 对应包代码 → 73085507
+会
+I13
+τ²只收到工具名字，根tools.json里的参数schema没有给Agent
+6c5ddf01 → 73085507
+会
+I14
+τ²的非合规回答被adapter剥掉外层说明，曾伪装成1.0
+6c5ddf01上的未提交候选 → 73085507定稿
+会
+I15
+verifier退出码为0，但Docker attached stdout为空
+6c5ddf01 → 73085507 / PR8
+会
+I16
+native verifier还差一点返回，外层Docker在同一300秒截止先杀掉它
+73085507 → 65090c77
+会
+I17
+pytest结果已经出来，临时目录清理却把结果覆盖成error
+6f3bac23 → ded8bf99 → 6c2c42c1
+会
+I18
+native已明确返回timeout/0，verifier_cli仍把它翻译为评测器error
+6c2c42c1 → 6fdf9081 → 1c878d37
+会
+I19
+Hermes的学习写入跑进下一Turn：先修前台权限，再修真正的线程结束边界
+73085507；1c878d37复发 → 65090c77；6aaca091 → ea26373c
+会
+I20
+源码修了，物化包未同步；旧receipt也曾不能发现内容漂移
+6c5ddf01基线上的未提交repair候选 → 73085507；ded8bf99；6fdf9081
+会
+I21
+Hermes submodule未初始化，revision检查读到父仓库SHA；重试claim已消费
+d714af08工作区；旧启动也出现 → 环境修正，无专属代码fix
+会
+I22
+余额中断后的evolving首个Interaction，旧controller只支持reset恢复
+ea26373c控制器 → ab77f4b0 → d714af08
+会
+I23
+Turn6的Interaction1已保存，Interaction2超时；不能把整Turn重来
+d714af08控制器 → 481b6cac → 4e9dad9d
+会
+I24
+relay403额度不足、DeepSeek402余额不足：代码不能补出服务余额
+6c5ddf01现场；ea26373c现场 → 补额/修正凭据，无业务fix SHA
+会
+I25
+HTTP有返回却没有可用内容：length空回复与Judge空回复不是同一个阶段
+0e4ffce0/6c5ddf01处理路径 → 未确认通用fix，保留失败
+会
+关键决策与问题处理
+如何阅读现场
+每项中的“现场”是日志/轨迹或明确标出的受控输入；“定位”指出代码为何把它处理成眼前的症状；“修复及验证”只认证该机制。源码已修改、单项测试通过、真实目标Turn恢复、整条流验收是不同证据层级。下面引用正控分数，只为说明工具/提交/判分链确实走通，不用于比较Agent能力。
+I01　请求只跑L2，驱动却没有L2-only入口
+类型： 启动前发现的功能缺口。版本： 70505bcf → ee218bee。
+现场。 09-07准备L2实验时，目标是6条Stream、3种baseline、3种condition。旧驱动的jobs()会同时枚举L2和L1；即使只开1个worker，它也会顺序跑混合队列。这里没有证据表明我们已经为错误的混合选集付费；问题是在启动检查中发现的。
+定位。 tools/run_new_package_matrix.py · 70505bcf:96直接遍历("l2", l2), ("l1", l1)，函数没有level参数。它是“表达不了本次运行范围”，不是某个模型任务失败。
+修复。 ee218bee给jobs()和CLI增加--level l2，只解析被选择的package。tests/test_matrix_levels.py · ee218bee:1核验L2选集恰为54jobs、2610次Turn评测，且没有L1。这个数字只用于启动选集验收。
+同事如何判断。 看启动命令与实际selected jobs，不能凭输出目录叫“L2”判断。未带level的旧命令可能仍保留混合默认行为。
+I02　launcher里填了API参数，baseline内部SDK却没按它执行
+类型： 配置传递缺陷。版本： 5d6691b2 → f92f433f。
+现场。 09-07排查慢请求时，外层声明 150 秒 timeout、重试次数和12000输出上限，并不保证SkillOpt/Trace2Skill内部client收到相同值。一个Turn包含多次模型调用，内外两层retry若同时工作，单并发也会等很久。这里定位的是实际参数传递缺口，不把每次慢请求都归为该缺陷。
+定位。 修复前可在baseline/SkillOpt/skillopt/model/openai_compatible_backend.py · 5d6691b2:191和baseline/Trace2Skill/src/react_agent/models.py · 5d6691b2:168检查client构建与外层retry；生成器只改外部配置不足以约束这些内部路径。
+修复。 f92f433f同步修改tools/prepare_matrix_configs.py · f92f433f:109、SkillOpt client/request路径和Trace2Skill构造函数，把timeout、retry、L2 token cap传到SDK，避免两套retry相乘。输出cap仍受数据包上限约束。
+验证与同事核对。 镜像参数qualification收据（本机归档；路径见附件）记录无付费的请求参数/模拟重试检查；这是配置资格验证，不是API质量测试。要看容器实际配置与image digest；仅更新宿主Python文件不能改变旧镜像里的SDK调用。
+I03　Turn12已经有Agent输出，却在Judge的HTTP524后失去安全恢复入口
+类型： 外部超时暴露恢复缺陷。版本： ee218bee → 5d6691b2。
+现场。 09-07，Hermes/reset/AIRS，run20260907T033307Z-92897060运行到Turn12。Agent已做过工具操作，评分请求中断：
+L2AgentRunError: evaluation_error in turn12:
+OpenAI-compatible model request failed (HTTP 524): error code: 524
+
+原始driver日志（本机归档；路径见附件）保留了这一边界。直接重做整个Turn可能重复工具副作用；直接选最近压缩包也不一定保留最后一次真实执行。
+定位。 tools/run_new_package_matrix.py · ee218bee:174的latest_checkpoint()主要检查文件是否齐全，未充分检查合法前缀、待判分reply及更新的unsafe frontier。trievo_bench/model.py · ee218bee:23的可重试状态集也漏了524。524由服务端产生；代码缺陷在分类和恢复选择。
+修复及验证。 5d6691b2扩展transport状态分类，并在latest_checkpoint()验证prefix/reply/phase：有保存的reply时恢复adjudication；若最新执行没有安全材料则拒绝回退。对应test_l2_contract_runtime.py和test_model_reply.py加入回归。它没有承诺供应商不再超时，也不授权整个工具交互重放。
+单并发影响。 与worker数量无关。先查失败是在interact前、reply之后还是Judge阶段，再选择恢复点。
+I04　没有收到Turn14回复，却一度被恢复脚本补成0分
+类型： 真实发生的错误补分。版本： 228b3612 → 79cecfb4 + 5e81dc33。
+现场。 09-07，Hermes/reset/AIRS，run20260907T060910Z-fc9b60b0在Turn14等待baseline回复时超时：_queue.Empty之后是baseline adapter timed out during interact。工作区已有episodes/E014/train_and_predict.py，但没有完整返回的reply。这不足以证明模型正常交付或确定性耗尽任务预算。
+错误处理。 trievo_bench/l2_agent.py · 228b3612:414以及tools/recover_l2_taskstream_timeout.py · 228b3612:187把这个缺回复的中断写成turn_score=0.0、空response/tool_calls和合成execution_limit。timeout-recovery现场收据（本机归档；路径见附件）明确记录status: admitted。
+修复。 79cecfb4改为精确绑定job/run/Turn的一次性授权重试；5e81dc33进一步把marker检查限制在同一run和Turn，避免其他运行的marker误伤本次恢复。原合成Turn没有删除，而是在结果排除清单（本机归档；路径见附件）明确排除。真正的任务超预算仍可合法记0；这里缺的是能支持这一判定的完整执行证据。
+验证与单并发影响。 Turn14真实重试收据（本机归档；路径见附件）及前缀保留审计（本机归档；路径见附件）确认真实补跑结果与原1～13Turn分开保存，synthetic14不进入接受结果。单worker一样可能中断；同事应重点排查是否存在admitted as execution_limit，不能只数report中有几个数字。
+I05　单个慢job让整个矩阵停止补位，恢复又可能认错PID
+类型： 调度策略与接管防护。版本： 5e81dc33基线 + 部署补丁 → 0e4ffce0。
+现场。 09-08曾实际达到10并发，但一项超时后驱动进入draining_error：在途任务仍跑，新的任务不再补入；“concurrency=10”不代表始终有10个健康worker。慢服务修复前状态（本机归档；路径见附件）和当时work-report记录了这个差异。串行运行也可能在一个错误后停队，但PID多worker接管问题只在重启/接管时触发。
+定位。 故障部署不是裸5e81dc33：当时部署收据（本机归档；路径见附件）记录把并发版tools/run_new_package_matrix.py覆盖到该worktree，文件SHA256为3f3ccab297815d2377d727d94beb03e8607b52300adb369f5d6d47c66546b342。不能用基线SHA冒充完整部署身份。驱动原来的fail-fast语义不足以完成“独立job失败后继续其余job”的要求；这不是fail-fast本身永远错误。恢复监督进程时仅凭PID判断还存在PID复用风险，属于回归/故障场景防护，并无证据说明现场已经接管错了一个无关进程。
+修复。 0e4ffce0的tools/run_new_package_matrix.py · 0e4ffce0:590加入AdoptedProcess、process_start_ticks与命令/输出路径核验，并提供job error policy、持久状态和补位；同提交的慢服务profile使request/interaction/evolution预算可明确配置。新策略后来又暴露共享存储故障不能当独立job错误处理，见I06。
+验证。 test_matrix_parallel.py覆盖adoption与启动标识，test_slow_provider_profile.py、test_baseline_api_transport.py覆盖有界重试及401不重试；worker交接收据（本机归档；路径见附件）核对了实际接管。没有同条件串/并行实验，因此不把10并发说成实测10倍加速。
+I06　Docker盘已经坏了，调度器还把待运行job逐个送进去失败
+类型： 共享存储故障与缺失准入保护。版本： 0e4ffce0 → d6a02af4。
+现场。 09-08，Hermes/frozen/SkillLearn的workspace输入已存在，但在Docker volume复制阶段就失败，尚未进入正常判分：
+DockerVolumeError: Docker volume command failed (cp)
+Error setting up pivot dir: mkdir /ebs/docker/fuse-overlayfs/.../.pivot_root...:
+no such file or directory
+
+原始driver日志（本机归档；路径见附件）与存储审计还出现no space left on device、会话存储不可写。Docker root在/ebs/docker；宿主另一块大盘有空间不能说明Docker可写。独立job继续策略把共享故障扩散成整队失败。
+定位。 trievo_bench/docker_volume.py · 0e4ffce0:102的同步路径没有接入共享健康等待；driver也没有区分共享storage fault与独立任务错误。旧版sync_to_host已经有staging、backup和rollback，不是这次新发明。 .pivot_root错误来自daemon/storage状态，不能说某个Python提交制造了磁盘故障。
+修复。 d6a02af4增加trievo_bench/storage_recovery.py · d6a02af4:1，检查Docker root字节/inode/device，并做真实copy/read-back；20GiB暂停、恢复25GiB且稳定30秒后再准入。trievo_bench/docker_volume.py · d6a02af4:222用健康门包住既有原子复制，只重试复制，最多有界次数；收到reply先存不安全证据，避免同步失败后把“模型已执行”丢掉。
+验证与单并发影响。 部署/故障注入收据（本机归档；路径见附件）记录205测试、复制中途失败后旧workspace完整、仅重试复制以及真实探针读回；实际恢复快照（本机归档；路径见附件）记录恢复到10workers并保留队列。这不是全局磁盘配额，也不会清理他人的容器。一个worker也会遇到坏overlay、满盘或权限错误。
+I07　完成的job被算进待恢复队列，看板夸大剩余工作
+类型： 状态统计缺陷。版本： d6a02af4 → 6c5ddf01。
+现场。 存储恢复前已有5个完整job应保留。新恢复队列把有匹配report的completed row也放进pending，显示出来的剩余工作不准确。这里是状态统计问题；没有证据证明这5个job真的重新调了模型。
+定位。 tools/run_new_package_matrix.py · d6a02af4:825创建pending时只排除了adopted和几类暂停状态。后面的执行路径本来还会跳过有匹配report的完成job，因此不能夸大为“防止了已经发生的重复付费”。
+修复及验证。 6c5ddf01在同一队列推导式增加status == completed and _has_matching_report(row)排除。恢复部署收据（本机归档；路径见附件）与live状态（本机归档；路径见附件）分别保留5个completed和真实运行/排队数。
+同事核对。 重启后比较completed、pending和实际模型新调用。单并发同样会受错误看板影响，但不能把一个队列计数直接解释为多跑了一次。
+I08　Trace2Skill说了Action，parser却先看见TASK_COMPLETE而直接结束
+类型： 确定的解析器缺陷。版本： 6c5ddf01 → 73085507。
+现场。 Hermes之外，Trace2Skill/reset/SkillLearn的run20260908T132707Z-84f093d5也能“跑完”一些Turn，但其中有行动被吞。Turn20/Interaction1原始checkpoint（本机归档；路径见附件）保存了想读episodes/E020/request.md的bash Action，紧接ACTION: TASK_COMPLETE；最终reply.tool_calls=[]、reply.events=[]。
+Action:
+{"name":"bash","arguments":{"command":"pwd && rg --files /workspace ..."}}ACTION: TASK_COMPLETE
+
+上面只省略了长command中段，碰撞标记与空执行记录来自同一份证据；不是据自然语言猜Agent执行过。旧审计1691份checkpoint中699份出现此碰撞、663份无tool_calls，数量是attempt级，不是独立任务数。
+定位。 baseline/Trace2Skill/src/react_agent/converter.py · 6c5ddf01:324先检查完成标记并return，后面的Action解析根本没机会运行。
+修复及验证。 73085507把可执行Action/envelope解析放在完成标记之前，混有不合法Action时拒绝静默完成。定向qualification（本机归档；路径见附件）记录修复后的真实工具调用和产物进入native verifier，保留不达标结果。单并发照样发生；它测到的是parser先return，不是模型没有行动意图。
+I09　SkillOpt生成了index.html，但生成在verifier不收的目录
+类型： 真实任务错误，另有适配提示缺口。版本： 6c5ddf01 → 73085507。
+现场。 09-08，SkillOpt/reset/SkillsBench，run20260908T132707Z-5bb8d6f0，Turn2/Interaction1写入episodes/E002/index.html；verifier收的是/workspace/output/index.html。原始trace（本机归档；路径见附件）明确留下错路径与index.html not found at /workspace/output/index.html。
+定位。 这个具体失败首先是Agent不满足输出合同，verifier报缺文件是对的。旧baseline/adapters/skillopt/bridge.py · 6c5ddf01:172只对部分启发式识别的workspace任务要求parseable action，Runtime也没有把公开required paths作为明确carrier指令贯通。
+修复。 73085507在trievo_bench/l2_agent.py · 73085507:1609向所有baseline传递公开提交路径；SkillOpt增加workspace-artifact要求检测与有界格式重试。它不把错路径文件偷偷移动到正确答案位置，也不保证写出的网页质量合格。
+验证与同事核对。 定向qualification确认修复后可见/workspace/output且真正进入native verifier，任务质量失败仍保留。单worker应同时查workspace_changes与required paths，不能相信最后一句“已完成”，也不能把这里的合法缺文件判定一律改成infra错误。
+I10　Hermes连续生成网页产物，却每个Turn都卡在20次工具上限
+类型： 预算校准及版本化合同调整。版本： 6c5ddf01 + 旧包20 → 73085507 + 修复包40。
+现场。 09-08，Hermes/SkillsBench三个condition各50Turn，共150/150终态为execution_limit。reset报告（本机归档；路径见附件）声明max_tool_calls=20；同目录trace记录934次工具调用，说明并非没有工具环境。达到限制后不走正常native判分路径，已有文件并不自动使任务完成。
+定位。 trievo_bench/l2_agent.py · 6c5ddf01:1721的_effective_work_limits()把runtime配置截到数据包上限。按旧20上限终止本身符合当时合同；问题是这套预算对该baseline/tool-heavy任务缺少成功路径校准。
+修复。 73085507先允许显式qualification override，同时tools/repair_l2_runtime_contracts.py · 73085507:164把修复包SkillsBench ceiling版本化为40；三种baseline配置用同一上限。不是永久只有qualification可用40：formal仍必须服从它实际使用的包；新包40与旧包20不可混为同一条件。
+验证与同事核对。 实际正控收据（本机归档；路径见附件）记录Hermes在formal新包40下用了26次工具、56个变更文件并到达native pass。这个正控证明链路有可行路径，不用于夸大旧新能力差异。单并发只是把150次同类失败串行经历一遍。
+I11　SRA代码已经写出，却把“已实现”的说明文字交给Python编译
+类型： 提交载体不匹配。版本： 6c5ddf01 → 73085507。
+现场A：Hermes。 09-08，reset/SRA，run20260908T170151Z-1605bb8d，Turn1/Interaction1做了5次工具调用并写出task_solution.py，final response却只是实现说明。SRA trace（本机归档；路径见附件）里verifier把这句话放进Python，报SyntaxError: invalid syntax。文件存在不等于按合同提交了源码。
+定位与修复A。 旧trievo_bench/l2_agent.py · 6c5ddf01:1532构造请求时没有明确贯通carrier；trievo_bench/l2_agent.py · 73085507:1623要求final response本身是完整Python source，禁止只给总结/文件链接。这才对应Hermes现场，不能拿Trace2Skill文件替Hermes定位。
+现场B与修复B：Trace2Skill。 后续定向验证中框架返回None，但Agent确实执行过含task_func的Python Action。旧baseline/adapters/trace2skill/bridge.py · 6c5ddf01:166直接返回框架answer；baseline/adapters/trace2skill/bridge.py · 73085507:714增加受carrier限定的已执行源码转换，记录raw answer和source hash，不得生成或改好答案。
+验证与单并发影响。 两条SRA定向正控（本机归档；路径见附件）分别记录Hermes裸源码、Trace2Skill透明carrier后的native pass。单并发不改变收件方式。若同事用另一bridge，必须先确认它有没有同类转换及公开记录，不能把方法适配差异当模型效果。
+I12　SRA的sanitizer被不合法源码打崩，任务失败变成评测器error
+类型： 确定的evaluator鲁棒性缺陷。版本： 6c5ddf01 对应包代码 → 73085507。
+现场。 09-08，Trace2Skill/reset/SRA，run20260908T184424Z-ba26a658，Turn1/Interaction3，原始trace（本机归档；路径见附件）给出：
+ValueError: definition node has no identifier
+native status: error
+score: null
+
+它和I11不同：这里不是正确判定交错载体，而是解析器自己抛异常，未完成正常的invalid-submission判定。
+定位。 现场执行的是外部V3包内文件；Git中对应的benchmarks/current/L2_Demo_V2/streams/sra_bigcodebench_pandas_dataframe_viz_001/turn1/evaluation_assets/sra_sanitize.py · 6c5ddf01:77在找不到identifier时抛ValueError，native_semantics.py直接调用sanitize而没处理这类输入。V2路径是仓库内对应实现，不把现场数据版本写成V2。
+修复及验证。 73085507修改sanitizer：找不到合法代码片段返回空；native adapter只把已识别的SyntaxError/ValueError/TypeError和空提交判为fail/0，保留错误原因。已知正确源码仍可pass。外部V3还必须执行版本化repair，不能只修Git内模板；未知evaluator异常仍应为error，不允许一概catch成0。
+单并发影响。 会在同一非法输入上复现；重跑更多天不会修好解析器。
+I13　τ²只收到工具名字，根tools.json里的参数schema没有给Agent
+类型： 公开工具合同漏传。版本： 6c5ddf01 → 73085507。
+现场。 旧τ²/reset/Trace2Skill，run20260909T001422Z-65f08073的trace（本机归档；路径见附件）出现自创轨迹字段、requestor/arguments不匹配。09-11修复时才确认：handoff要求加载根tools.json，旧Runtime实际只传available_tools中的名字。
+定位。 trievo_bench/l2_agent.py · 6c5ddf01:1542读取并串行化工具名字，却没有从根catalog取得description/requestor/arguments。不能要求Agent准确遵守一个未被传给它的公开接口。
+修复及验证。 73085507在trievo_bench/l2_agent.py · 73085507:1640增加_taskstream_tool_catalog()与_public_taskstream_tools()，验证catalog并按任务允许列表投影完整公开schema。原任务09-11 10:41UTC记录了这次发现，源码回归覆盖catalog。注意当时同一条消息曾报告τ²正控1.0，随后因I14撤销；不能拿被撤销分数证明本修复效果。
+单并发影响。 与调度无关。先看baseline实际收到的request，而非只确认磁盘上“有tools.json”。
+I14　τ²的非合规回答被adapter剥掉外层说明，曾伪装成1.0
+类型： 修复过程中发现的false positive。版本： 6c5ddf01上的未提交候选 → 73085507定稿。
+现场。 09-11定向验证full-trace2skill-tau2/20260911T104344Z-b273b265最初被报告为1.0。10:59UTC独立review发现，模型原回复包含JSON外的prose，bridge事后从prose或workspace中提取JSON再交给verifier。更正后的qualification收据（本机归档；路径见附件）明确撤销该正控。
+定位边界。 这条“帮模型收拾JSON”的分支发生在以6c5ddf01为基线的未提交修复候选，不能把它谎称为6c5ddf01已提交代码。已确认的故障载体是上述run及candidate镜像；定稿baseline/adapters/trace2skill/bridge.py · 73085507:714保留raw final response，对τ²不做这种答案重写。源码commit边界不完整的地方，按现场说明，不补造引入SHA。
+修复。 73085507移除JSON/prose与workspace fallback，增加拒绝改写的回归；只按真实raw回复验证。与之相关，旧native parser允许单个Markdown fence，而新prompt/parser收紧为裸JSON，这是合同行为变化，必须随包冻结；不能把每个旧fenced回答事后都判为历史infra bug。
+验证与单并发影响。 收据保留旧1.0并标注invalidated，修复后相同不合规输出判fail；不删除这段失败尝试。单worker一样会得到这个假阳性，因此“任务都跑完、成绩不低”不能替代carrier审计。
+I15　verifier退出码为0，但Docker attached stdout为空
+类型： 受控故障注入覆盖的结果丢失。版本： 6c5ddf01 → 73085507 / PR8。
+还原输入。 本项可核对的证据是controlled regression：docker run返回code0和空stdout，但同一容器的docker logs中有正确JSON。没有找到可唯一绑定的自然发生job报错，因此不把这项包装成某次生产事故。
+定位。 trievo_bench/l2_agent.py · 6c5ddf01:977用--rm启动verifier；trievo_bench/l2_agent.py · 6c5ddf01:1019直接取stdout最后一行。空输出触发IndexError/invalid_verifier_output，容器已自动删除时还可能失去恢复日志。
+修复及验证。 PR8在trievo_bench/l2_agent.py · 6f3bac23:1048为verifier使用唯一容器名，在成功但stdout为空时读取同一容器日志，然后清理；不能从其他run捡一个JSON。tests/test_l2_agent.py · 6f3bac23:261的test_taskstream_verifier_recovers_rootless_docker_output_from_logs提供可重放输入和断言。
+单并发影响。 根因是Docker输出传输/日志边界，不是worker竞争。此项证明恢复分支被测试覆盖，不证明所有rootless现场都已根治。
+I16　native verifier还差一点返回，外层Docker在同一300秒截止先杀掉它
+类型： 内外timeout竞争。版本： 73085507 → 65090c77。
+现场。 09-11的stream qualification，SkillOpt/SkillsBench，run20260911T115304Z-a8f4b304在Turn13留下verifier_timeout；该report（本机归档；路径见附件）中前12Turn有正常记录。内层native有300秒预算，外层transport也等300秒，没有给序列化结果和浏览器收尾留余量。
+定位。 旧trievo_bench/l2_agent.py · 6c5ddf01:984将native.timeout_seconds原样用于subprocess.run(timeout=...)，同样的问题在73085507候选仍存在。外层先超时意味着未拿到判分结果，不能冒充合法任务0分。
+修复及验证。 65090c77在trievo_bench/l2_agent.py · 65090c77:46加入30秒transport grace，常见配置变成native300/outer330。该提交并入PR8；不是PR10才加grace。后续6c2c42c1现场确实拿到了native返回的timeout，继而暴露I18的分类错误，说明两层问题不能混为一个补丁。
+单并发影响。 相同时间上限的竞争发生在一个verifier内部。grace只允许返回结果，不增加模型或native解题预算。
+I17　pytest结果已经出来，临时目录清理却把结果覆盖成error
+类型： 真实browser cleanup竞态。版本： 6f3bac23 → ded8bf99 → 6c2c42c1。
+现场。 09-11 19:17UTC，6f3bac23/qualification-2的Trace2Skill/SkillsBench，run20260911T175731Z-3aad1dd5对应job在Turn23失败，原始错误为：
+OSError: [Errno 39] Directory not empty: 'blob_storage'
+
+可复核Trace2Skill/s04原始report（本机归档；路径见附件）及其同目录trace。Chromium还在写profile，TemporaryDirectory退出时递归删除目录发生竞态；pytest已得到的pass/fail被清理异常覆盖。
+定位。 benchmarks/l2_demo/streams/skillsbench_data_to_d3_001/episodes/E001/evaluation_assets/verifier.py · 6f3bac23:42使用普通TemporaryDirectory；外部V3物化的native_semantics.py同样受影响。
+修复及验证。 ded8bf99（合入6c2c42c1）只对一次性verifier临时目录采用ignore_cleanup_errors=True，并在repair1.2覆盖SkillsBench、SkillLearn与物化包。它不忽略pytest失败。原任务19:42UTC记录复用保存reply后Turn23/24/25都合法返回且error为空；这三个是恢复smoke，不是新全量验收。
+单并发影响。 Chromium自身有后台进程/线程；即使整个矩阵只有一个worker也会竞争。
+I18　native已明确返回timeout/0，verifier_cli仍把它翻译为评测器error
+类型： 确定的判分分类缺陷。版本： 6c2c42c1 → 6fdf9081 → 1c878d37。
+现场。 09-11，6c2c42c1的SkillOpt/SkillsBench，run20260911T195121Z-df9aa20a在Turn3中止：report（本机归档；路径见附件）报告evaluation_error in turn3: native verifier timed out。这次外层grace已生效；内层捕获了任务测试超时并返回确定性结果category=timeout, score=0。
+定位。 物化verifier_cli.py::normalize_result()把timeout送进error_result。tools/repair_l2_runtime_contracts.py · 6fdf9081:82保留了旧分支及替换内容，可直接看出错误分类。
+修复及验证。 6fdf9081（合入1c878d37）只把native已完成返回的timeout规范化为fail/0；真正的Docker/transport超时仍error/null。修复同步到全部stream的物化verifier_cli，并更新receipt。test_materialized_native_timeout_is_a_scored_task_failure直接输入timeout结果做确定性验证；一次现场恢复没再等满300秒，不拿“故障没再发生”替代这项断言。
+单并发影响。 会。看到timeout字样应先辨认谁超时，不应一律记0或一律排除。
+I19　Hermes的学习写入跑进下一Turn：先修前台权限，再修真正的线程结束边界
+类型： 两轮真实state-write故障。版本： 73085507；1c878d37复发 → 65090c77；6aaca091 → ea26373c。
+第一轮现场。 73085507长流中Hermes/SkillsBench到Turn45、SRA到Turn25时，interact期间写入curator ledger/skill reference，触发baseline modified persistent learning state during interact。线程局部tool whitelist管不到Hermes在其他worker线程分发的learning tool。
+第一轮定位与修复。 trievo_bench/baselines/hermes_bridge.py · 73085507:440仅设置当前线程白名单；65090c77在foreground期间从agent.valid_tool_names移除memory/skill_manage/session_search，结束后恢复。
+第二轮现场。 后来的1c878d37仍在Hermes/τ² s06第5→6Turn复发，run20260911T201604Z-4d925037仅保留5个合法Turn，见Hermes/s06故障report（本机归档；路径见附件）。前台trace主要是只读调用，却有skills/.curator_ledger.jsonl和at-home-no-service-variant.md写入。这指向前一Turn的background evolution尾部，而不是这次前台偷偷写skill。
+真正的结束边界。 旧evolve()等的是review_run.request_done，这个event仅表示provider请求阶段结束，不保证后续工具写入及线程退出。trievo_bench/baselines/hermes_bridge.py · 6aaca091:284保留精确Thread handle并join；取消后仍活着就终止job，禁止带着writer进入下一Turn。6aaca091合入ea26373c。
+验证与单并发影响。 新测试改回只等request_done会红，完整回归237通过；真实ea26373c/Hermes/s06的Turn6得到合法0.075，随后另遇余额故障。1并发只限制job数，不会关掉Hermes内部后台线程，所以这是同事尤其要核对的点。
+I20　源码修了，物化包未同步；旧receipt也曾不能发现内容漂移
+类型： 发布/可复现性缺口。版本： 6c5ddf01基线上的未提交repair候选 → 73085507；ded8bf99；6fdf9081。
+现场。 09-11 10:59UTC独立review指出，repair的--check只看旧收据，未重新计算实际内容hash，包被改过也可能看似“检查通过”。同日修browser cleanup时又发现必须同时覆盖Git内V2和外部V3，否则只修模板不改变运行时执行的副本。
+定位边界。 初版未重算hash的repair是提交前候选，不把它标成某个已发布SHA的bug。实际执行文件位于外部package的turn*/evaluation_assets，与repo中模板/迁移源分开。只知道Git HEAD不足以识别这份数据包。
+修复及验证。 定稿tools/repair_l2_runtime_contracts.py · 73085507:175重新计算manifest和managed_files摘要并比较；ded8bf99扩展browser文件覆盖，6fdf9081扩展timeout规范化覆盖。receipt版本1.1/1.2/1.3描述的是修复内容，并不等于整个benchmark验收通过。
+同事核对。 单并发完全受影响。拿实际--l2-package路径运行对应候选的repair_l2_runtime_contracts.py <package> --check，确认无写入的检查通过；再对照镜像。没有此脚本的旧版本先看diff，不要在正在运行的包上盲目执行非--check修复。
+I21　Hermes submodule未初始化，revision检查读到父仓库SHA；重试claim已消费
+类型： 环境预检失败与操作顺序问题。版本： d714af08工作区；旧启动也出现 → 环境修正，无专属代码fix。
+现场。 09-12 01:51UTC，恢复worktree里的Hermes尚未初始化，三个job在模型调用前报：
+baseline revision mismatch for hermes:
+expected fce30d818e2a1833e99bb12160ccec648e8b2661,
+found d714af088d5abb7f54c39a2305d54c02f0514c73
+
+空submodule目录里执行Git会向上找到父repo；所以found不是“另一个Hermes版本”，而是Tri-Evo控制器的SHA。09-07的首次启动也出现过同类父仓库SHA。
+定位。 trievo_bench/baselines/process.py · 73085507:802的_verify_source_revision()按manifest source路径执行rev-parse并拒绝不匹配，这个guard正确拦住了错误环境。恢复controller更早消费了一次性授权，导致这次pre-model失败还需处理claim。
+实际处理。 初始化固定Hermes revision，保留并归档原claim为pre-model preflight failure，再生成精确的新授权。没有证据表明PR12或PR13已把claim消费移动到所有预检之后，不在文档里虚报代码修复。
+验证与单并发影响。 preflight-retry退出状态快照（本机归档；路径见附件）记录三个Hermes目标Turn重试exit0；旧的失败exit与claim仍保留。单worker也会在启动前失败。建议把submodule/image/config预检放到授权消费前是后续维护建议，不是本轮已经实现的功能。
+I22　余额中断后的evolving首个Interaction，旧controller只支持reset恢复
+类型： 有意限制后的恢复能力扩展。版本： ea26373c控制器 → ab77f4b0 → d714af08。
+现场。 09-12充值后，5个job有普通安全checkpoint可接续；另4个evolving job只有interact_started且没有reply，旧一次性retry只允许reset。直接删marker或回退到t*前缀会丢失副作用边界。
+定位与修复。 tools/run_new_package_matrix.py · ab77f4b0:431扩展为reset/evolving，但evolving必须具备同run/Turn精确interact_started，同interaction若已有reply_received或adjudicate就拒绝；不能使用legacy completed-prefix fallback。ab77f4b0合入d714af08，此阶段仍只支持Interaction1。
+验证。 241项回归与独立review后，各次恢复的退出码与原始路径（本机归档；路径见附件）保留四个目标Turn的独立授权及exit0：Hermes/s04到prefix2、s05到15、s06到14，SkillOpt/s06到17。对应前缀不是重新从零获得，不能与旧report叠加计数。
+单并发影响。 恢复的是一个job内的执行边界。旧限制本来是在证据不足时保护结果；扩展后仍需用户明确授权，不能把这个commit理解为自动无限重试。
+I23　Turn6的Interaction1已保存，Interaction2超时；不能把整Turn重来
+类型： 更细粒度恢复能力扩展。版本： d714af08控制器 → 481b6cac → 4e9dad9d。
+现场。 09-12，Trace2Skill/evolving/SkillsBench，run20260912T013553Z-f91f43ee在5个合法Turn后，Turn6/Interaction2报baseline adapter timed out during interact。Interaction1已有reply和adjudication；旧PR12仍报interrupted Interaction retry only supports the first Interaction。
+定位与修复。 tools/run_new_package_matrix.py · 481b6cac:326在精确i* marker之外核对前一个Interaction的持久判分checkpoint，携带retry_interaction_index；只补缺失那次，不重复Interaction1。481b6cac合入4e9dad9d。checkpoint名如p0005-01表示当时已完成prefix及interaction位置，不能自行按字面猜成另一个Turn。
+真实验证。 一次性授权（本机归档；路径见附件）绑定p0005-01、i0005-02和retry_interaction_index=2；退出码（本机归档；路径见附件）为0，retry run20260912T022652Z-0aae469a写到Turn6，结果为合法fail/0.275。这是恢复路径验证，不是自进化收益。
+单并发影响。 完全相同；一个worker也必须保留“前一次已付费且已执行、后一次未收到reply”的区分。
+I24　relay403额度不足、DeepSeek402余额不足：代码不能补出服务余额
+类型： 外部账户/服务事件。版本： 6c5ddf01现场；ea26373c现场 → 补额/修正凭据，无业务fix SHA。
+现场。 旧relay矩阵末期14个job因HTTP 403: token quota is not enough中断；代表是Hermes/evolving/τ²的run20260909T030045Z-c560aa29。09-11的ea26373c验收又出现HTTP 402: Insufficient Balance，例如Hermes/s04 run20260911T204219Z-57e19935。早期dragtokens参数试验还出现401无效凭据、503无可用channel。原始路径与摘录见外部失败证据（本机归档；路径见附件）。
+代码定位不是根因归属。 trievo_bench/model.py · 6c5ddf01:249及baseline SDK错误处理负责上抛/分类；这些文件没有制造账户余额不足。普通401/402/额度403不应像503、524一样反复重试。故障报到BaselineProtocolError也不代表必然是bridge代码写错。
+实际处理。 官方DeepSeek充值后恢复，已有日志、授权、checkpoint照常保留。没有“修复余额的commit”，也不能把新增timeout/retry代码说成已经解决供应商可用性。
+单并发影响与结果处理。 降并发可能减少瞬时负载，不会使不足的总额度够用。缺少有效reply/判分的部分单独保留，不补0；有安全材料则按I03/I22/I23恢复。
+I25　HTTP有返回却没有可用内容：length空回复与Judge空回复不是同一个阶段
+类型： 尚未归因到特定代码bug的协议事件。版本： 0e4ffce0/6c5ddf01处理路径 → 未确认通用fix，保留失败。
+现场。 旧矩阵至少有三种需区分的记录：SkillOpt/evolving/Titanic run20260908T132707Z-ffdfe962报empty visible assistant content (finish_reason='length', reasoning_chars=0, tool_calls=0)；SkillOpt/evolving/SRA run20260908T210931Z-deeddbd1同样为空但finish_reason是stop；SkillOpt/reset/SkillLearn run20260908T033821Z-25d55bc7则在Turn26的Judge路径报OpenAI-compatible model returned empty content。三份report（本机归档；路径见附件）保留原始error。
+定位与边界。 baseline/SkillOpt/skillopt/model/openai_compatible_backend.py · 6c5ddf01:383检测Agent visible content；trievo_bench/model.py · 6c5ddf01:271检查Judge/User模型content。报错附带“可关闭thinking”的建议，不证明现场就是thinking引起；这里reasoning长度为0，不能照提示推断根因。
+处理。 既有代码拒绝把空内容当正常答案，对确定性的length耗尽不自动花同一预算重放。Agent未返回reply与Judge在已保存reply之后失败，恢复入口不同。未找到能解释并消除这三类空输出的单一fix commit，因此保持“根因未完全确定”，不借I02参数补丁宣称都已修好。
+单并发影响。 会；同事应保留finish_reason、usage、失败阶段和可用reply证据，不能只在日志里写“API error”或把三条都归为模型0分。
+验证结果
+本轮怎样核对这些记录
+本次没有重新运行模型、重放工具或改写旧分数。我们沿原task、既有work-report、run report/trace/checkpoint、部署收据和Git对象还原现场；直接检查了44个固定版本源码行锚点，并核对了25条案例的编号对应关系。案例中205/237/241等测试数是当时日志记录，不是本次新跑测试。
+复核材料
+用途与边界
+版本对象表（本机归档；路径见附件）、固定源码锚点（本机归档；路径见附件）
+记录完整SHA、父提交、文件及行内容；可核查修复究竟改了哪里。
+早期事故调查（本机归档；路径见附件）
+selector、524、参数、Turn14、调度、存储、队列统计；已纠正“staging是新加”“completed真的被重跑”的过度归因。
+adapter调查（本机归档；路径见附件）
+parser、路径、预算、SRA、τ²；与正文的同baseline代码/现场对应。
+后期事故调查（本机归档；路径见附件）
+verifier、Hermes线程、submodule和两次恢复扩展；将自然故障与controlled regression分开。
+原对话现场摘录（本机归档；路径见附件）
+保留当时判断和后续撤销，例如τ²假1.0。原task：01a085e5-db60-74f3-ba73-160120782256、01a07ee0-a4a2-79d2-b8b2-3455b2d176a2。
+外部失败记录（本机归档；路径见附件）
+quota、empty-response原始report路径、hash和错误；不将它们伪装成已修好的代码bug。
+源码链接可直接从浏览器阅读；原始run日志在本机归档，关键报错已在各案例摘录，完整本地路径保留在Markdown附件中。没有为了共享文档发布API key或大段无关聊天。
+API质量和速度：保留排障所需的观察
+dragtokens旧运行实际可产生工具/文件，也实见503/524、鉴权失败与额度不足；官方DeepSeek后期实际可完成若干任务链，余额不足时同样中断。I02/I03/I05/I24/I25已说明这些现象发生在哪层。不能根据接口返回HTTP200，就推断一定有可用内容；也不能把所有BaselineProtocolError当成供应商问题。
+此前从既有日志算得：旧relay的18份evolving样本累计736,291个Interaction输出tokens/87,613.193个job秒，约8.40 tok/s；官方DeepSeek的8份有wall字段样本为296,528/4,819.665，约61.53 tok/s。样本与计量证据（本机归档；路径见附件）、本次独立复算（本机归档；路径见附件）保留精确文件列表。
+这些是包括工具、重试、评分和故障等待的整个运行过程输出率。分母是各job耗时相加，分子不含所有阶段的tokens；两边模型、runtime、任务前缀与失败构成都不同。它们只能解释为什么当时运行慢，不能称为纯decode速度或供应商公平排名，更不能拿来解释自进化。缺少同配置请求级TTFT/p50/p95/成功分母，就不补造这类指标。
+风险阻塞与范围偏离
+哪些严格性要保留，哪些复杂度应该收敛
+I04禁止合成分数，I14禁止adapter帮忙改好答案，I18区分native任务超时和外层执行失败，I19要求更新线程真正结束，I22/I23保护已执行副作用，这些都直接影响测量，不能为了“都跑完”删除。I10的20→40是新版本预算，I14的fence规则收紧是合同变化，应明确冻结版本而不是事后追分。I09的错路径仍可能是合法任务失败，不要过度归为infra。
+可维护性问题是真实存在的：规则散落在driver、bridge、submodule、镜像和物化repair中，导致只升级一层就以为全套已修好。I20/I21就是现场例子。建议把公开contract、failure taxonomy、release receipt与对应回归收敛到固定入口；已有原子复制等机制继续复用。预算、数据包或状态语义改变后的资格验证要重新绑定候选；同候选外部中断若有完整证据，应走安全恢复，不必一概全量从零重跑。
+仍未确认： 同事那次运行的版本与具体受影响条目；I15自然发生事故的唯一现场；I20初版未提交repair的完整源码身份；I25空回复的统一根因；I21授权消费早于全部preflight是否已有后续独立修复。本文把这些空缺写明，不用“已修好infra”一笔带过。
+本轮范围是修订同一份文档、恢复现场与核对源码。没有修代码、改同事环境、启动或终止job、充值、运行新增付费验证。也没有把报告的独立Judge当成runtime验收。旧版文档和附件的本地历史保留，新版正文不再携带旧分数分析与曲线。
+下一步与需决策事项
+同事复核旧运行的最短路径
+先记录实际执行时的四项身份：主repo SHA、Hermes submodule SHA、三个baseline的image ID/revision label、实际--l2-package及repair receipt。只有当前checkout的HEAD不够，旧镜像和被覆盖的部署脚本可能完全不同；I05就是Git基线与部署文件不一致的实例。
+下面是只读检查示例，替换为那次真正使用的路径/镜像名，不是要求现在更新或重跑：
+git rev-parse HEAD
+git submodule status baseline/hermes-agent
+git show <故障或修复SHA>:<索引指向的文件>
+docker image inspect <实际baseline镜像> --format '{{.Id}} {{index .Config.Labels "org.opencontainers.image.revision"}}'
+python tools/repair_l2_runtime_contracts.py <实际L2包> --check
+
+若通过cherry-pick移植补丁，只检查merge-base --is-ancestor不够；还要看函数行为、构建后的镜像与包文件。确认身份后按索引筛选，再抽查对应trace：requested Action是否真的执行、final carrier是否原样保留、native结果是否被正确接收、evolve结束是否真的先于下一Turn。发现受影响结果应保留原始失败，并单列需要复核的job/Turn，不批量补0、不挑最好一次重跑结果。
+Harbor路线保持，但不以迁移代替修复
+原任务09-11 09:43UTC已明确选择长期Harbor、短期直接修关键适配；09:46UTC用户决定先修当前七类问题，暂不迁移。这里保留这一顺序：先让当前runtime可用，再将通用执行层逐步交给Harbor。
+Tri-Evo仍负责Stream/Turn/Interaction、条件状态、User Simulator、evolution时机、判分与恢复合同；Harbor可承接task packaging、sandbox、Docker/Agent/verifier lifecycle、artifact和并发。它不会自动修I08 parser、I11 carrier、I18判分语义，也不会替我们证明安全恢复。迁移前后先用相同文件任务与browser任务核对输入、工具、产物、判分和恢复，再扩展；本次没有新POC或迁移工期承诺。
+本次没有等待同事版本信息才可完成的文档事项。 版本未知已通过清楚的故障边界和检查方法处理；拿到SHA后可以据索引判定影响，而不是先让同事重跑几天。
+暂时无法在飞书文档外展示此内容

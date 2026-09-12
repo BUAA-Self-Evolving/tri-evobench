@@ -1,9 +1,13 @@
 import json
+import sys
 from types import SimpleNamespace
+
+import pytest
 
 from trievo_bench import storage_recovery as module
 
 
+@pytest.mark.skipif(sys.platform != "linux", reason="storage gate samples Linux statvfs mounts")
 def test_low_space_latches_then_recovers_after_stability_across_instances(tmp_path, monkeypatch):
     clock = [100.0]
     free = [40]
@@ -29,6 +33,7 @@ def test_low_space_latches_then_recovers_after_stability_across_instances(tmp_pa
     assert json.loads((tmp_path / 'state/health.json').read_text())['healthy'] is False
 
 
+@pytest.mark.skipif(sys.platform != "linux", reason="storage gate samples Linux statvfs mounts")
 def test_bad_overlay_probe_does_not_release_pending_jobs(tmp_path, monkeypatch):
     monkeypatch.setattr(module.os, 'statvfs', lambda p: SimpleNamespace(
         f_bavail=80*1024**3, f_frsize=1, f_blocks=100*1024**3, f_favail=50000, f_files=100000))

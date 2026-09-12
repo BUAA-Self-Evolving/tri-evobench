@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from tools.run_new_package_matrix import jobs
+from tools.run_new_package_matrix import BASELINES, L2_CONDITIONS, jobs
 
 
 def _packages(root):
@@ -24,20 +24,20 @@ def test_default_retains_mixed_matrix_and_l2_selects_exact_full_matrix(tmp_path)
     packages = _packages(tmp_path / "packages")
     kwargs = {"l2_conditions": ("reset", "frozen", "evolving")}
     legacy = jobs(tmp_path, tmp_path / "out", packages, **kwargs)
-    assert len(legacy) == 123
+    assert len(legacy) == 23 * len(BASELINES) + 6 * len(BASELINES) * len(L2_CONDITIONS)
     selected = jobs(tmp_path, tmp_path / "out", packages, level="l2", **kwargs)
     assert selected == [row for row in legacy if row["level"] == "l2"]
-    assert len(selected) == 54
-    assert sum(len(row["turns"]) for row in selected) == 2610
+    assert len(selected) == 6 * len(BASELINES) * len(L2_CONDITIONS)
+    assert sum(len(row["turns"]) for row in selected) == 290 * len(BASELINES) * len(L2_CONDITIONS)
     assert {row["level"] for row in selected} == {"l2"}
-    assert len({row["id"] for row in selected}) == 54
-    assert len(jobs(tmp_path, tmp_path / "out", packages)) == 87
+    assert len({row["id"] for row in selected}) == len(selected)
+    assert len(jobs(tmp_path, tmp_path / "out", packages)) == 29 * len(BASELINES)
 
 
 def test_l2_only_does_not_require_l1_package(tmp_path):
     packages = _packages(tmp_path / "packages")
     rows = jobs(tmp_path, tmp_path / "out", packages / "l2", level="l2")
-    assert len(rows) == 18
+    assert len(rows) == 6 * len(BASELINES)
 
 
 def test_l1_only_does_not_resolve_ambiguous_l2_packages(tmp_path):
@@ -46,7 +46,7 @@ def test_l1_only_does_not_resolve_ambiguous_l2_packages(tmp_path):
     second.parent.mkdir(parents=True)
     second.write_text("{}")
     rows = jobs(tmp_path, tmp_path / "out", packages, level="l1")
-    assert len(rows) == 69
+    assert len(rows) == 23 * len(BASELINES)
     assert {row["level"] for row in rows} == {"l1"}
 
 
@@ -59,7 +59,7 @@ def test_cli_level_selects_before_gate_without_paid_calls(tmp_path):
     packages = _packages(tmp_path / "packages")
     root = tmp_path / "out"
     # Valid existing reports make the CLI reuse results without launching agents.
-    for agent in ("hermes", "skillopt", "trace2skill"):
+    for agent in BASELINES:
         path = root / f"l2/reset/{agent}/s01/run/stream/report.json"
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps({"stream_id": "l2-0", "condition": "reset", "turns": [

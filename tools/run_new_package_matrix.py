@@ -15,6 +15,13 @@ from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Make direct ``python tools/run_new_package_matrix.py`` execution resolve the
+# adjacent package regardless of the caller's current working directory or
+# whether the checkout has been installed in editable mode.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 L2_CONDITIONS = ("reset", "frozen", "evolving")
 BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness")
 

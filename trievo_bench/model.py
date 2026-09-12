@@ -84,10 +84,10 @@ def parse_reply(text: str) -> ModelReply:
         except json.JSONDecodeError:
             loose = _parse_loose_action(text)
             return ModelReply(text=text, actions=loose, state_update={}, raw=text)
-    if not isinstance(payload, dict):
+    if not isinstance(payload, (dict, list)):
         return ModelReply(text=text, actions=[], state_update={}, raw=payload)
     actions: list[dict[str, Any]] = []
-    raw_actions = payload.get("actions", [])
+    raw_actions = payload if isinstance(payload, list) else payload.get("actions", [])
     if isinstance(raw_actions, dict):
         raw_actions = [raw_actions]
     for raw_action in raw_actions if isinstance(raw_actions, list) else []:
@@ -105,6 +105,8 @@ def parse_reply(text: str) -> ModelReply:
         elif op in {"remove", "file_remove", "delete", "delete_file"}:
             path = raw_action.get("path") or raw_action.get("file") or raw_action.get("filename") or raw_action.get("file_path") or raw_action.get("target")
             actions.append({"op": "remove", "path": path})
+    if isinstance(payload, list):
+        return ModelReply(text=text, actions=actions, state_update={}, raw=payload)
     tool_calls = payload.get("tool_calls", payload.get("tools", []))
     events = payload.get("events", [])
     raw_state_update = payload.get("state_update", payload.get("state", {}))
