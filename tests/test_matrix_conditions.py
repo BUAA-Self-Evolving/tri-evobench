@@ -362,6 +362,174 @@ def test_interrupted_retry_consumes_authorization_and_uses_exact_prefix_checkpoi
         prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
 
 
+def test_interrupted_retry_accepts_evolving_started_marker_without_replaying_prefix(tmp_path):
+    row = jobs(
+        tmp_path,
+        tmp_path / "results",
+        _packages(tmp_path),
+        l2_conditions=("evolving",),
+    )[0]
+    run_id = "20260911T204219Z-deadbeef"
+    run_dir = Path(row["output"]) / f"sra/{run_id}"
+    _write_json(run_dir / "report.json", {
+        "schema_version": "l2-agent-runtime-0.2-taskstream",
+        "run_id": run_id,
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "turns": _report("evolving")["turns"][:1],
+        "error": "BaselineProtocolError: baseline adapter interact failed: HTTP 402",
+    })
+    started = Path(row["output"]) / "_checkpoints/key/deadbeef/i0001-01"
+    for name in ("workspace.zip", "baseline_state.zip"):
+        _empty_zip(started / name)
+    _write_json(
+        started / "completed_turns.json",
+        _report("evolving")["turns"][:1],
+    )
+    _write_json(started / "checkpoint.json", {
+        "phase": "interact_started",
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "run_id": run_id,
+        "turn_id": "turn2",
+        "next_turn_index": 1,
+        "interaction_index": 1,
+    })
+    authorization = tmp_path / "authorization.json"
+    _write_json(authorization, {
+        "status": "authorized_not_consumed",
+        "job": row["id"],
+        "failed_run_id": run_id,
+        "turn_id": "turn2",
+        "allowed_additional_attempts": 1,
+        "preserve_valid_turns": [1],
+    })
+
+    checkpoint, selected_run, stop_after_turn = prepare_interrupted_retry(
+        row,
+        run_id,
+        authorization,
+    )
+
+    assert checkpoint == started
+    assert selected_run == run_id
+    assert stop_after_turn == "turn2"
+    consumed = json.loads(authorization.read_text(encoding="utf-8"))
+    assert consumed["status"] == "consumed"
+    assert consumed["condition"] == "evolving"
+    assert consumed["checkpoint"] == str(started)
+
+
+def test_evolving_interrupted_retry_rejects_legacy_completed_prefix_fallback(tmp_path):
+    row = jobs(
+        tmp_path,
+        tmp_path / "results",
+        _packages(tmp_path),
+        l2_conditions=("evolving",),
+    )[0]
+    run_id = "20260911T204219Z-deadbeef"
+    run_dir = Path(row["output"]) / f"sra/{run_id}"
+    _write_json(run_dir / "report.json", {
+        "schema_version": "l2-agent-runtime-0.2-taskstream",
+        "run_id": run_id,
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "turns": _report("evolving")["turns"][:1],
+        "error": "BaselineProtocolError: baseline adapter timed out during interact",
+    })
+    completed = Path(row["output"]) / "_checkpoints/key/deadbeef/t0001"
+    for name in ("workspace.zip", "baseline_state.zip"):
+        _empty_zip(completed / name)
+    _write_json(
+        completed / "completed_turns.json",
+        _report("evolving")["turns"][:1],
+    )
+    _write_json(completed / "checkpoint.json", {
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "next_turn_index": 1,
+    })
+    authorization = tmp_path / "authorization.json"
+    _write_json(authorization, {
+        "status": "authorized_not_consumed",
+        "job": row["id"],
+        "failed_run_id": run_id,
+        "turn_id": "turn2",
+        "allowed_additional_attempts": 1,
+        "preserve_valid_turns": [1],
+    })
+
+    with pytest.raises(ValueError, match="exact interact_started checkpoint"):
+        prepare_interrupted_retry(row, run_id, authorization)
+
+    assert json.loads(authorization.read_text(encoding="utf-8"))["status"] == "authorized_not_consumed"
+
+
+def test_evolving_interrupted_retry_rejects_same_run_reply_received_evidence(tmp_path):
+    row = jobs(
+        tmp_path,
+        tmp_path / "results",
+        _packages(tmp_path),
+        l2_conditions=("evolving",),
+    )[0]
+    run_id = "20260911T204219Z-deadbeef"
+    run_dir = Path(row["output"]) / f"sra/{run_id}"
+    _write_json(run_dir / "report.json", {
+        "schema_version": "l2-agent-runtime-0.2-taskstream",
+        "run_id": run_id,
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "turns": _report("evolving")["turns"][:1],
+        "error": "RuntimeError: crashed after reply_received checkpoint",
+    })
+    checkpoint_root = Path(row["output"]) / "_checkpoints/key/deadbeef"
+    started = checkpoint_root / "i0001-01"
+    received = checkpoint_root / "r0001-01"
+    for directory in (started, received):
+        for name in ("workspace.zip", "baseline_state.zip"):
+            _empty_zip(directory / name)
+        _write_json(
+            directory / "completed_turns.json",
+            _report("evolving")["turns"][:1],
+        )
+    marker = {
+        "stream_id": "sra",
+        "baseline": "hermes",
+        "condition": "evolving",
+        "run_id": run_id,
+        "turn_id": "turn2",
+        "next_turn_index": 1,
+        "interaction_index": 1,
+    }
+    _write_json(started / "checkpoint.json", {**marker, "phase": "interact_started"})
+    _write_json(received / "checkpoint.json", {**marker, "phase": "reply_received"})
+    _write_json(received / "reply_received.json", {
+        "turn_id": "turn2",
+        "turn_index": 1,
+        "interaction_index": 1,
+        "reply": {"text": "paid reply"},
+    })
+    authorization = tmp_path / "authorization.json"
+    _write_json(authorization, {
+        "status": "authorized_not_consumed",
+        "job": row["id"],
+        "failed_run_id": run_id,
+        "turn_id": "turn2",
+        "allowed_additional_attempts": 1,
+        "preserve_valid_turns": [1],
+    })
+
+    with pytest.raises(ValueError, match="reply_received evidence"):
+        prepare_interrupted_retry(row, run_id, authorization)
+
+    assert json.loads(authorization.read_text(encoding="utf-8"))["status"] == "authorized_not_consumed"
+
+
 def test_interrupted_retry_accepts_legacy_timeout_receipt_without_trusting_synthetic_turn(tmp_path):
     row = jobs(
         tmp_path,
@@ -495,7 +663,7 @@ def test_interrupted_retry_rejects_mismatch_and_scored_failure(tmp_path):
         prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
 
 
-def test_interrupted_retry_rejects_non_reset_condition(tmp_path):
+def test_interrupted_retry_rejects_frozen_condition(tmp_path):
     row = jobs(
         tmp_path,
         tmp_path / "results",
@@ -512,7 +680,7 @@ def test_interrupted_retry_rejects_non_reset_condition(tmp_path):
         "preserve_valid_turns": [1],
     })
 
-    with pytest.raises(ValueError, match="reset L2"):
+    with pytest.raises(ValueError, match="reset or evolving L2"):
         prepare_interrupted_retry(row, "20260907T000000Z-deadbeef", authorization)
 
 
