@@ -556,12 +556,13 @@ def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=Non
         config = f"tmp_{row['agent']}_docker.override.json"
     # Stream length must not silently determine the per-turn resource allowance.
     # This is an aggregate guard; model/tool/time limits remain unchanged.
-    # This is a runaway guard, not a scientific per-Turn budget. Hermes can
-    # legitimately use roughly 3.8M tokens in a tool-heavy SkillsBench Turn
-    # once the explicit turn-boundary evolution pass is included, so retain
-    # headroom above the observed legal maximum. Per-Turn model/tool/output
-    # limits remain the actual comparable resource contract.
-    stream_token_limit = max(10_000_000, 5_000_000 * len(row["turns"]))
+    # This is a runaway guard, not a scientific per-Turn budget. Cached context
+    # and explicit turn-boundary evolution can make a legal SkillsBench Turn
+    # exceed 5M accounted tokens even though its model/tool/output limits hold.
+    # Keep broad aggregate headroom so this secondary fuse does not become an
+    # accidental admission limit; per-Turn limits remain the comparable runtime
+    # contract and still bound every individual episode.
+    stream_token_limit = max(10_000_000, 10_000_000 * len(row["turns"]))
     args = [sys.executable, "-m", f"trievo_bench.{row['level']}_" + ("arena_compat" if row["level"] == "l1" else "compat"),
             "--package", row["package"], "--stream", row["stream"], "--output", row["output"],
             "--baseline", row["agent"], "--baseline-config", str(config_root / config),
