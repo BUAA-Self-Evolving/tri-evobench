@@ -110,7 +110,9 @@ def load_l1_arena_stream(
             "metadata": {"public": {
                 "source_format": "l1_arena_task_json",
                 "available_tools": available,
-                "interaction_timeout_seconds": 300,
+                # The transport must outlive the agent's advertised episode
+                # budget so it can return its bounded result and usage.
+                "interaction_timeout_seconds": 660,
                 "agent_limits": {
                     "max_model_calls": 12,
                     "max_tool_calls": 16,

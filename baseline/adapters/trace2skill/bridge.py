@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import signal
 import shutil
 import sys
 import traceback
@@ -164,7 +165,10 @@ class Trace2SkillBridge:
         target_calls_before = self._clients.get("target").calls if self._clients.get("target") else 0
         target_usage_before = dict(getattr(self._clients.get("target"), "usage_totals", {}))
         context = self._build_context(request, params)
-        result = agent.run(context)
+        limits = _turn_agent_limits(self.turn_metadata)
+        result = _run_agent_bounded(
+            agent, context, float(limits.get("episode_timeout_seconds", 0) or 0)
+        )
         steps = getattr(getattr(agent, "_agent", None), "_last_steps", [])
         trace = _steps_to_trace(steps)
         success = bool(result.get("success", False)) if isinstance(result, dict) else False
@@ -426,9 +430,12 @@ class Trace2SkillBridge:
         }.get(agent_name)
         if agent_class is None:
             raise RuntimeError(f"unsupported Trace2Skill agent: {agent_name}")
+        limits = _turn_agent_limits(self.turn_metadata)
+        configured_turns = max(1, int(self.options.get("max_turns", 20)))
+        max_model_calls = int(limits.get("max_model_calls", configured_turns) or configured_turns)
         kwargs = {
             "client": client,
-            "max_turns": max(1, int(self.options.get("max_turns", 20))),
+            "max_turns": max(1, min(configured_turns, max_model_calls)),
             "temperature": float(self.options.get("temperature", 0.0)),
             "verbose": bool(self.options.get("verbose", False)),
             "timeout": max(1, int(self.options.get("tool_timeout", 120))),
@@ -603,6 +610,8 @@ def _build_client(options: dict[str, Any], repo_root: Path, stage: str) -> Any:
         use_cache=use_cache,
         cache_path=str(cache_path) if cache_path else None,
         timeout=float(options.get("request_timeout", 600)),
+        retry_times=tuple(int(item) for item in options.get("request_retry_times", (5, 10, 30))),
+        max_retries=int(options.get("sdk_max_retries", 2)),
     )
 
 
@@ -656,6 +665,41 @@ def _looks_like_l1_protocol_task(request: str, metadata: dict[str, Any] | None =
             return False
     text = str(request).lower()
     return "可调用的模拟工具" in text or "available tools" in text
+
+
+class _EpisodeDeadline(BaseException):
+    """Bypass broad model-client Exception retries at the episode boundary."""
+
+
+def _turn_agent_limits(metadata: dict[str, Any] | None) -> dict[str, Any]:
+    if not isinstance(metadata, dict):
+        return {}
+    public = metadata.get("public", metadata)
+    limits = public.get("agent_limits", {}) if isinstance(public, dict) else {}
+    return limits if isinstance(limits, dict) else {}
+
+
+def _run_agent_bounded(agent: Any, context: Any, timeout_seconds: float) -> Any:
+    if timeout_seconds <= 0 or os.name != "posix":
+        return agent.run(context)
+    previous = signal.getsignal(signal.SIGALRM)
+
+    def expire(_signum: int, _frame: Any) -> None:
+        raise _EpisodeDeadline()
+
+    signal.signal(signal.SIGALRM, expire)
+    signal.setitimer(signal.ITIMER_REAL, timeout_seconds)
+    try:
+        return agent.run(context)
+    except _EpisodeDeadline:
+        return {
+            "success": False,
+            "answer": "",
+            "error": f"episode_timeout after {timeout_seconds:g} seconds",
+        }
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
 
 
 def _unwrap_nested_l1_reply(parsed: Any) -> Any:

@@ -88,6 +88,11 @@ class SkillOptBaselineContractTest(unittest.TestCase):
         self.assertEqual(override["workspace"]["adapter_path"], "/workspace")
         self.assertEqual(override["state"]["adapter_path"], "/agent-state")
 
+    def test_active_docker_override_runs_as_host_user(self) -> None:
+        override = json.loads((Path(__file__).parents[1] / "tmp_skillopt_docker.override.json").read_text())
+        command = override["adapter"]["command"]
+        self.assertEqual(command[command.index("--user") + 1], "{uid}:{gid}")
+
     def test_workspace_actions_are_safe_and_executable(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             workspace = Path(tmp) / "workspace"

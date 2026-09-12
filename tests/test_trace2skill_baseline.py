@@ -21,6 +21,11 @@ from trievo_bench.spec import BenchmarkSpec
 
 
 class Trace2SkillBaselineContractTest(unittest.TestCase):
+    def test_active_docker_override_runs_as_host_user(self) -> None:
+        override = json.loads((Path(__file__).parents[1] / "tmp_trace2skill_docker.override.json").read_text())
+        command = override["adapter"]["command"]
+        self.assertEqual(command[command.index("--user") + 1], "{uid}:{gid}")
+
     def test_manifest_is_registered_with_flow_scoped_skill_state(self) -> None:
         manifest = load_manifest(Path(__file__).parents[1] / "baseline" / "manifests" / "trace2skill.json")
         self.assertEqual(manifest.baseline_id, "trace2skill")

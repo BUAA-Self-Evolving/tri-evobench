@@ -54,7 +54,10 @@ class NdjsonProcess:
     ) -> None:
         self.command = command
         self.timeout_seconds = timeout_seconds
-        self._stderr_stream = stderr_path.open("w", encoding="utf-8")
+        # A reset-condition Stream starts a fresh runtime for every Turn but
+        # intentionally keeps one run directory. Append so later runtimes (or
+        # an exact checkpoint resume) cannot erase earlier diagnostic logs.
+        self._stderr_stream = stderr_path.open("a", encoding="utf-8")
         try:
             self.process = subprocess.Popen(
                 command,

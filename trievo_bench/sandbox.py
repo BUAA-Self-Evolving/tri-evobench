@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 import subprocess
 import tempfile
 import uuid
@@ -14,6 +15,29 @@ from typing import Any
 
 class SandboxError(RuntimeError):
     pass
+
+
+def _make_readonly_export_traversable(root: Path) -> None:
+    """Allow the remapped verifier user to read an ephemeral workspace copy.
+
+    ``mkdtemp`` creates the export root with mode 0700 and agent runtimes may
+    create files with mode 0600.  A Docker daemon using user-namespace
+    remapping therefore cannot traverse the bind mount even though the
+    verifier container itself runs as root.  Only add read/search bits to the
+    disposable export tree; never follow agent-authored symlinks.
+    """
+    for path in [root, *root.rglob("*")]:
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(info.st_mode):
+            continue
+        mode = stat.S_IMODE(info.st_mode)
+        if stat.S_ISDIR(info.st_mode):
+            path.chmod(mode | 0o055)
+        elif stat.S_ISREG(info.st_mode):
+            path.chmod(mode | 0o044)
 
 
 def _safe_relative(path: str) -> str:
@@ -190,6 +214,7 @@ class DockerSandbox(Sandbox):
     def export_workspace(self) -> Path:
         exported = Path(tempfile.mkdtemp(prefix="trievo-export-"))
         self._run(["docker", "cp", f"{self.name}:/workspace/.", str(exported)])
+        _make_readonly_export_traversable(exported)
         return exported
 
     def workspace_path(self) -> Path:
