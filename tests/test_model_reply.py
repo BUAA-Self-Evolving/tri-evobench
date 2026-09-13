@@ -140,6 +140,43 @@ def test_openai_client_retries_malformed_success_payload(monkeypatch: pytest.Mon
     assert client.budget.used == 14
 
 
+def test_openai_client_surfaces_friday_business_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "trievo_bench.model.urllib.request.urlopen",
+        lambda request, timeout: _Response({"status": 400, "message": "invalid app authorization"}),
+    )
+    client = OpenAICompatibleClient(
+        base_url="https://aigc.sankuai.com/v1/openai/native",
+        api_key="test-app-id",
+        model="deepseek-v4-flash",
+        budget=TokenBudget(5000),
+        max_retries=3,
+    )
+
+    with pytest.raises(RuntimeError, match="status 400.*invalid app authorization"):
+        client.complete([{"role": "user", "content": "hello"}])
+    assert client.budget.calls == 1
+
+
+def test_openai_client_retries_friday_business_429(monkeypatch: pytest.MonkeyPatch) -> None:
+    outcomes = [_Response({"status": 429, "message": "rate limited"}), _success_response()]
+    monkeypatch.setattr(
+        "trievo_bench.model.urllib.request.urlopen",
+        lambda request, timeout: outcomes.pop(0),
+    )
+    monkeypatch.setattr("trievo_bench.model.time.sleep", lambda _: None)
+    client = OpenAICompatibleClient(
+        base_url="https://aigc.sankuai.com/v1/openai/native",
+        api_key="test-app-id",
+        model="deepseek-v4-flash",
+        budget=TokenBudget(5000),
+        max_retries=2,
+    )
+
+    assert client.complete([{"role": "user", "content": "hello"}]) == "ok"
+    assert client.budget.calls == 2
+
+
 def test_client_from_config_reads_relay_retry_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TRIEVO_API_KEY", "secret")
     monkeypatch.setenv("TRIEVO_API_TIMEOUT_SECONDS", "150")

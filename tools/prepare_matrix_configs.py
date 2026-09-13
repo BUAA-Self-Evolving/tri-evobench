@@ -3,7 +3,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from trievo_bench.provider_profiles import PROVIDER_PROFILES, get_provider_profile
 
 PROXY_ENV_NAMES = (
     "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY",
@@ -27,17 +34,25 @@ def _add_passthrough_env(command, names):
 
 def generate(
     output: Path,
-    model: str,
-    base_url: str,
+    model: str | None = None,
+    base_url: str | None = None,
     *,
+    provider_mode: str = "packycode",
     l2_max_output_tokens: int = 12000,
-    api_timeout_seconds: int = 150,
-    api_max_retries: int = 4,
+    api_timeout_seconds: int | None = None,
+    api_max_retries: int | None = None,
     hermes_image: str = "trievo-hermes:matrix-current",
     skillopt_image: str = "trievo-skillopt:matrix-current",
     trace2skill_image: str = "trievo-trace2skill:matrix-current",
-    inherit_proxy: bool = True,
+    inherit_proxy: bool | None = None,
 ):
+    profile = get_provider_profile(provider_mode)
+    model = model or profile.model
+    base_url = base_url or profile.base_url
+    api_timeout_seconds = api_timeout_seconds if api_timeout_seconds is not None else profile.timeout_seconds
+    api_max_retries = api_max_retries if api_max_retries is not None else profile.max_retries
+    inherit_proxy = profile.inherit_proxy if inherit_proxy is None else inherit_proxy
+    thinking = profile.thinking
     if not 1 <= l2_max_output_tokens <= 1_000_000:
         raise ValueError("l2_max_output_tokens must be between 1 and 1000000")
     if not 1 <= api_timeout_seconds <= 3600:
@@ -46,7 +61,7 @@ def generate(
         raise ValueError("api_max_retries must be between 0 and 20")
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    repo = Path(__file__).resolve().parents[1]
+    repo = REPO_ROOT
     limits = {
         "max_model_calls": 24,
         "max_tool_calls": 20,
@@ -86,11 +101,11 @@ def generate(
             f"model:\n  default: {json.dumps(model)}\n  provider: custom\n"
             f"  base_url: {json.dumps(base_url)}\n  max_tokens: {cap}\n"
             "auxiliary:\n  title_generation:\n    enabled: false\n"
-            f"agent:\n  reasoning_effort: none\n  api_max_retries: {api_max_retries}\n"
+            f"agent:\n  reasoning_effort: {'high' if thinking == 'enabled' else 'none'}\n  api_max_retries: {api_max_retries}\n"
             f"providers:\n  custom:\n    base_url: {json.dumps(base_url)}\n"
             "    key_env: OPENAI_API_KEY\n    api_mode: chat_completions\n"
-            "    extra_body:\n      thinking:\n        type: disabled\n"
-            "      reasoning:\n        enabled: false\n"
+            f"    extra_body:\n      thinking:\n        type: {thinking}\n"
+            f"      reasoning:\n        enabled: {'true' if thinking == 'enabled' else 'false'}\n"
             f"    request_timeout_seconds: {api_timeout_seconds}\n",
             encoding="utf-8",
         )
@@ -98,7 +113,7 @@ def generate(
             "adapter": {"command": command},
             "state": {"seed_from": str(seed), "seed_files": ["config.yaml"]},
             "options": {"image": hermes_image, "approval_policy": "session",
-                        "thinking": "disabled",
+                        "thinking": thinking,
                         "l2_agent_limits": l2_limits if level == "l2" else limits},
         })
 
@@ -112,14 +127,16 @@ def generate(
           "native_tool_rounds": 16, "exec_timeout": 90, "retries": 1}),
         ("trace2skill", trace2skill_image, ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
          {"model": model, "max_turns": 24, "request_timeout": 120, "tool_timeout": 90,
-          "generation_config": {"thinking": {"type": "disabled"}}}),
+          "generation_config": {"thinking": {"type": thinking}}}),
         ("prime-agent", "trievo-prime-agent:matrix-current", ["OPENAI_API_KEY"],
          {"provider": "trievo", "model": model, "base_url": base_url,
           "api": "openai-completions", "api_key_env": "TRIEVO_API_KEY",
-          "thinking": "off", "reasoning": False, "max_output_tokens": 4096}),
+          "thinking": "on" if thinking == "enabled" else "off",
+          "reasoning": thinking == "enabled", "max_output_tokens": 4096}),
         ("adaptive-auto-harness", "trievo-adaptive-auto-harness:matrix-current",
          ["OPENAI_BASE_URL", "OPENAI_API_KEY"],
          {"model": model, "base_url": base_url, "api_key_env": "TRIEVO_API_KEY",
+          "thinking": thinking,
           "max_output_tokens": 4096, "max_steps": 20, "tool_timeout": 90,
           "evolver_model": model, "evolver_base_url": base_url,
           "evolver_api_key_env": "TRIEVO_API_KEY", "evolver_max_tokens": 4096,
@@ -146,7 +163,7 @@ def generate(
                         "cleanup_command": ["docker", "rm", "-f", container]},
             "workspace": {"mode": "shared_volume", "adapter_path": "/workspace"},
             "state": {"adapter_path": "/state"},
-            "environment": {"set": {"TRIEVO_THINKING": "disabled"}},
+            "environment": {"set": {"TRIEVO_THINKING": thinking}},
             "options": {**options, "l2_agent_limits": limits},
         }
         save(f"tmp_{agent}_docker.override.json", config)
@@ -175,17 +192,26 @@ def generate(
                     },
                 },
             })
+    save("provider-profile.json", profile.public_metadata() | {
+        "base_url": base_url,
+        "model": model,
+        "thinking": thinking,
+        "timeout_seconds": api_timeout_seconds,
+        "max_retries": api_max_retries,
+        "inherit_proxy": inherit_proxy,
+    })
     return output
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=Path("tmp/matrix-config"))
-    parser.add_argument("--model", default="deepseek-v4-flash")
-    parser.add_argument("--base-url", default="https://cf.api.fan/v1")
+    parser.add_argument("--provider-mode", choices=sorted(PROVIDER_PROFILES), default="packycode")
+    parser.add_argument("--model", help="override the selected provider profile model")
+    parser.add_argument("--base-url", help="override the selected provider profile base URL")
     parser.add_argument("--l2-max-output-tokens", type=int, default=12000)
-    parser.add_argument("--api-timeout-seconds", type=int, default=150)
-    parser.add_argument("--api-max-retries", type=int, default=4)
+    parser.add_argument("--api-timeout-seconds", type=int)
+    parser.add_argument("--api-max-retries", type=int)
     parser.add_argument("--hermes-image", default="trievo-hermes:matrix-current")
     parser.add_argument("--skillopt-image", default="trievo-skillopt:matrix-current")
     parser.add_argument("--trace2skill-image", default="trievo-trace2skill:matrix-current")
@@ -205,7 +231,8 @@ def main():
         hermes_image=args.hermes_image,
         skillopt_image=args.skillopt_image,
         trace2skill_image=args.trace2skill_image,
-        inherit_proxy=not args.direct_api,
+        provider_mode=args.provider_mode,
+        inherit_proxy=False if args.direct_api else None,
     ))
 
 

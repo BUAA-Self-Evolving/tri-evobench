@@ -100,6 +100,41 @@ def test_direct_api_configs_do_not_inherit_loopback_proxy(tmp_path):
         ))
 
 
+def test_friday_profile_generates_direct_thinking_configs_without_secret(tmp_path):
+    output = generate(tmp_path / "friday", provider_mode="friday")
+    profile = json.loads((output / "provider-profile.json").read_text())
+    assert profile == {
+        "name": "friday",
+        "base_url": "https://aigc.sankuai.com/v1/openai/native",
+        "model": "deepseek-v4-flash",
+        "credential_env": "FRIDAY_APP_ID",
+        "thinking": "enabled",
+        "timeout_seconds": 300,
+        "max_retries": 5,
+        "inherit_proxy": False,
+        "default_rpm": 20,
+    }
+    for path in output.glob("*.override.json"):
+        config = json.loads(path.read_text())
+        command = config["adapter"]["command"]
+        assert not any(name in command for name in (
+            "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY",
+            "http_proxy", "https_proxy", "no_proxy",
+        ))
+        assert "FRIDAY_APP_ID" not in path.read_text()
+    hermes = (output / "hermes-l2-seed/config.yaml").read_text()
+    assert "https://aigc.sankuai.com/v1/openai/native" in hermes
+    assert "thinking:\n        type: enabled" in hermes
+    trace = json.loads((output / "tmp_trace2skill_docker.override.json").read_text())
+    prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
+    adaptive = json.loads((output / "tmp_adaptive-auto-harness_docker.override.json").read_text())
+    assert trace["environment"]["set"]["TRIEVO_THINKING"] == "enabled"
+    assert trace["options"]["generation_config"]["thinking"] == {"type": "enabled"}
+    assert prime["options"]["thinking"] == "on"
+    assert prime["options"]["reasoning"] is True
+    assert adaptive["options"]["thinking"] == "enabled"
+
+
 def test_explicit_package_and_config_paths(tmp_path):
     packages = tmp_path / "data"
     for directory, manifest in (

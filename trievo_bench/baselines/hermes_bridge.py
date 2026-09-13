@@ -66,7 +66,7 @@ class HermesBridge:
             raise RuntimeError(f"unsupported Hermes evolution policy: {self._policy}")
         if self._approval_policy not in {"once", "session", "always", "deny"}:
             raise RuntimeError(f"unsupported Hermes approval policy: {self._approval_policy}")
-        if self._thinking not in {"", "disabled"}:
+        if self._thinking not in {"", "enabled", "disabled"}:
             raise RuntimeError(f"unsupported Hermes thinking mode: {self._thinking}")
         return {
             "protocol_version": RUNTIME_PROTOCOL_VERSION,
@@ -122,20 +122,20 @@ class HermesBridge:
         self._is_l1_life_turn = _is_l1_life_metadata(metadata)
         semantic_state = params.get("semantic_state", {})
         self._l1_state = dict(semantic_state) if self._is_l1_turn and not self._is_taskstream_turn and isinstance(semantic_state, dict) else {}
-        # DeepSeek Flash V4 exposes hidden reasoning by default.  The
-        # benchmark track requested here is the non-thinking track, so apply
-        # the provider-neutral Hermes control to every turn (including L2 and
-        # the same-model evolution fork), not only the L1 protocol path.
-        agent.reasoning_config = {"enabled": False}
-        if self._thinking == "disabled":
+        # Apply the selected provider profile to every turn, including L2 and
+        # the same-model evolution fork. An empty legacy value keeps the
+        # historical non-thinking behavior.
+        thinking_enabled = self._thinking == "enabled"
+        agent.reasoning_config = {"enabled": thinking_enabled}
+        if self._thinking in {"enabled", "disabled"}:
             # Hermes' ACP SessionManager currently keeps provider credentials
             # but drops custom-provider request_overrides.  Reapply the
             # benchmark's explicit wire control without modifying upstream.
             request_overrides = dict(getattr(agent, "request_overrides", {}) or {})
             extra_body = dict(request_overrides.get("extra_body", {}) or {})
             extra_body.update({
-                "thinking": {"type": "disabled"},
-                "reasoning": {"enabled": False},
+                "thinking": {"type": self._thinking},
+                "reasoning": {"enabled": thinking_enabled},
             })
             request_overrides["extra_body"] = extra_body
             agent.request_overrides = request_overrides

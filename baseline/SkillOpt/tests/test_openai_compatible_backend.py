@@ -77,6 +77,16 @@ def test_thinking_disable_is_forwarded(monkeypatch: pytest.MonkeyPatch) -> None:
     assert recorder.calls[0]["extra_body"] == {"thinking": {"type": "disabled"}}
 
 
+def test_thinking_enable_is_forwarded(monkeypatch: pytest.MonkeyPatch) -> None:
+    recorder = _CompletionRecorder()
+    monkeypatch.setattr(backend, "_get_client", lambda role: _Client(recorder))
+    monkeypatch.setenv("TRIEVO_THINKING", "enabled")
+
+    backend.chat_target("system", "user", retries=1)
+
+    assert recorder.calls[0]["extra_body"] == {"thinking": {"type": "enabled"}}
+
+
 @pytest.fixture(autouse=True)
 def isolate_backend_state(monkeypatch: pytest.MonkeyPatch):
     optimizer_backend = backend_config.get_optimizer_backend()

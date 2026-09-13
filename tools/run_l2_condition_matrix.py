@@ -10,6 +10,16 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from trievo_bench.provider_profiles import (
+    PROVIDER_PROFILES,
+    configure_provider_environment,
+    validate_generated_profile,
+)
+
 
 AGENTS = ("hermes", "skillopt", "trace2skill")
 CONDITIONS = ("reset", "frozen")
@@ -135,19 +145,21 @@ def main():
     parser.add_argument("--root", default="runs/mx25/l2-controls")
     parser.add_argument("--package", type=Path, default=Path("benchmarks/current/L2_Demo_V2"))
     parser.add_argument("--config-dir", type=Path)
+    parser.add_argument("--provider-mode", choices=sorted(PROVIDER_PROFILES), default="packycode")
     parser.add_argument("--gate", action="store_true", help="run both conditions and all agents on the shortest stream")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
-    if not os.environ.get("TRIEVO_API_KEY"):
-        raise SystemExit("TRIEVO_API_KEY is required")
-    for name in ("OPENAI_API_KEY", "OPENAI_COMPATIBLE_API_KEY", "TARGET_OPENAI_COMPATIBLE_API_KEY", "DEEPSEEK_API_KEY"):
-        os.environ[name] = os.environ["TRIEVO_API_KEY"]
-    for name in ("OPENAI_BASE_URL", "OPENAI_COMPATIBLE_BASE_URL", "TARGET_OPENAI_COMPATIBLE_BASE_URL", "DEEPSEEK_BASE_URL"):
-        os.environ[name] = os.environ.get("TRIEVO_BASE_URL", "https://cf.api.fan/v1")
-    os.environ["TRIEVO_THINKING"] = "disabled"
+    try:
+        configure_provider_environment(args.provider_mode, os.environ)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     root = (repo / args.root).resolve()
     package = (repo / args.package).resolve() if not args.package.is_absolute() else args.package.resolve()
     config_dir = args.config_dir.resolve() if args.config_dir else repo
+    try:
+        validate_generated_profile(config_dir, args.provider_mode)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     root.mkdir(parents=True, exist_ok=True)
     global _driver_lock
     _driver_lock = (root / "driver.lock").open("a+b")
@@ -162,7 +174,8 @@ def main():
     all_rows = jobs(repo, root, package)
     selected = [row for row in all_rows if row["stream"] == "airs_sick_textual_entailment_accuracy_001"] if args.gate else all_rows
     status_path = root / "matrix_status.json"
-    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "gate": args.gate, "jobs": selected}
+    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "gate": args.gate,
+             "provider_mode": args.provider_mode, "jobs": selected}
     save(status_path, state)
     for row in selected:
         report_path, report = report_for(row)

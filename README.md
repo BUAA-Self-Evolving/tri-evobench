@@ -152,6 +152,7 @@ python -m trievo_bench.l1_life_compat `
 最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及五种框架 baseline
 完整矩阵，请使用 [当前版本运行指南](docs/current-matrix.md)。
 指南包含从源码构建 Docker、可移植配置、完整日志与检查点恢复；下方命令仍适用于旧版 episode 数据包。
+PackyCode 与企业 Friday 渠道的无密钥双模式配置见 [模型渠道模式](docs/provider-modes.md)。
 
 L2 adapter 用于检查和运行带私有 evaluator 边界的 Stream/Episode 数据包。
 

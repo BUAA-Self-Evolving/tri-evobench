@@ -321,6 +321,26 @@ class BaselineRuntimeTest(unittest.TestCase):
             "reasoning": {"enabled": False},
         })
 
+    def test_hermes_explicit_enabled_thinking_reaches_acp_request_overrides(self) -> None:
+        agent = SimpleNamespace(request_overrides={})
+        state = SimpleNamespace(agent=agent, session_id="session-1")
+        bridge = HermesBridge()
+        bridge.initialize({
+            "protocol_version": "1.0",
+            "evolution": {"policy": "disabled"},
+            "options": {"thinking": "enabled"},
+        })
+        bridge._manager = SimpleNamespace(create_session=lambda **_kwargs: state)
+        bridge._workspace = "/workspace"
+
+        bridge.start_turn({"turn_id": "turn-1", "metadata": {}})
+
+        self.assertEqual(agent.reasoning_config, {"enabled": True})
+        self.assertEqual(agent.request_overrides["extra_body"], {
+            "thinking": {"type": "enabled"},
+            "reasoning": {"enabled": True},
+        })
+
     def test_hermes_failed_conversation_is_not_a_benchmark_response(self) -> None:
         result = {
             "failed": True,

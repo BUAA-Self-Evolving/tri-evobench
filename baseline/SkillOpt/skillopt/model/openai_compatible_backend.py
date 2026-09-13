@@ -347,7 +347,10 @@ def _chat_messages_impl(
     # DeepSeek Flash V4 enables hidden reasoning unless the provider-specific
     # control is sent explicitly.  Keep the switch environment-driven so the
     # generic backend remains usable with other OpenAI-compatible providers.
-    if str(os.environ.get("TRIEVO_THINKING", "")).strip().lower() in {"disabled", "off", "none"}:
+    thinking = str(os.environ.get("TRIEVO_THINKING", "")).strip().lower()
+    if thinking in {"enabled", "on"}:
+        kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
+    elif thinking in {"disabled", "off", "none"}:
         kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
     if tools:
         kwargs["tools"] = _sanitize_for_transport(tools)

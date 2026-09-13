@@ -60,6 +60,7 @@ class OpenAIChatBackend:
         self.client = OpenAI(api_key=api_key, base_url=base_url or None)
         self.temperature = float(options.get(f"{prefix}temperature", options.get("temperature", 0.0)))
         self.max_tokens = int(options.get(f"{prefix}max_tokens", options.get("max_output_tokens", 4096)))
+        self.thinking = str(options.get(f"{prefix}thinking") or options.get("thinking") or os.getenv("TRIEVO_THINKING", "")).strip().lower()
 
     def complete(self, messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None = None) -> _Completion:
         kwargs: dict[str, Any] = {
@@ -71,8 +72,15 @@ class OpenAIChatBackend:
         if tools:
             kwargs["tools"] = tools
             kwargs["tool_choice"] = "auto"
+        if self.thinking in {"enabled", "disabled"}:
+            kwargs["extra_body"] = {"thinking": {"type": self.thinking}}
         response = self.client.chat.completions.create(**kwargs)
-        choice = response.choices[0]
+        choices = getattr(response, "choices", None) or []
+        if not choices:
+            status = getattr(response, "status", None)
+            message = getattr(response, "message", None) or "response has no usable choice"
+            raise RuntimeError(f"OpenAI-compatible provider error (status {status}): {message}")
+        choice = choices[0]
         message = choice.message
         calls: list[dict[str, Any]] = []
         for call in message.tool_calls or []:

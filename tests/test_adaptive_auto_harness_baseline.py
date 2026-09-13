@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from baseline.adapters.adaptive_auto_harness.bridge import (
     AdaptiveAutoHarnessBridge,
+    OpenAIChatBackend,
     _allowed_state_path,
     _apply_proposal,
     _evolve_config,
@@ -18,6 +23,30 @@ from trievo_bench.spec import BenchmarkSpec
 
 
 class AdaptiveAutoHarnessBaselineContractTest(unittest.TestCase):
+    def test_friday_thinking_mode_is_forwarded(self) -> None:
+        calls = []
+
+        class Completions:
+            @staticmethod
+            def create(**kwargs):
+                calls.append(kwargs)
+                message = SimpleNamespace(content="ok", tool_calls=[])
+                choice = SimpleNamespace(message=message, finish_reason="stop")
+                usage = SimpleNamespace(prompt_tokens=1, completion_tokens=1)
+                return SimpleNamespace(choices=[choice], usage=usage)
+
+        class FakeOpenAI:
+            def __init__(self, **kwargs):
+                self.chat = SimpleNamespace(completions=Completions())
+
+        fake_module = SimpleNamespace(OpenAI=FakeOpenAI)
+        environment = {**os.environ, "FRIDAY_APP_ID": "test", "TRIEVO_API_KEY": "test"}
+        with patch.dict(sys.modules, {"openai": fake_module}), patch.dict(os.environ, environment, clear=True):
+            backend = OpenAIChatBackend({"model": "deepseek-v4-flash", "thinking": "enabled"}, stage="interaction")
+            backend.complete([{"role": "user", "content": "hello"}])
+
+        self.assertEqual(calls[0]["extra_body"], {"thinking": {"type": "enabled"}})
+
     def test_manifest_registers_fixed_revision_and_contract_state(self) -> None:
         manifest = load_manifest(
             Path(__file__).parents[1] / "baseline" / "manifests" / "adaptive-auto-harness.json"

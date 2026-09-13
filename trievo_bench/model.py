@@ -21,6 +21,14 @@ class _TransientModelResponseError(RuntimeError):
     """A successful HTTP response did not contain one usable model message."""
 
 
+class _ProviderResponseError(RuntimeError):
+    """An HTTP 200 response carried a provider-level error status."""
+
+    def __init__(self, status: int, message: str) -> None:
+        super().__init__(message)
+        self.status = status
+
+
 _RETRYABLE_HTTP_STATUS = {408, 409, 429, *range(500, 600)}
 _RETRYABLE_TRANSPORT_ERRORS = (
     urllib.error.URLError,
@@ -190,6 +198,17 @@ class OpenAICompatibleClient:
     def _message_from_result(result: Any) -> dict[str, Any]:
         if not isinstance(result, dict):
             raise _TransientModelResponseError("response root is not an object")
+        # Friday can report an application-level failure inside an HTTP 200
+        # response. Surface the actual provider status/message instead of
+        # misclassifying it as a generic missing-choice response.
+        status = result.get("status")
+        try:
+            status_code = int(status) if status is not None else 200
+        except (TypeError, ValueError):
+            status_code = 0
+        if status_code != 200 and not result.get("choices"):
+            message = str(result.get("message") or result.get("msg") or "provider rejected request")
+            raise _ProviderResponseError(status_code, message)
         choices = result.get("choices")
         if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
             raise _TransientModelResponseError("response has no usable choice")
@@ -258,6 +277,13 @@ class OpenAICompatibleClient:
                     detail = ""
                 suffix = f": {detail}" if detail else ""
                 raise RuntimeError(f"OpenAI-compatible model request failed (HTTP {exc.code}){suffix}") from exc
+            except _ProviderResponseError as exc:
+                if exc.status in _RETRYABLE_HTTP_STATUS and attempt < self.max_retries:
+                    self._wait_for_retry(attempt, exc)
+                    continue
+                raise RuntimeError(
+                    f"OpenAI-compatible provider rejected request (status {exc.status}): {exc}"
+                ) from exc
             except (*_RETRYABLE_TRANSPORT_ERRORS, json.JSONDecodeError) as exc:
                 if attempt < self.max_retries:
                     self._wait_for_retry(attempt, exc)
