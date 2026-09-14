@@ -63,10 +63,10 @@ Tri-EvoBench Runner
 
 ### 3.2 `start_turn`
 
-- 每个 Turn 创建全新会话。
-- Turn 之间不继承聊天 history。
-- Flow 级学习状态继续保留。
-- 上一个 Turn 必须已经完成 `evolve` barrier。
+- 会话边界由 baseline manifest/adapter 明确声明。进化方法通常每个 Turn 创建全新会话；持续型 harness 可以让整个 Flow 复用一个原生 session。
+- 持续型 harness 中，一个 Turn 对应该 session 内的一次或多次 `interact`；重试和后续 Turn 都显式续接同一 session。
+- Flow 级学习状态或 harness session 继续保留。
+- 上一个 Turn 必须已经完成 `evolve` barrier；不做显式学习的 harness 也必须返回已完成的 no-op barrier。
 
 ### 3.3 `interact`
 
@@ -606,3 +606,28 @@ trievo-bench --spec <benchmark.json> --baseline adaptive-auto-harness \
 常用超参数为 `model`、`base_url`、`max_steps`、`tool_timeout`、`evolver_model`、
 `evolver_max_tokens`，以及 `evolve_prompts`、`evolve_skills`、`evolve_memory`、`evolve_tools`。
 设置 `evolution.policy=disabled` 或运行 frozen/reset condition 时只跨过 barrier，不更新学习状态。
+
+## 14. OpenCode 接入
+
+`baseline/opencode` 通过 `baseline/manifests/opencode.json` 注册为 `opencode` baseline。Bridge 使用
+OpenCode 原生无头 CLI 的 `run --format json` 接口：Flow 的第一次 Interaction 创建 session 并记录
+session id，之后同一 Flow 内的所有 Interaction（包括同一 Turn 的多轮纠错及后续 Turn）都通过
+`--session` 续接。因此映射关系是 **Stream/Flow = 一个 OpenCode session，Turn = session 内一次或多次交流**。
+
+OpenCode 是持续会话型 harness，不在 Turn 末执行额外的 skill/memory 优化；`evolve` 是显式 no-op
+barrier。原生 session 数据库保存在 Flow 隔离状态目录，支持运行产物导出和 checkpoint 恢复。CLI 的
+JSON 事件会转换为统一的最终文本、工具轨迹、provider step 数、token 与 cost。
+
+```bash
+git submodule update --init baseline/opencode
+docker build -t trievo-opencode:0.1 -f baseline/adapters/opencode/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline opencode \
+  --baseline-config examples/opencode-baseline.override.json \
+  --output runs/opencode
+```
+
+可在 benchmark spec 中直接设置 `baseline.type` 为 `opencode`。常用超参数包括 `model`（完整的
+`provider/model`）、`agent`、`variant`、`auto_approve` 和 `request_timeout_seconds`。使用兼容 OpenAI
+的自定义服务时设置 `model`、`base_url`、`api_key_env`；示例见
+`examples/opencode-openai-compatible.override.json`。默认启用 `pure` 并关闭项目配置、外部 skills、
+自动更新与下载，避免宿主配置和被测 workspace 中的配置影响实验。

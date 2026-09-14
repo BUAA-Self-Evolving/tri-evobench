@@ -64,8 +64,10 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
     prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
     adaptive = json.loads((output / "tmp_adaptive-auto-harness_docker.override.json").read_text())
+    opencode = json.loads((output / "tmp_opencode_docker.override.json").read_text())
     assert prime["options"]["base_url"] == "https://example.test/v1"
     assert adaptive["options"]["evolver_base_url"] == "https://example.test/v1"
+    assert opencode["options"]["base_url"] == "https://example.test/v1"
 
 
 def test_generated_configs_accept_candidate_bound_image_tags(tmp_path):
@@ -145,7 +147,7 @@ def test_explicit_package_and_config_paths(tmp_path):
         (directory / "stream.json").write_text(json.dumps(manifest))
     config_dir = generate(tmp_path / "configs", "deepseek-v4-flash", "https://example.test/v1")
     rows = jobs(tmp_path, tmp_path / "results", l1_package=packages / "l1_arena", l2_package=packages / "L2_Demo_V3")
-    assert len(rows) == 10
+    assert len(rows) == 12
     args = command(tmp_path, rows[0], None, config_dir)
     assert args[args.index("--baseline-config") + 1] == str(config_dir / "tmp_hermes_cf_l2.override.json")
     assert rows[0]["package"] == str(packages / "L2_Demo_V3")

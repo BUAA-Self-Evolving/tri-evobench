@@ -142,6 +142,10 @@ def generate(
           "evolver_api_key_env": "TRIEVO_API_KEY", "evolver_max_tokens": 4096,
           "evolve_prompts": True, "evolve_skills": True,
           "evolve_memory": True, "evolve_tools": False}),
+        ("opencode", "trievo-opencode:matrix-current", ["OPENAI_API_KEY"],
+         {"model": model, "base_url": base_url, "api_key_env": "TRIEVO_API_KEY",
+          "agent": "build", "max_output_tokens": 4096,
+          "request_timeout_seconds": 900}),
     ):
         container = f"trievo-{agent}-{{instance_id}}"
         command = ["docker", "run", "--rm", "-i", "--name", container,

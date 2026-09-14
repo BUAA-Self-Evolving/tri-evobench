@@ -29,7 +29,7 @@ from trievo_bench.provider_profiles import (
 )
 
 L2_CONDITIONS = ("reset", "frozen", "evolving")
-BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness")
+BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness", "opencode")
 
 
 
