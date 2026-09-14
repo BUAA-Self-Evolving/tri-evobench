@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 L2_CONDITIONS = ("reset", "frozen", "evolving")
-BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness")
+BASELINES = ("hermes", "skillopt", "trace2skill", "prime-agent", "adaptive-auto-harness", "opencode")
 
 
 def load(path: Path):

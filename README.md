@@ -30,7 +30,7 @@ trievo-bench --spec <benchmark.json> --baseline trace2skill \
 
 也可以直接在 benchmark spec 中设置 `baseline.type` 为 `trace2skill`。通过 override 的 `options.agent` 可切换 `cli_skill_preloaded`/`cli_only`，并可调整 `model`、`max_turns`、`temperature`、`skill`、`skill_name`、`evolution_batch_size`、`max_workers` 等参数。
 
-Prime Agent 与 Adaptive Auto-Harness 也已通过同一 Runtime 注册，可只改 baseline 超参数切换：
+Prime Agent、Adaptive Auto-Harness 与 OpenCode 也已通过同一 Runtime 注册，可只改 baseline 超参数切换。OpenCode 按“一个 stream 一个 session”运行，同一 Turn 的重试及后续 Turn 都续接这个 session：
 
 ```bash
 docker build -t trievo-prime-agent:0.1 -f baseline/adapters/prime_agent/Dockerfile .
@@ -42,10 +42,16 @@ docker build -t trievo-adaptive-auto-harness:0.1 \
 trievo-bench --spec <benchmark.json> --baseline adaptive-auto-harness \
   --baseline-config examples/adaptive-auto-harness.override.json \
   --output runs/adaptive-auto-harness
+
+docker build -t trievo-opencode:0.1 -f baseline/adapters/opencode/Dockerfile .
+trievo-bench --spec <benchmark.json> --baseline opencode \
+  --baseline-config examples/opencode-baseline.override.json \
+  --output runs/opencode
 ```
 
-也可在 spec 中分别设置 `baseline.type` 为 `prime-agent` 或 `adaptive-auto-harness`。两者都使用
-Turn 级新会话、Flow 级学习状态、Turn 末显式演化 barrier 和增量 Token 计量。
+也可在 spec 中设置 `baseline.type` 为 `prime-agent`、`adaptive-auto-harness` 或 `opencode`。前两者使用
+Turn 级新会话和 Flow 级学习状态；OpenCode 则保留整个 Flow 的原生 session，并把 Turn 映射为 session
+内的一次或多次交流。三者都会回传增量 Token 计量。
 
 ```bash
 docker build -t trievo-hermes:0.1 -f baseline/adapters/hermes/Dockerfile .
@@ -70,7 +76,7 @@ Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baselin
 ```bash
 git clone git@github.com:BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode
 uv sync --frozen --group dev
 ```
 
@@ -149,7 +155,7 @@ python -m trievo_bench.l1_life_compat `
 
 ## L2
 
-最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及五种框架 baseline
+最新的 L1 Arena / L2 TaskStream（包括外部 V3 package）及六种框架 baseline
 完整矩阵，请使用 [当前版本运行指南](docs/current-matrix.md)。
 指南包含从源码构建 Docker、可移植配置、完整日志与检查点恢复；下方命令仍适用于旧版 episode 数据包。
 

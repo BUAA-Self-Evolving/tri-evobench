@@ -995,7 +995,7 @@ class L2AgentStreamRunner:
     def _create_runtime(self, resume_state_archive: Path | None = None) -> ProcessBaselineRuntime:
         # L2 uses the same BaselineRuntime protocol as L1.  Resolve the
         # selected adapter from its registered manifest so Hermes, SkillOpt,
-        # Trace2Skill, Prime Agent, and Adaptive Auto-Harness can be compared
+        # Trace2Skill, Prime Agent, Adaptive Auto-Harness, and OpenCode can be compared
         # under one evaluator. Previously this method hard-coded Hermes.
         manifest_path = find_manifest(self.options.baseline, self.options.repo_root)
         policy = "turn_boundary" if self.condition.policy.sut_evolution_enabled else "disabled"
@@ -1033,6 +1033,19 @@ class L2AgentStreamRunner:
                     "max_output_tokens": min(
                         int(options.get("max_output_tokens", self.work_limits.max_output_tokens)),
                         self.work_limits.max_output_tokens,
+                    ),
+                }
+            })
+        elif self.options.baseline == "opencode":
+            manifest = manifest.with_overrides({
+                "options": {
+                    "max_output_tokens": min(
+                        int(options.get("max_output_tokens", self.work_limits.max_output_tokens)),
+                        self.work_limits.max_output_tokens,
+                    ),
+                    "request_timeout_seconds": min(
+                        float(options.get("request_timeout_seconds", self.work_limits.episode_timeout_seconds)),
+                        float(self.work_limits.episode_timeout_seconds),
                     ),
                 }
             })

@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "id": "opencode",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "docker", "run", "--rm", "-i",
+      "--name", "trievo-opencode-{instance_id}",
+      "--user", "{uid}:{gid}",
+      "--cap-drop", "ALL",
+      "--security-opt", "no-new-privileges",
+      "--pids-limit", "512",
+      "--memory", "8g",
+      "--cpus", "4",
+      "-v", "{workspace_mount}:/workspace",
+      "-v", "{state_mount}:/agent-state",
+      "-e", "HOME=/agent-state/home",
+      "-e", "OPENAI_API_KEY",
+      "-e", "OPENAI_BASE_URL",
+      "-e", "ANTHROPIC_API_KEY",
+      "-e", "OPENROUTER_API_KEY",
+      "-e", "GEMINI_API_KEY",
+      "-e", "GOOGLE_API_KEY",
+      "-e", "XAI_API_KEY",
+      "-e", "DEEPSEEK_API_KEY",
+      "-e", "TRIEVO_API_KEY",
+      "-e", "TRIEVO_BASE_URL",
+      "-e", "TRIEVO_MODEL",
+      "-e", "HTTP_PROXY",
+      "-e", "HTTPS_PROXY",
+      "-e", "NO_PROXY",
+      "-e", "http_proxy",
+      "-e", "https_proxy",
+      "-e", "no_proxy",
+      "{image}"
+    ],
+    "cleanup_command": ["docker", "rm", "-f", "trievo-opencode-{instance_id}"]
+  },
+  "source": {
+    "path": "baseline/opencode",
+    "revision": "df23b7f9488a38e6f8064a0739d4f8cde86d7cfb"
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY", "OPENAI_BASE_URL", "ANTHROPIC_API_KEY", "OPENROUTER_API_KEY",
+      "GEMINI_API_KEY", "GOOGLE_API_KEY", "XAI_API_KEY", "DEEPSEEK_API_KEY",
+      "TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL",
+      "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"
+    ]
+  },
+  "workspace": {"mode": "shared_volume", "adapter_path": "/workspace"},
+  "state": {
+    "scope": "flow",
+    "adapter_path": "/agent-state",
+    "paths": ["session.json", "xdg/data/opencode/**/*", "xdg/state/opencode/**/*"],
+    "enforce_turn_freeze": false
+  },
+  "evolution": {"policy": "disabled", "timeout_seconds": 30},
+  "options": {
+    "image": "trievo-opencode:0.1",
+    "executable": ["bun", "run", "--cwd", "/opt/opencode/packages/opencode", "src/index.ts"],
+    "provider": "openai",
+    "model": "",
+    "agent": "build",
+    "variant": "",
+    "base_url": "",
+    "api_key_env": "TRIEVO_API_KEY",
+    "context_window": 128000,
+    "max_output_tokens": 16384,
+    "reasoning": true,
+    "auto_approve": true,
+    "pure": true,
+    "request_timeout_seconds": 1800,
+    "allow_revision_mismatch": false
+  },
+  "capabilities": ["direct_workspace", "terminal", "persistent_session", "tool_calls", "usage"]
+}
+
