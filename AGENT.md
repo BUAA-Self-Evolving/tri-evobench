@@ -2,7 +2,7 @@
 
 更新时间：2026-09-13（Asia/Shanghai）
 
-本文面向在新设备上接手本项目的开发 Agent。目标是让接手者只依赖当前 Git 仓库和本文，便能理解研究问题、运行时架构、数据边界、五种 baseline、模型渠道、测试、正式评测和安全恢复方式，并在不破坏已有结果的前提下继续工作。
+本文面向在新设备上接手本项目的开发 Agent。目标是让接手者只依赖当前 Git 仓库和本文，便能理解研究问题、运行时架构、数据边界、六种 baseline、模型渠道、测试、正式评测和安全恢复方式，并在不破坏已有结果的前提下继续工作。
 
 本文描述当前最终实现和必须保持的工程合同，不记录开发试错过程。历史 handoff、旧运行报告和旧问题清单只用于溯源；若与本文、`AGENTS.md`、当前代码或最新提交冲突，以这四者为准。
 
@@ -137,12 +137,12 @@ L2 CLI 为兼容旧调用，在未传条件时默认 `evolving`；这不代表�
 | `benchmarks/current/l1_arena` | 当前 L1 Arena | 23 streams，423 turns |
 | `benchmarks/current/L2_Demo_V2` | 当前 L2 TaskStream Demo V2 | 6 streams，134 turns |
 
-五 baseline 下：
+六 baseline 下：
 
-- 默认 L1 + L2 evolving：145 个 stream-agent jobs，2,785 个 agent-turn；
-- L1 加 L2 三条件完整矩阵：205 个 jobs，4,125 个 agent-turn；
-- L1 共 `423 turns × 5 baselines = 2,115 agent-turn`；
-- L2 三条件共 `134 turns × 5 baselines × 3 conditions = 2,010 agent-turn`。
+- 默认 L1 + L2 evolving：174 个 stream-agent jobs，3,342 个 agent-turn；
+- L1 加 L2 三条件完整矩阵：246 个 jobs，4,950 个 agent-turn；
+- L1 共 `423 turns × 6 baselines = 2,538 agent-turn`；
+- L2 三条件共 `134 turns × 6 baselines × 3 conditions = 2,412 agent-turn`。
 
 当前 L2 streams：
 
@@ -229,7 +229,7 @@ tri-evobench/
 
 | 任务 | 入口 |
 |---|---|
-| 生成五 baseline 可移植配置 | `tools/prepare_matrix_configs.py` |
+| 生成六 baseline 可移植配置 | `tools/prepare_matrix_configs.py` |
 | 当前完整矩阵调度 | `tools/run_new_package_matrix.py` |
 | 旧三 baseline L2 control driver | `tools/run_l2_condition_matrix.py` |
 | 单独检查/运行 L2 | `python -m trievo_bench.l2_compat` |
@@ -279,7 +279,7 @@ Adapter 永远不能收到 `verifier_details`、`oracle_update`、private evalua
 
 ---
 
-## 8. 五种 baseline 的最终接入
+## 8. 六种 baseline 的最终接入
 
 ### 8.1 Hermes
 
@@ -341,6 +341,20 @@ Interaction 使用 `CLIOnlyAgent` 或 `CLISkillPreloadedAgent`；Turn 末将公�
 
 Bridge 使用 A-Evolve 的 `BaseAgent` / `AgentWorkspace` 文件合同，通过通用终端 Agent 完成任务，Turn 末调用 `AEvolveEngine.evolve`。提案只能更新启用的 prompt/skill/memory/tool 层。模型 interaction 和 evolver 都支持 PackyCode/Friday thinking profile。
 
+### 8.6 OpenCode
+
+- id：`opencode`
+- source：`baseline/opencode` Git submodule
+- pinned revision：`df23b7f9488a38e6f8064a0739d4f8cde86d7cfb`
+- bridge：`baseline/adapters/opencode/bridge.py`
+- manifest：`baseline/manifests/opencode.json`
+- Dockerfile：`baseline/adapters/opencode/Dockerfile`
+- 持久状态：`session.json`、`xdg/data/opencode/**/*`、`xdg/state/opencode/**/*`
+
+OpenCode 使用原生无头 CLI 的 `run --format json` 接口。一个 benchmark Flow 映射为一个持续 OpenCode session：第一次 Interaction 创建 session 并把 id 原子写入 `session.json`，同 Turn 重试和后续 Turn 都通过 `--session` 续接。Bridge 解析 JSONL 中的 text、tool use、step finish、usage 和 error，并把每次 Interaction 的增量 usage 返回 Runtime。
+
+OpenCode 是持续会话型 harness，当前 `evolution.policy=disabled`，Turn 末 `evolve` 是显式 no-op；因此它可以参加 Reset/Frozen/Evolving 的执行矩阵，但不能把 session persistence 本身表述为已经实现了 Turn-boundary skill/memory evolution。`pure=true` 会关闭项目配置、外部 skills、默认 plugins、分享、自动更新、LSP 下载和模型目录拉取，减少任务外状态污染。自定义 OpenAI-compatible 地址通过 `base_url`、`model` 和 `api_key_env` 注入；生成配置会按照 PackyCode/Friday profile 设置 reasoning capability。
+
 ---
 
 ## 9. 模型渠道：PackyCode 与 Friday
@@ -376,7 +390,7 @@ Friday 可能在 HTTP 200 body 中返回非 200 的业务 `status`。主模型 t
 ```bash
 git clone https://github.com/BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode
 uv sync --frozen --group dev
 uv run --frozen python -m pytest tests -q
 docker info
@@ -389,6 +403,7 @@ git submodule status
 git -C baseline/hermes-agent status --short
 git -C baseline/prime-agent status --short
 git -C baseline/adaptive-auto-harness status --short
+git -C baseline/opencode status --short
 ```
 
 正式 baseline Runtime 默认拒绝 pinned source revision 不匹配或 source tree 有 tracked/untracked 改动。`allow_revision_mismatch` 只用于本地开发，不能进入正式结果。
@@ -408,9 +423,10 @@ docker build -t trievo-skillopt:matrix-current -f baseline/adapters/skillopt/Doc
 docker build -t trievo-trace2skill:matrix-current -f baseline/adapters/trace2skill/Dockerfile .
 docker build -t trievo-prime-agent:matrix-current -f baseline/adapters/prime_agent/Dockerfile .
 docker build -t trievo-adaptive-auto-harness:matrix-current -f baseline/adapters/adaptive_auto_harness/Dockerfile .
+docker build -t trievo-opencode:matrix-current -f baseline/adapters/opencode/Dockerfile .
 ```
 
-两个 verifier image 和五个 baseline image 是不同职责：
+两个 verifier image 和六个 baseline image 是不同职责：
 
 - baseline 容器联网调用模型并操作逻辑 `/workspace`；
 - verifier 容器读取私有 evaluator 资产并执行评分；
@@ -439,7 +455,7 @@ uv run --frozen python tools/prepare_matrix_configs.py \
   --output tmp/matrix-config-friday
 ```
 
-生成目录包含八个 `*.override.json`、Hermes L1/L2 seed config 和 `provider-profile.json`。其中没有凭证。Friday Runtime 会要求 profile 文件存在且 mode 匹配，避免把企业凭证错误发送到 PackyCode 地址或反向混用。
+生成目录包含九个 `*.override.json`、Hermes L1/L2 seed config 和 `provider-profile.json`。其中没有凭证。Friday Runtime 会要求 profile 文件存在且 mode 匹配，避免把企业凭证错误发送到 PackyCode 地址或反向混用。
 
 默认 L2 `max_output_tokens=12000`。数据包声明的上限仍由 Runtime 约束；提高生成配置数值不能绕过数据合同，也不能把 qualification 参数冒充正式结果。
 
@@ -502,7 +518,7 @@ uv run --frozen python tools/run_new_package_matrix.py `
   --l2-package benchmarks/current/L2_Demo_V2 `
   --config-dir tmp/matrix-config-friday `
   --root runs/friday-preflight `
-  --only l2/evolving/hermes/s01 `
+  --only l2/evolving/opencode/s01 `
   --concurrency 1
 ```
 
@@ -542,7 +558,7 @@ episode_timeout_seconds = 900
 max_output_tokens = 12000
 ```
 
-Hermes、SkillOpt 和 Trace2Skill 的 repaired SkillsBench L2 路径使用 `max_tool_calls=40`；Prime Agent 和 Adaptive Auto-Harness 仍使用常规 20。terminal/evolution 等未覆盖字段继续受 Runtime 和 adapter 的硬限制。数据包也可在受控范围内声明 stream-specific 限制；正式结果必须保存实际 applied limits 和 budget profile。
+Hermes、SkillOpt 和 Trace2Skill 的 repaired SkillsBench L2 路径使用 `max_tool_calls=40`；Prime Agent、Adaptive Auto-Harness 和 OpenCode 使用常规 20。terminal/evolution 等未覆盖字段继续受 Runtime 和 adapter 的硬限制。数据包也可在受控范围内声明 stream-specific 限制；正式结果必须保存实际 applied limits 和 budget profile。
 
 矩阵 driver 的 stream token guard 为：
 
@@ -708,7 +724,7 @@ git diff --check
 截至本文更新，合并最新 `origin/main` 后主测试基线为：
 
 ```text
-263 passed, 6 skipped, 3 subtests passed
+268 passed, 6 skipped, 3 subtests passed
 ```
 
 SkillOpt OpenAI-compatible transport 专项为 `8 passed`。
@@ -817,7 +833,7 @@ git grep -n -E 'sk-[A-Za-z0-9]{20,}' HEAD -- .
 - `docs/weekly_progress_20260912_matrix_probe.tex`：三条件探针、role/stream 分析和成本；
 - `docs/report_assets/final_matrix_analysis_20260911/`：可读 trace 素材。
 
-这些结果不能替代新五 baseline、Friday profile 或后续修订版数据的重新验证。引用时必须同时写明其 baseline 范围、数据版本、模型渠道和提交/image 身份。
+这些结果不能替代新六 baseline、Friday profile 或后续修订版数据的重新验证。引用时必须同时写明其 baseline 范围、数据版本、模型渠道和提交/image 身份。
 
 ---
 
@@ -826,7 +842,7 @@ git grep -n -E 'sk-[A-Za-z0-9]{20,}' HEAD -- .
 当前已经具备：
 
 - 统一 BaselineRuntime 1.0；
-- 五 baseline 参数化切换；
+- 六 baseline 参数化切换；
 - L1 Arena 和 L2 TaskStream；
 - Reset/Frozen/Evolving；
 - private verifier/Judge 边界；
@@ -847,7 +863,7 @@ git grep -n -E 'sk-[A-Za-z0-9]{20,}' HEAD -- .
 1. 将 L2 runtime-repaired files 与发布用 SHA inventory 重新冻结并审计；
 2. 完成模型网络与 task tool 网络的独立 Tool Gateway；
 3. 对 Trace2Skill Action/TASK_COMPLETE 资格问题做独立修复和验证；
-4. 在同 commit、同 image、同 package、同 timing profile 上完成五 baseline 三条件真实矩阵；
+4. 在同 commit、同 image、同 package、同 timing profile 上完成六 baseline 三条件真实矩阵；
 5. 对 L1-Life v2 做 reference judge 校准和完整 Evolving/Reset 对照；
 6. 保持恢复逻辑保守，不用自动重跑替代证据审计；
 7. 若迁移 Harbor，只替换 environment backend，不改变 Flow/Turn/Interaction、判分和 evolution 合同。
@@ -888,7 +904,7 @@ project target: /mnt/myuan/sunqh/tri-evobench-20260904
 3. `README.md`：用户入口；
 4. `docs/current-matrix.md`：当前矩阵、命令、输出和隔离；
 5. `docs/provider-modes.md`：PackyCode/Friday；
-6. `docs/baseline-runtime.md`：BaselineRuntime 和五框架接入；
+6. `docs/baseline-runtime.md`：BaselineRuntime 和六框架接入；
 7. `docs/spec.md`：Flow/Turn/Interaction 基础协议；
 8. `benchmarks/README.md`：数据版本和可见性；
 9. `docs/storage-recovery.md`、`docs/slow-provider-runtime.md`：生产运行恢复；

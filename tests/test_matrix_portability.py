@@ -10,7 +10,7 @@ from tools.run_new_package_matrix import command, jobs
 def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     output = generate(tmp_path / "configs", "gpt-5.6-terra", "https://example.test/v1")
     files = list(output.glob("*.override.json"))
-    assert len(files) == 8
+    assert len(files) == 9
     for path in files:
         config = json.loads(path.read_text())
         assert config["adapter"]["command"][0] == "docker"
@@ -68,6 +68,7 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert prime["options"]["base_url"] == "https://example.test/v1"
     assert adaptive["options"]["evolver_base_url"] == "https://example.test/v1"
     assert opencode["options"]["base_url"] == "https://example.test/v1"
+    assert opencode["options"]["reasoning"] is False
 
 
 def test_generated_configs_accept_candidate_bound_image_tags(tmp_path):
@@ -130,11 +131,13 @@ def test_friday_profile_generates_direct_thinking_configs_without_secret(tmp_pat
     trace = json.loads((output / "tmp_trace2skill_docker.override.json").read_text())
     prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
     adaptive = json.loads((output / "tmp_adaptive-auto-harness_docker.override.json").read_text())
+    opencode = json.loads((output / "tmp_opencode_docker.override.json").read_text())
     assert trace["environment"]["set"]["TRIEVO_THINKING"] == "enabled"
     assert trace["options"]["generation_config"]["thinking"] == {"type": "enabled"}
     assert prime["options"]["thinking"] == "on"
     assert prime["options"]["reasoning"] is True
     assert adaptive["options"]["thinking"] == "enabled"
+    assert opencode["options"]["reasoning"] is True
 
 
 def test_explicit_package_and_config_paths(tmp_path):

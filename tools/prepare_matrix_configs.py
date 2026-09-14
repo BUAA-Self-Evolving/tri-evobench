@@ -145,6 +145,7 @@ def generate(
         ("opencode", "trievo-opencode:matrix-current", ["OPENAI_API_KEY"],
          {"model": model, "base_url": base_url, "api_key_env": "TRIEVO_API_KEY",
           "agent": "build", "max_output_tokens": 4096,
+          "reasoning": thinking == "enabled",
           "request_timeout_seconds": 900}),
     ):
         container = f"trievo-{agent}-{{instance_id}}"
