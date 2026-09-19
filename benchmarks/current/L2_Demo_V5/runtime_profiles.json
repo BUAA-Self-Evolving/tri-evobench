@@ -1,0 +1,69 @@
+{
+  "schema_version": "l2_runtime_profiles/1.0",
+  "profiles": [
+    {
+      "runtime_profile_id": "skilllearn_python_file_v1",
+      "task_sandbox_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_class": "python",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "dependency_class": "python_stdlib_plus_local_assets",
+      "network": "disabled",
+      "turn_timeout_seconds": 900,
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "learner_state_abi": "baseline_state/1.0",
+      "serialization_version": "1",
+      "mount_path": "/baseline_state",
+      "owner": "baseline",
+      "permission": "rw"
+    },
+    {
+      "runtime_profile_id": "skillsbench_python_task_v1",
+      "task_sandbox_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_class": "python",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "dependency_class": "python_native_task_assets",
+      "network": "disabled",
+      "turn_timeout_seconds": 1200,
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "learner_state_abi": "baseline_state/1.0",
+      "serialization_version": "1",
+      "mount_path": "/baseline_state",
+      "owner": "baseline",
+      "permission": "rw"
+    },
+    {
+      "runtime_profile_id": "sr_agents_python_v1",
+      "task_sandbox_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_class": "python",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "dependency_class": "python_code_generation",
+      "network": "disabled",
+      "turn_timeout_seconds": 900,
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "learner_state_abi": "baseline_state/1.0",
+      "serialization_version": "1",
+      "mount_path": "/baseline_state",
+      "owner": "baseline",
+      "permission": "rw"
+    },
+    {
+      "runtime_profile_id": "tau2_tool_v1",
+      "task_sandbox_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_digest": "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+      "verifier_image_class": "python",
+      "tool_profile_id": "terminal_json_tools_v1",
+      "dependency_class": "tau2_policy_tool_simulator",
+      "network": "disabled",
+      "turn_timeout_seconds": 900,
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "learner_state_abi": "baseline_state/1.0",
+      "serialization_version": "1",
+      "mount_path": "/baseline_state",
+      "owner": "baseline",
+      "permission": "rw"
+    }
+  ]
+}

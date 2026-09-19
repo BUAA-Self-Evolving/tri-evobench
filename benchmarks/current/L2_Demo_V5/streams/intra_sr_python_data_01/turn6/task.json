@@ -1,0 +1,98 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_sr_python_data_01",
+  "turn_id": "turn6",
+  "turn_index": 6,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00012",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00012",
+    "source_hash": "b5da428722fb23af29437d8072e8b4cc75aecf560a309c455ed87328a8cd62a6"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "file_processing"
+    ],
+    "capability_id": "filesystem_path_operations",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_061",
+        "bigcodebench_043",
+        "bigcodebench_116",
+        "bigcodebench_130"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "filesystem_path_operations",
+    "parent_turn_ids": [
+      "turn3"
+    ],
+    "relation_rationale": "Implement file discovery, path, directory, or filesystem operations."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00012\n\nRuns the provided backup shell script and logs the start time, end time, and exit status in a specified JSON log file.\nThe function should raise the exception for: FileNotFoundError: If the script file does not exist. RuntimeError: If there is an error executing the script.\nThe function should output with:\n    dict: A dictionary containing:\n    'start_time': The start time of the script execution in the format '%Y-%m-%d %H:%M:%S'.\n    'end_time': The end time of the script execution in the format '%Y-%m-%d %H:%M:%S'.\n    'exit_status': The exit status of the script execution (0 for success, other values indicate an error).\nYou should write self-contained code starting with:\n```\nimport subprocess\nimport os\nimport json\nfrom datetime import datetime\ndef task_func(script_name='backup.sh', log_file='/home/user/backup_log.json'):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn6.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00012"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

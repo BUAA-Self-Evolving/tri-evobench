@@ -1,0 +1,113 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_sr_python_visual_01",
+  "turn_id": "turn11",
+  "turn_index": 11,
+  "sequence_role": "probe",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00049",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00049",
+    "source_hash": "b356be170007dd8421c68435c8e9b6aecae52071589829abc35e79d9d9dbc5c0"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "data_transformation"
+    ],
+    "capability_id": "pandas_dataframe_manipulation",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_043",
+        "bigcodebench_138"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "pandas_dataframe_manipulation",
+    "parent_turn_ids": [
+      "turn2",
+      "turn5",
+      "turn8"
+    ],
+    "relation_rationale": "Implement a function whose reusable procedure centers on pandas DataFrame APIs."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00049\n\nConvert a list of Unix timestamps to date objects, create a Pandas DataFrame, and draw a histogram. - The date format should be as DATE_FORMAT. - The DataFrame should have 'Timestamp' and 'Datetime' as column names. - If the list of timestamps is empty, raise a ValueError with the message \"Input list of timestamps is empty\".\nThe function should raise the exception for: ValueError(\"Input list of timestamps is empty.\"): If the list of timestamps is empty.\nThe function should output with:\n    pandas.DataFrame: A pandas DataFrame containing the original Unix timestamps and the converted datetime objects.\n    Axes: The Axes object of the histogram plot. The histogram will have 10 bins by default, representing the distribution of the datetime objects.\nYou should write self-contained code starting with:\n```\nfrom datetime import datetime\nimport pandas as pd\nimport matplotlib.pyplot as plt\n# Constants\nDATE_FORMAT = \"%Y-%m-%d %H:%M:%S\"\ndef task_func(timestamps):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn11.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00049"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  },
+  "probe_spec": {
+    "target_capability_id": "pandas_dataframe_manipulation",
+    "expected_transfer_from_turn_ids": [
+      "turn2",
+      "turn5",
+      "turn8"
+    ],
+    "interference_capability_ids": [
+      "filesystem_path_operations",
+      "matplotlib_visualization"
+    ],
+    "claim_scope": "within_benchmark_retention",
+    "held_out_source_task_id": "bigcodebench_00049"
+  }
+}

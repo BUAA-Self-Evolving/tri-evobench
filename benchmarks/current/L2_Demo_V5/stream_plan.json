@@ -1,0 +1,197 @@
+{
+  "schema_version": "l2_v5_stream_plan/1.0",
+  "seed": 20260919,
+  "instances_per_capability": 4,
+  "streams": [
+    {
+      "stream_id": "intra_tau2_banking_ops_01",
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "benchmark_capabilities": [
+        [
+          "tau2_bench",
+          "banking_product_application"
+        ],
+        [
+          "tau2_bench",
+          "retail_exchange_resolution"
+        ],
+        [
+          "tau2_bench",
+          "telecom_connectivity_troubleshooting"
+        ]
+      ]
+    },
+    {
+      "stream_id": "intra_skillsbench_ops_01",
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skillsbench",
+          "security_code_repair"
+        ],
+        [
+          "skillsbench",
+          "office_document_automation"
+        ],
+        [
+          "skillsbench",
+          "constrained_operations_planning"
+        ]
+      ]
+    },
+    {
+      "stream_id": "intra_sr_python_data_01",
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "benchmark_capabilities": [
+        [
+          "sr_agents",
+          "pandas_dataframe_manipulation"
+        ],
+        [
+          "sr_agents",
+          "numpy_numerical_computing"
+        ],
+        [
+          "sr_agents",
+          "filesystem_path_operations"
+        ]
+      ]
+    },
+    {
+      "stream_id": "intra_sr_python_visual_01",
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "benchmark_capabilities": [
+        [
+          "sr_agents",
+          "matplotlib_visualization"
+        ],
+        [
+          "sr_agents",
+          "pandas_dataframe_manipulation"
+        ],
+        [
+          "sr_agents",
+          "filesystem_path_operations"
+        ]
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_support_01",
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "benchmark_capabilities": [
+        [
+          "tau2_bench",
+          "retail_exchange_resolution"
+        ],
+        [
+          "tau2_bench",
+          "airline_booking_change"
+        ],
+        [
+          "tau2_bench",
+          "telecom_connectivity_troubleshooting"
+        ]
+      ]
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_01",
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skilllearnbench",
+          "dependency_vulnerability_audit"
+        ],
+        [
+          "tau2_bench",
+          "banking_product_application"
+        ],
+        [
+          "sr_agents",
+          "matplotlib_visualization"
+        ]
+      ]
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_02",
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skilllearnbench",
+          "stock_data_visualization"
+        ],
+        [
+          "tau2_bench",
+          "retail_exchange_resolution"
+        ],
+        [
+          "sr_agents",
+          "numpy_numerical_computing"
+        ]
+      ]
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_03",
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skilllearnbench",
+          "dbscan_parameter_tuning"
+        ],
+        [
+          "tau2_bench",
+          "telecom_connectivity_troubleshooting"
+        ],
+        [
+          "sr_agents",
+          "pandas_dataframe_manipulation"
+        ]
+      ]
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_04",
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skilllearnbench",
+          "weighted_gdp_analysis"
+        ],
+        [
+          "tau2_bench",
+          "airline_booking_change"
+        ],
+        [
+          "sr_agents",
+          "filesystem_path_operations"
+        ]
+      ]
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_05",
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "benchmark_capabilities": [
+        [
+          "skilllearnbench",
+          "court_form_filling"
+        ],
+        [
+          "tau2_bench",
+          "retail_exchange_resolution"
+        ],
+        [
+          "sr_agents",
+          "matplotlib_visualization"
+        ]
+      ]
+    }
+  ]
+}

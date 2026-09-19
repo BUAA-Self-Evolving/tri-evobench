@@ -1,0 +1,32 @@
+{
+  "source_id": "sr_agents:bigcodebench_00033",
+  "source": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_hash": "3da8dd462d95cfd591bc881b59f9452f58defbf602b5678893218bb21e36e03f",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00033",
+    "source_task_id": "bigcodebench_00033"
+  },
+  "benchmark_native_labels": {
+    "dataset": "bigcodebench",
+    "skill_annotations": [
+      "bigcodebench_137",
+      "bigcodebench_118"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "numpy_numerical_computing",
+    "confidence": 0.9,
+    "domain_id": "software_engineering",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_generation",
+      "numerical_computing"
+    ]
+  },
+  "prompt_sha256": "c1f2b7fc648577091e9d96820800bf225b7b59607cf600b22c32c0b0c3f411d3"
+}

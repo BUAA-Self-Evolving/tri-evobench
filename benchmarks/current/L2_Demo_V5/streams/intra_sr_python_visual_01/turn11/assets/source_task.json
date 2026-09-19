@@ -1,0 +1,33 @@
+{
+  "source_id": "sr_agents:bigcodebench_00049",
+  "source": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_hash": "b356be170007dd8421c68435c8e9b6aecae52071589829abc35e79d9d9dbc5c0",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00049",
+    "source_task_id": "bigcodebench_00049"
+  },
+  "benchmark_native_labels": {
+    "dataset": "bigcodebench",
+    "skill_annotations": [
+      "bigcodebench_094",
+      "bigcodebench_043",
+      "bigcodebench_138"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "pandas_dataframe_manipulation",
+    "confidence": 0.9,
+    "domain_id": "software_engineering",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_generation",
+      "data_transformation"
+    ]
+  },
+  "prompt_sha256": "bc1aac52393ac02b5f313fa55d52518c1ffbab21d86896a783f3addb9d0cfd00"
+}

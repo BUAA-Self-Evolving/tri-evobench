@@ -1,0 +1,38 @@
+{
+  "source_id": "tau2_bench:retail:18",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "9f5f2d7c533f3e91b29e8c7fddcc3ae0a06770bb459ac5a84dda8693669960f1",
+    "source_path": "data/tau2/domains/retail/tasks.json#18",
+    "source_task_id": "retail:18"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "find_user_id_by_name_zip",
+      "get_user_details",
+      "get_order_details",
+      "get_product_details",
+      "exchange_delivered_order_items"
+    ],
+    "documents": [],
+    "domain": "retail",
+    "purpose": null,
+    "reason_for_call": "You want to return the office chair because it came with some broken pieces. But if the agent asks you for confirm, you say you want to rethink for a while, and then change your mind to exchange for the same item. If the agent mentions that the same product is not available, ask for a gray office chair with fixed armrest made of leather instead."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "retail_exchange_resolution",
+    "confidence": 0.9,
+    "domain_id": "retail_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "04a803b3c2b434c3420fab54b9ca3d5010a6798447caaee5ecba1dc9e507bf35"
+}

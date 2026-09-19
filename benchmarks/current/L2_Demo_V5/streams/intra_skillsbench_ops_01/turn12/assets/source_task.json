@@ -1,0 +1,69 @@
+{
+  "source_id": "skillsbench:manufacturing-fjsp-optimization",
+  "source": {
+    "benchmark_id": "skillsbench",
+    "benchmark_revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "source_hash": "b3d1e3f47d3ca0383828455801c6ea0e91ae701e7d6e2cfc6539afdb4b80b8de",
+    "source_path": "tasks/manufacturing-fjsp-optimization",
+    "source_task_id": "manufacturing-fjsp-optimization"
+  },
+  "benchmark_native_labels": {
+    "author_email": "wdi169286@gmail.com",
+    "author_name": "Di Wang @Foxconn",
+    "category": "industrial-physical-systems",
+    "category_confidence": "high",
+    "difficulty": "medium",
+    "distractor_skills": [
+      "geospatial-utils",
+      "time-series-analysis",
+      "temporal-signal-engineering"
+    ],
+    "interface": [
+      "terminal",
+      "python"
+    ],
+    "modality": [
+      "csv",
+      "json"
+    ],
+    "required_skills": [
+      "fjsp-baseline-repair-with-downtime-and-policy"
+    ],
+    "secondary_category": "mathematics-or-formal-reasoning",
+    "skill_type": [
+      "mathematical-method",
+      "domain-procedure"
+    ],
+    "subcategory": "production-scheduling",
+    "tags": [
+      "optimization",
+      "manufacturing",
+      "flexible job shop planning"
+    ],
+    "task_type": [
+      "optimization",
+      "planning"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "constrained_operations_planning",
+    "confidence": 0.9,
+    "domain_id": "operations_research",
+    "interface_ids": [
+      "terminal",
+      "python"
+    ],
+    "label_source": "rule_normalized",
+    "modality_ids": [
+      "csv",
+      "json"
+    ],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "optimization",
+      "planning"
+    ]
+  },
+  "prompt_sha256": "9dd3636a1eb2825872e370846e4101b9d9e0ddd11e20a5c1c09ebcefd597f1b6"
+}

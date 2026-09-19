@@ -1,0 +1,40 @@
+{
+  "source_id": "tau2_bench:airline:18",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "04e629b91edf7df01e3c5bef4b0f45c88453d106f7d5c9a0ff364220485201ce",
+    "source_path": "data/tau2/domains/airline/tasks.json#18",
+    "source_task_id": "airline:18"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "update_reservation_flights",
+      "update_reservation_flights",
+      "update_reservation_flights",
+      "update_reservation_flights",
+      "update_reservation_flights"
+    ],
+    "documents": [
+      "23553"
+    ],
+    "domain": "airline",
+    "purpose": "Checking that agent can properly downgrade the right flights and calculate total savings.",
+    "reason_for_call": "You just faced some money issue and want to downgrade all business flights to economy, without changing the flights or passengers."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "airline_booking_change",
+    "confidence": 0.9,
+    "domain_id": "travel_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "09cbf28f03b94d332019121e67bebc56ed20a62c181b0d503e2e3cd10b1f3c4a"
+}

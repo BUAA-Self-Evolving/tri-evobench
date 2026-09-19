@@ -1,0 +1,60 @@
+{
+  "source_id": "skillsbench:bike-rebalance",
+  "source": {
+    "benchmark_id": "skillsbench",
+    "benchmark_revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "source_hash": "3fd28035748ee3d3f36e0b0d9a493655be14628e252cac4bb155d591c34eaeed",
+    "source_path": "tasks/bike-rebalance",
+    "source_task_id": "bike-rebalance"
+  },
+  "benchmark_native_labels": {
+    "author_email": "sikaicheng@gatech.edu",
+    "author_name": "Sikai Cheng",
+    "category": "mathematics-or-formal-reasoning",
+    "category_confidence": "high",
+    "difficulty": "medium",
+    "difficulty_explanation": "The agent must convert operational rules into a feasible multi-vehicle pickup/dropoff routing plan:",
+    "interface": [
+      "terminal",
+      "python"
+    ],
+    "modality": [
+      "json"
+    ],
+    "skill_type": [
+      "mathematical-method",
+      "domain-procedure"
+    ],
+    "subcategory": "operations-research-vehicle-routing",
+    "tags": [
+      "bike-sharing",
+      "vehicle-routing",
+      "inventory-rebalancing",
+      "mixed-integer-program"
+    ],
+    "task_type": [
+      "optimization",
+      "planning"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "constrained_operations_planning",
+    "confidence": 0.9,
+    "domain_id": "operations_research",
+    "interface_ids": [
+      "terminal",
+      "python"
+    ],
+    "label_source": "rule_normalized",
+    "modality_ids": [
+      "json"
+    ],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "optimization",
+      "planning"
+    ]
+  },
+  "prompt_sha256": "f9c3d010a4b5d3768c194c9263c66d40ce553759b9a690a2ddcbd55b46a00e68"
+}

@@ -1,0 +1,60 @@
+{
+  "source_id": "skillsbench:setup-fuzzing-py",
+  "source": {
+    "benchmark_id": "skillsbench",
+    "benchmark_revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "source_hash": "7a860c073a7cf928f1840b026a2a3b0f2e32e151bc9f8ed4b2425a5b0f9f95ac",
+    "source_path": "tasks/setup-fuzzing-py",
+    "source_task_id": "setup-fuzzing-py"
+  },
+  "benchmark_native_labels": {
+    "author_email": "yfhe.cs@gmail.com",
+    "author_name": "Yifeng He",
+    "category": "cybersecurity",
+    "category_confidence": "high",
+    "difficulty": "medium",
+    "interface": [
+      "terminal",
+      "python"
+    ],
+    "modality": [
+      "source-code"
+    ],
+    "skill_type": [
+      "tool-workflow",
+      "evaluation-protocol"
+    ],
+    "subcategory": "fuzzing",
+    "tags": [
+      "security",
+      "build",
+      "vulnerability",
+      "continuous-integration",
+      "python"
+    ],
+    "task_type": [
+      "implementation",
+      "verification"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "security_code_repair",
+    "confidence": 0.9,
+    "domain_id": "cybersecurity",
+    "interface_ids": [
+      "terminal",
+      "python"
+    ],
+    "label_source": "rule_normalized",
+    "modality_ids": [
+      "source-code"
+    ],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_repair",
+      "vulnerability_analysis"
+    ]
+  },
+  "prompt_sha256": "338675ad51753ff6b653342ff638ae8b774a1d9d985166b6f17724bc524050b0"
+}

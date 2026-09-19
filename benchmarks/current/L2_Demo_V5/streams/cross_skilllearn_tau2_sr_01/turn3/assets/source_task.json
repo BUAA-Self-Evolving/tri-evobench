@@ -1,0 +1,32 @@
+{
+  "source_id": "sr_agents:bigcodebench_00044",
+  "source": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_hash": "b78df9cd366f4ffa71f9c7dbe48e7d39a270ec6fb934c29692264e3143cd7687",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00044",
+    "source_task_id": "bigcodebench_00044"
+  },
+  "benchmark_native_labels": {
+    "dataset": "bigcodebench",
+    "skill_annotations": [
+      "bigcodebench_138",
+      "bigcodebench_024"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "matplotlib_visualization",
+    "confidence": 0.9,
+    "domain_id": "software_engineering",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_generation",
+      "visualization"
+    ]
+  },
+  "prompt_sha256": "c4af6ca9937fe6042f35404b97b5e72d79d53582d3f109843031442cfdcf638b"
+}

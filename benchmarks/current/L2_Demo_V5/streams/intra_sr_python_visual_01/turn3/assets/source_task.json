@@ -1,0 +1,33 @@
+{
+  "source_id": "sr_agents:bigcodebench_00015",
+  "source": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_hash": "c1f0ad8aa62ece1f22b7c94920628c3e70cd1024c6ea162ba105a576f1c4a8f1",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00015",
+    "source_task_id": "bigcodebench_00015"
+  },
+  "benchmark_native_labels": {
+    "dataset": "bigcodebench",
+    "skill_annotations": [
+      "bigcodebench_061",
+      "bigcodebench_119",
+      "bigcodebench_130"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "filesystem_path_operations",
+    "confidence": 0.9,
+    "domain_id": "software_engineering",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_generation",
+      "file_processing"
+    ]
+  },
+  "prompt_sha256": "956b8e694c61bb0d841cc63f78e9d85b96b4e3a719f7a34b9215df7c0c2c1944"
+}

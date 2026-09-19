@@ -1,0 +1,113 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_sr_python_data_01",
+  "turn_id": "turn12",
+  "turn_index": 12,
+  "sequence_role": "probe",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00014",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00014",
+    "source_hash": "558f4929bab3653d4ddf7ffab977221092fb1425785a7a49120b12f5ed3aab09"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "file_processing"
+    ],
+    "capability_id": "filesystem_path_operations",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_125",
+        "bigcodebench_133",
+        "bigcodebench_130"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "filesystem_path_operations",
+    "parent_turn_ids": [
+      "turn3",
+      "turn6",
+      "turn9"
+    ],
+    "relation_rationale": "Implement file discovery, path, directory, or filesystem operations."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00014\n\nArchive a specified project directory into a ZIP file based on the configuration specified in a config file. This function reads a configuration file to determine the project directory and archives this directory into a ZIP file. The ZIP file's name will be the project directory's basename, stored in the specified archive directory. Configuration File Format: [Project] directory=path_to_project_directory\nThe function should raise the exception for: FileNotFoundError: If the `config_file_path` does not exist or the specified project directory does not exist. Exception: If the ZIP archive cannot be created.\nThe function should output with:\n    bool: True if the ZIP archive is successfully created, otherwise an exception is raised.\nYou should write self-contained code starting with:\n```\nimport configparser\nimport os\nimport shutil\ndef task_func(config_file_path, archieve_dir ='/home/user/archive'):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn12.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00014"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  },
+  "probe_spec": {
+    "target_capability_id": "filesystem_path_operations",
+    "expected_transfer_from_turn_ids": [
+      "turn3",
+      "turn6",
+      "turn9"
+    ],
+    "interference_capability_ids": [
+      "numpy_numerical_computing",
+      "pandas_dataframe_manipulation"
+    ],
+    "claim_scope": "within_benchmark_retention",
+    "held_out_source_task_id": "bigcodebench_00014"
+  }
+}

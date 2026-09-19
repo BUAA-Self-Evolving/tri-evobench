@@ -1,0 +1,98 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "cross_skilllearn_tau2_sr_05",
+  "turn_id": "turn9",
+  "turn_index": 9,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00062",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00062",
+    "source_hash": "9eafb0f2c7d52af6b251371c30b6fa05d422a3a9ecb6b0f1b99298ff09e67ff2"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "visualization"
+    ],
+    "capability_id": "matplotlib_visualization",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_138",
+        "bigcodebench_013"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "matplotlib_visualization",
+    "parent_turn_ids": [
+      "turn3",
+      "turn6"
+    ],
+    "relation_rationale": "Implement a plotting function centered on Matplotlib APIs."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00062\n\nDraws a histogram of the \"from_user\" values in the provided result. The color of the histogram bars is selected at random from the provided colors list.\nThe function should output with:\n    None: The function displays the histogram and does not return any value.\nYou should write self-contained code starting with:\n```\nimport random\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(result, colors=['b', 'g', 'r', 'c', 'm', 'y', 'k']):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn9.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00062"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

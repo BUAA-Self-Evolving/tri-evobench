@@ -1,0 +1,36 @@
+{
+  "source_id": "tau2_bench:retail:102",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "922a63e4135d110cec8993681602399b3e499f3ad678095d992b016c1cf1d8d9",
+    "source_path": "data/tau2/domains/retail/tasks.json#102",
+    "source_task_id": "retail:102"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "modify_pending_order_address",
+      "modify_pending_order_items",
+      "exchange_delivered_order_items"
+    ],
+    "documents": [],
+    "domain": "retail",
+    "purpose": null,
+    "reason_for_call": "You just placed an order with two watches, you want to change its address to your New York address (you don't want to reveal it but it's in your other order). You also want to modify the silicone watch to a metal one. If multiple colors available, you prefer white. For the air purifier you received along with sneakers, you want to exchange the purifier to large size and night mode, but still with HEPA filter."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "retail_exchange_resolution",
+    "confidence": 0.9,
+    "domain_id": "retail_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "bf1e96edf1a306c5d6f53bad27ce9d53b945e640f266660f39138931d6d9ee3b"
+}

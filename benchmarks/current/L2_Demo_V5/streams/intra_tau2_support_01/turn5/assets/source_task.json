@@ -1,0 +1,38 @@
+{
+  "source_id": "tau2_bench:airline:12",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "a0e997a4bf45c9df9725b39508b27301a078781a9dda04065067819672a4efb9",
+    "source_path": "data/tau2/domains/airline/tasks.json#12",
+    "source_task_id": "airline:12"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "get_reservation_details",
+      "search_direct_flight",
+      "search_direct_flight",
+      "calculate",
+      "update_reservation_baggages"
+    ],
+    "documents": [],
+    "domain": "airline",
+    "purpose": "Test that agent doesn't offer to modify the cabin for only one of the passenger of a reservation.",
+    "reason_for_call": "You have an upcoming flight from Boston to Minneapolis under reservation ID YAX4DR.\n\nYou want to change your class for all passengers to business.\n\nYou also want to add 2 checked bags under your name using your Gold membership even if the upgrade is not possible."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "airline_booking_change",
+    "confidence": 0.9,
+    "domain_id": "travel_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "16f5b819bdb036c1838c2bcdfecb7f0036987741c2154711a060a5b4fe8a6520"
+}

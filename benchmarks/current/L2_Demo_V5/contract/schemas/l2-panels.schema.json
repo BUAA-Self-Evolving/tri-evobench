@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-panels.schema.json",
+  "title": "L2 TaskStream Panel Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "panels",
+    "unique_parent_turn_count",
+    "turn_placement_count",
+    "aggregation_rule"
+  ],
+  "properties": {
+    "schema_version": {"const": "l2_panels/1.0"},
+    "panels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "panel_id",
+          "purpose",
+          "stream_ids",
+          "allows_cross_panel_aggregation"
+        ],
+        "properties": {
+          "panel_id": {"$ref": "#/$defs/id"},
+          "purpose": {"enum": ["primary", "diagnostic"]},
+          "stream_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/id"}
+          },
+          "allows_cross_panel_aggregation": {"const": false}
+        }
+      }
+    },
+    "unique_parent_turn_count": {"type": "integer", "minimum": 1},
+    "turn_placement_count": {"type": "integer", "minimum": 1},
+    "aggregation_rule": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"}
+  }
+}

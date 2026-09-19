@@ -1,0 +1,36 @@
+{
+  "source_id": "skilllearnbench:dependency-vulnerability-check-1",
+  "source": {
+    "benchmark_id": "skilllearnbench",
+    "benchmark_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "source_hash": "b08030939f574bd3a118bb9f27fb40293db4a0fbbf2a279317275a010b1a7969",
+    "source_path": "tasks/dependency-vulnerability-check/dependency-vulnerability-check-1",
+    "source_task_id": "dependency-vulnerability-check-1"
+  },
+  "benchmark_native_labels": {
+    "capability_id": "dependency_vulnerability_check",
+    "category": "security",
+    "difficulty": "medium",
+    "family": "dependency-vulnerability-check",
+    "tags": [
+      "security",
+      "vulnerability-scanning",
+      "dependencies"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "dependency_vulnerability_audit",
+    "confidence": 0.9,
+    "domain_id": "cybersecurity",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "vulnerability_analysis",
+      "report_generation"
+    ]
+  },
+  "prompt_sha256": "8439ae2db24b81b7448ac6ca4bd509ae2c47fe7792020b663b2e8d0dbd75c8aa"
+}

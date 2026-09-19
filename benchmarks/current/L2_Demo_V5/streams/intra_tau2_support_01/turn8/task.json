@@ -1,0 +1,99 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_tau2_support_01",
+  "turn_id": "turn8",
+  "turn_index": 8,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_task_id": "airline:15",
+    "source_path": "data/tau2/domains/airline/tasks.json#15",
+    "source_hash": "818601038662007277f2668d89fc94ee396e64fe364787ed26a28b728494b63d"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "travel_support",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ],
+    "capability_id": "airline_booking_change",
+    "native_labels": {
+      "actions": [
+        "update_reservation_flights"
+      ],
+      "documents": [],
+      "domain": "airline",
+      "purpose": "Test finding cheapest Economy cabin class (not Basic Economy) flight on the next day. Multiple airports to consider. Testing understanding that policy forbids changing origin or destination of a reservation.",
+      "reason_for_call": "For your upcoming trip from ATL to PHL, you want to change for the cheapest flight in Economy cabin class (not Basic Economy) and for the day after the original reservation."
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "tau2_tool_v1",
+  "capability_relation": {
+    "capability_id": "airline_booking_change",
+    "parent_turn_ids": [
+      "turn2",
+      "turn5"
+    ],
+    "relation_rationale": "Change or cancel an existing airline reservation under policy."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: tau2_bench\nSource task id: airline:15\n\nFor your upcoming trip from ATL to PHL, you want to change for the cheapest flight in Economy cabin class (not Basic Economy) and for the day after the original reservation."
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn8.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "tau2_bench",
+      "source_task_id": "airline:15"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_sr_python_data_01",
+  "turn_id": "turn8",
+  "turn_index": 8,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00011",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00011",
+    "source_hash": "c5812ca64899ef6b84a2f47f4dce83de0148b9361b5d105ec0a26654bbee8cf3"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "numerical_computing"
+    ],
+    "capability_id": "numpy_numerical_computing",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_137",
+        "bigcodebench_108",
+        "bigcodebench_073"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "numpy_numerical_computing",
+    "parent_turn_ids": [
+      "turn2",
+      "turn5"
+    ],
+    "relation_rationale": "Implement a function centered on NumPy array operations."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00011\n\nConverts elements in 'T1', a tuple of tuples containing string representations of integers, to integers and creates a list of random integers. The size of the list equals the sum of these integers. Returns the 25th, 50th, and 75th percentiles of this list.\nThe function should output with:\n    tuple: A tuple (p25, p50, p75) representing the 25th, 50th, and 75th percentiles of the list.\nYou should write self-contained code starting with:\n```\nimport numpy as np\nimport itertools\nimport random\ndef task_func(T1, max_value=100):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn8.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00011"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

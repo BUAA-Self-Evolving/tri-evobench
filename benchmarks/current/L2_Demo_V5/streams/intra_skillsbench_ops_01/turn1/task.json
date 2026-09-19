@@ -1,0 +1,115 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_skillsbench_ops_01",
+  "turn_id": "turn1",
+  "turn_index": 1,
+  "sequence_role": "learning",
+  "source_basis": {
+    "benchmark_id": "skillsbench",
+    "benchmark_revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "source_task_id": "fix-druid-loophole-cve",
+    "source_path": "tasks/fix-druid-loophole-cve",
+    "source_hash": "9b01add9fdf3dd93fa0aecec7cb182343f827a07f41c84cd530a56a4cd24fbb1"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "cybersecurity",
+    "task_type_ids": [
+      "code_repair",
+      "vulnerability_analysis"
+    ],
+    "capability_id": "security_code_repair",
+    "native_labels": {
+      "author_email": "xinyiliu0227@gmail.com",
+      "author_name": "Xinyi Liu",
+      "category": "cybersecurity",
+      "category_confidence": "high",
+      "difficulty": "hard",
+      "interface": [
+        "terminal",
+        "compiler-toolchain"
+      ],
+      "modality": [
+        "source-code"
+      ],
+      "skill_type": [
+        "domain-procedure",
+        "debugging-heuristic"
+      ],
+      "subcategory": "vulnerability-analysis",
+      "tags": [
+        "Java",
+        "Security",
+        "Apache Druid",
+        "Vulnerability Fix"
+      ],
+      "task_type": [
+        "repair"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "skillsbench_python_task_v1",
+  "capability_relation": {
+    "capability_id": "security_code_repair",
+    "parent_turn_ids": [],
+    "relation_rationale": "Inspect and repair or harden code against a concrete security failure."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: skillsbench\nSource task id: fix-druid-loophole-cve\n\nA vulnerability has been found in Apache Druid version 0.20.0: authenticated attackers can execute arbitrary code on the server through malicious JavaScript payloads, for example:\n\n```http\nPOST /druid/indexer/v1/sampler HTTP/1.1\nContent-Type: application/json\n\n{\n  \"type\": \"index\",\n  \"spec\": {\n    \"dataSchema\": {\n      \"transformSpec\": {\n        \"filter\": {\n          \"type\": \"javascript\",\n          \"function\": \"function(){java.lang.Runtime.getRuntime().exec('malicious_command');}\",\n          \"\": {\n            \"enabled\": true\n          }\n        }\n      }\n    }\n  }\n}\n```\nThe empty key `\"\"` can bypass JavaScript security settings to allow arbitrary code execution.\n\n\nYour need to:\n1. Write patch files that can address this vulnerability in `/root/patches/`\n2. Apply your patches to the Druid source code (a git repository) at `/root/druid/`\n3. Rebuild Druid with the fixes using Maven (skip web-console to avoid OOM error, skip code quality checks for patched files):\n   ```bash\n   cd /root/druid\n   mvn clean package -DskipTests -Dcheckstyle.skip=true -Dpmd.skip=true -Dforbiddenapis.skip=true -Dspotbugs.skip=true -Danimal.sniffer.skip=true -Denforcer.skip=true -Djacoco.skip=true -Ddependency-check.skip=true -pl '!web-console' -pl indexing-service -am\n   ```\n\nThe verifier will deploy the patched JAR to `/opt/druid/lib/` and restart the Druid server before running tests. Tests will verify that all exploit requests are blocked while legitimate requests still work.\n\nYou must work with Apache Druid version 0.20.0."
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn1.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "skillsbench",
+      "source_task_id": "fix-druid-loophole-cve"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "source_id": "tau2_bench:banking_knowledge:task_002",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "88c687e4d5da943c2b3c7f50140b88be22740d4790f1c31ae81f658a22a16e28",
+    "source_path": "data/tau2/domains/banking_knowledge/tasks.json#task_002",
+    "source_task_id": "banking_knowledge:task_002"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "apply_for_credit_card"
+    ],
+    "documents": [],
+    "domain": "banking_knowledge",
+    "purpose": "Task: task_002",
+    "reason_for_call": "You are playing the role of a customer contacting a customer service representative agent. Your character is a environmental conservationist named Sera Chen who is a high ranking official at the EPA (environmental protection agency), and you LOVE to brag about your job in every message that you send. Your annual income is $250,000. You do NOT have a Rho-Bank+ subscription.\n\nYou're looking for a credit card to use for your everyday purchases. You want the card that gives you the highest cash back available in the Rho-Bank profile: make this extremely upfront. You are willing to pay up to an effective amount of 100 dollars a year in fees to fund the credit card. You plan to use the card on at least 50,000 dollars worth of purchases each month. DO NOT bring this up unless asked.\n\nIf you find out that there are no credit cards that fit your needs, you are happy to immediately take your business elsewhere and end the conversation.You take recommendations very strongly. If you are recommended a particular credit card, then you take that recommendation. If you are offered many options, ask for the customer support agent to provide only one option so that they may make the decision for you.\n\nYou have access to a tool that allow you to apply for credit cards by specifying the card type. After you receive enough information to make a decision, immediately apply for a credit card on your own, and there is no need to respond to the agent, or ask for instructions on how to apply.\n\nYou are currently on the line with a customer support agent. Don't dump all your information at once. Never respond as a customer service representative/assistant. You are playing the role of the customer."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "banking_product_application",
+    "confidence": 0.9,
+    "domain_id": "banking_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "product_selection"
+    ]
+  },
+  "prompt_sha256": "c343603a58eab61d1e8b2075e226f728e6d0f04e3fd65ca06193a23cc1dc16b5"
+}

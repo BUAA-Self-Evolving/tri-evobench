@@ -1,0 +1,96 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "cross_skilllearn_tau2_sr_03",
+  "turn_id": "turn6",
+  "turn_index": 6,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00052",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00052",
+    "source_hash": "dc1b83ccf597c49d05441517d01c75f3d491fa451d42050ab05a0b318616a736"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "data_transformation"
+    ],
+    "capability_id": "pandas_dataframe_manipulation",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_045",
+        "bigcodebench_094"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "pandas_dataframe_manipulation",
+    "parent_turn_ids": [
+      "turn3"
+    ],
+    "relation_rationale": "Implement a function whose reusable procedure centers on pandas DataFrame APIs."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00052\n\nCount the frequency of each word in a text after removing specific stopwords.\nThe function should output with:\n    Series: A pandas Series with word frequencies excluding the words in STOPWORDS list.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport regex as re\n# Constants\nSTOPWORDS = [\"a\", \"an\", \"the\", \"in\", \"is\", \"are\"]\ndef task_func(text):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn6.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00052"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

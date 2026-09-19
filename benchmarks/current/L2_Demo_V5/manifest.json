@@ -1,0 +1,117 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "benchmark": "Tri-EvoBench L2 Demo V5 heterogeneous short streams",
+  "aggregation_profile": "l2_evolution_aggregation/1.2",
+  "baseline_sha": "89369da0daaa1cb130318237ca24e017868063d7",
+  "stream_count": 10,
+  "total_turn_count": 120,
+  "unique_source_task_count": 120,
+  "turn_placement_count": 120,
+  "streams": [
+    {
+      "stream_id": "intra_tau2_banking_ops_01",
+      "directory": "intra_tau2_banking_ops_01",
+      "turn_count": 12,
+      "path": "streams/intra_tau2_banking_ops_01/stream.json",
+      "pool_id": "intra_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "intra_skillsbench_ops_01",
+      "directory": "intra_skillsbench_ops_01",
+      "turn_count": 12,
+      "path": "streams/intra_skillsbench_ops_01/stream.json",
+      "pool_id": "intra_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "intra_sr_python_data_01",
+      "directory": "intra_sr_python_data_01",
+      "turn_count": 12,
+      "path": "streams/intra_sr_python_data_01/stream.json",
+      "pool_id": "intra_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "intra_sr_python_visual_01",
+      "directory": "intra_sr_python_visual_01",
+      "turn_count": 12,
+      "path": "streams/intra_sr_python_visual_01/stream.json",
+      "pool_id": "intra_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "intra_tau2_support_01",
+      "directory": "intra_tau2_support_01",
+      "turn_count": 12,
+      "path": "streams/intra_tau2_support_01/stream.json",
+      "pool_id": "intra_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_01",
+      "directory": "cross_skilllearn_tau2_sr_01",
+      "turn_count": 12,
+      "path": "streams/cross_skilllearn_tau2_sr_01/stream.json",
+      "pool_id": "cross_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_02",
+      "directory": "cross_skilllearn_tau2_sr_02",
+      "turn_count": 12,
+      "path": "streams/cross_skilllearn_tau2_sr_02/stream.json",
+      "pool_id": "cross_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_03",
+      "directory": "cross_skilllearn_tau2_sr_03",
+      "turn_count": 12,
+      "path": "streams/cross_skilllearn_tau2_sr_03/stream.json",
+      "pool_id": "cross_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_04",
+      "directory": "cross_skilllearn_tau2_sr_04",
+      "turn_count": 12,
+      "path": "streams/cross_skilllearn_tau2_sr_04/stream.json",
+      "pool_id": "cross_benchmark_multi_capability"
+    },
+    {
+      "stream_id": "cross_skilllearn_tau2_sr_05",
+      "directory": "cross_skilllearn_tau2_sr_05",
+      "turn_count": 12,
+      "path": "streams/cross_skilllearn_tau2_sr_05/stream.json",
+      "pool_id": "cross_benchmark_multi_capability"
+    }
+  ],
+  "pool_manifest": {
+    "schema_version": "l2_pools/1.0",
+    "path": "pools.json",
+    "sha256": "5646fd4bb583128734feaaa447e2471ca00afcbe7d7c9b54314e2dcf2f7b3303"
+  },
+  "panel_manifest": {
+    "schema_version": "l2_panels/1.0",
+    "path": "panels.json",
+    "sha256": "eee96ccc2ce3d5bbc833d175d4e9a3e6d50fde6bbb193cedfc7344d395fd068d"
+  },
+  "taxonomy_manifest": {
+    "schema_version": "l2_taxonomy/1.0",
+    "path": "taxonomy.json",
+    "sha256": "b57f7b0f871970338b4d5483e4623291d8ab6ce9f790bf0f4fe24e408b780628"
+  },
+  "runtime_profiles": {
+    "schema_version": "l2_runtime_profiles/1.0",
+    "path": "runtime_profiles.json",
+    "sha256": "6ef0a6ee8fcea0abe97dcf0c903da5472e16e4a7688466fa4d6b82f2c2018bb5"
+  },
+  "source_catalog": {
+    "schema_version": "jsonl/source_tasks",
+    "path": "source_tasks.jsonl",
+    "sha256": "653e315ee66d9059c08a65dfc444687bb77f37e39da3eee612d01616c2449c9d"
+  },
+  "source_qualification": {
+    "schema_version": "jsonl/source_qualification",
+    "path": "source_qualification.jsonl",
+    "sha256": "1daccf1e444e6fb482e300c46474187fcb4ad24e0f26e2746edd3700af562c0a"
+  },
+  "selection_manifest": {
+    "schema_version": "l2_v5_stream_plan/1.0",
+    "path": "stream_plan.json",
+    "sha256": "53c0f5fc131e0ac883905bbf70bde54998bcf1d8903d0f70158916619365c409"
+  }
+}

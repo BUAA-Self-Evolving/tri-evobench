@@ -1,0 +1,40 @@
+{
+  "source_id": "tau2_bench:retail:104",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "05560a8b40aacdb34474956812b1640f8ee9524ce4002603be095f93333f334b",
+    "source_path": "data/tau2/domains/retail/tasks.json#104",
+    "source_task_id": "retail:104"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "return_delivered_order_items",
+      "return_delivered_order_items",
+      "modify_pending_order_address",
+      "modify_pending_order_items",
+      "return_delivered_order_items"
+    ],
+    "documents": [
+      "286422338955"
+    ],
+    "domain": "retail",
+    "purpose": "Check if the agent correctly handles cancelled order (containing bookshelf and jigsaw) and only returns the bookshelf in the non-cancelled order.",
+    "reason_for_call": "You want to return all bookshelves and jigsaw puzzles you received in different orders. Make sure you mention at the beginning that you want to cancel these two things, and they are from different orders. You also want to return the backpack you received with the vacuum cleaner. You also want to change your pending order item to red, and change the address of the order to your default Chicago home (you won't reveal it for private reasons but it's in your profile). You want to get the tracking number of your cancelled order."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "retail_exchange_resolution",
+    "confidence": 0.9,
+    "domain_id": "retail_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "0a5fa917b86d3075ba520b4b41406590eb28304898db8d5681aabe9c0657a174"
+}

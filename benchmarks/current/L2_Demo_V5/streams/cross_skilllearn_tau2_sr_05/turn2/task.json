@@ -1,0 +1,106 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "cross_skilllearn_tau2_sr_05",
+  "turn_id": "turn2",
+  "turn_index": 2,
+  "sequence_role": "learning",
+  "source_basis": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_task_id": "retail:16",
+    "source_path": "data/tau2/domains/retail/tasks.json#16",
+    "source_hash": "c99e9277b9c211c8f85ff3c10e62458bd7f8eed115d45da7f870a837ec25767c"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "retail_support",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ],
+    "capability_id": "retail_exchange_resolution",
+    "native_labels": {
+      "actions": [
+        "find_user_id_by_name_zip",
+        "get_user_details",
+        "get_order_details",
+        "get_order_details",
+        "get_order_details",
+        "calculate",
+        "cancel_pending_order",
+        "cancel_pending_order",
+        "return_delivered_order_items"
+      ],
+      "documents": [
+        "8276.23"
+      ],
+      "domain": "retail",
+      "purpose": null,
+      "reason_for_call": "You want to cancel all pending orders (since they are no longer needed) and return the watch you have received (but nothing else), and you want to know the total amount you can get back."
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "tau2_tool_v1",
+  "capability_relation": {
+    "capability_id": "retail_exchange_resolution",
+    "parent_turn_ids": [],
+    "relation_rationale": "Resolve delivered-order return or exchange requests under retail policy."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: tau2_bench\nSource task id: retail:16\n\nYou want to cancel all pending orders (since they are no longer needed) and return the watch you have received (but nothing else), and you want to know the total amount you can get back."
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn2.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "tau2_bench",
+      "source_task_id": "retail:16"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}

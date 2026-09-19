@@ -1,0 +1,116 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_tau2_banking_ops_01",
+  "turn_id": "turn11",
+  "turn_index": 11,
+  "sequence_role": "probe",
+  "source_basis": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_task_id": "retail:102",
+    "source_path": "data/tau2/domains/retail/tasks.json#102",
+    "source_hash": "922a63e4135d110cec8993681602399b3e499f3ad678095d992b016c1cf1d8d9"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "retail_support",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ],
+    "capability_id": "retail_exchange_resolution",
+    "native_labels": {
+      "actions": [
+        "modify_pending_order_address",
+        "modify_pending_order_items",
+        "exchange_delivered_order_items"
+      ],
+      "documents": [],
+      "domain": "retail",
+      "purpose": null,
+      "reason_for_call": "You just placed an order with two watches, you want to change its address to your New York address (you don't want to reveal it but it's in your other order). You also want to modify the silicone watch to a metal one. If multiple colors available, you prefer white. For the air purifier you received along with sneakers, you want to exchange the purifier to large size and night mode, but still with HEPA filter."
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "tau2_tool_v1",
+  "capability_relation": {
+    "capability_id": "retail_exchange_resolution",
+    "parent_turn_ids": [
+      "turn2",
+      "turn5",
+      "turn8"
+    ],
+    "relation_rationale": "Resolve delivered-order return or exchange requests under retail policy."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: tau2_bench\nSource task id: retail:102\n\nYou just placed an order with two watches, you want to change its address to your New York address (you don't want to reveal it but it's in your other order). You also want to modify the silicone watch to a metal one. If multiple colors available, you prefer white. For the air purifier you received along with sneakers, you want to exchange the purifier to large size and night mode, but still with HEPA filter."
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn11.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "tau2_bench",
+      "source_task_id": "retail:102"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  },
+  "probe_spec": {
+    "target_capability_id": "retail_exchange_resolution",
+    "expected_transfer_from_turn_ids": [
+      "turn2",
+      "turn5",
+      "turn8"
+    ],
+    "interference_capability_ids": [
+      "banking_product_application",
+      "telecom_connectivity_troubleshooting"
+    ],
+    "claim_scope": "within_benchmark_retention",
+    "held_out_source_task_id": "retail:102"
+  }
+}

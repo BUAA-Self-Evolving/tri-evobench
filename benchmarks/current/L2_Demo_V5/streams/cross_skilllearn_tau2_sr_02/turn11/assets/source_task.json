@@ -1,0 +1,39 @@
+{
+  "source_id": "tau2_bench:retail:14",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "395a84680c99f65fb83339e0784951c599704773a9fbc4340fddd94ea74fb32f",
+    "source_path": "data/tau2/domains/retail/tasks.json#14",
+    "source_task_id": "retail:14"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "find_user_id_by_email",
+      "get_user_details",
+      "get_order_details",
+      "get_order_details",
+      "return_delivered_order_items",
+      "return_delivered_order_items"
+    ],
+    "documents": [],
+    "domain": "retail",
+    "purpose": null,
+    "reason_for_call": "You just quit gaming and want to cancel or return everything associated with it. (It's just a keyboard and a mouse, but do not reveal it to the agent). Original payment is preferred."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "retail_exchange_resolution",
+    "confidence": 0.9,
+    "domain_id": "retail_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "6c23976494e6cc675008b3cf5bbaf1a165a588f8f9fbf6e853b5cb80364e7109"
+}

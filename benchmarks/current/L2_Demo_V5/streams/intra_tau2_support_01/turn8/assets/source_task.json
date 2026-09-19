@@ -1,0 +1,34 @@
+{
+  "source_id": "tau2_bench:airline:15",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "818601038662007277f2668d89fc94ee396e64fe364787ed26a28b728494b63d",
+    "source_path": "data/tau2/domains/airline/tasks.json#15",
+    "source_task_id": "airline:15"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "update_reservation_flights"
+    ],
+    "documents": [],
+    "domain": "airline",
+    "purpose": "Test finding cheapest Economy cabin class (not Basic Economy) flight on the next day. Multiple airports to consider. Testing understanding that policy forbids changing origin or destination of a reservation.",
+    "reason_for_call": "For your upcoming trip from ATL to PHL, you want to change for the cheapest flight in Economy cabin class (not Basic Economy) and for the day after the original reservation."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "airline_booking_change",
+    "confidence": 0.9,
+    "domain_id": "travel_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "policy_application"
+    ]
+  },
+  "prompt_sha256": "ccde8cd5518ff4c6906037ff6e9e01814296fb46e9401ee2d03d70f9d3ca1309"
+}

@@ -1,0 +1,55 @@
+{
+  "source_id": "skillsbench:fix-erlang-ssh-cve",
+  "source": {
+    "benchmark_id": "skillsbench",
+    "benchmark_revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "source_hash": "1054bfd3f92a03038bd2928a2bd2f78e4169f3174864580d91ff95e67d1e1e32",
+    "source_path": "tasks/fix-erlang-ssh-cve",
+    "source_task_id": "fix-erlang-ssh-cve"
+  },
+  "benchmark_native_labels": {
+    "author_email": "yuanliw@bu.edu",
+    "author_name": "Yuanli Wang",
+    "category": "cybersecurity",
+    "category_confidence": "high",
+    "difficulty": "hard",
+    "interface": [
+      "terminal"
+    ],
+    "modality": [
+      "source-code"
+    ],
+    "skill_type": [
+      "domain-procedure",
+      "debugging-heuristic"
+    ],
+    "subcategory": "vulnerability-analysis",
+    "tags": [
+      "erlang",
+      "security"
+    ],
+    "task_type": [
+      "repair",
+      "debugging"
+    ]
+  },
+  "normalized_taxonomy": {
+    "capability_id": "security_code_repair",
+    "confidence": 0.9,
+    "domain_id": "cybersecurity",
+    "interface_ids": [
+      "terminal"
+    ],
+    "label_source": "rule_normalized",
+    "modality_ids": [
+      "source-code"
+    ],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "code_repair",
+      "vulnerability_analysis"
+    ]
+  },
+  "prompt_sha256": "a88e166be21b05a4a1d55824602243fb3ba499b8c3ba78a3105bcdaebc12dfce"
+}

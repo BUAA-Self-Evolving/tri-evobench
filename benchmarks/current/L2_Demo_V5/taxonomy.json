@@ -1,0 +1,273 @@
+{
+  "schema_version": "l2_taxonomy/1.0",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "codebook_path": "capability_codebook.json",
+  "codebook_sha256": "1629ee1cf7d284b421c65f7e0545c3ccaf3241dd2b2b8d1560ef33bb91b540ca",
+  "capabilities": {
+    "offer_letter_generation": {
+      "display_name": "Offer letter generation",
+      "domain_id": "office_productivity",
+      "task_type_ids": [
+        "document_generation"
+      ],
+      "aliases": [
+        "offer-letter-generator",
+        "offer_letter_generator"
+      ],
+      "inclusion": "Generate a complete offer letter from structured employee and role inputs.",
+      "exclusion": "Other document editing without an offer-letter contract."
+    },
+    "court_form_filling": {
+      "display_name": "Court form filling",
+      "domain_id": "legal_operations",
+      "task_type_ids": [
+        "document_generation",
+        "structured_data_entry"
+      ],
+      "aliases": [
+        "court-form-filling"
+      ],
+      "inclusion": "Transfer case facts into a supplied court form.",
+      "exclusion": "Free-form legal analysis."
+    },
+    "schedule_planning": {
+      "display_name": "Constraint-aware schedule planning",
+      "domain_id": "operations_research",
+      "task_type_ids": [
+        "planning",
+        "optimization"
+      ],
+      "aliases": [
+        "schedule-planning"
+      ],
+      "inclusion": "Produce a schedule satisfying explicit constraints.",
+      "exclusion": "Calendar text normalization without constraint solving."
+    },
+    "stock_data_visualization": {
+      "display_name": "Stock data visualization",
+      "domain_id": "data_analytics",
+      "task_type_ids": [
+        "visualization",
+        "artifact_generation"
+      ],
+      "aliases": [
+        "stock-data-visualization"
+      ],
+      "inclusion": "Transform stock data into the requested interactive visualization.",
+      "exclusion": "Generic chart styling without stock-data analysis."
+    },
+    "dbscan_parameter_tuning": {
+      "display_name": "DBSCAN parameter tuning",
+      "domain_id": "machine_learning",
+      "task_type_ids": [
+        "model_tuning",
+        "analysis"
+      ],
+      "aliases": [
+        "dbscan-parameter-tuning"
+      ],
+      "inclusion": "Tune DBSCAN parameters against a supplied clustering objective.",
+      "exclusion": "Unrelated clustering or generic parameter search."
+    },
+    "weighted_gdp_analysis": {
+      "display_name": "Weighted GDP calculation",
+      "domain_id": "finance_economics",
+      "task_type_ids": [
+        "calculation",
+        "analysis"
+      ],
+      "aliases": [
+        "weighted-gdp-calculation",
+        "weighted-gdp-calc"
+      ],
+      "inclusion": "Calculate weighted GDP measures from supplied economic data.",
+      "exclusion": "General spreadsheet arithmetic."
+    },
+    "dependency_vulnerability_audit": {
+      "display_name": "Dependency vulnerability audit",
+      "domain_id": "cybersecurity",
+      "task_type_ids": [
+        "vulnerability_analysis",
+        "report_generation"
+      ],
+      "aliases": [
+        "dependency-vulnerability-check",
+        "software-dependency-audit"
+      ],
+      "inclusion": "Audit dependency manifests for scoped vulnerabilities and produce evidence.",
+      "exclusion": "Source-code vulnerability repair."
+    },
+    "retail_exchange_resolution": {
+      "display_name": "Retail return and exchange resolution",
+      "domain_id": "retail_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "aliases": [
+        "exchange_delivered_order_items",
+        "return_delivered_order_items"
+      ],
+      "inclusion": "Resolve delivered-order return or exchange requests under retail policy.",
+      "exclusion": "Pending-order edits or address changes."
+    },
+    "airline_booking_change": {
+      "display_name": "Airline booking change",
+      "domain_id": "travel_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "aliases": [
+        "update_reservation_flights",
+        "cancel_reservation",
+        "update_reservation_baggages"
+      ],
+      "inclusion": "Change or cancel an existing airline reservation under policy.",
+      "exclusion": "New booking without a change to an existing reservation."
+    },
+    "telecom_connectivity_troubleshooting": {
+      "display_name": "Telecom connectivity troubleshooting",
+      "domain_id": "telecom_support",
+      "task_type_ids": [
+        "diagnosis",
+        "tool_workflow"
+      ],
+      "aliases": [
+        "reset_apn_settings",
+        "toggle_roaming",
+        "toggle_data",
+        "reboot_device"
+      ],
+      "inclusion": "Diagnose and repair mobile data, roaming, or APN connectivity.",
+      "exclusion": "Account billing and unrelated device configuration."
+    },
+    "banking_product_application": {
+      "display_name": "Banking product application",
+      "domain_id": "banking_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "product_selection"
+      ],
+      "aliases": [
+        "apply_for_credit_card",
+        "get_credit_card_accounts_by_user"
+      ],
+      "inclusion": "Select, apply for, or inspect a banking product for a verified user.",
+      "exclusion": "Generic knowledge answers without a product workflow."
+    },
+    "pandas_dataframe_manipulation": {
+      "display_name": "Pandas DataFrame manipulation",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "data_transformation"
+      ],
+      "aliases": [
+        "bigcodebench_094"
+      ],
+      "inclusion": "Implement a function whose reusable procedure centers on pandas DataFrame APIs.",
+      "exclusion": "Tasks where pandas is incidental."
+    },
+    "numpy_numerical_computing": {
+      "display_name": "NumPy numerical computing",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "numerical_computing"
+      ],
+      "aliases": [
+        "bigcodebench_137"
+      ],
+      "inclusion": "Implement a function centered on NumPy array operations.",
+      "exclusion": "Pure Python numerical code without NumPy procedure transfer."
+    },
+    "filesystem_path_operations": {
+      "display_name": "Filesystem and path operations",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "file_processing"
+      ],
+      "aliases": [
+        "bigcodebench_130"
+      ],
+      "inclusion": "Implement file discovery, path, directory, or filesystem operations.",
+      "exclusion": "File formats where filesystem traversal is incidental."
+    },
+    "matplotlib_visualization": {
+      "display_name": "Matplotlib visualization",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "visualization"
+      ],
+      "aliases": [
+        "bigcodebench_138"
+      ],
+      "inclusion": "Implement a plotting function centered on Matplotlib APIs.",
+      "exclusion": "Plots generated only through another primary library."
+    },
+    "security_code_repair": {
+      "display_name": "Security code repair",
+      "domain_id": "cybersecurity",
+      "task_type_ids": [
+        "code_repair",
+        "vulnerability_analysis"
+      ],
+      "aliases": [
+        "skillsbench:fix-erlang-ssh-cve",
+        "skillsbench:fix-druid-loophole-cve",
+        "skillsbench:suricata-custom-exfil",
+        "skillsbench:setup-fuzzing-py"
+      ],
+      "inclusion": "Inspect and repair or harden code against a concrete security failure.",
+      "exclusion": "Dependency inventory without source repair."
+    },
+    "office_document_automation": {
+      "display_name": "Office document automation",
+      "domain_id": "office_productivity",
+      "task_type_ids": [
+        "document_generation",
+        "document_transformation"
+      ],
+      "aliases": [
+        "skillsbench:offer-letter-generator",
+        "skillsbench:court-form-filling",
+        "skillsbench:edit-pdf",
+        "skillsbench:pptx-reference-formatting",
+        "skillsbench:exceltable-in-ppt"
+      ],
+      "inclusion": "Create or transform a constrained office document artifact.",
+      "exclusion": "Free-form prose without an artifact contract."
+    },
+    "constrained_operations_planning": {
+      "display_name": "Constrained operations planning",
+      "domain_id": "operations_research",
+      "task_type_ids": [
+        "optimization",
+        "planning"
+      ],
+      "aliases": [
+        "skillsbench:bike-rebalance",
+        "skillsbench:civ6-adjacency-optimizer",
+        "skillsbench:exam-block-sequencing",
+        "skillsbench:paratransit-routing",
+        "skillsbench:manufacturing-fjsp-optimization"
+      ],
+      "inclusion": "Construct a plan or allocation satisfying explicit constraints and an objective.",
+      "exclusion": "Unconstrained calculation or simulation."
+    },
+    "energy_grid_optimization": {
+      "display_name": "Energy grid optimization",
+      "domain_id": "energy_systems",
+      "task_type_ids": [
+        "optimization",
+        "planning"
+      ],
+      "aliases": [],
+      "inclusion": "Optimize grid dispatch, unit commitment, power flow, or market allocation under physical and operational constraints.",
+      "exclusion": "Generic control or energy-domain calculation without an optimization objective."
+    }
+  }
+}

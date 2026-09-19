@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-user-simulator-output.schema.json",
+  "title": "L2 User Simulator Output V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "next_user_message", "rationale_category"],
+  "properties": {
+    "schema_version": {"const": "l2_user_simulator_output/1.0"},
+    "next_user_message": {"type": "string", "minLength": 1},
+    "rationale_category": {
+      "enum": ["incomplete_task", "incorrect_result", "invalid_artifact", "missing_evidence", "execution_error", "unanswered_requirement"]
+    }
+  }
+}

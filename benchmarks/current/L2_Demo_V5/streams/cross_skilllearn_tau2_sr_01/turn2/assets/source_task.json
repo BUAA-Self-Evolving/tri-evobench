@@ -1,0 +1,34 @@
+{
+  "source_id": "tau2_bench:banking_knowledge:task_007",
+  "source": {
+    "benchmark_id": "tau2_bench",
+    "benchmark_revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "source_hash": "4774c8f6ad04c3e0cac788fd1d6efaa8e368632a0dfbdce1b4a20ca472256133",
+    "source_path": "data/tau2/domains/banking_knowledge/tasks.json#task_007",
+    "source_task_id": "banking_knowledge:task_007"
+  },
+  "benchmark_native_labels": {
+    "actions": [
+      "apply_for_credit_card"
+    ],
+    "documents": [],
+    "domain": "banking_knowledge",
+    "purpose": "Task: task_007",
+    "reason_for_call": "You are playing the role of a customer contacting a customer service representative agent. Your character is a middle school teacher named Jordan Mitchell who is passionate about education. Your annual income is $62,000. You do NOT have a Rho-Bank+ subscription.\n\nYou're looking for a credit card (do not mention what type of credit card, just say \"credit card\") with the best promotional offer that gives you points or cash back as a sign-up bonus. You are very upfront about this being your primary interest. If there are multiple cards with such promotional offers, you prefer the one with the lowest annual fee.\n\nYou plan to sign up for the card primarily to get the bonus and don't expect to use it much afterward. You don't need to mention this to the agent, but it informs your priorities.\n\n You do not want to apply to any business credit cards, but do not mention this upfront. As soon as the model makes a report on the available credit cards, if you find out that there are no credit cards with promotional sign-up bonuses that fit your needs, you are happy to immediately take your business elsewhere and end the conversation without further investigation.\n\nYou have access to a tool that allows you to apply for credit cards by specifying the card type. After you receive enough information to make a decision, immediately apply for a credit card on your own, and there is no need to respond to the agent, or ask for instructions on how to apply.\n\nYou are currently on the line with a customer support agent. Only provide additional details about your situation when the agent asks for them. Don't dump all your information at once. Never respond as a customer service representative/assistant. You are playing the role of the customer."
+  },
+  "normalized_taxonomy": {
+    "capability_id": "banking_product_application",
+    "confidence": 0.9,
+    "domain_id": "banking_support",
+    "interface_ids": [],
+    "label_source": "rule_normalized",
+    "modality_ids": [],
+    "needs_review": false,
+    "rationale": "deterministic alias mapping from upstream taxonomy",
+    "task_type_ids": [
+      "tool_workflow",
+      "product_selection"
+    ]
+  },
+  "prompt_sha256": "9674c24266264da0da7e6905581825dae0c05ec8111b07b065b2e218634099a1"
+}

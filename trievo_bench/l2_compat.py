@@ -61,6 +61,10 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
     if not streams_root.is_dir():
         raise L2SpecError(f"missing streams directory: {streams_root}")
 
+    v5_contract = _load_v5_contract(root)
+    v5_source_identities: set[tuple[str, str, str]] = set()
+    v5_turn_count = 0
+
     result: list[L2StreamInfo] = []
     for stream_dir in sorted(path for path in streams_root.iterdir() if path.is_dir()):
         manifest_path = stream_dir / "stream.json"
@@ -75,7 +79,12 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
         # stream.json -> episodes/*/episode.json indirection.  Validate its
         # public shape here so the package can be inventoried by the same CLI
         # without exposing evaluation assets to an agent.
-        if manifest.get("schema_version") == "l2_taskstream/1.0":
+        taskstream_version = manifest.get("schema_version")
+        if taskstream_version in {"l2_taskstream/1.0", "l2_taskstream/1.2"}:
+            if taskstream_version == "l2_taskstream/1.2" and v5_contract is None:
+                raise L2SpecError("l2_taskstream/1.2 stream requires a 1.2 package manifest")
+            if taskstream_version == "l2_taskstream/1.0" and v5_contract is not None:
+                raise L2SpecError("l2_taskstream/1.2 package requires 1.2 stream documents")
             workspace_name = manifest.get("agent_workspace")
             ordering = manifest.get("ordering")
             turns = manifest.get("turns")
@@ -89,6 +98,8 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
             if not isinstance(turns, list) or len(turns) != len(ordering["turn_order"]):
                 raise L2SpecError(f"{stream_id}: turns must match turn_order")
             _validate_taskstream_execution_requirements(stream_id, manifest)
+            if v5_contract is not None:
+                _validate_v5_stream(stream_id, manifest, v5_contract)
             for turn_index, item in enumerate(ordering["turn_order"], start=1):
                 if not isinstance(item, str):
                     raise L2SpecError(f"{stream_id}: turn ids must be text")
@@ -120,7 +131,30 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
                 evaluation = task.get("evaluation")
                 if not isinstance(evaluation, dict) or evaluation.get("native_verifier", {}).get("required") is not True:
                     raise L2SpecError(f"{stream_id}/{item}: native verifier declaration is required")
-                _validate_taskstream_transition(stream_dir, task_path.parent, workspace_seed, task)
+                if v5_contract is not None:
+                    source_identity = _validate_v5_task(
+                        stream_id=stream_id,
+                        task=task,
+                        summary=summary,
+                        turn_index=turn_index,
+                        turn_order=ordering["turn_order"],
+                        tasks_by_id={
+                            turn_id: _load_json(_under(stream_dir, turn_id + "/task.json"))
+                            for turn_id in ordering["turn_order"]
+                        },
+                        v5_contract=v5_contract,
+                    )
+                    if source_identity in v5_source_identities:
+                        raise L2SpecError(f"{stream_id}/{item}: duplicate source identity")
+                    v5_source_identities.add(source_identity)
+                _validate_taskstream_transition(
+                    stream_dir,
+                    task_path.parent,
+                    workspace_seed,
+                    task,
+                    task_local=v5_contract is not None,
+                )
+                v5_turn_count += int(v5_contract is not None)
             result.append(L2StreamInfo(str(stream_id), len(turns), "taskstream", workspace_name))
             continue
         if manifest.get("level") != "L2":
@@ -174,7 +208,276 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
     if not result:
         raise L2SpecError(f"no L2 streams found in {streams_root}")
     _validate_l2_panels(root, {item.stream_id for item in result})
+    if v5_contract is not None:
+        _validate_v5_package_counts(
+            root,
+            v5_contract,
+            result,
+            unique_source_task_count=len(v5_source_identities),
+            turn_placement_count=v5_turn_count,
+        )
     return result
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _load_v5_contract(root: Path) -> dict[str, Any] | None:
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return None
+    manifest = _load_json(manifest_path)
+    if manifest.get("schema_version") != "l2_taskstream/1.2":
+        return None
+    if manifest.get("aggregation_profile") != "l2_evolution_aggregation/1.2":
+        raise L2SpecError("1.2 manifest requires aggregation_profile l2_evolution_aggregation/1.2")
+    bindings = {
+        "pool_manifest": "pools.json",
+        "panel_manifest": "panels.json",
+        "taxonomy_manifest": "taxonomy.json",
+        "runtime_profiles": "runtime_profiles.json",
+    }
+    loaded: dict[str, Any] = {"manifest": manifest}
+    for key, default_path in bindings.items():
+        binding = manifest.get(key)
+        if not isinstance(binding, dict):
+            raise L2SpecError(f"1.2 manifest requires {key}")
+        relative = binding.get("path", default_path)
+        if not isinstance(relative, str) or not relative:
+            raise L2SpecError(f"{key}.path must be non-empty")
+        path = _under(root, relative)
+        if not path.is_file():
+            raise L2SpecError(f"{key} path is missing: {relative}")
+        digest = binding.get("sha256")
+        if not isinstance(digest, str) or digest != _sha256(path):
+            label = key.removesuffix("_manifest").replace("_", " ")
+            raise L2SpecError(f"{label} SHA-256 binding mismatch")
+        loaded[key] = _load_json(path)
+
+    pools = loaded["pool_manifest"]
+    if pools.get("schema_version") != "l2_pools/1.0":
+        raise L2SpecError("pools.json must declare l2_pools/1.0")
+    pool_items = pools.get("pools")
+    if not isinstance(pool_items, list) or not pool_items:
+        raise L2SpecError("pools.json must declare non-empty pools")
+    pool_map: dict[str, dict[str, Any]] = {}
+    for pool in pool_items:
+        if not isinstance(pool, dict):
+            raise L2SpecError("pool entries must be objects")
+        pool_id = pool.get("pool_id")
+        if not isinstance(pool_id, str) or not pool_id or pool_id in pool_map:
+            raise L2SpecError("pool_id values must be non-empty and unique")
+        if pool.get("allows_cross_pool_aggregation") is not False:
+            raise L2SpecError(f"{pool_id}: cross-pool aggregation must be false")
+        pool_map[pool_id] = pool
+    loaded["pool_map"] = pool_map
+
+    profiles = loaded["runtime_profiles"]
+    if profiles.get("schema_version") != "l2_runtime_profiles/1.0":
+        raise L2SpecError("runtime_profiles.json must declare l2_runtime_profiles/1.0")
+    profile_map: dict[str, dict[str, Any]] = {}
+    for profile in profiles.get("profiles", []):
+        if not isinstance(profile, dict):
+            raise L2SpecError("runtime profile entries must be objects")
+        profile_id = profile.get("runtime_profile_id")
+        if not isinstance(profile_id, str) or not profile_id or profile_id in profile_map:
+            raise L2SpecError("runtime_profile_id values must be non-empty and unique")
+        digest = profile.get("task_sandbox_image_digest")
+        if not isinstance(digest, str) or not digest.startswith("sha256:") or len(digest) != 71:
+            raise L2SpecError(f"{profile_id}: invalid task_sandbox_image_digest")
+        verifier_digest = profile.get("verifier_image_digest")
+        if (
+            not isinstance(verifier_digest, str)
+            or not verifier_digest.startswith("sha256:")
+            or len(verifier_digest) != 71
+        ):
+            raise L2SpecError(f"{profile_id}: invalid verifier_image_digest")
+        if profile.get("network") != "disabled":
+            raise L2SpecError(f"{profile_id}: network must be disabled")
+        if not isinstance(profile.get("learner_state_abi"), str) or not profile["learner_state_abi"]:
+            raise L2SpecError(f"{profile_id}: learner_state_abi is required")
+        for field in ("serialization_version", "mount_path", "owner", "permission"):
+            if not isinstance(profile.get(field), str) or not profile[field]:
+                raise L2SpecError(f"{profile_id}: {field} is required")
+        profile_map[profile_id] = profile
+    if not profile_map:
+        raise L2SpecError("runtime_profiles.json must declare non-empty profiles")
+    loaded["profile_map"] = profile_map
+
+    taxonomy = loaded["taxonomy_manifest"]
+    if taxonomy.get("schema_version") != "l2_taxonomy/1.0":
+        raise L2SpecError("taxonomy.json must declare l2_taxonomy/1.0")
+    raw_capabilities = taxonomy.get("capabilities")
+    if isinstance(raw_capabilities, dict):
+        capability_map = raw_capabilities
+    elif isinstance(raw_capabilities, list):
+        capability_map = {
+            str(item.get("capability_id")): item
+            for item in raw_capabilities
+            if isinstance(item, dict) and isinstance(item.get("capability_id"), str)
+        }
+    else:
+        capability_map = {}
+    if not capability_map:
+        raise L2SpecError("taxonomy.json must declare non-empty capabilities")
+    loaded["capability_map"] = capability_map
+
+    panels = loaded["panel_manifest"].get("panels")
+    if not isinstance(panels, list) or not panels:
+        raise L2SpecError("panels.json must declare non-empty panels")
+    for panel in panels:
+        if not isinstance(panel, dict):
+            raise L2SpecError("panel entries must be objects")
+        pool_id = panel.get("pool_id")
+        pool = pool_map.get(pool_id)
+        if pool is None:
+            raise L2SpecError(f"panel references unknown pool {pool_id!r}")
+        selected = panel.get("stream_ids")
+        if not isinstance(selected, list) or not set(selected).issubset(set(pool.get("stream_ids", []))):
+            raise L2SpecError("panel stream selection must be contained by its pool")
+        license_scope = panel.get("license_scope")
+        if license_scope is not None and license_scope not in pool.get("license_scopes", []):
+            raise L2SpecError("panel license scope must be declared by its pool")
+    return loaded
+
+
+def _validate_v5_stream(
+    stream_id: str,
+    stream: dict[str, Any],
+    v5_contract: dict[str, Any],
+) -> None:
+    turn_count = stream.get("turn_count")
+    if not isinstance(turn_count, int) or isinstance(turn_count, bool) or not 12 <= turn_count <= 20:
+        raise L2SpecError(f"{stream_id}: turn_count must be between 12 and 20")
+    if stream.get("workspace_persistence") != "task_local":
+        raise L2SpecError(f"{stream_id}: workspace_persistence must be task_local")
+    design = stream.get("stream_design")
+    if not isinstance(design, dict):
+        raise L2SpecError(f"{stream_id}: stream_design is required")
+    pool_id = design.get("pool_id")
+    pool = v5_contract["pool_map"].get(pool_id)
+    if pool is None:
+        raise L2SpecError(f"{stream_id}: unknown pool_id {pool_id!r}")
+    if stream_id not in pool.get("stream_ids", []):
+        raise L2SpecError(f"{stream_id}: stream is not declared by pool {pool_id}")
+    capabilities = stream.get("capabilities")
+    if not isinstance(capabilities, list) or len(capabilities) < 3:
+        raise L2SpecError(f"{stream_id}: at least 3 capabilities are required")
+    capability_ids = [item.get("capability_id") for item in capabilities if isinstance(item, dict)]
+    if len(capability_ids) != len(capabilities) or len(set(capability_ids)) != len(capability_ids):
+        raise L2SpecError(f"{stream_id}: capability IDs must be unique")
+    benchmarks = {item.get("source_benchmark") for item in capabilities}
+    pool_type = design.get("pool_type")
+    if pool_type != pool.get("pool_type"):
+        raise L2SpecError(f"{stream_id}: pool_type does not match pools.json")
+    if pool_type == "same_benchmark" and len(benchmarks) != 1:
+        raise L2SpecError(f"{stream_id}: same benchmark pool requires one source benchmark")
+    if pool_type == "cross_benchmark" and len(benchmarks) != 3:
+        raise L2SpecError(f"{stream_id}: cross pool requires exactly 3 benchmarks")
+    if pool_type not in {"same_benchmark", "cross_benchmark"}:
+        raise L2SpecError(f"{stream_id}: unsupported pool_type {pool_type!r}")
+    if not isinstance(stream.get("selection_provenance"), dict):
+        raise L2SpecError(f"{stream_id}: selection_provenance is required")
+
+
+def _validate_v5_task(
+    *,
+    stream_id: str,
+    task: dict[str, Any],
+    summary: dict[str, Any],
+    turn_index: int,
+    turn_order: list[Any],
+    tasks_by_id: dict[str, dict[str, Any]],
+    v5_contract: dict[str, Any],
+) -> tuple[str, str, str]:
+    if task.get("schema_version") != "l2_taskstream/1.2":
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: task schema_version must be 1.2")
+    source = task.get("source_basis")
+    required_source = ("benchmark_id", "benchmark_revision", "source_task_id", "source_path", "source_hash")
+    if not isinstance(source, dict) or any(not isinstance(source.get(key), str) or not source[key] for key in required_source):
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: complete source_basis is required")
+    if len(source["source_hash"]) != 64:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: source_hash must be SHA-256")
+    taxonomy = task.get("taxonomy_ref")
+    if not isinstance(taxonomy, dict):
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: taxonomy_ref is required")
+    capability_id = taxonomy.get("capability_id")
+    capability = v5_contract["capability_map"].get(capability_id)
+    if not isinstance(capability, dict):
+        raise L2SpecError(
+            f"{stream_id}/{task.get('turn_id')}: capability is absent from bound taxonomy"
+        )
+    taxonomy_version = v5_contract["taxonomy_manifest"].get("taxonomy_version")
+    if taxonomy.get("taxonomy_version") != taxonomy_version:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: taxonomy version mismatch")
+    if (
+        taxonomy.get("domain_id") != capability.get("domain_id")
+        or taxonomy.get("task_type_ids") != capability.get("task_type_ids")
+    ):
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: taxonomy fields do not match codebook")
+    profile_id = task.get("runtime_profile_id")
+    if profile_id not in v5_contract["profile_map"]:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: unknown runtime profile {profile_id!r}")
+    if summary.get("runtime_profile_id") != profile_id or summary.get("capability_id") != capability_id:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: summary taxonomy/runtime identity mismatch")
+    relation = task.get("capability_relation")
+    if not isinstance(relation, dict) or relation.get("capability_id") != capability_id:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: capability relation mismatch")
+    if task.get("relation_class") not in {"native_family_sibling", "reviewed_shared_procedure"}:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: invalid relation_class")
+    role = task.get("sequence_role")
+    probe = task.get("probe_spec")
+    if role == "probe":
+        if not isinstance(probe, dict):
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe_spec is required")
+        if probe.get("target_capability_id") != capability_id:
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe target does not match capability")
+        parents = probe.get("expected_transfer_from_turn_ids")
+        if not isinstance(parents, list) or not parents:
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe transfer references are required")
+        earlier = set(turn_order[: turn_index - 1])
+        for parent in parents:
+            if parent not in earlier:
+                raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe references a future Turn")
+            parent_task = tasks_by_id.get(str(parent), {})
+            parent_taxonomy = parent_task.get("taxonomy_ref", {})
+            if parent_taxonomy.get("capability_id") != capability_id:
+                raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe references another capability")
+    elif probe is not None:
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe_spec is only allowed on probe Turns")
+    return (source["benchmark_id"], source["benchmark_revision"], source["source_task_id"])
+
+
+def _validate_v5_package_counts(
+    root: Path,
+    v5_contract: dict[str, Any],
+    inventory: list[L2StreamInfo],
+    *,
+    unique_source_task_count: int,
+    turn_placement_count: int,
+) -> None:
+    manifest = v5_contract["manifest"]
+    expected = {
+        "stream_count": len(inventory),
+        "total_turn_count": turn_placement_count,
+        "unique_source_task_count": unique_source_task_count,
+        "turn_placement_count": turn_placement_count,
+    }
+    for field, value in expected.items():
+        if manifest.get(field) != value:
+            raise L2SpecError(f"manifest {field} does not match package contents")
+    stream_ids = {item.stream_id for item in inventory}
+    declared = manifest.get("streams")
+    if not isinstance(declared, list) or {item.get("stream_id") for item in declared if isinstance(item, dict)} != stream_ids:
+        raise L2SpecError("manifest streams do not match package contents")
+    pool_streams = {
+        stream_id
+        for pool in v5_contract["pool_map"].values()
+        for stream_id in pool.get("stream_ids", [])
+    }
+    if pool_streams != stream_ids:
+        raise L2SpecError("pool stream selection does not match package contents")
 
 
 def _load_l2_panels(root: Path) -> tuple[dict[str, Any], str] | None:
@@ -185,8 +488,8 @@ def _load_l2_panels(root: Path) -> tuple[dict[str, Any], str] | None:
     if panels.get("schema_version") != "l2_panels/1.0":
         raise L2SpecError("panels.json must declare schema_version l2_panels/1.0")
     manifest = _load_json(root / "manifest.json")
-    if manifest.get("schema_version") != "l2_taskstream/1.1":
-        raise L2SpecError("panel-aware packages must declare l2_taskstream/1.1")
+    if manifest.get("schema_version") not in {"l2_taskstream/1.1", "l2_taskstream/1.2"}:
+        raise L2SpecError("panel-aware packages must declare l2_taskstream/1.1 or 1.2")
     binding = manifest.get("panel_manifest")
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     if (
@@ -286,12 +589,12 @@ def _validate_taskstream_transition(
     turn_dir: Path,
     workspace_seed: Path,
     task: dict[str, Any],
+    *,
+    task_local: bool = False,
 ) -> None:
     transition = task.get("workspace_transition")
-    if not isinstance(transition, dict) or transition.get("mode") not in {
-        "continue",
-        "continue_with_patch",
-    }:
+    allowed_modes = {"task_local_seed"} if task_local else {"continue", "continue_with_patch"}
+    if not isinstance(transition, dict) or transition.get("mode") not in allowed_modes:
         raise L2SpecError(f"{task.get('stream_id')}/{task.get('turn_id')}: unsupported transition")
     operations = transition.get("operations", [])
     if not isinstance(operations, list):
@@ -400,6 +703,10 @@ def main() -> None:
     parser.add_argument("--panel-id", help="L2 panel id for panel-aware matrix runs")
     parser.add_argument("--panel-manifest-sha256", help="SHA-256 of package panels.json")
     parser.add_argument("--panel-streams", help="comma-separated stream ids selected by the panel")
+    parser.add_argument("--pool-id", help="L2 V5 pool id for 1.2 runtime runs")
+    parser.add_argument("--pool-manifest-sha256", help="SHA-256 of package pools.json")
+    parser.add_argument("--package-manifest-sha256", help="SHA-256 of package manifest.json")
+    parser.add_argument("--runtime-profiles-sha256", help="SHA-256 of package runtime_profiles.json")
     parser.add_argument(
         "--condition",
         choices=["reset", "frozen", "evolving"],
@@ -459,6 +766,10 @@ def main() -> None:
                 panel_id=args.panel_id,
                 panel_manifest_sha256=args.panel_manifest_sha256,
                 selected_stream_ids=panel_streams,
+                pool_id=args.pool_id,
+                pool_manifest_sha256=args.pool_manifest_sha256,
+                package_manifest_sha256=args.package_manifest_sha256,
+                runtime_profiles_sha256=args.runtime_profiles_sha256,
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))

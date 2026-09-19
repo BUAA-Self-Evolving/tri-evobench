@@ -69,6 +69,92 @@ class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
 
 
+class _TaskSandboxSession:
+    """One disposable, network-disabled execution sandbox for a V5 Turn."""
+
+    def __init__(self, *, profile: dict[str, Any], workspace: Path) -> None:
+        self.profile = profile
+        self.workspace = workspace.resolve()
+        self.name = f"trievo-l2-task-{uuid4().hex[:12]}"
+        self.image = str(profile["task_sandbox_image_digest"])
+        self._started = False
+        self.evidence: dict[str, Any] = {}
+
+    def start(self) -> dict[str, Any]:
+        inspect = subprocess.run(
+            [_docker_executable(), "image", "inspect", self.image, "--format", "{{.Id}}"],
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+            check=False,
+        )
+        actual_image = inspect.stdout.strip()
+        if inspect.returncode != 0 or actual_image != self.image:
+            raise L2AgentRunError(
+                f"task sandbox image is unavailable or digest-mismatched: {self.image}"
+            )
+        command = [
+            _docker_executable(), "run", "-d", "--name", self.name,
+            "--network", "none", "--cap-drop", "ALL",
+            "--security-opt", "no-new-privileges", "--pids-limit", "256",
+            "--memory", "4g", "--cpus", "2",
+            "-v", f"{self.workspace}:/workspace",
+            "-w", "/workspace", self.image,
+            "sh", "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
+        ]
+        started = subprocess.run(
+            command,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+            check=False,
+        )
+        if started.returncode != 0:
+            self.close()
+            raise L2AgentRunError(
+                "failed to materialize task sandbox: " + started.stderr[-2000:]
+            )
+        self._started = True
+        inspected = subprocess.run(
+            [
+                _docker_executable(), "inspect", self.name, "--format",
+                "{{.Image}} {{.HostConfig.NetworkMode}} {{.State.Running}}",
+            ],
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+            check=False,
+        )
+        fields = inspected.stdout.strip().split()
+        if inspected.returncode != 0 or fields != [self.image, "none", "true"]:
+            self.close()
+            raise L2AgentRunError("task sandbox runtime readback failed closed")
+        self.evidence = {
+            "runtime_profile_id": self.profile["runtime_profile_id"],
+            "container_name": self.name,
+            "image_digest": actual_image,
+            "network_mode": "none",
+            "workspace_mount": "/workspace",
+            "tool_profile_id": self.profile["tool_profile_id"],
+            "dependency_class": self.profile["dependency_class"],
+        }
+        return dict(self.evidence)
+
+    def close(self) -> None:
+        subprocess.run(
+            [_docker_executable(), "rm", "-f", self.name],
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+            check=False,
+        )
+        self._started = False
+
+
 def _restored_reply(value: dict[str, Any]) -> BaselineReply:
     return BaselineReply(**{**value, "usage": UsageDetails.from_mapping(value.get("usage"))})
 
@@ -107,6 +193,10 @@ class L2AgentRunOptions:
     panel_id: str | None = None
     panel_manifest_sha256: str | None = None
     selected_stream_ids: tuple[str, ...] = ()
+    pool_id: str | None = None
+    pool_manifest_sha256: str | None = None
+    package_manifest_sha256: str | None = None
+    runtime_profiles_sha256: str | None = None
 
 
 class L2AgentStreamRunner:
@@ -132,6 +222,10 @@ class L2AgentStreamRunner:
             )
         self.evaluation_error_policy = options.evaluation_error_policy
         self.panel_metadata = self._validate_panel_metadata(options)
+        self.v5_metadata: dict[str, Any] = {}
+        self._v5_runtime_profiles: dict[str, dict[str, Any]] = {}
+        self._current_v5_profile: dict[str, Any] | None = None
+        self._taskstream_schema_version = "l2_taskstream/1.0"
         self.budget_profile = _budget_profile(options.baseline_overrides)
         self._applied_stream_limit_overrides: list[dict[str, Any]] = []
         if options.retry_interrupted_run_id and self.condition not in {
@@ -149,6 +243,7 @@ class L2AgentStreamRunner:
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
         self._storage_gate = _storage_gate_from_environment()
+        self._task_sandbox: _TaskSandboxSession | None = None
 
     def _validate_panel_metadata(self, options: L2AgentRunOptions) -> dict[str, Any]:
         if options.panel_id is None:
@@ -177,7 +272,21 @@ class L2AgentStreamRunner:
         }
 
     def _checkpoint_panel_metadata(self) -> dict[str, Any]:
-        return dict(self.panel_metadata)
+        metadata = {**self.panel_metadata, **self.v5_metadata}
+        if self._current_v5_profile is not None:
+            metadata.update({
+                "runtime_profile_id": self._current_v5_profile["runtime_profile_id"],
+                "runtime_profile_digest": _canonical_digest(self._current_v5_profile),
+                "learner_state_abi": self._current_v5_profile["learner_state_abi"],
+                "learner_state_serialization_version": self._current_v5_profile["serialization_version"],
+            })
+        return metadata
+
+    def _checkpoint_state_metadata(self, state_archive: Path) -> dict[str, Any]:
+        return {
+            **self._checkpoint_panel_metadata(),
+            "learner_state_digest": hashlib.sha256(state_archive.read_bytes()).hexdigest(),
+        }
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
@@ -185,7 +294,7 @@ class L2AgentStreamRunner:
         # legacy episode runner below unchanged, but route the new contract to
         # its native-verifier carrier instead of pretending that turn*/task.json
         # is the old episode.json/evaluation.json layout.
-        if manifest.get("schema_version") == "l2_taskstream/1.0":
+        if manifest.get("schema_version") in {"l2_taskstream/1.0", "l2_taskstream/1.2"}:
             return self._run_taskstream(manifest)
         if self.condition is not RunCondition.EVOLVING:
             raise L2AgentRunError(
@@ -302,6 +411,15 @@ class L2AgentStreamRunner:
             raise L2AgentRunError("TaskStream ordering.turn_order is invalid")
         if manifest.get("stream_id") != self.options.stream_id:
             raise L2AgentRunError("TaskStream stream id does not match stream directory")
+        self._taskstream_schema_version = str(manifest.get("schema_version"))
+        is_v5 = self._taskstream_schema_version == "l2_taskstream/1.2"
+        if is_v5:
+            self.v5_metadata, self._v5_runtime_profiles = _load_v5_runtime_binding(
+                self.package_dir,
+                manifest,
+                self.options,
+                self.panel_metadata,
+            )
         execution_requirements = _execution_requirements(manifest)
         tool_catalog = _taskstream_tool_catalog(self.package_dir)
         stream_carriers = _stream_submission_carriers(self.stream_dir, turn_order)
@@ -351,10 +469,11 @@ class L2AgentStreamRunner:
             )
             if checkpoint_condition != self.condition.value:
                 raise L2AgentRunError("checkpoint run condition mismatch")
-            if self.panel_metadata:
-                for key, expected in self.panel_metadata.items():
+            checkpoint_identity = {**self.panel_metadata, **self.v5_metadata}
+            if checkpoint_identity:
+                for key, expected in checkpoint_identity.items():
                     if checkpoint_metadata.get(key) != expected:
-                        raise L2AgentRunError("checkpoint panel binding mismatch")
+                        raise L2AgentRunError("checkpoint package/pool/panel binding mismatch")
             checkpoint_error_policy = str(
                 checkpoint_metadata.get("evaluation_error_policy", "stop")
             )
@@ -435,6 +554,7 @@ class L2AgentStreamRunner:
         trace_path = run_dir / "trace.jsonl"
         started = time.monotonic()
         runtime_started = False
+        stream_work_limits = self.work_limits
         try:
             if volume_transport:
                 self._start_taskstream_volume_transport(workspace)
@@ -457,11 +577,20 @@ class L2AgentStreamRunner:
                 task = _load_json(turn_dir / "task.json")
                 if task.get("stream_id") != self.options.stream_id or task.get("turn_id") != turn_id:
                     raise L2AgentRunError(f"TaskStream identity mismatch for {turn_id}")
+                if is_v5:
+                    profile_id = task.get("runtime_profile_id")
+                    profile = self._v5_runtime_profiles.get(str(profile_id))
+                    if profile is None:
+                        raise L2AgentRunError(f"unknown runtime profile: {profile_id!r}")
+                    self._current_v5_profile = profile
+                    self.work_limits = _runtime_profile_work_limits(stream_work_limits, profile)
                 if resume_pending is None and not resume_interrupted:
                     if self.condition is RunCondition.RESET:
                         if runtime_started and self._runtime is not None:
                             self._runtime.end_flow()
                             runtime_started = False
+                        _replace_tree(agent_workspace, workspace)
+                    elif is_v5:
                         _replace_tree(agent_workspace, workspace)
                     self._apply_taskstream_transition(task, turn_dir, workspace)
                     self._sync_workspace_to_volume()
@@ -474,6 +603,16 @@ class L2AgentStreamRunner:
                             ),
                         )
                         runtime_started = True
+                task_sandbox_evidence: dict[str, Any] = {}
+                if is_v5 and isinstance(self._runtime, ProcessBaselineRuntime):
+                    self._close_task_sandbox()
+                    if self._current_v5_profile is None:
+                        raise L2AgentRunError("V5 Turn has no active runtime profile")
+                    self._task_sandbox = _TaskSandboxSession(
+                        profile=self._current_v5_profile,
+                        workspace=workspace,
+                    )
+                    task_sandbox_evidence = self._task_sandbox.start()
                 sequence_role = _validate_taskstream_turn_identity(
                     manifest,
                     task,
@@ -500,7 +639,7 @@ class L2AgentStreamRunner:
                         max_interactions,
                         {
                             "level": "L2",
-                            "schema_version": "l2_taskstream/1.0",
+                            "schema_version": self._taskstream_schema_version,
                             "source_format": "l2_taskstream_task_json",
                             "stream_id": self.options.stream_id,
                             "condition": self.condition.value,
@@ -509,6 +648,18 @@ class L2AgentStreamRunner:
                             "available_tools": _public_taskstream_tools(task, tool_catalog),
                             "interaction_timeout_seconds": self.work_limits.episode_timeout_seconds,
                             "slow_provider": self.slow_provider,
+                            **(
+                                {
+                                    "runtime_profile_id": self._current_v5_profile["runtime_profile_id"],
+                                    "task_sandbox_image_digest": self._current_v5_profile["task_sandbox_image_digest"],
+                                    "tool_profile_id": self._current_v5_profile["tool_profile_id"],
+                                    "dependency_class": self._current_v5_profile["dependency_class"],
+                                    "network": "disabled",
+                                    "task_sandbox": task_sandbox_evidence,
+                                }
+                                if self._current_v5_profile is not None
+                                else {}
+                            ),
                         },
                     )
                 )
@@ -540,7 +691,7 @@ class L2AgentStreamRunner:
                         _write_json(started_checkpoint / "checkpoint.json", {
                             "phase": "interact_started", "stream_id": self.options.stream_id,
                             "baseline": self.options.baseline, "condition": self.condition.value,
-                            **self._checkpoint_panel_metadata(),
+                            **self._checkpoint_state_metadata(started_checkpoint / "baseline_state.zip"),
                             "evaluation_error_policy": self.evaluation_error_policy,
                             "run_id": run_id, "turn_id": turn_id,
                             "next_turn_index": turn_index, "interaction_index": interaction_index,
@@ -552,7 +703,11 @@ class L2AgentStreamRunner:
                                 interaction_index=interaction_index,
                                 request=interaction_request,
                                 history=history,
-                                sandbox={"workspace": "/workspace", "files": _public_workspace_files(workspace)},
+                                sandbox={
+                                    "workspace": "/workspace",
+                                    "files": _public_workspace_files(workspace),
+                                    **({"task_runtime": task_sandbox_evidence} if task_sandbox_evidence else {}),
+                                },
                                 remaining_token_budget=max(0, self.budget.limit - self.budget.used),
                             )
                         )
@@ -588,7 +743,7 @@ class L2AgentStreamRunner:
                     _write_json(pending / "checkpoint.json", {
                         "phase": "adjudicate", "stream_id": self.options.stream_id,
                         "baseline": self.options.baseline, "condition": self.condition.value,
-                        **self._checkpoint_panel_metadata(),
+                        **self._checkpoint_state_metadata(pending / "baseline_state.zip"),
                         "evaluation_error_policy": self.evaluation_error_policy,
                         "run_id": run_id, "turn_id": turn_id,
                         "next_turn_index": turn_index, "interaction_index": interaction_index,
@@ -808,6 +963,8 @@ class L2AgentStreamRunner:
                     "interaction_count": len(interactions),
                     "trace_file": str(trace_path),
                     "evolution": evolution.to_dict(),
+                    "effective_work_limits": asdict(self.work_limits),
+                    **({"task_sandbox": task_sandbox_evidence} if task_sandbox_evidence else {}),
                 })
                 report["token_budget"] = asdict(self.budget)
                 _write_json(run_dir / "report.json", report)
@@ -822,7 +979,7 @@ class L2AgentStreamRunner:
                     "stream_id": self.options.stream_id,
                     "baseline": self.options.baseline,
                     "condition": self.condition.value,
-                    **self._checkpoint_panel_metadata(),
+                    **self._checkpoint_state_metadata(checkpoint / "baseline_state.zip"),
                     "evaluation_error_policy": self.evaluation_error_policy,
                     "turn_id": turn_id,
                     "completed_turn_index": turn_index,
@@ -858,6 +1015,7 @@ class L2AgentStreamRunner:
             _archive_tree(workspace, run_dir / "error_workspace.zip")
             raise
         finally:
+            self._close_task_sandbox()
             if runtime_started and self._runtime is not None:
                 try:
                     self._runtime.end_flow()
@@ -871,6 +1029,11 @@ class L2AgentStreamRunner:
             self._close_taskstream_volume_transport()
             shutil.rmtree(workspace, ignore_errors=True)
         return report
+
+    def _close_task_sandbox(self) -> None:
+        if self._task_sandbox is not None:
+            self._task_sandbox.close()
+            self._task_sandbox = None
 
     def _start_taskstream_volume_transport(self, workspace: Path) -> None:
         if self._workspace_volume is not None or self._package_volume is not None:
@@ -975,7 +1138,10 @@ class L2AgentStreamRunner:
 
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
-        if not isinstance(transition, dict) or transition.get("mode") not in {"continue", "continue_with_patch"}:
+        allowed_modes = {"continue", "continue_with_patch"}
+        if self._taskstream_schema_version == "l2_taskstream/1.2":
+            allowed_modes = {"task_local_seed"}
+        if not isinstance(transition, dict) or transition.get("mode") not in allowed_modes:
             raise L2AgentRunError("unsupported TaskStream workspace transition")
         for operation in transition.get("operations", []):
             if not isinstance(operation, dict) or operation.get("op") != "copy":
@@ -1045,6 +1211,16 @@ class L2AgentStreamRunner:
         contract_path = verifier.parent / "verifier_contract.json"
         requires_browser = contract_path.is_file() and "playwright" in contract_path.read_text(encoding="utf-8").lower()
         verifier_image = self.options.browser_verifier_image if requires_browser else self.options.verifier_image
+        current_v5_profile = getattr(self, "_current_v5_profile", None)
+        if current_v5_profile is not None:
+            declared_verifier = current_v5_profile.get("verifier_image_digest")
+            if not isinstance(declared_verifier, str) or not declared_verifier.startswith("sha256:"):
+                return {
+                    "category": "error",
+                    "score": None,
+                    "details": {"type": "invalid_runtime_profile_verifier_image"},
+                }
+            verifier_image = declared_verifier
         package_volume = getattr(self, "_package_volume", None)
         workspace_volume = getattr(self, "_workspace_volume", None)
         package_mount = (
@@ -1161,6 +1337,15 @@ class L2AgentStreamRunner:
 
     def _judge_taskstream(self, task: dict[str, Any], reply: BaselineReply, native: dict[str, Any], interaction_index: int, history: list[dict[str, Any]], before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
         evaluation = task["evaluation"]
+        if evaluation.get("type") == "native_verifier_only":
+            score = float(native.get("score", 0.0) or 0.0)
+            threshold = float(evaluation.get("success_policy", {}).get("turn_score_threshold", 1.0))
+            return {
+                "score": score,
+                "passed": score >= threshold,
+                "feedback": "Native verifier score used directly.",
+                "details": {"check_scores": {"native_verifier": score}},
+            }
         config = evaluation.get("judge_config", {})
         if evaluation.get("type") != "llm_as_judge" or not config.get("judge_prompt"):
             raise L2AgentRunError("TaskStream requires its declared reference judge")
@@ -1272,7 +1457,7 @@ class L2AgentStreamRunner:
                 output_dir=output_dir,
                 metadata={
                     "level": "L2",
-                    "schema_version": "l2_taskstream/1.0",
+                    "schema_version": self._taskstream_schema_version,
                     "stream_id": self.options.stream_id,
                     "condition": self.condition.value,
                 },
@@ -1627,6 +1812,140 @@ def _load_json(path: Path) -> dict[str, Any]:
     if not isinstance(raw, dict):
         raise L2AgentRunError(f"JSON root must be an object: {path}")
     return raw
+
+
+def _canonical_digest(value: Any) -> str:
+    payload = json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _require_digest(value: str | None, *, field: str) -> str:
+    if not isinstance(value, str) or len(value) != 64:
+        raise L2AgentRunError(f"{field} must be a 64-character SHA-256")
+    try:
+        int(value, 16)
+    except ValueError as exc:
+        raise L2AgentRunError(f"{field} must be hexadecimal") from exc
+    return value
+
+
+def _load_v5_runtime_binding(
+    package_dir: Path,
+    stream: dict[str, Any],
+    options: L2AgentRunOptions,
+    panel_metadata: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    manifest_path = package_dir / "manifest.json"
+    manifest = _load_json(manifest_path)
+    if manifest.get("schema_version") != "l2_taskstream/1.2":
+        raise L2AgentRunError("1.2 stream requires a 1.2 package manifest")
+    package_digest = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    if _require_digest(options.package_manifest_sha256, field="package_manifest_sha256") != package_digest:
+        raise L2AgentRunError("package manifest SHA-256 does not match manifest.json")
+    if not isinstance(options.pool_id, str) or not options.pool_id:
+        raise L2AgentRunError("1.2 runtime requires an explicit pool_id")
+
+    catalog_specs = {
+        "pool_manifest": ("pools.json", options.pool_manifest_sha256),
+        "panel_manifest": ("panels.json", options.panel_manifest_sha256),
+        "runtime_profiles": ("runtime_profiles.json", options.runtime_profiles_sha256),
+    }
+    catalogs: dict[str, dict[str, Any]] = {}
+    catalog_digests: dict[str, str] = {}
+    for key, (default_path, supplied_digest) in catalog_specs.items():
+        binding = manifest.get(key)
+        if not isinstance(binding, dict):
+            raise L2AgentRunError(f"1.2 manifest is missing {key}")
+        path = _under(package_dir, str(binding.get("path", default_path)))
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if binding.get("sha256") != actual:
+            raise L2AgentRunError(f"{key} binding does not match package contents")
+        if _require_digest(supplied_digest, field=f"{key}_sha256") != actual:
+            raise L2AgentRunError(f"runtime {key} SHA-256 does not match package")
+        catalogs[key] = _load_json(path)
+        catalog_digests[key] = actual
+
+    design = stream.get("stream_design")
+    if not isinstance(design, dict) or design.get("pool_id") != options.pool_id:
+        raise L2AgentRunError("runtime pool_id does not match Stream design")
+    pools = catalogs["pool_manifest"].get("pools")
+    pool = next(
+        (item for item in pools if isinstance(item, dict) and item.get("pool_id") == options.pool_id),
+        None,
+    ) if isinstance(pools, list) else None
+    if pool is None or options.stream_id not in pool.get("stream_ids", []):
+        raise L2AgentRunError("Stream is not selected by the requested pool")
+    if not panel_metadata:
+        raise L2AgentRunError("1.2 runtime requires explicit panel metadata")
+    panels = catalogs["panel_manifest"].get("panels")
+    panel = next(
+        (item for item in panels if isinstance(item, dict) and item.get("panel_id") == options.panel_id),
+        None,
+    ) if isinstance(panels, list) else None
+    if panel is None or panel.get("pool_id") != options.pool_id:
+        raise L2AgentRunError("runtime panel does not belong to the requested pool")
+    if panel.get("stream_ids") != list(options.selected_stream_ids):
+        raise L2AgentRunError("runtime panel Stream selection does not match panels.json")
+
+    raw_profiles = catalogs["runtime_profiles"].get("profiles")
+    if not isinstance(raw_profiles, list) or not raw_profiles:
+        raise L2AgentRunError("runtime_profiles.json must declare profiles")
+    profiles = {
+        str(item.get("runtime_profile_id")): item
+        for item in raw_profiles
+        if isinstance(item, dict) and isinstance(item.get("runtime_profile_id"), str)
+    }
+    referenced_ids = {
+        str(item.get("runtime_profile_id"))
+        for item in stream.get("turns", [])
+        if isinstance(item, dict)
+    }
+    missing = sorted(referenced_ids - profiles.keys())
+    if missing:
+        raise L2AgentRunError(f"unknown runtime profile(s): {missing}")
+    abi_fields = (
+        "learner_state_abi",
+        "serialization_version",
+        "mount_path",
+        "owner",
+        "permission",
+    )
+    abi_values = {tuple(profiles[profile_id].get(field) for field in abi_fields) for profile_id in referenced_ids}
+    if len(abi_values) != 1 or any(not value for value in next(iter(abi_values), ())):
+        raise L2AgentRunError("runtime profiles have incompatible learner-state ABI")
+    for profile_id in referenced_ids:
+        profile = profiles[profile_id]
+        if profile.get("network") != "disabled":
+            raise L2AgentRunError(f"runtime profile {profile_id} must disable network")
+        image = profile.get("task_sandbox_image_digest")
+        if not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71:
+            raise L2AgentRunError(f"runtime profile {profile_id} image digest is not pinned")
+        verifier_image = profile.get("verifier_image_digest")
+        if (
+            not isinstance(verifier_image, str)
+            or not verifier_image.startswith("sha256:")
+            or len(verifier_image) != 71
+        ):
+            raise L2AgentRunError(
+                f"runtime profile {profile_id} verifier image digest is not pinned"
+            )
+
+    return ({
+        "package_manifest_sha256": package_digest,
+        "pool_id": options.pool_id,
+        "pool_manifest_sha256": catalog_digests["pool_manifest"],
+        "runtime_profiles_sha256": catalog_digests["runtime_profiles"],
+        "runtime_profile_set_digest": _canonical_digest(
+            [profiles[profile_id] for profile_id in sorted(referenced_ids)]
+        ),
+        "learner_state_abi_set_digest": _canonical_digest(sorted(abi_values)),
+        "allows_cross_pool_aggregation": False,
+    }, profiles)
 
 
 def _under(root: Path, relative: str) -> Path:
@@ -2126,6 +2445,29 @@ def _effective_work_limits(
             configured.max_output_tokens,
             int(requirements["max_output_tokens"]),
         ),
+    )
+
+
+def _runtime_profile_work_limits(
+    stream_limits: L2AgentWorkLimits,
+    profile: dict[str, Any],
+) -> L2AgentWorkLimits:
+    """Apply a Turn profile without allowing it to loosen Stream limits."""
+    timeout = int(profile.get("turn_timeout_seconds", stream_limits.episode_timeout_seconds))
+    tool_calls = int(profile.get("max_tool_calls", stream_limits.max_tool_calls))
+    output_tokens = int(profile.get("max_output_tokens", stream_limits.max_output_tokens))
+    if timeout < 2 or tool_calls < 1 or output_tokens < 1:
+        raise L2AgentRunError("runtime profile limits must be positive")
+    episode_timeout = min(stream_limits.episode_timeout_seconds, timeout)
+    return replace(
+        stream_limits,
+        episode_timeout_seconds=episode_timeout,
+        terminal_timeout_seconds=min(
+            stream_limits.terminal_timeout_seconds,
+            episode_timeout - 1,
+        ),
+        max_tool_calls=min(stream_limits.max_tool_calls, tool_calls),
+        max_output_tokens=min(stream_limits.max_output_tokens, output_tokens),
     )
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import zipfile
 from dataclasses import replace
@@ -17,12 +18,69 @@ from trievo_bench.l2_agent import (
     _project_bounded_feedback,
     _taskstream_retryable,
     _user_simulator_output_error,
+    _TaskSandboxSession,
+    _runtime_profile_work_limits,
+    L2AgentWorkLimits,
 )
 
 
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value), encoding="utf-8")
+
+
+def test_v5_task_sandbox_materializes_pinned_offline_container(tmp_path, monkeypatch) -> None:
+    calls: list[list[str]] = []
+    image = "sha256:" + "a" * 64
+
+    def run(command, **_kwargs):
+        calls.append(command)
+        if command[1:3] == ["image", "inspect"]:
+            return subprocess.CompletedProcess(command, 0, image + "\n", "")
+        if command[1] == "run":
+            return subprocess.CompletedProcess(command, 0, "container-id\n", "")
+        if command[1] == "inspect":
+            return subprocess.CompletedProcess(command, 0, f"{image} none true\n", "")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(l2_agent_module.subprocess, "run", run)
+    session = _TaskSandboxSession(
+        profile={
+            "runtime_profile_id": "python_v1",
+            "task_sandbox_image_digest": image,
+            "tool_profile_id": "terminal_filesystem_v1",
+            "dependency_class": "python_stdlib",
+        },
+        workspace=tmp_path,
+    )
+    evidence = session.start()
+    session.close()
+
+    run_command = next(command for command in calls if command[1] == "run")
+    assert ["--network", "none"] == run_command[run_command.index("--network"):run_command.index("--network") + 2]
+    assert f"{tmp_path.resolve()}:/workspace" in run_command
+    assert evidence["image_digest"] == image
+    assert evidence["network_mode"] == "none"
+
+
+def test_v5_runtime_profile_can_only_tighten_turn_limits() -> None:
+    limits = _runtime_profile_work_limits(
+        L2AgentWorkLimits(
+            max_tool_calls=20,
+            terminal_timeout_seconds=90,
+            episode_timeout_seconds=900,
+            max_output_tokens=12000,
+        ),
+        {
+            "turn_timeout_seconds": 300,
+            "max_tool_calls": 6,
+            "max_output_tokens": 4096,
+        },
+    )
+    assert limits.episode_timeout_seconds == 300
+    assert limits.terminal_timeout_seconds == 90
+    assert limits.max_tool_calls == 6
+    assert limits.max_output_tokens == 4096
 
 
 def _package(root: Path, *, turns: int = 2, simulator_messages: int = 0) -> Path:
@@ -161,6 +219,123 @@ def _options(package: Path, output: Path, condition: str, *, error_policy: str =
     )
 
 
+def _v5_package(root: Path, *, turns: int = 2) -> Path:
+    package = _package(root, turns=turns)
+    stream_path = package / "streams/stream-a/stream.json"
+    stream = json.loads(stream_path.read_text(encoding="utf-8"))
+    stream.update({
+        "schema_version": "l2_taskstream/1.2",
+        "workspace_persistence": "task_local",
+        "stream_design": {
+            "pool_id": "intra_benchmark_multi_capability",
+            "pool_type": "same_benchmark",
+            "composition_policy": "runtime-test",
+        },
+        "capabilities": [
+            {
+                "capability_id": f"cap-{index}",
+                "domain_id": "software_engineering",
+                "task_type_ids": ["code"],
+                "source_benchmark": "fixture",
+            }
+            for index in range(1, 4)
+        ],
+        "selection_provenance": {"selector": "runtime-test", "seed": 7},
+    })
+    for index, summary in enumerate(stream["turns"], start=1):
+        capability = f"cap-{((index - 1) % 3) + 1}"
+        summary.update({
+            "capability_id": capability,
+            "runtime_profile_id": "python_v1",
+        })
+        task_path = package / f"streams/stream-a/turn{index}/task.json"
+        task = json.loads(task_path.read_text(encoding="utf-8"))
+        task.update({
+            "schema_version": "l2_taskstream/1.2",
+            "runtime_profile_id": "python_v1",
+            "taxonomy_ref": {"capability_id": capability},
+        })
+        task["workspace_transition"]["mode"] = "task_local_seed"
+        _write_json(task_path, task)
+    _write_json(stream_path, stream)
+    runtime_profiles = {
+        "schema_version": "l2_runtime_profiles/1.0",
+        "profiles": [{
+            "runtime_profile_id": "python_v1",
+            "task_sandbox_image_digest": "sha256:" + "1" * 64,
+            "verifier_image_digest": "sha256:" + "2" * 64,
+            "verifier_image_class": "python",
+            "tool_profile_id": "terminal_filesystem_v1",
+            "dependency_class": "python_stdlib",
+            "network": "disabled",
+            "turn_timeout_seconds": 900,
+            "learner_state_mount_profile": "baseline_explicit_v1",
+            "learner_state_abi": "baseline_state/1.0",
+            "serialization_version": "1",
+            "mount_path": "/baseline_state",
+            "owner": "baseline",
+            "permission": "rw",
+        }],
+    }
+    pools = {
+        "schema_version": "l2_pools/1.0",
+        "pools": [{
+            "pool_id": "intra_benchmark_multi_capability",
+            "pool_type": "same_benchmark",
+            "stream_ids": ["stream-a"],
+            "composition_policy": "runtime-test",
+            "license_scopes": ["permissive"],
+            "allows_cross_pool_aggregation": False,
+        }],
+    }
+    panels = {
+        "schema_version": "l2_panels/1.0",
+        "panels": [{
+            "panel_id": "intra_primary",
+            "purpose": "primary",
+            "pool_id": "intra_benchmark_multi_capability",
+            "stream_ids": ["stream-a"],
+            "allows_cross_panel_aggregation": False,
+        }],
+    }
+    taxonomy = {"schema_version": "l2_taxonomy/1.0", "taxonomy_version": "test/1.0"}
+    documents = {
+        "pool_manifest": ("pools.json", pools, "l2_pools/1.0"),
+        "panel_manifest": ("panels.json", panels, "l2_panels/1.0"),
+        "taxonomy_manifest": ("taxonomy.json", taxonomy, "l2_taxonomy/1.0"),
+        "runtime_profiles": ("runtime_profiles.json", runtime_profiles, "l2_runtime_profiles/1.0"),
+    }
+    bindings = {}
+    for key, (name, value, version) in documents.items():
+        _write_json(package / name, value)
+        bindings[key] = {
+            "schema_version": version,
+            "path": name,
+            "sha256": hashlib.sha256((package / name).read_bytes()).hexdigest(),
+        }
+    _write_json(package / "manifest.json", {
+        "schema_version": "l2_taskstream/1.2",
+        "aggregation_profile": "l2_evolution_aggregation/1.2",
+        **bindings,
+    })
+    return package
+
+
+def _v5_options(package: Path, output: Path, condition: str) -> L2AgentRunOptions:
+    options = _options(package, output, condition)
+    manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
+    return replace(
+        options,
+        pool_id="intra_benchmark_multi_capability",
+        pool_manifest_sha256=manifest["pool_manifest"]["sha256"],
+        package_manifest_sha256=hashlib.sha256((package / "manifest.json").read_bytes()).hexdigest(),
+        runtime_profiles_sha256=manifest["runtime_profiles"]["sha256"],
+        panel_id="intra_primary",
+        panel_manifest_sha256=manifest["panel_manifest"]["sha256"],
+        selected_stream_ids=("stream-a",),
+    )
+
+
 def _install_fake_runtime(monkeypatch, *, judge_score: float = 1.0, verifier_error: bool = False):
     runtimes: list[_Runtime] = []
 
@@ -249,6 +424,55 @@ def test_taskstream_run_conditions_are_executable_and_reported(
     assert [turn["sequence_role"] for turn in report["turns"]] == ["learning", "application"]
     assert all(turn["turn_score"] == 1.0 for turn in report["turns"])
     assert all(turn["evaluation_status"] == "passed" for turn in report["turns"])
+
+
+@pytest.mark.parametrize("condition", ["frozen", "evolving"])
+def test_v5_keeps_learner_process_but_rebuilds_task_workspace_each_turn(
+    tmp_path, monkeypatch, condition
+):
+    package = _v5_package(tmp_path)
+    runtimes = _install_fake_runtime(monkeypatch)
+
+    report = L2AgentStreamRunner(
+        _v5_options(package, tmp_path / f"out-v5-{condition}", condition)
+    ).run()
+
+    assert report["completed"] is True
+    assert len(runtimes) == 1
+    assert "generated-turn1.txt" not in runtimes[0].visible_before_interact[1]
+    assert "inputs/turn1.txt" not in runtimes[0].visible_before_interact[1]
+    assert "inputs/turn2.txt" in runtimes[0].visible_before_interact[1]
+
+
+def test_v5_checkpoint_binds_package_pool_profile_and_learner_state(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _install_fake_runtime(monkeypatch)
+    output = tmp_path / "out-v5-checkpoint"
+    options = replace(_v5_options(package, output, "evolving"), stop_after_turn="turn1")
+
+    L2AgentStreamRunner(options).run()
+
+    checkpoint = next(output.glob("_checkpoints/*/*/t0001/checkpoint.json"))
+    metadata = json.loads(checkpoint.read_text(encoding="utf-8"))
+    assert metadata["package_manifest_sha256"] == options.package_manifest_sha256
+    assert metadata["pool_id"] == options.pool_id
+    assert metadata["pool_manifest_sha256"] == options.pool_manifest_sha256
+    assert metadata["runtime_profiles_sha256"] == options.runtime_profiles_sha256
+    assert metadata["runtime_profile_id"] == "python_v1"
+    assert metadata["learner_state_abi"] == "baseline_state/1.0"
+    assert len(metadata["learner_state_digest"]) == 64
+
+
+def test_v5_rejects_task_runtime_profile_not_in_bound_catalog(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path, turns=1)
+    task_path = package / "streams/stream-a/turn1/task.json"
+    task = json.loads(task_path.read_text(encoding="utf-8"))
+    task["runtime_profile_id"] = "missing"
+    _write_json(task_path, task)
+    _install_fake_runtime(monkeypatch)
+
+    with pytest.raises(L2AgentRunError, match="runtime profile"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
 
 
 def test_evaluator_error_continue_is_null_unscored_and_does_not_evolve(tmp_path, monkeypatch):

@@ -1,0 +1,97 @@
+{
+  "schema_version": "l2_taskstream/1.2",
+  "stream_id": "intra_sr_python_visual_01",
+  "turn_id": "turn7",
+  "turn_index": 7,
+  "sequence_role": "application",
+  "source_basis": {
+    "benchmark_id": "sr_agents",
+    "benchmark_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "source_task_id": "bigcodebench_00035",
+    "source_path": "data/bench/instances/bigcodebench.json#bigcodebench_00035",
+    "source_hash": "34ecbc7d58ea8d96428a3108e9dc5207bce2d4a223f48c864bd1a0d7d679ccc4"
+  },
+  "taxonomy_ref": {
+    "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+    "domain_id": "software_engineering",
+    "task_type_ids": [
+      "code_generation",
+      "visualization"
+    ],
+    "capability_id": "matplotlib_visualization",
+    "native_labels": {
+      "dataset": "bigcodebench",
+      "skill_annotations": [
+        "bigcodebench_138",
+        "bigcodebench_013"
+      ]
+    },
+    "label_source": "rule_normalized"
+  },
+  "relation_class": "native_family_sibling",
+  "runtime_profile_id": "sr_agents_python_v1",
+  "capability_relation": {
+    "capability_id": "matplotlib_visualization",
+    "parent_turn_ids": [
+      "turn1",
+      "turn4"
+    ],
+    "relation_rationale": "Implement a plotting function centered on Matplotlib APIs."
+  },
+  "agent_input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Solve the source benchmark task below. Produce the requested artifact inside the task workspace and do not use network access.\n\nSource benchmark: sr_agents\nSource task id: bigcodebench_00035\n\nReplace all elements in DataFrame columns that do not exist in the target_values array with zeros, and then output the distribution of each column after replacing. - label each plot as the name of the column it corresponds to.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object of the plotted data.\nYou should write self-contained code starting with:\n```\nimport seaborn as sns\nimport matplotlib.pyplot as plt\ndef task_func(df, target_values=[1, 3, 4]):\n```"
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "source_task.json",
+        "visibility": "agent_visible"
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "task_local_seed",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/source_task.json",
+        "target": "agent_workspace/source/turn7.json"
+      }
+    ]
+  },
+  "evaluation": {
+    "type": "native_verifier_only",
+    "evaluation_profile": "general",
+    "submission_contract": {
+      "schema_version": "l2_submission_contract/1.0",
+      "carrier": "interaction_record",
+      "source_binding": "final_response"
+    },
+    "native_verifier": {
+      "required": true,
+      "entrypoint": "verifier.py",
+      "timeout_seconds": 60,
+      "input_bindings": [
+        {
+          "name": "final_response",
+          "source": "interaction_record",
+          "path": "final_response"
+        }
+      ],
+      "request_schema_version": "l2_native_verifier_request/1.0",
+      "result_schema_version": "l2_native_verifier_result/1.0",
+      "source_benchmark": "sr_agents",
+      "source_task_id": "bigcodebench_00035"
+    },
+    "success_policy": {
+      "turn_score_threshold": 0.8
+    }
+  }
+}
