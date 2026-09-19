@@ -1,0 +1,31 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "modify_pending_order_items",
+      "arguments": {
+        "item_ids": [
+          "8926329222",
+          "5312063289"
+        ],
+        "new_item_ids": [
+          "7160999700",
+          "6956751343"
+        ],
+        "order_id": "#W3295833",
+        "payment_method_id": "credit_card_3261838"
+      }
+    },
+    {
+      "name": "return_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "5676696062"
+        ],
+        "order_id": "#W8488728",
+        "payment_method_id": "paypal_3650980"
+      }
+    }
+  ]
+}

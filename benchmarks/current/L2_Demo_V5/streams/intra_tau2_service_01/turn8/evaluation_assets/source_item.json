@@ -1,0 +1,53 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Test finding cheapest Economy cabin class (not Basic Economy) flight on the next day. Multiple airports to consider. Testing understanding that policy forbids changing origin or destination of a reservation.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "15_0",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-24",
+              "flight_number": "HAT110"
+            },
+            {
+              "date": "2024-05-24",
+              "flight_number": "HAT172"
+            }
+          ],
+          "payment_id": "gift_card_8887175",
+          "reservation_id": "M05KNL"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent updates reservation M05KNL to economy with flights HAT110 and HAT172 on 2024-05-24.",
+      "Agent uses the payment id: gift_card_8887175"
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "15",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "Your name is Aarav Garcia.\n\nYour user id is aarav_garcia_1177.",
+      "reason_for_call": "For your upcoming trip from ATL to PHL, you want to change for the cheapest flight in Economy cabin class (not Basic Economy) and for the day after the original reservation.",
+      "task_instructions": "Since you live in Princeton, so EWR and PHL are equally convenient for you and you want to consider both.\n\nYou are happy with original payment for refund.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

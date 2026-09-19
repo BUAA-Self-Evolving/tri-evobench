@@ -1,0 +1,58 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "101_0",
+        "arguments": {
+          "item_ids": [
+            "8926329222",
+            "5312063289"
+          ],
+          "new_item_ids": [
+            "7160999700",
+            "6956751343"
+          ],
+          "order_id": "#W3295833",
+          "payment_method_id": "credit_card_3261838"
+        },
+        "info": null,
+        "name": "modify_pending_order_items"
+      },
+      {
+        "action_id": "101_1",
+        "arguments": {
+          "item_ids": [
+            "5676696062"
+          ],
+          "order_id": "#W8488728",
+          "payment_method_id": "paypal_3650980"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": null,
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "100",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You name is Liam Thomas and your zip code is 85049.",
+      "reason_for_call": "You want to return your luggage set and get the exact same item but with red color, and return you skateboard in the same order to get a new one with features {'length': '34 inch', 'design': 'custom'}. For the pending order modification, you want to use your credit card. You also want to return the hiking boots.",
+      "task_instructions": "You are pessimistic and an  insecure person.\nIf the agent says pending orders cannot be exchanged, ask for changing the order to your requirements.",
+      "unknown_info": "You do not remember your email address."
+    },
+    "persona": null
+  }
+}

@@ -1,0 +1,9 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import skew
+def task_func(data_matrix):
+    skewness = skew(data_matrix, axis=1)
+    df = pd.DataFrame(skewness, columns=["Skewness"])
+    plt.figure(figsize=(10, 5))
+    df["Skewness"].plot(kind="hist", title="Distribution of Skewness")
+    return df, plt.gca()

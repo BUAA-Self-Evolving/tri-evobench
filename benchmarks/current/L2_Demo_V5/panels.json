@@ -2,30 +2,28 @@
   "schema_version": "l2_panels/1.0",
   "panels": [
     {
-      "panel_id": "intra_primary_permissive",
+      "panel_id": "intra_benchmark_multi_capability_primary",
       "purpose": "primary",
       "pool_id": "intra_benchmark_multi_capability",
-      "license_scope": "permissive",
       "stream_ids": [
-        "intra_tau2_banking_ops_01",
-        "intra_skillsbench_ops_01",
         "intra_sr_python_data_01",
         "intra_sr_python_visual_01",
-        "intra_tau2_support_01"
+        "intra_sr_python_io_02",
+        "intra_tau2_service_01",
+        "intra_tau2_support_02"
       ],
       "allows_cross_panel_aggregation": false
     },
     {
-      "panel_id": "cross_primary_permissive",
+      "panel_id": "cross_benchmark_multi_capability_primary",
       "purpose": "primary",
       "pool_id": "cross_benchmark_multi_capability",
-      "license_scope": "permissive",
       "stream_ids": [
-        "cross_skilllearn_tau2_sr_01",
-        "cross_skilllearn_tau2_sr_02",
-        "cross_skilllearn_tau2_sr_03",
-        "cross_skilllearn_tau2_sr_04",
-        "cross_skilllearn_tau2_sr_05"
+        "cross_offer_retail_filesystem_01",
+        "cross_court_airline_plotting_01",
+        "cross_dbscan_telecom_pandas_01",
+        "cross_weighted_gdp_telecom_numpy_01",
+        "cross_office_retail_filesystem_01"
       ],
       "allows_cross_panel_aggregation": false
     }

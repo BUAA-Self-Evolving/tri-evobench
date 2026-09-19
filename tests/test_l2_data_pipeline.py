@@ -38,6 +38,32 @@ def test_compose_cli_routes_to_source_semantic_composer() -> None:
     assert args.func is pipeline._cmd_compose_semantic
 
 
+def test_generated_v5_judge_prompt_declares_strict_output_shape() -> None:
+    evaluation = pipeline._evaluation(
+        "stream-a",
+        "turn1",
+        {"source_binding": "submission"},
+        {"name": "submission", "source": "interaction_record", "path": "final_response"},
+    )
+    prompt = evaluation["judge_config"]["judge_prompt"]
+
+    assert "{stream_id}" in prompt
+    assert "{native_verifier_result}" in prompt
+    assert '"check_scores"' in prompt
+    assert '"source_rubric_scores"' in prompt
+    assert "Return JSON only" in prompt
+
+
+def test_generated_v5_user_simulator_prompt_declares_schema() -> None:
+    prompt = pipeline.l2_user_simulator_prompt()
+
+    assert "{agent_input}" in prompt
+    assert "{bounded_evaluation_feedback}" in prompt
+    assert '"schema_version": "l2_user_simulator_output/1.0"' in prompt
+    assert '"next_user_message"' in prompt
+    assert '"rationale_category"' in prompt
+
+
 def test_cache_key_binds_source_taxonomy_prompt_and_model() -> None:
     first = pipeline.classification_cache_key("a" * 64, "taxonomy/1", "prompt/1", "deepseek-chat")
     assert first == pipeline.classification_cache_key(
@@ -120,6 +146,29 @@ def test_metrics_are_split_by_label_source_and_include_macro_f1() -> None:
     assert set(metrics["by_label_source"]) == {"upstream_direct", "rule_normalized", "llm_filled"}
     assert metrics["by_label_source"]["upstream_direct"]["capability"]["accuracy"] == 1.0
     assert metrics["by_label_source"]["llm_filled"]["capability"]["macro_f1"] == 0.0
+
+
+def test_metrics_report_needs_review_recall() -> None:
+    predictions = [
+        {"source_id": "accepted", "label_source": "upstream_direct", "needs_review": False},
+        {"source_id": "caught", "label_source": "unclassified", "needs_review": True},
+        {"source_id": "missed", "label_source": "llm_filled", "needs_review": False},
+    ]
+    gold = [
+        {"source_id": "accepted", "needs_review": False},
+        {"source_id": "caught", "needs_review": True},
+        {"source_id": "missed", "needs_review": True},
+    ]
+
+    metrics = pipeline.classification_metrics(predictions, gold)
+
+    assert metrics["needs_review"] == {
+        "sample_count": 3,
+        "positive_count": 2,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 2 / 3,
+    }
 
 
 def test_jsonl_writer_is_resume_safe_and_deterministic(tmp_path: Path) -> None:
@@ -301,6 +350,12 @@ def test_compose_materializes_ten_fifteen_turn_v5_streams(tmp_path: Path, monkey
     assert manifest["schema_version"] == "l2_taskstream/1.2"
     assert manifest["unique_source_task_count"] == manifest["turn_placement_count"] == 150
     assert "derivation" not in json.dumps(manifest)
+    assert (package / "stream_plan.json").read_bytes() == plan.read_bytes()
+    assert manifest["selection_manifest"] == {
+        "schema_version": "l2_stream_plan/1.0",
+        "path": "stream_plan.json",
+        "sha256": hashlib.sha256(plan.read_bytes()).hexdigest(),
+    }
     pools = json.loads((package / "pools.json").read_text(encoding="utf-8"))["pools"]
     assert [len(pool["stream_ids"]) for pool in pools] == [5, 5]
     for stream_entry in manifest["streams"]:

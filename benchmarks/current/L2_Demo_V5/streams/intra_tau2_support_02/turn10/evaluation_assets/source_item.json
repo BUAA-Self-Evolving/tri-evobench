@@ -1,0 +1,47 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "109_0",
+        "arguments": {
+          "item_ids": [
+            "9612497925",
+            "7127170374",
+            "6268080249"
+          ],
+          "order_id": "#W1679211",
+          "payment_method_id": "paypal_3022415"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      }
+    ],
+    "communicate_info": [
+      "346.93"
+    ],
+    "nl_assertions": [
+      "Agent should tell the user the refund amount is $346.93."
+    ],
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "108",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You name is Yusuf Gonzalez and your zip code is 91455.",
+      "reason_for_call": "You want to return everything but a tablet in a recently delivered order. There is an E-Reader in the order that you want to return.",
+      "task_instructions": "You want to know how much money you can get back.",
+      "unknown_info": "You do not remember your email address"
+    },
+    "persona": null
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "actions": [
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-25",
+            "flight_number": "HAT056"
+          },
+          {
+            "date": "2024-05-25",
+            "flight_number": "HAT138"
+          }
+        ],
+        "payment_id": "gift_card_8190333",
+        "reservation_id": "FQ8APE"
+      }
+    },
+    {
+      "name": "update_reservation_passengers",
+      "arguments": {
+        "passengers": [
+          {
+            "dob": "1970-06-06",
+            "first_name": "Omar",
+            "last_name": "Rossi"
+          }
+        ],
+        "reservation_id": "FQ8APE"
+      }
+    },
+    {
+      "name": "update_reservation_baggages",
+      "arguments": {
+        "nonfree_baggages": 0,
+        "payment_id": "gift_card_8190333",
+        "reservation_id": "FQ8APE",
+        "total_baggages": 3
+      }
+    }
+  ]
+}

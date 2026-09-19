@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00059",
+  "dataset": "bigcodebench",
+  "question": "Create a word cloud from the text of a Wikipedia page.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object of the plotted data. Is None if there is no wikipedia page with the title given as input.\nYou should write self-contained code starting with:\n```\nimport wikipedia\nfrom wordcloud import WordCloud\nimport matplotlib.pyplot as plt\ndef task_func(page_title):\n```",
+  "skill_annotations": [
+    "bigcodebench_034",
+    "bigcodebench_138",
+    "bigcodebench_022"
+  ],
+  "eval_data": {
+    "answer": "    try:\n        text = wikipedia.page(page_title).content\n    except Exception as e:\n        print(f\"An error occured: {e}\")\n        return None\n    wordcloud = WordCloud().generate(text)\n    plt.figure(figsize=(10, 5))\n    plt.imshow(wordcloud, interpolation='bilinear')\n    plt.axis('off')\n    ax = plt.gca()\n    return ax",
+    "code_prompt": "import wikipedia\nfrom wordcloud import WordCloud\nimport matplotlib.pyplot as plt\ndef task_func(page_title):\n",
+    "test": "import unittest\nfrom unittest.mock import patch\nclass A :\n    def __init__(self, content) -> None:\n        self.content = content\n        self.text = content\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    @patch('wikipedia.page')\n    def test_case_1(self, mock_function):\n        # Mocking the function to prevent actual execution\n        mock_function.return_value = A(\"I want to sleep\")\n        # Running the function\n        _ = task_func('Python (programming language)')\n    @patch('wikipedia.page')\n    def test_case_2(self, mock_function):\n        # Mocking the function to prevent actual execution\n        mock_function.return_value = A(\"I want to sleep because it is important to sleep.\")\n        # Running the function\n        _ = task_func('Python (programming language)')\n    @patch('wikipedia.page')\n    def test_case_3(self, mock_function):\n        # Mocking the function to prevent actual execution\n        mock_function.return_value = A(\"I want to sleep\")\n        # Running the function\n        _ = task_func('Python (programming language)')\n    @patch('wikipedia.page')\n    def test_case_4(self, mock_function):\n        # Mocking the function to prevent actual execution\n        mock_function.return_value =A(\"I want to eat\")\n        # Running the function\n        _ = task_func('Python (programming language)')\n    @patch('wikipedia.page')\n    def test_case_5(self, mock_function):\n        # Mocking the function to prevent actual execution\n        mock_function.return_value = A(\"I want to help you to get your business to work.\")\n        # Running the function\n        _ = task_func('Python (programming language)')\n    def test_case_6(self):\n        ax = task_func(\"Invalid Page Title\")\n        self.assertIsNone(ax)",
+    "entry_point": "task_func"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "instance_id": "bigcodebench_00131",
+  "dataset": "bigcodebench",
+  "question": "Converts a hex string to bytes, salts it with a random value of specified size, and computes its SHA256 hash. The function generates a random salt of the given size, appends it to the byte representation of the hex string, and then computes the SHA256 hash of the salted data. The salt and hash are returned as a tuple.\nThe function should output with:\n    tuple: A tuple containing the base64-encoded salt and the SHA256 hash.\nYou should write self-contained code starting with:\n```\nimport base64\nimport binascii\nimport os\nimport hashlib\ndef task_func(hex_str, salt_size):\n```",
+  "skill_annotations": [
+    "bigcodebench_078",
+    "bigcodebench_067",
+    "bigcodebench_130",
+    "bigcodebench_086"
+  ],
+  "eval_data": {
+    "answer": "    salt = os.urandom(salt_size)\n    data = binascii.unhexlify(hex_str.replace('\\\\x', ''))\n    salted_data = salt + data\n    hash_value = hashlib.sha256(salted_data).hexdigest()\n\n    return (base64.b64encode(salt).decode('utf-8'), hash_value)",
+    "code_prompt": "import base64\nimport binascii\nimport os\nimport hashlib\ndef task_func(hex_str, salt_size):\n",
+    "test": "import unittest\nfrom unittest.mock import patch\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.salt_size = 16  # Define salt_size here to use in all tests\n    def test_return_type(self):\n        \"\"\"Test that the function returns a tuple.\"\"\"\n        result = task_func(\"F3BE8080\", self.salt_size)\n        self.assertIsInstance(result, tuple)\n    def test_salt_and_hash_length(self):\n        \"\"\"Test the length of the salt and hash.\"\"\"\n        salt, hash_value = task_func(\"F3BE8080\", self.salt_size)\n        self.assertEqual(len(salt), 24)  # Base64 encoded 16-byte salt\n        self.assertEqual(len(hash_value), 64)  # Length of SHA256 hash\n    def test_hash_changes_with_input(self):\n        \"\"\"Test that different inputs produce different hashes.\"\"\"\n        _, hash1 = task_func(\"F3BE8080\", self.salt_size)\n        _, hash2 = task_func(\"F4BE8080\", self.salt_size)\n        self.assertNotEqual(hash1, hash2)\n    def test_various_hex_formats(self):\n        \"\"\"Test the function with various hex string formats.\"\"\"\n        _, hash1 = task_func(\"F3BE8080\", self.salt_size)\n        _, hash2 = task_func(\"f3be8080\", self.salt_size)  # Lowercase\n        _, hash3 = task_func(\"\\\\xF3\\\\xBE\\\\x80\\\\x80\", self.salt_size)  # With escape sequences\n        self.assertNotEqual(hash1, hash2)\n        self.assertNotEqual(hash1, hash3)\n    @patch('os.urandom', return_value=b'\\x00' * 16)\n    def test_salt_generation(self, mock_urandom):\n        \"\"\"Test that the salt is generated using os.urandom with the correct size.\"\"\"\n        salt, _ = task_func(\"F3BE8080\", self.salt_size)\n        mock_urandom.assert_called_once_with(self.salt_size)\n        expected_salt = base64.b64encode(b'\\x00' * self.salt_size).decode('utf-8')\n        self.assertEqual(salt, expected_salt)",
+    "entry_point": "task_func"
+  }
+}

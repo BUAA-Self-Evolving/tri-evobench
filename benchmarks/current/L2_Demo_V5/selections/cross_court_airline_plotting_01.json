@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "cross_court_airline_plotting_01",
+  "pool_id": "cross_benchmark_multi_capability",
+  "composition_policy": "three_capabilities_three_benchmarks",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "skilllearnbench:court-form-filling-1",
+      "source_hash": "4bb63d6317c1ab7aeba08ca6fc4c515701ad631e68ed2c665b67877a111e515c",
+      "capability_id": "court_form_filling"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:airline:32",
+      "source_hash": "e994cdc35cebbef990aef8b385df6efb28157bcb57b8d98dbe8a9fd367b6c47f",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00062",
+      "source_hash": "9eafb0f2c7d52af6b251371c30b6fa05d422a3a9ecb6b0f1b99298ff09e67ff2",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:court-form-filling-2",
+      "source_hash": "4534e98ec12995d92891e959cca2c6b39f9faab4b3f66f999f8de3be14271031",
+      "capability_id": "court_form_filling"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:33",
+      "source_hash": "49a5b47fae446c9fbc572cb3c2849e082a4ddde2e85ff47c69e8f206470b52dc",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00069",
+      "source_hash": "e46a13e1c5f47a6496c25f89d432471d95ea429582120c6a322e058eae9a0218",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:court-form-filling-3",
+      "source_hash": "083f05f02123c60f7cefe812a911b9f8b2e32849ac168cd061792bd1c728c695",
+      "capability_id": "court_form_filling"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:37",
+      "source_hash": "e99b43871a20e458b887723119a541c3b73735b4cf0bfa2ffd51f52dafadea7c",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00091",
+      "source_hash": "0cfdd60b608c2758ad0f6b435086d3abb1f7630468ba9993b736f1b8a71b2380",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:court-form-filling-4",
+      "source_hash": "feba9c915e8b022402dd86a1f60d2c5d8426cc7d61c9de85ed0e75f9be10f166",
+      "capability_id": "court_form_filling"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:39",
+      "source_hash": "d9b7a3ef5ef4640de6567ee816e396ee99193ff934208c8ca7cba75f55ed5ec8",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00124",
+      "source_hash": "c746ad30fa623e9340ecbedb704b71ea3e781382b767358a818e87cd204a4f04",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "skilllearnbench:court-form-filling-5",
+      "source_hash": "a0dccd58bda50932ebcfd20120ec41673685507c4bbbe28305cddf489efd860b",
+      "capability_id": "court_form_filling"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:airline:42",
+      "source_hash": "1eabb4af3128144e48f6d55bc13b90aaa9774afe9cda0b6e711eeba6dbf81d1b",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00175",
+      "source_hash": "5659f92ea00b7306002a7b0e859183f115aafc7846924bb7a89c14f6f03a6563",
+      "capability_id": "matplotlib_visualization"
+    }
+  ]
+}

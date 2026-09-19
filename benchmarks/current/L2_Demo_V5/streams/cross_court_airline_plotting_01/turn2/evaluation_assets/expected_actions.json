@@ -1,0 +1,56 @@
+{
+  "actions": [
+    {
+      "name": "get_user_details",
+      "arguments": {
+        "user_id": "ivan_rossi_8555"
+      }
+    },
+    {
+      "name": "get_reservation_details",
+      "arguments": {
+        "reservation_id": "OWZ4XL"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-21",
+        "destination": "LAX",
+        "origin": "EWR"
+      }
+    },
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-21",
+            "flight_number": "HAT202"
+          },
+          {
+            "date": "2024-05-21",
+            "flight_number": "HAT232"
+          }
+        ],
+        "payment_id": "credit_card_9659780",
+        "reservation_id": "OWZ4XL"
+      }
+    },
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-21",
+            "flight_number": "HAT041"
+          }
+        ],
+        "payment_id": "credit_card_9659780",
+        "reservation_id": "OWZ4XL"
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+def task_func(list_of_pairs):
+    return None

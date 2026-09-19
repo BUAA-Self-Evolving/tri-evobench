@@ -1,0 +1,46 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "107_0",
+        "arguments": {
+          "item_ids": [
+            "9354168549"
+          ],
+          "new_item_ids": [
+            "2060066974"
+          ],
+          "order_id": "#W3388163",
+          "payment_method_id": "paypal_5334408"
+        },
+        "info": null,
+        "name": "exchange_delivered_order_items"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent should process the exchange."
+    ],
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "106",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You name is Sofia Thomas and your emails are sofia.thomas3019@example.com and sofia.thomas3069@example.com.",
+      "reason_for_call": "You want to exchange your T-Shirt because it is too big, one size smaller would be good. You like the cotton feeling. If multiple colors are available, you prefer black.",
+      "task_instructions": "You are dependent, pessimistic, direct.",
+      "unknown_info": "."
+    },
+    "persona": null
+  }
+}

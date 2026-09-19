@@ -1,0 +1,66 @@
+{
+  "actions": [
+    {
+      "name": "find_user_id_by_name_zip",
+      "arguments": {
+        "first_name": "Fatima",
+        "last_name": "Johnson",
+        "zip": "78712"
+      }
+    },
+    {
+      "name": "get_user_details",
+      "arguments": {
+        "user_id": "fatima_johnson_7581"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W5199551"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W8665881"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W9389413"
+      }
+    },
+    {
+      "name": "calculate",
+      "arguments": {
+        "expression": "3131.1 + 4777.75 + 367.38"
+      }
+    },
+    {
+      "name": "cancel_pending_order",
+      "arguments": {
+        "order_id": "#W5199551",
+        "reason": "no longer needed"
+      }
+    },
+    {
+      "name": "cancel_pending_order",
+      "arguments": {
+        "order_id": "#W8665881",
+        "reason": "no longer needed"
+      }
+    },
+    {
+      "name": "return_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "2554056026"
+        ],
+        "order_id": "#W9389413",
+        "payment_method_id": "paypal_5364164"
+      }
+    }
+  ]
+}

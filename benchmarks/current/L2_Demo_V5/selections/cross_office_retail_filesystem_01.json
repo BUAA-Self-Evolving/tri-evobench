@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "cross_office_retail_filesystem_01",
+  "pool_id": "cross_benchmark_multi_capability",
+  "composition_policy": "three_capabilities_three_benchmarks",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "skillsbench:court-form-filling",
+      "source_hash": "030c0d7d59e287a58c5e7fd328b561168991943bbb2766876cce85963c7eb057",
+      "capability_id": "office_document_automation"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:retail:2",
+      "source_hash": "b9d429bc628d64d4a96247dccb41b4220de1459de4d9ab39f1d8ca8080e050fd",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00266",
+      "source_hash": "de1208c284d81a8329bd1d07f855bcfd656eb606b83937a8304b529f853812bd",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "skillsbench:edit-pdf",
+      "source_hash": "e7ac86cadce39ca39d683baf7f831575af780fe4ea2c0fc4779334c462b973dd",
+      "capability_id": "office_document_automation"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:27",
+      "source_hash": "fcc8829b481ce039545636294ceee30975d0bc24cde87aef92afe6ab0fe52a9f",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00281",
+      "source_hash": "67086fede06ba680795da29a50fd640cdccf759606ed86cf03f5e174e255a02d",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "skillsbench:exceltable-in-ppt",
+      "source_hash": "3330d7606a7a0c2d0c456b4bbcabcec2845d95b731d840d5a16944723a540275",
+      "capability_id": "office_document_automation"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:29",
+      "source_hash": "a68e7d97fb4ccece80fb2d171262387945e3153b96d9aa81cca5bc2ead104cbe",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00283",
+      "source_hash": "a6b8e2729e008d6d279085db684040005793bc069f43a658be63df0a46a2be8d",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "skillsbench:offer-letter-generator",
+      "source_hash": "3db66b8e45ca839c51bc561ae0f5e0391f5c96af03ce5ba6552890e27c4c3c91",
+      "capability_id": "office_document_automation"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:30",
+      "source_hash": "e6418f6d763211341bb23c246fee501813a5ffc85e62c1408b53cccb3fc9ee28",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00286",
+      "source_hash": "07079056fbdd65ae79c877d19e091e74ea8a770dab1c383737fd7d3ec70c65e5",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "skillsbench:pptx-reference-formatting",
+      "source_hash": "1db90a8f13c1a00133efd9f9dda068391a03f35d6f07293c4992f593f1f82db8",
+      "capability_id": "office_document_automation"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:retail:31",
+      "source_hash": "f74012109c33190191885d0b7df3a8f119eca2641fa18f03eabf75b63ff4e11c",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00287",
+      "source_hash": "7a47a99381e0030b0ac5411c017cefc43da99d8cf5be632587b588d09d71b495",
+      "capability_id": "filesystem_path_operations"
+    }
+  ]
+}

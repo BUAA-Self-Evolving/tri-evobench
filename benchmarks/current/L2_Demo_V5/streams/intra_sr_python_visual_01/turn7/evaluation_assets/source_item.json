@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00035",
+  "dataset": "bigcodebench",
+  "question": "Replace all elements in DataFrame columns that do not exist in the target_values array with zeros, and then output the distribution of each column after replacing. - label each plot as the name of the column it corresponds to.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object of the plotted data.\nYou should write self-contained code starting with:\n```\nimport seaborn as sns\nimport matplotlib.pyplot as plt\ndef task_func(df, target_values=[1, 3, 4]):\n```",
+  "skill_annotations": [
+    "bigcodebench_138",
+    "bigcodebench_013"
+  ],
+  "eval_data": {
+    "answer": "    df = df.applymap(lambda x: x if x in target_values else 0)\n    plt.figure(figsize=(10, 5))\n    for column in df.columns:\n        sns.kdeplot(df[column], label=column, warn_singular=False)\n    plt.legend()\n    return df, plt.gca()",
+    "code_prompt": "import seaborn as sns\nimport matplotlib.pyplot as plt\ndef task_func(df, target_values=[1, 3, 4]):\n",
+    "test": "import unittest\nimport pandas as pd\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def test_case_1(self):\n        df = pd.DataFrame({\"A\": [1, 4, 7, 6, 7, 3, 4, 4]})\n        df1, ax = task_func(df)\n        self.assertIsInstance(ax, plt.Axes)\n    def test_case_2(self):\n        df = pd.DataFrame({\"A\": [1, 2, 3, 4, 5], \"B\": [7, 4, 3, 3, 1]})\n        df1, ax = task_func(df)\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(len(ax.lines), 2)\n    def test_case_3(self):\n        df = pd.DataFrame({\"A\": [5, 6, 2, 9, 7, 3, 2, 2, 8, 1]})\n        target_values = [1, 2, 3, 4, 5]\n        df1, ax = task_func(df, target_values=target_values)\n        mask = df1.isin(target_values) | (df1 == 0)\n        self.assertTrue(mask.all().all())\n        self.assertIsInstance(ax, plt.Axes)\n    def test_case_4(self):\n        df = pd.DataFrame({\"A\": [10, 20, 30, 40, 50], \"B\": [50, 40, 10, 10, 30]})\n        target_values = [10, 20, 30]\n        df1, ax = task_func(df, target_values=target_values)\n        mask = df1.isin(target_values) | (df1 == 0)\n        self.assertTrue(mask.all().all())\n        self.assertIsInstance(ax, plt.Axes)\n        self.assertEqual(len(ax.lines), 2)\n    def test_case_5(self):\n        df = pd.DataFrame({\"A\": [5, 6, 2, 9, 7, 3, 2, 2, 8, 1]})\n        df1, ax = task_func(df, target_values=[])\n        self.assertTrue(df1.eq(0).all().all())\n        self.assertIsInstance(ax, plt.Axes)\n    def test_case_7(self):\n        df = pd.DataFrame({\"A\": [5, 6, 2, 9, 7, 3, 2, 2, 8, 1]})\n        df1, ax = task_func(df, target_values=[5, 6, 2, 9, 7, 3, 8, 1])\n        self.assertTrue(df1.equals(df))\n        self.assertIsInstance(ax, plt.Axes)",
+    "entry_point": "task_func"
+  }
+}

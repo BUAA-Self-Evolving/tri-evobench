@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "intra_tau2_service_01",
+  "pool_id": "intra_benchmark_multi_capability",
+  "composition_policy": "three_distinct_capabilities_one_benchmark",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:retail:0",
+      "source_hash": "08338487b508897406ec8a73d2b8748d5061768840acd20cd0c1cf56a9889491",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:airline:11",
+      "source_hash": "81b181e8c681974be42062b44975335bb9c8f26e0cbbfe00b5808a499f48a925",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:banking_knowledge:task_001",
+      "source_hash": "5b3ddebff2e64399f88074f7175b88b53d41258f2165fd3c7c9528e14a62b922",
+      "capability_id": "banking_product_application"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:1",
+      "source_hash": "28a51c15bd56d88cb22ec10096cf80396b408ac76b7b3273a5fcf761aabcd6cc",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:12",
+      "source_hash": "a0e997a4bf45c9df9725b39508b27301a078781a9dda04065067819672a4efb9",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:banking_knowledge:task_002",
+      "source_hash": "88c687e4d5da943c2b3c7f50140b88be22740d4790f1c31ae81f658a22a16e28",
+      "capability_id": "banking_product_application"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:100",
+      "source_hash": "1df3bbdf496a38e4cf787e1c45842242288c1cb42a49476c0478c784a2c66a5c",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:15",
+      "source_hash": "818601038662007277f2668d89fc94ee396e64fe364787ed26a28b728494b63d",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:banking_knowledge:task_003",
+      "source_hash": "85bfd758b2bfbc1744d4be26d036987ba7c1b00443209e5c7cd5b70ab3bd8e17",
+      "capability_id": "banking_product_application"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:102",
+      "source_hash": "922a63e4135d110cec8993681602399b3e499f3ad678095d992b016c1cf1d8d9",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:16",
+      "source_hash": "56aa075f8664e75c42dec997ffe014b88820e5d11c529afbe1567a023e4390ab",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:banking_knowledge:task_006",
+      "source_hash": "a16fd91e8aa65ea0cf020b3c991919c8ea5a043192d7f1e9f50f7fbcca3552d2",
+      "capability_id": "banking_product_application"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:retail:104",
+      "source_hash": "05560a8b40aacdb34474956812b1640f8ee9524ce4002603be095f93333f334b",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:airline:17",
+      "source_hash": "5179713cfe7634433baeee2400e357b7d8e1907103392637860c87263af69110",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:banking_knowledge:task_007",
+      "source_hash": "4774c8f6ad04c3e0cac788fd1d6efaa8e368632a0dfbdce1b4a20ca472256133",
+      "capability_id": "banking_product_application"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "get_reservation_details",
+      "arguments": {
+        "reservation_id": "YAX4DR"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-18",
+        "destination": "MCO",
+        "origin": "BOS"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-19",
+        "destination": "MSP",
+        "origin": "MCO"
+      }
+    },
+    {
+      "name": "calculate",
+      "arguments": {
+        "expression": "2 * ((350 - 122) + (499 - 127))"
+      }
+    },
+    {
+      "name": "update_reservation_baggages",
+      "arguments": {
+        "nonfree_baggages": 0,
+        "payment_id": "credit_card_4938634",
+        "reservation_id": "YAX4DR",
+        "total_baggages": 2
+      }
+    }
+  ]
+}

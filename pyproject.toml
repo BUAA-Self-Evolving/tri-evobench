@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=8.3,<9"]
+dev = ["jsonschema>=4.23,<5", "pytest>=8.3,<9"]
 
 [project.scripts]
 trievo-bench = "trievo_bench.runner:main"

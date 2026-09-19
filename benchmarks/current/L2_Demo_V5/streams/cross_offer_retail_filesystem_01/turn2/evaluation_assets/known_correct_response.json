@@ -1,0 +1,42 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "find_user_id_by_email",
+      "arguments": {
+        "email": "mia.garcia2723@example.com"
+      }
+    },
+    {
+      "name": "get_user_details",
+      "arguments": {
+        "user_id": "mia_garcia_4516"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W5490111"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W7387996"
+      }
+    },
+    {
+      "name": "return_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "4579334072",
+          "6117189161",
+          "4947717507"
+        ],
+        "order_id": "#W5490111",
+        "payment_method_id": "credit_card_3124723"
+      }
+    }
+  ]
+}

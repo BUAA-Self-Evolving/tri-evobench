@@ -1,34 +1,132 @@
 {
-  "schema_version": "l2_selection/1.0",
+  "schema_version": "l2_selection_provenance/1.0",
   "stream_id": "intra_sr_python_visual_01",
   "pool_id": "intra_benchmark_multi_capability",
-  "source_ids": [
-    "sr_agents:bigcodebench_00031",
-    "sr_agents:bigcodebench_00034",
-    "sr_agents:bigcodebench_00035",
-    "sr_agents:bigcodebench_00037",
-    "sr_agents:bigcodebench_00041",
-    "sr_agents:bigcodebench_00042",
-    "sr_agents:bigcodebench_00045",
-    "sr_agents:bigcodebench_00049",
-    "sr_agents:bigcodebench_00015",
-    "sr_agents:bigcodebench_00016",
-    "sr_agents:bigcodebench_00018",
-    "sr_agents:bigcodebench_00019"
-  ],
-  "source_hashes": [
-    "e6881931a7bd026cb8665e612efa7a8fd55d060fd866b1ee1a5aa1400552559b",
-    "becfe0a1fed2e3893662c9dead855d79acf99b79cd7f1e2ea1d6af56d8a330bf",
-    "34ecbc7d58ea8d96428a3108e9dc5207bce2d4a223f48c864bd1a0d7d679ccc4",
-    "0e8d224ebb7d68bb8c1889757c92940aceeecd5d5ac7f1d8cebfdfe6d85d4bb7",
-    "473b82ed896ebd08817f3778a1dd2aca80c9289b69b265a07b0c82d0f0e3a52c",
-    "4f8b164ddecc9153e0d359b7e6c5c0c313f769c2498176de4e8f3f4bd6bdf016",
-    "7c49ba8c2a85d4b1aa5ea85e92de7e775bb0ba3a896415cd693e318a0d3df900",
-    "b356be170007dd8421c68435c8e9b6aecae52071589829abc35e79d9d9dbc5c0",
-    "c1f0ad8aa62ece1f22b7c94920628c3e70cd1024c6ea162ba105a576f1c4a8f1",
-    "3160205d62e831930b8ea5e674ee207ef143afa979c725c13aabbc0980b7079a",
-    "d4a3822c211cec31a873bd094c74f495f43001e57f1a45be731c90d74a739f60",
-    "cc786f90d880e8c18bbed7fd0c06f1adaf166f8654ab775baea85977f582d896"
-  ],
-  "seed": 20260919
+  "composition_policy": "three_distinct_capabilities_one_benchmark",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00031",
+      "source_hash": "e6881931a7bd026cb8665e612efa7a8fd55d060fd866b1ee1a5aa1400552559b",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00042",
+      "source_hash": "4f8b164ddecc9153e0d359b7e6c5c0c313f769c2498176de4e8f3f4bd6bdf016",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00016",
+      "source_hash": "3160205d62e831930b8ea5e674ee207ef143afa979c725c13aabbc0980b7079a",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00034",
+      "source_hash": "becfe0a1fed2e3893662c9dead855d79acf99b79cd7f1e2ea1d6af56d8a330bf",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00045",
+      "source_hash": "7c49ba8c2a85d4b1aa5ea85e92de7e775bb0ba3a896415cd693e318a0d3df900",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00018",
+      "source_hash": "d4a3822c211cec31a873bd094c74f495f43001e57f1a45be731c90d74a739f60",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00035",
+      "source_hash": "34ecbc7d58ea8d96428a3108e9dc5207bce2d4a223f48c864bd1a0d7d679ccc4",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00049",
+      "source_hash": "b356be170007dd8421c68435c8e9b6aecae52071589829abc35e79d9d9dbc5c0",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00019",
+      "source_hash": "cc786f90d880e8c18bbed7fd0c06f1adaf166f8654ab775baea85977f582d896",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00037",
+      "source_hash": "0e8d224ebb7d68bb8c1889757c92940aceeecd5d5ac7f1d8cebfdfe6d85d4bb7",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00050",
+      "source_hash": "ea907f9b3e73c49d1aa29b50365880eb676354a0ab531bd0b1f0a7688fccc712",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00024",
+      "source_hash": "836f18e0b5fa08735183a270e7e432c187465a6528dbdc080d04e25b333d5b98",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00044",
+      "source_hash": "b78df9cd366f4ffa71f9c7dbe48e7d39a270ec6fb934c29692264e3143cd7687",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00052",
+      "source_hash": "dc1b83ccf597c49d05441517d01c75f3d491fa451d42050ab05a0b318616a736",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00030",
+      "source_hash": "e1001e1e40f4368a13ced6ab10f3e485b99476037c15355d4ff98c0089adc84b",
+      "capability_id": "filesystem_path_operations"
+    }
+  ]
 }

@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00033",
+  "dataset": "bigcodebench",
+  "question": "Calculate the product of the second values in each tuple in a list of tuples and return the product as a single-element numeric array.\nThe function should output with:\n    numpy.ndarray: A 1D numpy array containing a single element that is the product of the second values in the list of tuples.\nYou should write self-contained code starting with:\n```\nimport numpy as np\nfrom functools import reduce\ndef task_func(list_of_pairs):\n```",
+  "skill_annotations": [
+    "bigcodebench_137",
+    "bigcodebench_118"
+  ],
+  "eval_data": {
+    "answer": "    second_values = [pair[1] for pair in list_of_pairs]\n    product = reduce(np.multiply, second_values)\n    product_array = np.array([product])\n\n    return product_array",
+    "code_prompt": "import numpy as np\nfrom functools import reduce\ndef task_func(list_of_pairs):\n",
+    "test": "import unittest\nimport numpy as np\nfrom functools import reduce\nclass TestCases(unittest.TestCase):\n    \n    def test_case_1(self):\n        # Basic test case with positive and negative numbers\n        list_of_pairs = [('Fruits', 5), ('Vegetables', 9), ('Dairy', -1), ('Bakery', -2), ('Meat', 4)]\n        expected_output = np.array([360])\n        actual_output = task_func(list_of_pairs)\n        print(actual_output, expected_output)\n        self.assertTrue(np.array_equal(actual_output, expected_output))\n    \n    def test_case_2(self):\n        # Test case with all positive numbers\n        list_of_pairs = [('A', 2), ('B', 3), ('C', 4)]\n        expected_output = np.array([24])\n        actual_output = task_func(list_of_pairs)\n        self.assertTrue(np.array_equal(actual_output, expected_output))\n    \n    def test_case_3(self):\n        # Test case with all negative numbers\n        list_of_pairs = [('A', -2), ('B', -3), ('C', -4)]\n        expected_output = np.array([-24])\n        actual_output = task_func(list_of_pairs)\n        self.assertTrue(np.array_equal(actual_output, expected_output))\n    \n    def test_case_4(self):\n        # Test case with a single tuple\n        list_of_pairs = [('A', 10)]\n        expected_output = np.array([10])\n        actual_output = task_func(list_of_pairs)\n        self.assertTrue(np.array_equal(actual_output, expected_output))\n    \n    def test_case_5(self):\n        # Test case with zeros\n        list_of_pairs = [('A', 0), ('B', 5), ('C', 10)]\n        expected_output = np.array([0])\n        actual_output = task_func(list_of_pairs)\n        self.assertTrue(np.array_equal(actual_output, expected_output))",
+    "entry_point": "task_func"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "toggle_airplane_mode",
+      "arguments": {}
+    },
+    {
+      "name": "set_network_mode_preference",
+      "arguments": {
+        "mode": "4g_5g_preferred"
+      }
+    },
+    {
+      "name": "toggle_wifi_calling",
+      "arguments": {}
+    },
+    {
+      "name": "reset_apn_settings",
+      "arguments": {}
+    },
+    {
+      "name": "reboot_device",
+      "arguments": {}
+    },
+    {
+      "name": "grant_app_permission",
+      "arguments": {
+        "app_name": "messaging",
+        "permission": "sms"
+      }
+    },
+    {
+      "name": "grant_app_permission",
+      "arguments": {
+        "app_name": "messaging",
+        "permission": "storage"
+      }
+    },
+    {
+      "name": "reseat_sim_card",
+      "arguments": {}
+    },
+    {
+      "name": "enable_roaming",
+      "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+      }
+    },
+    {
+      "name": "toggle_roaming",
+      "arguments": {}
+    }
+  ]
+}

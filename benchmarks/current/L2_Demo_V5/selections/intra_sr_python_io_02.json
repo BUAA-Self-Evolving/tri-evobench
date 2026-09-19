@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "intra_sr_python_io_02",
+  "pool_id": "intra_benchmark_multi_capability",
+  "composition_policy": "three_distinct_capabilities_one_benchmark",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00118",
+      "source_hash": "97a7047b4b070a16098d6daae99a9d0bff721a21bc1d147a52bff067977f988e",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00046",
+      "source_hash": "e9773fb5b571a3bc9615effe2f40526ffb535577b758eec7a02c24c494223ca2",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00053",
+      "source_hash": "de583ce1e2930fb3aec68bcb3a8dfebea8798fb5df0dedd0f19cefafc1ad625e",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00127",
+      "source_hash": "1937747b2b67f4694e9402f88057b9d27cdc8d8d7ae3f8cbe6e77620245a6d1e",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00047",
+      "source_hash": "0ae625d1373734498394756c53e6ac3c06923fbb11d75a6fee0991a37da6808f",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00054",
+      "source_hash": "bb9a16cdb61e2eaa20db80ad5063aa764b35057ac9fa7a4766239984b83ffd25",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00130",
+      "source_hash": "9281fdc2d60f5a2774b20f6ccab73937a5cf8601953d77570c33b35fc513c31d",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00048",
+      "source_hash": "3ea718e1135913bc0ee91a2cf3ed3701d46a53903716799d9dbe8c4bcd7a691c",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00055",
+      "source_hash": "a3d5c43e7cad3252bbf93b05f340614cf45677f8cce6ef4e84cbd016b22dd132",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00131",
+      "source_hash": "67a742a1afba3af8d5e5c2151f1b579105afbda17359339127c53ae7c2190737",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00051",
+      "source_hash": "069458a41eeca7bfd60335a4257e9f6c4ee48233539cae3339677c35db5aeab3",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00056",
+      "source_hash": "4eb9c8258938f3a94d05911b8419c6161e1eb479ee0106021a99201bebe594f0",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00154",
+      "source_hash": "9591d42f0944dda2ca3295938aed9b88ada4db3d8181ead42970ec9a8313108e",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00059",
+      "source_hash": "b1ff576d5b2d6f487e24834a5064575e30e5c7ab7dc8fe2982822e43232adfd0",
+      "capability_id": "matplotlib_visualization"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00057",
+      "source_hash": "f717acd6b3b599a1fe3306416f211d569a460d55e1228a825ab87818a9726ff5",
+      "capability_id": "pandas_dataframe_manipulation"
+    }
+  ]
+}

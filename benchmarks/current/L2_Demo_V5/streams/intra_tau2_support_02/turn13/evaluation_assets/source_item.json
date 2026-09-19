@@ -1,0 +1,88 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "11_0",
+        "arguments": {
+          "email": "mia.garcia2723@example.com"
+        },
+        "info": null,
+        "name": "find_user_id_by_email"
+      },
+      {
+        "action_id": "11_1",
+        "arguments": {
+          "user_id": "mia_garcia_4516"
+        },
+        "info": null,
+        "name": "get_user_details"
+      },
+      {
+        "action_id": "11_2",
+        "arguments": {
+          "order_id": "#W5490111"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "11_3",
+        "arguments": {
+          "order_id": "#W7387996"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "11_4",
+        "arguments": {
+          "item_ids": [
+            "4579334072",
+            "1421289881",
+            "6117189161",
+            "4947717507"
+          ],
+          "order_id": "#W5490111",
+          "payment_method_id": "credit_card_3124723"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      },
+      {
+        "action_id": "11_5",
+        "arguments": {
+          "item_ids": [
+            "5796612084"
+          ],
+          "order_id": "#W7387996",
+          "payment_method_id": "paypal_9497703"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": null,
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "11",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You are mia_garcia_4516 (mia.garcia2723@example.com).",
+      "reason_for_call": "For some reason, you want to return all things ordered. You have two payment methods and two orders, and you want to refund each order to the other order's payment method. If not possible, you are angry and swear for a few times, then agree to return all things with the original payment method.",
+      "task_instructions": "You are a mysterious person and do not want to reveal much about yourself or speak too many words at the same time.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

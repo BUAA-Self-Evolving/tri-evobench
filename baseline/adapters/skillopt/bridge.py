@@ -169,6 +169,8 @@ class SkillOptBridge:
 
         parsed = parse_reply(raw_text)
         parsed = _unwrap_nested_l1_reply(parsed)
+        sandbox = params.get("sandbox", {})
+        task_runtime = sandbox.get("task_runtime") if isinstance(sandbox, dict) else None
         protocol_task = _looks_like_l1_protocol_task(request, self.turn_metadata)
         workspace_artifact_required = _requires_parseable_workspace_artifact(request, self.turn_metadata)
         if not protocol_task and not parsed.actions and not parsed.tool_calls:
@@ -222,7 +224,12 @@ class SkillOptBridge:
                         break
                     executed = dict(call)
                     try:
-                        executed["observation"] = _execute_dsml_tool(executed, self.workspace, self.config)
+                        executed["observation"] = _execute_dsml_tool(
+                            executed,
+                            self.workspace,
+                            self.config,
+                            task_runtime=task_runtime if isinstance(task_runtime, dict) else None,
+                        )
                     except (OSError, ValueError, KeyError) as exc:
                         # Invalid paths/arguments are model-visible tool
                         # results, not transport failures that abort a turn.
@@ -1076,7 +1083,13 @@ def _tool_observation_prompt(calls: list[dict[str, Any]]) -> str:
     )
 
 
-def _execute_dsml_tool(call: dict[str, Any], workspace: Path | None, config: dict[str, Any]) -> str:
+def _execute_dsml_tool(
+    call: dict[str, Any],
+    workspace: Path | None,
+    config: dict[str, Any],
+    *,
+    task_runtime: dict[str, Any] | None = None,
+) -> str:
     if workspace is None:
         return "[tool error] workspace unavailable"
     name = str(call.get("name", ""))
@@ -1137,14 +1150,22 @@ def _execute_dsml_tool(call: dict[str, Any], workspace: Path | None, config: dic
         return "[tool error] empty program"
     command = [sys.executable, "-c", program] if name == "python" else ["bash", "-lc", program]
     docker_exe = os.environ.get("DOCKER_EXE") or shutil.which("docker")
-    if os.name == "nt" and docker_exe:
+    container_name = str((task_runtime or {}).get("container_name", ""))
+    if container_name:
+        if not re.fullmatch(r"trievo-l2-task-[0-9a-f]{12}", container_name):
+            raise ValueError("invalid task sandbox container name")
+        if not docker_exe:
+            return "[tool error] Docker is unavailable for the bound task sandbox"
+        inner = ["python", "-c", program] if name == "python" else ["bash", "-lc", program]
+        command = [docker_exe, "exec", "-w", "/workspace", container_name, *inner]
+    elif os.name == "nt" and docker_exe:
         image = os.environ.get("TRIEVO_TOOL_IMAGE", "trievo-ubuntu:22.04")
         inner = ["python3", "-c", program] if name == "python" else ["bash", "-lc", program]
         command = [docker_exe, "run", "--rm", "-v", f"{workspace.resolve()}:/workspace", "-w", "/workspace", image, *inner]
     try:
         result = _run_bounded(
             command,
-            cwd=None if (os.name == "nt" and docker_exe) else str(workspace),
+            cwd=None if container_name or (os.name == "nt" and docker_exe) else str(workspace),
             capture_output=True,
             text=True,
             encoding="utf-8",

@@ -29,9 +29,29 @@ def _write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value), encoding="utf-8")
 
 
+def _task_sandbox_subprocess(command, **_kwargs):
+    image = "sha256:" + "1" * 64
+    if command[1:3] == ["image", "inspect"]:
+        return subprocess.CompletedProcess(command, 0, image + "\n", "")
+    if command[1] == "run":
+        return subprocess.CompletedProcess(command, 0, "container-id\n", "")
+    if command[1] == "inspect":
+        return subprocess.CompletedProcess(command, 0, f"{image} none true\n", "")
+    if command[1] == "rm":
+        return subprocess.CompletedProcess(command, 0, "", "")
+    return subprocess.CompletedProcess(command, 0, "", "")
+
+
 def test_v5_task_sandbox_materializes_pinned_offline_container(tmp_path, monkeypatch) -> None:
     calls: list[list[str]] = []
     image = "sha256:" + "a" * 64
+
+    class WorkspaceVolume:
+        volume_name = "trievo-l2-workspace-test"
+
+        def mount_spec(self, target: str, *, read_only: bool = False) -> str:
+            assert read_only is False
+            return f"type=volume,src={self.volume_name},dst={target}"
 
     def run(command, **_kwargs):
         calls.append(command)
@@ -52,15 +72,18 @@ def test_v5_task_sandbox_materializes_pinned_offline_container(tmp_path, monkeyp
             "dependency_class": "python_stdlib",
         },
         workspace=tmp_path,
+        workspace_volume=WorkspaceVolume(),
     )
     evidence = session.start()
     session.close()
 
     run_command = next(command for command in calls if command[1] == "run")
     assert ["--network", "none"] == run_command[run_command.index("--network"):run_command.index("--network") + 2]
-    assert f"{tmp_path.resolve()}:/workspace" in run_command
+    assert "type=volume,src=trievo-l2-workspace-test,dst=/workspace" in run_command
+    assert f"{tmp_path.resolve()}:/workspace" not in run_command
     assert evidence["image_digest"] == image
     assert evidence["network_mode"] == "none"
+    assert evidence["workspace_transport"] == "docker_volume"
 
 
 def test_v5_runtime_profile_can_only_tighten_turn_limits() -> None:
@@ -81,6 +104,36 @@ def test_v5_runtime_profile_can_only_tighten_turn_limits() -> None:
     assert limits.terminal_timeout_seconds == 90
     assert limits.max_tool_calls == 6
     assert limits.max_output_tokens == 4096
+
+
+def test_v5_task_local_seed_can_copy_directory_contents_to_workspace_root(
+    tmp_path,
+) -> None:
+    turn_dir = tmp_path / "turn1"
+    seed = turn_dir / "workspace_seed"
+    seed.mkdir(parents=True)
+    (seed / "input.txt").write_text("seed\n", encoding="utf-8")
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    runner = object.__new__(L2AgentStreamRunner)
+    runner._taskstream_schema_version = "l2_taskstream/1.2"
+
+    runner._apply_taskstream_transition(
+        {
+            "workspace_transition": {
+                "mode": "task_local_seed",
+                "operations": [{
+                    "op": "copy",
+                    "source": "workspace_seed",
+                    "target": "agent_workspace/.",
+                }],
+            }
+        },
+        turn_dir,
+        workspace,
+    )
+
+    assert (workspace / "input.txt").read_text(encoding="utf-8") == "seed\n"
 
 
 def _package(root: Path, *, turns: int = 2, simulator_messages: int = 0) -> Path:
@@ -948,8 +1001,11 @@ def test_taskstream_can_select_daemon_owned_volume_transport(tmp_path, monkeypat
             self.volume_name = f"volume-{role}"
             self.closed = False
 
-        def mount(self, target, *, read_only=False):
-            return f"{self.volume_name}:{target}{':ro' if read_only else ''}"
+        def mount_spec(self, target, *, read_only=False):
+            return (
+                f"type=volume,src={self.volume_name},dst={target}"
+                f"{',readonly' if read_only else ''}"
+            )
 
         def sync_from_host(self):
             return None
@@ -973,6 +1029,55 @@ def test_taskstream_can_select_daemon_owned_volume_transport(tmp_path, monkeypat
 
     report = L2AgentStreamRunner(
         _options(package, tmp_path / "out-volume", "evolving")
+    ).run()
+
+    assert report["run_configuration"]["docker_volume_transport"] is True
+    assert runtimes[0].workspace_mount == "volume-l2-workspace"
+    assert [mirror.volume_name for mirror in mirrors] == [
+        "volume-l2-workspace",
+        "volume-l2-package",
+    ]
+    assert all(mirror.closed for mirror in mirrors)
+
+
+def test_v5_taskstream_forces_daemon_owned_volume_transport(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path, turns=1)
+    runtimes = _install_fake_runtime(monkeypatch)
+    mirrors = []
+
+    class Mirror:
+        def __init__(self, role):
+            self.volume_name = f"volume-{role}"
+            self.closed = False
+
+        def mount_spec(self, target, *, read_only=False):
+            return (
+                f"type=volume,src={self.volume_name},dst={target}"
+                f"{',readonly' if read_only else ''}"
+            )
+
+        def sync_from_host(self):
+            return None
+
+        def sync_to_host(self):
+            return None
+
+        def close(self):
+            self.closed = True
+
+    def create(_path, *, role, **_kwargs):
+        mirror = Mirror(role)
+        mirrors.append(mirror)
+        return mirror
+
+    monkeypatch.delenv("TRIEVO_DOCKER_VOLUME_TRANSPORT", raising=False)
+    monkeypatch.setattr(
+        "trievo_bench.l2_agent.DockerVolumeMirror.create",
+        create,
+    )
+
+    report = L2AgentStreamRunner(
+        _v5_options(package, tmp_path / "out-v5-forced-volume", "evolving")
     ).run()
 
     assert report["run_configuration"]["docker_volume_transport"] is True
@@ -1063,8 +1168,11 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
         def __init__(self, name):
             self.volume_name = name
 
-        def mount(self, target, *, read_only=False):
-            return f"{self.volume_name}:{target}{':ro' if read_only else ''}"
+        def mount_spec(self, target, *, read_only=False):
+            return (
+                f"type=volume,src={self.volume_name},dst={target}"
+                f"{',readonly' if read_only else ''}"
+            )
 
     def run(command, **kwargs):
         captured.setdefault("calls", []).append((command, kwargs))
@@ -1101,8 +1209,8 @@ def test_native_verifier_uses_named_volumes_without_proxy_environment(
     assert verifier_kwargs["input"]
     assert "--network" in command
     assert command[command.index("--network") + 1] == "none"
-    assert "package-volume:/opt/l2_demo:ro" in command
-    assert "workspace-volume:/workspace" in command
+    assert "type=volume,src=package-volume,dst=/opt/l2_demo,readonly" in command
+    assert "type=volume,src=workspace-volume,dst=/workspace" in command
     for name in l2_agent_module._VERIFIER_PROXY_ENV_NAMES:
         index = command.index(f"{name}=")
         assert command[index - 1] == "-e"

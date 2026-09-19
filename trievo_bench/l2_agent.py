@@ -72,9 +72,16 @@ class L2AgentRunError(RuntimeError):
 class _TaskSandboxSession:
     """One disposable, network-disabled execution sandbox for a V5 Turn."""
 
-    def __init__(self, *, profile: dict[str, Any], workspace: Path) -> None:
+    def __init__(
+        self,
+        *,
+        profile: dict[str, Any],
+        workspace: Path,
+        workspace_volume: DockerVolumeMirror,
+    ) -> None:
         self.profile = profile
         self.workspace = workspace.resolve()
+        self.workspace_volume = workspace_volume
         self.name = f"trievo-l2-task-{uuid4().hex[:12]}"
         self.image = str(profile["task_sandbox_image_digest"])
         self._started = False
@@ -99,7 +106,7 @@ class _TaskSandboxSession:
             "--network", "none", "--cap-drop", "ALL",
             "--security-opt", "no-new-privileges", "--pids-limit", "256",
             "--memory", "4g", "--cpus", "2",
-            "-v", f"{self.workspace}:/workspace",
+            "--mount", self.workspace_volume.mount_spec("/workspace"),
             "-w", "/workspace", self.image,
             "sh", "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
         ]
@@ -138,6 +145,7 @@ class _TaskSandboxSession:
             "image_digest": actual_image,
             "network_mode": "none",
             "workspace_mount": "/workspace",
+            "workspace_transport": "docker_volume",
             "tool_profile_id": self.profile["tool_profile_id"],
             "dependency_class": self.profile["dependency_class"],
         }
@@ -524,7 +532,10 @@ class L2AgentStreamRunner:
                 shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
         else:
             shutil.copytree(agent_workspace, workspace, dirs_exist_ok=True)
-        volume_transport = docker_volume_transport_enabled()
+        # V5 task sandboxes must share the daemon-owned workspace volume with
+        # the baseline runtime. Raw host binds can be remapped by nested Docker
+        # hosts and would make successful tool calls invisible to verification.
+        volume_transport = is_v5 or docker_volume_transport_enabled()
         report: dict[str, Any] = {
             "schema_version": "l2-agent-runtime-0.2-taskstream",
             "run_id": run_id,
@@ -608,9 +619,12 @@ class L2AgentStreamRunner:
                     self._close_task_sandbox()
                     if self._current_v5_profile is None:
                         raise L2AgentRunError("V5 Turn has no active runtime profile")
+                    if self._workspace_volume is None:
+                        raise L2AgentRunError("V5 task sandbox requires Docker volume transport")
                     self._task_sandbox = _TaskSandboxSession(
                         profile=self._current_v5_profile,
                         workspace=workspace,
+                        workspace_volume=self._workspace_volume,
                     )
                     task_sandbox_evidence = self._task_sandbox.start()
                 sequence_role = _validate_taskstream_turn_identity(
@@ -1149,6 +1163,20 @@ class L2AgentStreamRunner:
             source = _under(turn_dir, str(operation.get("source", "")))
             target_name = str(operation.get("target", "")).removeprefix("agent_workspace/")
             target = _under(workspace, target_name)
+            if target_name in {"", "."}:
+                if not source.is_dir():
+                    raise L2AgentRunError("workspace-root transition source must be a directory")
+                for child in source.iterdir():
+                    child_target = workspace / child.name
+                    if child_target.exists():
+                        raise L2AgentRunError(
+                            f"TaskStream transition target already exists: {child.name}"
+                        )
+                    if child.is_dir():
+                        shutil.copytree(child, child_target)
+                    else:
+                        shutil.copy2(child, child_target)
+                continue
             if target.exists():
                 raise L2AgentRunError(f"TaskStream transition target already exists: {target_name}")
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -1223,15 +1251,15 @@ class L2AgentStreamRunner:
             verifier_image = declared_verifier
         package_volume = getattr(self, "_package_volume", None)
         workspace_volume = getattr(self, "_workspace_volume", None)
-        package_mount = (
-            package_volume.mount("/opt/l2_demo", read_only=True)
+        package_mount_args = (
+            ["--mount", package_volume.mount_spec("/opt/l2_demo", read_only=True)]
             if package_volume is not None
-            else f"{package_root}:/opt/l2_demo:ro"
+            else ["-v", f"{package_root}:/opt/l2_demo:ro"]
         )
-        workspace_mount = (
-            workspace_volume.mount("/workspace")
+        workspace_mount_args = (
+            ["--mount", workspace_volume.mount_spec("/workspace")]
             if workspace_volume is not None
-            else f"{workspace}:/workspace"
+            else ["-v", f"{workspace}:/workspace"]
         )
         blocked_proxy_environment = [
             item
@@ -1242,7 +1270,7 @@ class L2AgentStreamRunner:
         command = [
             _docker_executable(), "run", "--name", verifier_container, "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
-            "-v", package_mount, "-v", workspace_mount,
+            *package_mount_args, *workspace_mount_args,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
             *blocked_proxy_environment,
             verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",

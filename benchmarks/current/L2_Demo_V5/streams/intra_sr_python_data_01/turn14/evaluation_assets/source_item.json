@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00029",
+  "dataset": "bigcodebench",
+  "question": "Standardize a numeric array using sklearn's StandardScaler and encode the standardized data in base64 format as an ASCII string.\nThe function should output with:\n    str: The base64-encoded ASCII string representation of the standardized data.\nYou should write self-contained code starting with:\n```\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\nimport base64\ndef task_func(data):\n```",
+  "skill_annotations": [
+    "bigcodebench_078",
+    "bigcodebench_137",
+    "bigcodebench_024"
+  ],
+  "eval_data": {
+    "answer": "    scaler = StandardScaler()\n    standardized_data = scaler.fit_transform(data)\n    standardized_data_str = np.array2string(standardized_data)\n    encoded_data = base64.b64encode(standardized_data_str.encode('ascii')).decode('ascii')\n    \n    return encoded_data",
+    "code_prompt": "from sklearn.preprocessing import StandardScaler\nimport numpy as np\nimport base64\ndef task_func(data):\n",
+    "test": "import unittest\nfrom unittest.mock import patch \nimport numpy as np\nimport base64\nfrom sklearn.preprocessing import StandardScaler\nclass TestCases(unittest.TestCase):\n    def test_output_is_string_and_valid_base64(self):\n        # Check that the function returns a valid base64 string.\n        data = np.array([[0, 0], [0, 0], [1, 1], [1, 1]])\n        encoded_data = task_func(data)\n        self.assertIsInstance(encoded_data, str)\n        try:\n            decoded_data = base64.b64decode(encoded_data).decode('ascii')\n            self.assertTrue(decoded_data.startswith('[[') and decoded_data.endswith(']]'))\n        except Exception as e:\n            self.fail(f\"Decoding base64 failed with error: {e}\")\n    def test_with_mocked_scaler(self):\n        # Mock StandardScaler to control the standardized output and check interaction\n        with patch('sklearn.preprocessing.StandardScaler.fit_transform', return_value=np.array([[0, 0], [0, 0], [1, 1], [1, 1]])) as mocked_method:\n            data = np.array([[10, 5], [15, 7], [12, 6]])\n            encoded_data = task_func(data)\n            mocked_method.assert_called_once()\n            decoded_data = base64.b64decode(encoded_data).decode('ascii')\n            self.assertIn('[[0 0]\\n [0 0]\\n [1 1]\\n [1 1]]', decoded_data) \n    def test_varied_data_sets(self):\n        # This will cycle through various datasets and ensure they're processed without error\n        datasets = [\n            np.array([[10, 5], [15, 7], [12, 6]]),\n            np.array([[25, 30], [35, 40], [45, 50]]),\n            np.array([[-5, -10], [-15, -20], [-25, -30]]),\n            np.array([[0.5, 0.7], [0.9, 1.1], [1.3, 1.5]])\n        ]\n        for data in datasets:\n            encoded_data = task_func(data)\n            self.assertIsInstance(encoded_data, str)\n            decoded_data = base64.b64decode(encoded_data).decode('ascii')\n            self.assertTrue(decoded_data.startswith('[[') and decoded_data.endswith(']]'))",
+    "entry_point": "task_func"
+  }
+}

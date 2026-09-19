@@ -1,0 +1,80 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Testing if the agent can handle user asking for 3 changes at once.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "17_0",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-25",
+              "flight_number": "HAT056"
+            },
+            {
+              "date": "2024-05-25",
+              "flight_number": "HAT138"
+            }
+          ],
+          "payment_id": "gift_card_8190333",
+          "reservation_id": "FQ8APE"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "17_1",
+        "arguments": {
+          "passengers": [
+            {
+              "dob": "1970-06-06",
+              "first_name": "Omar",
+              "last_name": "Rossi"
+            }
+          ],
+          "reservation_id": "FQ8APE"
+        },
+        "info": null,
+        "name": "update_reservation_passengers"
+      },
+      {
+        "action_id": "17_2",
+        "arguments": {
+          "nonfree_baggages": 0,
+          "payment_id": "gift_card_8190333",
+          "reservation_id": "FQ8APE",
+          "total_baggages": 3
+        },
+        "info": null,
+        "name": "update_reservation_baggages"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Reservation FQ8APE is updated to economy.",
+      "Passenger for reservation FQ8APE is updated to Omar Rossi.",
+      "Number of bags for reservation FQ8APE is updated to 3."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "17",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "Your name is Omar Rossi.\n\nYour user id is omar_rossi_1241.",
+      "reason_for_call": "For your upcoming trip from New York to Chicago, you want to:\n- add 3 checked bags\n- change the passenger to yourself\n- upgrade it to economy class. \n\nMention all three things at once and in this order.",
+      "task_instructions": "You prefer gift card payment.\n\nYour birthday is in your user profile so you prefer not to provide it.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "cross_offer_retail_filesystem_01",
+  "pool_id": "cross_benchmark_multi_capability",
+  "composition_policy": "three_capabilities_three_benchmarks",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "skilllearnbench:offer-letter-generator-1",
+      "source_hash": "800eee0b1473c87b446cde4bc4d59c7b069277e0e33568495134f6a5ab7b18d1",
+      "capability_id": "offer_letter_generation"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:retail:13",
+      "source_hash": "d12d616a63714f85186276de764a67ebeb3728204a7d06c91a635c43415676b4",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00206",
+      "source_hash": "fad5038383959b880746706938666dd2e610651a2e508f392c6b2743e1ed9da9",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:offer-letter-generator-2",
+      "source_hash": "4c6efd89bfa2686e4c5808ba6b4d0759556ca6e9bb56da37cc526a420c429076",
+      "capability_id": "offer_letter_generation"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:14",
+      "source_hash": "395a84680c99f65fb83339e0784951c599704773a9fbc4340fddd94ea74fb32f",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00211",
+      "source_hash": "dc4176601483cb5054bb3892e92bd8909df0405944d21cbe4700260627547a34",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:offer-letter-generator-3",
+      "source_hash": "d2063c3fe822f0ab9081f18dac288b3877f654c1c6907407bbec8bb1200436bc",
+      "capability_id": "offer_letter_generation"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:16",
+      "source_hash": "c99e9277b9c211c8f85ff3c10e62458bd7f8eed115d45da7f870a837ec25767c",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00260",
+      "source_hash": "2ee853bbbe922d10b27e1665b275f0371b1aa54629b609328b7c36f0ae6de532",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:offer-letter-generator-4",
+      "source_hash": "ae2829312ceb0471c08fe7f4584392038b9481432b8ff5473e2533aba153bd44",
+      "capability_id": "offer_letter_generation"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:18",
+      "source_hash": "9f5f2d7c533f3e91b29e8c7fddcc3ae0a06770bb459ac5a84dda8693669960f1",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00263",
+      "source_hash": "b02c69dc93854f65964af4cbd5dc3aea81606bdc0151c77a284d01296c5eba78",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "skilllearnbench:offer-letter-generator-5",
+      "source_hash": "d1356f1e1be07cc6da2fd10bb90a940d6c2d3d736bcebca94c814a5331c37cae",
+      "capability_id": "offer_letter_generation"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:retail:19",
+      "source_hash": "86fcd31a9cf8a1ad5017527b5efaee556d6b2206450ad24f50ababc9284d388e",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00265",
+      "source_hash": "88afdf57471dd2f1b30379484516b60283b8576f4b4353fc8f661927cbf9b8b0",
+      "capability_id": "filesystem_path_operations"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "2_0",
+        "arguments": {
+          "first_name": "Yusuf",
+          "last_name": "Rossi",
+          "zip": "19122"
+        },
+        "info": null,
+        "name": "find_user_id_by_name_zip"
+      },
+      {
+        "action_id": "2_1",
+        "arguments": {
+          "product_id": "6086499569"
+        },
+        "info": null,
+        "name": "get_product_details"
+      },
+      {
+        "action_id": "2_3",
+        "arguments": {
+          "product_id": "9523456873"
+        },
+        "info": null,
+        "name": "get_product_details"
+      },
+      {
+        "action_id": "2_4",
+        "arguments": {
+          "user_id": "yusuf_rossi_9620"
+        },
+        "info": null,
+        "name": "get_user_details"
+      },
+      {
+        "action_id": "2_5",
+        "arguments": {
+          "order_id": "#W6247578"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "2_6",
+        "arguments": {
+          "order_id": "#W9711842"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "2_7",
+        "arguments": {
+          "order_id": "#W4776164"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "2_8",
+        "arguments": {
+          "order_id": "#W6679257"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "2_9",
+        "arguments": {
+          "order_id": "#W2378156"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "2_10",
+        "arguments": {
+          "product_id": "9523456873"
+        },
+        "info": null,
+        "name": "get_product_details"
+      },
+      {
+        "action_id": "2_11",
+        "arguments": {
+          "item_ids": [
+            "4602305039",
+            "4202497723",
+            "9408160950"
+          ],
+          "order_id": "#W2378156",
+          "payment_method_id": "credit_card_9513926"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      }
+    ],
+    "communicate_info": [
+      "10"
+    ],
+    "nl_assertions": [
+      "Agent should tell the user that there are 10 t-shirt options available."
+    ],
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "2",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You are Yusuf Rossi in zip code 19122.",
+      "reason_for_call": "You want to know exactly how many tshirt options are available in the online store right now. You want to also return the cleaner, headphone, and smart watch.",
+      "task_instructions": ".",
+      "unknown_info": "You do not remember your email address"
+    },
+    "persona": null
+  }
+}

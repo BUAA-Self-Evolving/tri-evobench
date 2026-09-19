@@ -1,0 +1,39 @@
+{
+  "actions": [
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-27",
+            "flight_number": "HAT078"
+          },
+          {
+            "date": "2024-05-27",
+            "flight_number": "HAT118"
+          },
+          {
+            "date": "2024-05-27",
+            "flight_number": "HAT290"
+          },
+          {
+            "date": "2024-05-27",
+            "flight_number": "HAT175"
+          }
+        ],
+        "payment_id": "gift_card_6276644",
+        "reservation_id": "OBUT9V"
+      }
+    },
+    {
+      "name": "update_reservation_baggages",
+      "arguments": {
+        "nonfree_baggages": 0,
+        "payment_id": "gift_card_6276644",
+        "reservation_id": "OBUT9V",
+        "total_baggages": 2
+      }
+    }
+  ]
+}

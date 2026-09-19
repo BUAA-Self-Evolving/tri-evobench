@@ -238,6 +238,14 @@ class ProcessBaselineRuntime(BaselineRuntime):
             variables = self._template_variables(context)
             self._template_values = variables
             command = [_render(item, variables) for item in adapter["command"]]
+            if context.workspace_mount is not None:
+                command = _rewrite_named_volume_mount(
+                    command, context.workspace_mount, "/workspace"
+                )
+            if self._state_volume is not None:
+                command = _rewrite_named_volume_mount(
+                    command, self._state_volume.volume_name, "/state"
+                )
             command[0] = _resolve_executable(command[0])
             cleanup = adapter.get("cleanup_command")
             self._cleanup_command = (
@@ -889,6 +897,26 @@ def _render(value: str, variables: dict[str, str]) -> str:
     for key, replacement in variables.items():
         rendered = rendered.replace("{" + key + "}", replacement)
     return rendered
+
+
+def _rewrite_named_volume_mount(
+    command: list[str], volume_name: str, target: str
+) -> list[str]:
+    """Rewrite one known named-volume ``-v`` pair to explicit mount syntax."""
+    expected = f"{volume_name}:{target}"
+    rewritten: list[str] = []
+    index = 0
+    while index < len(command):
+        if index + 1 < len(command) and command[index] == "-v" and command[index + 1] == expected:
+            rewritten.extend([
+                "--mount",
+                f"type=volume,src={volume_name},dst={target}",
+            ])
+            index += 2
+            continue
+        rewritten.append(command[index])
+        index += 1
+    return rewritten
 
 
 def _safe_name(value: str) -> str:

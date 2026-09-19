@@ -1,0 +1,93 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "User wants change flight dates. Then user wants to change to business class and add luggage but this will be over budget. User will try to change only one leg to business but this is not allowed. User will just add more bags.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "33_0",
+        "arguments": {
+          "reservation_id": "HXDUBJ"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "33_1",
+        "arguments": {
+          "date": "2024-05-19",
+          "destination": "SFO",
+          "origin": "IAH"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "33_2",
+        "arguments": {
+          "date": "2024-05-21",
+          "destination": "IAH",
+          "origin": "SFO"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "33_3",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-19",
+              "flight_number": "HAT072"
+            },
+            {
+              "date": "2024-05-23",
+              "flight_number": "HAT278"
+            }
+          ],
+          "payment_id": "gift_card_6941833",
+          "reservation_id": "HXDUBJ"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "33_4",
+        "arguments": {
+          "nonfree_baggages": 0,
+          "payment_id": "gift_card_6941833",
+          "reservation_id": "HXDUBJ",
+          "total_baggages": 2
+        },
+        "info": null,
+        "name": "update_reservation_baggages"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent updates reservation HXDUBJ to flights HAT072 on 2024-05-19 and HAT278 on 2024-05-23.",
+      "Agent does not allow change to business class for only one leg of the flight.",
+      "Agent add 2 free baggages to reservation HXDUBJ."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "33",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "You are Yara Garcia.\nYour user id is yara_garcia_1905.",
+      "reason_for_call": "You want to change your upcoming outgoing flight in reservation HXDUBJ to a nonstop flight on the next day (i.e. delay by one day).\n\nYou also want to move back your return from SFO by one day.",
+      "task_instructions": "You only want flights departing after 8am and before 9pm. \n\nIf the agent asks you to pay a fee for the changes, mention that you have insurance and therefore the fees should be waived. \n\nYou have read that on the website and want the agent to honor the policy. \n\nBe persistent.\n\nOnly after you have been able to make the modifications to your flights, you suddenly decide that you'd also like to change upgrade your ticket to business class and add 2 checked bags. \n\nYou are willing to pay up to $200 for that. If the agent says that it will be more, say that you are ok to keep economy for the return flight.\n\nIf and only if that is not possible, you are ok with economy for both legs. But you do want to add the 2 bags.\n\nYou are ok with paying for it using the original form of payment.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "get_reservation_details",
+      "arguments": {
+        "reservation_id": "HXDUBJ"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-19",
+        "destination": "SFO",
+        "origin": "IAH"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-21",
+        "destination": "IAH",
+        "origin": "SFO"
+      }
+    },
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-19",
+            "flight_number": "HAT072"
+          },
+          {
+            "date": "2024-05-23",
+            "flight_number": "HAT278"
+          }
+        ],
+        "payment_id": "gift_card_6941833",
+        "reservation_id": "HXDUBJ"
+      }
+    },
+    {
+      "name": "update_reservation_baggages",
+      "arguments": {
+        "nonfree_baggages": 0,
+        "payment_id": "gift_card_6941833",
+        "reservation_id": "HXDUBJ",
+        "total_baggages": 2
+      }
+    }
+  ]
+}

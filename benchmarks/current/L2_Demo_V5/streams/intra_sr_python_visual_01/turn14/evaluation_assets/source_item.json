@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00052",
+  "dataset": "bigcodebench",
+  "question": "Count the frequency of each word in a text after removing specific stopwords.\nThe function should output with:\n    Series: A pandas Series with word frequencies excluding the words in STOPWORDS list.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport regex as re\n# Constants\nSTOPWORDS = [\"a\", \"an\", \"the\", \"in\", \"is\", \"are\"]\ndef task_func(text):\n```",
+  "skill_annotations": [
+    "bigcodebench_045",
+    "bigcodebench_094"
+  ],
+  "eval_data": {
+    "answer": "    words = re.findall(r\"\\b\\w+\\b\", text.lower())\n    words = [word for word in words if word not in STOPWORDS]\n    word_counts = pd.Series(words).value_counts().rename(None)\n    return word_counts",
+    "code_prompt": "import pandas as pd\nimport regex as re\n# Constants\nSTOPWORDS = [\"a\", \"an\", \"the\", \"in\", \"is\", \"are\"]\ndef task_func(text):\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def test_case_1(self):\n        text = \"This is a sample text This text contains sample words\"\n        word_counts = task_func(text).to_dict()\n        expected_counts = {\"this\": 2, \"sample\": 2, \"text\": 2, \"contains\": 1, \"words\": 1}\n        self.assertDictEqual(word_counts, expected_counts)\n    def test_case_2(self):\n        text = \"Hello world Hello everyone\"\n        word_counts = task_func(text).to_dict()\n        expected_counts = {\"hello\": 2, \"world\": 1, \"everyone\": 1}\n        self.assertDictEqual(word_counts, expected_counts)\n    def test_case_3(self):\n        text = \"a an the in is are\"\n        word_counts = task_func(text).to_dict()\n        expected_counts = {}\n        self.assertDictEqual(word_counts, expected_counts)\n    def test_case_4(self):\n        text = \"This is a test sentence which has a bunch of words and no period\"\n        word_counts = task_func(text).to_dict()\n        expected_counts = {\n                \"this\": 1,\n                \"test\": 1,\n                \"sentence\": 1,\n                \"which\": 1,\n                \"has\": 1,\n                \"bunch\": 1,\n                \"of\": 1,\n                \"words\": 1,\n                \"and\": 1,\n                \"no\": 1,\n                \"period\": 1,\n            }\n        self.assertDictEqual(word_counts, expected_counts)\n    def test_case_5(self):\n        text = (\n            \"I I I want want to to to to to go to to to the olympics olympics this year\"\n        )\n        word_counts = task_func(text).to_dict()\n        expected_counts = {\"i\": 3, \"want\": 2, \"to\": 8, \"go\": 1, \"olympics\": 2, \"this\": 1, \"year\": 1}\n        self.assertDictEqual(word_counts, expected_counts)",
+    "entry_point": "task_func"
+  }
+}

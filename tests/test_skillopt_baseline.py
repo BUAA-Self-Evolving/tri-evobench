@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import ModuleType
+from unittest.mock import patch
 
 from baseline.adapters.skillopt.bridge import (
     SkillOptBridge,
@@ -136,6 +137,28 @@ class SkillOptBaselineContractTest(unittest.TestCase):
             self.assertIn("result.txt", _execute_dsml_tool({
                 "name": "filesystem", "arguments": {"path": "/workspace"},
             }, workspace, {}))
+
+    def test_l2_terminal_tool_executes_in_bound_task_sandbox(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            with patch("baseline.adapters.skillopt.bridge._run_bounded") as run:
+                run.return_value.returncode = 0
+                run.return_value.stdout = "ok\n"
+                run.return_value.stderr = ""
+                result = _execute_dsml_tool(
+                    {"name": "terminal", "arguments": {"command": "python -V"}},
+                    workspace,
+                    {"tool_timeout": 90},
+                    task_runtime={"container_name": "trievo-l2-task-deadbeef1234"},
+                )
+            self.assertEqual(result, "ok")
+            command = run.call_args.args[0]
+            self.assertEqual(Path(command[0]).name, "docker")
+            self.assertEqual(
+                command[1:6],
+                ["exec", "-w", "/workspace", "trievo-l2-task-deadbeef1234", "bash"],
+            )
+            self.assertIsNone(run.call_args.kwargs["cwd"])
 
     def test_claude_style_text_tool_envelope_is_parsed(self) -> None:
         text = """<tool_uses><tool_use><tool_name>Write</tool_name>

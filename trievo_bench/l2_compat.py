@@ -42,6 +42,23 @@ def _load_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise L2SpecError(f"invalid JSONL: {path}") from exc
+    for number, line in enumerate(lines, start=1):
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise L2SpecError(f"invalid JSONL: {path}:{number}") from exc
+        if not isinstance(value, dict):
+            raise L2SpecError(f"JSONL row must be an object: {path}:{number}")
+        rows.append(value)
+    return rows
+
+
 def _under(root: Path, relative: str) -> Path:
     candidate = (root / relative).resolve()
     if candidate != root and root not in candidate.parents:
@@ -100,6 +117,7 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
             _validate_taskstream_execution_requirements(stream_id, manifest)
             if v5_contract is not None:
                 _validate_v5_stream(stream_id, manifest, v5_contract)
+                v5_contract.setdefault("stream_capabilities", {})[stream_id] = manifest.get("capabilities", [])
             for turn_index, item in enumerate(ordering["turn_order"], start=1):
                 if not isinstance(item, str):
                     raise L2SpecError(f"{stream_id}: turn ids must be text")
@@ -147,6 +165,7 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
                     if source_identity in v5_source_identities:
                         raise L2SpecError(f"{stream_id}/{item}: duplicate source identity")
                     v5_source_identities.add(source_identity)
+                    _validate_v5_source_selection(stream_id, item, task, summary, v5_contract)
                 _validate_taskstream_transition(
                     stream_dir,
                     task_path.parent,
@@ -219,6 +238,37 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
     return result
 
 
+def _validate_v5_source_selection(
+    stream_id: str,
+    turn_id: str,
+    task: dict[str, Any],
+    summary: dict[str, Any],
+    contract: dict[str, Any],
+) -> None:
+    source = task["source_basis"]
+    source_id = f"{source['benchmark_id']}:{source['source_task_id']}"
+    source_map = contract.get("source_map")
+    if isinstance(source_map, dict):
+        catalog = source_map.get(source_id)
+        if not isinstance(catalog, dict) or catalog.get("source") != source:
+            raise L2SpecError(f"{stream_id}/{turn_id}: task source does not match source catalog")
+    selection_map = contract.get("selection_map")
+    if isinstance(selection_map, dict):
+        selected = selection_map.get((stream_id, turn_id))
+        expected = {
+            "turn_id": turn_id,
+            "turn_index": task.get("turn_index"),
+            "sequence_role": task.get("sequence_role"),
+            "source_id": source_id,
+            "source_hash": source.get("source_hash"),
+            "capability_id": task.get("taxonomy_ref", {}).get("capability_id"),
+        }
+        if not isinstance(selected, dict) or any(selected.get(key) != value for key, value in expected.items()):
+            raise L2SpecError(f"{stream_id}/{turn_id}: selection provenance does not match task")
+        if summary.get("source_task_id") != source.get("source_task_id"):
+            raise L2SpecError(f"{stream_id}/{turn_id}: stream summary source does not match task")
+
+
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -254,6 +304,53 @@ def _load_v5_contract(root: Path) -> dict[str, Any] | None:
             label = key.removesuffix("_manifest").replace("_", " ")
             raise L2SpecError(f"{label} SHA-256 binding mismatch")
         loaded[key] = _load_json(path)
+
+    optional_bindings = {
+        "source_catalog": "source_tasks.jsonl",
+        "selection_manifest": "stream_plan.json",
+    }
+    for key, default_path in optional_bindings.items():
+        binding = manifest.get(key)
+        if binding is None:
+            continue
+        if not isinstance(binding, dict):
+            raise L2SpecError(f"1.2 manifest requires {key} binding to be an object")
+        relative = binding.get("path", default_path)
+        if not isinstance(relative, str) or not relative:
+            raise L2SpecError(f"{key}.path must be non-empty")
+        path = _under(root, relative)
+        if not path.is_file():
+            raise L2SpecError(f"{key} path is missing: {relative}")
+        digest = binding.get("sha256")
+        if not isinstance(digest, str) or digest != _sha256(path):
+            raise L2SpecError(f"{key} SHA-256 binding mismatch")
+        loaded[key] = _load_jsonl(path) if key == "source_catalog" else _load_json(path)
+
+    if "source_catalog" in loaded:
+        source_map: dict[str, dict[str, Any]] = {}
+        for row in loaded["source_catalog"]:
+            source_id = row.get("source_id")
+            if not isinstance(source_id, str) or not source_id or source_id in source_map:
+                raise L2SpecError("source_catalog source_id values must be unique non-empty strings")
+            source_map[source_id] = row
+        loaded["source_map"] = source_map
+    selection_dir = root / "selections"
+    if selection_dir.is_dir():
+        selection_map: dict[tuple[str, str], dict[str, Any]] = {}
+        for path in sorted(selection_dir.glob("*.json")):
+            document = _load_json(path)
+            stream_id = document.get("stream_id")
+            selected = document.get("selected_turns")
+            if not isinstance(stream_id, str) or not isinstance(selected, list):
+                raise L2SpecError(f"{path.name}: invalid selection provenance")
+            for item in selected:
+                if not isinstance(item, dict) or not isinstance(item.get("turn_id"), str):
+                    raise L2SpecError(f"{path.name}: invalid selected turn")
+                key = (stream_id, item["turn_id"])
+                if key in selection_map:
+                    raise L2SpecError(f"duplicate selection provenance for {stream_id}/{item['turn_id']}")
+                selection_map[key] = item
+        loaded["selection_map"] = selection_map
 
     pools = loaded["pool_manifest"]
     if pools.get("schema_version") != "l2_pools/1.0":
@@ -444,6 +541,23 @@ def _validate_v5_task(
             parent_taxonomy = parent_task.get("taxonomy_ref", {})
             if parent_taxonomy.get("capability_id") != capability_id:
                 raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe references another capability")
+        if len(set(parents)) != len(parents):
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe transfer references must be unique")
+        interference = probe.get("interference_capability_ids")
+        stream_capabilities = {
+            item.get("capability_id") for item in v5_contract.get("stream_capabilities", {}).get(stream_id, [])
+            if isinstance(item, dict)
+        }
+        if (
+            not isinstance(interference, list)
+            or len(interference) < 2
+            or len(set(interference)) != len(interference)
+            or capability_id in interference
+            or not set(interference).issubset(stream_capabilities)
+        ):
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: invalid probe interference capabilities")
+        if probe.get("held_out_source_task_id") != source["source_task_id"]:
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe held-out source does not match task")
     elif probe is not None:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe_spec is only allowed on probe Turns")
     return (source["benchmark_id"], source["benchmark_revision"], source["source_task_id"])

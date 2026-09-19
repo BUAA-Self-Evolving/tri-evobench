@@ -1,197 +1,476 @@
 {
-  "schema_version": "l2_v5_stream_plan/1.0",
-  "seed": 20260919,
-  "instances_per_capability": 4,
+  "classifier_version": "l2-data-pipeline/1.0",
+  "package_id": "L2_Demo_V5",
+  "review_version": "adjudicated-gold/1.1",
+  "runtime_profiles": [
+    {
+      "dependency_class": "source_native",
+      "learner_state_abi": "baseline_state/1.0",
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "mount_path": "/baseline_state",
+      "network": "disabled",
+      "owner": "baseline",
+      "permission": "rw",
+      "runtime_profile_id": "skilllearn_task_v1",
+      "serialization_version": "1",
+      "task_sandbox_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "turn_timeout_seconds": 900,
+      "verifier_image_class": "python",
+      "verifier_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb"
+    },
+    {
+      "dependency_class": "source_native",
+      "learner_state_abi": "baseline_state/1.0",
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "mount_path": "/baseline_state",
+      "network": "disabled",
+      "owner": "baseline",
+      "permission": "rw",
+      "runtime_profile_id": "skillsbench_task_v1",
+      "serialization_version": "1",
+      "task_sandbox_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "turn_timeout_seconds": 900,
+      "verifier_image_class": "python",
+      "verifier_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb"
+    },
+    {
+      "dependency_class": "source_native",
+      "learner_state_abi": "baseline_state/1.0",
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "mount_path": "/baseline_state",
+      "network": "disabled",
+      "owner": "baseline",
+      "permission": "rw",
+      "runtime_profile_id": "sr_agents_python_v1",
+      "serialization_version": "1",
+      "task_sandbox_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb",
+      "tool_profile_id": "terminal_filesystem_v1",
+      "turn_timeout_seconds": 900,
+      "verifier_image_class": "python",
+      "verifier_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb"
+    },
+    {
+      "dependency_class": "source_native",
+      "learner_state_abi": "baseline_state/1.0",
+      "learner_state_mount_profile": "baseline_explicit_v1",
+      "mount_path": "/baseline_state",
+      "network": "disabled",
+      "owner": "baseline",
+      "permission": "rw",
+      "runtime_profile_id": "tau2_tool_v1",
+      "serialization_version": "1",
+      "task_sandbox_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb",
+      "tool_profile_id": "terminal_json_tools_v1",
+      "turn_timeout_seconds": 900,
+      "verifier_image_class": "python",
+      "verifier_image_digest": "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb"
+    }
+  ],
+  "schema_version": "l2_stream_plan/1.0",
+  "selection_seed": 20260919,
   "streams": [
     {
-      "stream_id": "intra_tau2_banking_ops_01",
+      "capabilities": [
+        {
+          "capability_id": "pandas_dataframe_manipulation",
+          "source_ids": [
+            "sr_agents:bigcodebench_00009",
+            "sr_agents:bigcodebench_00020",
+            "sr_agents:bigcodebench_00038",
+            "sr_agents:bigcodebench_00040",
+            "sr_agents:bigcodebench_00041"
+          ]
+        },
+        {
+          "capability_id": "numpy_numerical_computing",
+          "source_ids": [
+            "sr_agents:bigcodebench_00003",
+            "sr_agents:bigcodebench_00010",
+            "sr_agents:bigcodebench_00011",
+            "sr_agents:bigcodebench_00023",
+            "sr_agents:bigcodebench_00029"
+          ]
+        },
+        {
+          "capability_id": "filesystem_path_operations",
+          "source_ids": [
+            "sr_agents:bigcodebench_00006",
+            "sr_agents:bigcodebench_00012",
+            "sr_agents:bigcodebench_00013",
+            "sr_agents:bigcodebench_00014",
+            "sr_agents:bigcodebench_00015"
+          ]
+        }
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scope": "permissive",
       "pool_id": "intra_benchmark_multi_capability",
       "pool_type": "same_benchmark",
-      "benchmark_capabilities": [
-        [
-          "tau2_bench",
-          "banking_product_application"
-        ],
-        [
-          "tau2_bench",
-          "retail_exchange_resolution"
-        ],
-        [
-          "tau2_bench",
-          "telecom_connectivity_troubleshooting"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "intra_sr_python_data_01"
     },
     {
-      "stream_id": "intra_skillsbench_ops_01",
+      "capabilities": [
+        {
+          "capability_id": "matplotlib_visualization",
+          "source_ids": [
+            "sr_agents:bigcodebench_00031",
+            "sr_agents:bigcodebench_00034",
+            "sr_agents:bigcodebench_00035",
+            "sr_agents:bigcodebench_00037",
+            "sr_agents:bigcodebench_00044"
+          ]
+        },
+        {
+          "capability_id": "pandas_dataframe_manipulation",
+          "source_ids": [
+            "sr_agents:bigcodebench_00042",
+            "sr_agents:bigcodebench_00045",
+            "sr_agents:bigcodebench_00049",
+            "sr_agents:bigcodebench_00050",
+            "sr_agents:bigcodebench_00052"
+          ]
+        },
+        {
+          "capability_id": "filesystem_path_operations",
+          "source_ids": [
+            "sr_agents:bigcodebench_00016",
+            "sr_agents:bigcodebench_00018",
+            "sr_agents:bigcodebench_00019",
+            "sr_agents:bigcodebench_00024",
+            "sr_agents:bigcodebench_00030"
+          ]
+        }
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scope": "permissive",
       "pool_id": "intra_benchmark_multi_capability",
       "pool_type": "same_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skillsbench",
-          "security_code_repair"
-        ],
-        [
-          "skillsbench",
-          "office_document_automation"
-        ],
-        [
-          "skillsbench",
-          "constrained_operations_planning"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "intra_sr_python_visual_01"
     },
     {
-      "stream_id": "intra_sr_python_data_01",
+      "capabilities": [
+        {
+          "capability_id": "filesystem_path_operations",
+          "source_ids": [
+            "sr_agents:bigcodebench_00118",
+            "sr_agents:bigcodebench_00127",
+            "sr_agents:bigcodebench_00130",
+            "sr_agents:bigcodebench_00131",
+            "sr_agents:bigcodebench_00154"
+          ]
+        },
+        {
+          "capability_id": "matplotlib_visualization",
+          "source_ids": [
+            "sr_agents:bigcodebench_00046",
+            "sr_agents:bigcodebench_00047",
+            "sr_agents:bigcodebench_00048",
+            "sr_agents:bigcodebench_00051",
+            "sr_agents:bigcodebench_00059"
+          ]
+        },
+        {
+          "capability_id": "pandas_dataframe_manipulation",
+          "source_ids": [
+            "sr_agents:bigcodebench_00053",
+            "sr_agents:bigcodebench_00054",
+            "sr_agents:bigcodebench_00055",
+            "sr_agents:bigcodebench_00056",
+            "sr_agents:bigcodebench_00057"
+          ]
+        }
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scope": "permissive",
       "pool_id": "intra_benchmark_multi_capability",
       "pool_type": "same_benchmark",
-      "benchmark_capabilities": [
-        [
-          "sr_agents",
-          "pandas_dataframe_manipulation"
-        ],
-        [
-          "sr_agents",
-          "numpy_numerical_computing"
-        ],
-        [
-          "sr_agents",
-          "filesystem_path_operations"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "intra_sr_python_io_02"
     },
     {
-      "stream_id": "intra_sr_python_visual_01",
+      "capabilities": [
+        {
+          "capability_id": "retail_exchange_resolution",
+          "source_ids": [
+            "tau2_bench:retail:0",
+            "tau2_bench:retail:1",
+            "tau2_bench:retail:100",
+            "tau2_bench:retail:102",
+            "tau2_bench:retail:104"
+          ]
+        },
+        {
+          "capability_id": "airline_booking_change",
+          "source_ids": [
+            "tau2_bench:airline:11",
+            "tau2_bench:airline:12",
+            "tau2_bench:airline:15",
+            "tau2_bench:airline:16",
+            "tau2_bench:airline:17"
+          ]
+        },
+        {
+          "capability_id": "banking_product_application",
+          "source_ids": [
+            "tau2_bench:banking_knowledge:task_001",
+            "tau2_bench:banking_knowledge:task_002",
+            "tau2_bench:banking_knowledge:task_003",
+            "tau2_bench:banking_knowledge:task_006",
+            "tau2_bench:banking_knowledge:task_007"
+          ]
+        }
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scope": "permissive",
       "pool_id": "intra_benchmark_multi_capability",
       "pool_type": "same_benchmark",
-      "benchmark_capabilities": [
-        [
-          "sr_agents",
-          "matplotlib_visualization"
-        ],
-        [
-          "sr_agents",
-          "pandas_dataframe_manipulation"
-        ],
-        [
-          "sr_agents",
-          "filesystem_path_operations"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "intra_tau2_service_01"
     },
     {
-      "stream_id": "intra_tau2_support_01",
+      "capabilities": [
+        {
+          "capability_id": "retail_exchange_resolution",
+          "source_ids": [
+            "tau2_bench:retail:105",
+            "tau2_bench:retail:106",
+            "tau2_bench:retail:107",
+            "tau2_bench:retail:108",
+            "tau2_bench:retail:11"
+          ]
+        },
+        {
+          "capability_id": "airline_booking_change",
+          "source_ids": [
+            "tau2_bench:airline:18",
+            "tau2_bench:airline:19",
+            "tau2_bench:airline:21",
+            "tau2_bench:airline:22",
+            "tau2_bench:airline:30"
+          ]
+        },
+        {
+          "capability_id": "telecom_connectivity_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+          ]
+        }
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scope": "permissive",
       "pool_id": "intra_benchmark_multi_capability",
       "pool_type": "same_benchmark",
-      "benchmark_capabilities": [
-        [
-          "tau2_bench",
-          "retail_exchange_resolution"
-        ],
-        [
-          "tau2_bench",
-          "airline_booking_change"
-        ],
-        [
-          "tau2_bench",
-          "telecom_connectivity_troubleshooting"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "intra_tau2_support_02"
     },
     {
-      "stream_id": "cross_skilllearn_tau2_sr_01",
+      "capabilities": [
+        {
+          "capability_id": "offer_letter_generation",
+          "source_ids": [
+            "skilllearnbench:offer-letter-generator-1",
+            "skilllearnbench:offer-letter-generator-2",
+            "skilllearnbench:offer-letter-generator-3",
+            "skilllearnbench:offer-letter-generator-4",
+            "skilllearnbench:offer-letter-generator-5"
+          ]
+        },
+        {
+          "capability_id": "retail_exchange_resolution",
+          "source_ids": [
+            "tau2_bench:retail:13",
+            "tau2_bench:retail:14",
+            "tau2_bench:retail:16",
+            "tau2_bench:retail:18",
+            "tau2_bench:retail:19"
+          ]
+        },
+        {
+          "capability_id": "filesystem_path_operations",
+          "source_ids": [
+            "sr_agents:bigcodebench_00206",
+            "sr_agents:bigcodebench_00211",
+            "sr_agents:bigcodebench_00260",
+            "sr_agents:bigcodebench_00263",
+            "sr_agents:bigcodebench_00265"
+          ]
+        }
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scope": "permissive",
       "pool_id": "cross_benchmark_multi_capability",
       "pool_type": "cross_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skilllearnbench",
-          "dependency_vulnerability_audit"
-        ],
-        [
-          "tau2_bench",
-          "banking_product_application"
-        ],
-        [
-          "sr_agents",
-          "matplotlib_visualization"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "cross_offer_retail_filesystem_01"
     },
     {
-      "stream_id": "cross_skilllearn_tau2_sr_02",
+      "capabilities": [
+        {
+          "capability_id": "court_form_filling",
+          "source_ids": [
+            "skilllearnbench:court-form-filling-1",
+            "skilllearnbench:court-form-filling-2",
+            "skilllearnbench:court-form-filling-3",
+            "skilllearnbench:court-form-filling-4",
+            "skilllearnbench:court-form-filling-5"
+          ]
+        },
+        {
+          "capability_id": "airline_booking_change",
+          "source_ids": [
+            "tau2_bench:airline:32",
+            "tau2_bench:airline:33",
+            "tau2_bench:airline:37",
+            "tau2_bench:airline:39",
+            "tau2_bench:airline:42"
+          ]
+        },
+        {
+          "capability_id": "matplotlib_visualization",
+          "source_ids": [
+            "sr_agents:bigcodebench_00062",
+            "sr_agents:bigcodebench_00069",
+            "sr_agents:bigcodebench_00091",
+            "sr_agents:bigcodebench_00124",
+            "sr_agents:bigcodebench_00175"
+          ]
+        }
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scope": "permissive",
       "pool_id": "cross_benchmark_multi_capability",
       "pool_type": "cross_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skilllearnbench",
-          "stock_data_visualization"
-        ],
-        [
-          "tau2_bench",
-          "retail_exchange_resolution"
-        ],
-        [
-          "sr_agents",
-          "numpy_numerical_computing"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "cross_court_airline_plotting_01"
     },
     {
-      "stream_id": "cross_skilllearn_tau2_sr_03",
+      "capabilities": [
+        {
+          "capability_id": "dbscan_parameter_tuning",
+          "source_ids": [
+            "skilllearnbench:dbscan-parameter-tuning-1",
+            "skilllearnbench:dbscan-parameter-tuning-2",
+            "skilllearnbench:dbscan-parameter-tuning-3",
+            "skilllearnbench:dbscan-parameter-tuning-4",
+            "skilllearnbench:dbscan-parameter-tuning-5"
+          ]
+        },
+        {
+          "capability_id": "telecom_connectivity_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]"
+          ]
+        },
+        {
+          "capability_id": "pandas_dataframe_manipulation",
+          "source_ids": [
+            "sr_agents:bigcodebench_00060",
+            "sr_agents:bigcodebench_00063",
+            "sr_agents:bigcodebench_00064",
+            "sr_agents:bigcodebench_00065",
+            "sr_agents:bigcodebench_00066"
+          ]
+        }
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scope": "permissive",
       "pool_id": "cross_benchmark_multi_capability",
       "pool_type": "cross_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skilllearnbench",
-          "dbscan_parameter_tuning"
-        ],
-        [
-          "tau2_bench",
-          "telecom_connectivity_troubleshooting"
-        ],
-        [
-          "sr_agents",
-          "pandas_dataframe_manipulation"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "cross_dbscan_telecom_pandas_01"
     },
     {
-      "stream_id": "cross_skilllearn_tau2_sr_04",
+      "capabilities": [
+        {
+          "capability_id": "weighted_gdp_analysis",
+          "source_ids": [
+            "skilllearnbench:weighted-gdp-calculation-1",
+            "skilllearnbench:weighted-gdp-calculation-3",
+            "skilllearnbench:weighted-gdp-calculation-4",
+            "skilllearnbench:weighted-gdp-calculation-5",
+            "skilllearnbench:weighted-gdp-calculation-6"
+          ]
+        },
+        {
+          "capability_id": "telecom_connectivity_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+          ]
+        },
+        {
+          "capability_id": "numpy_numerical_computing",
+          "source_ids": [
+            "sr_agents:bigcodebench_00033",
+            "sr_agents:bigcodebench_00036",
+            "sr_agents:bigcodebench_00039",
+            "sr_agents:bigcodebench_00043",
+            "sr_agents:bigcodebench_00058"
+          ]
+        }
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scope": "permissive",
       "pool_id": "cross_benchmark_multi_capability",
       "pool_type": "cross_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skilllearnbench",
-          "weighted_gdp_analysis"
-        ],
-        [
-          "tau2_bench",
-          "airline_booking_change"
-        ],
-        [
-          "sr_agents",
-          "filesystem_path_operations"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "cross_weighted_gdp_telecom_numpy_01"
     },
     {
-      "stream_id": "cross_skilllearn_tau2_sr_05",
+      "capabilities": [
+        {
+          "capability_id": "office_document_automation",
+          "source_ids": [
+            "skillsbench:court-form-filling",
+            "skillsbench:edit-pdf",
+            "skillsbench:exceltable-in-ppt",
+            "skillsbench:offer-letter-generator",
+            "skillsbench:pptx-reference-formatting"
+          ]
+        },
+        {
+          "capability_id": "retail_exchange_resolution",
+          "source_ids": [
+            "tau2_bench:retail:2",
+            "tau2_bench:retail:27",
+            "tau2_bench:retail:29",
+            "tau2_bench:retail:30",
+            "tau2_bench:retail:31"
+          ]
+        },
+        {
+          "capability_id": "filesystem_path_operations",
+          "source_ids": [
+            "sr_agents:bigcodebench_00266",
+            "sr_agents:bigcodebench_00281",
+            "sr_agents:bigcodebench_00283",
+            "sr_agents:bigcodebench_00286",
+            "sr_agents:bigcodebench_00287"
+          ]
+        }
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scope": "permissive",
       "pool_id": "cross_benchmark_multi_capability",
       "pool_type": "cross_benchmark",
-      "benchmark_capabilities": [
-        [
-          "skilllearnbench",
-          "court_form_filling"
-        ],
-        [
-          "tau2_bench",
-          "retail_exchange_resolution"
-        ],
-        [
-          "sr_agents",
-          "matplotlib_visualization"
-        ]
-      ]
+      "relation_class": "native_family_sibling",
+      "stream_id": "cross_office_retail_filesystem_01"
     }
-  ]
+  ],
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0"
 }

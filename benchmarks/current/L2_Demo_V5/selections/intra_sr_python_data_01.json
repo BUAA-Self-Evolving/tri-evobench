@@ -1,34 +1,132 @@
 {
-  "schema_version": "l2_selection/1.0",
+  "schema_version": "l2_selection_provenance/1.0",
   "stream_id": "intra_sr_python_data_01",
   "pool_id": "intra_benchmark_multi_capability",
-  "source_ids": [
-    "sr_agents:bigcodebench_00009",
-    "sr_agents:bigcodebench_00020",
-    "sr_agents:bigcodebench_00038",
-    "sr_agents:bigcodebench_00040",
-    "sr_agents:bigcodebench_00003",
-    "sr_agents:bigcodebench_00010",
-    "sr_agents:bigcodebench_00011",
-    "sr_agents:bigcodebench_00023",
-    "sr_agents:bigcodebench_00006",
-    "sr_agents:bigcodebench_00012",
-    "sr_agents:bigcodebench_00013",
-    "sr_agents:bigcodebench_00014"
-  ],
-  "source_hashes": [
-    "7d36f9fef57fed7d5c505f92ddcd6038ecbe7008d6ef6605d4a12ce02a06fb46",
-    "34399eeeba182affcb8ccc9ec8a4d24cb8a433f8cf73759d3358d90fd479f280",
-    "986899cd0f39692b570b647e235c2365dcd5d2fdcf6f59c51986d09d698a3b0c",
-    "34642b93b938a017c1dbaf7fbda33d5081109543c8b172a4b10818c3fbbcd393",
-    "981f777d639ce07b1a0c7747b7bffa6af31fb23823e3ee7ada592ce2e23c8058",
-    "55dc44b8f8c3b76f6a74b2953d65d968946c64d35e3f860086b43bb343b33567",
-    "c5812ca64899ef6b84a2f47f4dce83de0148b9361b5d105ec0a26654bbee8cf3",
-    "0bcaf6558b7df98c6a40e23106e6bfff55a51e1770d813b5593f540e1e1611ae",
-    "dad879cdfef8aea2b481c2f2757ff0d54a6ab454fc3aec9d34dce9a2d576d1ee",
-    "b5da428722fb23af29437d8072e8b4cc75aecf560a309c455ed87328a8cd62a6",
-    "71042ed4bcb6badbbe72ed14ccb2388ad46d54307e7ca974919316da92f112df",
-    "558f4929bab3653d4ddf7ffab977221092fb1425785a7a49120b12f5ed3aab09"
-  ],
-  "seed": 20260919
+  "composition_policy": "three_distinct_capabilities_one_benchmark",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00009",
+      "source_hash": "7d36f9fef57fed7d5c505f92ddcd6038ecbe7008d6ef6605d4a12ce02a06fb46",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00003",
+      "source_hash": "981f777d639ce07b1a0c7747b7bffa6af31fb23823e3ee7ada592ce2e23c8058",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00006",
+      "source_hash": "dad879cdfef8aea2b481c2f2757ff0d54a6ab454fc3aec9d34dce9a2d576d1ee",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00020",
+      "source_hash": "34399eeeba182affcb8ccc9ec8a4d24cb8a433f8cf73759d3358d90fd479f280",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00010",
+      "source_hash": "55dc44b8f8c3b76f6a74b2953d65d968946c64d35e3f860086b43bb343b33567",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00012",
+      "source_hash": "b5da428722fb23af29437d8072e8b4cc75aecf560a309c455ed87328a8cd62a6",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00038",
+      "source_hash": "986899cd0f39692b570b647e235c2365dcd5d2fdcf6f59c51986d09d698a3b0c",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00011",
+      "source_hash": "c5812ca64899ef6b84a2f47f4dce83de0148b9361b5d105ec0a26654bbee8cf3",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00013",
+      "source_hash": "71042ed4bcb6badbbe72ed14ccb2388ad46d54307e7ca974919316da92f112df",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00040",
+      "source_hash": "34642b93b938a017c1dbaf7fbda33d5081109543c8b172a4b10818c3fbbcd393",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00023",
+      "source_hash": "0bcaf6558b7df98c6a40e23106e6bfff55a51e1770d813b5593f540e1e1611ae",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00014",
+      "source_hash": "558f4929bab3653d4ddf7ffab977221092fb1425785a7a49120b12f5ed3aab09",
+      "capability_id": "filesystem_path_operations"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00041",
+      "source_hash": "473b82ed896ebd08817f3778a1dd2aca80c9289b69b265a07b0c82d0f0e3a52c",
+      "capability_id": "pandas_dataframe_manipulation"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00029",
+      "source_hash": "153914f7e10cd796151b9bd9b4744d6f9950c44ff75e1a474d1f739faada1cf2",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00015",
+      "source_hash": "c1f0ad8aa62ece1f22b7c94920628c3e70cd1024c6ea162ba105a576f1c4a8f1",
+      "capability_id": "filesystem_path_operations"
+    }
+  ]
 }

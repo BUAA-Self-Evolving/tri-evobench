@@ -1,0 +1,17 @@
+{
+  "instance_id": "bigcodebench_00048",
+  "dataset": "bigcodebench",
+  "question": "Generate n random Unix timestamps and convert them to strings formatted as UTC DATE_FORMAT. Plot a histogram of the distribution of the generated timestamps. If an output path is provided, save the histogram to the specified path. Otherwise, display the plot.\nThe function should output with:\n    list: The list of n formatted timestamps.\nYou should write self-contained code starting with:\n```\nimport time\nfrom datetime import datetime\nimport random\nimport matplotlib.pyplot as plt\n# Constants\nDATE_FORMAT = \"%Y-%m-%d %H:%M:%S\"\ndef task_func(n, output_path=None):\n```",
+  "skill_annotations": [
+    "bigcodebench_043",
+    "bigcodebench_073",
+    "bigcodebench_138",
+    "bigcodebench_050"
+  ],
+  "eval_data": {
+    "answer": "    timestamps = []\n    for _ in range(n):\n        timestamp = random.randint(0, int(time.time()))\n        formatted_time = datetime.utcfromtimestamp(timestamp).strftime(DATE_FORMAT)\n        timestamps.append(formatted_time)\n\n    plt.hist([datetime.strptime(t, DATE_FORMAT) for t in timestamps])\n\n    if output_path:\n        plt.savefig(output_path)\n    else:\n        plt.show()\n    return timestamps",
+    "code_prompt": "import time\nfrom datetime import datetime\nimport random\nimport matplotlib.pyplot as plt\n# Constants\nDATE_FORMAT = \"%Y-%m-%d %H:%M:%S\"\ndef task_func(n, output_path=None):\n",
+    "test": "import unittest\nimport os\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def setUp(self):\n        self.test_dir = \"data/task_func\"\n        os.makedirs(self.test_dir, exist_ok=True)\n        self.o_1 = os.path.join(self.test_dir, \"histogram_1.png\")\n    def tearDown(self) -> None:\n        import shutil\n        try:\n            shutil.rmtree(self.test_dir)\n        except:\n            pass\n    def test_case_1(self):\n        random.seed(42)\n        result = task_func(10)\n        self.assertEqual(len(result), 10)\n    def test_case_2(self):\n        random.seed(42)\n        result = task_func(15)\n        for timestamp in result:\n            try:\n                datetime.strptime(timestamp, DATE_FORMAT)\n            except ValueError:\n                self.fail(f\"Timestamp {timestamp} doesn't match the specified format.\")\n    def test_case_3(self):\n        random.seed(42)\n        task_func(20, output_path=self.o_1)\n        self.assertTrue(os.path.exists(self.o_1))\n    def test_case_4(self):\n        result = task_func(50)\n        self.assertEqual(len(result), len(set(result)))\n    def test_case_5(self):\n        result = task_func(0)\n        self.assertEqual(len(result), 0)",
+    "entry_point": "task_func"
+  }
+}

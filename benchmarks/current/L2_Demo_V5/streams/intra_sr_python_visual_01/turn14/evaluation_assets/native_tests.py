@@ -1,0 +1,42 @@
+import unittest
+class TestCases(unittest.TestCase):
+    """Test cases for the task_func function."""
+    def test_case_1(self):
+        text = "This is a sample text This text contains sample words"
+        word_counts = task_func(text).to_dict()
+        expected_counts = {"this": 2, "sample": 2, "text": 2, "contains": 1, "words": 1}
+        self.assertDictEqual(word_counts, expected_counts)
+    def test_case_2(self):
+        text = "Hello world Hello everyone"
+        word_counts = task_func(text).to_dict()
+        expected_counts = {"hello": 2, "world": 1, "everyone": 1}
+        self.assertDictEqual(word_counts, expected_counts)
+    def test_case_3(self):
+        text = "a an the in is are"
+        word_counts = task_func(text).to_dict()
+        expected_counts = {}
+        self.assertDictEqual(word_counts, expected_counts)
+    def test_case_4(self):
+        text = "This is a test sentence which has a bunch of words and no period"
+        word_counts = task_func(text).to_dict()
+        expected_counts = {
+                "this": 1,
+                "test": 1,
+                "sentence": 1,
+                "which": 1,
+                "has": 1,
+                "bunch": 1,
+                "of": 1,
+                "words": 1,
+                "and": 1,
+                "no": 1,
+                "period": 1,
+            }
+        self.assertDictEqual(word_counts, expected_counts)
+    def test_case_5(self):
+        text = (
+            "I I I want want to to to to to go to to to the olympics olympics this year"
+        )
+        word_counts = task_func(text).to_dict()
+        expected_counts = {"i": 3, "want": 2, "to": 8, "go": 1, "olympics": 2, "this": 1, "year": 1}
+        self.assertDictEqual(word_counts, expected_counts)

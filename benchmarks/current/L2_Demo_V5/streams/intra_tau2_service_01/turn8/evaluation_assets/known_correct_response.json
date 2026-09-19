@@ -1,0 +1,24 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-24",
+            "flight_number": "HAT110"
+          },
+          {
+            "date": "2024-05-24",
+            "flight_number": "HAT172"
+          }
+        ],
+        "payment_id": "gift_card_8887175",
+        "reservation_id": "M05KNL"
+      }
+    }
+  ]
+}

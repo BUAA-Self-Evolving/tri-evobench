@@ -1,0 +1,36 @@
+{
+  "actions": [
+    {
+      "name": "get_reservation_details",
+      "arguments": {
+        "reservation_id": "1N99U6"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-19",
+        "destination": "IAH",
+        "origin": "LAS"
+      }
+    },
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "economy",
+        "flights": [
+          {
+            "date": "2024-05-19",
+            "flight_number": "HAT266"
+          },
+          {
+            "date": "2024-05-27",
+            "flight_number": "HAT112"
+          }
+        ],
+        "payment_id": "gift_card_5634230",
+        "reservation_id": "1N99U6"
+      }
+    }
+  ]
+}

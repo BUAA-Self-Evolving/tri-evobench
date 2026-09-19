@@ -1,0 +1,58 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "find_user_id_by_name_zip",
+      "arguments": {
+        "first_name": "Isabella",
+        "last_name": "Johansson",
+        "zip": "32286"
+      }
+    },
+    {
+      "name": "get_user_details",
+      "arguments": {
+        "user_id": "isabella_johansson_2152"
+      }
+    },
+    {
+      "name": "get_order_details",
+      "arguments": {
+        "order_id": "#W3792453"
+      }
+    },
+    {
+      "name": "get_product_details",
+      "arguments": {
+        "product_id": "1968349452"
+      }
+    },
+    {
+      "name": "exchange_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "4293355847"
+        ],
+        "new_item_ids": [
+          "8176740019"
+        ],
+        "order_id": "#W3792453",
+        "payment_method_id": "paypal_3024827"
+      }
+    },
+    {
+      "name": "exchange_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "5753502325"
+        ],
+        "new_item_ids": [
+          "5206946487"
+        ],
+        "order_id": "#W7181492",
+        "payment_method_id": "paypal_3024827"
+      }
+    }
+  ]
+}

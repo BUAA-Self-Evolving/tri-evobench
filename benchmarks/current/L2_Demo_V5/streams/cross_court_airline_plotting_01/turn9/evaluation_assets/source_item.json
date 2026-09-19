@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00091",
+  "dataset": "bigcodebench",
+  "question": "Perform a linear regression on two columns of a dataset and record the result. Additionally, generates a plot representing the original data and the fitted line.\nThe function should raise the exception for: ValueError: If the specified columns do not exist in the DataFrame.\nThe function should output with:\n    tuple: The slope, intercept, r-value, p-value, and standard error of the regression.\n    Axes: The matplotlib Axes object containing the plot.\nYou should write self-contained code starting with:\n```\nfrom scipy.stats import linregress\nimport matplotlib.pyplot as plt\ndef task_func(data, column1, column2):\n```",
+  "skill_annotations": [
+    "bigcodebench_138",
+    "bigcodebench_062"
+  ],
+  "eval_data": {
+    "answer": "    if column1 not in data.columns or column2 not in data.columns:\n        raise ValueError(\"Specified columns must exist in the DataFrame\")\n\n    x = data[column1].values\n    y = data[column2].values\n\n    slope, intercept, r_value, p_value, std_err = linregress(x, y)\n\n    fig, ax = plt.subplots()\n    ax.plot(x, y, 'o', label='original data')\n    ax.plot(x, intercept + slope*x, 'r', label='fitted line')\n    ax.legend()\n\n    return (slope, intercept, r_value, p_value, std_err), ax",
+    "code_prompt": "from scipy.stats import linregress\nimport matplotlib.pyplot as plt\ndef task_func(data, column1, column2):\n",
+    "test": "import unittest\nimport pandas as pd\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.data = pd.DataFrame({\n            'Column1': [14, 1, 7, 10, 5],\n            'Column2': [25, 22, 8, 15, 11]\n        })\n    def test_regression_results(self):\n        result, _ = task_func(self.data, 'Column1', 'Column2')\n        self.assertIsInstance(result, tuple)\n        self.assertEqual(len(result), 5)\n    def test_invalid_columns(self):\n        with self.assertRaises(ValueError):\n            task_func(self.data, 'Invalid1', 'Column2')\n    def test_plot_axes(self):\n        _, ax = task_func(self.data, 'Column1', 'Column2')\n        self.assertEqual(len(ax.lines), 2)  # Original data and fitted line\n    def test_empty_dataframe(self):\n        with self.assertRaises(ValueError):\n            task_func(pd.DataFrame(), 'Column1', 'Column2')\n    def test_single_point_regression(self):\n        single_point_data = pd.DataFrame({'Column1': [1], 'Column2': [2]})\n        result, ax = task_func(single_point_data, 'Column1', 'Column2')\n        # self.assertEqual(result[0], np.nan)\n        self.assertEqual(result[2], 0)  # Slope should be 0 for single point\n    \n    def test_return_values(self):\n        result, ax = task_func(self.data, 'Column1', 'Column2')\n        # print(result)\n        # with open('df_contents.txt', 'w') as file:\n        #     file.write(str(result))\n        expect = (0.3456790123456789, 13.641975308641975, 0.23699046752221187, 0.7011032163730078, 0.8181438416490141)\n        for res, exp in zip(result, expect):\n            self.assertAlmostEqual(res, exp, places=7)",
+    "entry_point": "task_func"
+  }
+}

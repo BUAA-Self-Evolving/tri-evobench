@@ -1,0 +1,80 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Test that agent doesn't offer to modify the cabin for only one of the passenger of a reservation.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "12_0",
+        "arguments": {
+          "reservation_id": "YAX4DR"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "12_1",
+        "arguments": {
+          "date": "2024-05-18",
+          "destination": "MCO",
+          "origin": "BOS"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "12_2",
+        "arguments": {
+          "date": "2024-05-19",
+          "destination": "MSP",
+          "origin": "MCO"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "12_3",
+        "arguments": {
+          "expression": "2 * ((350 - 122) + (499 - 127))"
+        },
+        "info": null,
+        "name": "calculate"
+      },
+      {
+        "action_id": "12_4",
+        "arguments": {
+          "nonfree_baggages": 0,
+          "payment_id": "credit_card_4938634",
+          "reservation_id": "YAX4DR",
+          "total_baggages": 2
+        },
+        "info": null,
+        "name": "update_reservation_baggages"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Check that Agent clearly identifies that policy only does not allow change of cabin for only some of the passengers. All passengers must fly in the same cabin.",
+      "Check that agent correctly adds 2 checked bags for free."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "12",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "Your name is Chen Lee.\n\nYour user id is chen_lee_6825.",
+      "reason_for_call": "You have an upcoming flight from Boston to Minneapolis under reservation ID YAX4DR.\n\nYou want to change your class for all passengers to business.\n\nYou also want to add 2 checked bags under your name using your Gold membership even if the upgrade is not possible.",
+      "task_instructions": "You are willing to pay a fee for the business class changes, up to $650.\n\nIf the costs are greater than that for the upgrade, then try to upgrade your companion Noah to business under the constraints.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

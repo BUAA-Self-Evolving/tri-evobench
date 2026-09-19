@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00023",
+  "dataset": "bigcodebench",
+  "question": "Alternates elements from two numeric lists, calculates the absolute difference of each element from a predefined threshold, and returns the element closest to this threshold.\nNote that: Notes: If l1 and l2 are of different lengths, elements from the longer list without a corresponding pair in the shorter list will not be paired with 'None'. Only existing numeric elements are considered. The threshold is fixed at 0.5. Adjustments to the threshold require changes to the THRESHOLD constant.\nThe function should output with:\n    float: The element from the combined list that is closest to the threshold of 0.5.\nYou should write self-contained code starting with:\n```\nimport numpy as np\nfrom itertools import zip_longest\ndef task_func(l1, l2,THRESHOLD = 0.5):\n```",
+  "skill_annotations": [
+    "bigcodebench_137",
+    "bigcodebench_108"
+  ],
+  "eval_data": {
+    "answer": "    combined = [val for pair in zip_longest(l1, l2) for val in pair if val is not None]\n    differences = np.abs(np.array(combined) - THRESHOLD)\n    closest_index = np.argmin(differences)\n    return combined[closest_index]",
+    "code_prompt": "import numpy as np\nfrom itertools import zip_longest\ndef task_func(l1, l2,THRESHOLD = 0.5):\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    def test_case_1(self):\n        # Test with two lists of equal length where one element exactly matches the threshold.\n        l1 = [0, 0.5, 2, 3, 4]\n        l2 = [10, 11, 12, 13, 14]\n        self.assertEqual(task_func(l1, l2), 0.5)\n    def test_case_2(self):\n        # Test with the first list longer than the second, where the closest value is below the threshold.\n        l1 = [0, 0.4, 0.6, 3, 4, 5]\n        l2 = [10, 11, 12]\n        self.assertEqual(task_func(l1, l2), 0.4)\n        \n    def test_case_3(self):\n        # Test with the second list longer than the first, where the closest value is just above the threshold.\n        l1 = [0, 0.51]\n        l2 = [10, 11, 12, 13]\n        self.assertEqual(task_func(l1, l2), 0.51)\n        \n    def test_case_4(self):\n        # Test where one list is empty and the function must choose the closest value from a single non-empty list.\n        l1 = []\n        l2 = [10, 11, 12, 13]\n        self.assertEqual(task_func(l1, l2), 10)\n        \n    def test_case_5(self):\n        # Test with negative and positive numbers where the closest value to the threshold is zero.\n        l1 = [-10, -5, 0, 5, 10]\n        l2 = [-1, 0, 1]\n        self.assertEqual(task_func(l1, l2), 0)\n    def test_empty_lists(self):\n        # Test with both lists empty to check function's behavior in absence of any elements.\n        with self.assertRaises(ValueError):\n            task_func([], [])",
+    "entry_point": "task_func"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Check that agent doesn't cancel reservations if the refund is not applicable even if the user asks. Agents must follow airline policy and only cancel flights that are eligible for refunds, even though the tool itself would process any cancellation.\nAlso user is not a native English speaker.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "39_0",
+        "arguments": {
+          "user_id": "amelia_davis_8890"
+        },
+        "info": null,
+        "name": "get_user_details"
+      },
+      {
+        "action_id": "39_1",
+        "arguments": {
+          "reservation_id": "8C8K4E"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_2",
+        "arguments": {
+          "reservation_id": "UDMOP1"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_3",
+        "arguments": {
+          "reservation_id": "XAZ3C0"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_4",
+        "arguments": {
+          "reservation_id": "LU15PA"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_5",
+        "arguments": {
+          "reservation_id": "MSJ4OA"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_6",
+        "arguments": {
+          "reservation_id": "I6M8JQ"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_7",
+        "arguments": {
+          "reservation_id": "4XGCCM"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "39_8",
+        "arguments": {
+          "reservation_id": "8C8K4E"
+        },
+        "info": null,
+        "name": "cancel_reservation"
+      },
+      {
+        "action_id": "39_9",
+        "arguments": {
+          "reservation_id": "LU15PA"
+        },
+        "info": null,
+        "name": "cancel_reservation"
+      },
+      {
+        "action_id": "39_10",
+        "arguments": {
+          "reservation_id": "MSJ4OA"
+        },
+        "info": null,
+        "name": "cancel_reservation"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent cancels reservation 8C8K4E.",
+      "Agent cancels reservation LU15PA.",
+      "Agent cancels reservation MSJ4OA.",
+      "Agent does not cancel  any other reservation."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "39",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "You are Amelia Davis.\n\nYour user id is amelia_davis_8890.\n\n\nYou are French by birth and your English is not perfect.  \nYou occasionally insert French words when you communicate.",
+      "reason_for_call": "You want to cancel all of your upcoming flights.",
+      "task_instructions": "Even if the agent says you will not receive a refund for some of them, you want to proceed anyway so that you can give up your seat for someone else who needs it.",
+      "unknown_info": "You don't know any of your reservation ids."
+    },
+    "persona": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00062",
+  "dataset": "bigcodebench",
+  "question": "Draws a histogram of the \"from_user\" values in the provided result. The color of the histogram bars is selected at random from the provided colors list.\nThe function should output with:\n    None: The function displays the histogram and does not return any value.\nYou should write self-contained code starting with:\n```\nimport random\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(result, colors=['b', 'g', 'r', 'c', 'm', 'y', 'k']):\n```",
+  "skill_annotations": [
+    "bigcodebench_073",
+    "bigcodebench_138",
+    "bigcodebench_013"
+  ],
+  "eval_data": {
+    "answer": "    from_user_values = [d['from_user'] for d in result if 'from_user' in d]\n    color = random.choice(colors)\n    plt.figure()\n    sns.histplot(from_user_values, color=color)\n    plt.show()",
+    "code_prompt": "import random\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(result, colors=['b', 'g', 'r', 'c', 'm', 'y', 'k']):\n",
+    "test": "import unittest\nfrom unittest.mock import patch\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def test_case_1(self):\n        random.seed(42)\n        result = [\n            {\"from_user\": 0}, \n            {\"from_user\": 0}, \n            {\"from_user\": 1}\n        ]\n        with patch(\"matplotlib.pyplot.show\") as mocked_show:\n            task_func(result)\n            mocked_show.assert_called_once()\n    def test_case_2(self):\n        random.seed(42)\n        result = []\n        with patch(\"matplotlib.pyplot.show\") as mocked_show:\n            task_func(result)\n            mocked_show.assert_called_once()\n    def test_case_3(self):\n        random.seed(42)\n        result = [\n            {\"hello\": 0}, \n            {\"world\": 1}\n        ]\n        with patch(\"matplotlib.pyplot.show\") as mocked_show:\n            task_func(result)\n            mocked_show.assert_called_once()\n    def test_case_4(self):\n        random.seed(42)\n        result = [\n            {\"from_user\": 0}, \n            {\"from_user\": 1}, \n            {\"from_user\": 2}\n        ]\n        colors = [\"orange\", \"purple\"]\n        with patch(\"matplotlib.pyplot.show\") as mocked_show, patch(\"random.choice\", return_value=\"orange\") as mocked_choice:\n            task_func(result, colors)\n            mocked_choice.assert_called_with(colors)\n            mocked_show.assert_called_once()\n    def test_case_5(self):\n        random.seed(42)\n        result = [\n            {\n                \"hello\": 0,\n                \"from_user\": 1,\n            },\n            {\n                \"world\": 1,\n                \"from_user\": 1\n            },\n            {\n                \"love\": 1,\n                \"from_user\": 1\n            }\n        ]\n        with patch(\"matplotlib.pyplot.show\") as mocked_show:\n            task_func(result)\n            mocked_show.assert_called_once()",
+    "entry_point": "task_func"
+  }
+}

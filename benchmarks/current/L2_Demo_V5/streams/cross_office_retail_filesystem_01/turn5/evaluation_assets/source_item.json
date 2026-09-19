@@ -1,0 +1,86 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "27_0",
+        "arguments": {
+          "first_name": "Isabella",
+          "last_name": "Johansson",
+          "zip": "32286"
+        },
+        "info": null,
+        "name": "find_user_id_by_name_zip"
+      },
+      {
+        "action_id": "27_1",
+        "arguments": {
+          "user_id": "isabella_johansson_2152"
+        },
+        "info": null,
+        "name": "get_user_details"
+      },
+      {
+        "action_id": "27_2",
+        "arguments": {
+          "order_id": "#W3792453"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "27_3",
+        "arguments": {
+          "order_id": "#W7181492"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "27_4",
+        "arguments": {
+          "product_id": "7363354090"
+        },
+        "info": null,
+        "name": "get_product_details"
+      },
+      {
+        "action_id": "27_5",
+        "arguments": {
+          "item_ids": [
+            "8118291112"
+          ],
+          "new_item_ids": [
+            "8277474082"
+          ],
+          "order_id": "#W7181492",
+          "payment_method_id": "paypal_3024827"
+        },
+        "info": null,
+        "name": "exchange_delivered_order_items"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": null,
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "27",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You are Isabella Johansson, and you live in zipcode 32286.",
+      "reason_for_call": "From a recent order, you want to return the hose, backpack, and exchange the hiking boots to the exact same item but a waterproof variant. Make sure you mention the two requests at the same time, and if the agent says they can only do one, you prefer to do the exchange.",
+      "task_instructions": "You are a bit anxious and want to get things done quickly.",
+      "unknown_info": "You do not remember your email address"
+    },
+    "persona": null
+  }
+}

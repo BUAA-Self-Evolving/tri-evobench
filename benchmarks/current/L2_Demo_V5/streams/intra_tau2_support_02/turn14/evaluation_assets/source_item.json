@@ -1,0 +1,71 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Check that agent doesn't remove bags from a reservation.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "30_0",
+        "arguments": {
+          "reservation_id": "1N99U6"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "30_1",
+        "arguments": {
+          "date": "2024-05-19",
+          "destination": "IAH",
+          "origin": "LAS"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "30_2",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-19",
+              "flight_number": "HAT266"
+            },
+            {
+              "date": "2024-05-27",
+              "flight_number": "HAT112"
+            }
+          ],
+          "payment_id": "gift_card_5634230",
+          "reservation_id": "1N99U6"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent updates reservation to flights HAT266 and HAT112.",
+      "Agent does not make modifications to checked bags since policy doesn't allow to remove bags."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "30",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "You are James Taylor.\n\nYour user id is james_taylor_7043. \n\nYour reservation ID is 1N99U6.",
+      "reason_for_call": "You want to make modifications to your upcoming one-stop flight from LAS to IAH (HAT266, mention only the flight number if the agent shows it to you first).",
+      "task_instructions": "You want to change your upcoming one-stop flight from LAS to IAH to a nonstop flight.\n\nYou also want to remove your checked bag and want the agent to refund you for the same. If agent says that you cannot remove bags, accept it and move on.\n\nYou want to use the gift card (do not mention this unless the agent asks) for payment.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

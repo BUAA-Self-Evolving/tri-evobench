@@ -1,0 +1,46 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "get_reservation_details",
+      "arguments": {
+        "reservation_id": "M20IZO"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-22",
+        "destination": "ATL",
+        "origin": "JFK"
+      }
+    },
+    {
+      "name": "search_direct_flight",
+      "arguments": {
+        "date": "2024-05-22",
+        "destination": "MCO",
+        "origin": "ATL"
+      }
+    },
+    {
+      "name": "update_reservation_flights",
+      "arguments": {
+        "cabin": "business",
+        "flights": [
+          {
+            "date": "2024-05-22",
+            "flight_number": "HAT268"
+          },
+          {
+            "date": "2024-05-22",
+            "flight_number": "HAT010"
+          }
+        ],
+        "payment_id": "credit_card_9074831",
+        "reservation_id": "M20IZO"
+      }
+    }
+  ]
+}

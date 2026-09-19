@@ -1,0 +1,113 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "16_0",
+        "arguments": {
+          "first_name": "Fatima",
+          "last_name": "Johnson",
+          "zip": "78712"
+        },
+        "info": null,
+        "name": "find_user_id_by_name_zip"
+      },
+      {
+        "action_id": "16_1",
+        "arguments": {
+          "user_id": "fatima_johnson_7581"
+        },
+        "info": null,
+        "name": "get_user_details"
+      },
+      {
+        "action_id": "16_2",
+        "arguments": {
+          "order_id": "#W5199551"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "16_3",
+        "arguments": {
+          "order_id": "#W8665881"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "16_4",
+        "arguments": {
+          "order_id": "#W9389413"
+        },
+        "info": null,
+        "name": "get_order_details"
+      },
+      {
+        "action_id": "16_5",
+        "arguments": {
+          "expression": "3131.1 + 4777.75 + 367.38"
+        },
+        "info": null,
+        "name": "calculate"
+      },
+      {
+        "action_id": "16_6",
+        "arguments": {
+          "order_id": "#W5199551",
+          "reason": "no longer needed"
+        },
+        "info": null,
+        "name": "cancel_pending_order"
+      },
+      {
+        "action_id": "16_7",
+        "arguments": {
+          "order_id": "#W8665881",
+          "reason": "no longer needed"
+        },
+        "info": null,
+        "name": "cancel_pending_order"
+      },
+      {
+        "action_id": "16_8",
+        "arguments": {
+          "item_ids": [
+            "2554056026"
+          ],
+          "order_id": "#W9389413",
+          "payment_method_id": "paypal_5364164"
+        },
+        "info": null,
+        "name": "return_delivered_order_items"
+      }
+    ],
+    "communicate_info": [
+      "8276.23"
+    ],
+    "nl_assertions": [
+      "Agent should tell the user the total refund amount is $8,276.23."
+    ],
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "16",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You are Fatima Johnson in zipcode 78712.",
+      "reason_for_call": "You want to cancel all pending orders (since they are no longer needed) and return the watch you have received (but nothing else), and you want to know the total amount you can get back.",
+      "task_instructions": "You are a private person that does not want to reveal much about yourself.",
+      "unknown_info": "You do not remember your email address"
+    },
+    "persona": null
+  }
+}

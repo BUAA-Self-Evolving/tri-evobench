@@ -1,0 +1,147 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Checking that agent can properly downgrade the right flights and calculate total savings.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "18_0",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-21",
+              "flight_number": "HAT028"
+            },
+            {
+              "date": "2024-05-21",
+              "flight_number": "HAT277"
+            }
+          ],
+          "payment_id": "credit_card_2929732",
+          "reservation_id": "JG7FMM"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "18_1",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-28",
+              "flight_number": "HAT080"
+            },
+            {
+              "date": "2024-05-28",
+              "flight_number": "HAT076"
+            },
+            {
+              "date": "2024-05-30",
+              "flight_number": "HAT255"
+            },
+            {
+              "date": "2024-05-30",
+              "flight_number": "HAT148"
+            }
+          ],
+          "payment_id": "gift_card_3481935",
+          "reservation_id": "2FBBAH"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "18_2",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-24",
+              "flight_number": "HAT232"
+            },
+            {
+              "date": "2024-05-24",
+              "flight_number": "HAT228"
+            }
+          ],
+          "payment_id": "credit_card_2929732",
+          "reservation_id": "X7BYG1"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "18_3",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-23",
+              "flight_number": "HAT084"
+            },
+            {
+              "date": "2024-05-23",
+              "flight_number": "HAT175"
+            }
+          ],
+          "payment_id": "gift_card_6847880",
+          "reservation_id": "EQ1G6C"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      },
+      {
+        "action_id": "18_4",
+        "arguments": {
+          "cabin": "economy",
+          "flights": [
+            {
+              "date": "2024-05-21",
+              "flight_number": "HAT276"
+            },
+            {
+              "date": "2024-05-22",
+              "flight_number": "HAT279"
+            }
+          ],
+          "payment_id": "credit_card_9525117",
+          "reservation_id": "BOH180"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      }
+    ],
+    "communicate_info": [
+      "23553"
+    ],
+    "nl_assertions": [
+      "Reservation JG7FMM is updated to economy.",
+      "Reservation 2FBBAH is updated to economy.",
+      "Reservation X7BYG1 is updated to economy. ",
+      "Reservation BOH180 is updated to economy. ",
+      "Reservation EQ1G6C is updated to economy.",
+      "Agent communicates that user will save $23553 in total."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "18",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "Your name is Omar Davis.\n\nYour user id is omar_davis_3817.",
+      "reason_for_call": "You just faced some money issue and want to downgrade all business flights to economy, without changing the flights or passengers.",
+      "task_instructions": "You are fine with refunding to original payment for each reservation.\n\nYou want to know how much money you have saved in total, but you are fine having that information after the refunds are processed.\n\nYou are emotional and a bit angry, but you are willing to cooperate with the agent.",
+      "unknown_info": "You don't remember the payment method you used."
+    },
+    "persona": null
+  }
+}

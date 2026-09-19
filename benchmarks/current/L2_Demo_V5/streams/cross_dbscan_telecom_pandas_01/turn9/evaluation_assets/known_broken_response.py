@@ -1,0 +1,7 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+# Constants
+COLUMNS = ['col1', 'col2', 'col3']
+def task_func(data):
+    return None

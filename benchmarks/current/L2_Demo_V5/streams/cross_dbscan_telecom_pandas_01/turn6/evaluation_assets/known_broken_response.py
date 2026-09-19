@@ -1,0 +1,4 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+def task_func(car_dict):
+    return None

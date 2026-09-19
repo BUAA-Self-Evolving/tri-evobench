@@ -117,6 +117,13 @@ class DockerVolumeMirror:
         suffix = ":ro" if read_only else ""
         return f"{self.volume_name}:{target}{suffix}"
 
+    def mount_spec(self, target: str, *, read_only: bool = False) -> str:
+        """Return an unambiguous Docker ``--mount`` specification."""
+        if not target.startswith("/"):
+            raise DockerVolumeError("container volume target must be absolute")
+        suffix = ",readonly" if read_only else ""
+        return f"type=volume,src={self.volume_name},dst={target}{suffix}"
+
     def sync_from_host(self) -> None:
         self._require_open()
 
@@ -207,8 +214,8 @@ class DockerVolumeMirror:
                 "256m",
                 "--cpus",
                 "1",
-                "-v",
-                self.mount("/volume"),
+                "--mount",
+                self.mount_spec("/volume"),
                 self.helper_image,
                 "sleep",
                 "infinity",

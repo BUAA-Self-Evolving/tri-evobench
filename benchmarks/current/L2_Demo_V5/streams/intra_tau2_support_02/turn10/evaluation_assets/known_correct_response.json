@@ -1,0 +1,18 @@
+{
+  "schema_version": "tau2-action-trajectory/1.0",
+  "assistant_message": "Completed.",
+  "tool_calls": [
+    {
+      "name": "return_delivered_order_items",
+      "arguments": {
+        "item_ids": [
+          "9612497925",
+          "7127170374",
+          "6268080249"
+        ],
+        "order_id": "#W1679211",
+        "payment_method_id": "paypal_3022415"
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-v5.schema.json",
+  "title": "Tri-EvoBench L2 V5 TaskStream bundle",
+  "oneOf": [
+    { "$ref": "#/$defs/manifest" },
+    { "$ref": "#/$defs/poolDocument" },
+    { "$ref": "#/$defs/taxonomyDocument" },
+    { "$ref": "#/$defs/runtimeDocument" },
+    { "$ref": "#/$defs/selection" },
+    { "$ref": "#/$defs/stream" },
+    { "$ref": "#/$defs/task" }
+  ],
+  "$defs": {
+    "shaBinding": {
+      "type": "object",
+      "required": ["schema_version", "path", "sha256"],
+      "properties": {
+        "schema_version": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["schema_version", "aggregation_profile", "stream_count", "total_turn_count", "unique_source_task_count", "turn_placement_count", "pool_manifest", "panel_manifest", "taxonomy_manifest", "runtime_profiles", "source_catalog", "selection_manifest"],
+      "properties": {
+        "schema_version": { "const": "l2_taskstream/1.2" },
+        "aggregation_profile": { "const": "l2_evolution_aggregation/1.2" },
+        "stream_count": { "type": "integer", "minimum": 1 },
+        "total_turn_count": { "type": "integer", "minimum": 12 },
+        "unique_source_task_count": { "type": "integer", "minimum": 1 },
+        "turn_placement_count": { "type": "integer", "minimum": 1 },
+        "pool_manifest": { "$ref": "#/$defs/shaBinding" },
+        "panel_manifest": { "$ref": "#/$defs/shaBinding" },
+        "taxonomy_manifest": { "$ref": "#/$defs/shaBinding" },
+        "runtime_profiles": { "$ref": "#/$defs/shaBinding" },
+        "source_catalog": { "$ref": "#/$defs/shaBinding" },
+        "selection_manifest": { "$ref": "#/$defs/shaBinding" }
+      },
+      "additionalProperties": true
+    },
+    "poolDocument": {
+      "type": "object",
+      "required": ["schema_version", "pools"],
+      "properties": { "schema_version": { "const": "l2_pools/1.0" }, "pools": { "type": "array", "minItems": 2 } },
+      "additionalProperties": true
+    },
+    "taxonomyDocument": {
+      "type": "object",
+      "required": ["schema_version", "taxonomy_version", "capabilities"],
+      "properties": { "schema_version": { "const": "l2_taxonomy/1.0" }, "taxonomy_version": { "type": "string" }, "capabilities": { "type": "array", "minItems": 3 } },
+      "additionalProperties": true
+    },
+    "runtimeDocument": {
+      "type": "object",
+      "required": ["schema_version", "profiles"],
+      "properties": { "schema_version": { "const": "l2_runtime_profiles/1.0" }, "profiles": { "type": "array", "minItems": 1 } },
+      "additionalProperties": true
+    },
+    "selection": {
+      "type": "object",
+      "required": ["schema_version", "stream_id", "pool_id", "selected_turns"],
+      "properties": { "schema_version": { "const": "l2_selection_provenance/1.0" }, "stream_id": { "type": "string" }, "pool_id": { "type": "string" }, "selected_turns": { "type": "array", "minItems": 12 } },
+      "additionalProperties": true
+    },
+    "stream": {
+      "type": "object",
+      "required": ["schema_version", "stream_id", "turn_count", "workspace_persistence", "stream_design", "capabilities", "ordering", "turns", "selection_provenance"],
+      "properties": {
+        "schema_version": { "const": "l2_taskstream/1.2" },
+        "stream_id": { "type": "string", "minLength": 1 },
+        "turn_count": { "type": "integer", "minimum": 12, "maximum": 20 },
+        "workspace_persistence": { "const": "task_local" },
+        "stream_design": { "type": "object", "required": ["pool_id", "pool_type", "composition_policy"] },
+        "capabilities": { "type": "array", "minItems": 3 },
+        "ordering": { "type": "object", "required": ["turn_order"] },
+        "turns": { "type": "array", "minItems": 12 },
+        "selection_provenance": { "type": "object", "required": ["plan_sha256", "taxonomy_version"] }
+      },
+      "additionalProperties": true
+    },
+    "sourceBasis": {
+      "type": "object",
+      "required": ["benchmark_id", "benchmark_revision", "source_task_id", "source_path", "source_hash"],
+      "properties": { "source_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" } },
+      "additionalProperties": true
+    },
+    "probe": {
+      "type": "object",
+      "required": ["target_capability_id", "expected_transfer_from_turn_ids", "interference_capability_ids", "held_out_source_task_id"],
+      "properties": { "target_capability_id": { "type": "string" }, "expected_transfer_from_turn_ids": { "type": "array", "minItems": 1 }, "interference_capability_ids": { "type": "array", "minItems": 2 } },
+      "additionalProperties": true
+    },
+    "task": {
+      "type": "object",
+      "required": ["schema_version", "stream_id", "turn_id", "turn_index", "sequence_role", "source_basis", "taxonomy_ref", "runtime_profile_id", "capability_relation", "agent_input", "workspace_transition", "evaluation"],
+      "properties": {
+        "schema_version": { "const": "l2_taskstream/1.2" },
+        "turn_index": { "type": "integer", "minimum": 1 },
+        "source_basis": { "$ref": "#/$defs/sourceBasis" },
+        "taxonomy_ref": { "type": "object", "required": ["taxonomy_version", "domain_id", "task_type_ids", "capability_id"] },
+        "runtime_profile_id": { "type": "string", "minLength": 1 },
+        "capability_relation": { "type": "object", "required": ["capability_id", "parent_turn_ids"] },
+        "agent_input": { "type": "object", "required": ["messages", "assets"] },
+        "workspace_transition": { "type": "object", "required": ["mode", "operations"] },
+        "evaluation": { "type": "object", "required": ["submission_contract", "native_verifier"] },
+        "probe_spec": { "$ref": "#/$defs/probe" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

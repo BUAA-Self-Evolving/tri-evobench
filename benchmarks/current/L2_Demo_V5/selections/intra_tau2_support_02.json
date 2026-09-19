@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "intra_tau2_support_02",
+  "pool_id": "intra_benchmark_multi_capability",
+  "composition_policy": "three_distinct_capabilities_one_benchmark",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:retail:105",
+      "source_hash": "f0942a26d2d07d3da69b20247db9e29ef55df945c351c1fd358e56076f153e89",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:airline:18",
+      "source_hash": "04e629b91edf7df01e3c5bef4b0f45c88453d106f7d5c9a0ff364220485201ce",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+      "source_hash": "74252037305cb3f3ed54e8cc40677b98dcedd8e542c0d64286aed2bee7c76e6f",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:106",
+      "source_hash": "fea8fb625e853cccae6c2e1bdb0177691d7e8e0273ff605e5b5f58bb14b8f686",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:19",
+      "source_hash": "50477f8f85dea49215b518fe87dd617e0c8cc5ee275437df9d8eccf53ec32db9",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+      "source_hash": "39b8572b6469ffce128614bad8078f8176e9d95a3121c7a42e266990b463fcdc",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:107",
+      "source_hash": "99cd4c362f69d8337ae46d3dbc317d03e085b66367be6370162dead4c5967762",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:21",
+      "source_hash": "f1b0e0266b77edd0d97ec0807c4719ff98c153b50a12b1c8f15c8bac0086f4b5",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "ed18bd284b2a4352497607a073135086ee7a68619fb6a9947e05ad94fae20bbb",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:retail:108",
+      "source_hash": "eabf93e36236801ba7fe4df4314f8da9b3add1dbfef739db626661ec130b15bc",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:airline:22",
+      "source_hash": "cd69ba54671fa17fc582a4e205848adda34afc0b00520d434f65017f16ff9202",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "b21a0b4390624903f591480e839ca3b57273696ddea4226156fabf1a63e82c66",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:retail:11",
+      "source_hash": "8512a1ef2183ec1b116d679ebbf2895770efa4196b7ca8da31cb6807522a80c1",
+      "capability_id": "retail_exchange_resolution"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:airline:30",
+      "source_hash": "7210930176cacd21eb8a43ca3c3667689bfd3e9f1688551429d06cc0bbe892f5",
+      "capability_id": "airline_booking_change"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "a7af4d778d1cfbfd59db3541cde01911b38c6333e0c4fe50cc93eb5e4ca9e1a4",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    }
+  ]
+}

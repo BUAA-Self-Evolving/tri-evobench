@@ -51,12 +51,15 @@ def test_volume_mirror_uses_daemon_owned_volume_and_docker_cp(tmp_path, monkeypa
     assert mirror.mount("/workspace") == (
         "trievo-l2-workspace-aaaaaaaaaaaa:/workspace"
     )
+    assert mirror.mount_spec("/workspace", read_only=True) == (
+        "type=volume,src=trievo-l2-workspace-aaaaaaaaaaaa,dst=/workspace,readonly"
+    )
     create = calls[0][0]
     carrier = calls[1][0]
     copy = next(args for args, _ in calls if args[:1] == ["cp"])
     assert create[:2] == ["volume", "create"]
     assert "io.trievo.role=l2-workspace" in create
-    assert "-v" in carrier
+    assert "--mount" in carrier
     assert all(str(source) not in item for item in carrier)
     assert copy == [
         "cp",
@@ -201,8 +204,8 @@ def test_process_runtime_renders_workspace_and_state_volume_mounts(tmp_path, mon
     )
     runtime.end_flow()
 
-    assert "workspace-volume:/workspace" in commands[0]
-    assert "state-volume:/state" in commands[0]
+    assert "type=volume,src=workspace-volume,dst=/workspace" in commands[0]
+    assert "type=volume,src=state-volume,dst=/state" in commands[0]
     assert mirrors[0].pulls >= 1
     assert mirrors[0].closed
     assert runtime.metadata()["docker_volume_transport"] is True

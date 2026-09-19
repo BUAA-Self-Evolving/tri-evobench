@@ -1,0 +1,48 @@
+{
+  "description": {
+    "notes": null,
+    "purpose": null,
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "106_0",
+        "arguments": {
+          "item_ids": [
+            "7292993796",
+            "7292993796"
+          ],
+          "new_item_ids": [
+            "3761330360",
+            "9647374798"
+          ],
+          "order_id": "#W4316152",
+          "payment_method_id": "gift_card_7245904"
+        },
+        "info": null,
+        "name": "exchange_delivered_order_items"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent should exchange both tea kettles (same style) to the items requested"
+    ],
+    "reward_basis": [
+      "DB",
+      "NL_ASSERTION"
+    ]
+  },
+  "id": "105",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "retail",
+      "known_info": "You name is Aarav Anderson and your zip code is 19031.",
+      "reason_for_call": "For order #W4316152, you want to  exchange one Tea Kettle {'material': 'glass', 'capacity': '2 liters', 'stovetop compatibility': 'induction'} to {'material': 'ceramic', 'stovetop compatibility': 'gas'}; and another Tea Kettle {'material': 'glass', 'capacity': '2 liters', 'stovetop compatibility': 'induction'} to {'capacity': '1.5 liters', 'stovetop compatibility': 'gas'};",
+      "task_instructions": "You are cautious, messy, rigid.",
+      "unknown_info": "You do not remember your email address"
+    },
+    "persona": null
+  }
+}

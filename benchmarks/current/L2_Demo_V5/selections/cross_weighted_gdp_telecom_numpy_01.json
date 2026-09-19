@@ -1,0 +1,132 @@
+{
+  "schema_version": "l2_selection_provenance/1.0",
+  "stream_id": "cross_weighted_gdp_telecom_numpy_01",
+  "pool_id": "cross_benchmark_multi_capability",
+  "composition_policy": "three_capabilities_three_benchmarks",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "classifier_version": "l2-data-pipeline/1.0",
+  "review_version": "adjudicated-gold/1.1",
+  "seed": 20260919,
+  "selected_turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-1",
+      "source_hash": "ff2d17b294d43234cae5e69e6cb5abab8a1a57b7f973f16314036fdb0e93509a",
+      "capability_id": "weighted_gdp_analysis"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "sequence_role": "learning",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "4cd9171d48aaa267f8847f066583beb27acde48ba9e793e35369a4ba08a04151",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "sequence_role": "learning",
+      "source_id": "sr_agents:bigcodebench_00033",
+      "source_hash": "3da8dd462d95cfd591bc881b59f9452f58defbf602b5678893218bb21e36e03f",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-3",
+      "source_hash": "b8aee2127b502d576fa4e5c0cf80aa3c8f3d84d34e4f468c2aa2bea43a0c2f59",
+      "capability_id": "weighted_gdp_analysis"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "837412620c0be6558d0f2dfa31b7cd0fc8176115074670a5c566e9e6d87dec75",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00036",
+      "source_hash": "624ce9409fd0a43f4de7d046aafc49b2ea13fae5a62948a656359c2e9faa68a1",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-4",
+      "source_hash": "4571d648fb5c334dfbdf688380625ad839c1a10c82ab5ad2e498137b8d9895c2",
+      "capability_id": "weighted_gdp_analysis"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "4e4a37c4a6dff3d80eb12436323c429c1de207e514b2fa2060de957f923af1f9",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00039",
+      "source_hash": "2dc2e3711e1b2567b2594a6b35301a0f20b48ae6b03f935b064df772e0be03fc",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "sequence_role": "application",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-5",
+      "source_hash": "5ff8b54f7ad300a26a0aefe4ebded563d278d90aa733970619d0a7d3f23e691b",
+      "capability_id": "weighted_gdp_analysis"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "sequence_role": "application",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "632430e181e5dfdbf240612a0b3546f7582b8c63dd96c98d2db3b6beddb9cefa",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "sequence_role": "application",
+      "source_id": "sr_agents:bigcodebench_00043",
+      "source_hash": "95dc5f91904b708be060bcffe3c30f8f1b233dacfb71014ebb48a817ff7312b7",
+      "capability_id": "numpy_numerical_computing"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-6",
+      "source_hash": "decd3c5683bb1f9defbc9dcbdf55d7580f097ffde947a52d2631cfd604bc1507",
+      "capability_id": "weighted_gdp_analysis"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "sequence_role": "probe",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "776e0587575400880721c7eec823ff7f31bf3c461dba17237ba12703b64deb4a",
+      "capability_id": "telecom_connectivity_troubleshooting"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "sequence_role": "probe",
+      "source_id": "sr_agents:bigcodebench_00058",
+      "source_hash": "464a83d5f4fa849cf2a19091184e392af0d17a89a057a90751553ff179f57f23",
+      "capability_id": "numpy_numerical_computing"
+    }
+  ]
+}

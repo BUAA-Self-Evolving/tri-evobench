@@ -19,6 +19,13 @@ def _read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _rewrite_binding(package: Path, key: str) -> None:
+    manifest = _read_json(package / "manifest.json")
+    path = package / manifest[key]["path"]
+    manifest[key]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    _write_json(package / "manifest.json", manifest)
+
+
 def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dict | None = None) -> Path:
     package = root / "L2_Demo_V5"
     stream = package / "streams" / "s"
@@ -363,6 +370,21 @@ def test_v5_probe_target_must_match_turn_capability() -> None:
             inspect_l2_package(package)
 
 
+@pytest.mark.parametrize("field", ["held_out_source_task_id", "interference_capability_ids"])
+def test_v5_probe_binding_fails_closed(field: str) -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp))
+        task_path = package / "streams/s/turn10/task.json"
+        task = _read_json(task_path)
+        if field == "held_out_source_task_id":
+            task["probe_spec"][field] = "wrong-id"
+        else:
+            task["probe_spec"].pop(field)
+        _write_json(task_path, task)
+        with pytest.raises(L2SpecError, match="held-out|interference"):
+            inspect_l2_package(package)
+
+
 def test_v5_task_capability_must_exist_in_bound_taxonomy() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         package = _minimal_v5(Path(tmp))
@@ -389,3 +411,18 @@ def test_v5_panel_pool_must_exist_and_match_selected_stream() -> None:
         _write_json(package / "manifest.json", manifest)
         with pytest.raises(L2SpecError, match="pool"):
             inspect_l2_package(package)
+
+
+def test_l2_demo_v5_tasks_embed_full_judge_and_simulator_prompts() -> None:
+    package = Path("benchmarks/current/L2_Demo_V5")
+    if not package.is_dir():
+        pytest.skip("L2_Demo_V5 package is not present")
+    judge_prompt = (package / "contract/prompts/l2_judge_prompt_v2.md").read_text(encoding="utf-8")
+    simulator_prompt = (package / "contract/prompts/l2_user_simulator_prompt.md").read_text(encoding="utf-8")
+    task_paths = sorted((package / "streams").glob("*/*/task.json"))
+
+    assert task_paths
+    for path in task_paths:
+        task = _read_json(path)
+        assert task["evaluation"]["judge_config"]["judge_prompt"] == judge_prompt
+        assert task["user_simulator"]["simulator_prompt"] == simulator_prompt

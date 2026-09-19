@@ -1,0 +1,82 @@
+{
+  "annotations": null,
+  "description": {
+    "notes": null,
+    "purpose": "Test two cancellations requests, none allowed + 1 upgrade to business class.",
+    "relevant_policies": null
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "37_1",
+        "arguments": {
+          "reservation_id": "M20IZO"
+        },
+        "info": null,
+        "name": "get_reservation_details"
+      },
+      {
+        "action_id": "37_2",
+        "arguments": {
+          "date": "2024-05-22",
+          "destination": "ATL",
+          "origin": "JFK"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "37_3",
+        "arguments": {
+          "date": "2024-05-22",
+          "destination": "MCO",
+          "origin": "ATL"
+        },
+        "info": null,
+        "name": "search_direct_flight"
+      },
+      {
+        "action_id": "37_4",
+        "arguments": {
+          "cabin": "business",
+          "flights": [
+            {
+              "date": "2024-05-22",
+              "flight_number": "HAT268"
+            },
+            {
+              "date": "2024-05-22",
+              "flight_number": "HAT010"
+            }
+          ],
+          "payment_id": "credit_card_9074831",
+          "reservation_id": "M20IZO"
+        },
+        "info": null,
+        "name": "update_reservation_flights"
+      }
+    ],
+    "communicate_info": [],
+    "nl_assertions": [
+      "Agent does not cancel reservation NQNU5R since it is in the past.",
+      "Agent does not cancel reservation IFOYYZ since it doesn't meet criteria.",
+      "Agent upgrades M20IZO to business class."
+    ],
+    "reward_basis": [
+      "DB",
+      "COMMUNICATE"
+    ]
+  },
+  "id": "37",
+  "initial_state": null,
+  "user_scenario": {
+    "instructions": {
+      "domain": "airline",
+      "known_info": "You are Aarav Ahmed.\nYour user id is aarav_ahmed_6699.",
+      "reason_for_call": "You want to cancel two of your upcoming reservations (IFOYYZ and NQNU5R) and upgrade a third (M20IZO) to business class.",
+      "task_instructions": "You want to use your credit card ending in 7334 to pay for all charges and are willing to comply with airline policies for the changes.",
+      "unknown_info": null
+    },
+    "persona": null
+  }
+}

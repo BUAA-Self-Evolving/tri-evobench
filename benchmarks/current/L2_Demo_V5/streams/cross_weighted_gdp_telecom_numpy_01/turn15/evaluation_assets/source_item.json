@@ -1,0 +1,16 @@
+{
+  "instance_id": "bigcodebench_00058",
+  "dataset": "bigcodebench",
+  "question": "Display a plot showing a normal distribution with a given mean and standard deviation and overlay a histogram of randomly generated samples from this distribution. The plot title should be 'Normal Distribution'.\nThe function should output with:\n    fig (matplotlib.figure.Figure): The generated figure. Useful for testing purposes.\nYou should write self-contained code starting with:\n```\nimport numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\ndef task_func(mu, sigma, num_samples):\n```",
+  "skill_annotations": [
+    "bigcodebench_137",
+    "bigcodebench_138",
+    "bigcodebench_062"
+  ],
+  "eval_data": {
+    "answer": "    samples = np.random.normal(mu, sigma, num_samples)\n    fig, ax = plt.subplots()\n    ax.hist(samples, bins=30, density=True, alpha=0.6, color='g')\n\n    xmin, xmax = plt.xlim()\n    x = np.linspace(xmin, xmax, 100)\n    p = stats.norm.pdf(x, mu, sigma)\n    ax.plot(x, p, 'k', linewidth=2)\n\n    ax.set_title('Normal Distribution')\n    plt.show()\n    return fig",
+    "code_prompt": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\ndef task_func(mu, sigma, num_samples):\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n    def test_case_1(self):\n        np.random.seed(42)\n        mu = 0\n        sigma = 1\n        num_samples = 1000\n        fig = task_func(mu, sigma, num_samples)\n        ax = fig.gca()\n        self.assertEqual(ax.get_title(), \"Normal Distribution\")\n        self.assertTrue(len(ax.patches) > 0)\n        self.assertTrue(len(ax.lines) > 0)\n    def test_case_2(self):\n        np.random.seed(42)\n        mu = 5\n        sigma = 2\n        num_samples = 1000\n        fig = task_func(mu, sigma, num_samples)\n        ax = fig.gca()\n        self.assertEqual(ax.get_title(), \"Normal Distribution\")\n        self.assertTrue(len(ax.patches) > 0)\n        self.assertTrue(len(ax.lines) > 0)\n    def test_case_3(self):\n        np.random.seed(42)\n        mu = 0\n        sigma = 1\n        num_samples = 10\n        fig = task_func(mu, sigma, num_samples)\n        ax = fig.gca()\n        self.assertEqual(ax.get_title(), \"Normal Distribution\")\n        self.assertTrue(len(ax.patches) > 0)\n        self.assertTrue(len(ax.lines) > 0)\n    def test_case_4(self):\n        np.random.seed(42)\n        mu = 0\n        sigma = 1\n        num_samples = 10\n        fig = task_func(mu, sigma, num_samples)\n        ax = fig.gca()\n        self.assertEqual(ax.get_title(), \"Normal Distribution\")\n        self.assertTrue(len(ax.patches) > 0)\n        self.assertTrue(len(ax.lines) > 0)\n    def test_case_5(self):\n        np.random.seed(42)\n        mu = 0\n        sigma = 1\n        num_samples = 10\n        fig = task_func(mu, sigma, num_samples)\n        ax = fig.gca()\n        self.assertEqual(ax.get_title(), \"Normal Distribution\")\n        self.assertTrue(len(ax.patches) > 0)\n        self.assertTrue(len(ax.lines) > 0)",
+    "entry_point": "task_func"
+  }
+}

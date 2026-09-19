@@ -34,12 +34,149 @@ LABEL_SOURCES = ("upstream_direct", "rule_normalized", "llm_filled")
 COMPOSITION_SEED = 20260919
 DEFAULT_LOCAL_L2_IMAGE_DIGEST = os.environ.get(
     "TRIEVO_L2_V5_IMAGE_DIGEST",
-    "sha256:dcf745ddf0d40f3ade31ff64a8d1bd09e222d9e0f5c9d1f7696b5be87a59cb3b",
+    "sha256:aef1eb316941f620ab1241b34b271edec73b83e1a8a743dd8595abe6697dc9fb",
 )
 
 GENERIC_V5_VERIFIER = """#!/usr/bin/env python3
 raise SystemExit("generic V5 verification was removed; use the source-semantic composer")
 """
+
+_FALLBACK_L2_JUDGE_PROMPT_V2 = """You are the reference evaluator for L2 TaskStream. Evaluate one completed Interaction strictly from supplied observable evidence.
+
+[IDENTITY]
+Stream: {stream_id}
+Turn: {turn_id}
+Turn type: {turn_type}
+Turn origin: {turn_origin}
+Interaction index: {interaction_index}
+
+[EVALUATION PROFILE]
+Profile: {evaluation_profile}
+Metric profile: {metric_profile}
+
+[ROUTED RUBRIC EXTENSIONS]
+Domain rubric:
+{domain_rubric}
+
+Benchmark rubric:
+{benchmark_rubric}
+
+[AGENT-VISIBLE TASK]
+{agent_input}
+
+[EXECUTION EVIDENCE]
+Final response:
+{final_response}
+
+Interaction transcript:
+{interaction_transcript}
+
+Tool calls:
+{tool_calls}
+
+Tool results:
+{tool_results}
+
+Workspace before:
+{workspace_before}
+
+Workspace after:
+{workspace_after}
+
+Workspace diff:
+{workspace_diff}
+
+Workspace transition record:
+{workspace_transition_record}
+
+Native verifier result:
+{native_verifier_result}
+
+Execution error:
+{execution_error}
+
+Resource usage:
+{resource_usage}
+
+[SEALED EVALUATION DATA]
+Reference context:
+{reference_context}
+
+Source and behavioral rubrics:
+{rubrics}
+
+Evaluation checks:
+{checks}
+
+Expected state:
+{expected_state}
+
+Expected tool call:
+{expected_tool_call}
+
+Expected workspace effect:
+{expected_workspace_effect}
+
+Structured ground truth:
+{gt}
+
+[SCORING RULES]
+1. Return exactly one check_scores item for every declared check, preserving check_id.
+2. For scoring=ordinal, use only 1, 0.5, 0, or null.
+3. Use null only when a check is logically inapplicable.
+4. Do not output a weighted total or a pass/fail decision.
+
+[OUTPUT]
+Return JSON only, with no Markdown fence or surrounding text:
+{
+  "stream_id": "<exact stream_id>",
+  "turn_id": "<exact turn_id>",
+  "interaction_index": 1,
+  "check_scores": [
+    {
+      "check_id": "<exact declared check_id>",
+      "score": 1,
+      "reason": "brief evidence-based justification",
+      "evidence_refs": ["native_verifier_result"]
+    }
+  ],
+  "source_rubric_scores": [],
+  "rationale": "brief overall diagnosis"
+}
+"""
+
+
+def l2_judge_prompt_v2() -> str:
+    prompt = (
+        REPO_ROOT
+        / "benchmarks"
+        / "current"
+        / "L2_Demo_V5"
+        / "contract"
+        / "prompts"
+        / "l2_judge_prompt_v2.md"
+    )
+    if prompt.is_file():
+        return prompt.read_text(encoding="utf-8")
+    return _FALLBACK_L2_JUDGE_PROMPT_V2
+
+
+def l2_user_simulator_prompt() -> str:
+    prompt = (
+        REPO_ROOT
+        / "benchmarks"
+        / "current"
+        / "L2_Demo_V5"
+        / "contract"
+        / "prompts"
+        / "l2_user_simulator_prompt.md"
+    )
+    if prompt.is_file():
+        return prompt.read_text(encoding="utf-8")
+    return (
+        "Ask for another attempt using bounded public feedback only.\n"
+        "Return JSON only with schema_version, next_user_message, and rationale_category."
+    )
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -559,7 +696,28 @@ def classification_metrics(
         expected = gold_by_id.get(str(prediction.get("source_id")))
         if expected is not None:
             grouped[str(prediction.get("label_source"))].append((prediction, expected))
-    result: dict[str, Any] = {"by_label_source": {}}
+    review_pairs = [
+        (bool(prediction.get("needs_review")), bool(expected["needs_review"]))
+        for prediction in predictions
+        if (expected := gold_by_id.get(str(prediction.get("source_id")))) is not None
+        and isinstance(expected.get("needs_review"), bool)
+    ]
+    review_tp = sum(predicted and expected for predicted, expected in review_pairs)
+    review_fp = sum(predicted and not expected for predicted, expected in review_pairs)
+    review_fn = sum(not predicted and expected for predicted, expected in review_pairs)
+    precision = review_tp / (review_tp + review_fp) if review_tp + review_fp else None
+    recall = review_tp / (review_tp + review_fn) if review_tp + review_fn else None
+    result: dict[str, Any] = {
+        "needs_review": {
+            "sample_count": len(review_pairs),
+            "positive_count": sum(expected for _, expected in review_pairs),
+            "precision": precision,
+            "recall": recall,
+            "f1": 2 * precision * recall / (precision + recall)
+            if precision is not None and recall is not None and precision + recall else None,
+        },
+        "by_label_source": {},
+    }
     fields = {
         "domain": "domain_id",
         "task_type": "task_type_ids",
@@ -944,7 +1102,7 @@ def _evaluation(stream_id: str, turn_id: str, contract: dict[str, Any], binding:
         },
         "judge_config": {
             "prompt_version": "l2_judge/2.0",
-            "judge_prompt": "Judge task completion from native verifier and public execution evidence.",
+            "judge_prompt": l2_judge_prompt_v2(),
             "temperature": 0, "output_schema": "l2_judge_output/1.0",
         },
         "success_policy": {
@@ -993,6 +1151,7 @@ def compose_package(
             "schema_version": "l2_runtime_profiles/1.0",
             "profiles": sorted(plan["runtime_profiles"], key=lambda row: row["runtime_profile_id"]),
         })
+        shutil.copy2(plan_path, stage / "stream_plan.json")
         pool_streams: dict[str, list[str]] = defaultdict(list)
         pool_scopes: dict[str, set[str]] = defaultdict(set)
         taxonomy_specs: dict[str, dict[str, Any]] = {}
@@ -1062,7 +1221,7 @@ def compose_package(
                     "user_simulator": {
                         "type": "llm_post_failure", "trigger": "interaction_unsuccessful_and_budget_remaining",
                         "prompt_version": "l2_user_simulator/1.0",
-                        "simulator_prompt": "Ask for another attempt using bounded public feedback only.",
+                        "simulator_prompt": l2_user_simulator_prompt(),
                         "temperature": 0, "output_schema": "l2_user_simulator_output/1.0",
                         "max_generated_messages": 2,
                     },
@@ -1169,10 +1328,14 @@ def compose_package(
             "taxonomy_manifest": _binding(stage / "taxonomy.json", "l2_taxonomy/1.0", "taxonomy.json"),
             "runtime_profiles": _binding(stage / "runtime_profiles.json", "l2_runtime_profiles/1.0", "runtime_profiles.json"),
             "source_catalog": _binding(stage / "source_tasks.jsonl", "l2_source_catalog/1.0", "source_tasks.jsonl"),
+            "selection_manifest": _binding(stage / "stream_plan.json", "l2_stream_plan/1.0", "stream_plan.json"),
         }
         write_json(stage / "manifest.json", manifest)
         if output_package.exists():
-            generated = ("manifest.json", "pools.json", "panels.json", "taxonomy.json", "runtime_profiles.json", "streams", "selections")
+            generated = (
+                "manifest.json", "pools.json", "panels.json", "taxonomy.json",
+                "runtime_profiles.json", "stream_plan.json", "streams", "selections",
+            )
             conflicts = [name for name in generated if (output_package / name).exists()]
             if conflicts:
                 raise ValueError(f"output package already contains generated paths: {conflicts}")
