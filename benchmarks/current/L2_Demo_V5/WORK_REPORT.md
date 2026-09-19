@@ -70,7 +70,11 @@ not an agent-ability result. Missing external AIRS/AppWorld/MLGym data was not
 downloaded. The two requested independent review agents did not remain
 read-only and their responses are not used as independent review evidence;
 their unauthorized commit was audited, and the final package was revalidated
-after the remaining schema/test fixes.
+after the remaining schema/test fixes. A separate read-only verifier review
+returned **PASS WITH LIMITATIONS** against the final candidate. It noted one
+non-blocking P2 maintainability issue: older unused compose/default helper
+paths remain in the pipeline beside the exercised CLI path. That path was not
+used to construct or validate this candidate.
 
 ## Reproducibility
 
