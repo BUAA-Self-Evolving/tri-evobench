@@ -25,10 +25,11 @@ sandbox and the marker synchronized back to the host workspace. Other
 baselines still require their own adapter-specific route qualification.
 
 The scripted adapter and deterministic native-score Judge fixture provide
-runtime/checkpoint/isolation E2E evidence only. The qualified intra Stream ran
-15/15 Turns after adjudication-checkpoint resume; the cross Stream ran Turn 1,
-then resumed from its post-Turn checkpoint for the remaining 14 Turns. These
-runs do not measure model quality or causal evolution gain.
+runtime/checkpoint/isolation E2E evidence only. Both
+`intra_tau2_support_02` and `cross_offer_retail_filesystem_01` stopped after
+Turn 7, resumed from the bound post-Turn checkpoint at Turn 8, and completed
+15/15 Turns with the pinned image and Docker-volume Workspace transport.
+These runs do not measure model quality or causal evolution gain.
 
 Use `python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V5
 --inspect` and the pipeline `validate` command before any model smoke. Formal

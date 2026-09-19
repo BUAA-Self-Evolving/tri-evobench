@@ -6,8 +6,14 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import ValidationError
 
 from trievo_bench.l2_compat import L2SpecError, inspect_l2_package
+
+
+PACKAGE_ROOT = Path(__file__).resolve().parents[1] / "benchmarks/current/L2_Demo_V5"
+V4_PACKAGE_ROOT = Path(__file__).resolve().parents[1] / "benchmarks/current/L2_Demo_V4"
 
 
 def _write_json(path: Path, value: object) -> None:
@@ -215,6 +221,29 @@ def test_v5_package_passes_extended_contract() -> None:
         inventory = inspect_l2_package(_minimal_v5(Path(tmp)))
     assert inventory[0].stream_id == "s"
     assert inventory[0].episode_count == 12
+
+
+def test_v5_panel_schema_accepts_pool_bound_panel_document() -> None:
+    schema = _read_json(PACKAGE_ROOT / "contract/schemas/l2-panels.schema.json")
+    panels = _read_json(PACKAGE_ROOT / "panels.json")
+
+    Draft202012Validator(schema).validate(panels)
+
+
+def test_v5_panel_schema_rejects_panel_without_pool_binding() -> None:
+    schema = _read_json(PACKAGE_ROOT / "contract/schemas/l2-panels.schema.json")
+    panels = _read_json(PACKAGE_ROOT / "panels.json")
+    panels["panels"][0].pop("pool_id")
+
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(panels)
+
+
+def test_v5_panel_schema_preserves_v4_panel_document_compatibility() -> None:
+    schema = _read_json(PACKAGE_ROOT / "contract/schemas/l2-panels.schema.json")
+    panels = _read_json(V4_PACKAGE_ROOT / "panels.json")
+
+    Draft202012Validator(schema).validate(panels)
 
 
 @pytest.mark.parametrize(
