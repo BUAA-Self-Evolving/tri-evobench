@@ -78,7 +78,7 @@ l2_release/
 | `source_datasets` | 使用的源 Benchmark 名称列表 |
 | `stream_count` | Stream 数量 |
 | `total_turn_count` | Turn 总量 |
-| `aggregation_profile` | 固定为 `l2_evolution_aggregation/1.1`，指向全 Benchmark 共用的 learning-curve 与 evolution-gain 规范 |
+| `aggregation_profile` | 固定为 `l2_evolution_aggregation/1.0`，指向全 Benchmark 共用的 learning-curve 与 evolution-gain 规范 |
 | `judge_prompt_version` / `judge_prompt_versions` | 单 Prompt 发布使用前者；同时包含 General V1 与 AutoResearch V2 的混合发布使用版本列表。二者必须且只能出现一个 |
 | `user_simulator_prompt_version` | 通用 User Simulator Prompt 版本 |
 | `tools_version` | Tool catalog 版本 |

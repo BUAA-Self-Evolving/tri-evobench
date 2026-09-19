@@ -2,8 +2,9 @@
 
 ## 支持范围与验证状态
 
-本版本支持 `l2_taskstream/1.0`，数据目录名不参与协议判断；仓库内当前 L2 包为
-Demo V4，带 `panels.json`，正式矩阵必须显式选择一个 panel。旧版 episode 格式适配仍保留。
+本版本支持 `l2_taskstream/1.0` 和包级 `l2_taskstream/1.1`，数据目录名不参与协议判断。
+V4 的 Task/Stream 文档仍是 1.0；1.1 只在根 manifest 增加 hash-bound panel contract。
+正式矩阵必须显式选择一个 panel；旧版 episode 格式适配仍保留。
 支持 Hermes、SkillOpt、Trace2Skill、Prime Agent、Adaptive Auto-Harness、OpenCode 的真实 Docker 工具执行、独立 Docker 私有验证、
 L2 原始 rubric 的 LLM judge、用户反馈交互，以及跨 turn 的自进化状态。
 L1 Arena 使用数据集规定的任务/偏好检查与更新顺序。
@@ -126,7 +127,7 @@ export TRIEVO_DOCKER_VOLUME_TRANSPORT=required
 
 Runtime 会通过 `docker cp` 把 package、Workspace 和 baseline state 送入 daemon-owned named volume，
 Agent 和 verifier 继续看到相同的 `/workspace`。回写先进入同文件系统 staging，再做可回滚目录交换；
-Flow 结束后删除 carrier container 和 volume。该模式当前只接入 `l2_taskstream/1.0`；L1 和旧 L2
+Flow 结束后删除 carrier container 和 volume。该模式接入 `l2_taskstream/1.0` Task/Stream；L1 和旧 L2
 继续使用原有 bind mount，但共享同一套 `BaselineRuntime`、proxy bridge 和 mount 模板，后续扩展不需要
 改 L1/L2 数据合同。数据包复制会增加每条 Stream 的启动时间，不能把它当作零成本 mount。
 

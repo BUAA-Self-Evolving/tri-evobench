@@ -144,6 +144,65 @@ def validate_lineage_groups(root: Path, manifest: dict) -> None:
         assert len(schedules[parent_id]) > 1
 
 
+def validate_panels(root: Path, manifest: dict) -> None:
+    binding = manifest["panel_manifest"]
+    panel_path = root / binding["path"]
+    assert binding["schema_version"] == "l2_panels/1.0"
+    assert binding["sha256"] == sha256_file(panel_path)
+    panels = load_json(panel_path)
+    Draft202012Validator(
+        load_json(root / "contract/schemas/l2-panels.schema.json")
+    ).validate(panels)
+    definitions = panels["panels"]
+    assert len({item["panel_id"] for item in definitions}) == len(definitions)
+    stream_ids = {item["stream_id"] for item in manifest["streams"]}
+    panel_streams = [stream_id for item in definitions for stream_id in item["stream_ids"]]
+    assert len(panel_streams) == len(set(panel_streams))
+    assert set(panel_streams) == stream_ids
+    assert panels["turn_placement_count"] == manifest["total_turn_count"]
+    by_id = {item["panel_id"]: item for item in definitions}
+    assert len(by_id["short_stream_main_panel"]["stream_ids"]) == 24
+    assert by_id["short_stream_main_panel"]["purpose"] == "primary"
+    assert len(by_id["parent_stream_diagnostic"]["stream_ids"]) == 6
+    assert by_id["parent_stream_diagnostic"]["purpose"] == "diagnostic"
+
+
+def validate_panel_aggregation(root: Path, manifest: dict) -> None:
+    path = root / "contract/evolution_panel_reference.py"
+    spec = importlib.util.spec_from_file_location("l2_panel_aggregation_reference", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    binding = manifest["panel_manifest"]
+    records = []
+    for condition, score in (("reset", 0.2), ("frozen", 0.3), ("evolving", 0.4)):
+        for index in range(1, 11):
+            records.append({
+                "condition": condition,
+                "panel_id": "short_stream_main_panel",
+                "panel_manifest_sha256": binding["sha256"],
+                "stream_id": "contract_smoke",
+                "turn_id": f"turn{index}",
+                "turn_index": index,
+                "sequence_role": "learning" if index == 1 else "probe" if index == 10 else "application",
+                "turn_score": score,
+                "evaluation_status": "scored",
+            })
+    result = module.aggregate_matched_runs(records)
+    assert result["aggregation_profile"] == "l2_evolution_aggregation/1.1"
+    assert result["panel_id"] == "short_stream_main_panel"
+    legacy_records = [
+        {key: value for key, value in record.items() if not key.startswith("panel_")}
+        for record in records
+    ]
+    try:
+        module.aggregate_matched_runs(legacy_records)
+    except ValueError as exc:
+        assert "require an L2 panel binding" in str(exc)
+    else:
+        raise AssertionError("panel aggregation accepted records without a binding")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--package", type=Path, default=Path(__file__).resolve().parent)
@@ -155,6 +214,8 @@ def main() -> None:
     Draft202012Validator(load_json(root / "contract/schemas/l2-manifest.schema.json")).validate(manifest)
     assert manifest["stream_count"] == len(manifest["streams"]) == 30
     assert manifest["total_turn_count"] == sum(item["turn_count"] for item in manifest["streams"]) == 580
+    assert manifest["schema_version"] == "l2_taskstream/1.1"
+    assert manifest["aggregation_profile"] == "l2_evolution_aggregation/1.1"
     assert Counter(item["turn_count"] for item in manifest["streams"]) == Counter({10: 19, 20: 7, 50: 3, 100: 1})
     tool_names = set(load_json(root / "tools.json")["tools"])
     task_count = 0
@@ -170,6 +231,8 @@ def main() -> None:
             validate_shard(root, stream_ref, stream)
         task_count += stream["turn_count"]
     validate_lineage_groups(root, manifest)
+    validate_panels(root, manifest)
+    validate_panel_aggregation(root, manifest)
     validate_package_manifest(root, manifest)
     helpers.assert_no_symlinks(root)
     if args.native_smoke:

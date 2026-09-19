@@ -1,5 +1,5 @@
 {
-  "schema_version": "l2_taskstream/1.0",
+  "schema_version": "l2_taskstream/1.1",
   "benchmark": "L2-TaskStream-Contract-V1-Demo-V4-Diversified",
   "source_datasets": [
     "AIRS-Bench / SICK",
@@ -203,5 +203,10 @@
       "turn_count": 10,
       "path": "streams/mlgym_titanic_tabular_classification_001__shard_02_of_02/stream.json"
     }
-  ]
+  ],
+  "panel_manifest": {
+    "schema_version": "l2_panels/1.0",
+    "path": "panels.json",
+    "sha256": "f43c4d556b4d5dd7a1fea4ca982cef8ae450461360f16c76d33a74188b5b2931"
+  }
 }

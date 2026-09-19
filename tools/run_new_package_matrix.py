@@ -77,23 +77,53 @@ def _l2_panel(package: Path, panel_id: str | None) -> dict[str, object] | None:
     panels = load(panels_path)
     if panels.get("schema_version") != "l2_panels/1.0":
         raise ValueError(f"unsupported L2 panels schema: {panels_path}")
+    manifest_path = package / "manifest.json"
+    if not manifest_path.is_file():
+        raise ValueError(f"panel-aware L2 package is missing manifest.json: {package}")
+    manifest = load(manifest_path)
+    if manifest.get("schema_version") != "l2_taskstream/1.1":
+        raise ValueError("panel-aware L2 package must declare l2_taskstream/1.1")
+    binding = manifest.get("panel_manifest")
+    digest = _sha256_file(panels_path)
+    if (
+        not isinstance(binding, dict)
+        or binding.get("schema_version") != "l2_panels/1.0"
+        or binding.get("path") != "panels.json"
+        or binding.get("sha256") != digest
+    ):
+        raise ValueError("L2 manifest panel binding does not match panels.json")
+    definitions = panels.get("panels")
+    if not isinstance(definitions, list):
+        raise ValueError("L2 panels manifest must contain a panels list")
     panel_ids = sorted(
-        key for key, value in panels.items()
-        if isinstance(value, list) and all(isinstance(item, str) for item in value)
+        str(item.get("panel_id")) for item in definitions if isinstance(item, dict)
     )
     if panel_id is None:
         raise ValueError(
             f"L2 package declares panels; pass --l2-panel ({', '.join(panel_ids)})"
         )
-    if panel_id not in panel_ids:
+    matches = [
+        item for item in definitions
+        if isinstance(item, dict) and item.get("panel_id") == panel_id
+    ]
+    if len(matches) != 1:
         raise ValueError(f"unknown L2 panel {panel_id!r}; expected one of {panel_ids}")
-    stream_ids = [str(item) for item in panels[panel_id]]
-    if len(set(stream_ids)) != len(stream_ids):
+    selected = matches[0]
+    stream_ids = selected.get("stream_ids")
+    if (
+        not isinstance(stream_ids, list)
+        or not stream_ids
+        or not all(isinstance(item, str) and item for item in stream_ids)
+        or len(set(stream_ids)) != len(stream_ids)
+    ):
         raise ValueError(f"L2 panel {panel_id!r} contains duplicate stream ids")
+    if selected.get("allows_cross_panel_aggregation") is not False:
+        raise ValueError(f"L2 panel {panel_id!r} must forbid cross-panel aggregation")
     return {
         "panel_id": panel_id,
-        "panel_manifest_sha256": _sha256_file(panels_path),
+        "panel_manifest_sha256": digest,
         "selected_stream_ids": stream_ids,
+        "panel_purpose": selected.get("purpose"),
         "allows_cross_panel_aggregation": False,
     }
 
@@ -738,7 +768,8 @@ def matched_l2_aggregations(rows):
                 # profile. Do not label mixed timing budgets as matched gain.
                 continue
             result[agent] = aggregate_matched_runs(
-                l2_reports_to_aggregation_records(report_rows)
+                l2_reports_to_aggregation_records(report_rows),
+                require_panel_binding=bool(selected[0].get("panel_id")),
             )
     return result
 

@@ -135,27 +135,25 @@ L2 CLI 为兼容旧调用，在未传条件时默认 `evolving`；这不代表�
 | 路径 | 内容 | 当前规模 |
 |---|---|---:|
 | `benchmarks/current/l1_arena` | 当前 L1 Arena | 23 streams，423 turns |
-| `benchmarks/current/L2_Demo_V2` | 当前 L2 TaskStream Demo V2 | 6 streams，134 turns |
+| `benchmarks/current/L2_Demo_V4` | 当前 L2 diversified package | 24-shard primary panel + 6-parent diagnostic panel；各 290 turns |
 
 六 baseline 下：
 
-- 默认 L1 + L2 evolving：174 个 stream-agent jobs，3,342 个 agent-turn；
-- L1 加 L2 三条件完整矩阵：246 个 jobs，4,950 个 agent-turn；
+- 默认 L1 + L2 primary evolving：282 个 stream-agent jobs，4,278 个 agent-turn；
+- L1 加 L2 primary 三条件完整矩阵：570 个 jobs，7,758 个 agent-turn；
 - L1 共 `423 turns × 6 baselines = 2,538 agent-turn`；
-- L2 三条件共 `134 turns × 6 baselines × 3 conditions = 2,412 agent-turn`。
+- L2 primary 三条件共 `290 turns × 6 baselines × 3 conditions = 5,220 agent-turn`。
 
-当前 L2 streams：
+当前 L2 panels：
 
-| Stream | Turns | 主要任务类型 |
-|---|---:|---|
-| `airs_sick_textual_entailment_accuracy_001` | 2 | 文本蕴含分类 |
-| `mlgym_titanic_tabular_classification_001` | 2 | 表格机器学习 |
-| `skilllearn_stock_data_visualization_001` | 10 | 股票数据处理和可视化 |
-| `skillsbench_data_to_d3_001` | 10 | 数据到 D3/Web 产物 |
-| `sra_bigcodebench_pandas_dataframe_viz_001` | 100 | 长程 Pandas/可视化代码任务 |
-| `tau2_telecom_mobile_data_roaming_001` | 10 | 电信策略和状态任务 |
+| Panel | Streams | Turns | 用途 |
+|---|---:|---:|---|
+| `short_stream_main_panel` | 24 | 290 | 正式 matched matrix |
+| `parent_stream_diagnostic` | 6 | 290 | 原始父流诊断，独立报告 |
 
-L2 Turn 带有 `learning`、`application`、`probe` 等 `sequence_role`。聚合必须保持三条件的 stream、turn、顺序和 role 完全匹配。
+两组 panel 重用同一批 290 个 parent Turns，不能计算 30 条 Stream 的 overall mean。L2 Turn 带有
+`learning`、`application`、`probe` 等 `sequence_role`；聚合必须保持 panel hash、三条件的
+stream、turn、顺序和 role 完全匹配。
 
 其他数据目录：
 
@@ -166,19 +164,18 @@ L2 Turn 带有 `learning`、`application`、`probe` 等 `sequence_role`。聚合
 
 `l1_life_v2` 是独立研究包，不可替代本次矩阵的 `l1_arena`。它评测事实披露、纠正、偏好应用、延迟问答、事实依赖工具、干扰项和长延迟 replay；Agent 只能看到 `agent_input`、工具 schema、grounded simulator 回复和可写 workspace，不能看到 `evaluation`、`facts.json`、rubrics、expected state/tool/workspace 或 judge 输出。
 
-外部 L2 V3 应解压到 Git checkout 外，通过 `--l2-package` 显式传入。协议选择基于 schema/content，不基于目录叫 V2 还是 V3。
+协议选择基于 schema/content，不基于目录名。V4 的根 manifest 是 1.1，Task/Stream 文档保持 1.0。
 
 ### 5.1 数据完整性现状
 
 当前 runtime-repaired L2 包的只读合同检查应使用：
 
 ```bash
-python tools/repair_l2_runtime_contracts.py benchmarks/current/L2_Demo_V2 --check
+python benchmarks/current/L2_Demo_V4/validate_pilot.py
 ```
 
-在本文更新时，该命令返回 `changes: []`，说明七类 Runtime 合同修复已物化。
-
-`python tools/dataset_inventory.py --check` 当前会报告部分 `runtime-repair.json`、`verifier_cli.py` 和 `native_semantics.py` 与旧 SHA inventory 不一致。这表示数据 inventory 尚未与后续已提交的 verifier/runtime 修订重新冻结，不表示这些 tracked 文件是本地脏改动。发布新数据版本或声称逐文件 manifest 完整前，必须审计并重新生成对应 inventory；不得静默忽略，也不得为了让检查变绿而回退已修复 verifier。
+该校验同时检查 manifest、panel 覆盖、lineage、路径隔离和数据合同。仓库级完整性使用
+`python tools/dataset_inventory.py --check`；发布前还要对 staged blobs 执行 `--check-index`。
 
 ---
 
@@ -471,10 +468,9 @@ uv run --frozen python tools/prepare_matrix_configs.py \
 uv run --frozen python -m pytest tests -q
 uv run --frozen python -m compileall -q trievo_bench baseline/adapters tools tests
 uv run --frozen python -m trievo_bench.l2_compat \
-  --package benchmarks/current/L2_Demo_V2 --inspect
+  --package benchmarks/current/L2_Demo_V4 --inspect
 uv run --frozen python tools/validate_arena_packages.py benchmarks/current/l1_arena
-uv run --frozen python tools/repair_l2_runtime_contracts.py \
-  benchmarks/current/L2_Demo_V2 --check
+uv run --frozen python benchmarks/current/L2_Demo_V4/validate_pilot.py
 ```
 
 ### 13.2 PackyCode 运行
@@ -484,7 +480,8 @@ $env:PACKYCODE_API_KEY = '<只在当前进程设置>'
 uv run --frozen python tools/run_new_package_matrix.py `
   --provider-mode packycode `
   --l1-package benchmarks/current/l1_arena `
-  --l2-package benchmarks/current/L2_Demo_V2 `
+  --l2-package benchmarks/current/L2_Demo_V4 `
+  --l2-panel short_stream_main_panel `
   --l2-condition reset --l2-condition frozen --l2-condition evolving `
   --config-dir tmp/matrix-config-packycode `
   --root runs/packycode-matrix `
@@ -500,7 +497,8 @@ $env:FRIDAY_APP_ID = '<只在企业设备当前进程设置>'
 uv run --frozen python tools/run_new_package_matrix.py `
   --provider-mode friday `
   --l1-package benchmarks/current/l1_arena `
-  --l2-package benchmarks/current/L2_Demo_V2 `
+  --l2-package benchmarks/current/L2_Demo_V4 `
+  --l2-panel short_stream_main_panel `
   --l2-condition reset --l2-condition frozen --l2-condition evolving `
   --config-dir tmp/matrix-config-friday `
   --root runs/friday-matrix `
@@ -515,7 +513,8 @@ uv run --frozen python tools/run_new_package_matrix.py `
 uv run --frozen python tools/run_new_package_matrix.py `
   --provider-mode friday `
   --level l2 `
-  --l2-package benchmarks/current/L2_Demo_V2 `
+  --l2-package benchmarks/current/L2_Demo_V4 `
+  --l2-panel short_stream_main_panel `
   --config-dir tmp/matrix-config-friday `
   --root runs/friday-preflight `
   --only l2/evolving/opencode/s01 `
@@ -927,8 +926,8 @@ git submodule status
 uv sync --frozen --group dev
 uv run --frozen python -m pytest tests -q
 uv run --frozen python -m compileall -q trievo_bench baseline/adapters tools tests
-python tools/repair_l2_runtime_contracts.py benchmarks/current/L2_Demo_V2 --check
-python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V2 --inspect
+python benchmarks/current/L2_Demo_V4/validate_pilot.py
+python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V4 --inspect
 python tools/validate_arena_packages.py benchmarks/current/l1_arena
 docker info
 ```

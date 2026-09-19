@@ -596,7 +596,7 @@ errors/retries/costs
 所有 `l2_taskstream/1.0` Release 使用根 manifest 声明的统一 profile：
 
 ```text
-l2_evolution_aggregation/1.1
+l2_evolution_aggregation/1.0
 ```
 
 本 Profile 不在 Stream 中重复保存 `analysis_plan`，也不改变单 Turn 的 verifier/Judge 评分。Runtime 必须使用相同模型、Prompt、工具权限、Turn 顺序、资源预算和 evaluator 配置，分别执行 `reset`、`frozen`、`evolving` 三个匹配 condition；三者的 Workspace 与 SUT-state 语义见 `L2_BENCHMARK_SPEC_zh.md`。

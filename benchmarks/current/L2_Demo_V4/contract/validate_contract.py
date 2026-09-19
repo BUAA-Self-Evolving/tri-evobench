@@ -87,7 +87,7 @@ manifest = {
     "source_datasets": ["example-source"],
     "stream_count": 1,
     "total_turn_count": 1,
-    "aggregation_profile": "l2_evolution_aggregation/1.1",
+    "aggregation_profile": "l2_evolution_aggregation/1.0",
     "judge_prompt_version": "l2_judge/1.0",
     "user_simulator_prompt_version": "l2_user_simulator/1.0",
     "tools_version": "l2_tools/1.0",
@@ -535,7 +535,7 @@ for condition, offset in (("reset", 0.0), ("frozen", 0.1), ("evolving", 0.2)):
             "turn_score": 0.4 + offset,
         })
 aggregates = aggregate_reference_runs(evolution_records)
-assert aggregates["aggregation_profile"] == "l2_evolution_aggregation/1.1"
+assert aggregates["aggregation_profile"] == "l2_evolution_aggregation/1.0"
 assert len(
     aggregates["conditions"]["evolving"]["per_stream"]["example_stream"]["learning_curve_bins"]
 ) == 2

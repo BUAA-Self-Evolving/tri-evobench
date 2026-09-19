@@ -1,4 +1,5 @@
 import json
+import hashlib
 import zipfile
 from pathlib import Path
 
@@ -51,16 +52,51 @@ def _panel_packages(tmp_path: Path) -> Path:
             "turns": [{"turn_id": "turn1", "sequence_role": "learning"}],
         },
     )
-    _write_json(
-        packages / "L2_Demo_V3/panels.json",
-        {
+    panel_path = packages / "L2_Demo_V3/panels.json"
+    _write_json(panel_path, {
+        "schema_version": "l2_panels/1.0",
+        "panels": [
+            {
+                "panel_id": "short_stream_main_panel",
+                "purpose": "primary",
+                "stream_ids": ["sra"],
+                "allows_cross_panel_aggregation": False,
+            },
+            {
+                "panel_id": "parent_stream_diagnostic",
+                "purpose": "diagnostic",
+                "stream_ids": ["diagnostic"],
+                "allows_cross_panel_aggregation": False,
+            },
+        ],
+        "unique_parent_turn_count": 2,
+        "turn_placement_count": 3,
+        "aggregation_rule": "Report panels separately.",
+    })
+    digest = hashlib.sha256(panel_path.read_bytes()).hexdigest()
+    _write_json(packages / "L2_Demo_V3/manifest.json", {
+        "schema_version": "l2_taskstream/1.1",
+        "panel_manifest": {
             "schema_version": "l2_panels/1.0",
-            "short_stream_main_panel": ["sra"],
-            "parent_stream_diagnostic": ["diagnostic"],
-            "aggregation_rule": "Report panels separately.",
+            "path": "panels.json",
+            "sha256": digest,
         },
-    )
+    })
     return packages
+
+
+def test_l2_panel_manifest_tampering_fails_closed(tmp_path):
+    packages = _panel_packages(tmp_path)
+    panel_path = packages / "L2_Demo_V3/panels.json"
+    panels = json.loads(panel_path.read_text())
+    panels["aggregation_rule"] = "tampered"
+    _write_json(panel_path, panels)
+
+    with pytest.raises(ValueError, match="binding does not match"):
+        jobs(
+            tmp_path, tmp_path / "results", packages, level="l2",
+            l2_panel="short_stream_main_panel",
+        )
 
 
 def _report(condition=None, *, score=1.0, status="scored"):
@@ -897,7 +933,9 @@ def test_l2_reports_convert_to_aggregation_records(tmp_path):
     records = l2_reports_to_aggregation_records(report_rows)
     assert len(records) == 6
     assert records[0]["sequence_role"] == "learning"
-    result = aggregate_matched_runs(records, bin_size=1)
+    result = aggregate_matched_runs(
+        records, bin_size=1, require_panel_binding=False
+    )
     assert result["record_count"] == 6
 
     with pytest.raises(ValueError, match="missing required L2 condition"):

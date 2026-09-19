@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Calculate the correlation matrix of a DataFrame and plot a scatter plot for the pair of columns with the highest absolute correlation. Exception Handling: - Raises ValueError if the input DataFrame is empty. - Raises TypeError if any column in the DataFrame is non-numeric. - Raises ValueError if the DataFrame has fewer than two columns.\nThe function should output with:\n    ax (plt.Axes): The scatter plot of the pair of columns with the highest absolute correlation.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\ndef task_func(dataframe):\n```"
+        "content": "Calculate the correlation matrix of a DataFrame and plot a scatter plot for the pair of columns with the highest absolute correlation. Exception Handling: - Raises ValueError if the input DataFrame is empty. - Raises TypeError if any column in the DataFrame is non-numeric. - Raises ValueError if the DataFrame has fewer than two columns.\nThe function should output with:\n    ax (plt.Axes): The scatter plot of the pair of columns with the highest absolute correlation.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\ndef task_func(dataframe):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

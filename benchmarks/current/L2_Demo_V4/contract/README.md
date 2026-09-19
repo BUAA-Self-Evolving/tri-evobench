@@ -65,7 +65,7 @@
 17. L2 数据组交付数据、prompt、schema、verifier/evidence 合同和聚合语义；Runtime/Baselines 组实现 Harness、Sandbox、工具、模型调用和实验运行。
 18. 对外 Task schema 不包含许可证字段；来源 revision 与许可判断仍保留在项目内部 provenance/合规记录中。
 19. Verifier/Judge/Simulator 在 Runtime retry/repair 后仍失败时属于 `evaluation_error`：Turn 分数为 `null`，不触发 User Simulator，也不能伪装为 Agent 失败；Run 停止或继续由 Runtime run configuration 决定。
-20. 根 manifest 固定声明 `aggregation_profile=l2_evolution_aggregation/1.1`。Runtime 使用匹配的 Reset/Frozen/Evolving Runs 计算每 10 Turns 一个 bin 的 learning curve、Evolving 相对 Reset 的主增益，以及 Evolving 相对 Frozen 的诊断增益。V1 暂不定义 forgetting 指标。
+20. V3 基础合同的根 manifest 固定声明 `aggregation_profile=l2_evolution_aggregation/1.0`。V4 由 `PANEL_CONTRACT.md` 覆盖为 `l2_evolution_aggregation/1.1`，并要求 panel binding。Runtime 使用匹配的 Reset/Frozen/Evolving Runs 计算每 10 Turns 一个 bin 的 learning curve、Evolving 相对 Reset 的主增益，以及 Evolving 相对 Frozen 的诊断增益。V1 暂不定义 forgetting 指标。
 
 ## Reference 数据流
 

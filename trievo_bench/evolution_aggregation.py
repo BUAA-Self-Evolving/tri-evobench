@@ -28,6 +28,7 @@ def aggregate_matched_runs(
     records: Iterable[Mapping[str, object]],
     *,
     bin_size: int = LEARNING_CURVE_BIN_SIZE,
+    require_panel_binding: bool = True,
 ) -> dict[str, object]:
     """Return deterministic L2 aggregates for matched terminal Turn scores.
 
@@ -51,7 +52,9 @@ def aggregate_matched_runs(
         grouped[str(record["condition"])][str(record["stream_id"])].append(record)
         record_count += 1
 
-    panel_id, panel_manifest_sha256 = _validate_panel_binding(panels)
+    panel_id, panel_manifest_sha256 = _validate_panel_binding(
+        panels, require_panel_binding=require_panel_binding
+    )
     _validate_matched_runs(grouped, bin_size=bin_size)
     condition_results = {
         condition: _aggregate_condition(grouped[condition], bin_size=bin_size)
@@ -82,9 +85,9 @@ def aggregate_matched_runs(
 
 
 def aggregate_reference_runs(records: Iterable[Mapping[str, object]]) -> dict[str, object]:
-    """Compatibility wrapper for the contract reference implementation name."""
+    """Compatibility wrapper for pre-panel L2 aggregation contracts."""
 
-    return aggregate_matched_runs(records)
+    return aggregate_matched_runs(records, require_panel_binding=False)
 
 
 def _normalize_record(raw: Mapping[str, object]) -> dict[str, object]:
@@ -139,13 +142,18 @@ def _normalize_record(raw: Mapping[str, object]) -> dict[str, object]:
 
 
 def _validate_panel_binding(
-    panels: set[tuple[str | None, str | None]]
+    panels: set[tuple[str | None, str | None]],
+    *,
+    require_panel_binding: bool,
 ) -> tuple[str | None, str | None]:
     if not panels:
         return None, None
     if len(panels) != 1:
         raise ValueError("aggregation records must belong to exactly one L2 panel")
-    return next(iter(panels))
+    binding = next(iter(panels))
+    if require_panel_binding and binding == (None, None):
+        raise ValueError("aggregation records require an L2 panel binding")
+    return binding
 
 
 def _validate_matched_runs(

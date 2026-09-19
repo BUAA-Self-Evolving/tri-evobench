@@ -23,6 +23,7 @@ The normative lifecycle is in `contract/L2_BENCHMARK_SPEC_zh.md`; evaluation aut
 7. AutoResearch performance bands are Pilot configuration and require calibration after a real Runtime run; the raw metric and normalization evidence must remain available for recalibration.
 8. Reference conditions for experiment aggregation are `reset`, `frozen`, and `evolving`. In L2, `reset` clears SUT persistent state and rebuilds the Workspace from the Stream initial `agent_workspace` plus only the current Turn's `workspace_transition`; `frozen` keeps the Stream Workspace but disallows SUT updates; `evolving` keeps the Stream Workspace and allows SUT updates.
 9. Learning curve aggregation uses complete 10-Turn bins. Formal gain requires matched, non-null terminal scores for all three conditions: `mean(evolving) - mean(reset)` is the L1-aligned primary gain, and `mean(evolving) - mean(frozen)` isolates the additional effect of SUT updates while preserving the evolving Workspace.
+10. Load `panels.json` and select exactly one panel before scheduling. Bind its file SHA-256 to each run, checkpoint, and aggregate. `short_stream_main_panel` is primary; `parent_stream_diagnostic` is diagnostic. Never combine their denominators or means because both panels place the same 290 parent Turns.
 
 ## Runtime-owned choices intentionally left open
 

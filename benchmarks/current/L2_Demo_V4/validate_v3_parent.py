@@ -48,7 +48,7 @@ def main() -> None:
     validate_package_manifest()
     manifest = load_json(PILOT / "manifest.json")
     validate(manifest, "l2-manifest.schema.json")
-    assert manifest["aggregation_profile"] == "l2_evolution_aggregation/1.1"
+    assert manifest["aggregation_profile"] == "l2_evolution_aggregation/1.0"
     assert manifest["stream_count"] == len(manifest["streams"])
     assert manifest["total_turn_count"] == sum(item["turn_count"] for item in manifest["streams"])
     assert manifest["stream_count"] == 6

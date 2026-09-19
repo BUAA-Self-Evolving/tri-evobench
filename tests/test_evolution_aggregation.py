@@ -32,6 +32,8 @@ class EvolutionAggregationTest(unittest.TestCase):
                             "sequence_role": roles[(turn_index - 1) % len(roles)],
                             "turn_score": base_score + offset,
                             "evaluation_status": "scored",
+                            "panel_id": "test_panel",
+                            "panel_manifest_sha256": "a" * 64,
                         }
                     )
         return records
@@ -40,7 +42,7 @@ class EvolutionAggregationTest(unittest.TestCase):
         result = aggregate_matched_runs(self._records())
 
         self.assertEqual(result["aggregation_profile"], AGGREGATION_PROFILE)
-        self.assertIsNone(result["panel_id"])
+        self.assertEqual(result["panel_id"], "test_panel")
         self.assertEqual(result["bin_size"], 10)
         self.assertEqual(result["record_count"], 90)
         json.dumps(result, sort_keys=True)
@@ -89,10 +91,22 @@ class EvolutionAggregationTest(unittest.TestCase):
         )
 
     def test_reference_wrapper_uses_same_profile(self) -> None:
+        records = self._records()
+        for record in records:
+            record.pop("panel_id")
+            record.pop("panel_manifest_sha256")
         self.assertEqual(
-            aggregate_reference_runs(self._records())["aggregation_profile"],
+            aggregate_reference_runs(records)["aggregation_profile"],
             AGGREGATION_PROFILE,
         )
+
+    def test_panel_profile_rejects_missing_binding_by_default(self) -> None:
+        records = self._records()
+        for record in records:
+            record.pop("panel_id")
+            record.pop("panel_manifest_sha256")
+        with self.assertRaisesRegex(ValueError, "require an L2 panel binding"):
+            aggregate_matched_runs(records)
 
     def test_panel_bound_records_keep_panel_metadata(self) -> None:
         records = self._records()

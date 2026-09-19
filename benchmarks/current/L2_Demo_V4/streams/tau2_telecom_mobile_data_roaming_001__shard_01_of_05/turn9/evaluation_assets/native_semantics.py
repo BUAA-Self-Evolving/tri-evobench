@@ -17,7 +17,6 @@ from typing import Any
 from verification import VerifyResult
 
 
-_FENCED_JSON = re.compile(r"^\s*```(?:json)?\s*(.*?)\s*```\s*$", re.DOTALL | re.IGNORECASE)
 _SCHEMA_VERSION = "tau2-telecom-trajectory-0.1"
 _MAX_TOOL_CALLS = 16
 
@@ -70,9 +69,7 @@ class Tau2TelecomVerifier:
 
 
 def _parse_trajectory(raw: str) -> dict[str, Any]:
-    match = _FENCED_JSON.match(raw)
-    payload = match.group(1) if match else raw
-    trajectory = json.loads(payload)
+    trajectory = json.loads(raw)
     if not isinstance(trajectory, dict):
         raise ValueError("response must be a JSON object")
     if set(trajectory) != {"schema_version", "assistant_message", "tool_calls"}:

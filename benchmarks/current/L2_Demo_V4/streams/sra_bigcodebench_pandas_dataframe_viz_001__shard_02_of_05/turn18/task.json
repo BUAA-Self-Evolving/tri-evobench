@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Draw a scatter plot with a regression line for two columns from a DataFrame.\nThe function should raise the exception for: Raise ValueError if the input df is not a DataFrame, empty, or does not contain the specified columns. Raise TypeError if df use non-numeric data\nThe function should output with:\n    Axes: A seaborn axes object.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(df, col1, col2):\n```"
+        "content": "Draw a scatter plot with a regression line for two columns from a DataFrame.\nThe function should raise the exception for: Raise ValueError if the input df is not a DataFrame, empty, or does not contain the specified columns. Raise TypeError if df use non-numeric data\nThe function should output with:\n    Axes: A seaborn axes object.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(df, col1, col2):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

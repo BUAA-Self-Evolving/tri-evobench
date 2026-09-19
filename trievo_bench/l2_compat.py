@@ -9,6 +9,7 @@ package's own runtime inside a disposable Ubuntu container.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -176,27 +177,86 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
     return result
 
 
-def _validate_l2_panels(root: Path, stream_ids: set[str]) -> None:
+def _load_l2_panels(root: Path) -> tuple[dict[str, Any], str] | None:
     path = root / "panels.json"
     if not path.is_file():
-        return
+        return None
     panels = _load_json(path)
     if panels.get("schema_version") != "l2_panels/1.0":
         raise L2SpecError("panels.json must declare schema_version l2_panels/1.0")
-    panel_count = 0
-    for key, value in panels.items():
-        if key in {"schema_version", "unique_parent_turn_count", "turn_placement_count", "aggregation_rule"}:
-            continue
-        if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
-            raise L2SpecError(f"panels.json/{key}: panel entries must be stream id strings")
-        panel_count += 1
-        if len(set(value)) != len(value):
-            raise L2SpecError(f"panels.json/{key}: duplicate stream id")
-        missing = sorted(set(value) - stream_ids)
+    manifest = _load_json(root / "manifest.json")
+    if manifest.get("schema_version") != "l2_taskstream/1.1":
+        raise L2SpecError("panel-aware packages must declare l2_taskstream/1.1")
+    binding = manifest.get("panel_manifest")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    if (
+        not isinstance(binding, dict)
+        or binding.get("schema_version") != "l2_panels/1.0"
+        or binding.get("path") != "panels.json"
+        or binding.get("sha256") != digest
+    ):
+        raise L2SpecError("manifest panel binding does not match panels.json")
+    return panels, digest
+
+
+def _validate_l2_panels(root: Path, stream_ids: set[str]) -> None:
+    loaded = _load_l2_panels(root)
+    if loaded is None:
+        return
+    panels, _ = loaded
+    definitions = panels.get("panels")
+    if not isinstance(definitions, list) or not definitions:
+        raise L2SpecError("panels.json must declare a non-empty panels list")
+    seen_panel_ids: set[str] = set()
+    for panel in definitions:
+        if not isinstance(panel, dict):
+            raise L2SpecError("panels.json panel entries must be objects")
+        panel_id = panel.get("panel_id")
+        selected = panel.get("stream_ids")
+        if not isinstance(panel_id, str) or not panel_id or panel_id in seen_panel_ids:
+            raise L2SpecError("panels.json panel_id values must be non-empty and unique")
+        seen_panel_ids.add(panel_id)
+        if not isinstance(selected, list) or not selected or not all(
+            isinstance(item, str) and item for item in selected
+        ):
+            raise L2SpecError(f"panels.json/{panel_id}: stream_ids must be non-empty strings")
+        if len(set(selected)) != len(selected):
+            raise L2SpecError(f"panels.json/{panel_id}: duplicate stream id")
+        if panel.get("allows_cross_panel_aggregation") is not False:
+            raise L2SpecError(f"panels.json/{panel_id}: cross-panel aggregation must be false")
+        missing = sorted(set(selected) - stream_ids)
         if missing:
-            raise L2SpecError(f"panels.json/{key}: missing stream(s): {missing}")
-    if panel_count == 0:
-        raise L2SpecError("panels.json must declare at least one panel")
+            raise L2SpecError(f"panels.json/{panel_id}: missing stream(s): {missing}")
+
+
+def _validate_runtime_panel_binding(
+    root: Path,
+    stream_id: str,
+    panel_id: str | None,
+    panel_manifest_sha256: str | None,
+    selected_stream_ids: tuple[str, ...],
+) -> None:
+    loaded = _load_l2_panels(root)
+    if loaded is None:
+        if panel_id is not None or panel_manifest_sha256 is not None or selected_stream_ids:
+            raise L2SpecError("package has no panels.json for supplied panel metadata")
+        return
+    if panel_id is None or panel_manifest_sha256 is None or not selected_stream_ids:
+        raise L2SpecError("panel-aware packages require complete panel metadata")
+    panels, digest = loaded
+    if panel_manifest_sha256 != digest:
+        raise L2SpecError("runtime panel SHA-256 does not match panels.json")
+    matches = [
+        item for item in panels["panels"]
+        if isinstance(item, dict) and item.get("panel_id") == panel_id
+    ]
+    if len(matches) != 1:
+        raise L2SpecError(f"unknown or duplicate panel_id: {panel_id}")
+    declared = matches[0].get("stream_ids")
+    if list(selected_stream_ids) != declared:
+        raise L2SpecError("runtime panel stream selection does not match panels.json")
+    if stream_id not in selected_stream_ids:
+        raise L2SpecError(f"stream {stream_id} is not a member of panel {panel_id}")
 
 
 def _validate_taskstream_execution_requirements(
@@ -359,6 +419,14 @@ def main() -> None:
         return
     if not args.stream:
         raise SystemExit("--stream is required unless --inspect is used")
+    panel_streams = tuple(item for item in (args.panel_streams or "").split(",") if item)
+    try:
+        _validate_runtime_panel_binding(
+            Path(args.package).resolve(), args.stream, args.panel_id,
+            args.panel_manifest_sha256, panel_streams,
+        )
+    except L2SpecError as exc:
+        raise SystemExit(str(exc)) from exc
     if args.baseline:
         if not args.allow_generated_code:
             raise SystemExit("L2 real-agent execution requires --allow-generated-code")
@@ -390,9 +458,7 @@ def main() -> None:
                 retry_job_id=args.retry_job,
                 panel_id=args.panel_id,
                 panel_manifest_sha256=args.panel_manifest_sha256,
-                selected_stream_ids=tuple(
-                    item for item in (args.panel_streams or "").split(",") if item
-                ),
+                selected_stream_ids=panel_streams,
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))

@@ -13,7 +13,6 @@ import zipfile
 from collections import Counter
 from pathlib import Path
 
-
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent
 if str(REPO_ROOT) not in sys.path:
@@ -21,8 +20,10 @@ if str(REPO_ROOT) not in sys.path:
 
 from tools.repair_l2_runtime_contracts import repair as repair_runtime_contracts
 
+
 DEFAULT_DESIGN = HERE / "l2_stream_shard_design.json"
 VALIDATOR = HERE / "validate_l2_stream_shards.py"
+PANELS_SCHEMA = HERE.parent / "schemas" / "l2-panels.schema.json"
 
 
 def load_json(path: Path) -> dict:
@@ -76,6 +77,45 @@ def copy_root(source: Path, output: Path) -> None:
     shutil.copytree(source / "streams", output / "streams")
     shutil.copy2(source / "validate_pilot.py", output / "validate_v3_parent.py")
     shutil.copy2(VALIDATOR, output / "validate_pilot.py")
+
+
+def upgrade_manifest_contract(output: Path) -> None:
+    schema_path = output / "contract/schemas/l2-manifest.schema.json"
+    schema = load_json(schema_path)
+    schema["title"] = "L2 TaskStream Manifest V1.1"
+    schema["properties"]["schema_version"] = {
+        "enum": ["l2_taskstream/1.0", "l2_taskstream/1.1"]
+    }
+    schema["properties"]["aggregation_profile"] = {
+        "enum": ["l2_evolution_aggregation/1.0", "l2_evolution_aggregation/1.1"]
+    }
+    schema["properties"]["panel_manifest"] = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["schema_version", "path", "sha256"],
+        "properties": {
+            "schema_version": {"const": "l2_panels/1.0"},
+            "path": {"const": "panels.json"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        },
+    }
+    schema["allOf"] = [{
+        "if": {"properties": {"schema_version": {"const": "l2_taskstream/1.1"}}},
+        "then": {
+            "required": ["panel_manifest"],
+            "properties": {
+                "aggregation_profile": {"const": "l2_evolution_aggregation/1.1"}
+            },
+        },
+        "else": {
+            "not": {"required": ["panel_manifest"]},
+            "properties": {
+                "aggregation_profile": {"const": "l2_evolution_aggregation/1.0"}
+            },
+        },
+    }]
+    write_json(schema_path, schema)
+    shutil.copy2(PANELS_SCHEMA, output / "contract/schemas/l2-panels.schema.json")
 
 
 def role_for(index: int, schedule: dict) -> str:
@@ -320,6 +360,7 @@ def build_package(source: Path, output: Path, design_path: Path) -> None:
     source_refs = {item["stream_id"]: item for item in source_manifest["streams"]}
     assert set(source_refs) == {item["parent_stream_id"] for item in design["parents"]}
     copy_root(source, output)
+    upgrade_manifest_contract(output)
     parent_hashes = {}
     shard_refs = []
     expanded_design = []
@@ -344,10 +385,39 @@ def build_package(source: Path, output: Path, design_path: Path) -> None:
                 "probe_turn_indices": schedule["probe"],
                 "schedule_rationale": schedule["rationale"],
             })
+    panels = {
+        "schema_version": "l2_panels/1.0",
+        "panels": [
+            {
+                "panel_id": "short_stream_main_panel",
+                "purpose": "primary",
+                "stream_ids": [item["stream_id"] for item in shard_refs],
+                "allows_cross_panel_aggregation": False,
+            },
+            {
+                "panel_id": "parent_stream_diagnostic",
+                "purpose": "diagnostic",
+                "stream_ids": [item["stream_id"] for item in source_manifest["streams"]],
+                "allows_cross_panel_aggregation": False,
+            },
+        ],
+        "unique_parent_turn_count": source_manifest["total_turn_count"],
+        "turn_placement_count": source_manifest["total_turn_count"] + sum(
+            item["turn_count"] for item in shard_refs
+        ),
+        "aggregation_rule": "Report panels separately; do not combine their denominators or overall means.",
+    }
+    write_json(output / "panels.json", panels)
     manifest = dict(source_manifest)
     manifest.update({
+        "schema_version": "l2_taskstream/1.1",
         "benchmark": "L2-TaskStream-Contract-V1-Demo-V4-Diversified",
         "aggregation_profile": "l2_evolution_aggregation/1.1",
+        "panel_manifest": {
+            "schema_version": "l2_panels/1.0",
+            "path": "panels.json",
+            "sha256": sha256_file(output / "panels.json"),
+        },
         "stream_count": len(source_manifest["streams"]) + len(shard_refs),
         "total_turn_count": source_manifest["total_turn_count"] + sum(item["turn_count"] for item in shard_refs),
         "streams": source_manifest["streams"] + shard_refs,
@@ -364,38 +434,59 @@ def build_package(source: Path, output: Path, design_path: Path) -> None:
         "source_design_sha256": sha256_file(design_path),
         "streams": expanded_design,
     })
-    write_json(output / "panels.json", {
-        "schema_version": "l2_panels/1.0",
-        "short_stream_main_panel": [item["stream_id"] for item in shard_refs],
-        "parent_stream_diagnostic": [item["stream_id"] for item in source_manifest["streams"]],
-        "unique_parent_turn_count": source_manifest["total_turn_count"],
-        "turn_placement_count": manifest["total_turn_count"],
-        "aggregation_rule": "Report panels separately; do not combine their denominators or overall means.",
-    })
-    write_json(output / "contract" / "schemas" / "l2-panels.schema.json", {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://self-evolving-benchmark.local/schemas/l2-panels.schema.json",
-        "title": "L2 Panels V1",
-        "type": "object",
-        "additionalProperties": False,
-        "required": ["schema_version", "short_stream_main_panel", "parent_stream_diagnostic", "aggregation_rule"],
-        "properties": {
-            "schema_version": {"const": "l2_panels/1.0"},
-            "short_stream_main_panel": {"$ref": "#/$defs/panel_streams"},
-            "parent_stream_diagnostic": {"$ref": "#/$defs/panel_streams"},
-            "unique_parent_turn_count": {"type": "integer", "minimum": 1},
-            "turn_placement_count": {"type": "integer", "minimum": 1},
-            "aggregation_rule": {"type": "string", "minLength": 1},
-        },
-        "$defs": {
-            "panel_streams": {
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": True,
-                "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
-            },
-        },
-    })
+    shutil.copy2(
+        Path(__file__).resolve().parents[1] / "trievo_bench" / "evolution_aggregation.py",
+        output / "contract" / "evolution_panel_reference.py",
+    )
+    (output / "contract" / "PANEL_CONTRACT.md").write_text(
+        "# L2 Demo V4 panel contract\n\n"
+        "The V3 Task and Stream documents remain `l2_taskstream/1.0`. V4 adds a package-level "
+        "`l2_taskstream/1.1` manifest so selection and aggregation can distinguish two "
+        "non-independent views of the same 290 parent Turns.\n\n"
+        "| Panel | Purpose | Streams | Turn placements |\n"
+        "|---|---|---:|---:|\n"
+        "| `short_stream_main_panel` | Primary matched matrix | 24 shards | 290 |\n"
+        "| `parent_stream_diagnostic` | Long-stream diagnostic | 6 parents | 290 |\n\n"
+        "A launcher must select exactly one `panel_id`, verify the `panels.json` SHA-256 bound "
+        "by the root manifest, and carry both values into reports and checkpoints. Aggregation "
+        "must reject records with missing, partial, or mixed panel bindings. The two panels may "
+        "be reported side by side but their denominators and overall means must never be combined.\n\n"
+        "`evolution_reference.py` and `validate_contract.py` preserve the V3 base-contract fixtures. "
+        "V4 panel-aware runs use `evolution_panel_reference.py` and profile `l2_evolution_aggregation/1.1`; "
+        "its default entrypoint rejects records without a panel binding.\n",
+        encoding="utf-8",
+    )
+    handoff_path = output / "RUNTIME_HANDOFF.md"
+    handoff = handoff_path.read_text(encoding="utf-8")
+    aggregation_rule = (
+        "9. Learning curve aggregation uses complete 10-Turn bins. Formal gain requires matched, non-null terminal scores for all three conditions: "
+        "`mean(evolving) - mean(reset)` is the L1-aligned primary gain, and `mean(evolving) - mean(frozen)` isolates the additional effect of SUT updates while preserving the evolving Workspace."
+    )
+    panel_rule = (
+        "10. Load `panels.json` and select exactly one panel before scheduling. Bind its file SHA-256 to each run, checkpoint, and aggregate. "
+        "`short_stream_main_panel` is primary; `parent_stream_diagnostic` is diagnostic. Never combine their denominators or means because both panels place the same 290 parent Turns."
+    )
+    if aggregation_rule not in handoff:
+        raise ValueError("RUNTIME_HANDOFF.md aggregation rule marker is missing")
+    handoff = handoff.replace(aggregation_rule, aggregation_rule + "\n" + panel_rule, 1)
+    handoff = handoff.replace(
+        "`l2_evolution_aggregation/1.0` semantics.",
+        "`l2_evolution_aggregation/1.1` semantics.",
+        1,
+    )
+    handoff_path.write_text(handoff, encoding="utf-8")
+    contract_readme_path = output / "contract" / "README.md"
+    contract_readme = contract_readme_path.read_text(encoding="utf-8")
+    v3_rule = "20. 根 manifest 固定声明 `aggregation_profile=l2_evolution_aggregation/1.0`。"
+    v4_rule = (
+        "20. V3 基础合同的根 manifest 固定声明 `aggregation_profile=l2_evolution_aggregation/1.0`。"
+        "V4 由 `PANEL_CONTRACT.md` 覆盖为 `l2_evolution_aggregation/1.1`，并要求 panel binding。"
+    )
+    if v3_rule not in contract_readme:
+        raise ValueError("contract/README.md aggregation rule marker is missing")
+    contract_readme_path.write_text(
+        contract_readme.replace(v3_rule, v4_rule, 1), encoding="utf-8"
+    )
     (output / "README.md").write_text(
         "# L2 Demo V4 - diversified independent Streams\n\n"
         "This package preserves all six frozen L2 Demo V3 parent Streams and adds 24 independent 10/20-Turn Streams. "
@@ -403,16 +494,19 @@ def build_package(source: Path, output: Path, design_path: Path) -> None:
         "There are 30 Streams and 580 Turn placements, not 580 unique source tasks.\n\n"
         "Each shard starts from its own copied blank `agent_workspace`, carries all task and private verifier assets, and has no runtime dependency on its parent. "
         "See `shard_design.json`, each shard's `selection.json`, and `panels.json`.\n\n"
+        "Formal runs must select exactly one panel and bind the SHA-256 of `panels.json` in every report and checkpoint. "
+        "Use `short_stream_main_panel` for the primary matched matrix. Use `parent_stream_diagnostic` only for a separately reported diagnostic run. "
+        "Cross-panel aggregation is invalid.\n\n"
         "Validate after fresh extraction with `python validate_pilot.py`. Add `--native-smoke` for all red/green fixtures.\n",
         encoding="utf-8",
     )
-    repair_runtime_contracts(output, check=False)
+    repair_runtime_contracts(output)
     package_manifest_path = output / "PACKAGE_MANIFEST.json"
     records, tree_hash = tree_records(output, {package_manifest_path})
     write_json(package_manifest_path, {
         "schema_version": "l2_demo_package_manifest/1.0",
         "package_name": output.name,
-        "contract_schema_version": "l2_taskstream/1.0",
+        "contract_schema_version": "l2_taskstream/1.1",
         "stream_count": manifest["stream_count"],
         "turn_count": manifest["total_turn_count"],
         "file_count": len(records),

@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Analyzes the groups in a DataFrame by plotting a scatter plot of the ordinals against the values for each group.\nThe function should raise the exception for: ValueError: If 'df' is not a DataFrame or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object with the scatter plot.\n    The Axes object will have a title 'Scatterplot of Values for Each Group Over Time',\n    x-axis labeled as 'Date (ordinal)', and y-axis labeled as 'Value'.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom itertools import cycle\ndef task_func(df, groups=['A', 'B', 'C', 'D', 'E']):\n```"
+        "content": "Analyzes the groups in a DataFrame by plotting a scatter plot of the ordinals against the values for each group.\nThe function should raise the exception for: ValueError: If 'df' is not a DataFrame or lacks required columns.\nThe function should output with:\n    matplotlib.axes.Axes: The Axes object with the scatter plot.\n    The Axes object will have a title 'Scatterplot of Values for Each Group Over Time',\n    x-axis labeled as 'Date (ordinal)', and y-axis labeled as 'Value'.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom itertools import cycle\ndef task_func(df, groups=['A', 'B', 'C', 'D', 'E']):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

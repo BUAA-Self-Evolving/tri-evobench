@@ -40,7 +40,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Load a CSV file into a DataFrame, filter the lines in which the employee ID begins with a prefix, and draw a histogram of its age.\nThe function should output with:\n    DataFrame: A pandas DataFrame with the filtered data, containing the columns 'Employee ID' and 'Age'.\n    Axes: A histogram plot of the 'Age' column of the filtered data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(data='/path/to/data.csv', emp_prefix='EMP'):\n```"
+        "content": "Load a CSV file into a DataFrame, filter the lines in which the employee ID begins with a prefix, and draw a histogram of its age.\nThe function should output with:\n    DataFrame: A pandas DataFrame with the filtered data, containing the columns 'Employee ID' and 'Age'.\n    Axes: A histogram plot of the 'Age' column of the filtered data.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport seaborn as sns\ndef task_func(data='/path/to/data.csv', emp_prefix='EMP'):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

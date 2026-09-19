@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Generate a DataFrame containing random integer values across a specified number of categories, and visualize these data as a horizontal stacked bar chart.\nNote that: The plot displays categories on the y-axis and their corresponding values on the x-axis, with data segmented by category.\nThe function should output with:\n    tuple: A tuple containing a matplotlib Figure and Axes objects for the generated plot.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_types=5, integer_range=(0, 100)):\n```"
+        "content": "Generate a DataFrame containing random integer values across a specified number of categories, and visualize these data as a horizontal stacked bar chart.\nNote that: The plot displays categories on the y-axis and their corresponding values on the x-axis, with data segmented by category.\nThe function should output with:\n    tuple: A tuple containing a matplotlib Figure and Axes objects for the generated plot.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom random import randint\ndef task_func(num_types=5, integer_range=(0, 100)):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

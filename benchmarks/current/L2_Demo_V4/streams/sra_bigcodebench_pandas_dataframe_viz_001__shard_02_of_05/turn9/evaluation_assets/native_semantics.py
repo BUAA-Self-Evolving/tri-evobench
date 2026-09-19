@@ -54,7 +54,23 @@ class SraBigCodeBenchVerifier:
         item = json.loads((assets / "source_item.json").read_text())
         eval_data = item["eval_data"]
         entrypoint = eval_data["entry_point"]
-        extracted = sanitize(raw_model_output, entrypoint=entrypoint)
+        try:
+            extracted = sanitize(raw_model_output, entrypoint=entrypoint)
+        except (SyntaxError, ValueError, TypeError) as exc:
+            return VerifyResult(
+                category="fail",
+                score=0.0,
+                details={"reason": "invalid_submission", "error": str(exc)},
+            )
+        if not extracted.strip():
+            return VerifyResult(
+                category="fail",
+                score=0.0,
+                details={
+                    "reason": "invalid_submission",
+                    "error": "final response did not contain extractable Python source",
+                },
+            )
         solution = eval_data["code_prompt"] + "\n    pass\n" + extracted
         test_code = (assets / "tests.py").read_text()
         script = solution + "\n" + test_code + "\n" + _TEST_HARNESS

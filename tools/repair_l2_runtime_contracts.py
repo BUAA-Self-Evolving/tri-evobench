@@ -132,6 +132,7 @@ def _managed_paths(
     tau2_turns: list[Path],
     browser_turns: dict[str, list[Path]],
     all_turns: dict[str, list[Path]],
+    skillsbench_manifests: list[Path],
 ) -> list[Path]:
     paths: list[Path] = []
     for turn in sra_turns:
@@ -148,7 +149,7 @@ def _managed_paths(
     for turns in all_turns.values():
         for turn in turns:
             paths.append(turn / "evaluation_assets" / "verifier_cli.py")
-    paths.append(package / "streams" / SKILLSBENCH_STREAM / "stream.json")
+    paths.extend(skillsbench_manifests)
     return paths
 
 
@@ -162,19 +163,25 @@ def _managed_hashes(package: Path, paths: list[Path]) -> dict[str, str]:
 def repair(package: Path, *, check: bool = False) -> dict[str, object]:
     package = package.resolve()
     manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("schema_version") != "l2_taskstream/1.0":
-        raise ValueError("repair requires an l2_taskstream/1.0 package")
+    if manifest.get("schema_version") not in {"l2_taskstream/1.0", "l2_taskstream/1.1"}:
+        raise ValueError("repair requires an l2_taskstream/1.0 or 1.1 package")
     changes: list[str] = []
 
-    sra_turns = _turn_dirs(package, SRA_STREAM)
-    tau2_turns = _turn_dirs(package, TAU2_STREAM)
-    browser_turns = {stream_id: _turn_dirs(package, stream_id) for stream_id in BROWSER_STREAMS}
     all_turns = {
         str(stream["stream_id"]): _turn_dirs(package, str(stream["stream_id"]))
         for stream in manifest.get("streams", [])
     }
     if not all_turns:
         raise ValueError("package manifest does not declare streams")
+    family = lambda parent_id: [
+        turn
+        for stream_id, turns in all_turns.items()
+        if stream_id == parent_id or stream_id.startswith(parent_id + "__shard_")
+        for turn in turns
+    ]
+    sra_turns = family(SRA_STREAM)
+    tau2_turns = family(TAU2_STREAM)
+    browser_turns = {stream_id: family(stream_id) for stream_id in BROWSER_STREAMS}
     for turn in sra_turns:
         assets = turn / "evaluation_assets"
         for path, old, new in (
@@ -211,19 +218,28 @@ def repair(package: Path, *, check: bool = False) -> dict[str, object]:
             if _replace_once(verifier_cli, NATIVE_TIMEOUT_OLD, NATIVE_TIMEOUT_NEW, check=check):
                 changes.append(str(verifier_cli.relative_to(package)))
 
-    skillsbench_manifest = package / "streams" / SKILLSBENCH_STREAM / "stream.json"
-    stream = json.loads(skillsbench_manifest.read_text(encoding="utf-8"))
-    requirements = stream.get("execution_requirements", {})
-    if requirements.get("max_tool_calls_per_interaction") != 40:
-        changes.append(str(skillsbench_manifest.relative_to(package)))
-        if not check:
-            requirements["max_tool_calls_per_interaction"] = 40
-            skillsbench_manifest.write_text(
-                json.dumps(stream, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-            )
+    skillsbench_manifests = [
+        package / "streams" / stream_id / "stream.json"
+        for stream_id in all_turns
+        if stream_id == SKILLSBENCH_STREAM
+        or stream_id.startswith(SKILLSBENCH_STREAM + "__shard_")
+    ]
+    for skillsbench_manifest in skillsbench_manifests:
+        stream = json.loads(skillsbench_manifest.read_text(encoding="utf-8"))
+        requirements = stream.get("execution_requirements", {})
+        if requirements.get("max_tool_calls_per_interaction") != 40:
+            changes.append(str(skillsbench_manifest.relative_to(package)))
+            if not check:
+                requirements["max_tool_calls_per_interaction"] = 40
+                skillsbench_manifest.write_text(
+                    json.dumps(stream, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+                )
 
     receipt = package / "runtime-repair.json"
-    managed_paths = _managed_paths(package, sra_turns, tau2_turns, browser_turns, all_turns)
+    managed_paths = _managed_paths(
+        package, sra_turns, tau2_turns, browser_turns, all_turns,
+        skillsbench_manifests,
+    )
     managed_files = _managed_hashes(package, managed_paths)
     package_manifest_sha256 = hashlib.sha256((package / "manifest.json").read_bytes()).hexdigest()
     if check:

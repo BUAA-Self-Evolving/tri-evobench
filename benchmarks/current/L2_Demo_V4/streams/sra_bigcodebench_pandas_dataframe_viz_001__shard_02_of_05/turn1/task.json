@@ -37,7 +37,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Create a Pandas DataFrame from a list of pairs and visualize the data using a bar chart. - The title of the barplot should be set to 'Category vs Value'`.\nThe function should output with:\n    tuple:\n    DataFrame: A pandas DataFrame with columns 'Category' and 'Value'.\n    Axes: A matplotlib Axes displaying a bar chart of categories vs. values.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(list_of_pairs):\n```"
+        "content": "Create a Pandas DataFrame from a list of pairs and visualize the data using a bar chart. - The title of the barplot should be set to 'Category vs Value'`.\nThe function should output with:\n    tuple:\n    DataFrame: A pandas DataFrame with columns 'Category' and 'Value'.\n    Axes: A matplotlib Axes displaying a bar chart of categories vs. values.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndef task_func(list_of_pairs):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

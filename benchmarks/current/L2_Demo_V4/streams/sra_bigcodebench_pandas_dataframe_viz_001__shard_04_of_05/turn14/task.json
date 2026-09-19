@@ -39,7 +39,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "Calculate the occurrence of certain words in a collection of sentences and return a bar chart.\nThe function should output with:\n    matplotlib.axes._axes.Axes: Axes object of the bar chart displaying the frequencies.\nYou should write self-contained code starting with:\n```\nimport collections\nimport matplotlib.pyplot as plt\nimport pandas as pd\n# Constants\nWORDS = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I']\ndef task_func(sentences_dict, word_keys):\n```"
+        "content": "Calculate the occurrence of certain words in a collection of sentences and return a bar chart.\nThe function should output with:\n    matplotlib.axes._axes.Axes: Axes object of the bar chart displaying the frequencies.\nYou should write self-contained code starting with:\n```\nimport collections\nimport matplotlib.pyplot as plt\nimport pandas as pd\n# Constants\nWORDS = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I']\ndef task_func(sentences_dict, word_keys):\n``` Your final response must contain only the complete self-contained Python source code. Do not return a summary or file link, and do not rely on a Workspace file as the submission. Do not add prose outside the source code."
       }
     ],
     "available_tools": [],

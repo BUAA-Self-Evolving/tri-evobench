@@ -11,7 +11,7 @@
 
 | 项目 | 本文边界 |
 |---|---|
-| L2 数据合同 | `l2_taskstream/1.0`，`l2_evolution_aggregation/1.1` |
+| L2 数据合同 | `l2_taskstream/1.0`，`l2_evolution_aggregation/1.0` |
 | 本地项目基线 | `ce66c1c57d62b85e82bae25bf22fc93d0895598c` 之上的未提交 V3 工作树；最终提交前应重新绑定 commit |
 | V3 数据规模 | 6 Streams / 290 Turns |
 | τ² / Telecom | `a2c024725189473d2d7cea3a5cfdbcc67478e41f` |

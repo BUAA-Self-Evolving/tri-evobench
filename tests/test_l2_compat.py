@@ -1,9 +1,14 @@
 import json
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 
-from trievo_bench.l2_compat import L2SpecError, inspect_l2_package
+from trievo_bench.l2_compat import (
+    L2SpecError,
+    _validate_runtime_panel_binding,
+    inspect_l2_package,
+)
 
 
 class L2CompatTest(unittest.TestCase):
@@ -100,13 +105,65 @@ class L2CompatTest(unittest.TestCase):
     def test_rejects_panel_referencing_missing_stream(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = self._make_package(Path(tmp))
-            (root / "panels.json").write_text(json.dumps({
+            panel_path = root / "panels.json"
+            panel_path.write_text(json.dumps({
                 "schema_version": "l2_panels/1.0",
-                "short_stream_main_panel": ["demo_stream", "missing_stream"],
+                "panels": [{
+                    "panel_id": "short_stream_main_panel",
+                    "purpose": "primary",
+                    "stream_ids": ["demo_stream", "missing_stream"],
+                    "allows_cross_panel_aggregation": False,
+                }],
+            }), encoding="utf-8")
+            digest = hashlib.sha256(panel_path.read_bytes()).hexdigest()
+            (root / "manifest.json").write_text(json.dumps({
+                "schema_version": "l2_taskstream/1.1",
+                "panel_manifest": {
+                    "schema_version": "l2_panels/1.0",
+                    "path": "panels.json",
+                    "sha256": digest,
+                },
             }), encoding="utf-8")
 
             with self.assertRaisesRegex(L2SpecError, "missing stream"):
                 inspect_l2_package(root)
+
+    def test_runtime_panel_binding_requires_hash_and_exact_selection(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_package(Path(tmp))
+            panel_path = root / "panels.json"
+            panel_path.write_text(json.dumps({
+                "schema_version": "l2_panels/1.0",
+                "panels": [{
+                    "panel_id": "main",
+                    "purpose": "primary",
+                    "stream_ids": ["demo_stream"],
+                    "allows_cross_panel_aggregation": False,
+                }],
+            }), encoding="utf-8")
+            digest = hashlib.sha256(panel_path.read_bytes()).hexdigest()
+            (root / "manifest.json").write_text(json.dumps({
+                "schema_version": "l2_taskstream/1.1",
+                "panel_manifest": {
+                    "schema_version": "l2_panels/1.0",
+                    "path": "panels.json",
+                    "sha256": digest,
+                },
+            }), encoding="utf-8")
+
+            _validate_runtime_panel_binding(
+                root, "demo_stream", "main", digest, ("demo_stream",)
+            )
+            with self.assertRaisesRegex(L2SpecError, "complete panel metadata"):
+                _validate_runtime_panel_binding(root, "demo_stream", None, None, ())
+            with self.assertRaisesRegex(L2SpecError, "SHA-256"):
+                _validate_runtime_panel_binding(
+                    root, "demo_stream", "main", "0" * 64, ("demo_stream",)
+                )
+            with self.assertRaisesRegex(L2SpecError, "does not match panels.json"):
+                _validate_runtime_panel_binding(
+                    root, "demo_stream", "main", digest, ("other",)
+                )
 
 
 if __name__ == "__main__":

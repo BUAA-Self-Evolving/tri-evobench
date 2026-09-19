@@ -12,7 +12,7 @@ from statistics import fmean
 from typing import Iterable, Mapping, Sequence
 
 
-AGGREGATION_PROFILE = "l2_evolution_aggregation/1.1"
+AGGREGATION_PROFILE = "l2_evolution_aggregation/1.0"
 CONDITIONS = ("reset", "frozen", "evolving")
 LEARNING_CURVE_BIN_SIZE = 10
 SEQUENCE_ROLES = {"learning", "application", "probe", "replay", "noise"}
