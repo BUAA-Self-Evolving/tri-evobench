@@ -12,7 +12,7 @@ from statistics import fmean
 from typing import Iterable, Mapping, Sequence
 
 
-AGGREGATION_PROFILE = "l2_evolution_aggregation/1.0"
+AGGREGATION_PROFILE = "l2_evolution_aggregation/1.1"
 CONDITIONS = ("reset", "frozen", "evolving")
 LEARNING_CURVE_BIN_SIZE = 10
 SEQUENCE_ROLES = frozenset({"learning", "application", "probe", "replay", "noise"})
@@ -43,12 +43,15 @@ def aggregate_matched_runs(
     grouped: dict[str, dict[str, list[dict[str, object]]]] = {
         condition: defaultdict(list) for condition in CONDITIONS
     }
+    panels: set[tuple[str | None, str | None]] = set()
     record_count = 0
     for raw in records:
         record = _normalize_record(raw)
+        panels.add((record.get("panel_id"), record.get("panel_manifest_sha256")))
         grouped[str(record["condition"])][str(record["stream_id"])].append(record)
         record_count += 1
 
+    panel_id, panel_manifest_sha256 = _validate_panel_binding(panels)
     _validate_matched_runs(grouped, bin_size=bin_size)
     condition_results = {
         condition: _aggregate_condition(grouped[condition], bin_size=bin_size)
@@ -57,6 +60,9 @@ def aggregate_matched_runs(
 
     return {
         "aggregation_profile": AGGREGATION_PROFILE,
+        "panel_id": panel_id,
+        "panel_manifest_sha256": panel_manifest_sha256,
+        "allows_cross_panel_aggregation": False if panel_id else None,
         "bin_size": bin_size,
         "record_count": record_count,
         "conditions": condition_results,
@@ -114,8 +120,32 @@ def _normalize_record(raw: Mapping[str, object]) -> dict[str, object]:
         if evaluation_status not in SCORED_EVALUATION_STATUSES:
             raise ValueError(f"unknown evaluation_status: {evaluation_status!r}")
 
+    panel_id = record.get("panel_id")
+    panel_manifest_sha256 = record.get("panel_manifest_sha256")
+    if panel_id is not None and (not isinstance(panel_id, str) or not panel_id):
+        raise ValueError("panel_id must be a non-empty string when present")
+    if panel_manifest_sha256 is not None:
+        if not isinstance(panel_manifest_sha256, str) or len(panel_manifest_sha256) != 64:
+            raise ValueError("panel_manifest_sha256 must be a 64-character hex string when present")
+        try:
+            int(panel_manifest_sha256, 16)
+        except ValueError as exc:
+            raise ValueError("panel_manifest_sha256 must be lowercase hexadecimal") from exc
+    if (panel_id is None) != (panel_manifest_sha256 is None):
+        raise ValueError("panel_id and panel_manifest_sha256 must be provided together")
+
     record["turn_score"] = float(score)
     return record
+
+
+def _validate_panel_binding(
+    panels: set[tuple[str | None, str | None]]
+) -> tuple[str | None, str | None]:
+    if not panels:
+        return None, None
+    if len(panels) != 1:
+        raise ValueError("aggregation records must belong to exactly one L2 panel")
+    return next(iter(panels))
 
 
 def _validate_matched_runs(

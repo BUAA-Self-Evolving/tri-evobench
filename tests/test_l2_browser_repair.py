@@ -25,19 +25,19 @@ class L2BrowserRepairTest(unittest.TestCase):
             ):
                 self.assertIn("ignore_cleanup_errors=True", verifier.read_text(encoding="utf-8"))
 
-    def test_materialized_browser_verifiers_and_receipt_are_current(self) -> None:
+    def test_current_l2_package_inspects_as_taskstream(self) -> None:
         repo = Path(__file__).parents[1]
-        package = repo / "benchmarks/current/L2_Demo_V2"
-        receipt = package / "runtime-repair.json"
-        from tools.repair_l2_runtime_contracts import REPAIR_VERSION, repair
+        package = repo / "benchmarks/current/L2_Demo_V4"
+        from trievo_bench.l2_compat import inspect_l2_package
 
-        self.assertEqual(json.loads(receipt.read_text())["repair_version"], REPAIR_VERSION)
-        self.assertEqual(repair(package, check=True)["repair_version"], REPAIR_VERSION)
+        inventory = inspect_l2_package(package)
+        self.assertEqual(len(inventory), 30)
+        self.assertEqual(sum(item.episode_count for item in inventory), 580)
 
     def test_materialized_native_timeout_is_a_scored_task_failure(self) -> None:
         assets = (
             Path(__file__).parents[1]
-            / "benchmarks/current/L2_Demo_V2/streams/skillsbench_data_to_d3_001"
+            / "benchmarks/current/L2_Demo_V4/streams/skillsbench_data_to_d3_001"
             / "turn1/evaluation_assets"
         )
         previous_native = sys.modules.pop("native_semantics", None)

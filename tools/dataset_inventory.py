@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 PACKAGES = (
-    "current/l1_arena", "current/L2_Demo_V2", "l1_demo", "l2_demo",
+    "current/l1_arena", "current/L2_Demo_V4", "l1_demo", "l2_demo",
     "l1_life_v2", "archive/L2_Demo_V2_previous",
 )
 

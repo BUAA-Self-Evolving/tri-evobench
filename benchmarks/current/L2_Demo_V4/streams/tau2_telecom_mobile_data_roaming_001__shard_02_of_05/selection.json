@@ -1,0 +1,306 @@
+{
+  "schema_version": "l2_v3_stream_selection/1.0",
+  "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_02_of_05",
+  "source": {
+    "benchmark": "tau2-bench",
+    "upstream_url": "https://github.com/sierra-research/tau2-bench.git",
+    "revision": "a2c024725189473d2d7cea3a5cfdbcc67478e41f",
+    "license": "MIT",
+    "dataset": "telecom/tasks.json",
+    "path": "data/tau2/domains/telecom/tasks.json"
+  },
+  "target_turn_count": 10,
+  "selection_rule": {
+    "candidate_filter": {
+      "description.purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "evaluation_criteria.reward_basis": [
+        "ENV_ASSERTION"
+      ]
+    },
+    "ordering": "first 50 matching native tasks in pinned tasks.json order",
+    "candidate_count": 254,
+    "selected_native_count": 50,
+    "derived_count": 0,
+    "native_scoring": "final environment assertions; evaluation_criteria.actions is reference evidence, not a mandatory unique action sequence"
+  },
+  "sequence_role_policy": {
+    "learning": [
+      1
+    ],
+    "probe": [
+      3,
+      8
+    ],
+    "application": "all remaining turn indices",
+    "probe_basis": "Non-terminal transfer checks.",
+    "replay_and_noise": "not used in this release"
+  },
+  "selected_turns": [
+    {
+      "turn_index": 1,
+      "turn_id": "turn1",
+      "sequence_role": "learning",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 10,
+        "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+      },
+      "item_sha256": "4b40ea8884545d88e5246bc53b4afb6059d66819fc3f82327298e0b41805a2da",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn11",
+      "parent_turn_index": 11
+    },
+    {
+      "turn_index": 2,
+      "turn_id": "turn2",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_mode_off[PERSONA:None]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 11,
+        "id": "[mobile_data_issue]airplane_mode_on|data_mode_off[PERSONA:None]"
+      },
+      "item_sha256": "1684f44366c23e2dd6ca8588614be2430c890aca0631dfc62bcfa05794252cef",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn12",
+      "parent_turn_index": 12
+    },
+    {
+      "turn_index": 3,
+      "turn_id": "turn3",
+      "sequence_role": "probe",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_saver_mode_on[PERSONA:Easy]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 12,
+        "id": "[mobile_data_issue]airplane_mode_on|data_saver_mode_on[PERSONA:Easy]"
+      },
+      "item_sha256": "03684567b7200ba44609f23eed08949615d37841d7133cdcc3a474c53b1f2fff",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn13",
+      "parent_turn_index": 13
+    },
+    {
+      "turn_index": 4,
+      "turn_id": "turn4",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference[PERSONA:Hard]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 13,
+        "id": "[mobile_data_issue]airplane_mode_on|bad_network_preference[PERSONA:Hard]"
+      },
+      "item_sha256": "d0283876405e929871524eefdd1c72e07db22587ecc98bedc7e19e00cbe5009b",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn14",
+      "parent_turn_index": 14
+    },
+    {
+      "turn_index": 5,
+      "turn_id": "turn5",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|bad_vpn[PERSONA:None]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 14,
+        "id": "[mobile_data_issue]airplane_mode_on|bad_vpn[PERSONA:None]"
+      },
+      "item_sha256": "42ec1fed13332b308053a65b462483a2033f0b4754878fda4f48429c125c3783",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn15",
+      "parent_turn_index": 15
+    },
+    {
+      "turn_index": 6,
+      "turn_id": "turn6",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_usage_exceeded[PERSONA:Easy]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 15,
+        "id": "[mobile_data_issue]airplane_mode_on|data_usage_exceeded[PERSONA:Easy]"
+      },
+      "item_sha256": "8d966b657bf07b96477e735da07b839f37e3d44db219e2924269eafffeb3c3fd",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn16",
+      "parent_turn_index": 16
+    },
+    {
+      "turn_index": 7,
+      "turn_id": "turn7",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]data_mode_off|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 16,
+        "id": "[mobile_data_issue]data_mode_off|user_abroad_roaming_enabled_off[PERSONA:None]"
+      },
+      "item_sha256": "03b72bb2c42bc95a99ea005accc695880eebfcee2e848c9563b65017cd39a9a1",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn17",
+      "parent_turn_index": 17
+    },
+    {
+      "turn_index": 8,
+      "turn_id": "turn8",
+      "sequence_role": "probe",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 17,
+        "id": "[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]"
+      },
+      "item_sha256": "fc18c2d140e675a6b8c4b18d101c65bbdc59d664b6fd94d21617ae395819650f",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn18",
+      "parent_turn_index": 18
+    },
+    {
+      "turn_index": 9,
+      "turn_id": "turn9",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]bad_network_preference|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 18,
+        "id": "[mobile_data_issue]bad_network_preference|user_abroad_roaming_enabled_off[PERSONA:Hard]"
+      },
+      "item_sha256": "68e6999a530548ccce6503568d9ab45e010e15b69ea236352e59cb8fb79764f3",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn19",
+      "parent_turn_index": 19
+    },
+    {
+      "turn_index": 10,
+      "turn_id": "turn10",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "source_task_id": "[mobile_data_issue]bad_vpn|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "parent_source_task_ids": [],
+      "source_selector": {
+        "json_index": 19,
+        "id": "[mobile_data_issue]bad_vpn|user_abroad_roaming_enabled_off[PERSONA:None]"
+      },
+      "item_sha256": "99bc6eac394ac1f6c83d2ead25954e4de73ecd672fd45467c96a34daa019413b",
+      "native_reward_basis": [
+        "ENV_ASSERTION"
+      ],
+      "purpose": "Test resolution path: Mobile Data/Slow Internet Issues.",
+      "parent_turn_id": "turn20",
+      "parent_turn_index": 20
+    }
+  ],
+  "derivation": {
+    "kind": "independent_stream_from_parent_turn_subset",
+    "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+    "parent_stream_version": "L2_Demo_V3",
+    "source_turn_range": [
+      11,
+      20
+    ],
+    "shard_index": 2,
+    "shard_count": 5,
+    "preserves_parent_order": true,
+    "runtime_dependency_on_parent": false,
+    "schedule_rationale": "Non-terminal transfer checks."
+  },
+  "turn_lineage": [
+    {
+      "turn_id": "turn1",
+      "parent_turn_id": "turn11",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+    },
+    {
+      "turn_id": "turn2",
+      "parent_turn_id": "turn12",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_mode_off[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn3",
+      "parent_turn_id": "turn13",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_saver_mode_on[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn4",
+      "parent_turn_id": "turn14",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference[PERSONA:Hard]"
+    },
+    {
+      "turn_id": "turn5",
+      "parent_turn_id": "turn15",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|bad_vpn[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn6",
+      "parent_turn_id": "turn16",
+      "source_task_id": "[mobile_data_issue]airplane_mode_on|data_usage_exceeded[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn7",
+      "parent_turn_id": "turn17",
+      "source_task_id": "[mobile_data_issue]data_mode_off|user_abroad_roaming_enabled_off[PERSONA:None]"
+    },
+    {
+      "turn_id": "turn8",
+      "parent_turn_id": "turn18",
+      "source_task_id": "[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]"
+    },
+    {
+      "turn_id": "turn9",
+      "parent_turn_id": "turn19",
+      "source_task_id": "[mobile_data_issue]bad_network_preference|user_abroad_roaming_enabled_off[PERSONA:Hard]"
+    },
+    {
+      "turn_id": "turn10",
+      "parent_turn_id": "turn20",
+      "source_task_id": "[mobile_data_issue]bad_vpn|user_abroad_roaming_enabled_off[PERSONA:None]"
+    }
+  ]
+}

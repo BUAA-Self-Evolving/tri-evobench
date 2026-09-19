@@ -1,0 +1,40 @@
+{
+  "schema_version": "l2_panels/1.0",
+  "short_stream_main_panel": [
+    "sra_bigcodebench_pandas_dataframe_viz_001__shard_01_of_05",
+    "sra_bigcodebench_pandas_dataframe_viz_001__shard_02_of_05",
+    "sra_bigcodebench_pandas_dataframe_viz_001__shard_03_of_05",
+    "sra_bigcodebench_pandas_dataframe_viz_001__shard_04_of_05",
+    "sra_bigcodebench_pandas_dataframe_viz_001__shard_05_of_05",
+    "tau2_telecom_mobile_data_roaming_001__shard_01_of_05",
+    "tau2_telecom_mobile_data_roaming_001__shard_02_of_05",
+    "tau2_telecom_mobile_data_roaming_001__shard_03_of_05",
+    "tau2_telecom_mobile_data_roaming_001__shard_04_of_05",
+    "tau2_telecom_mobile_data_roaming_001__shard_05_of_05",
+    "skilllearn_stock_data_visualization_001__shard_01_of_05",
+    "skilllearn_stock_data_visualization_001__shard_02_of_05",
+    "skilllearn_stock_data_visualization_001__shard_03_of_05",
+    "skilllearn_stock_data_visualization_001__shard_04_of_05",
+    "skilllearn_stock_data_visualization_001__shard_05_of_05",
+    "skillsbench_data_to_d3_001__shard_01_of_05",
+    "skillsbench_data_to_d3_001__shard_02_of_05",
+    "skillsbench_data_to_d3_001__shard_03_of_05",
+    "skillsbench_data_to_d3_001__shard_04_of_05",
+    "skillsbench_data_to_d3_001__shard_05_of_05",
+    "airs_sick_textual_entailment_accuracy_001__shard_01_of_02",
+    "airs_sick_textual_entailment_accuracy_001__shard_02_of_02",
+    "mlgym_titanic_tabular_classification_001__shard_01_of_02",
+    "mlgym_titanic_tabular_classification_001__shard_02_of_02"
+  ],
+  "parent_stream_diagnostic": [
+    "airs_sick_textual_entailment_accuracy_001",
+    "mlgym_titanic_tabular_classification_001",
+    "skilllearn_stock_data_visualization_001",
+    "skillsbench_data_to_d3_001",
+    "sra_bigcodebench_pandas_dataframe_viz_001",
+    "tau2_telecom_mobile_data_roaming_001"
+  ],
+  "unique_parent_turn_count": 290,
+  "turn_placement_count": 580,
+  "aggregation_rule": "Report panels separately; do not combine their denominators or overall means."
+}

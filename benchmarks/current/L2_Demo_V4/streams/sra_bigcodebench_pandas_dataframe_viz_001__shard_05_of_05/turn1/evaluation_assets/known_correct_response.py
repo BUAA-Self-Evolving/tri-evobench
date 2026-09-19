@@ -1,0 +1,21 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+def task_func(dictionary, key, value, n=100, bins=30, seed=0):
+    np.random.seed(seed)
+    # Test that value is a number
+    try:
+        float(value)
+    except ValueError:
+        raise ValueError("Value must be a number.")
+    # Update the dictionary
+    dictionary[key] = value
+    
+    # Generate the dataset
+    data = np.random.normal(loc=float(value), scale=float(value), size=n)
+    
+    # Plot the histogram of the generated data and get the axes object
+    _, ax = plt.subplots()
+    ax.hist(data, bins=bins, density=True)
+    data = pd.Series(data)
+    return dictionary, data, ax

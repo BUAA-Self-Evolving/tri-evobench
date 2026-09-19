@@ -1,0 +1,24 @@
+{
+  "schema_version": "tau2-telecom-trajectory-0.1",
+  "assistant_message": "I resolved the mobile-data issue and restored excellent connectivity.",
+  "tool_calls": [
+    {
+      "requestor": "user",
+      "name": "toggle_airplane_mode",
+      "arguments": {}
+    },
+    {
+      "requestor": "user",
+      "name": "toggle_data_saver_mode",
+      "arguments": {}
+    },
+    {
+      "requestor": "assistant",
+      "name": "enable_roaming",
+      "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "instance_id": "bigcodebench_00588",
+  "dataset": "bigcodebench",
+  "question": "Generates a DataFrame with two columns, 'X' and 'Y', each filled with random integers within a specified range, and plots these points using a scatter plot. The visualization is created using Seaborn on top of Matplotlib. The function is designed to be parameter-free for simplicity, utilizing constants for configuration. No Parameters.\nThe function should output with:\n    pd.DataFrame: A DataFrame with 'X' and 'Y' columns containing the generated random integers.\nYou should write self-contained code starting with:\n```\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n# Constants defining the range of random integers and the size of the DataFrame\nRANGE = 100\nSIZE = 1000\ndef task_func():\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_137",
+    "bigcodebench_138",
+    "bigcodebench_013"
+  ],
+  "eval_data": {
+    "answer": "    # Generate the DataFrame with random integers within the specified range [0, RANGE)\n    df = pd.DataFrame({\n        'X': np.random.randint(0, RANGE, SIZE),\n        'Y': np.random.randint(0, RANGE, SIZE)\n    })\n\n    # Draw a scatter plot using Seaborn for a more refined visual output\n    sns.scatterplot(data=df, x='X', y='Y')\n    plt.show()\n\n    return df",
+    "code_prompt": "import numpy as np\nimport pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n# Constants defining the range of random integers and the size of the DataFrame\nRANGE = 100\nSIZE = 1000\ndef task_func():\n",
+    "test": "import unittest\nclass TestCases(unittest.TestCase):\n    def test_dataframe_shape(self):\n        \"\"\"Test that the DataFrame has the correct shape.\"\"\"\n        df = task_func()\n        self.assertEqual(df.shape, (SIZE, 2))\n    def test_random_range(self):\n        \"\"\"Test that the random numbers fall within the specified range.\"\"\"\n        df = task_func()\n        self.assertTrue(df['X'].between(0, RANGE-1).all())\n        self.assertTrue(df['Y'].between(0, RANGE-1).all())\n    def test_columns_existence(self):\n        \"\"\"Ensure both 'X' and 'Y' columns exist.\"\"\"\n        df = task_func()\n        self.assertIn('X', df.columns)\n        self.assertIn('Y', df.columns)\n    def test_non_empty_dataframe(self):\n        \"\"\"Check that the DataFrame is not empty.\"\"\"\n        df = task_func()\n        self.assertFalse(df.empty)\n    def test_columns_type(self):\n        \"\"\"Test that 'X' and 'Y' columns are of integer type.\"\"\"\n        df = task_func()\n        self.assertTrue(np.issubdtype(df['X'].dtype, np.integer))\n        self.assertTrue(np.issubdtype(df['Y'].dtype, np.integer))",
+    "entry_point": "task_func"
+  }
+}

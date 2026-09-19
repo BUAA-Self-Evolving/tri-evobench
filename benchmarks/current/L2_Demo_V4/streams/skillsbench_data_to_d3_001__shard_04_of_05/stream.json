@@ -1,0 +1,127 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "stream_id": "skillsbench_data_to_d3_001__shard_04_of_05",
+  "directory": "skillsbench_data_to_d3_001__shard_04_of_05",
+  "profile": "L2 task family adapted from SkillsBench",
+  "theme": "One native SkillsBench data-to-d3 task plus forty-nine declared deterministic format/order variants share one persistent D3 skill and artifact workflow. This independent shard starts from a blank Stream workspace.",
+  "turn_count": 10,
+  "task_layout": "turn_directories",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "capability_application": 10
+  },
+  "fact_thread_count": 0,
+  "capability": {
+    "capability_id": "d3_stock_data_visualization",
+    "family": "file_artifact_data_visualization",
+    "relation_type": "same_artifact_workflow_different_input_format",
+    "description": "One native task plus forty-nine declared deterministic input-format/order variants require the same D3 stock visualization workflow over CSV, JSON, and TSV inputs while reusing one materialized skill."
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "turn_order": [
+      "turn1",
+      "turn2",
+      "turn3",
+      "turn4",
+      "turn5",
+      "turn6",
+      "turn7",
+      "turn8",
+      "turn9",
+      "turn10"
+    ],
+    "note": "Preserves parent Turns 31-40 and renumbers them locally."
+  },
+  "execution_requirements": {
+    "network": "disabled",
+    "path_scope": "agent_workspace",
+    "max_interactions": 3,
+    "max_tool_calls_per_interaction": 20,
+    "turn_timeout_seconds": 900,
+    "max_output_tokens": 12000
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "learning",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "probe",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "sequence_role": "application",
+      "source_task_id": null
+    }
+  ]
+}

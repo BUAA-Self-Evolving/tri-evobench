@@ -63,7 +63,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("runs/mx25/l2-controls"))
     parser.add_argument("--evolving-root", type=Path, default=Path("runs/mx24/full"))
-    parser.add_argument("--package", type=Path, default=Path("benchmarks/current/L2_Demo_V2"))
+    parser.add_argument("--package", type=Path, default=Path("benchmarks/current/L2_Demo_V4"))
     args = parser.parse_args()
     root = args.root.resolve()
     package = args.package.resolve()

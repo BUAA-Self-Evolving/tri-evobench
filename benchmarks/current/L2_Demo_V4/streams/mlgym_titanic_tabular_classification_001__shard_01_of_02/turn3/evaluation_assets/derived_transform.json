@@ -1,0 +1,16 @@
+{
+  "schema_version": "l2_derived_transform/1.0",
+  "parent_source_task_id": "titanicSurvival",
+  "transformation": {
+    "type": "deterministic_non_overlapping_stratified_hidden_cohort",
+    "algorithm": "partition private labels into PassengerId-sorted classes; each cohort takes the next 14 class-0 and 8 class-1 rows, then sorts the public cohort by PassengerId",
+    "slice_index": 1,
+    "slice_count": 19
+  },
+  "row_count": 22,
+  "passenger_id_min": 911,
+  "passenger_id_max": 937,
+  "public_test_sha256": "9b9713659fe056309b56d7fdf3e877c83871714fb8907fdcf89a2028dcef6032",
+  "private_ground_truth_sha256": "68af6c5bef52255002da5b6bd0c5b62d168a9d2d588d2e936b4563c1d4862986",
+  "semantic_invariant": "Train data, binary label, submission schema, and raw Accuracy verifier are unchanged."
+}

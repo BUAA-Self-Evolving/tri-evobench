@@ -1,0 +1,67 @@
+{
+  "schema_version": "l2_stream_shard_design/1.0",
+  "parent_package_version": "L2_Demo_V3",
+  "output_package_version": "L2_Demo_V4",
+  "parents": [
+    {
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "shard_size": 20,
+      "schedules": [
+        {"learning": [1], "probe": [5, 13, 20], "rationale": "Frequent, non-equidistant transfer checks."},
+        {"learning": [1], "probe": [8, 17], "rationale": "Sparse checks with a long dependency interval."},
+        {"learning": [1, 7], "probe": [12, 20], "rationale": "A mid-stream reinforcement followed by delayed checks."},
+        {"learning": [1, 9], "probe": [15, 19], "rationale": "Interleaved reinforcement and transfer checks."},
+        {"learning": [1], "probe": [6, 14, 19], "rationale": "Checks avoid a fixed end-of-bin cadence."}
+      ]
+    },
+    {
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "shard_size": 10,
+      "schedules": [
+        {"learning": [1], "probe": [4, 10], "rationale": "Early and delayed workflow transfer checks."},
+        {"learning": [1], "probe": [3, 8], "rationale": "Non-terminal transfer checks."},
+        {"learning": [1, 5], "probe": [7, 10], "rationale": "Mid-stream workflow reinforcement."},
+        {"learning": [1], "probe": [6, 9], "rationale": "Long application interval before checks."},
+        {"learning": [1, 4], "probe": [7, 10], "rationale": "Repeated workflow exposure before checks."}
+      ]
+    },
+    {
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "shard_size": 10,
+      "schedules": [
+        {"learning": [1], "probe": [4, 10], "rationale": "Early and delayed artifact-workflow checks."},
+        {"learning": [1], "probe": [3, 8], "rationale": "Non-terminal artifact-workflow checks."},
+        {"learning": [1, 5], "probe": [7, 10], "rationale": "Mid-stream artifact-workflow reinforcement."},
+        {"learning": [1], "probe": [6, 9], "rationale": "Long application interval before checks."},
+        {"learning": [1, 4], "probe": [7, 10], "rationale": "Repeated artifact-workflow exposure before checks."}
+      ]
+    },
+    {
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "shard_size": 10,
+      "schedules": [
+        {"learning": [1], "probe": [4, 10], "rationale": "Early and delayed D3 workflow checks."},
+        {"learning": [1], "probe": [3, 8], "rationale": "Non-terminal D3 workflow checks."},
+        {"learning": [1, 5], "probe": [7, 10], "rationale": "Mid-stream D3 workflow reinforcement."},
+        {"learning": [1], "probe": [6, 9], "rationale": "Long application interval before checks."},
+        {"learning": [1, 4], "probe": [7, 10], "rationale": "Repeated D3 workflow exposure before checks."}
+      ]
+    },
+    {
+      "parent_stream_id": "airs_sick_textual_entailment_accuracy_001",
+      "shard_size": 10,
+      "schedules": [
+        {"learning": [1], "probe": [4, 10], "rationale": "Early and delayed classifier-workflow checks."},
+        {"learning": [1], "probe": [3, 8], "rationale": "Non-terminal classifier-workflow checks."}
+      ]
+    },
+    {
+      "parent_stream_id": "mlgym_titanic_tabular_classification_001",
+      "shard_size": 10,
+      "schedules": [
+        {"learning": [1, 5], "probe": [7, 10], "rationale": "Mid-stream tabular-workflow reinforcement."},
+        {"learning": [1], "probe": [6, 9], "rationale": "Long application interval before checks."}
+      ]
+    }
+  ]
+}

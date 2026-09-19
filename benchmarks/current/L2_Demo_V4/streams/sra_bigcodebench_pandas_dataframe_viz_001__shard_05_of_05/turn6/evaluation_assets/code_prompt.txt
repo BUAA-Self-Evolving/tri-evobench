@@ -1,0 +1,6 @@
+from random import sample
+import seaborn as sns
+import pandas as pd
+# Constants
+COLUMNS = ['A', 'B', 'C', 'D', 'E']
+def task_func(df: pd.DataFrame, tuples: list, n_plots: int) -> (pd.DataFrame, list):

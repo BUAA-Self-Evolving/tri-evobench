@@ -12,7 +12,7 @@ from trievo_bench.l2_agent import L2AgentRunOptions, L2AgentStreamRunner, _resto
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    rows = jobs(root, root / "runs/mx24/full", root / "benchmarks/current")
+    rows = jobs(root, root / "runs/mx24/full", root / "benchmarks/current", l2_panel="parent_stream_diagnostic")
     assert len(rows) == 87
     assert sum(len(row["turns"]) for row in rows) == 1671
     completed = [row for row in rows if report_for(row)[0]]
@@ -37,7 +37,7 @@ def main():
     for agent in ("hermes", "skillopt", "trace2skill"):
         name = "tmp_hermes_cf_l2.override.json" if agent == "hermes" else f"tmp_{agent}_docker.override.json"
         config = json.loads((root / name).read_text())
-        options = L2AgentRunOptions(root / "benchmarks/current/L2_Demo_V2", row["flow_id"],
+        options = L2AgentRunOptions(root / "benchmarks/current/L2_Demo_V4", row["flow_id"],
                                    root / "migration/offline-native", agent, config, 300000000,
                                    "trievo-l2:0.1", "trievo-l2-browser:0.1", root)
         runner = L2AgentStreamRunner(options)

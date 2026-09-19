@@ -104,6 +104,9 @@ class L2AgentRunOptions:
     stop_after_turn: str | None = None
     retry_authorization: Path | None = None
     retry_job_id: str | None = None
+    panel_id: str | None = None
+    panel_manifest_sha256: str | None = None
+    selected_stream_ids: tuple[str, ...] = ()
 
 
 class L2AgentStreamRunner:
@@ -128,6 +131,7 @@ class L2AgentStreamRunner:
                 "evaluation_error_policy must be 'stop' or 'continue'"
             )
         self.evaluation_error_policy = options.evaluation_error_policy
+        self.panel_metadata = self._validate_panel_metadata(options)
         self.budget_profile = _budget_profile(options.baseline_overrides)
         self._applied_stream_limit_overrides: list[dict[str, Any]] = []
         if options.retry_interrupted_run_id and self.condition not in {
@@ -145,6 +149,35 @@ class L2AgentStreamRunner:
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
         self._storage_gate = _storage_gate_from_environment()
+
+    def _validate_panel_metadata(self, options: L2AgentRunOptions) -> dict[str, Any]:
+        if options.panel_id is None:
+            if options.panel_manifest_sha256 is not None or options.selected_stream_ids:
+                raise L2AgentRunError("panel metadata must include panel_id")
+            return {}
+        if not options.panel_id:
+            raise L2AgentRunError("panel_id must be non-empty")
+        digest = options.panel_manifest_sha256
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise L2AgentRunError("panel_manifest_sha256 must be a 64-character hex string")
+        try:
+            int(digest, 16)
+        except ValueError as exc:
+            raise L2AgentRunError("panel_manifest_sha256 must be hexadecimal") from exc
+        selected = list(options.selected_stream_ids)
+        if not selected or len(set(selected)) != len(selected):
+            raise L2AgentRunError("selected_stream_ids must be non-empty and unique")
+        if options.stream_id not in selected:
+            raise L2AgentRunError("selected_stream_ids must contain the current stream")
+        return {
+            "panel_id": options.panel_id,
+            "panel_manifest_sha256": digest,
+            "selected_stream_ids": selected,
+            "allows_cross_panel_aggregation": False,
+        }
+
+    def _checkpoint_panel_metadata(self) -> dict[str, Any]:
+        return dict(self.panel_metadata)
 
     def run(self) -> dict[str, Any]:
         manifest = _load_json(self.stream_dir / "stream.json")
@@ -318,6 +351,10 @@ class L2AgentStreamRunner:
             )
             if checkpoint_condition != self.condition.value:
                 raise L2AgentRunError("checkpoint run condition mismatch")
+            if self.panel_metadata:
+                for key, expected in self.panel_metadata.items():
+                    if checkpoint_metadata.get(key) != expected:
+                        raise L2AgentRunError("checkpoint panel binding mismatch")
             checkpoint_error_policy = str(
                 checkpoint_metadata.get("evaluation_error_policy", "stop")
             )
@@ -375,6 +412,7 @@ class L2AgentStreamRunner:
             "stream_id": self.options.stream_id,
             "baseline": self.options.baseline,
             "condition": self.condition.value,
+            **self.panel_metadata,
             "started_at": datetime.now(UTC).isoformat(),
             "turns": completed_turns,
             "success": False,
@@ -382,6 +420,7 @@ class L2AgentStreamRunner:
             "work_limits": asdict(self.work_limits),
             "run_configuration": {
                 "condition": self.condition.value,
+                **self.panel_metadata,
                 "budget_profile": self.budget_profile,
                 "evaluation_error_policy": self.evaluation_error_policy,
                 "execution_requirements": execution_requirements,
@@ -501,6 +540,7 @@ class L2AgentStreamRunner:
                         _write_json(started_checkpoint / "checkpoint.json", {
                             "phase": "interact_started", "stream_id": self.options.stream_id,
                             "baseline": self.options.baseline, "condition": self.condition.value,
+                            **self._checkpoint_panel_metadata(),
                             "evaluation_error_policy": self.evaluation_error_policy,
                             "run_id": run_id, "turn_id": turn_id,
                             "next_turn_index": turn_index, "interaction_index": interaction_index,
@@ -548,6 +588,7 @@ class L2AgentStreamRunner:
                     _write_json(pending / "checkpoint.json", {
                         "phase": "adjudicate", "stream_id": self.options.stream_id,
                         "baseline": self.options.baseline, "condition": self.condition.value,
+                        **self._checkpoint_panel_metadata(),
                         "evaluation_error_policy": self.evaluation_error_policy,
                         "run_id": run_id, "turn_id": turn_id,
                         "next_turn_index": turn_index, "interaction_index": interaction_index,
@@ -781,6 +822,7 @@ class L2AgentStreamRunner:
                     "stream_id": self.options.stream_id,
                     "baseline": self.options.baseline,
                     "condition": self.condition.value,
+                    **self._checkpoint_panel_metadata(),
                     "evaluation_error_policy": self.evaluation_error_policy,
                     "turn_id": turn_id,
                     "completed_turn_index": turn_index,
@@ -913,6 +955,7 @@ class L2AgentStreamRunner:
             "stream_id": self.options.stream_id,
             "baseline": self.options.baseline,
             "condition": self.condition.value,
+            **self._checkpoint_panel_metadata(),
             "evaluation_error_policy": self.evaluation_error_policy,
             "run_id": run_id,
             "turn_id": turn_id,

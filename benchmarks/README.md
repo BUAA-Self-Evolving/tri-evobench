@@ -6,7 +6,7 @@
 | 路径 | 版本与用途 | 规模 |
 |---|---|---|
 | `current/l1_arena` | 2026-09-03 导入的最新 L1 Arena | 23 streams，423 turns |
-| `current/L2_Demo_V2` | 2026-09-03 导入、当前正在评测的 L2 Demo V2 | 6 streams，134 turns |
+| `current/L2_Demo_V4` | 2026-09-18 派生的 panel-aware L2 Demo V4 | 30 streams，580 turn placements |
 | `l1_demo` | 原始 L1 七轮 Demo | 1 session，7 turns |
 | `l2_demo` | 旧 episode 格式 L2 Demo 的本地评测输入版本 | 6 streams，17 episodes |
 | `l1_life_v2` | 已有的 L1 Life V2 数据包 | 以包内 manifest 为准 |
@@ -23,11 +23,12 @@ Python 缓存等非评测文件，未改写任务、gold、rubric 或 verifier�
 
 ```bash
 python tools/dataset_inventory.py --check
-python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V2 --inspect
+python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V4 --inspect
 ```
 
-执行最新五种 baseline 矩阵请看 [运行指南](../docs/current-matrix.md)，传入
-`--packages benchmarks/current`。`SHA256_MANIFEST.json` 记录各版本每个文件的大小和摘要。
+执行最新六种 baseline 矩阵请看 [运行指南](../docs/current-matrix.md)，传入
+`--packages benchmarks/current --l2-panel short_stream_main_panel`。`SHA256_MANIFEST.json`
+记录各版本每个文件的大小和摘要。
 
 保留各数据包自带的来源和许可说明；仓库代码许可不覆盖上游数据、素材的独立使用限制。
 包内含私有评测 gold 与 verifier，不能把整个包挂载给被测 agent，必须通过评测器划分可见边界。

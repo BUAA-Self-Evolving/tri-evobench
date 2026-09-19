@@ -1,0 +1,7 @@
+    scaler = StandardScaler()
+    standardized_data = scaler.fit_transform(data_matrix)
+    df = pd.DataFrame(standardized_data, columns=FEATURE_NAMES)
+    df["Mean"] = df.mean(axis=1)
+    plt.figure(figsize=(10, 5))
+    ax = df["Mean"].plot(kind="hist", title="Distribution of Means")
+    return df, ax

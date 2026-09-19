@@ -1,0 +1,324 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "stream_id": "airs_sick_textual_entailment_accuracy_001__shard_01_of_02",
+  "turn_id": "turn6",
+  "turn_index": 6,
+  "turn_type": "capability_application",
+  "turn_origin": "derived_evolution_turn",
+  "sequence_role": "application",
+  "interaction_arm": "llm_post_failure",
+  "source_basis": {
+    "source_dataset": "RobZamp/sick",
+    "source_task_id": null,
+    "parent_source_task_ids": [
+      "TextualClassificationSickAccuracy"
+    ],
+    "mapping_rule": "This derived_evolution_turn is a deterministic hidden-test cohort of one pinned native benchmark task; it is not an additional upstream task. The exact selector and hashes are frozen in selection.json and evaluation_assets/derived_transform.json.",
+    "source_revision": "18e4f1d501069cf7d7e2740d81c2ca748c56a6a1",
+    "source_path": "airsbench/tasks/rad/TextualClassificationSickAccuracy",
+    "source_selector": {
+      "parent_task_id": "TextualClassificationSickAccuracy",
+      "fold_id": 5,
+      "fold_count": 20
+    },
+    "source_metadata": {
+      "dataset": "RobZamp/sick",
+      "revision": "18e4f1d501069cf7d7e2740d81c2ca748c56a6a1",
+      "path": "airsbench/tasks/rad/TextualClassificationSickAccuracy",
+      "selector": "metadata.logging_info.name == TextualClassificationSickAccuracy",
+      "variant_type": "derived_hidden_test_fold",
+      "benchmark": "AIRS-Bench",
+      "parent_source_task_id": "TextualClassificationSickAccuracy",
+      "selection_manifest": "selection.json",
+      "selection_turn_index": 6,
+      "derived_variant_id": "sick_hidden_fold_05",
+      "transform_manifest": "evaluation_assets/derived_transform.json",
+      "row_count": 246
+    }
+  },
+  "capability_relation": {
+    "capability_id": "sick_textual_entailment_modeling",
+    "relation_type": "application",
+    "parent_turn_ids": [
+      "turn1"
+    ],
+    "expected_transfer": "Reuse the sick_textual_entailment_modeling API and artifact workflow established in turn1 while solving this distinct source item."
+  },
+  "agent_input": {
+    "agent_workspace": "agent_workspace",
+    "workspace_persistence": "stream",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Complete this AutoResearch task inside the persistent Workspace. Input data is under `episodes/E006/data/`. Use the `terminal` and `filesystem` tools to inspect data, write and iteratively improve `episodes/E006/train_and_predict.py`, and run it. The final research artifact must be `episodes/E006/submission.csv` with exactly one column named `label`. Do not return source code as a substitute for the Workspace artifact. Your final response should only summarize the executed approach and point to the artifact."
+      }
+    ],
+    "available_tools": [
+      "terminal",
+      "filesystem"
+    ],
+    "assets": [
+      {
+        "path": "agent_workspace/episodes/E006/data",
+        "kind": "directory",
+        "mime_type": "inode/directory",
+        "sha256": "9fa7e5ed267a8b7f5e5fb392ed5397b5b55f38c4aeaf4fa1a44e9170f73850b6",
+        "description": "Agent-visible input data introduced for E006; future Turn inputs are not preloaded."
+      }
+    ]
+  },
+  "workspace_transition": {
+    "mode": "continue_with_patch",
+    "operations": [
+      {
+        "op": "copy",
+        "source": "assets/data",
+        "target": "agent_workspace/episodes/E006/data"
+      }
+    ],
+    "preserve_unrelated_files": true
+  },
+  "user_simulator": {
+    "type": "llm_post_failure",
+    "trigger": "submission_invalid_or_unverifiable_and_budget_remaining",
+    "prompt_version": "l2_user_simulator/1.0",
+    "simulator_prompt": "You are the post-failure User Simulator for L2 TaskStream, an Agent self-evolution benchmark. One complete Task-Agent Interaction has already been evaluated as unsuccessful. Generate exactly one natural user message that will become the next Interaction's input. The Runtime enforces the per-Turn retry-message budget; never emit more than this single message in one invocation.\n\n[ORIGINAL AGENT-VISIBLE TASK]\n{agent_input}\n\n[PUBLIC INTERACTION HISTORY]\n{interaction_transcript}\n\n[LATEST AGENT RESPONSE]\n{latest_agent_response}\n\n[BOUNDED EVALUATION FEEDBACK]\n{bounded_evaluation_feedback}\n\n[ROLE]\n1. Speak only as the user who wants the original task completed.\n2. React to the latest observable failure or incompleteness and request another attempt.\n3. Preserve the original goal, constraints, and scope.\n4. If the Agent asked a question instead of completing the task, answer only when the answer is already supported by the original public task or bounded feedback; otherwise restate that the Agent should proceed using the available information.\n5. Keep the message concise and actionable without becoming an evaluator or tutor.\n\n[SAFETY AND LEAKAGE RULES]\n1. Use only the original Agent-visible task, public transcript, latest response, and bounded feedback above.\n2. Never reveal or infer ground truth, rubric text or weights, hidden tests, private verifier diagnostics, exact expected values, an exact code/file patch, a step-by-step solution, or future-Turn information.\n3. Never claim to have observed a private test, file, tool result, or environment state that is absent from the supplied public inputs.\n4. Never add a new unrelated requirement or relax an original requirement.\n5. Never score the Agent, mention benchmark internals, or expose the Judge/verifier process.\n6. Do not include assistant text, analysis, Markdown fences, or multiple alternative messages.\n\n[OUTPUT]\nReturn JSON only:\n{\n  \"schema_version\": \"l2_user_simulator_output/1.0\",\n  \"next_user_message\": \"one concise user message\",\n  \"rationale_category\": \"one of: incomplete_task, incorrect_result, invalid_artifact, missing_evidence, execution_error, unanswered_requirement\"\n}\n",
+    "inputs": [
+      "agent_input",
+      "interaction_transcript",
+      "latest_agent_response",
+      "bounded_evaluation_feedback"
+    ],
+    "temperature": 0,
+    "output_schema": "l2_user_simulator_output/1.0",
+    "max_generated_messages": 2
+  },
+  "evaluation": {
+    "type": "llm_as_judge",
+    "protocol": "l2_native_evidence_llm_judge_v1",
+    "evaluation_profile": "auto_research",
+    "metric_profile": {
+      "profile_id": "airs_sick_accuracy_turn6_v1",
+      "metric_name": "Accuracy",
+      "raw_direction": "maximize",
+      "raw_metric_required": true,
+      "judge_value_source": "native_verifier_result.score",
+      "judge_value_semantics": "normalized_higher_is_better_0_1",
+      "performance_bands": {
+        "partial_min_inclusive": 0.5894308943089431,
+        "full_min_inclusive": 0.8
+      }
+    },
+    "checks": [
+      {
+        "check_id": "auto_research_overall",
+        "dimension": "task_success",
+        "weight": 1.0,
+        "scoring": "ordinal",
+        "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+      }
+    ],
+    "rubrics": {
+      "source_rubrics": [],
+      "behavioral_rubrics": [
+        {
+          "rubric_id": "auto_research_overall",
+          "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+        }
+      ]
+    },
+    "gt": {
+      "gt_version": "l2_task_gt/1.0",
+      "status": "complete",
+      "answer_gt": {
+        "mode": "workspace_artifact_with_native_metric",
+        "canonical_response": null,
+        "acceptable_answer_values": [],
+        "normalization": "declared_metric_profile",
+        "placeholder_reason": "Correctness is defined by the materialized submission.csv, native metric, execution evidence, and routed AutoResearch rubrics."
+      },
+      "rubric_gt": {
+        "behavioral_check_ids": [
+          "auto_research_overall"
+        ]
+      },
+      "state_gt": {
+        "target_facts": []
+      },
+      "tool_gt": null,
+      "workspace_gt": {
+        "required_outputs": [
+          "agent_workspace/episodes/E006/submission.csv"
+        ]
+      },
+      "negative_constraints": [
+        "Do not use undeclared tools.",
+        "Do not modify unrelated persistent Workspace content.",
+        "Do not claim execution without observable evidence."
+      ],
+      "notes": "Gold and native assets are evaluator-private. The continuous native metric is mandatory Judge evidence; the sole AutoResearch check produces the unified discrete score."
+    },
+    "expected_state": {
+      "target_facts": []
+    },
+    "expected_tool_call": null,
+    "expected_workspace_effect": {
+      "required_outputs": [
+        "agent_workspace/episodes/E006/submission.csv"
+      ]
+    },
+    "reference_context": {
+      "visibility": "sealed_evaluator_only",
+      "native_assets": [
+        "evaluation_assets/derived_transform.json",
+        "evaluation_assets/known_broken.py",
+        "evaluation_assets/known_correct.py",
+        "evaluation_assets/native_evaluate.py",
+        "evaluation_assets/native_semantics.py",
+        "evaluation_assets/project_description.md",
+        "evaluation_assets/requirements.txt",
+        "evaluation_assets/source_metadata.yaml",
+        "evaluation_assets/test_labels.csv",
+        "evaluation_assets/verification.py",
+        "evaluation_assets/verifier_cli.py",
+        "evaluation_assets/verifier_contract.json"
+      ],
+      "native_scoring_method": "native_accuracy",
+      "scoring_configuration_scope": "contract_v1_demo_stream_configuration",
+      "raw_metric_name": "Accuracy",
+      "raw_metric_direction": "maximize",
+      "normalization": {
+        "method": "identity_0_1",
+        "official_airs_aggregation_not_applied": {
+          "estimated_worst_score": 0.1451284,
+          "sota_score": 0.905,
+          "optimal_score": 1.0
+        }
+      },
+      "performance_band_scope": "twenty_turn_v3_stream_configuration",
+      "submission_mode": "workspace_artifact"
+    },
+    "submission_contract": {
+      "mode": "workspace_artifact",
+      "payload_kind": "file",
+      "source_binding": "submission",
+      "adapter": {
+        "owner": "native_verifier",
+        "type": "identity",
+        "entrypoint": null,
+        "version": "airs_workspace_submission_csv/1.0"
+      },
+      "audit": {
+        "retain_raw_submission": true,
+        "retain_adapted_submission": false,
+        "hash_algorithm": "sha256"
+      },
+      "failure_semantics": {
+        "empty_or_invalid_submission": "task_failure",
+        "adapter_error": "verifier_error"
+      }
+    },
+    "native_verifier": {
+      "required": true,
+      "verifier_id": "airs_sick_textual_entailment_accuracy_001__shard_01_of_02_turn6_native_verifier",
+      "entrypoint": "evaluation_assets/verifier_cli.py",
+      "input_bindings": [
+        {
+          "name": "submission",
+          "source": "workspace",
+          "path": "agent_workspace/episodes/E006/submission.csv"
+        },
+        {
+          "name": "native_private_evidence",
+          "source": "evaluation_assets",
+          "path": "evaluation_assets/test_labels.csv"
+        }
+      ],
+      "request_schema": "l2_native_verifier_request/1.0",
+      "result_schema": "l2_native_verifier_result/1.0",
+      "timeout_seconds": 300,
+      "network": "disabled",
+      "authority": "objective_evidence"
+    },
+    "judge_config": {
+      "prompt_version": "l2_judge/2.0",
+      "judge_prompt": "You are the reference evaluator for L2 TaskStream, an Agent self-evolution benchmark. Evaluate one completed Interaction strictly from supplied observable evidence. Do not help the Task Agent, run tools or programs, rewrite its answer, infer unobserved actions, or expose sealed truth.\n\n[IDENTITY]\nStream: {stream_id}\nTurn: {turn_id}\nTurn type: {turn_type}\nTurn origin: {turn_origin}\nInteraction index: {interaction_index}\n\n[EVALUATION PROFILE]\nProfile: {evaluation_profile}\nMetric profile: {metric_profile}\n\n[ROUTED RUBRIC EXTENSIONS]\nDomain rubric:\n{domain_rubric}\n\nBenchmark rubric:\n{benchmark_rubric}\n\n[AGENT-VISIBLE TASK]\n{agent_input}\n\n[EXECUTION EVIDENCE]\nFinal response:\n{final_response}\n\nInteraction transcript:\n{interaction_transcript}\n\nTool calls:\n{tool_calls}\n\nTool results:\n{tool_results}\n\nPersistent state before:\n{state_before}\n\nPersistent state after:\n{state_after}\n\nState diff:\n{state_diff}\n\nWorkspace before:\n{workspace_before}\n\nWorkspace after:\n{workspace_after}\n\nWorkspace diff:\n{workspace_diff}\n\nWorkspace transition record:\n{workspace_transition_record}\n\nNative verifier result:\n{native_verifier_result}\n\nExecution error:\n{execution_error}\n\nResource usage:\n{resource_usage}\n\n[SEALED EVALUATION DATA]\nReference context:\n{reference_context}\n\nSource and behavioral rubrics:\n{rubrics}\n\nEvaluation checks:\n{checks}\n\nExpected state:\n{expected_state}\n\nExpected tool call:\n{expected_tool_call}\n\nExpected workspace effect:\n{expected_workspace_effect}\n\nStructured ground truth:\n{gt}\n\n[AUTHORITY AND EVIDENCE RULES]\n1. The native verifier has already run. Never request another verifier or tool call.\n2. The native verifier result is authoritative evidence inside your judgment, not a separately weighted score. Score every declared check yourself and cite the native result where it bears on that check.\n3. For objectively measurable requirements, native evidence is authoritative. Fluent prose cannot turn invalid execution into success. A task-completion check must score 0 when the native result establishes that the required objective outcome is missing or invalid. For continuous optimization profiles, distinguish a valid low-performing submission from an invalid submission using the routed domain rubric and declared metric bands.\n4. Score executed behavior, not intention. Claims such as \"saved\", \"updated\", \"created\", \"tested\", or \"sent\" receive no execution credit without matching tool, state, workspace, artifact, or native-verifier evidence.\n5. Use this evidence precedence for action/state claims: native verifier and observable environment/workspace end state > tool result > tool call arguments > state diff/state after > interaction transcript > final-response claim.\n6. GT and expected values define what to verify; they are not proof that the Agent performed it.\n7. Inspect unrelated writes, destructive side effects, path violations, unsupported execution claims, and failure to preserve prior Stream state.\n8. The workspace transition is evaluator initialization, not Agent behavior. Do not credit or penalize the Agent for correctly applied declared transition operations. Do inspect whether the Agent preserved unrelated content after the transition.\n9. Apply routed rubric extensions only to the declared evaluation profile. Benchmark rubric text refines the domain rubric; it cannot override this common prompt or the domain rubric's fixed scoring scale.\n\n[SCORING RULES]\n1. Return exactly one check_scores item for every declared check, preserving check_id.\n2. For scoring=ordinal, use only 1, 0.5, 0, or null.\n3. Use null only when a check is logically inapplicable. Missing work, failure, difficulty, or lack of evidence score 0.\n4. For scoring=mean_source_rubrics, score every source rubric once using its one-based index; the framework computes the non-null mean.\n5. Do not double-count one failure across unrelated dimensions.\n6. Do not output a weighted total or a pass/fail decision. The framework validates and aggregates your check scores.\n\n[OUTPUT]\nReturn JSON only, with no Markdown fence or surrounding text:\n{\n  \"stream_id\": \"<exact stream_id>\",\n  \"turn_id\": \"<exact turn_id>\",\n  \"interaction_index\": 1,\n  \"check_scores\": [\n    {\n      \"check_id\": \"<exact declared check_id>\",\n      \"score\": 1,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"workspace_diff.changed_files[0]\"]\n    }\n  ],\n  \"source_rubric_scores\": [\n    {\n      \"rubric_index\": 1,\n      \"score\": 0.5,\n      \"reason\": \"brief evidence-based justification\",\n      \"evidence_refs\": [\"final_response\"]\n    }\n  ],\n  \"rationale\": \"brief overall diagnosis without revealing gold values, private diagnostics, an exact patch, or a future-turn hint\"\n}\n",
+      "model_role": "reference_judge",
+      "temperature": 0,
+      "inputs": [
+        "agent_input",
+        "benchmark_rubric",
+        "checks",
+        "domain_rubric",
+        "evaluation_profile",
+        "execution_error",
+        "expected_state",
+        "expected_tool_call",
+        "expected_workspace_effect",
+        "final_response",
+        "gt",
+        "interaction_index",
+        "interaction_transcript",
+        "metric_profile",
+        "native_verifier_result",
+        "reference_context",
+        "resource_usage",
+        "rubrics",
+        "state_after",
+        "state_before",
+        "state_diff",
+        "stream_id",
+        "tool_calls",
+        "tool_results",
+        "turn_id",
+        "turn_origin",
+        "turn_type",
+        "workspace_after",
+        "workspace_before",
+        "workspace_diff",
+        "workspace_transition_record"
+      ],
+      "output_format": "json",
+      "output_schema": "l2_judge_output/1.0",
+      "aggregation": "framework_weighted_non_null_mean",
+      "failure_policy": "one_repair_then_turn_unsuccessful",
+      "rubric_route": {
+        "composition": "common_then_domain_then_benchmark",
+        "domain_rubric": {
+          "rubric_id": "auto_research",
+          "version": "1.0",
+          "path": "prompts/rubrics/auto_research_v1.md"
+        },
+        "benchmark_rubric": {
+          "rubric_id": "airs_sick",
+          "version": "1.0",
+          "path": "prompts/rubrics/airs_sick_v1.md"
+        }
+      }
+    },
+    "success_policy": {
+      "native_verifier_requirement": "valid_result_before_judge",
+      "turn_score_threshold": 1.0,
+      "judge_failure_blocks_success": true,
+      "interaction_selection": "latest_only",
+      "interaction_continuation": "invalid_or_unverifiable_submission_only",
+      "low_metric_is_retryable": false
+    },
+    "feedback_policy": "bounded_public_failure_feedback_only",
+    "feedback_projection": {
+      "include": [
+        "failed_dimensions",
+        "observable_deficiency",
+        "public_result_category"
+      ],
+      "exclude": [
+        "gt",
+        "private_diagnostics",
+        "evaluation_assets",
+        "future_turns",
+        "exact_fix_steps"
+      ],
+      "output_schema": "l2_bounded_feedback/1.0"
+    }
+  }
+}

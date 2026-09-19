@@ -97,6 +97,17 @@ class L2CompatTest(unittest.TestCase):
             with self.assertRaisesRegex(L2SpecError, "identity|sequence_role"):
                 inspect_l2_package(root)
 
+    def test_rejects_panel_referencing_missing_stream(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_package(Path(tmp))
+            (root / "panels.json").write_text(json.dumps({
+                "schema_version": "l2_panels/1.0",
+                "short_stream_main_panel": ["demo_stream", "missing_stream"],
+            }), encoding="utf-8")
+
+            with self.assertRaisesRegex(L2SpecError, "missing stream"):
+                inspect_l2_package(root)
+
 
 if __name__ == "__main__":
     unittest.main()

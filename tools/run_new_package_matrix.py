@@ -6,6 +6,7 @@ paid run blindly. A heartbeat can repair the issue and restart this command.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -59,6 +60,44 @@ def _l2_manifests(package: Path):
     return sorted((package / "streams").glob("*/stream.json"))
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _l2_panel(package: Path, panel_id: str | None) -> dict[str, object] | None:
+    panels_path = package / "panels.json"
+    if not panels_path.is_file():
+        if panel_id:
+            raise ValueError(f"L2 package has no panels.json: {package}")
+        return None
+    panels = load(panels_path)
+    if panels.get("schema_version") != "l2_panels/1.0":
+        raise ValueError(f"unsupported L2 panels schema: {panels_path}")
+    panel_ids = sorted(
+        key for key, value in panels.items()
+        if isinstance(value, list) and all(isinstance(item, str) for item in value)
+    )
+    if panel_id is None:
+        raise ValueError(
+            f"L2 package declares panels; pass --l2-panel ({', '.join(panel_ids)})"
+        )
+    if panel_id not in panel_ids:
+        raise ValueError(f"unknown L2 panel {panel_id!r}; expected one of {panel_ids}")
+    stream_ids = [str(item) for item in panels[panel_id]]
+    if len(set(stream_ids)) != len(stream_ids):
+        raise ValueError(f"L2 panel {panel_id!r} contains duplicate stream ids")
+    return {
+        "panel_id": panel_id,
+        "panel_manifest_sha256": _sha256_file(panels_path),
+        "selected_stream_ids": stream_ids,
+        "allows_cross_panel_aggregation": False,
+    }
+
+
 def _resolve_l1_package(packages: Path, explicit: Path | None) -> Path:
     if explicit is not None:
         return explicit
@@ -77,7 +116,7 @@ def _resolve_l2_package(packages: Path, explicit: Path | None) -> Path:
     if len(candidates) == 1:
         return candidates[0]
     if not candidates:
-        return packages / "L2_Demo_V2"
+        return packages / "L2_Demo_V4"
     names = ", ".join(str(path) for path in candidates)
     raise ValueError(f"multiple L2 packages found; pass --l2-package explicitly: {names}")
 
@@ -98,6 +137,7 @@ def jobs(
     l1_package: Path | None = None,
     l2_package: Path | None = None,
     l2_conditions: tuple[str, ...] | list[str] | None = None,
+    l2_panel: str | None = None,
     level: str | None = None,
 ):
     if level not in (None, "l1", "l2"):
@@ -117,6 +157,16 @@ def jobs(
         manifests = _l2_manifests(package) if level == "l2" else _l1_manifests(package)
         if not manifests:
             raise ValueError(f"No {level} stream manifests found in {package}")
+        panel = _l2_panel(package, l2_panel) if level == "l2" else None
+        if panel is not None:
+            by_stream_id = {}
+            for path in manifests:
+                manifest = load(path)
+                by_stream_id[str(manifest["stream_id"])] = path
+            missing = [stream_id for stream_id in panel["selected_stream_ids"] if stream_id not in by_stream_id]
+            if missing:
+                raise ValueError(f"L2 panel {panel['panel_id']!r} references missing streams: {missing}")
+            manifests = [by_stream_id[stream_id] for stream_id in panel["selected_stream_ids"]]
         for index, path in enumerate(manifests, 1):
             manifest = load(path)
             turns = manifest["ordering"]["turn_order"] if level == "l2" else [item["turn_id"] for item in manifest["turns"]]
@@ -133,7 +183,8 @@ def jobs(
                                  "package": str(package), "stream": path.parent.name,
                                  "flow_id": manifest["stream_id"], "turns": turns,
                                  "condition": condition, "turn_roles": _turn_roles(manifest),
-                                 "output": str(output)})
+                                 "output": str(output),
+                                 **(panel or {})})
     return rows
 
 
@@ -163,6 +214,15 @@ def _report_matches_row(row: dict, report: dict) -> bool:
         run_configuration = report.get("run_configuration", {})
         if isinstance(run_configuration, dict) and run_configuration.get("budget_profile", "formal") != "formal":
             return False
+        if row.get("panel_id"):
+            if not isinstance(run_configuration, dict):
+                return False
+            if run_configuration.get("panel_id") != row.get("panel_id"):
+                return False
+            if run_configuration.get("panel_manifest_sha256") != row.get("panel_manifest_sha256"):
+                return False
+            if run_configuration.get("selected_stream_ids") != row.get("selected_stream_ids"):
+                return False
         condition = _report_condition(report, turns)
         # Reports produced before the condition field existed are evolving runs.
         if condition is None:
@@ -221,6 +281,13 @@ def latest_checkpoint(row):
                     continue
             elif checkpoint_condition != row.get("condition"):
                 continue
+            if row.get("panel_id"):
+                if data.get("panel_id") != row.get("panel_id"):
+                    continue
+                if data.get("panel_manifest_sha256") != row.get("panel_manifest_sha256"):
+                    continue
+                if data.get("selected_stream_ids") != row.get("selected_stream_ids"):
+                    continue
             if data.get("phase") == "interact_started":
                 if _started_marker_has_same_run_pending(row, path.parent, data):
                     continue
@@ -309,6 +376,13 @@ def _checkpoint_preserves_prefix(row, checkpoint, expected_index):
         raise ValueError("retry checkpoint baseline identity mismatch")
     if condition != row.get("condition"):
         raise ValueError("retry checkpoint condition mismatch")
+    if row.get("panel_id"):
+        if data.get("panel_id") != row.get("panel_id"):
+            raise ValueError("retry checkpoint panel identity mismatch")
+        if data.get("panel_manifest_sha256") != row.get("panel_manifest_sha256"):
+            raise ValueError("retry checkpoint panel manifest mismatch")
+        if data.get("selected_stream_ids") != row.get("selected_stream_ids"):
+            raise ValueError("retry checkpoint panel stream selection mismatch")
     if int(data.get("next_turn_index", -1)) != expected_index:
         raise ValueError("retry checkpoint turn frontier mismatch")
     if not (isinstance(turns, list) and len(turns) == expected_index and _report_matches_row(prefix, report)):
@@ -425,6 +499,9 @@ def _started_marker_has_same_run_pending(row, checkpoint, data):
         metadata.get("phase") == "adjudicate"
         and metadata.get("stream_id") == row["flow_id"]
         and metadata.get("condition") == row.get("condition")
+        and metadata.get("panel_id") == row.get("panel_id")
+        and metadata.get("panel_manifest_sha256") == row.get("panel_manifest_sha256")
+        and metadata.get("selected_stream_ids") == row.get("selected_stream_ids")
         and metadata.get("run_id") == data.get("run_id")
         and metadata.get("turn_id") == turn_id
         and int(metadata.get("next_turn_index", -1)) == turn_index
@@ -585,6 +662,12 @@ def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=Non
         args += ["--retry-authorization", str(retry_authorization)]
     if retry_interrupted_run:
         args += ["--retry-job", row["id"]]
+    if row.get("panel_id"):
+        args += [
+            "--panel-id", row["panel_id"],
+            "--panel-manifest-sha256", row["panel_manifest_sha256"],
+            "--panel-streams", ",".join(row["selected_stream_ids"]),
+        ]
     if stop_after_turn:
         args += ["--stop-after-turn", str(stop_after_turn)]
     return args
@@ -612,6 +695,8 @@ def l2_reports_to_aggregation_records(report_rows):
                 raise ValueError(f"missing sequence_role for {row.get('id')}/{turn_id}")
             records.append({
                 "condition": condition,
+                "panel_id": row.get("panel_id"),
+                "panel_manifest_sha256": row.get("panel_manifest_sha256"),
                 "stream_id": stream_id,
                 "turn_id": turn_id,
                 "turn_index": int(turn.get("turn_index", index)),
@@ -633,6 +718,8 @@ def matched_l2_aggregations(rows):
     result = {}
     for agent in BASELINES:
         selected = [row for row in rows if row["level"] == "l2" and row["agent"] == agent]
+        if len({row.get("panel_id") for row in selected}) > 1:
+            continue
         if {row.get("condition") for row in selected} != set(L2_CONDITIONS):
             continue
         report_rows = []
@@ -833,7 +920,10 @@ def _prepare_recovered_storage_rows(selected, storage_gate, storage_retry_limit)
 
 
 def _same_job_identity(row, prior):
-    return all(row.get(field) == prior.get(field) for field in ("id", "output", "package", "condition", "turns"))
+    return all(row.get(field) == prior.get(field) for field in (
+        "id", "output", "package", "condition", "turns",
+        "panel_id", "panel_manifest_sha256", "selected_stream_ids",
+    ))
 
 
 def _restore_prior_storage_state(selected, prior_state):
@@ -1088,6 +1178,7 @@ def main():
     parser.add_argument("--packages", type=Path, help="legacy parent directory containing l1_arena/ and one L2 package")
     parser.add_argument("--l1-package", type=Path, help="explicit L1 package directory")
     parser.add_argument("--l2-package", type=Path, help="explicit L2 package directory")
+    parser.add_argument("--l2-panel", help="explicit L2 panel id from package panels.json")
     parser.add_argument("--level", choices=("l1", "l2"), help="select one level; default runs both L1 and L2")
     parser.add_argument("--l2-condition", action="append", choices=L2_CONDITIONS, help="L2 condition to run; repeat for reset/frozen/evolving")
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
@@ -1149,6 +1240,7 @@ def main():
         l1_package=args.l1_package.resolve() if args.l1_package else None,
         l2_package=args.l2_package.resolve() if args.l2_package else None,
         l2_conditions=tuple(args.l2_condition) if args.l2_condition else None,
+        l2_panel=args.l2_panel,
         level=args.level,
     )
     config_dir = args.config_dir.resolve() if args.config_dir else repo
@@ -1165,6 +1257,9 @@ def main():
         raise SystemExit("--retry-interrupted-run requires one selected job")
     if args.recover_storage_errors and not args.storage_guard:
         parser.error("--recover-storage-errors requires --storage-guard")
+    selected_panel_ids = sorted({row.get("panel_id") for row in selected if row.get("level") == "l2" and row.get("panel_id")})
+    if len(selected_panel_ids) > 1:
+        raise SystemExit(f"selected L2 jobs span multiple panels: {selected_panel_ids}")
     storage_gate = storage_gate_from_environment() if args.storage_guard else None
     if args.storage_guard and storage_gate is None:
         raise SystemExit("--storage-guard requested but StorageGate.from_environment() returned no gate")
@@ -1174,6 +1269,14 @@ def main():
     if args.recover_storage_errors:
         _prepare_recovered_storage_rows(selected, storage_gate, args.storage_retry_limit)
     state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected, "concurrency": concurrency, "provider_mode": args.provider_mode, "job_error_policy": args.job_error_policy, "phase": "gate" if args.gate else ("only" if args.only else "full")}
+    if selected_panel_ids:
+        panel_rows = [row for row in selected if row.get("level") == "l2" and row.get("panel_id")]
+        state["l2_panel"] = {
+            "panel_id": selected_panel_ids[0],
+            "panel_manifest_sha256": panel_rows[0].get("panel_manifest_sha256"),
+            "selected_stream_ids": panel_rows[0].get("selected_stream_ids", []),
+            "allows_cross_panel_aggregation": False,
+        }
     if args.storage_guard and not args.adopt_state:
         survivors = [row for row in selected
                      if row.get("status") == "running" and row.get("process_start_ticks")

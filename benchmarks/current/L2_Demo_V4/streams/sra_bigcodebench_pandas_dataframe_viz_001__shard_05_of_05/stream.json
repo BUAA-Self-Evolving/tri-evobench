@@ -1,0 +1,217 @@
+{
+  "schema_version": "l2_taskstream/1.0",
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_05_of_05",
+  "directory": "sra_bigcodebench_pandas_dataframe_viz_001__shard_05_of_05",
+  "profile": "L2 task family adapted from SRA-Bench / SR-Agents",
+  "theme": "One hundred selected native BigCodeBench items share pandas DataFrame transformation plus a Matplotlib or Seaborn visualization workflow. This independent shard starts from a blank Stream workspace.",
+  "turn_count": 20,
+  "task_layout": "turn_directories",
+  "agent_workspace": "agent_workspace",
+  "turn_type_counts": {
+    "capability_application": 20
+  },
+  "fact_thread_count": 0,
+  "capability": {
+    "capability_id": "pandas_dataframe_visualization",
+    "family": "code_generation_and_data_visualization",
+    "relation_type": "same_gold_skill_and_narrow_workflow",
+    "description": "One hundred selected native BigCodeBench items share pandas skill bigcodebench_094 plus a Matplotlib or Seaborn visualization skill and require a local, self-contained DataFrame visualization workflow."
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null,
+    "turn_order": [
+      "turn1",
+      "turn2",
+      "turn3",
+      "turn4",
+      "turn5",
+      "turn6",
+      "turn7",
+      "turn8",
+      "turn9",
+      "turn10",
+      "turn11",
+      "turn12",
+      "turn13",
+      "turn14",
+      "turn15",
+      "turn16",
+      "turn17",
+      "turn18",
+      "turn19",
+      "turn20"
+    ],
+    "note": "Preserves parent Turns 81-100 and renumbers them locally."
+  },
+  "execution_requirements": {
+    "network": "disabled",
+    "path_scope": "agent_workspace",
+    "max_interactions": 3,
+    "max_tool_calls_per_interaction": 20,
+    "turn_timeout_seconds": 900,
+    "max_output_tokens": 12000
+  },
+  "turns": [
+    {
+      "turn_id": "turn1",
+      "turn_index": 1,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "learning",
+      "source_task_id": "bigcodebench_00264"
+    },
+    {
+      "turn_id": "turn2",
+      "turn_index": 2,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00567"
+    },
+    {
+      "turn_id": "turn3",
+      "turn_index": 3,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00607"
+    },
+    {
+      "turn_id": "turn4",
+      "turn_index": 4,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01079"
+    },
+    {
+      "turn_id": "turn5",
+      "turn_index": 5,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01083"
+    },
+    {
+      "turn_id": "turn6",
+      "turn_index": 6,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00610"
+    },
+    {
+      "turn_id": "turn7",
+      "turn_index": 7,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00506"
+    },
+    {
+      "turn_id": "turn8",
+      "turn_index": 8,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_01069"
+    },
+    {
+      "turn_id": "turn9",
+      "turn_index": 9,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00135"
+    },
+    {
+      "turn_id": "turn10",
+      "turn_index": 10,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00040"
+    },
+    {
+      "turn_id": "turn11",
+      "turn_index": 11,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00042"
+    },
+    {
+      "turn_id": "turn12",
+      "turn_index": 12,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00041"
+    },
+    {
+      "turn_id": "turn13",
+      "turn_index": 13,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00513"
+    },
+    {
+      "turn_id": "turn14",
+      "turn_index": 14,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00477"
+    },
+    {
+      "turn_id": "turn15",
+      "turn_index": 15,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00469"
+    },
+    {
+      "turn_id": "turn16",
+      "turn_index": 16,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00568"
+    },
+    {
+      "turn_id": "turn17",
+      "turn_index": 17,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00136"
+    },
+    {
+      "turn_id": "turn18",
+      "turn_index": 18,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00560"
+    },
+    {
+      "turn_id": "turn19",
+      "turn_index": 19,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "probe",
+      "source_task_id": "bigcodebench_00106"
+    },
+    {
+      "turn_id": "turn20",
+      "turn_index": 20,
+      "turn_type": "capability_application",
+      "turn_origin": "source_task",
+      "sequence_role": "application",
+      "source_task_id": "bigcodebench_00514"
+    }
+  ]
+}

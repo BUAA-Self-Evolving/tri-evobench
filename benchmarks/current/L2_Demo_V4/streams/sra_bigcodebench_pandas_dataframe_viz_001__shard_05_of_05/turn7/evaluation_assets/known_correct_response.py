@@ -1,0 +1,21 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+def task_func(column, data):
+    COLUMNS = ["Date", "Temperature", "Humidity", "Wind Speed", "Precipitation"]
+    df = pd.DataFrame(data, columns=COLUMNS)
+    column_data = df[column]
+
+    result = {
+        "sum": np.sum(column_data),
+        "mean": np.nan if df.empty else np.mean(column_data),
+        "min": np.inf if df.empty else np.min(column_data),
+        "max": -np.inf if df.empty else np.max(column_data),
+    }
+
+    _, _, ax = plt.hist(column_data)
+    plt.title(f"Histogram of {column}")
+
+    result["plot"] = ax
+
+    return result

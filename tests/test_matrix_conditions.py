@@ -13,7 +13,7 @@ from tools.run_new_package_matrix import (
     prepare_interrupted_retry,
     report_for,
 )
-from trievo_bench.evolution_aggregation import aggregate_matched_runs
+from trievo_bench.evolution_aggregation import AGGREGATION_PROFILE, aggregate_matched_runs
 
 
 def _write_json(path: Path, value):
@@ -36,6 +36,28 @@ def _packages(tmp_path: Path) -> Path:
                 {"turn_id": "turn1", "sequence_role": "learning"},
                 {"turn_id": "turn2", "sequence_role": "probe"},
             ],
+        },
+    )
+    return packages
+
+
+def _panel_packages(tmp_path: Path) -> Path:
+    packages = _packages(tmp_path)
+    _write_json(
+        packages / "L2_Demo_V3/streams/diagnostic/stream.json",
+        {
+            "stream_id": "diagnostic",
+            "ordering": {"turn_order": ["turn1"]},
+            "turns": [{"turn_id": "turn1", "sequence_role": "learning"}],
+        },
+    )
+    _write_json(
+        packages / "L2_Demo_V3/panels.json",
+        {
+            "schema_version": "l2_panels/1.0",
+            "short_stream_main_panel": ["sra"],
+            "parent_stream_diagnostic": ["diagnostic"],
+            "aggregation_rule": "Report panels separately.",
         },
     )
     return packages
@@ -75,6 +97,32 @@ def test_three_l2_conditions_are_in_rows_outputs_and_commands(tmp_path):
     assert args[args.index("--condition") + 1] == "reset"
 
 
+def test_l2_panel_must_be_explicit_and_filters_streams(tmp_path):
+    packages = _panel_packages(tmp_path)
+
+    with pytest.raises(ValueError, match="pass --l2-panel"):
+        jobs(tmp_path, tmp_path / "results", packages, level="l2")
+
+    rows = jobs(
+        tmp_path,
+        tmp_path / "results",
+        packages,
+        level="l2",
+        l2_panel="short_stream_main_panel",
+        l2_conditions=("reset",),
+    )
+
+    assert len(rows) == 6
+    assert {row["stream"] for row in rows} == {"sra"}
+    assert {row["panel_id"] for row in rows} == {"short_stream_main_panel"}
+    assert all(len(row["panel_manifest_sha256"]) == 64 for row in rows)
+    assert rows[0]["selected_stream_ids"] == ["sra"]
+
+    args = command(tmp_path, rows[0], None)
+    assert args[args.index("--panel-id") + 1] == "short_stream_main_panel"
+    assert args[args.index("--panel-streams") + 1] == "sra"
+
+
 def test_report_discovery_rejects_condition_mismatch_evaluator_error_and_null_score(tmp_path):
     row = jobs(
         tmp_path,
@@ -106,6 +154,49 @@ def test_report_discovery_rejects_condition_mismatch_evaluator_error_and_null_sc
     path, report = report_for(row)
     assert path is not None
     assert report["condition"] == "reset"
+
+
+def test_panel_bound_reports_and_aggregation_records(tmp_path):
+    rows = jobs(
+        tmp_path,
+        tmp_path / "results",
+        _panel_packages(tmp_path),
+        level="l2",
+        l2_panel="short_stream_main_panel",
+        l2_conditions=("reset", "frozen", "evolving"),
+    )
+    selected = [row for row in rows if row["agent"] == "hermes"]
+    report_rows = []
+    for row in selected:
+        report = _report(row["condition"])
+        report["run_configuration"] = {
+            "condition": row["condition"],
+            "budget_profile": "formal",
+            "panel_id": row["panel_id"],
+            "panel_manifest_sha256": row["panel_manifest_sha256"],
+            "selected_stream_ids": row["selected_stream_ids"],
+        }
+        _write_json(Path(row["output"]) / "run/sub/report.json", report)
+        _, matched = report_for(row)
+        assert matched is not None
+        report_rows.append((row, matched))
+
+    records = l2_reports_to_aggregation_records(report_rows)
+    assert {record["panel_id"] for record in records} == {"short_stream_main_panel"}
+    assert {record["panel_manifest_sha256"] for record in records} == {selected[0]["panel_manifest_sha256"]}
+
+    row = selected[0]
+    report = _report(row["condition"])
+    wrong = dict(report)
+    wrong["run_configuration"] = {
+        "condition": row["condition"],
+        "budget_profile": "formal",
+        "panel_id": "parent_stream_diagnostic",
+        "panel_manifest_sha256": row["panel_manifest_sha256"],
+        "selected_stream_ids": row["selected_stream_ids"],
+    }
+    _write_json(Path(row["output"]) / "run/sub/report.json", wrong)
+    assert report_for(row) == (None, None)
 
 
 def test_legacy_evolving_reports_and_checkpoints_still_match(tmp_path):
@@ -828,4 +919,4 @@ def test_formal_aggregation_is_emitted_only_after_all_matched_reports_exist(tmp_
 
     result = matched_l2_aggregations(rows)
     assert set(result) == {"hermes"}
-    assert result["hermes"]["aggregation_profile"] == "l2_evolution_aggregation/1.0"
+    assert result["hermes"]["aggregation_profile"] == AGGREGATION_PROFILE

@@ -2,8 +2,8 @@
 
 ## 支持范围与验证状态
 
-本版本支持 `l2_taskstream/1.0`，数据目录名不参与协议判断，因此仓库内 Demo V2 与外部
-Demo V3 都走同一条 Runtime；同时保留旧版 episode 格式适配。
+本版本支持 `l2_taskstream/1.0`，数据目录名不参与协议判断；仓库内当前 L2 包为
+Demo V4，带 `panels.json`，正式矩阵必须显式选择一个 panel。旧版 episode 格式适配仍保留。
 支持 Hermes、SkillOpt、Trace2Skill、Prime Agent、Adaptive Auto-Harness、OpenCode 的真实 Docker 工具执行、独立 Docker 私有验证、
 L2 原始 rubric 的 LLM judge、用户反馈交互，以及跨 turn 的自进化状态。
 L1 Arena 使用数据集规定的任务/偏好检查与更新顺序。
@@ -20,8 +20,9 @@ Docker image/runtime smoke 与真实模型矩阵是另外两层证据；只有�
 
 ## 数据包
 
-仓库内当前附带 L1 Arena 与 L2 Demo V2。外部 V3 应先解压到 Git checkout 之外，再通过
-`--l2-package` 显式传入；Runtime 不需要也不直接读取 ZIP。
+仓库内当前附带 L1 Arena 与 L2 Demo V4。Demo V4 的主统计面板是
+`short_stream_main_panel`；`parent_stream_diagnostic` 只能单独跑诊断，不能和主面板混算。
+外部包应先解压到 Git checkout 之外，再通过 `--l2-package` 显式传入；Runtime 不需要也不直接读取 ZIP。
 全部数据版本见 [数据包目录](../benchmarks/README.md)，文件完整性可用
 `python tools/dataset_inventory.py --check` 检查。API key、付费运行日志和检查点不上传。
 不要用仓库旧 `benchmarks/l1_life_v2` 替代本次 `l1_arena`。
@@ -31,8 +32,9 @@ DATA_ROOT/
   l1_arena/
     stream-1/stream.json
     ...                         # 23 streams，423 turns / agent
-  L2_Demo_V2/
-    streams/*/stream.json        # 6 streams，134 turns / agent
+  L2_Demo_V4/
+    panels.json                  # short_stream_main_panel / parent_stream_diagnostic
+    streams/*/stream.json        # 30 streams，580 turn placements / agent
 ```
 
 检查目录时不要额外嵌套同名目录。数据集中的说明和任务内容是评测输入，不能覆盖评测器的权限边界。
@@ -57,7 +59,7 @@ docker build -t trievo-adaptive-auto-harness:matrix-current -f baseline/adapters
 docker build -t trievo-opencode:matrix-current -f baseline/adapters/opencode/Dockerfile .
 uv run --frozen python -m pytest tests -q
 uv run --frozen python tools/prepare_matrix_configs.py --output tmp/matrix-config
-uv run --frozen python -m trievo_bench.l2_compat --package <extracted-l2-package> --inspect
+uv run --frozen python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V4 --inspect
 uv run --frozen python tools/validate_arena_packages.py benchmarks/current/l1_arena
 ```
 
@@ -83,10 +85,10 @@ Python/科学计算依赖，同时仍会安装并校验各 baseline 自己的依
 DeepSeek provider 把未知模型 ID 归一化为其他 DeepSeek 模型；直连官方 provider 时仍应按其原生配置处理。
 配置中不保存 key，且去除了作者的固定 `host.docker.internal:7890` 代理。
 
-L2 的默认单次模型输出上限为 `12000`，与当前 V3 `execution_requirements` 一致；Hermes L1
+L2 的默认单次模型输出上限为 `12000`，与当前 V4 `execution_requirements` 一致；Hermes L1
 仍保留 `1200`，SkillOpt L1 仍保留 `4096`。配置生成器可用 `--l2-max-output-tokens` 生成较低的
 参数试验，但大于数据包声明值的配置仍会被 Runtime 截到数据包上限。`32000`/`40000` 只适合
-验证 provider 是否接受大请求，不能在未修改数据包版本的情况下冒充正式 V3 条件。
+验证 provider 是否接受大请求，不能在未修改数据包版本的情况下冒充正式 V4 条件。
 
 中转站运行默认给 benchmark 自有 Judge/User Simulator client 配置 `150s` 单请求 timeout 和
 最多 `4` 次额外 transport retry；只重试连接中断、残缺响应、`408/409/429` 与 `5xx` 等瞬时故障，
@@ -138,7 +140,8 @@ $env:TRIEVO_BASE_URL = 'https://cf.api.fan/v1'
 $env:TRIEVO_MODEL = 'deepseek-v4-flash'
 uv run --frozen python tools/run_new_package_matrix.py `
   --l1-package benchmarks/current/l1_arena `
-  --l2-package '<path-to-extracted-L2-Demo-V3>' `
+  --l2-package benchmarks/current/L2_Demo_V4 `
+  --l2-panel short_stream_main_panel `
   --l2-condition reset --l2-condition frozen --l2-condition evolving `
   --config-dir tmp/matrix-config --root runs/my-matrix
 ```
@@ -154,12 +157,15 @@ export TRIEVO_API_TIMEOUT_SECONDS=150
 export TRIEVO_API_MAX_RETRIES=4
 uv run --frozen python tools/run_new_package_matrix.py \
   --l1-package benchmarks/current/l1_arena \
-  --l2-package /path/to/extracted/L2_Demo_V3 \
+  --l2-package benchmarks/current/L2_Demo_V4 \
+  --l2-panel short_stream_main_panel \
   --l2-condition reset --l2-condition frozen --l2-condition evolving \
   --config-dir tmp/matrix-config --root runs/my-matrix
 ```
 
 未传 `--l2-condition` 时只跑 `evolving`，保持旧命令行为；正式 L2 gain 必须显式传入三种 condition。
+当前 V4 包声明了 panels；L2 正式矩阵必须传 `--l2-panel short_stream_main_panel`，诊断父流单独用
+`--l2-panel parent_stream_diagnostic` 跑，不能混合汇总。
 不加 `--gate` 或 `--only` 才是完整矩阵。首次换机器建议先加 `--gate` 做有费用的连通检查；
 成功后移除该参数并使用同一个输出目录，已完成结果会复用。gate 不能当作全量成绩。
 运行串行调度，输出根目录有进程锁；不同根目录仍可重复计费，避免误开两份。

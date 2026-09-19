@@ -1,0 +1,12 @@
+{
+  "schema_version": "l2_derived_transform/1.0",
+  "parent_source_task_id": "stock-data-visualization-3",
+  "transformation": {
+    "type": "rotate_primary_descriptor_records",
+    "record_offset": 8,
+    "semantic_invariant": "The same 50 stock records and all field values are retained; only record order changes."
+  },
+  "input_asset": "stock-descriptions.tsv",
+  "source_asset_sha256": "dc9ffc578317b476d01f8133919a95479e05d94b022bd699ff9f2dddeaf65215",
+  "derived_asset_sha256": "4399f67dd44fbe3669914710b2ab2159fdcc718d8dae55fe1cbfa724f99a66b4"
+}

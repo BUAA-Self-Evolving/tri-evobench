@@ -11,7 +11,7 @@ def load(name, path):
 
 
 root = Path("/repo")
-stream = root / "benchmarks/current/L2_Demo_V2/streams/sra_bigcodebench_pandas_dataframe_viz_001"
+stream = root / "benchmarks/current/L2_Demo_V4/streams/sra_bigcodebench_pandas_dataframe_viz_001"
 original = load("old_sanitize", stream / "turn5/evaluation_assets/sra_sanitize.py")
 patched = load("new_sanitize", root / "trievo_bench/native_patches/sra_sanitize.py")
 example = "a, b = (2, 3)\ndef task_func():\n    return a + b\n"

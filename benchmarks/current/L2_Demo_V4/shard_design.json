@@ -1,0 +1,981 @@
+{
+  "schema_version": "l2_stream_shard_design_expanded/1.0",
+  "source_design_sha256": "1e93d5ca21462a4f19b884368dc5280eecfb753c3635eb50ed43ce586f1556e3",
+  "streams": [
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_01_of_05",
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        5,
+        13,
+        20
+      ],
+      "schedule_rationale": "Frequent, non-equidistant transfer checks."
+    },
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_02_of_05",
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "source_turn_ids": [
+        "turn21",
+        "turn22",
+        "turn23",
+        "turn24",
+        "turn25",
+        "turn26",
+        "turn27",
+        "turn28",
+        "turn29",
+        "turn30",
+        "turn31",
+        "turn32",
+        "turn33",
+        "turn34",
+        "turn35",
+        "turn36",
+        "turn37",
+        "turn38",
+        "turn39",
+        "turn40"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        8,
+        17
+      ],
+      "schedule_rationale": "Sparse checks with a long dependency interval."
+    },
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_03_of_05",
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "source_turn_ids": [
+        "turn41",
+        "turn42",
+        "turn43",
+        "turn44",
+        "turn45",
+        "turn46",
+        "turn47",
+        "turn48",
+        "turn49",
+        "turn50",
+        "turn51",
+        "turn52",
+        "turn53",
+        "turn54",
+        "turn55",
+        "turn56",
+        "turn57",
+        "turn58",
+        "turn59",
+        "turn60"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "learning_turn_indices": [
+        1,
+        7
+      ],
+      "probe_turn_indices": [
+        12,
+        20
+      ],
+      "schedule_rationale": "A mid-stream reinforcement followed by delayed checks."
+    },
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_04_of_05",
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "source_turn_ids": [
+        "turn61",
+        "turn62",
+        "turn63",
+        "turn64",
+        "turn65",
+        "turn66",
+        "turn67",
+        "turn68",
+        "turn69",
+        "turn70",
+        "turn71",
+        "turn72",
+        "turn73",
+        "turn74",
+        "turn75",
+        "turn76",
+        "turn77",
+        "turn78",
+        "turn79",
+        "turn80"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "learning_turn_indices": [
+        1,
+        9
+      ],
+      "probe_turn_indices": [
+        15,
+        19
+      ],
+      "schedule_rationale": "Interleaved reinforcement and transfer checks."
+    },
+    {
+      "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_05_of_05",
+      "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+      "source_turn_ids": [
+        "turn81",
+        "turn82",
+        "turn83",
+        "turn84",
+        "turn85",
+        "turn86",
+        "turn87",
+        "turn88",
+        "turn89",
+        "turn90",
+        "turn91",
+        "turn92",
+        "turn93",
+        "turn94",
+        "turn95",
+        "turn96",
+        "turn97",
+        "turn98",
+        "turn99",
+        "turn100"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10",
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        6,
+        14,
+        19
+      ],
+      "schedule_rationale": "Checks avoid a fixed end-of-bin cadence."
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_01_of_05",
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        4,
+        10
+      ],
+      "schedule_rationale": "Early and delayed workflow transfer checks."
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_02_of_05",
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "source_turn_ids": [
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        3,
+        8
+      ],
+      "schedule_rationale": "Non-terminal transfer checks."
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_03_of_05",
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "source_turn_ids": [
+        "turn21",
+        "turn22",
+        "turn23",
+        "turn24",
+        "turn25",
+        "turn26",
+        "turn27",
+        "turn28",
+        "turn29",
+        "turn30"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        5
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Mid-stream workflow reinforcement."
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_04_of_05",
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "source_turn_ids": [
+        "turn31",
+        "turn32",
+        "turn33",
+        "turn34",
+        "turn35",
+        "turn36",
+        "turn37",
+        "turn38",
+        "turn39",
+        "turn40"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        6,
+        9
+      ],
+      "schedule_rationale": "Long application interval before checks."
+    },
+    {
+      "stream_id": "tau2_telecom_mobile_data_roaming_001__shard_05_of_05",
+      "parent_stream_id": "tau2_telecom_mobile_data_roaming_001",
+      "source_turn_ids": [
+        "turn41",
+        "turn42",
+        "turn43",
+        "turn44",
+        "turn45",
+        "turn46",
+        "turn47",
+        "turn48",
+        "turn49",
+        "turn50"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        4
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Repeated workflow exposure before checks."
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001__shard_01_of_05",
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        4,
+        10
+      ],
+      "schedule_rationale": "Early and delayed artifact-workflow checks."
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001__shard_02_of_05",
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "source_turn_ids": [
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        3,
+        8
+      ],
+      "schedule_rationale": "Non-terminal artifact-workflow checks."
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001__shard_03_of_05",
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "source_turn_ids": [
+        "turn21",
+        "turn22",
+        "turn23",
+        "turn24",
+        "turn25",
+        "turn26",
+        "turn27",
+        "turn28",
+        "turn29",
+        "turn30"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        5
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Mid-stream artifact-workflow reinforcement."
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001__shard_04_of_05",
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "source_turn_ids": [
+        "turn31",
+        "turn32",
+        "turn33",
+        "turn34",
+        "turn35",
+        "turn36",
+        "turn37",
+        "turn38",
+        "turn39",
+        "turn40"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        6,
+        9
+      ],
+      "schedule_rationale": "Long application interval before checks."
+    },
+    {
+      "stream_id": "skilllearn_stock_data_visualization_001__shard_05_of_05",
+      "parent_stream_id": "skilllearn_stock_data_visualization_001",
+      "source_turn_ids": [
+        "turn41",
+        "turn42",
+        "turn43",
+        "turn44",
+        "turn45",
+        "turn46",
+        "turn47",
+        "turn48",
+        "turn49",
+        "turn50"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        4
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Repeated artifact-workflow exposure before checks."
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001__shard_01_of_05",
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        4,
+        10
+      ],
+      "schedule_rationale": "Early and delayed D3 workflow checks."
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001__shard_02_of_05",
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "source_turn_ids": [
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        3,
+        8
+      ],
+      "schedule_rationale": "Non-terminal D3 workflow checks."
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001__shard_03_of_05",
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "source_turn_ids": [
+        "turn21",
+        "turn22",
+        "turn23",
+        "turn24",
+        "turn25",
+        "turn26",
+        "turn27",
+        "turn28",
+        "turn29",
+        "turn30"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        5
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Mid-stream D3 workflow reinforcement."
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001__shard_04_of_05",
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "source_turn_ids": [
+        "turn31",
+        "turn32",
+        "turn33",
+        "turn34",
+        "turn35",
+        "turn36",
+        "turn37",
+        "turn38",
+        "turn39",
+        "turn40"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        6,
+        9
+      ],
+      "schedule_rationale": "Long application interval before checks."
+    },
+    {
+      "stream_id": "skillsbench_data_to_d3_001__shard_05_of_05",
+      "parent_stream_id": "skillsbench_data_to_d3_001",
+      "source_turn_ids": [
+        "turn41",
+        "turn42",
+        "turn43",
+        "turn44",
+        "turn45",
+        "turn46",
+        "turn47",
+        "turn48",
+        "turn49",
+        "turn50"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        4
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Repeated D3 workflow exposure before checks."
+    },
+    {
+      "stream_id": "airs_sick_textual_entailment_accuracy_001__shard_01_of_02",
+      "parent_stream_id": "airs_sick_textual_entailment_accuracy_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        4,
+        10
+      ],
+      "schedule_rationale": "Early and delayed classifier-workflow checks."
+    },
+    {
+      "stream_id": "airs_sick_textual_entailment_accuracy_001__shard_02_of_02",
+      "parent_stream_id": "airs_sick_textual_entailment_accuracy_001",
+      "source_turn_ids": [
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        3,
+        8
+      ],
+      "schedule_rationale": "Non-terminal classifier-workflow checks."
+    },
+    {
+      "stream_id": "mlgym_titanic_tabular_classification_001__shard_01_of_02",
+      "parent_stream_id": "mlgym_titanic_tabular_classification_001",
+      "source_turn_ids": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1,
+        5
+      ],
+      "probe_turn_indices": [
+        7,
+        10
+      ],
+      "schedule_rationale": "Mid-stream tabular-workflow reinforcement."
+    },
+    {
+      "stream_id": "mlgym_titanic_tabular_classification_001__shard_02_of_02",
+      "parent_stream_id": "mlgym_titanic_tabular_classification_001",
+      "source_turn_ids": [
+        "turn11",
+        "turn12",
+        "turn13",
+        "turn14",
+        "turn15",
+        "turn16",
+        "turn17",
+        "turn18",
+        "turn19",
+        "turn20"
+      ],
+      "turn_order": [
+        "turn1",
+        "turn2",
+        "turn3",
+        "turn4",
+        "turn5",
+        "turn6",
+        "turn7",
+        "turn8",
+        "turn9",
+        "turn10"
+      ],
+      "learning_turn_indices": [
+        1
+      ],
+      "probe_turn_indices": [
+        6,
+        9
+      ],
+      "schedule_rationale": "Long application interval before checks."
+    }
+  ]
+}

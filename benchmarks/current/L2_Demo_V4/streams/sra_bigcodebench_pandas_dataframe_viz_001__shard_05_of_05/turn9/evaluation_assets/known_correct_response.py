@@ -1,0 +1,18 @@
+import numpy as np
+import pandas as pd
+from sklearn.impute import SimpleImputer
+import seaborn as sns
+import matplotlib.pyplot as plt
+def task_func(df):
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        raise ValueError("Input must be a non-empty pandas DataFrame.")
+
+    last_col = df.columns[-1]
+    imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
+    df[last_col] = imp_mean.fit_transform(df[last_col].values.reshape(-1, 1))
+
+    fig, ax = plt.subplots()
+    sns.boxplot(x=df[last_col], ax=ax)
+    ax.set_title('Boxplot of Last Column')
+    ax.set_xlabel(last_col)
+    return df, ax

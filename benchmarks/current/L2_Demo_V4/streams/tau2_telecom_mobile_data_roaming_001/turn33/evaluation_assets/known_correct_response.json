@@ -1,0 +1,18 @@
+{
+  "schema_version": "tau2-telecom-trajectory-0.1",
+  "assistant_message": "I resolved the mobile-data issue and restored excellent connectivity.",
+  "tool_calls": [
+    {
+      "requestor": "user",
+      "name": "set_network_mode_preference",
+      "arguments": {
+        "mode": "4g_5g_preferred"
+      }
+    },
+    {
+      "requestor": "user",
+      "name": "toggle_data",
+      "arguments": {}
+    }
+  ]
+}

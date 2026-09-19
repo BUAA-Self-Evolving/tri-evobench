@@ -27,7 +27,7 @@ B. 零费用验证
   `python -m pytest -q tests/test_opencode_baseline.py tests/test_matrix_conditions.py tests/test_matrix_portability.py tests/test_l2_agent.py`
 - 再执行完整仓库单测：`python -m pytest -q`。
 - 执行：`python -m compileall -q trievo_bench baseline/adapters tools tests`。
-- 执行：`python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V2 --inspect`。
+- 执行：`python -m trievo_bench.l2_compat --package benchmarks/current/L2_Demo_V4 --inspect`。
 - 执行：`python tools/validate_arena_packages.py benchmarks/current/l1_arena`。
 - 任一步失败时先定位并修复根因，不要通过删测试、放宽 verifier、提高预算或切换到其他 baseline 绕过。
 
@@ -48,7 +48,7 @@ D. 在企业设备当前 PowerShell 进程注入 Friday 凭证
 
 E. 一个最小真实 OpenCode job
 - 执行：
-  `python tools/run_new_package_matrix.py --provider-mode friday --level l2 --l2-package benchmarks/current/L2_Demo_V2 --l2-condition evolving --config-dir tmp/matrix-config-friday --root runs/friday-opencode-preflight --only l2/evolving/opencode/s01 --concurrency 1`
+  `python tools/run_new_package_matrix.py --provider-mode friday --level l2 --l2-package benchmarks/current/L2_Demo_V4 --l2-panel short_stream_main_panel --l2-condition evolving --config-dir tmp/matrix-config-friday --root runs/friday-opencode-preflight --only l2/evolving/opencode/s01 --concurrency 1`
 - 不要并行，不要自动 retry 整个 job，不要改成 --gate 或去掉 --only。
 - 检查 matrix_status.json、对应 report.json、trace.jsonl、baseline.stderr.log、baseline_state/session.json。
 - 成功标准：进程退出 0；选中的唯一 job 完成预期 turns；无 runtime/protocol/cleanup/evaluation error；OpenCode 创建并复用同一个 Flow session；trace 中有真实模型 usage 和必要 tool events；凭证未出现在任何输出中。

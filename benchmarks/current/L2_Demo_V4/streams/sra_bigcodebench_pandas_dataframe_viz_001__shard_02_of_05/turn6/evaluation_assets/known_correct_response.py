@@ -1,0 +1,17 @@
+import pandas as pd
+import seaborn as sns
+def task_func(goals, penalties):
+    # Constants
+    TEAMS = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']
+
+    data = []
+    for team in TEAMS:
+        team_goals = goals.get(team, 0)
+        team_penalties = penalties.get(team, 0)
+        data.append([team, team_goals, team_penalties])
+
+    df = pd.DataFrame(data, columns=['Team', 'Goals', 'Penalties'])
+
+    plot = sns.pairplot(df, hue='Team')
+
+    return df, plot

@@ -172,7 +172,31 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
         result.append(L2StreamInfo(str(stream_id), len(episodes), mode, str(workspace["initial_snapshot"])))
     if not result:
         raise L2SpecError(f"no L2 streams found in {streams_root}")
+    _validate_l2_panels(root, {item.stream_id for item in result})
     return result
+
+
+def _validate_l2_panels(root: Path, stream_ids: set[str]) -> None:
+    path = root / "panels.json"
+    if not path.is_file():
+        return
+    panels = _load_json(path)
+    if panels.get("schema_version") != "l2_panels/1.0":
+        raise L2SpecError("panels.json must declare schema_version l2_panels/1.0")
+    panel_count = 0
+    for key, value in panels.items():
+        if key in {"schema_version", "unique_parent_turn_count", "turn_placement_count", "aggregation_rule"}:
+            continue
+        if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+            raise L2SpecError(f"panels.json/{key}: panel entries must be stream id strings")
+        panel_count += 1
+        if len(set(value)) != len(value):
+            raise L2SpecError(f"panels.json/{key}: duplicate stream id")
+        missing = sorted(set(value) - stream_ids)
+        if missing:
+            raise L2SpecError(f"panels.json/{key}: missing stream(s): {missing}")
+    if panel_count == 0:
+        raise L2SpecError("panels.json must declare at least one panel")
 
 
 def _validate_taskstream_execution_requirements(
@@ -313,6 +337,9 @@ def main() -> None:
     parser.add_argument("--retry-authorization", type=Path, help="consumed one-shot authorization ledger for --retry-interrupted-run")
     parser.add_argument("--retry-job", help="matrix job id bound to the consumed retry authorization")
     parser.add_argument("--stop-after-turn", help="stop after completing this TaskStream turn")
+    parser.add_argument("--panel-id", help="L2 panel id for panel-aware matrix runs")
+    parser.add_argument("--panel-manifest-sha256", help="SHA-256 of package panels.json")
+    parser.add_argument("--panel-streams", help="comma-separated stream ids selected by the panel")
     parser.add_argument(
         "--condition",
         choices=["reset", "frozen", "evolving"],
@@ -361,6 +388,11 @@ def main() -> None:
                 stop_after_turn=args.stop_after_turn,
                 retry_authorization=args.retry_authorization,
                 retry_job_id=args.retry_job,
+                panel_id=args.panel_id,
+                panel_manifest_sha256=args.panel_manifest_sha256,
+                selected_stream_ids=tuple(
+                    item for item in (args.panel_streams or "").split(",") if item
+                ),
             )
         )
         print(json.dumps(report, ensure_ascii=False, indent=2))

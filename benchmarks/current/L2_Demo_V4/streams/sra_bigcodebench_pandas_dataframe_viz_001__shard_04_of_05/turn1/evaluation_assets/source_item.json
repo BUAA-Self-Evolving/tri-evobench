@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00904",
+  "dataset": "bigcodebench",
+  "question": "Plot values from a list of dictionaries based on specified keys and return the plot as a Matplotlib Axes object. >>> ax = task_func(data, keys=['x', 'y']) >>> type(ax) <class 'matplotlib.axes._axes.Axes'>\nThe function should output with:\n    Matplotlib Axes object: The plot showing the values of specified keys from the input list of dictionaries.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(d, keys=['x', 'y', 'z']):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "    # Convert the list of dictionaries to a DataFrame\n    df = pd.DataFrame(d)\n\n    # Initialize a plot\n    fig, ax = plt.subplots()\n    \n    # Plot the values for the specified keys\n    plotted_keys = []\n    for key in keys:\n        if key in df.columns:\n            ax.plot(df[key], label=key)\n            plotted_keys.append(key)\n    \n    # Add a legend if there are any lines plotted\n    if plotted_keys:\n        ax.legend()\n    \n    # Return the Axes object\n    return ax",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(d, keys=['x', 'y', 'z']):\n",
+    "test": "import unittest\nfrom matplotlib.axes import Axes\nclass TestCases(unittest.TestCase):\n    \n    def test_basic_input(self):\n        data = [{'x': 1, 'y': 10, 'z': 5}, {'x': 3, 'y': 15, 'z': 6}, {'x': 2, 'y': 1, 'z': 7}]\n        ax = task_func(data)\n        self.assertIsInstance(ax, Axes)\n        self.assertEqual(set([text.get_text() for text in ax.legend_.texts]), {'x', 'y', 'z'})\n        self.assertEqual(len(ax.lines), 3)\n    def test_missing_keys_in_data(self):\n        data = [{'x': 1, 'y': 10}, {'y': 15, 'z': 6}, {'x': 2, 'z': 7}]\n        ax = task_func(data)\n        self.assertIsInstance(ax, Axes)\n        self.assertEqual(set([text.get_text() for text in ax.legend_.texts]), {'x', 'y', 'z'})\n        self.assertEqual(len(ax.lines), 3)\n    def test_custom_keys(self):\n        data = [{'a': 1, 'b': 10}, {'b': 15, 'c': 6}, {'a': 2, 'c': 7}]\n        ax = task_func(data, keys=['a', 'b', 'c'])\n        self.assertIsInstance(ax, Axes)\n        self.assertEqual(set([text.get_text() for text in ax.legend_.texts]), {'a', 'b', 'c'})\n        self.assertEqual(len(ax.lines), 3)\n    def test_empty_data_list(self):\n        data = []\n        ax = task_func(data)\n        self.assertIsInstance(ax, Axes)\n        self.assertEqual(len(ax.lines), 0)\n        self.assertIsNone(ax.legend_)\n    def test_single_key_data(self):\n        data = [{'x': 1}, {'x': 2}, {'x': 3}]\n        ax = task_func(data)\n        self.assertIsInstance(ax, Axes)\n        self.assertEqual(set([text.get_text() for text in ax.legend_.texts]), {'x'})\n        self.assertEqual(len(ax.lines), 1)",
+    "entry_point": "task_func"
+  }
+}

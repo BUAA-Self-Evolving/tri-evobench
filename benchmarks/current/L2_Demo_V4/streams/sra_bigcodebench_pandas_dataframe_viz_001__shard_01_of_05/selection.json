@@ -1,0 +1,630 @@
+{
+  "schema_version": "l2_sra_selection/1.0",
+  "source": {
+    "dataset": "bigcodebench",
+    "revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+    "path": "data/bench/instances/bigcodebench.json"
+  },
+  "target_turn_count": 20,
+  "selection_rule": {
+    "required_gold_skill": "bigcodebench_094",
+    "required_visualization_skill_any": [
+      "bigcodebench_013",
+      "bigcodebench_138"
+    ],
+    "required_imports": {
+      "all": [
+        "pandas"
+      ],
+      "any": [
+        "matplotlib",
+        "seaborn"
+      ]
+    },
+    "required_entry_point": "task_func",
+    "allowed_third_party_modules": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "scipy",
+      "seaborn",
+      "sklearn"
+    ],
+    "other_imports_must_be_python_standard_library": true,
+    "excluded_standard_library_modules": [
+      "sqlite3"
+    ],
+    "native_fixture_preflight": {
+      "requirement": "known-correct response must pass the materialized native verifier in the pinned validation environment",
+      "recorded_incompatible_items": {
+        "bigcodebench_00049": "reference fixture is timezone-sensitive in the pinned environment",
+        "bigcodebench_00101": "reference fixture performs a network fetch while Runtime network is disabled",
+        "bigcodebench_00111": "reference fixture disagrees with native missing-value expectations",
+        "bigcodebench_00112": "reference fixture constructs an incorrect status-to-percentage mapping",
+        "bigcodebench_00157": "reference fixture disagrees with native correlation output shape",
+        "bigcodebench_00225": "reference fixture has a pandas dtype compatibility mismatch",
+        "bigcodebench_00251": "native test includes an all-zero pie-chart edge case rejected by Matplotlib",
+        "bigcodebench_00416": "reference fixture disagrees with native correlation output shape",
+        "bigcodebench_00511": "native pie-chart test passes non-numeric values rejected by pinned Matplotlib"
+      }
+    },
+    "priority": [
+      "retain independently reviewed pilot anchors that pass all eligibility gates",
+      "prefer fewer auxiliary skills outside pandas/matplotlib/seaborn",
+      "use a stable SHA-256 tie-breaker only after semantic filtering"
+    ],
+    "tie_breaker": "sra-viz-selection-v1"
+  },
+  "candidate_counts": {
+    "all_bigcodebench_items": 1140,
+    "required_gold_skill": 426,
+    "visualization_annotated": 150,
+    "native_fixture_incompatible_found_during_preflight": 9,
+    "eligible_after_all_filters": 132,
+    "selected": 100
+  },
+  "ordering": {
+    "method": "fixed",
+    "seed": null
+  },
+  "sequence_role_policy": {
+    "learning": [
+      1
+    ],
+    "probe": [
+      5,
+      13,
+      20
+    ],
+    "application": "all remaining turn indices",
+    "probe_basis": "Frequent, non-equidistant transfer checks.",
+    "replay_and_noise": "not used in this release"
+  },
+  "selected_turns": [
+    {
+      "turn_index": 1,
+      "sequence_role": "learning",
+      "instance_id": "bigcodebench_01037",
+      "skill_annotations": [
+        "bigcodebench_024",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_024"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "sklearn"
+      ],
+      "question_sha256": "9d9cc2c27697c21733b1014fbbf192ac76b7f11cc462d7a19f058c05662150ca",
+      "code_prompt_sha256": "522a78c08b7fa457e1f0d86c96abdc898b7540377a68450b10c50ebf7e8fa227",
+      "tests_sha256": "da19c5fecd18ba32f1c1c883393abce3c48739994999369ce019d02e893d8f9a",
+      "turn_id": "turn1",
+      "parent_turn_id": "turn1",
+      "parent_turn_index": 1
+    },
+    {
+      "turn_index": 2,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00613",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "ad75a0d43df07cfc1dcb2657e57b878ed46de99699912b20a5bd6896b4c5de19",
+      "code_prompt_sha256": "c653f0370312f5f68b6138171d9b33813d8c1068eeb271d47617ebb637e92c9d",
+      "tests_sha256": "9406244c871d5c6730f666b50b3a6e1101912747937b1232831c3a31d01556ab",
+      "turn_id": "turn2",
+      "parent_turn_id": "turn2",
+      "parent_turn_index": 2
+    },
+    {
+      "turn_index": 3,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00919",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "68198abbca693517c4c33a4849928eb0915b6da509f073d9319d633b25b6c92e",
+      "code_prompt_sha256": "454fb10266111a067a5a414d295c98f9d15406dbce6197c5541d59519840befc",
+      "tests_sha256": "38ce7d1184c6ac148036b43669dc016493764bc590989dceac0d63f6506e9696",
+      "turn_id": "turn3",
+      "parent_turn_id": "turn3",
+      "parent_turn_index": 3
+    },
+    {
+      "turn_index": 4,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00296",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "7f31436f6a9286a4630fb8ca635d8a2342a0f5a302550b1c6824cf4db6011288",
+      "code_prompt_sha256": "c48cb1ae112196464389103cd3bf8bd1de6b9a73c29d81bc785d89522a8546d1",
+      "tests_sha256": "d306b26c8009c2bb12dcc16c0860195ce6f29d6508e873b4b4e76afc8a62fbea",
+      "turn_id": "turn4",
+      "parent_turn_id": "turn4",
+      "parent_turn_index": 4
+    },
+    {
+      "turn_index": 5,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00208",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "5423166aa5deb58251366b43e5236fe9d9896ecd34bfcb578c658d194b247236",
+      "code_prompt_sha256": "222a45bf5af2ea6ffd307897b630dea2a8543b00a6c44107aa7668091cee6f74",
+      "tests_sha256": "d96a854df36cc4f50c4a5c069ffbd964203b8293c8a3421ccacc5523eb8452a7",
+      "turn_id": "turn5",
+      "parent_turn_id": "turn5",
+      "parent_turn_index": 5
+    },
+    {
+      "turn_index": 6,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00057",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "6da44df67af47d11b962124d59ab1df8e444682cf26f2704596f3cf554755f65",
+      "code_prompt_sha256": "81c17afcdaa300b1ec6cfc957013a2e0be621c157a7674b700201a86c41c7aff",
+      "tests_sha256": "9a9f2017b266f780fb3d7636c54bedd9e371c23135e204497eb1c33b74f6480a",
+      "turn_id": "turn6",
+      "parent_turn_id": "turn6",
+      "parent_turn_index": 6
+    },
+    {
+      "turn_index": 7,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00109",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "6b8d6de0643bed3d28485e7b78941e8f80cbecbc80fba6e93a3132840958111a",
+      "code_prompt_sha256": "586210f9bd8a48aa5fb17890b7bb15266d97536d9aa1f058cf7161bd8e7920af",
+      "tests_sha256": "87b39d185b188fadd3159711c95131243565d743bd1e2561e0536b375e2e0ba7",
+      "turn_id": "turn7",
+      "parent_turn_id": "turn7",
+      "parent_turn_index": 7
+    },
+    {
+      "turn_index": 8,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00065",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "32192e85fb581959e8558c70ab33ce7c38bd99c4bb3be4d48d7c3dc4b786b450",
+      "code_prompt_sha256": "139276c318cf7bb05b555ec3e72ed72d8cfd47ae6090cf2c62eb8fea68f18b4a",
+      "tests_sha256": "89716bcc325f3af65593e28a81c4dcf146c0a77e45e7d3d582344c1f6193513b",
+      "turn_id": "turn8",
+      "parent_turn_id": "turn8",
+      "parent_turn_index": 8
+    },
+    {
+      "turn_index": 9,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00165",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "6c4fe9462c4768b7698e903f1710d90e2898516ff8c0af24394ffee45013e276",
+      "code_prompt_sha256": "3138f0dca00c0ea13e5212f543dd3de3bfb7c17a97f891938aab48e868fe691c",
+      "tests_sha256": "db6c996bdbd5a72e60c31cc2ba93640036e5a5c9363fedc93fd5e7247e3f7990",
+      "turn_id": "turn9",
+      "parent_turn_id": "turn9",
+      "parent_turn_index": 9
+    },
+    {
+      "turn_index": 10,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00523",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "940e742ce0dc9bb7a3b05b659eaef224ed0b01867aeaf45025618167793db973",
+      "code_prompt_sha256": "94b41f2ff057823e0a0e52ccc7a10c057e07ca8cef2506c43157943a264f2ee9",
+      "tests_sha256": "d263fa6616075659cbd176b561df20ad0b78bcec667f23dfe34e4224e4db0b9c",
+      "turn_id": "turn10",
+      "parent_turn_id": "turn10",
+      "parent_turn_index": 10
+    },
+    {
+      "turn_index": 11,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00160",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_062",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_062"
+      ],
+      "imported_modules": [
+        "pandas",
+        "scipy",
+        "seaborn"
+      ],
+      "question_sha256": "2b1ef727d10bacf952a11720fff49b0ea8bfe408631ccf2727579827bc405fc2",
+      "code_prompt_sha256": "f8ed2389724c3e03027f18664d5968bb65cf6b4f5f20ab7890cc85a466636b63",
+      "tests_sha256": "64567c3b89378d7d885c517feccea17079561234c886874039d49a0ae841cdbc",
+      "turn_id": "turn11",
+      "parent_turn_id": "turn11",
+      "parent_turn_index": 11
+    },
+    {
+      "turn_index": 12,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00920",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "6506724749561b23b430d3f2fde5ee1a4bd425c09caca9bdb15c78318d3c1343",
+      "code_prompt_sha256": "a22c49aef6232fb96c93c80c6a1d7b48fe93ee4dc4ac16c47493f7c345ffb71f",
+      "tests_sha256": "40903b69c5399aa8d3215417c5c97d80674053aee5566e7f481a65b404fa0881",
+      "turn_id": "turn12",
+      "parent_turn_id": "turn12",
+      "parent_turn_index": 12
+    },
+    {
+      "turn_index": 13,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_00942",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_137",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_137"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "numpy",
+        "pandas"
+      ],
+      "question_sha256": "93baee6821b4671e491cf9c447e321099710c44f9e5c5fd213611208e9fbcabb",
+      "code_prompt_sha256": "8257eade6f4fc1a3d40653684100357c70a73354355bf122280f4ef09154706f",
+      "tests_sha256": "74661b9e4fcb8c558ac80b425d17ca6b88b86102944520f3e4203c0fec27db7b",
+      "turn_id": "turn13",
+      "parent_turn_id": "turn13",
+      "parent_turn_index": 13
+    },
+    {
+      "turn_index": 14,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00103",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "5ce1fc906d913f4ee4bcc0750d0e3a19f6d3596df414cd57d71b8b385adc2bf7",
+      "code_prompt_sha256": "4084bcf6de7b3372eebb6f4b197cb5015c4508156e6a463d62a66e5f722aa8cb",
+      "tests_sha256": "49c8edc64ab0f79a1d0f5bac9f907e6e7a53910c4410b24d4acd49c7f58e603e",
+      "turn_id": "turn14",
+      "parent_turn_id": "turn14",
+      "parent_turn_index": 14
+    },
+    {
+      "turn_index": 15,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00616",
+      "skill_annotations": [
+        "bigcodebench_073",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [
+        "bigcodebench_073"
+      ],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "random"
+      ],
+      "question_sha256": "3acef591b9d37ee806d96fa534b7e7e1006fb36b9cd34f08f38c26ba9c0c0ed6",
+      "code_prompt_sha256": "4aae5e3cf1d85b6d3e98e63706251d71884a6c83927e77296dfd18e01ccd1c1d",
+      "tests_sha256": "129c17ab7e792ad1613a04794ea87bd5dcbe6c00d213912bf03c2e2bb8a9fbf6",
+      "turn_id": "turn15",
+      "parent_turn_id": "turn15",
+      "parent_turn_index": 15
+    },
+    {
+      "turn_index": 16,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00138",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "e0a644e7e745dfe55b54c8d8c59c5feaed943404d426d5538778bdd63475df12",
+      "code_prompt_sha256": "470a21e5d4b507ed015a78306531859a7eb3d592110626e7a766ef89f3e7041c",
+      "tests_sha256": "1f231806c72464525a649964453fb8d1d68c4081afa63b47b1f66f82379c1105",
+      "turn_id": "turn16",
+      "parent_turn_id": "turn16",
+      "parent_turn_index": 16
+    },
+    {
+      "turn_index": 17,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00063",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "8508f38c1e5af403ba321d52f2d40c5b3bbf132d547688504ce2761195d3adcf",
+      "code_prompt_sha256": "6176c6eb9a303018cfaec50a48ef89948b4412840157595d40d45747f20e21ef",
+      "tests_sha256": "bd9c276984ee9a30f186bb96350434d38e62828b02a53a562a2c2a7aff1a8709",
+      "turn_id": "turn17",
+      "parent_turn_id": "turn17",
+      "parent_turn_index": 17
+    },
+    {
+      "turn_index": 18,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00341",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "bb6a6ffb119e73eb3fe7ed15da592a2635c81345a3081e0dab8c7c245547bdc8",
+      "code_prompt_sha256": "8b19850e83d78913b6a919d91669d1ee0bca3e136e3dbcae08b26cc12b267953",
+      "tests_sha256": "76a8393605e1f07894199de8590624bcd0fd01193f2e616478ab31b1b1ea1c97",
+      "turn_id": "turn18",
+      "parent_turn_id": "turn18",
+      "parent_turn_index": 18
+    },
+    {
+      "turn_index": 19,
+      "sequence_role": "application",
+      "instance_id": "bigcodebench_00515",
+      "skill_annotations": [
+        "bigcodebench_013",
+        "bigcodebench_094"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "pandas",
+        "seaborn"
+      ],
+      "question_sha256": "21e77b02edf694c1f13656d1c2d77a11e4d54db0a8806ef13d683c0eb248777d",
+      "code_prompt_sha256": "fb58858195140e64b48d0a14206006d07afc433a4b7f7b3b8dd7867f4f9aaf2c",
+      "tests_sha256": "15f7d4f7aa467e1e4ed11d9d7ba90720ddda10cfeb52eb4c722e69f58928cbc7",
+      "turn_id": "turn19",
+      "parent_turn_id": "turn19",
+      "parent_turn_index": 19
+    },
+    {
+      "turn_index": 20,
+      "sequence_role": "probe",
+      "instance_id": "bigcodebench_01002",
+      "skill_annotations": [
+        "bigcodebench_094",
+        "bigcodebench_138"
+      ],
+      "auxiliary_skills": [],
+      "imported_modules": [
+        "matplotlib",
+        "pandas"
+      ],
+      "question_sha256": "d38b12bcb4a47fb8bd4b2de72d19c6f22eb6b5cb6ecce37c3023693276ab832f",
+      "code_prompt_sha256": "e989382a46fbdf94d83035f8779032290617f19acd24bc6e7a87f17ef3a43c95",
+      "tests_sha256": "0d273589386c7320a5991ad04933073dd5d48b2020bec433a7477446197a0385",
+      "turn_id": "turn20",
+      "parent_turn_id": "turn20",
+      "parent_turn_index": 20
+    }
+  ],
+  "stream_id": "sra_bigcodebench_pandas_dataframe_viz_001__shard_01_of_05",
+  "derivation": {
+    "kind": "independent_stream_from_parent_turn_subset",
+    "parent_stream_id": "sra_bigcodebench_pandas_dataframe_viz_001",
+    "parent_stream_version": "L2_Demo_V3",
+    "source_turn_range": [
+      1,
+      20
+    ],
+    "shard_index": 1,
+    "shard_count": 5,
+    "preserves_parent_order": true,
+    "runtime_dependency_on_parent": false,
+    "schedule_rationale": "Frequent, non-equidistant transfer checks."
+  },
+  "turn_lineage": [
+    {
+      "turn_id": "turn1",
+      "parent_turn_id": "turn1",
+      "source_task_id": "bigcodebench_01037"
+    },
+    {
+      "turn_id": "turn2",
+      "parent_turn_id": "turn2",
+      "source_task_id": "bigcodebench_00613"
+    },
+    {
+      "turn_id": "turn3",
+      "parent_turn_id": "turn3",
+      "source_task_id": "bigcodebench_00919"
+    },
+    {
+      "turn_id": "turn4",
+      "parent_turn_id": "turn4",
+      "source_task_id": "bigcodebench_00296"
+    },
+    {
+      "turn_id": "turn5",
+      "parent_turn_id": "turn5",
+      "source_task_id": "bigcodebench_00208"
+    },
+    {
+      "turn_id": "turn6",
+      "parent_turn_id": "turn6",
+      "source_task_id": "bigcodebench_00057"
+    },
+    {
+      "turn_id": "turn7",
+      "parent_turn_id": "turn7",
+      "source_task_id": "bigcodebench_00109"
+    },
+    {
+      "turn_id": "turn8",
+      "parent_turn_id": "turn8",
+      "source_task_id": "bigcodebench_00065"
+    },
+    {
+      "turn_id": "turn9",
+      "parent_turn_id": "turn9",
+      "source_task_id": "bigcodebench_00165"
+    },
+    {
+      "turn_id": "turn10",
+      "parent_turn_id": "turn10",
+      "source_task_id": "bigcodebench_00523"
+    },
+    {
+      "turn_id": "turn11",
+      "parent_turn_id": "turn11",
+      "source_task_id": "bigcodebench_00160"
+    },
+    {
+      "turn_id": "turn12",
+      "parent_turn_id": "turn12",
+      "source_task_id": "bigcodebench_00920"
+    },
+    {
+      "turn_id": "turn13",
+      "parent_turn_id": "turn13",
+      "source_task_id": "bigcodebench_00942"
+    },
+    {
+      "turn_id": "turn14",
+      "parent_turn_id": "turn14",
+      "source_task_id": "bigcodebench_00103"
+    },
+    {
+      "turn_id": "turn15",
+      "parent_turn_id": "turn15",
+      "source_task_id": "bigcodebench_00616"
+    },
+    {
+      "turn_id": "turn16",
+      "parent_turn_id": "turn16",
+      "source_task_id": "bigcodebench_00138"
+    },
+    {
+      "turn_id": "turn17",
+      "parent_turn_id": "turn17",
+      "source_task_id": "bigcodebench_00063"
+    },
+    {
+      "turn_id": "turn18",
+      "parent_turn_id": "turn18",
+      "source_task_id": "bigcodebench_00341"
+    },
+    {
+      "turn_id": "turn19",
+      "parent_turn_id": "turn19",
+      "source_task_id": "bigcodebench_00515"
+    },
+    {
+      "turn_id": "turn20",
+      "parent_turn_id": "turn20",
+      "source_task_id": "bigcodebench_01002"
+    }
+  ]
+}

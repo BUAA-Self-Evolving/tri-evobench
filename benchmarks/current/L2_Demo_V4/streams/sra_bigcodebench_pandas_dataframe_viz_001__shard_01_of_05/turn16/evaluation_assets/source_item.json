@@ -1,0 +1,15 @@
+{
+  "instance_id": "bigcodebench_00138",
+  "dataset": "bigcodebench",
+  "question": "Create and return a bar chart of the frequency of letters in a DataFrame where the column 'Letters' contains English uppercase letters.\nThe function should raise the exception for: ValueError: If 'df' is not a DataFrame or lacks the 'Letters' column.\nThe function should output with:\n    Axes: A Matplotlib Axes object representing the bar graph of letter frequency, with the x-axis labeled 'Letters', the y-axis labeled 'Frequency', and the title 'Letter Frequency'.\nYou should write self-contained code starting with:\n```\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df, letters=list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')):\n```",
+  "skill_annotations": [
+    "bigcodebench_094",
+    "bigcodebench_138"
+  ],
+  "eval_data": {
+    "answer": "    if not isinstance(df, pd.DataFrame) or 'Letters' not in df.columns:\n        raise ValueError(\"The input must be a pandas DataFrame with a 'Letters' column.\")\n\n    letter_frequency = df['Letters'].value_counts().reindex(letters, fill_value=0)\n    ax = letter_frequency.plot(kind='bar')\n    ax.set_title('Letter Frequency')\n    ax.set_xlabel('Letters')\n    ax.set_ylabel('Frequency')\n    plt.show()\n    return ax",
+    "code_prompt": "import pandas as pd\nimport matplotlib.pyplot as plt\ndef task_func(df, letters=list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')):\n",
+    "test": "import unittest\nimport pandas as pd\nimport random\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        self.letters = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')\n        random.seed(42)\n        self.df = pd.DataFrame({'Letters': random.choices(self.letters, k=100)})\n    def test_return_type(self):\n        ax = task_func(self.df)\n        self.assertIsInstance(ax, plt.Axes)\n    def test_invalid_input_empty_dataframe(self):\n        with self.assertRaises(ValueError):\n            task_func(pd.DataFrame())\n    def test_invalid_input_type(self):\n        with self.assertRaises(ValueError):\n            task_func(\"not a dataframe\")\n    def test_plot_labels(self):\n        ax = task_func(self.df)\n        self.assertEqual(ax.get_title(), 'Letter Frequency')\n        self.assertEqual(ax.get_xlabel(), 'Letters')\n        self.assertEqual(ax.get_ylabel(), 'Frequency')\n    def test_bar_chart_values(self):\n        letter_counts = self.df['Letters'].value_counts()\n        ax = task_func(self.df)\n        bars = ax.containers[0]\n        for i, bar in enumerate(bars):\n            expected_height = letter_counts.get(self.letters[i], 0)\n            self.assertEqual(bar.get_height(), expected_height)",
+    "entry_point": "task_func"
+  }
+}

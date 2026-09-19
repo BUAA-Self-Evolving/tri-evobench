@@ -1,0 +1,352 @@
+{
+  "schema_version": "l2_v3_stream_selection/1.0",
+  "stream_id": "skillsbench_data_to_d3_001__shard_05_of_05",
+  "source": {
+    "benchmark": "skillsbench",
+    "upstream_url": "https://github.com/benchflow-ai/skillsbench.git",
+    "revision": "9a1f4dd5f7659f75707435da3ce854b6e48321d1",
+    "license": "Apache-2.0",
+    "dataset": "SkillsBench data-to-d3",
+    "path": "tasks/data-to-d3"
+  },
+  "target_turn_count": 10,
+  "selection_rule": {
+    "native_inventory": 1,
+    "native_turn_count": 1,
+    "derived_turn_count": 49,
+    "source_data_tree_sha256": "6d3169f5c1c8e1b5183272d33e213d499a36bc57fb089013c560f71f45854da0",
+    "ordering": "preserve the existing first ten variants, then continue the unique format/rotation schedule through Turn 50",
+    "derivation_claim": "deterministic semantics-preserving variants, not additional upstream tasks"
+  },
+  "sequence_role_policy": {
+    "learning": [
+      1,
+      4
+    ],
+    "probe": [
+      7,
+      10
+    ],
+    "application": "all remaining turn indices",
+    "probe_basis": "Repeated D3 workflow exposure before checks.",
+    "replay_and_noise": "not used in this release"
+  },
+  "selected_turns": [
+    {
+      "turn_index": 1,
+      "turn_id": "turn1",
+      "sequence_role": "learning",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 2,
+      "output_format": "json",
+      "record_rotation": 38,
+      "derived_variant_id": "format_json_rotation_38",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "json",
+        "record_rotation": 38,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn41",
+      "parent_turn_index": 41
+    },
+    {
+      "turn_index": 2,
+      "turn_id": "turn2",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 3,
+      "output_format": "tsv",
+      "record_rotation": 39,
+      "derived_variant_id": "format_tsv_rotation_39",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "tsv",
+        "record_rotation": 39,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn42",
+      "parent_turn_index": 42
+    },
+    {
+      "turn_index": 3,
+      "turn_id": "turn3",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 1,
+      "output_format": "csv",
+      "record_rotation": 40,
+      "derived_variant_id": "format_csv_rotation_40",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "csv",
+        "record_rotation": 40,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn43",
+      "parent_turn_index": 43
+    },
+    {
+      "turn_index": 4,
+      "turn_id": "turn4",
+      "sequence_role": "learning",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 2,
+      "output_format": "json",
+      "record_rotation": 41,
+      "derived_variant_id": "format_json_rotation_41",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "json",
+        "record_rotation": 41,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn44",
+      "parent_turn_index": 44
+    },
+    {
+      "turn_index": 5,
+      "turn_id": "turn5",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 3,
+      "output_format": "tsv",
+      "record_rotation": 42,
+      "derived_variant_id": "format_tsv_rotation_42",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "tsv",
+        "record_rotation": 42,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn45",
+      "parent_turn_index": 45
+    },
+    {
+      "turn_index": 6,
+      "turn_id": "turn6",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 1,
+      "output_format": "csv",
+      "record_rotation": 43,
+      "derived_variant_id": "format_csv_rotation_43",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "csv",
+        "record_rotation": 43,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn46",
+      "parent_turn_index": 46
+    },
+    {
+      "turn_index": 7,
+      "turn_id": "turn7",
+      "sequence_role": "probe",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 2,
+      "output_format": "json",
+      "record_rotation": 44,
+      "derived_variant_id": "format_json_rotation_44",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "json",
+        "record_rotation": 44,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn47",
+      "parent_turn_index": 47
+    },
+    {
+      "turn_index": 8,
+      "turn_id": "turn8",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 3,
+      "output_format": "tsv",
+      "record_rotation": 45,
+      "derived_variant_id": "format_tsv_rotation_45",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "tsv",
+        "record_rotation": 45,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn48",
+      "parent_turn_index": 48
+    },
+    {
+      "turn_index": 9,
+      "turn_id": "turn9",
+      "sequence_role": "application",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 1,
+      "output_format": "csv",
+      "record_rotation": 46,
+      "derived_variant_id": "format_csv_rotation_46",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "csv",
+        "record_rotation": 46,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn49",
+      "parent_turn_index": 49
+    },
+    {
+      "turn_index": 10,
+      "turn_id": "turn10",
+      "sequence_role": "probe",
+      "turn_type": "capability_application",
+      "turn_origin": "derived_evolution_turn",
+      "source_task_id": null,
+      "parent_source_task_ids": [
+        "data-to-d3"
+      ],
+      "parent_source_task_id": "data-to-d3",
+      "source_path": "tasks/data-to-d3",
+      "source_template_index": 2,
+      "output_format": "json",
+      "record_rotation": 47,
+      "derived_variant_id": "format_json_rotation_47",
+      "transform": {
+        "type": "deterministic_format_and_record_order_pipeline",
+        "output_format": "json",
+        "record_rotation": 47,
+        "semantic_invariant": "the native stock entities, values, D3 requirements, and browser-verifier semantics are retained"
+      },
+      "parent_turn_id": "turn50",
+      "parent_turn_index": 50
+    }
+  ],
+  "derivation": {
+    "kind": "independent_stream_from_parent_turn_subset",
+    "parent_stream_id": "skillsbench_data_to_d3_001",
+    "parent_stream_version": "L2_Demo_V3",
+    "source_turn_range": [
+      41,
+      50
+    ],
+    "shard_index": 5,
+    "shard_count": 5,
+    "preserves_parent_order": true,
+    "runtime_dependency_on_parent": false,
+    "schedule_rationale": "Repeated D3 workflow exposure before checks."
+  },
+  "turn_lineage": [
+    {
+      "turn_id": "turn1",
+      "parent_turn_id": "turn41",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn2",
+      "parent_turn_id": "turn42",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn3",
+      "parent_turn_id": "turn43",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn4",
+      "parent_turn_id": "turn44",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn5",
+      "parent_turn_id": "turn45",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn6",
+      "parent_turn_id": "turn46",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn7",
+      "parent_turn_id": "turn47",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn8",
+      "parent_turn_id": "turn48",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn9",
+      "parent_turn_id": "turn49",
+      "source_task_id": null
+    },
+    {
+      "turn_id": "turn10",
+      "parent_turn_id": "turn50",
+      "source_task_id": null
+    }
+  ]
+}

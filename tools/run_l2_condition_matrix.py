@@ -143,7 +143,7 @@ def aggregate(rows):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default="runs/mx25/l2-controls")
-    parser.add_argument("--package", type=Path, default=Path("benchmarks/current/L2_Demo_V2"))
+    parser.add_argument("--package", type=Path, default=Path("benchmarks/current/L2_Demo_V4"))
     parser.add_argument("--config-dir", type=Path)
     parser.add_argument("--provider-mode", choices=sorted(PROVIDER_PROFILES), default="packycode")
     parser.add_argument("--gate", action="store_true", help="run both conditions and all agents on the shortest stream")

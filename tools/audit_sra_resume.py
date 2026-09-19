@@ -10,7 +10,7 @@ from tools.run_new_package_matrix import jobs, report_for, latest_checkpoint
 from trievo_bench.l2_agent import L2AgentRunOptions, L2AgentStreamRunner, _restored_reply, _restore_tree_archive
 
 root = Path(__file__).resolve().parents[1]
-rows = jobs(root, root / "runs/mx24/full", root / "benchmarks/current")
+rows = jobs(root, root / "runs/mx24/full", root / "benchmarks/current", l2_panel="parent_stream_diagnostic")
 completed = [row for row in rows if report_for(row)[0]]
 assert len(completed) == 14
 row = next(row for row in rows if row["id"] == "l2/trace2skill/s05")
@@ -26,7 +26,7 @@ for name in ("workspace.zip", "baseline_state.zip"):
     with zipfile.ZipFile(checkpoint / name) as archive:
         assert archive.testzip() is None
 config = json.loads((root / "tmp_trace2skill_docker.override.json").read_text())
-options = L2AgentRunOptions(root / "benchmarks/current/L2_Demo_V2", row["flow_id"],
+options = L2AgentRunOptions(root / "benchmarks/current/L2_Demo_V4", row["flow_id"],
                            root / "migration/offline-sra", "trace2skill", config, 300000000,
                            "trievo-l2:0.1", "trievo-l2-browser:0.1", root)
 runner = L2AgentStreamRunner(options)

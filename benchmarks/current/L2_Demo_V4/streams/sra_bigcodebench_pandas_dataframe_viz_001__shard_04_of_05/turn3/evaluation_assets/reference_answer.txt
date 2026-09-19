@@ -1,0 +1,21 @@
+    if df.empty or not all(col in df.columns for col in ['group', 'date', 'value']):
+        raise ValueError("DataFrame must be non-empty and contain 'group', 'date', and 'value' columns.")
+    
+    if not pd.api.types.is_datetime64_any_dtype(df['date']):
+        raise ValueError("'date' column must be in datetime format.")
+
+    try:
+        df['date'] = df['date'].apply(lambda x: x.toordinal())
+        df_numeric = df.drop(columns=['group'])
+        correlation_matrix = df_numeric.corr()
+
+        heatmap_fig = plt.figure(figsize=(8, 6))
+        sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+        plt.title('Correlation Matrix')
+
+        pairplot_grid = sns.pairplot(df)
+
+        return heatmap_fig, pairplot_grid
+
+    except Exception as e:
+        raise ValueError(f"An error occurred: {e}")

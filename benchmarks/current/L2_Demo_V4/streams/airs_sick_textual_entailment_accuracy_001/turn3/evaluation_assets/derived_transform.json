@@ -1,0 +1,14 @@
+{
+  "schema_version": "l2_derived_transform/1.0",
+  "parent_source_task_id": "TextualClassificationSickAccuracy",
+  "transformation": {
+    "type": "deterministic_non_overlapping_hidden_test_fold",
+    "algorithm": "sort by sha256('airs-sick-fold-v1|<zero-based-row-index>|<sentence_A>|<sentence_B>'), assign rank modulo 20",
+    "fold_id": 2
+  },
+  "row_count": 246,
+  "source_row_indices_sha256": "29b9f0b90afd46e2f4452d2f982157160628c7f513ea55d67927142b0e2b5c1d",
+  "public_test_sha256": "1b6ee44fa423a5d318871cbbc99091df62be567918a53c1de661bf1dc91be678",
+  "private_labels_sha256": "9c2adb3e0ada2a4713e97e23d590869373aad359746efd257f5f228cfb3774b4",
+  "semantic_invariant": "Train/validation data, label space, prediction type, artifact schema, and raw Accuracy verifier are unchanged."
+}

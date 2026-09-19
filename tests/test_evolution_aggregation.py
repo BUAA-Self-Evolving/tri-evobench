@@ -40,6 +40,7 @@ class EvolutionAggregationTest(unittest.TestCase):
         result = aggregate_matched_runs(self._records())
 
         self.assertEqual(result["aggregation_profile"], AGGREGATION_PROFILE)
+        self.assertIsNone(result["panel_id"])
         self.assertEqual(result["bin_size"], 10)
         self.assertEqual(result["record_count"], 90)
         json.dumps(result, sort_keys=True)
@@ -92,6 +93,28 @@ class EvolutionAggregationTest(unittest.TestCase):
             aggregate_reference_runs(self._records())["aggregation_profile"],
             AGGREGATION_PROFILE,
         )
+
+    def test_panel_bound_records_keep_panel_metadata(self) -> None:
+        records = self._records()
+        for record in records:
+            record["panel_id"] = "short_stream_main_panel"
+            record["panel_manifest_sha256"] = "a" * 64
+
+        result = aggregate_matched_runs(records)
+
+        self.assertEqual(result["panel_id"], "short_stream_main_panel")
+        self.assertEqual(result["panel_manifest_sha256"], "a" * 64)
+        self.assertFalse(result["allows_cross_panel_aggregation"])
+
+    def test_rejects_mixed_panels(self) -> None:
+        records = self._records()
+        for record in records:
+            record["panel_id"] = "short_stream_main_panel"
+            record["panel_manifest_sha256"] = "a" * 64
+        records[0]["panel_id"] = "parent_stream_diagnostic"
+
+        with self.assertRaisesRegex(ValueError, "exactly one L2 panel"):
+            aggregate_matched_runs(records)
 
     def test_rejects_missing_condition(self) -> None:
         records = [

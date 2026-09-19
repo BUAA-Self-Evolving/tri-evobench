@@ -1,0 +1,26 @@
+{
+  "schema_version": "l2_derived_transform/1.0",
+  "parent_source_task_id": "data-to-d3",
+  "output_format": "json",
+  "record_rotation": 26,
+  "transformation": {
+    "type": "deterministic_pipeline",
+    "steps": [
+      {
+        "type": "semantic_preserving_tabular_format_conversion",
+        "from": "csv",
+        "to": "json",
+        "scope": "stock descriptions and individual stock histories",
+        "normalization": "Pandas-compatible conversion may type numeric cells, map empty cells to null, and name an empty index column; benchmark-relevant entities and values are preserved."
+      },
+      {
+        "type": "rotate_primary_descriptor_records",
+        "record_offset": 26,
+        "semantic_invariant": "The same 50 stock records and all field values are retained; only descriptor record order changes."
+      }
+    ],
+    "semantic_invariant": "The same native stock entities, values, visualization requirements, and verifier semantics are retained."
+  },
+  "source_data_tree_sha256": "6d3169f5c1c8e1b5183272d33e213d499a36bc57fb089013c560f71f45854da0",
+  "derived_data_tree_sha256": "cd5ca2708496b628d4ba30d3ebb77f825f33f864610e7820175bf80479da3131"
+}

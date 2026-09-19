@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://self-evolving-benchmark.local/schemas/l2-panels.schema.json",
+  "title": "L2 Panels V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "short_stream_main_panel",
+    "parent_stream_diagnostic",
+    "aggregation_rule"
+  ],
+  "properties": {
+    "schema_version": {"const": "l2_panels/1.0"},
+    "short_stream_main_panel": {"$ref": "#/$defs/panel_streams"},
+    "parent_stream_diagnostic": {"$ref": "#/$defs/panel_streams"},
+    "unique_parent_turn_count": {"type": "integer", "minimum": 1},
+    "turn_placement_count": {"type": "integer", "minimum": 1},
+    "aggregation_rule": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "panel_streams": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"}
+    }
+  }
+}
