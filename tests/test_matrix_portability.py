@@ -115,7 +115,7 @@ def test_friday_profile_generates_direct_thinking_configs_without_secret(tmp_pat
         "timeout_seconds": 300,
         "max_retries": 5,
         "inherit_proxy": False,
-        "default_rpm": 20,
+        "default_rpm": 1,
     }
     for path in output.glob("*.override.json"):
         config = json.loads(path.read_text())

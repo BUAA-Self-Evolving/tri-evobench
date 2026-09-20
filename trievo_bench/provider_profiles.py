@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
+import re
 from typing import MutableMapping
 
 
@@ -22,6 +23,14 @@ class ProviderProfile:
     def public_metadata(self) -> dict[str, object]:
         """Return a serializable description which can safely be committed."""
         return asdict(self)
+
+
+@dataclass(frozen=True)
+class ProviderCredential:
+    """One in-memory credential and its non-secret, stable slot label."""
+
+    slot: str
+    value: str
 
 
 PROVIDER_PROFILES = {
@@ -44,7 +53,7 @@ PROVIDER_PROFILES = {
         timeout_seconds=300,
         max_retries=5,
         inherit_proxy=False,
-        default_rpm=20,
+        default_rpm=1,
     ),
 }
 
@@ -66,6 +75,7 @@ _PROXY_ENV_NAMES = (
     "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY",
     "http_proxy", "https_proxy", "all_proxy", "no_proxy",
 )
+_FRIDAY_SLOT_PATTERN = re.compile(r"^FRIDAY_APP_ID_([1-9][0-9]*)$")
 
 
 def get_provider_profile(name: str) -> ProviderProfile:
@@ -76,21 +86,90 @@ def get_provider_profile(name: str) -> ProviderProfile:
         raise ValueError(f"unknown provider mode {name!r}; choose one of: {choices}") from exc
 
 
+def _friday_list_credentials(raw: str) -> list[str]:
+    """Parse a JSON array or newline-delimited credential list without logging it."""
+    value = raw.strip()
+    if not value:
+        return []
+    if value.startswith("["):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError as exc:
+            raise ValueError("FRIDAY_APP_IDS must be a JSON array or newline-delimited list") from exc
+        if not isinstance(parsed, list) or not all(isinstance(item, str) for item in parsed):
+            raise ValueError("FRIDAY_APP_IDS JSON value must be an array of strings")
+        return [item.strip() for item in parsed]
+    return [item.strip() for item in value.splitlines()]
+
+
+def provider_credentials(
+    name: str,
+    environ: MutableMapping[str, str],
+) -> tuple[ProviderCredential, ...]:
+    """Resolve a provider's credential pool without exposing values in metadata."""
+    profile = get_provider_profile(name)
+    if name != "friday":
+        value = environ.get(profile.credential_env, "")
+        if not value and name == "packycode":
+            value = environ.get("TRIEVO_API_KEY", "")
+        if not value:
+            raise ValueError(f"{profile.credential_env} is required for provider mode {name}")
+        return (ProviderCredential(profile.credential_env, value),)
+
+    indexed = []
+    for key, value in environ.items():
+        match = _FRIDAY_SLOT_PATTERN.match(key)
+        if match:
+            if not value.strip():
+                raise ValueError(f"{key} is empty")
+            indexed.append((int(match.group(1)), key, value.strip()))
+    indexed.sort()
+    if indexed:
+        credentials = [ProviderCredential(key, value) for _, key, value in indexed]
+    elif environ.get("FRIDAY_APP_IDS", "").strip():
+        values = _friday_list_credentials(environ["FRIDAY_APP_IDS"])
+        if not values or any(not value for value in values):
+            raise ValueError("FRIDAY_APP_IDS contains an empty credential")
+        credentials = [
+            ProviderCredential(f"FRIDAY_APP_IDS[{index}]", value)
+            for index, value in enumerate(values, 1)
+        ]
+    else:
+        value = environ.get("FRIDAY_APP_ID", "").strip()
+        credentials = [ProviderCredential("FRIDAY_APP_ID", value)] if value else []
+
+    if not credentials:
+        raise ValueError(
+            "FRIDAY_APP_ID, FRIDAY_APP_IDS, or FRIDAY_APP_ID_<n> is required "
+            "for provider mode friday"
+        )
+    values = [credential.value for credential in credentials]
+    if len(values) != len(set(values)):
+        raise ValueError("Friday credential pool contains duplicate App IDs")
+    return tuple(credentials)
+
+
 def configure_provider_environment(
     name: str,
     environ: MutableMapping[str, str],
+    *,
+    credential: ProviderCredential | None = None,
 ) -> ProviderProfile:
     """Select one provider and bridge its in-memory secret to legacy adapters."""
     profile = get_provider_profile(name)
-    credential = environ.get(profile.credential_env, "")
-    # TRIEVO_API_KEY remains the documented legacy PackyCode variable.
-    if not credential and name == "packycode":
-        credential = environ.get("TRIEVO_API_KEY", "")
-    if not credential:
-        raise ValueError(f"{profile.credential_env} is required for provider mode {name}")
+    selected = credential or provider_credentials(name, environ)[0]
+
+    if name == "friday":
+        # Do not expose the whole pool to a worker. It receives only its
+        # selected App ID plus aliases required by baseline adapters.
+        environ.pop("FRIDAY_APP_IDS", None)
+        for key in list(environ):
+            if _FRIDAY_SLOT_PATTERN.match(key):
+                environ.pop(key, None)
+        environ["FRIDAY_APP_ID"] = selected.value
 
     for key in _KEY_ALIASES:
-        environ[key] = credential
+        environ[key] = selected.value
     for key in _BASE_URL_ALIASES:
         environ[key] = profile.base_url
     environ["TRIEVO_MODEL"] = profile.model

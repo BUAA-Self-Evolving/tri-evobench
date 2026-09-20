@@ -361,11 +361,11 @@ OpenCode 是持续会话型 harness，当前 `evolution.policy=disabled`，Turn 
 | 模式 | 凭证变量 | Base URL | 模型 | Thinking | timeout | extra retries | proxy |
 |---|---|---|---|---|---:|---:|---|
 | `packycode` | `PACKYCODE_API_KEY`；兼容旧 `TRIEVO_API_KEY` | `https://cf.api.fan/v1` | `deepseek-v4-flash` | disabled | 150s | 4 | 继承宿主配置 |
-| `friday` | `FRIDAY_APP_ID` | `https://aigc.sankuai.com/v1/openai/native` | `deepseek-v4-flash` | enabled | 300s | 5 | 默认直连并清理 proxy 变量 |
+| `friday` | `FRIDAY_APP_ID` 或 `FRIDAY_APP_ID_<n>` / `FRIDAY_APP_IDS` 池 | `https://aigc.sankuai.com/v1/openai/native` | `deepseek-v4-flash` | enabled | 300s | 5 | 默认直连并清理 proxy 变量 |
 
-Friday 控制台当前默认 RPM 为 20，运行器在未显式指定并发时强制选择并发 1。只有渠道管理员已经调整配额并完成小规模验证后，才可显式提高 `--concurrency`。
+Friday 当前按每个 App ID 最大一个活跃 stream job 调度。多 App ID 模式使用确定性的 stream-affinity LPT：同一 `level + flow_id` 的所有 baseline/condition job 固定到同一凭证槽；槽位不足时按 `turn 数 × 选中 job 数` 的预计工作量从长到短分配给当前最轻槽位。未显式指定 `--concurrency` 时，有效并发为 App ID 数和选中 stream 数的较小值；显式值只能进一步降低并发。该限制不替代服务端真实 RPM enforcement。
 
-运行器在内存中把选定凭证映射到各 adapter 需要的 `TRIEVO_API_KEY`、`OPENAI_API_KEY`、`OPENAI_COMPATIBLE_API_KEY`、`TARGET_OPENAI_COMPATIBLE_API_KEY` 和 `DEEPSEEK_API_KEY`。这些兼容变量不能被落盘到配置、日志或报告。
+推荐用 `FRIDAY_APP_ID_1`、`FRIDAY_APP_ID_2`……建立稳定槽位；也支持单个 `FRIDAY_APP_ID`，以及 JSON 数组或换行列表形式的 `FRIDAY_APP_IDS`。每个 worker 的内存环境只保留自己选中的 App ID，并映射到各 adapter 需要的 `TRIEVO_API_KEY`、`OPENAI_API_KEY`、`OPENAI_COMPATIBLE_API_KEY`、`TARGET_OPENAI_COMPATIBLE_API_KEY` 和 `DEEPSEEK_API_KEY`；完整池不会传给 worker。状态文件只记录槽位名、stream 映射和预计工作量，不保存凭证值。恢复同一输出根时不得改变槽位名、顺序、对应 App ID 或选中 stream 集合。
 
 Friday 可能在 HTTP 200 body 中返回非 200 的业务 `status`。主模型 transport 会保留 provider `status/message`；429 和 5xx 只在同一次模型请求内重试，普通 4xx、鉴权、余额不足、空答案和 schema 错误不重试。transport retry 不能增加 benchmark Interaction，也不能重放已经执行过工具副作用的整个 Turn。
 
@@ -493,7 +493,9 @@ uv run --frozen python tools/run_new_package_matrix.py `
 ### 13.3 Friday 企业设备运行
 
 ```powershell
-$env:FRIDAY_APP_ID = '<只在企业设备当前进程设置>'
+$env:FRIDAY_APP_ID_1 = Read-Host 'Friday App ID slot 1'
+$env:FRIDAY_APP_ID_2 = Read-Host 'Friday App ID slot 2'
+# 按实际数量继续增加连续或非连续编号；编号按数值排序。
 uv run --frozen python tools/run_new_package_matrix.py `
   --provider-mode friday `
   --l1-package benchmarks/current/l1_arena `
@@ -501,9 +503,10 @@ uv run --frozen python tools/run_new_package_matrix.py `
   --l2-panel short_stream_main_panel `
   --l2-condition reset --l2-condition frozen --l2-condition evolving `
   --config-dir tmp/matrix-config-friday `
-  --root runs/friday-matrix `
-  --concurrency 1
+  --root runs/friday-matrix
 ```
+
+若只有一个 App ID，继续设置单个 `$env:FRIDAY_APP_ID` 即可，行为与旧版本兼容。多凭证下通常不要传 `--concurrency`，让运行器按 App ID/stream 数自动取安全并发；需要降低机器压力时才显式传更小值。
 
 ### 13.4 有费用的最小预检
 
@@ -641,6 +644,8 @@ Checkpoint 保存公共交互、workspace、声明的 baseline state、Turn 前�
 
 输出根目录有独占 driver lock；不同根目录仍可能重复计费，所以启动前必须检查是否已有同矩阵在运行。
 
+Friday 多凭证调度还强制每个 `credential_slot` 最多一个活跃 worker。LPT 只决定 stream 到槽位的静态映射，同一槽位内按 stream 分组顺序串行执行，以避免不同 stream 频繁切换破坏 cache locality。`matrix_status.json.credential_schedule` 可审计算法、槽位名、stream 映射、预计负载和 stream 数，但绝不能含凭证值。改变凭证池或选择范围必须换新的输出根；这既保护恢复身份，也避免缓存和审计记录混用。
+
 共享 Docker 存储紧张时启用：
 
 ```bash
@@ -697,7 +702,7 @@ Friday 企业内网 profile 默认移除 HTTP(S)/ALL proxy；不要把本地中�
 3. 不打包 `.env`、`runs/`、`tmp/`、Docker logs、credentials、个人配置和 API key；
 4. 把源码与所需公开数据单向传入企业设备；
 5. 在企业设备初始化 submodules/依赖并构建镜像；
-6. 在企业设备本地设置 `FRIDAY_APP_ID`；
+6. 在企业设备本地设置单个 `FRIDAY_APP_ID`，或稳定编号的 `FRIDAY_APP_ID_<n>` 凭证池；
 7. 在企业设备重新生成 `tmp/matrix-config-friday`；
 8. 先跑一个 `--only` job，再启动正式矩阵；
 9. 企业设备产生的结果若不能导出，就在设备内保留 commit SHA、image ID、profile、status、report 和 trace 的完整审计链。

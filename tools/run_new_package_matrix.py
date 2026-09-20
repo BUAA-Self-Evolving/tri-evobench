@@ -6,6 +6,7 @@ paid run blindly. A heartbeat can repair the issue and restart this command.
 from __future__ import annotations
 
 import argparse
+import heapq
 import hashlib
 import json
 import os
@@ -25,7 +26,9 @@ if str(REPO_ROOT) not in sys.path:
 
 from trievo_bench.provider_profiles import (
     PROVIDER_PROFILES,
+    ProviderCredential,
     configure_provider_environment,
+    provider_credentials,
     validate_generated_profile,
 )
 
@@ -216,6 +219,137 @@ def jobs(
                                  "output": str(output),
                                  **(panel or {})})
     return rows
+
+
+def _stream_schedule_key(row: dict) -> str:
+    """Return the logical stream identity shared by baselines and conditions."""
+    return f"{row['level']}:{row['flow_id']}"
+
+
+def assign_friday_credentials(
+    rows: list[dict],
+    credentials: tuple[ProviderCredential, ...],
+) -> dict[str, object]:
+    """Assign each stream to one App ID with deterministic LPT balancing.
+
+    The credential values never enter rows or returned metadata. All jobs for
+    one stream share a slot, preserving provider-side cache locality. When
+    there are fewer slots than streams, longest-processing-time scheduling on
+    turn-weighted job counts minimizes the estimated makespan while retaining
+    stream affinity.
+    """
+    if not credentials:
+        raise ValueError("Friday credential pool is empty")
+    groups: dict[str, list[tuple[int, dict]]] = {}
+    for index, row in enumerate(rows):
+        groups.setdefault(_stream_schedule_key(row), []).append((index, row))
+
+    weighted_groups = []
+    for stream_key, members in groups.items():
+        work_units = sum(max(1, len(row.get("turns", []))) for _, row in members)
+        weighted_groups.append((work_units, stream_key, members))
+    weighted_groups.sort(key=lambda item: (-item[0], item[1]))
+
+    slot_loads = [0] * len(credentials)
+    slot_stream_counts = [0] * len(credentials)
+    available_slots = [(0, index) for index in range(len(credentials))]
+    heapq.heapify(available_slots)
+    assignments = {}
+    for work_units, stream_key, members in weighted_groups:
+        current_load, slot_index = heapq.heappop(available_slots)
+        credential = credentials[slot_index]
+        stream_order = slot_stream_counts[slot_index]
+        slot_stream_counts[slot_index] += 1
+        slot_loads[slot_index] = current_load + work_units
+        heapq.heappush(available_slots, (slot_loads[slot_index], slot_index))
+        assignments[stream_key] = {
+            "credential_slot": slot_index + 1,
+            "credential_env": credential.slot,
+            "estimated_work_units": work_units,
+        }
+        for job_order, (source_index, row) in enumerate(members):
+            row.update(
+                credential_slot=slot_index + 1,
+                credential_env=credential.slot,
+                credential_stream_order=stream_order,
+                credential_job_order=job_order,
+                credential_source_order=source_index,
+            )
+
+    return {
+        "strategy": "stream_affinity_lpt_turn_weighted_v1",
+        "slot_names": [credential.slot for credential in credentials],
+        "slot_estimated_work_units": slot_loads,
+        "slot_stream_counts": slot_stream_counts,
+        "stream_assignments": assignments,
+    }
+
+
+def validate_friday_schedule(previous: dict, current: dict) -> None:
+    """Reject a credential reorder or changed stream plan in an existing root."""
+    saved = previous.get("credential_schedule") if isinstance(previous, dict) else None
+    if not saved:
+        return
+    for field in ("slot_names", "stream_assignments"):
+        if saved.get(field) != current.get(field):
+            raise ValueError(
+                "Friday credential schedule differs from this output root; "
+                "restore the original credential slots/selection or use a new --root"
+            )
+
+
+def friday_concurrency(requested: int | None, credential_count: int, stream_count: int) -> int:
+    """Return the safe worker count under one-active-job-per-App-ID."""
+    if credential_count < 1 or stream_count < 1:
+        raise ValueError("Friday scheduling requires at least one credential and one stream")
+    available = min(credential_count, stream_count)
+    return min(requested, available) if requested is not None else available
+
+
+def job_environment(
+    provider_mode: str,
+    credentials: tuple[ProviderCredential, ...],
+    row: dict,
+    base_environment=None,
+) -> dict[str, str]:
+    """Build a worker environment containing only the row's selected secret."""
+    if not credentials:
+        raise ValueError("provider credential pool is empty")
+    slot = int(row.get("credential_slot", 1))
+    if slot < 1 or slot > len(credentials):
+        raise ValueError(f"invalid credential slot {slot} for job {row.get('id')}")
+    environment = dict(os.environ if base_environment is None else base_environment)
+    configure_provider_environment(
+        provider_mode,
+        environment,
+        credential=credentials[slot - 1],
+    )
+    return environment
+
+
+def _scheduled_pending_rows(rows: list[dict]) -> list[dict]:
+    if not any("credential_slot" in row for row in rows):
+        return rows
+    return sorted(
+        rows,
+        key=lambda row: (
+            int(row.get("credential_slot", 0)),
+            int(row.get("credential_stream_order", 0)),
+            int(row.get("credential_job_order", 0)),
+            int(row.get("credential_source_order", 0)),
+        ),
+    )
+
+
+def _pop_eligible(queue: deque, active_slots: set[int]) -> dict | None:
+    """Pop the first job whose App ID slot is not already active."""
+    for _ in range(len(queue)):
+        row = queue.popleft()
+        slot = row.get("credential_slot")
+        if slot is None or int(slot) not in active_slots:
+            return row
+        queue.append(row)
+    return None
 
 
 def _turn_score(turn: dict):
@@ -1012,6 +1146,8 @@ def run_parallel(
     job_error_policy="stop",
     storage_gate=None,
     storage_retry_limit=5,
+    provider_mode=None,
+    credential_pool=(),
 ):
     """One writer, isolated child per job; drain in-flight jobs on failure."""
     if job_error_policy not in {"stop", "continue"}:
@@ -1034,10 +1170,15 @@ def run_parallel(
     if len(active) > concurrency:
         raise ValueError("adopted workers exceed concurrency")
     skipped = {"blocked_recovery", "deferred_storage", "needs_attention", "paused_error"}
-    pending = deque(row for row in selected
-                    if row["id"] not in adopted_ids and row.get("status") not in skipped
-                    and not (row.get("status") == "completed" and _has_matching_report(row)))
-    deferred = deque(row for row in selected if row["id"] not in adopted_ids and row.get("status") == "deferred_storage")
+    pending = deque(_scheduled_pending_rows([
+        row for row in selected
+        if row["id"] not in adopted_ids and row.get("status") not in skipped
+        and not (row.get("status") == "completed" and _has_matching_report(row))
+    ]))
+    deferred = deque(_scheduled_pending_rows([
+        row for row in selected
+        if row["id"] not in adopted_ids and row.get("status") == "deferred_storage"
+    ]))
     exhausted = False
     failed = False
 
@@ -1063,11 +1204,12 @@ def run_parallel(
         save(status_path, state)
 
     def next_pending():
-        if deferred:
-            return deferred.popleft()
-        if pending:
-            return pending.popleft()
-        return None
+        active_slots = {
+            int(row["credential_slot"])
+            for row, _, _ in active
+            if row.get("credential_slot") is not None
+        }
+        return _pop_eligible(deferred, active_slots) or _pop_eligible(pending, active_slots)
 
     while active or not exhausted or deferred:
         if storage_gate is not None:
@@ -1135,7 +1277,10 @@ def run_parallel(
                     break
             row = next_pending()
             if row is None:
-                exhausted = True
+                # Pending work may be pinned to an App ID already in use. Wait
+                # for that worker instead of violating per-App-ID concurrency.
+                if not pending and not deferred:
+                    exhausted = True
                 break
             stream = None
             try:
@@ -1158,8 +1303,16 @@ def run_parallel(
                     "checkpoint": row["checkpoint"],
                 })
                 stream = log.open("w", encoding="utf-8")
-                child = subprocess.Popen(command(repo, row, checkpoint, config_dir),
-                                         cwd=repo, stdout=stream, stderr=subprocess.STDOUT)
+                child = subprocess.Popen(
+                    command(repo, row, checkpoint, config_dir),
+                    cwd=repo,
+                    stdout=stream,
+                    stderr=subprocess.STDOUT,
+                    env=(
+                        job_environment(provider_mode, credential_pool, row)
+                        if provider_mode and credential_pool else None
+                    ),
+                )
                 row["pid"] = child.pid
                 start_ticks = process_start_ticks(child.pid)
                 if start_ticks is not None:
@@ -1215,7 +1368,14 @@ def main():
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
     parser.add_argument("--provider-mode", choices=sorted(PROVIDER_PROFILES), default="packycode")
     parser.add_argument("--adopt-state", type=Path, help="explicit saved worker handoff; old dispatcher must be stopped")
-    parser.add_argument("--concurrency", type=int, help="maximum simultaneous jobs; default matrix-execution.json concurrency, or 1")
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        help=(
+            "maximum simultaneous jobs; Friday defaults to min(App ID slots, streams) "
+            "and always caps each App ID at one active job"
+        ),
+    )
     parser.add_argument("--job-error-policy", choices=("stop", "continue"), default="stop", help="parallel job failure policy; default stop preserves fail-fast admission")
     parser.add_argument("--storage-guard", action="store_true", help="enable shared storage health gate for parallel admission")
     parser.add_argument("--storage-retry-limit", type=int, default=5, help="maximum deferred storage recovery attempts per job")
@@ -1227,22 +1387,21 @@ def main():
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     try:
-        configure_provider_environment(args.provider_mode, os.environ)
+        credential_pool = provider_credentials(args.provider_mode, os.environ)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
     root = (repo / args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
     execution_path = root / "matrix-execution.json"
     status_path = root / "matrix_status.json"
-    concurrency = args.concurrency
-    if concurrency is None:
-        concurrency = 1 if args.provider_mode == "friday" else (
-            load(execution_path).get("concurrency", 1) if execution_path.exists() else 1
-        )
-    if isinstance(concurrency, bool) or not isinstance(concurrency, int) or concurrency < 1:
+    requested_concurrency = args.concurrency
+    concurrency = requested_concurrency
+    if concurrency is None and args.provider_mode != "friday":
+        concurrency = load(execution_path).get("concurrency", 1) if execution_path.exists() else 1
+    if concurrency is not None and (
+        isinstance(concurrency, bool) or not isinstance(concurrency, int) or concurrency < 1
+    ):
         parser.error("concurrency must be a positive integer")
-    if args.retry_interrupted_run:
-        concurrency = 1  # One authorization always binds exactly one attempt.
     if args.storage_retry_limit < 0:
         parser.error("storage retry limit must be non-negative")
     if args.storage_guard:
@@ -1284,6 +1443,18 @@ def main():
         selected = selected[:3]
     if not selected:
         raise SystemExit("no matching job")
+    credential_schedule = None
+    if args.provider_mode == "friday":
+        credential_schedule = assign_friday_credentials(selected, credential_pool)
+        previous_state = load(status_path) if status_path.exists() else {}
+        try:
+            validate_friday_schedule(previous_state, credential_schedule)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        stream_count = len(credential_schedule["stream_assignments"])
+        concurrency = friday_concurrency(requested_concurrency, len(credential_pool), stream_count)
+    if args.retry_interrupted_run:
+        concurrency = 1  # One authorization always binds exactly one attempt.
     if args.retry_interrupted_run and len(selected) != 1:
         raise SystemExit("--retry-interrupted-run requires one selected job")
     if args.recover_storage_errors and not args.storage_guard:
@@ -1299,7 +1470,19 @@ def main():
         _restore_prior_storage_state(selected, prior_state)
     if args.recover_storage_errors:
         _prepare_recovered_storage_rows(selected, storage_gate, args.storage_retry_limit)
-    state = {"status": "running", "pid": os.getpid(), "started_at": now(), "jobs": selected, "concurrency": concurrency, "provider_mode": args.provider_mode, "job_error_policy": args.job_error_policy, "phase": "gate" if args.gate else ("only" if args.only else "full")}
+    state = {
+        "status": "running",
+        "pid": os.getpid(),
+        "started_at": now(),
+        "jobs": selected,
+        "concurrency": concurrency,
+        "requested_concurrency": requested_concurrency,
+        "provider_mode": args.provider_mode,
+        "job_error_policy": args.job_error_policy,
+        "phase": "gate" if args.gate else ("only" if args.only else "full"),
+    }
+    if credential_schedule is not None:
+        state["credential_schedule"] = credential_schedule
     if selected_panel_ids:
         panel_rows = [row for row in selected if row.get("level") == "l2" and row.get("panel_id")]
         state["l2_panel"] = {
@@ -1342,6 +1525,8 @@ def main():
             args.job_error_policy,
             storage_gate=storage_gate,
             storage_retry_limit=args.storage_retry_limit,
+            provider_mode=args.provider_mode,
+            credential_pool=credential_pool,
         )
         if code:
             return code
@@ -1379,6 +1564,7 @@ def main():
                     cwd=repo,
                     stdout=stream,
                     stderr=subprocess.STDOUT,
+                    env=job_environment(args.provider_mode, credential_pool, row),
                 )
                 row["pid"] = child.pid
                 state.update(current_job=row["id"], updated_at=now())
