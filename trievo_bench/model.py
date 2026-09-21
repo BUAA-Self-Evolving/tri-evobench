@@ -29,6 +29,20 @@ class _ProviderResponseError(RuntimeError):
         self.status = status
 
 
+class _ModelDeadlineExceeded(TimeoutError):
+    """A response exceeded its absolute wall-clock budget."""
+
+    def __init__(self, elapsed: float, chunks: int, byte_count: int) -> None:
+        super().__init__(
+            "model response exceeded absolute deadline "
+            f"(elapsed_seconds={elapsed:.3f}, chunks={chunks}, bytes={byte_count})"
+        )
+
+
+class _ModelPayloadTooLarge(RuntimeError):
+    """A provider response exceeded the bounded in-memory body size."""
+
+
 _RETRYABLE_HTTP_STATUS = {408, 409, 429, *range(500, 600)}
 _RETRYABLE_TRANSPORT_ERRORS = (
     urllib.error.URLError,
@@ -161,6 +175,7 @@ class OpenAICompatibleClient:
         timeout: int = 120,
         thinking: str | None = None,
         max_retries: int = 2,
+        max_response_bytes: int = 32 * 1024 * 1024,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
@@ -169,17 +184,66 @@ class OpenAICompatibleClient:
         self.timeout = timeout
         self.thinking = thinking
         self.max_retries = max_retries
+        self.max_response_bytes = max_response_bytes
 
     @staticmethod
     def _retry_delay(attempt: int, error: BaseException) -> float:
+        exponential = min(60.0, float(2 ** (attempt + 1)))
         if isinstance(error, urllib.error.HTTPError):
             retry_after = error.headers.get("Retry-After") if error.headers else None
             if retry_after:
                 try:
-                    return min(60.0, max(0.0, float(retry_after)))
+                    return min(60.0, max(exponential, max(0.0, float(retry_after))))
                 except ValueError:
                     pass
-        return min(30.0, float(2 ** (attempt + 1)))
+        return exponential
+
+    @staticmethod
+    def _set_response_timeout(response: Any, timeout: float) -> None:
+        """Tighten the current socket read to the absolute remaining budget."""
+        candidates = [
+            getattr(getattr(getattr(response, "fp", None), "raw", None), "_sock", None),
+            getattr(getattr(response, "fp", None), "raw", None),
+            getattr(response, "fp", None),
+        ]
+        for candidate in candidates:
+            setter = getattr(candidate, "settimeout", None)
+            if callable(setter):
+                try:
+                    setter(max(0.001, timeout))
+                except (OSError, ValueError):
+                    pass
+                return
+
+    def _read_response(self, response: Any, *, started: float, deadline: float) -> bytes:
+        chunks: list[bytes] = []
+        byte_count = 0
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise _ModelDeadlineExceeded(time.monotonic() - started, len(chunks), byte_count)
+            self._set_response_timeout(response, remaining)
+            try:
+                chunk = response.read(64 * 1024)
+            except TypeError:
+                # Minimal file-like test doubles may expose read() without a
+                # size parameter; production HTTPResponse always accepts it.
+                chunk = response.read()
+                if len(chunk) > self.max_response_bytes:
+                    raise _ModelPayloadTooLarge(
+                        "model response exceeded safe body limit "
+                        f"(chunks=1, bytes={len(chunk)}, limit={self.max_response_bytes})"
+                    )
+                return bytes(chunk)
+            if not chunk:
+                return b"".join(chunks)
+            chunks.append(bytes(chunk))
+            byte_count += len(chunk)
+            if byte_count > self.max_response_bytes:
+                raise _ModelPayloadTooLarge(
+                    "model response exceeded safe body limit "
+                    f"(chunks={len(chunks)}, bytes={byte_count}, limit={self.max_response_bytes})"
+                )
 
     def _wait_for_retry(self, attempt: int, error: BaseException) -> None:
         delay = self._retry_delay(attempt, error)
@@ -260,8 +324,11 @@ class OpenAICompatibleClient:
             # Interactions. Count failed attempts even when they report no usage.
             self.budget.record(0, calls=1)
             try:
+                started = time.monotonic()
+                deadline = started + self.timeout
                 with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                    candidate = json.loads(response.read().decode("utf-8"))
+                    body = self._read_response(response, started=started, deadline=deadline)
+                    candidate = json.loads(body.decode("utf-8"))
                 attempt_usage_recorded = self._record_reported_usage(candidate)
                 message = self._message_from_result(candidate)
                 result = candidate
@@ -272,7 +339,11 @@ class OpenAICompatibleClient:
                     self._wait_for_retry(attempt, exc)
                     continue
                 try:
-                    detail = exc.read().decode("utf-8", errors="replace")[:500]
+                    detail = self._read_response(
+                        exc,
+                        started=started,
+                        deadline=started + self.timeout,
+                    ).decode("utf-8", errors="replace")[:500]
                 except Exception:
                     detail = ""
                 suffix = f": {detail}" if detail else ""
@@ -284,6 +355,10 @@ class OpenAICompatibleClient:
                 raise RuntimeError(
                     f"OpenAI-compatible provider rejected request (status {exc.status}): {exc}"
                 ) from exc
+            except _ModelPayloadTooLarge as exc:
+                # Replaying an oversized successful response is unlikely to
+                # repair it and can multiply traffic dramatically.
+                raise RuntimeError(f"OpenAI-compatible model request failed ({exc})") from exc
             except (*_RETRYABLE_TRANSPORT_ERRORS, json.JSONDecodeError) as exc:
                 if attempt < self.max_retries:
                     self._wait_for_retry(attempt, exc)

@@ -201,6 +201,7 @@ class Runner:
                     workspace=sandbox.workspace_path(),
                     output_dir=flow_dir,
                     metadata=self._public_metadata(flow.metadata),
+                    workspace_mount=sandbox.workspace_mount(),
                 )
             )
             runtime_started = True
@@ -249,6 +250,7 @@ class Runner:
         # can materialize transient/dangling entries while an agent is still
         # finishing filesystem operations, which made checkpoint creation
         # fail even though the turn itself had succeeded.
+        sandbox.sync_workspace_to_host()
         source = sandbox.workspace_path()
         _archive_tree(source, root / "workspace.zip")
         save_state = getattr(self.runtime, "save_checkpoint_state", None)
@@ -267,8 +269,13 @@ class Runner:
         )
 
     def _run_turn(self, turn: TurnSpec, sandbox: Sandbox) -> TurnRecord:
+        # A daemon-owned workspace may have been changed by the baseline in
+        # the preceding Turn. Materialize it before applying host-side Arena
+        # updates, then publish the merged tree back to the shared volume.
+        sandbox.sync_workspace_to_host()
         sandbox.setup(turn.setup)
         apply_arena_updates(turn.setup, sandbox.workspace_path())
+        sandbox.sync_workspace_from_host()
         self.runtime.start_turn(
             TurnContext(
                 turn_id=turn.id,

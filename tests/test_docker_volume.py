@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import pytest
 
 from trievo_bench import docker_volume
+from trievo_bench import sandbox as sandbox_module
 from trievo_bench.baselines import process as process_module
 from trievo_bench.baselines.base import FlowContext
 from trievo_bench.baselines.manifest import BaselineManifest
@@ -17,6 +18,7 @@ from trievo_bench.docker_volume import (
     docker_volume_transport_enabled,
 )
 from trievo_bench.model import TokenBudget
+from trievo_bench.sandbox import DockerSandbox
 
 
 def test_volume_transport_is_explicit_and_fail_closed():
@@ -70,6 +72,64 @@ def test_volume_mirror_uses_daemon_owned_volume_and_docker_cp(tmp_path, monkeypa
     mirror.close()
     assert calls[-2][0][:2] == ["rm", "-f"]
     assert calls[-1][0][:3] == ["volume", "rm", "-f"]
+
+
+def test_l1_docker_sandbox_shares_daemon_volume_with_baseline(tmp_path, monkeypatch):
+    calls = []
+
+    class Mirror:
+        volume_name = "l1-workspace-volume"
+
+        def __init__(self, host_path):
+            self.host_path = host_path
+            self.pushes = 0
+            self.pulls = 0
+            self.closed = False
+
+        def mount_spec(self, target):
+            return f"type=volume,src={self.volume_name},dst={target}"
+
+        def sync_from_host(self):
+            self.pushes += 1
+
+        def sync_to_host(self):
+            self.pulls += 1
+
+        def close(self):
+            self.closed = True
+
+    mirrors = []
+
+    def create(host_path, **kwargs):
+        assert kwargs == {"role": "l1-workspace", "helper_image": "sandbox:image"}
+        mirror = Mirror(host_path)
+        mirrors.append(mirror)
+        return mirror
+
+    monkeypatch.setenv("TRIEVO_DOCKER_VOLUME_TRANSPORT", "required")
+    monkeypatch.setattr(sandbox_module.DockerVolumeMirror, "create", create)
+    monkeypatch.setattr(DockerSandbox, "_run", lambda self, command, input_text=None: calls.append(command) or "")
+    monkeypatch.setattr(
+        sandbox_module.subprocess,
+        "run",
+        lambda *args, **kwargs: subprocess.CompletedProcess(args, 0, "", ""),
+    )
+
+    sandbox = DockerSandbox(image="sandbox:image", name="l1-sandbox")
+    try:
+        assert sandbox.workspace_mount() == "l1-workspace-volume"
+        assert "type=volume,src=l1-workspace-volume,dst=/workspace" in calls[0]
+        source = tmp_path / "fixture"
+        source.mkdir()
+        (source / "seed.txt").write_text("seed", encoding="utf-8")
+        sandbox.setup({"host_copy": str(source)})
+        sandbox.write_file("/workspace/result.txt", "done")
+        assert (sandbox.workspace_path() / "result.txt").read_text(encoding="utf-8") == "done"
+        assert mirrors[0].pushes == 1
+    finally:
+        sandbox.close()
+    assert mirrors[0].pulls == 1
+    assert mirrors[0].closed
 
 
 def test_volume_pull_rolls_back_host_tree_when_atomic_swap_fails(

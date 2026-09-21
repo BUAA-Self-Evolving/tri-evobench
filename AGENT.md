@@ -6,6 +6,10 @@
 
 本文描述当前最终实现和必须保持的工程合同，不记录开发试错过程。历史 handoff、旧运行报告和旧问题清单只用于溯源；若与本文、`AGENTS.md`、当前代码或最新提交冲突，以这四者为准。
 
+Timeout、Prime RPC 竞态、L1 daemon-owned workspace 和 fail-fast 恢复的精确合同见
+`docs/TIMEOUT_RECOVERY_WORKFLOW.md`。修改 provider、Prime bridge、Docker workspace 或 checkpoint
+路径时必须同时阅读并更新该文档。
+
 ---
 
 ## 1. 项目身份与唯一正式仓库
@@ -677,7 +681,7 @@ Linux 并发 dispatcher 重启时可按 PID、`/proc` start ticks、命令行和
 baseline、task sandbox 和 verifier 使用同一个逻辑 `/workspace`，但运行于不同边界：
 
 - 普通主机使用 bind mount；
-- Docker daemon 看不到 checkout 时，L2 可设置 `TRIEVO_DOCKER_VOLUME_TRANSPORT=required`，通过 daemon-owned named volume 和 `docker cp` 传输；
+- Docker daemon 看不到 checkout 时，L1/L2 可设置 `TRIEVO_DOCKER_VOLUME_TRANSPORT=required`，通过 daemon-owned named volume 和 `docker cp` 传输；
 - volume pull 使用同文件系统 staging 和可回滚目录交换；
 - verifier package 只读、workspace 单独挂载；
 - native verifier `--network none`；

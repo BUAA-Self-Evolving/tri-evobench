@@ -3,6 +3,7 @@ from __future__ import annotations
 import http.client
 import io
 import json
+import time
 import urllib.error
 
 import pytest
@@ -83,6 +84,77 @@ def test_openai_client_retries_incomplete_response_body(monkeypatch: pytest.Monk
     assert client.complete([{"role": "user", "content": "hello"}]) == "ok"
     assert calls == [17, 17]
     assert client.budget.calls == 2
+
+
+def test_openai_client_absolute_deadline_stops_continuous_body(monkeypatch) -> None:
+    class EndlessResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def read(self, _size):
+            time.sleep(0.012)
+            return b"x"
+
+    monkeypatch.setattr(
+        "trievo_bench.model.urllib.request.urlopen",
+        lambda request, timeout: EndlessResponse(),
+    )
+    client = OpenAICompatibleClient(
+        base_url="https://example.test/v1",
+        api_key="must-not-appear",
+        model="test-model",
+        budget=TokenBudget(5000),
+        timeout=0.03,
+        max_retries=0,
+    )
+
+    with pytest.raises(RuntimeError, match="absolute deadline.*chunks=.*bytes=") as exc_info:
+        client.complete([{"role": "user", "content": "private prompt"}])
+    message = str(exc_info.value)
+    assert "must-not-appear" not in message
+    assert "private prompt" not in message
+    assert "example.test" not in message
+
+
+def test_openai_client_does_not_retry_oversized_success_body(monkeypatch) -> None:
+    calls = 0
+
+    def urlopen(request, timeout):
+        nonlocal calls
+        calls += 1
+        return io.BytesIO(b"x" * 64)
+
+    monkeypatch.setattr("trievo_bench.model.urllib.request.urlopen", urlopen)
+    client = OpenAICompatibleClient(
+        base_url="https://example.test/v1",
+        api_key="secret",
+        model="test-model",
+        budget=TokenBudget(5000),
+        max_retries=5,
+        max_response_bytes=32,
+    )
+
+    with pytest.raises(RuntimeError, match="safe body limit"):
+        client.complete([{"role": "user", "content": "hello"}])
+    assert calls == 1
+
+
+def test_retry_delay_uses_larger_of_backoff_and_retry_after() -> None:
+    error = urllib.error.HTTPError(
+        "https://example.test",
+        429,
+        "rate limited",
+        {"Retry-After": "1"},
+        io.BytesIO(),
+    )
+    assert OpenAICompatibleClient._retry_delay(2, error) == 8.0
+    error.headers["Retry-After"] = "50"
+    assert OpenAICompatibleClient._retry_delay(2, error) == 50.0
+    error.headers["Retry-After"] = "500"
+    assert OpenAICompatibleClient._retry_delay(2, error) == 60.0
 
 
 def test_openai_client_does_not_retry_permanent_http_error(monkeypatch: pytest.MonkeyPatch) -> None:

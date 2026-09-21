@@ -1,11 +1,20 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
-from baseline.adapters.prime_agent.bridge import PrimeAgentBridge, _public_evolution_context, _usage_delta
+from baseline.adapters.prime_agent.bridge import (
+    PrimeAgentBridge,
+    PrimeRpcError,
+    PrimeRpcProcess,
+    _public_evolution_context,
+    _usage_delta,
+)
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.spec import BenchmarkSpec
@@ -49,7 +58,62 @@ class _FakePrimeRpc:
         self.closed = True
 
 
+class _LimitedPrimeRpc(_FakePrimeRpc):
+    def __init__(self, command, env):
+        super().__init__(command, env)
+        self.abort_calls = 0
+
+    def request(self, command_type, **params):
+        if command_type == "prompt":
+            self.prompts.append(params["message"])
+            return {}, [
+                {"type": "message_end", "message": {"role": "assistant"}},
+                {"type": "tool_execution_start", "toolName": "ipython"},
+                {"type": "tool_execution_end", "toolName": "ipython", "result": "ok"},
+                {"type": "agent_end"},
+            ]
+        return super().request(command_type, **params)
+
+    def abort(self):
+        self.abort_calls += 1
+
+
 class PrimeAgentBaselineContractTest(unittest.TestCase):
+    def test_rpc_uses_authoritative_idle_state_across_retry_race(self) -> None:
+        code = r'''
+import json, sys
+def emit(value):
+    print(json.dumps(value), flush=True)
+prompt = json.loads(sys.stdin.readline())
+emit({"id": prompt["id"], "type": "response", "success": True})
+emit({"type": "agent_start"})
+emit({"type": "agent_end"})
+state1 = json.loads(sys.stdin.readline())
+emit({"type": "agent_start"})
+emit({"id": state1["id"], "type": "response", "success": True, "data": {"isStreaming": True}})
+emit({"type": "agent_end"})
+state2 = json.loads(sys.stdin.readline())
+emit({"id": state2["id"], "type": "response", "success": True, "data": {"isStreaming": False}})
+'''
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        try:
+            _, events = rpc.request("prompt", message="x", deadline=time.monotonic() + 5)
+        finally:
+            rpc.close()
+        self.assertEqual(
+            [event["type"] for event in events],
+            ["agent_start", "agent_end", "agent_start", "agent_end"],
+        )
+
+    def test_rpc_absolute_deadline_aborts_nonterminating_prompt(self) -> None:
+        code = "import sys,time; sys.stdin.readline(); time.sleep(0.2)"
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        try:
+            with self.assertRaisesRegex(PrimeRpcError, "absolute deadline"):
+                rpc.request("prompt", message="x", deadline=time.monotonic() + 0.03)
+        finally:
+            rpc.close()
+
     def test_manifest_registers_fixed_revision_and_harness_state(self) -> None:
         manifest = load_manifest(Path(__file__).parents[1] / "baseline" / "manifests" / "prime-agent.json")
         self.assertEqual(manifest.baseline_id, "prime-agent")
@@ -103,6 +167,50 @@ class PrimeAgentBaselineContractTest(unittest.TestCase):
             self.assertNotIn("verifier_details", serialized)
             self.assertNotIn("oracle_update", serialized)
             self.assertNotIn("secret", serialized)
+
+    def test_runtime_settings_bound_provider_timeout_and_retry(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            bridge = PrimeAgentBridge(rpc_factory=lambda command, env: _FakePrimeRpc(command, env))
+            bridge.initialize({
+                "protocol_version": "1.0",
+                "baseline_id": "prime-agent",
+                "options": {"request_timeout_seconds": 17, "max_retries": 99},
+                "evolution": {},
+            })
+            bridge.start_flow({"workspace": str(root / "workspace"), "state_dir": str(root / "state")})
+            settings = json.loads((root / "state/prime-home/settings.json").read_text(encoding="utf-8"))
+            self.assertEqual(settings["retry"]["maxRetries"], 5)
+            self.assertEqual(settings["retry"]["baseDelayMs"], 2000)
+            self.assertEqual(settings["retry"]["provider"]["timeoutMs"], 17000)
+            self.assertEqual(settings["retry"]["provider"]["maxRetryDelayMs"], 60000)
+
+    def test_turn_tool_budget_blocks_a_second_prompt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            rpc = _LimitedPrimeRpc([], {})
+            bridge = PrimeAgentBridge(rpc_factory=lambda command, env: rpc)
+            bridge.initialize({
+                "protocol_version": "1.0",
+                "baseline_id": "prime-agent",
+                "options": {},
+                "evolution": {},
+            })
+            bridge.start_flow({"workspace": str(root / "workspace"), "state_dir": str(root / "state")})
+            bridge.start_turn({
+                "turn_id": "t1",
+                "metadata": {"agent_limits": {
+                    "episode_timeout_seconds": 60,
+                    "max_model_calls": 2,
+                    "max_tool_calls": 1,
+                }},
+            })
+            first = bridge.interact({"turn_id": "t1", "request": "one"})
+            self.assertFalse(first["raw"]["limit_exhausted"])
+            with self.assertRaisesRegex(PrimeRpcError, "max_tool_calls"):
+                bridge.interact({"turn_id": "t1", "request": "two"})
+            self.assertEqual(rpc.abort_calls, 1)
+            self.assertEqual(rpc.prompts, ["one"])
 
     def test_usage_is_incremental_and_private_fields_are_removed(self) -> None:
         usage = _usage_delta(

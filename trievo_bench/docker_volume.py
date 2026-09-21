@@ -129,7 +129,7 @@ class DockerVolumeMirror:
 
         def copy() -> None:
             _run_docker(
-                ["exec", self.carrier_name, "python", "-c", _CLEAR_VOLUME_SCRIPT]
+                ["exec", self.carrier_name, "python3", "-c", _CLEAR_VOLUME_SCRIPT]
             )
             _run_docker(["cp", f"{self.host_path}/.", f"{self.carrier_name}:/volume"])
             _run_docker(

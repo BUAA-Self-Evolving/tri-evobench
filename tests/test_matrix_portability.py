@@ -63,6 +63,8 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
     assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
     prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
+    assert prime["options"]["request_timeout_seconds"] == 150
+    assert prime["options"]["max_retries"] == 4
     adaptive = json.loads((output / "tmp_adaptive-auto-harness_docker.override.json").read_text())
     opencode = json.loads((output / "tmp_opencode_docker.override.json").read_text())
     assert prime["options"]["base_url"] == "https://example.test/v1"
@@ -136,6 +138,8 @@ def test_friday_profile_generates_direct_thinking_configs_without_secret(tmp_pat
     assert trace["options"]["generation_config"]["thinking"] == {"type": "enabled"}
     assert prime["options"]["thinking"] == "on"
     assert prime["options"]["reasoning"] is True
+    assert prime["options"]["request_timeout_seconds"] == 300
+    assert prime["options"]["max_retries"] == 5
     assert adaptive["options"]["thinking"] == "enabled"
     assert opencode["options"]["reasoning"] is True
 

@@ -12,6 +12,8 @@ import uuid
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
+
 
 class SandboxError(RuntimeError):
     pass
@@ -80,6 +82,16 @@ class Sandbox:
     def workspace_path(self) -> Path:
         """Return the live host path shared with an external baseline runtime."""
         raise NotImplementedError
+
+    def workspace_mount(self) -> str | None:
+        """Return a daemon-visible named volume, when one backs /workspace."""
+        return None
+
+    def sync_workspace_from_host(self) -> None:
+        """Publish host-side fixture updates to the runtime workspace."""
+
+    def sync_workspace_to_host(self) -> None:
+        """Materialize runtime workspace changes for checkpoints/audits."""
 
     def cleanup_export(self, path: Path) -> None:
         pass
@@ -155,16 +167,27 @@ class DockerSandbox(Sandbox):
         self.image = image
         self.name = name or f"trievo-{uuid.uuid4().hex[:12]}"
         self._host_workspace = Path(tempfile.mkdtemp(prefix="trievo-workspace-"))
+        self._workspace_volume: DockerVolumeMirror | None = None
         try:
+            if docker_volume_transport_enabled():
+                self._workspace_volume = DockerVolumeMirror.create(
+                    self._host_workspace,
+                    role="l1-workspace",
+                    helper_image=image,
+                )
             command = ["docker", "run", "-d", "--name", self.name]
             if hasattr(os, "getuid") and hasattr(os, "getgid"):
                 command.extend(["--user", f"{os.getuid()}:{os.getgid()}"])
-            command.extend([
-                "-v", f"{self._host_workspace}:/workspace",
-                image, "sleep", "infinity",
-            ])
+            if self._workspace_volume is not None:
+                command.extend(["--mount", self._workspace_volume.mount_spec("/workspace")])
+            else:
+                command.extend(["-v", f"{self._host_workspace}:/workspace"])
+            command.extend([image, "sleep", "infinity"])
             self._run(command)
         except Exception:
+            if self._workspace_volume is not None:
+                self._workspace_volume.close()
+                self._workspace_volume = None
             shutil.rmtree(self._host_workspace, ignore_errors=True)
             raise
 
@@ -190,17 +213,29 @@ class DockerSandbox(Sandbox):
                 shutil.copytree(item, target, dirs_exist_ok=True)
             else:
                 shutil.copy2(item, target)
+        self.sync_workspace_from_host()
 
     def write_file(self, path: str, content: str) -> None:
         virtual = _safe_relative(path)
         payload = base64.b64encode(content.encode("utf-8")).decode("ascii")
         self._run_exec(["sh", "-lc", f"mkdir -p $(dirname {json.dumps(virtual)}) && echo {json.dumps(payload)} | base64 -d > {json.dumps(virtual)}"])
+        if self._workspace_volume is not None:
+            target = self._host_resolve(virtual)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
 
     def read_file(self, path: str) -> str:
         return self._run_exec(["cat", _safe_relative(path)])
 
     def remove(self, path: str) -> None:
-        self._run_exec(["rm", "-rf", _safe_relative(path)])
+        virtual = _safe_relative(path)
+        self._run_exec(["rm", "-rf", virtual])
+        if self._workspace_volume is not None:
+            target = self._host_resolve(virtual)
+            if target.is_dir() and not target.is_symlink():
+                shutil.rmtree(target)
+            elif target.exists() or target.is_symlink():
+                target.unlink()
 
     def snapshot(self) -> dict[str, Any]:
         raw = self._run_exec(["sh", "-lc", "find /workspace -type f -printf '%p\t%s\t' -exec sha256sum {} \; | sed 's/  /\t/'"])
@@ -220,12 +255,40 @@ class DockerSandbox(Sandbox):
     def workspace_path(self) -> Path:
         return self._host_workspace
 
+    def _host_resolve(self, virtual: str) -> Path:
+        relative = PurePosixPath(virtual).relative_to("/workspace")
+        target = (self._host_workspace / Path(*relative.parts)).resolve()
+        root = self._host_workspace.resolve()
+        if target != root and root not in target.parents:
+            raise SandboxError(f"path escapes host workspace mirror: {virtual}")
+        return target
+
+    def workspace_mount(self) -> str | None:
+        return self._workspace_volume.volume_name if self._workspace_volume is not None else None
+
+    def sync_workspace_from_host(self) -> None:
+        if self._workspace_volume is not None:
+            self._workspace_volume.sync_from_host()
+
+    def sync_workspace_to_host(self) -> None:
+        if self._workspace_volume is not None:
+            self._workspace_volume.sync_to_host()
+
     def cleanup_export(self, path: Path) -> None:
         shutil.rmtree(path, ignore_errors=True)
 
     def close(self) -> None:
-        subprocess.run(["docker", "rm", "-f", self.name], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
-        shutil.rmtree(self._host_workspace, ignore_errors=True)
+        try:
+            try:
+                self.sync_workspace_to_host()
+            except BaseException:
+                pass
+            subprocess.run(["docker", "rm", "-f", self.name], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
+        finally:
+            if self._workspace_volume is not None:
+                self._workspace_volume.close()
+                self._workspace_volume = None
+            shutil.rmtree(self._host_workspace, ignore_errors=True)
 
 
 def create_sandbox(config: dict[str, Any], backend_override: str | None = None, image_override: str | None = None) -> Sandbox:

@@ -74,7 +74,11 @@ class ArenaVerifier:
                 evidence["source"] = source_result.details
             preference = evaluation.get("preference_check")
             if preference:
-                target_exists = under(sandbox.workspace_path(), preference["target"]).exists()
+                try:
+                    sandbox.read_file(str(preference["target"]))
+                    target_exists = True
+                except Exception:
+                    target_exists = False
                 pref = self._exec(preference, check, sandbox, ["--rules", preference["rules"], "--target", preference["target"]])
                 components["preference_adherence"] = float(target_exists and pref.passed)
                 evidence["preference"] = {**pref.details, "target_exists": target_exists}

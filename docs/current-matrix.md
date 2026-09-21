@@ -127,9 +127,11 @@ export TRIEVO_DOCKER_VOLUME_TRANSPORT=required
 
 Runtime 会通过 `docker cp` 把 package、Workspace 和 baseline state 送入 daemon-owned named volume，
 Agent 和 verifier 继续看到相同的 `/workspace`。回写先进入同文件系统 staging，再做可回滚目录交换；
-Flow 结束后删除 carrier container 和 volume。该模式接入 `l2_taskstream/1.0` Task/Stream；L1 和旧 L2
-继续使用原有 bind mount，但共享同一套 `BaselineRuntime`、proxy bridge 和 mount 模板，后续扩展不需要
-改 L1/L2 数据合同。数据包复制会增加每条 Stream 的启动时间，不能把它当作零成本 mount。
+Flow 结束后删除 carrier container 和 volume。该模式同时接入 L1 `DockerSandbox` 与
+`l2_taskstream/1.0` Task/Stream：L1 sandbox、baseline Agent 和 verifier 共享一个 volume，Turn 前后再与
+host mirror 双向同步；bind mount 仍是默认路径。两种传输方式共享同一套 `BaselineRuntime`、proxy bridge
+和 mount 模板，不改变 L1/L2 数据合同。数据复制会增加每条 Stream 的启动时间，不能把它当作零成本
+mount。
 
 ## 完整矩阵
 
