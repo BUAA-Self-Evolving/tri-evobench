@@ -1018,6 +1018,15 @@ def _prepare_compose(
     return streams, source_map, carriers
 
 
+def _copy_shell_script(source: Path, destination: Path) -> None:
+    """Copy a UTF-8 shell script with POSIX line endings on every host."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    content = source.read_text(encoding="utf-8")
+    with destination.open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write(content)
+    shutil.copystat(source, destination, follow_symlinks=False)
+
+
 def _copy_native_tree(source: Path, destination: Path) -> None:
     if not source.is_dir():
         return
@@ -1026,7 +1035,10 @@ def _copy_native_tree(source: Path, destination: Path) -> None:
             continue
         target = destination / path.relative_to(source)
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(path, target)
+        if path.suffix == ".sh":
+            _copy_shell_script(path, target)
+        else:
+            shutil.copy2(path, target)
 
 
 def _materialize_native_carrier(
@@ -1066,8 +1078,8 @@ def _materialize_native_carrier(
             {"mode": "final_response", "payload_kind": "json_trajectory", "source_binding": "submission"},
             {"name": "submission", "source": "interaction_record", "path": "final_response"},
         )
-    shutil.copy2(carrier["test_dir"] / "test.sh", assets / "native_test.sh")
-    shutil.copy2(carrier["oracle_dir"] / "solve.sh", assets / "oracle_solution.sh")
+    _copy_shell_script(carrier["test_dir"] / "test.sh", assets / "native_test.sh")
+    _copy_shell_script(carrier["oracle_dir"] / "solve.sh", assets / "oracle_solution.sh")
     _copy_native_tree(carrier["test_dir"], assets / "native_test_files")
     _copy_native_tree(carrier["oracle_dir"], assets / "native_oracle_files")
     _copy_native_tree(carrier["task_dir"] / "environment", turn_dir / "workspace_seed")
@@ -1687,8 +1699,8 @@ def _materialize_native_assets(row: dict[str, Any], destination: Path | None) ->
     if destination is None:
         return
     destination.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(native_test, destination / "native_test.sh")
-    shutil.copy2(oracle, destination / "oracle_solution.sh")
+    _copy_shell_script(native_test, destination / "native_test.sh")
+    _copy_shell_script(oracle, destination / "oracle_solution.sh")
 
 
 def _legacy_compose_package(

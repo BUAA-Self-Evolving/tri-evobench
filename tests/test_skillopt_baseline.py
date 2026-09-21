@@ -153,7 +153,7 @@ class SkillOptBaselineContractTest(unittest.TestCase):
                 )
             self.assertEqual(result, "ok")
             command = run.call_args.args[0]
-            self.assertEqual(Path(command[0]).name, "docker")
+            self.assertEqual(Path(command[0]).stem.lower(), "docker")
             self.assertEqual(
                 command[1:6],
                 ["exec", "-w", "/workspace", "trievo-l2-task-deadbeef1234", "bash"],

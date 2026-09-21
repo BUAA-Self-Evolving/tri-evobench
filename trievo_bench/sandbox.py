@@ -238,7 +238,7 @@ class DockerSandbox(Sandbox):
                 target.unlink()
 
     def snapshot(self) -> dict[str, Any]:
-        raw = self._run_exec(["sh", "-lc", "find /workspace -type f -printf '%p\t%s\t' -exec sha256sum {} \; | sed 's/  /\t/'"])
+        raw = self._run_exec(["sh", "-lc", "find /workspace -type f -printf '%p\t%s\t' -exec sha256sum {} \\; | sed 's/  /\t/'"])
         files: list[dict[str, Any]] = []
         for line in raw.splitlines():
             parts = line.split("	")

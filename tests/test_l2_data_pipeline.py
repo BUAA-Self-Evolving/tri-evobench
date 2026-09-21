@@ -431,10 +431,31 @@ def test_composed_carriers_accept_native_answer_and_reject_broken(tmp_path: Path
     skill_turn = package / "streams/intra_01/turn1"
     workspace = tmp_path / "native-workspace"
     workspace.mkdir()
-    subprocess.run(
-        ["bash", str(skill_turn / "evaluation_assets/oracle_solution.sh")],
-        cwd=workspace, check=True,
-    )
+    oracle = skill_turn / "evaluation_assets/oracle_solution.sh"
+    assert b"\r" not in oracle.read_bytes()
+    assert b"\r" not in (skill_turn / "evaluation_assets/native_test.sh").read_bytes()
+    if os.name == "nt":
+        subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--mount",
+                f"type=bind,src={workspace.resolve()},dst=/workspace",
+                "--mount",
+                f"type=bind,src={oracle.parent.resolve()},dst=/oracle,readonly",
+                "--workdir",
+                "/workspace",
+                "trievo-l2:0.1",
+                "bash",
+                "/oracle/oracle_solution.sh",
+            ],
+            check=True,
+        )
+    else:
+        subprocess.run(["bash", str(oracle)], cwd=workspace, check=True)
     native_env = dict(
         os.environ,
         L2_VERIFIER_WORKSPACE=str(workspace),
