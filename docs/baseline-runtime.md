@@ -106,7 +106,7 @@ Hermes 已经通过 `acp_adapter.session.SessionManager` 提供新建 Session、
 当前 Hermes 源码固定为：
 
 ```text
-fce30d818e2a1833e99bb12160ccec648e8b2661
+53873bfae5dfdd5f1af5cb6203a441f6e75330c1
 ```
 
 运行前 Runtime 会校验 `baseline/hermes-agent` 的 Git revision，并拒绝 tracked/untracked 变更，避免相同 revision 实际运行不同源码。升级 Hermes 时必须同时更新 manifest revision 并重新执行契约测试；`options.allow_revision_mismatch=true` 只用于本地调试，不应出现在正式结果中。
@@ -489,6 +489,11 @@ trievo-bench --spec <benchmark.json> --baseline <baseline-id>
 baseline、任务 sandbox 和 verifier 都使用同一个逻辑 `/workspace`。普通主机通过宿主 bind mount
 传输；daemon 看不到 checkout 路径的嵌套/rootless 环境，可由 TaskStream Runtime 使用
 daemon-owned named volume 和 `docker cp` 传输。两种方式不改变 `BaselineRuntime 1.0` 生命周期。
+named-volume 模式只在 Flow 初始化时复制完整 seed；运行期间的冻结检查直接在 carrier
+容器内对 `state.paths`/`state.guard_paths` 计算 hash，需要回滚或 checkpoint 时也只传输这些
+白名单文件。SessionDB、pip cache、日志等未声明运行态文件不会被反复拉回宿主机，恢复白名单
+状态时也不会清空它们。`tools/profile_hermes_startup.py` 可在 `--network none` 下测量 Hermes
+冷/热 Session 构造，并报告任何意外的 lazy-install 事件，不会发出模型请求。
 Hermes 的 shell 命令运行在 Hermes 容器，而不是任务 sandbox 容器。因此：
 
 - 文件生成、编辑和由 verifier 在任务容器中执行测试的 benchmark 可以直接使用。

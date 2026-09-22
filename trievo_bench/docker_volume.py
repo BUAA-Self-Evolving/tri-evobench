@@ -8,19 +8,29 @@ owned by the daemon.
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import json
 import os
 import re
 import shutil
 import subprocess
 import tempfile
 import uuid
+import zipfile
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Mapping
 
 
 class DockerVolumeError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class DockerVolumeCapture:
+    files: dict[str, bytes]
+    metadata: list[dict[str, Any]]
 
 
 _TRUE_VALUES = {"1", "true", "yes", "on", "required"}
@@ -173,6 +183,105 @@ class DockerVolumeMirror:
 
         self._copy_with_storage_gate(copy)
 
+    def capture_selected(
+        self,
+        patterns: list[str],
+        ignore_patterns: list[str],
+        *,
+        include_bytes: bool,
+    ) -> DockerVolumeCapture:
+        """Hash or fetch only declared files without copying the whole volume."""
+        self._require_open()
+        selection = _selection_payload(patterns, ignore_patterns)
+        completed: subprocess.CompletedProcess[str] | None = None
+
+        def capture() -> None:
+            nonlocal completed
+            completed = _run_docker(
+                [
+                    "exec",
+                    self.carrier_name,
+                    "python3",
+                    "-c",
+                    _CAPTURE_SELECTED_SCRIPT,
+                    json.dumps(selection, separators=(",", ":")),
+                    "1" if include_bytes else "0",
+                ]
+            )
+
+        self._copy_with_storage_gate(capture)
+        if completed is None:
+            raise DockerVolumeError("Docker selective state capture did not run")
+        try:
+            raw_items = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise DockerVolumeError("Docker selective state capture returned invalid JSON") from exc
+        if not isinstance(raw_items, list):
+            raise DockerVolumeError("Docker selective state capture must return a list")
+        files: dict[str, bytes] = {}
+        metadata: list[dict[str, Any]] = []
+        for raw in raw_items:
+            if not isinstance(raw, dict):
+                raise DockerVolumeError("Docker selective state capture returned a non-object item")
+            relative = _safe_archive_name(str(raw.get("path", "")))
+            try:
+                size = int(raw["size"])
+                digest = str(raw["sha256"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise DockerVolumeError("Docker selective state capture metadata is invalid") from exc
+            item = {"path": relative, "size": size, "sha256": digest}
+            metadata.append(item)
+            if include_bytes:
+                encoded = raw.get("content")
+                if not isinstance(encoded, str):
+                    raise DockerVolumeError(f"Docker state capture omitted content for {relative}")
+                try:
+                    content = base64.b64decode(encoded, validate=True)
+                except ValueError as exc:
+                    raise DockerVolumeError(f"Docker state capture corrupted content for {relative}") from exc
+                if len(content) != size or hashlib.sha256(content).hexdigest() != digest:
+                    raise DockerVolumeError(f"Docker state capture digest mismatch for {relative}")
+                files[relative] = content
+        metadata.sort(key=lambda item: str(item["path"]))
+        return DockerVolumeCapture(files=files, metadata=metadata)
+
+    def sync_selected_from_host(
+        self,
+        patterns: list[str],
+        ignore_patterns: list[str],
+    ) -> None:
+        """Replace only declared paths in the volume, preserving all other state."""
+        self._require_open()
+        selection = _selection_payload(patterns, ignore_patterns)
+
+        def copy() -> None:
+            with tempfile.TemporaryDirectory(prefix="trievo-selected-state-") as temporary:
+                archive = Path(temporary) / "state.zip"
+                with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+                    for relative, path in _selected_host_files(
+                        self.host_path,
+                        selection["patterns"],
+                        selection["ignore_patterns"],
+                    ):
+                        bundle.write(path, arcname=relative)
+                remote_archive = f"/tmp/trievo-state-{uuid.uuid4().hex}.zip"
+                _run_docker(["cp", str(archive), f"{self.carrier_name}:{remote_archive}"])
+                _run_docker(
+                    [
+                        "exec",
+                        self.carrier_name,
+                        "python3",
+                        "-c",
+                        _RESTORE_SELECTED_SCRIPT,
+                        json.dumps(selection, separators=(",", ":")),
+                        remote_archive,
+                        str(self.uid),
+                        str(self.gid),
+                    ]
+                )
+
+        self._copy_with_storage_gate(copy)
+
     def close(self) -> None:
         if self._closed:
             return
@@ -257,6 +366,131 @@ for child in root.iterdir():
     else:
         child.unlink(missing_ok=True)
 """.strip()
+
+
+_CAPTURE_SELECTED_SCRIPT = r"""
+import base64
+import hashlib
+import json
+import sys
+from pathlib import Path, PurePosixPath
+
+root = Path('/volume')
+spec = json.loads(sys.argv[1])
+include_bytes = sys.argv[2] == '1'
+found = {}
+for pattern in spec['patterns']:
+    for path in root.glob(pattern):
+        if not path.is_file() or path.is_symlink():
+            continue
+        relative = path.relative_to(root).as_posix()
+        if any(PurePosixPath(relative).match(item) for item in spec['ignore_patterns']):
+            continue
+        found[relative] = path
+items = []
+for relative, path in sorted(found.items()):
+    content = path.read_bytes()
+    item = {
+        'path': relative,
+        'size': len(content),
+        'sha256': hashlib.sha256(content).hexdigest(),
+    }
+    if include_bytes:
+        item['content'] = base64.b64encode(content).decode('ascii')
+    items.append(item)
+print(json.dumps(items, separators=(',', ':')))
+""".strip()
+
+
+_RESTORE_SELECTED_SCRIPT = r"""
+import json
+import os
+import shutil
+import sys
+import zipfile
+from pathlib import Path, PurePosixPath
+
+root = Path('/volume').resolve()
+spec = json.loads(sys.argv[1])
+archive = Path(sys.argv[2])
+uid = int(sys.argv[3])
+gid = int(sys.argv[4])
+try:
+    found = {}
+    for pattern in spec['patterns']:
+        for path in root.glob(pattern):
+            if not path.is_file() or path.is_symlink():
+                continue
+            relative = path.relative_to(root).as_posix()
+            if any(PurePosixPath(relative).match(item) for item in spec['ignore_patterns']):
+                continue
+            found[relative] = path
+    for path in found.values():
+        path.unlink(missing_ok=True)
+    with zipfile.ZipFile(archive) as bundle:
+        for info in bundle.infolist():
+            relative = PurePosixPath(info.filename)
+            if relative.is_absolute() or '..' in relative.parts or info.is_dir():
+                continue
+            target = (root / Path(*relative.parts)).resolve()
+            if target != root and root not in target.parents:
+                raise RuntimeError('state archive path escapes volume')
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(bundle.read(info))
+            os.chmod(target, 0o644)
+            os.chown(target, uid, gid)
+            parent = target.parent
+            while parent != root:
+                os.chown(parent, uid, gid)
+                parent = parent.parent
+finally:
+    archive.unlink(missing_ok=True)
+""".strip()
+
+
+def _selection_payload(
+    patterns: list[str],
+    ignore_patterns: list[str],
+) -> dict[str, list[str]]:
+    selected = [_safe_selection_pattern(item) for item in patterns]
+    ignored = [_safe_selection_pattern(item) for item in ignore_patterns]
+    return {"patterns": selected, "ignore_patterns": ignored}
+
+
+def _safe_selection_pattern(value: str) -> str:
+    pattern = str(value).replace("\\", "/").strip()
+    posix = PurePosixPath(pattern)
+    if not pattern or posix.is_absolute() or ".." in posix.parts:
+        raise DockerVolumeError(f"unsafe Docker volume selection pattern: {value!r}")
+    return pattern
+
+
+def _safe_archive_name(value: str) -> str:
+    posix = PurePosixPath(value)
+    if not value or posix.is_absolute() or ".." in posix.parts:
+        raise DockerVolumeError(f"unsafe Docker volume capture path: {value!r}")
+    return posix.as_posix()
+
+
+def _selected_host_files(
+    root: Path,
+    patterns: list[str],
+    ignore_patterns: list[str],
+) -> list[tuple[str, Path]]:
+    found: dict[str, Path] = {}
+    root_resolved = root.resolve()
+    for pattern in patterns:
+        for path in root.glob(pattern):
+            if not path.is_file() or path.is_symlink():
+                continue
+            resolved = path.resolve()
+            if resolved != root_resolved and root_resolved not in resolved.parents:
+                continue
+            relative = resolved.relative_to(root_resolved).as_posix()
+            if any(PurePosixPath(relative).match(item) for item in ignore_patterns):
+                continue
+            found[relative] = resolved
+    return sorted(found.items())
 
 
 def _docker_executable() -> str:

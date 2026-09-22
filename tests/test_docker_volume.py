@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -13,6 +14,7 @@ from trievo_bench.baselines.base import FlowContext
 from trievo_bench.baselines.manifest import BaselineManifest
 from trievo_bench.baselines.process import BaselineProtocolError, ProcessBaselineRuntime
 from trievo_bench.docker_volume import (
+    DockerVolumeCapture,
     DockerVolumeError,
     DockerVolumeMirror,
     docker_volume_transport_enabled,
@@ -72,6 +74,80 @@ def test_volume_mirror_uses_daemon_owned_volume_and_docker_cp(tmp_path, monkeypa
     mirror.close()
     assert calls[-2][0][:2] == ["rm", "-f"]
     assert calls[-1][0][:3] == ["volume", "rm", "-f"]
+
+
+def test_volume_capture_fetches_only_declared_state(tmp_path, monkeypatch):
+    source = tmp_path / "state"
+    source.mkdir()
+    calls = []
+
+    def run(args, *, check=True):
+        calls.append(list(args))
+        if args[:2] == ["exec", "carrier"] and args[-1] == "1":
+            return subprocess.CompletedProcess(
+                args,
+                0,
+                '[{"path":"skills/a.md","size":2,"sha256":"2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df","content":"b2s="}]',
+                "",
+            )
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    mirror = DockerVolumeMirror(
+        source,
+        "state",
+        "volume",
+        "carrier",
+        "helper",
+        1000,
+        1000,
+    )
+    monkeypatch.setattr(docker_volume, "_run_docker", run)
+
+    capture = mirror.capture_selected(
+        ["memories/MEMORY.md", "skills/**/*"],
+        ["skills/.usage.json"],
+        include_bytes=True,
+    )
+
+    assert capture.files == {"skills/a.md": b"ok"}
+    assert capture.metadata == [{
+        "path": "skills/a.md",
+        "size": 2,
+        "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df",
+    }]
+    assert calls[0][:3] == ["exec", "carrier", "python3"]
+    assert "cache/**/*" not in calls[0][-2]
+
+
+def test_volume_restore_uploads_only_declared_state(tmp_path, monkeypatch):
+    source = tmp_path / "state"
+    (source / "skills").mkdir(parents=True)
+    (source / "cache").mkdir()
+    (source / "skills" / "a.md").write_text("learned", encoding="utf-8")
+    (source / "skills" / ".usage.json").write_text("ignored", encoding="utf-8")
+    (source / "cache" / "large.bin").write_bytes(b"unrelated")
+    uploaded = []
+
+    def run(args, *, check=True):
+        if args[0] == "cp":
+            with zipfile.ZipFile(args[1]) as bundle:
+                uploaded.extend(bundle.namelist())
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    mirror = DockerVolumeMirror(
+        source,
+        "state",
+        "volume",
+        "carrier",
+        "helper",
+        1000,
+        1000,
+    )
+    monkeypatch.setattr(docker_volume, "_run_docker", run)
+
+    mirror.sync_selected_from_host(["skills/**/*"], ["skills/.usage.json"])
+
+    assert uploaded == ["skills/a.md"]
 
 
 def test_l1_docker_sandbox_shares_daemon_volume_with_baseline(tmp_path, monkeypatch):
@@ -187,11 +263,12 @@ def test_process_runtime_renders_workspace_and_state_volume_mounts(tmp_path, mon
 
         def __init__(self, host_path):
             self.host_path = host_path
-            self.pulls = 0
+            self.captures = 0
             self.closed = False
 
-        def sync_to_host(self):
-            self.pulls += 1
+        def capture_selected(self, patterns, ignored, *, include_bytes):
+            self.captures += 1
+            return DockerVolumeCapture({}, [])
 
         def sync_from_host(self):
             return None
@@ -266,7 +343,7 @@ def test_process_runtime_renders_workspace_and_state_volume_mounts(tmp_path, mon
 
     assert "type=volume,src=workspace-volume,dst=/workspace" in commands[0]
     assert "type=volume,src=state-volume,dst=/state" in commands[0]
-    assert mirrors[0].pulls >= 1
+    assert mirrors[0].captures >= 1
     assert mirrors[0].closed
     assert runtime.metadata()["docker_volume_transport"] is True
 
@@ -332,7 +409,7 @@ def test_process_runtime_releases_transport_and_bridge_when_state_pull_fails(tmp
         def __init__(self):
             self.closed = False
 
-        def sync_to_host(self):
+        def capture_selected(self, patterns, ignored, *, include_bytes):
             raise DockerVolumeError("injected state pull failure")
 
         def close(self):

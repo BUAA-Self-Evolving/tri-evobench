@@ -350,7 +350,12 @@ class ProcessBaselineRuntime(BaselineRuntime):
         if context.turn_id != self._current_turn:
             raise RuntimeError(f"interaction belongs to inactive turn: {context.turn_id}")
         self._ensure_stable_state("before interact", interaction_error=True)
-        before = self._capture_state(include_bytes=True)
+        before = (
+            self._stable_state
+            if self._stable_state is not None
+            and bool(self.manifest.state.get("enforce_turn_freeze", False))
+            else self._capture_state(include_bytes=True)
+        )
         interaction_timeout = _positive_seconds(
             self._current_turn_metadata.get("interaction_timeout_seconds")
         )
@@ -389,7 +394,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 "baseline modified persistent learning state during interact: " + ", ".join(changed),
                 reply=reply,
             )
-        self._stable_state = before
+        self._stable_state = self._with_current_semantic_state(before)
         return reply
 
     def evolve(self, context: EvolutionContext) -> EvolutionResult:
@@ -398,7 +403,13 @@ class ProcessBaselineRuntime(BaselineRuntime):
         if self._turn_evolved:
             raise RuntimeError(f"turn {context.turn_id} was already evolved")
         self._ensure_stable_state("before evolve")
-        before_capture = self._capture_state(include_bytes=True)
+        before_capture = (
+            self._stable_state
+            if self._stable_state is not None
+            and bool(self.manifest.state.get("enforce_turn_freeze", False))
+            else self._capture_state(include_bytes=True)
+        )
+        before_capture = self._with_current_semantic_state(before_capture)
         before = before_capture.snapshot
         timeout = float(self.manifest.evolution.get("timeout_seconds", self.manifest.adapter.get("timeout_seconds", 900)))
         result = self._request(
@@ -451,7 +462,13 @@ class ProcessBaselineRuntime(BaselineRuntime):
 
     def save_checkpoint_state(self, archive: Path) -> None:
         """Persist exact learning state in a short, portable zip archive."""
-        capture = self._capture_state(include_bytes=True)
+        self._ensure_stable_state("before checkpoint")
+        capture = (
+            self._stable_state
+            if self._stable_state is not None
+            and bool(self.manifest.state.get("enforce_turn_freeze", False))
+            else self._capture_state(include_bytes=True)
+        )
         archive.parent.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
             for relative, content in capture.files.items():
@@ -666,20 +683,30 @@ class ProcessBaselineRuntime(BaselineRuntime):
         root = self._state_dir
         if root is None or not root.exists():
             return _StateCapture({}, BaselineSnapshot())
-        if self._state_volume is not None:
-            self._state_volume.sync_to_host()
-        captured: dict[str, bytes] = {}
-        metadata: list[dict[str, Any]] = []
         patterns = [
             *self.manifest.state.get("paths", []),
             *self.manifest.state.get("guard_paths", []),
         ]
-        for relative, path in self._iter_state_files(patterns):
-            content = path.read_bytes()
-            digest = hashlib.sha256(content).hexdigest()
-            metadata.append({"path": relative, "size": len(content), "sha256": digest})
+        ignored = [str(pattern) for pattern in self.manifest.state.get("ignore_paths", [])]
+        if self._state_volume is not None:
+            volume_capture = self._state_volume.capture_selected(
+                [str(pattern) for pattern in patterns],
+                ignored,
+                include_bytes=include_bytes,
+            )
+            captured = volume_capture.files
+            metadata = volume_capture.metadata
             if include_bytes:
-                captured[relative] = content
+                self._materialize_selected_host_state(captured, patterns)
+        else:
+            captured = {}
+            metadata = []
+            for relative, path in self._iter_state_files(patterns):
+                content = path.read_bytes()
+                digest = hashlib.sha256(content).hexdigest()
+                metadata.append({"path": relative, "size": len(content), "sha256": digest})
+                if include_bytes:
+                    captured[relative] = content
         metadata.sort(key=lambda item: item["path"])
         hasher = hashlib.sha256()
         for item in metadata:
@@ -688,6 +715,36 @@ class ProcessBaselineRuntime(BaselineRuntime):
         digest = hasher.hexdigest()
         state = {"digest": digest, "files": [item["path"] for item in metadata], **self._semantic_state}
         return _StateCapture(captured, BaselineSnapshot(state=state, digest=digest, files=metadata))
+
+    def _materialize_selected_host_state(
+        self,
+        files: dict[str, bytes],
+        patterns: list[str],
+    ) -> None:
+        if self._state_dir is None:
+            return
+        for _, path in self._iter_state_files(patterns):
+            path.unlink(missing_ok=True)
+        for relative, content in files.items():
+            target = self._state_dir / _safe_relative_state_path(relative)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+
+    def _with_current_semantic_state(self, capture: _StateCapture) -> _StateCapture:
+        snapshot = capture.snapshot
+        state = {
+            "digest": snapshot.digest,
+            "files": [item["path"] for item in snapshot.files],
+            **self._semantic_state,
+        }
+        return _StateCapture(
+            capture.files,
+            BaselineSnapshot(
+                state=state,
+                digest=snapshot.digest,
+                files=list(snapshot.files),
+            ),
+        )
 
     def _iter_state_files(self, patterns: list[str] | None = None) -> list[tuple[str, Path]]:
         root = self._state_dir
@@ -726,7 +783,10 @@ class ProcessBaselineRuntime(BaselineRuntime):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(content)
         if self._state_volume is not None:
-            self._state_volume.sync_from_host()
+            self._state_volume.sync_selected_from_host(
+                [str(pattern) for pattern in patterns],
+                [str(pattern) for pattern in self.manifest.state.get("ignore_paths", [])],
+            )
 
     def _ensure_stable_state(self, phase: str, *, interaction_error: bool = False) -> None:
         if not bool(self.manifest.state.get("enforce_turn_freeze", False)):

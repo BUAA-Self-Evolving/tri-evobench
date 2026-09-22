@@ -1,6 +1,6 @@
 # Tri-EvoBench 完整 Agent 交接手册
 
-更新时间：2026-09-13（Asia/Shanghai）
+更新时间：2026-09-22（Asia/Shanghai）
 
 本文面向在新设备上接手本项目的开发 Agent。目标是让接手者只依赖当前 Git 仓库和本文，便能理解研究问题、运行时架构、数据边界、六种 baseline、模型渠道、测试、正式评测和安全恢复方式，并在不破坏已有结果的前提下继续工作。
 
@@ -286,7 +286,7 @@ Adapter 永远不能收到 `verifier_details`、`oracle_update`、private evalua
 
 - id：`hermes`
 - source：`baseline/hermes-agent` Git submodule
-- pinned revision：`fce30d818e2a1833e99bb12160ccec648e8b2661`
+- pinned revision：`53873bfae5dfdd5f1af5cb6203a441f6e75330c1`
 - bridge：`trievo_bench/baselines/hermes_bridge.py`
 - manifest：`trievo_bench/baselines/manifests/hermes.json`
 - Dockerfile：`baseline/adapters/hermes/Dockerfile`
@@ -295,6 +295,13 @@ Adapter 永远不能收到 `verifier_details`、`oracle_update`、private evalua
 Hermes 的 Flow 映射到独立 `HERMES_HOME` 和 bridge 进程；每个 Turn 创建全新 ACP Session；Interaction 调用 `run_conversation`；Turn 末显式执行 background review。严格 `turn_boundary` 模式关闭前台 memory/skill nudge 和写工具，只允许在 evolution barrier 内更新。
 
 Hermes 支持 provider profile 传入的 `thinking=disabled|enabled`，并把控制同步到 `reasoning_config` 和 request `extra_body`。Session 累计 token 会在 bridge 中转换为 Interaction 增量；background review usage 单独记入 evolution。
+
+Hermes 的普通 provider 初始化不得安装 Bedrock 可选依赖；`boto3` 只允许在真正选择 AWS
+Bedrock 后由 `_require_boto3()` 按需加载。离线启动性能用
+`tools/profile_hermes_startup.py --image <image> --config <config>` 检查：该工具强制
+`--network none`、不执行 `interact`，分别记录 cold/warm `start_turn` 并列出 lazy-install
+事件，因此不会消耗模型 token。若冷启动再次出现分钟级停顿，先检查 Hermes `agent.log` 中的
+`Lazy-installing`，不能直接放宽 Turn timeout 掩盖运行时装包。
 
 ### 8.2 SkillOpt
 
@@ -682,7 +689,9 @@ baseline、task sandbox 和 verifier 使用同一个逻辑 `/workspace`，但运
 
 - 普通主机使用 bind mount；
 - Docker daemon 看不到 checkout 时，L1/L2 可设置 `TRIEVO_DOCKER_VOLUME_TRANSPORT=required`，通过 daemon-owned named volume 和 `docker cp` 传输；
-- volume pull 使用同文件系统 staging 和可回滚目录交换；
+- 初始 volume seed 使用同文件系统 staging 和可回滚目录交换；运行期间只在 carrier 内扫描
+  manifest 声明的 `state.paths`/`guard_paths`，按需回传白名单文件与 hash；
+- checkpoint、非法写入回滚和恢复只替换声明状态，不清空 Session、cache、日志等未声明路径；
 - verifier package 只读、workspace 单独挂载；
 - native verifier `--network none`；
 - baseline 容器需要联网调用模型。
