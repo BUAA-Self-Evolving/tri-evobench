@@ -128,6 +128,10 @@ L2 正式自进化结论必须来自同一 baseline、同一数据版本、同�
 
 目录标签不是条件正确执行的证据。实现变更必须验证 workspace 生命周期、状态冻结、`update_enabled` 和报告中的 condition 身份。
 
+Reset 仍须执行与 Frozen/Evolving 完全相同的 Turn 序列；它通过每 Turn 重建 workspace 和 SUT state
+消除跨 Turn 积累，而不是只执行 `sequence_role=probe` 的 Turn。probe-only 只能作为单独标记的诊断
+panel，不能进入正式三条件 matched aggregation。
+
 L2 CLI 为兼容旧调用，在未传条件时默认 `evolving`；这不代表单独的 evolving 运行可以支持正式 self-evolution claim。正式匹配矩阵必须显式传入三个条件。
 
 ---
@@ -374,9 +378,9 @@ OpenCode 是持续会话型 harness，当前 `evolution.policy=disabled`，Turn 
 | `packycode` | `PACKYCODE_API_KEY`；兼容旧 `TRIEVO_API_KEY` | `https://cf.api.fan/v1` | `deepseek-v4-flash` | disabled | 150s | 4 | 继承宿主配置 |
 | `friday` | `FRIDAY_APP_ID` 或 `FRIDAY_APP_ID_<n>` / `FRIDAY_APP_IDS` 池 | `https://aigc.sankuai.com/v1/openai/native` | `deepseek-v4-flash` | enabled | 300s | 5 | 默认直连并清理 proxy 变量 |
 
-Friday 当前按每个 App ID 最大一个活跃 stream job 调度。多 App ID 模式使用确定性的 stream-affinity LPT：同一 `level + flow_id` 的所有 baseline/condition job 固定到同一凭证槽；槽位不足时按 `turn 数 × 选中 job 数` 的预计工作量从长到短分配给当前最轻槽位。未显式指定 `--concurrency` 时，有效并发为 App ID 数和选中 stream 数的较小值；显式值只能进一步降低并发。该限制不替代服务端真实 RPM enforcement。
+Friday 当前按每个 App ID 最大一个活跃 job 调度。多 App ID 模式使用确定性的 stream-baseline-affinity LPT：同一 `level + flow_id + baseline` 的 condition jobs 固定到同一凭证槽，不同 baseline 可并行；各 group 按 condition turn 总数从长到短分配给当前最轻槽位。未显式指定 `--concurrency` 时，有效并发为 App ID 数和选中 affinity group 数的较小值；显式值只能进一步降低并发。该限制不替代服务端真实 RPM enforcement。
 
-推荐用 `FRIDAY_APP_ID_1`、`FRIDAY_APP_ID_2`……建立稳定槽位；也支持单个 `FRIDAY_APP_ID`，以及 JSON 数组或换行列表形式的 `FRIDAY_APP_IDS`。每个 worker 的内存环境只保留自己选中的 App ID，并映射到各 adapter 需要的 `TRIEVO_API_KEY`、`OPENAI_API_KEY`、`OPENAI_COMPATIBLE_API_KEY`、`TARGET_OPENAI_COMPATIBLE_API_KEY` 和 `DEEPSEEK_API_KEY`；完整池不会传给 worker。状态文件只记录槽位名、stream 映射和预计工作量，不保存凭证值。恢复同一输出根时不得改变槽位名、顺序、对应 App ID 或选中 stream 集合。
+推荐用 `FRIDAY_APP_ID_1`、`FRIDAY_APP_ID_2`……建立稳定槽位；也支持单个 `FRIDAY_APP_ID`，以及 JSON 数组或换行列表形式的 `FRIDAY_APP_IDS`。每个 worker 的内存环境只保留自己选中的 App ID，并映射到各 adapter 需要的 `TRIEVO_API_KEY`、`OPENAI_API_KEY`、`OPENAI_COMPATIBLE_API_KEY`、`TARGET_OPENAI_COMPATIBLE_API_KEY` 和 `DEEPSEEK_API_KEY`；完整池不会传给 worker。状态文件只记录槽位名、affinity group 映射和预计工作量，不保存凭证值。恢复同一输出根时不得改变槽位名、顺序、对应 App ID 或选中任务集合。
 
 Friday 可能在 HTTP 200 body 中返回非 200 的业务 `status`。主模型 transport 会保留 provider `status/message`；429 和 5xx 只在同一次模型请求内重试，普通 4xx、鉴权、余额不足、空答案和 schema 错误不重试。transport retry 不能增加 benchmark Interaction，也不能重放已经执行过工具副作用的整个 Turn。
 
@@ -655,7 +659,7 @@ Checkpoint 保存公共交互、workspace、声明的 baseline state、Turn 前�
 
 输出根目录有独占 driver lock；不同根目录仍可能重复计费，所以启动前必须检查是否已有同矩阵在运行。
 
-Friday 多凭证调度还强制每个 `credential_slot` 最多一个活跃 worker。LPT 只决定 stream 到槽位的静态映射，同一槽位内按 stream 分组顺序串行执行，以避免不同 stream 频繁切换破坏 cache locality。`matrix_status.json.credential_schedule` 可审计算法、槽位名、stream 映射、预计负载和 stream 数，但绝不能含凭证值。改变凭证池或选择范围必须换新的输出根；这既保护恢复身份，也避免缓存和审计记录混用。
+Friday 多凭证调度还强制每个 `credential_slot` 最多一个活跃 worker。LPT 只决定 `stream + baseline` affinity group 到槽位的静态映射，group 内 condition 按 reset、frozen、evolving 串行执行。`matrix_status.json.credential_schedule` 可审计算法、槽位名、group 映射、预计负载和 group 数，但绝不能含凭证值。改变凭证池或选择范围必须换新的输出根；这既保护恢复身份，也避免缓存和审计记录混用。
 
 共享 Docker 存储紧张时启用：
 

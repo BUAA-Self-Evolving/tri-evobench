@@ -8,9 +8,9 @@
 | `packycode` | `PACKYCODE_API_KEY`，兼容旧变量 `TRIEVO_API_KEY` | `https://cf.api.fan/v1` | `deepseek-v4-flash` | disabled | 继承代理 |
 | `friday` | `FRIDAY_APP_ID`（单个）或 `FRIDAY_APP_ID_<n>` / `FRIDAY_APP_IDS`（池） | `https://aigc.sankuai.com/v1/openai/native` | `deepseek-v4-flash` | enabled | 默认直连 |
 
-Friday 当前按每个 App ID 同时只承载一个 stream job 处理。多个 App ID 时，运行器自动采用
-stream-affinity LPT 调度：同一 `level + flow_id` 的所有 baseline/condition job 固定到同一 App ID；
-若 App ID 少于 stream 数，则按 `turn 数 × 被选 job 数` 从长到短放入当前预计负载最小的槽位。
+Friday 当前按每个 App ID 同时只承载一个 job。多个 App ID 时，运行器自动采用
+stream-baseline-affinity LPT 调度：同一 `level + flow_id + baseline` 的 condition jobs 固定到同一
+App ID，不同 baseline 可并行；各 group 按 condition turn 总数从长到短放入当前预计负载最小的槽位。
 每个槽位任何时刻最多一个活跃 job。这样兼顾 provider cache 局部性和整体 makespan，不是简单轮询。
 
 服务若在 HTTP 200 响应体内返回非 200 的业务 `status`，客户端会保留真实 `status` 和
@@ -55,13 +55,13 @@ uv run --frozen python tools/run_new_package_matrix.py `
 槽位对应同一 App ID。也可设置单个 `FRIDAY_APP_ID`；或把 JSON 字符串数组/换行列表放入
 `FRIDAY_APP_IDS`。三种来源同时存在时优先编号变量。重复或空 App ID 会在启动前被拒绝。
 
-未显式传 `--concurrency` 时，Friday 有效并发为 `min(App ID 数, 选中 stream 数)`；显式值只可
+未显式传 `--concurrency` 时，Friday 有效并发为 `min(App ID 数, 选中 stream-baseline group 数)`；显式值只可
 进一步降低并发，超过 App ID 数的部分会被安全截断。`--only`、同一 gate stream 和单次授权恢复
 仍只使用一个槽位。
 
 Friday 模式会为每个 worker 单独把选中的 App ID 映射给旧 baseline 所需的兼容变量，并从该 worker
-环境删除完整凭证池及 HTTP(S)/ALL proxy 变量。`matrix_status.json` 只保存槽位环境变量名、stream
-映射和预计工作量，不保存 App ID 值。已有输出根会拒绝槽位顺序或 stream 选择变化；要改变池或
+环境删除完整凭证池及 HTTP(S)/ALL proxy 变量。`matrix_status.json` 只保存槽位环境变量名、affinity
+group 映射和预计工作量，不保存 App ID 值。已有输出根会拒绝槽位顺序或任务选择变化；要改变池或
 选择范围请使用新的 `--root`。
 
 ## 只做最小连通性检查

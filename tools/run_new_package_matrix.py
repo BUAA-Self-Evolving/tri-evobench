@@ -221,48 +221,55 @@ def jobs(
     return rows
 
 
-def _stream_schedule_key(row: dict) -> str:
-    """Return the logical stream identity shared by baselines and conditions."""
-    return f"{row['level']}:{row['flow_id']}"
+def _friday_affinity_key(row: dict) -> str:
+    """Return the stream/baseline identity shared only across conditions."""
+    return f"{row['level']}:{row['flow_id']}:{row['agent']}"
 
 
 def assign_friday_credentials(
     rows: list[dict],
     credentials: tuple[ProviderCredential, ...],
 ) -> dict[str, object]:
-    """Assign each stream to one App ID with deterministic LPT balancing.
+    """Assign each stream/baseline group with deterministic LPT balancing.
 
     The credential values never enter rows or returned metadata. All jobs for
-    one stream share a slot, preserving provider-side cache locality. When
-    there are fewer slots than streams, longest-processing-time scheduling on
-    turn-weighted job counts minimizes the estimated makespan while retaining
-    stream affinity.
+    one baseline on one stream share a slot across conditions, preserving the
+    useful provider-side cache locality without serializing unrelated baseline
+    prompts. Longest-processing-time scheduling on turn-weighted job counts
+    minimizes the estimated makespan while retaining that bounded affinity.
     """
     if not credentials:
         raise ValueError("Friday credential pool is empty")
     groups: dict[str, list[tuple[int, dict]]] = {}
     for index, row in enumerate(rows):
-        groups.setdefault(_stream_schedule_key(row), []).append((index, row))
+        groups.setdefault(_friday_affinity_key(row), []).append((index, row))
 
     weighted_groups = []
-    for stream_key, members in groups.items():
+    condition_order = {"reset": 0, "frozen": 1, "evolving": 2}
+    for affinity_key, members in groups.items():
+        members.sort(
+            key=lambda item: (
+                condition_order.get(item[1].get("condition"), 3),
+                item[0],
+            )
+        )
         work_units = sum(max(1, len(row.get("turns", []))) for _, row in members)
-        weighted_groups.append((work_units, stream_key, members))
+        weighted_groups.append((work_units, affinity_key, members))
     weighted_groups.sort(key=lambda item: (-item[0], item[1]))
 
     slot_loads = [0] * len(credentials)
-    slot_stream_counts = [0] * len(credentials)
+    slot_group_counts = [0] * len(credentials)
     available_slots = [(0, index) for index in range(len(credentials))]
     heapq.heapify(available_slots)
     assignments = {}
-    for work_units, stream_key, members in weighted_groups:
+    for work_units, affinity_key, members in weighted_groups:
         current_load, slot_index = heapq.heappop(available_slots)
         credential = credentials[slot_index]
-        stream_order = slot_stream_counts[slot_index]
-        slot_stream_counts[slot_index] += 1
+        group_order = slot_group_counts[slot_index]
+        slot_group_counts[slot_index] += 1
         slot_loads[slot_index] = current_load + work_units
         heapq.heappush(available_slots, (slot_loads[slot_index], slot_index))
-        assignments[stream_key] = {
+        assignments[affinity_key] = {
             "credential_slot": slot_index + 1,
             "credential_env": credential.slot,
             "estimated_work_units": work_units,
@@ -271,26 +278,26 @@ def assign_friday_credentials(
             row.update(
                 credential_slot=slot_index + 1,
                 credential_env=credential.slot,
-                credential_stream_order=stream_order,
+                credential_group_order=group_order,
                 credential_job_order=job_order,
                 credential_source_order=source_index,
             )
 
     return {
-        "strategy": "stream_affinity_lpt_turn_weighted_v1",
+        "strategy": "stream_baseline_affinity_lpt_turn_weighted_v2",
         "slot_names": [credential.slot for credential in credentials],
         "slot_estimated_work_units": slot_loads,
-        "slot_stream_counts": slot_stream_counts,
-        "stream_assignments": assignments,
+        "slot_affinity_group_counts": slot_group_counts,
+        "affinity_assignments": assignments,
     }
 
 
 def validate_friday_schedule(previous: dict, current: dict) -> None:
-    """Reject a credential reorder or changed stream plan in an existing root."""
+    """Reject a credential reorder or changed affinity plan in an existing root."""
     saved = previous.get("credential_schedule") if isinstance(previous, dict) else None
     if not saved:
         return
-    for field in ("slot_names", "stream_assignments"):
+    for field in ("slot_names", "strategy", "affinity_assignments"):
         if saved.get(field) != current.get(field):
             raise ValueError(
                 "Friday credential schedule differs from this output root; "
@@ -298,11 +305,11 @@ def validate_friday_schedule(previous: dict, current: dict) -> None:
             )
 
 
-def friday_concurrency(requested: int | None, credential_count: int, stream_count: int) -> int:
+def friday_concurrency(requested: int | None, credential_count: int, group_count: int) -> int:
     """Return the safe worker count under one-active-job-per-App-ID."""
-    if credential_count < 1 or stream_count < 1:
-        raise ValueError("Friday scheduling requires at least one credential and one stream")
-    available = min(credential_count, stream_count)
+    if credential_count < 1 or group_count < 1:
+        raise ValueError("Friday scheduling requires at least one credential and one affinity group")
+    available = min(credential_count, group_count)
     return min(requested, available) if requested is not None else available
 
 
@@ -334,7 +341,7 @@ def _scheduled_pending_rows(rows: list[dict]) -> list[dict]:
         rows,
         key=lambda row: (
             int(row.get("credential_slot", 0)),
-            int(row.get("credential_stream_order", 0)),
+            int(row.get("credential_group_order", 0)),
             int(row.get("credential_job_order", 0)),
             int(row.get("credential_source_order", 0)),
         ),
@@ -1372,7 +1379,7 @@ def main():
         "--concurrency",
         type=int,
         help=(
-            "maximum simultaneous jobs; Friday defaults to min(App ID slots, streams) "
+            "maximum simultaneous jobs; Friday defaults to min(App ID slots, stream/baseline groups) "
             "and always caps each App ID at one active job"
         ),
     )
@@ -1451,8 +1458,8 @@ def main():
             validate_friday_schedule(previous_state, credential_schedule)
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
-        stream_count = len(credential_schedule["stream_assignments"])
-        concurrency = friday_concurrency(requested_concurrency, len(credential_pool), stream_count)
+        group_count = len(credential_schedule["affinity_assignments"])
+        concurrency = friday_concurrency(requested_concurrency, len(credential_pool), group_count)
     if args.retry_interrupted_run:
         concurrency = 1  # One authorization always binds exactly one attempt.
     if args.retry_interrupted_run and len(selected) != 1:

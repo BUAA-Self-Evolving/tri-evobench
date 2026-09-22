@@ -16,11 +16,20 @@ from tools.run_new_package_matrix import (
 from trievo_bench.provider_profiles import ProviderCredential
 
 
-def _row(stream: str, turns: int, job: int = 0) -> dict:
+def _row(
+    stream: str,
+    turns: int,
+    job: int = 0,
+    *,
+    agent: str = "hermes",
+    condition: str = "evolving",
+) -> dict:
     return {
-        "id": f"l2/evolving/hermes/{stream}-{job}",
+        "id": f"l2/{condition}/{agent}/{stream}-{job}",
         "level": "l2",
         "flow_id": stream,
+        "agent": agent,
+        "condition": condition,
         "turns": [f"turn-{index}" for index in range(turns)],
     }
 
@@ -32,34 +41,53 @@ def _credentials(count: int) -> tuple[ProviderCredential, ...]:
     )
 
 
-def test_each_stream_gets_a_unique_slot_when_capacity_is_available() -> None:
+def test_one_stream_runs_six_baselines_on_six_slots() -> None:
+    agents = ("hermes", "skillopt", "trace2skill", "prime", "aah", "opencode")
+    conditions = ("reset", "frozen", "evolving")
     rows = [
-        _row("stream-a", 8, 1),
-        _row("stream-a", 8, 2),
-        _row("stream-b", 3, 1),
-        _row("stream-c", 5, 1),
+        _row("stream-a", 100, agent=agent, condition=condition)
+        for condition in conditions
+        for agent in agents
     ]
 
-    schedule = assign_friday_credentials(rows, _credentials(4))
+    schedule = assign_friday_credentials(rows, _credentials(6))
 
-    a_slots = {row["credential_slot"] for row in rows if row["flow_id"] == "stream-a"}
-    stream_slots = {
-        stream: next(row["credential_slot"] for row in rows if row["flow_id"] == stream)
-        for stream in ("stream-a", "stream-b", "stream-c")
+    baseline_slots = {
+        agent: {row["credential_slot"] for row in rows if row["agent"] == agent}
+        for agent in agents
     }
-    assert len(a_slots) == 1
-    assert len(set(stream_slots.values())) == 3
-    assert schedule["strategy"] == "stream_affinity_lpt_turn_weighted_v1"
+    assert all(len(slots) == 1 for slots in baseline_slots.values())
+    assert len({next(iter(slots)) for slots in baseline_slots.values()}) == 6
+    assert schedule["slot_estimated_work_units"] == [300] * 6
+    assert schedule["strategy"] == "stream_baseline_affinity_lpt_turn_weighted_v2"
     assert "secret" not in json.dumps(schedule)
 
 
-def test_lpt_balances_turn_weighted_stream_groups() -> None:
+def test_conditions_keep_stream_baseline_affinity_and_order() -> None:
+    rows = [
+        _row("stream-a", 100, condition="evolving"),
+        _row("stream-a", 100, condition="reset"),
+        _row("stream-a", 100, condition="frozen"),
+        _row("stream-a", 100, agent="skillopt", condition="evolving"),
+    ]
+
+    schedule = assign_friday_credentials(rows, _credentials(2))
+
+    hermes = [row for row in rows if row["agent"] == "hermes"]
+    assert len({row["credential_slot"] for row in hermes}) == 1
+    assert [row["condition"] for row in sorted(
+        hermes, key=lambda row: row["credential_job_order"]
+    )] == ["reset", "frozen", "evolving"]
+    assert rows[-1]["credential_slot"] != hermes[0]["credential_slot"]
+
+
+def test_lpt_balances_turn_weighted_affinity_groups() -> None:
     rows = [_row("a", 8), _row("b", 7), _row("c", 6), _row("d", 5)]
 
     schedule = assign_friday_credentials(rows, _credentials(2))
 
     assert schedule["slot_estimated_work_units"] == [13, 13]
-    assert schedule["slot_stream_counts"] == [2, 2]
+    assert schedule["slot_affinity_group_counts"] == [2, 2]
 
 
 @pytest.mark.parametrize(

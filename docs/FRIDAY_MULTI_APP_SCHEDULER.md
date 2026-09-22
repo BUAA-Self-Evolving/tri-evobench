@@ -2,37 +2,45 @@
 
 ## 目标与约束
 
-Friday 渠道按每个 App ID 同时最多一个活跃 job 使用。调度单位不是单个 baseline job，而是逻辑
-stream：`level + flow_id`。同一 stream 下的全部 baseline 和 condition 固定使用同一个 App ID，避免在
-stream 内切换身份，从而保留 provider 侧前缀 cache 的局部性。
+Friday 渠道按每个 App ID 同时最多一个活跃 job 使用。调度单位是
+`level + flow_id + baseline`。同一 stream 的不同 baseline 可以并行使用不同 App ID；同一 baseline
+的 reset/frozen/evolving 固定使用同一个 App ID，从而避免把六个不同 Agent 框架错误串行到一个槽，
+同时保留真正有用的 provider 侧前缀 cache 局部性。
 
 调度器同时保证：
 
 - 一个 App ID 任意时刻最多启动一个 worker；
-- App ID 数不少于 stream 数时，每个 stream 使用独立 App ID；
-- App ID 不足时，同一 stream 仍不拆分；
+- 一个 6-baseline stream 在有 6 个 App ID 时可立即形成 6 条并行流水线；
+- 同一 `stream + baseline` 的 condition 不拆分；
 - worker 环境只含分配给自己的 App ID，不含完整凭证池；
 - 状态文件和日志只记录槽位名，不写入 App ID 值。
 
 ## 调度算法
 
-将每个 stream 视为不可拆分的调度任务。预计工作量为：
+将每个 `stream + baseline` affinity group 视为不可拆分的调度任务。预计工作量为：
 
 ```text
-W(stream) = sum(max(1, turn_count(job)))
+W(stream, baseline) = sum(max(1, turn_count(condition job)))
 ```
 
-求和范围是该 stream 在本次选择中的所有 baseline/condition job。因此同样有 8 个 turns 的 stream，
-若需要运行 4 个组合，其权重就是 32，而不是 8 或 4。
+求和范围是该 stream、该 baseline 在本次选择中的 condition job。100-turn stream 的三条件组权重
+为 300；如果只选择 evolving，权重就是 100。不同 baseline 形成不同 group，可以并行。
 
-所有 stream 按 `W` 降序排列，权重相同时按 stream key 排序保证可复现；随后用最小堆把下一个 stream
-放入当前累计负载最小的 App ID 槽位，负载相同时优先编号较小的槽位。这是带 stream 亲和约束的
-Longest Processing Time first（LPT）调度，时间复杂度为 `O(S log S + S log K)`，其中 `S` 是
-stream 数，`K` 是 App ID 数。与轮询或按 stream 数均分相比，它会把长 stream 优先错开，减少最后
-一个长 stream 拖延整个矩阵的概率。
+所有 affinity group 按 `W` 降序排列，权重相同时按 group key 排序保证可复现；随后用最小堆把
+下一个 group 放入当前累计负载最小的 App ID 槽位，负载相同时优先编号较小的槽位。这是带
+`stream + baseline` 亲和约束的 Longest Processing Time first（LPT）调度。一个 group 内固定按
+reset、frozen、evolving 顺序执行。
 
-LPT 只负责静态 stream 分配。运行时 admission control 会再次检查活跃槽位；即使总并发设置过高，
+LPT 只负责静态 group 分配。运行时 admission control 会再次检查活跃槽位；即使总并发设置过高，
 也不会在同一 App ID 上启动第二个 job。
+
+## Reset 与 probe
+
+调度器不会把 reset 缩减为 probe-only。Reset 的含义是每个 Turn 前重建 workspace 和 SUT state，
+不是跳过 learning/application Turn；三条件正式聚合要求 reset、frozen、evolving 的 turn id、turn index
+和 sequence role 完全匹配。probe 约占 1/10 只说明可单独生成一种诊断指标，不能替代正式
+`Evolving - Reset` 的 matched denominator。若未来需要低成本预检，应作为显式的 diagnostic panel 或
+新实验 profile 输出，不能写入正式 reset report，也不能与完整三条件结果聚合。
 
 ## 配置
 
@@ -51,13 +59,13 @@ $env:FRIDAY_APP_ID_3 = Read-Host 'Friday App ID slot 3'
 - 换行列表：`FRIDAY_APP_IDS="id-1`n`id-2"`。
 
 若同时设置多种来源，优先使用 `FRIDAY_APP_ID_<n>`。空值和重复 App ID 会在启动前失败。为避免恢复
-时改变 stream 身份，复用输出根时必须保持槽位名称、顺序及其实际 App ID 对应关系不变；改变凭证池
+时改变 group 身份，复用输出根时必须保持槽位名称、顺序及其实际 App ID 对应关系不变；改变凭证池
 或任务选择时使用新的 `--root`。
 
 ## 运行
 
 通常不要显式传 `--concurrency`：Friday 默认使用
-`min(App ID 数, 本次选择的 stream 数)`。如果机器资源不足，可以传更小值；更大的值会被安全截断。
+`min(App ID 数, 本次选择的 stream-baseline group 数)`。如果机器资源不足，可以传更小值；更大的值会被安全截断。
 
 ```powershell
 uv run --frozen python tools/run_new_package_matrix.py `
@@ -68,7 +76,7 @@ uv run --frozen python tools/run_new_package_matrix.py `
 ```
 
 启动后可检查 `runs/friday-matrix/matrix_status.json` 中的 `credential_schedule`。其中包含策略版本、
-槽位名、每槽预计 work units、stream 数和 stream 映射，但不应出现任何 App ID 值。
+槽位名、每槽预计 work units、affinity group 数和 group 映射，但不应出现任何 App ID 值。
 
 ## 验证
 
@@ -83,5 +91,5 @@ python -m pytest -q `
   tests/test_matrix_levels.py
 ```
 
-这些测试覆盖数值槽位排序、凭证隔离、每槽互斥、唯一 stream 分配、turn-weighted LPT、恢复计划校验、
+这些测试覆盖数值槽位排序、凭证隔离、每槽互斥、stream-baseline 分配、turn-weighted LPT、恢复计划校验、
 并发上限和 PackyCode 兼容性。真实 Friday 连通性仍按项目的单 job 预检流程执行，不要直接跑全量矩阵。
