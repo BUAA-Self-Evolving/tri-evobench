@@ -11,12 +11,14 @@ set and native metric. Nothing is split into folds or cohorts.
   creates fixtures: ``known_correct`` (a valid upstream-format submission),
   ``known_broken`` (a malformed submission), ``sanity_gold`` (the gold labels,
   where they exist) and ``sanity_strong`` (games). For AIRS, ``known_correct`` is the heavily
-  row-switched gold submission and doubles as the band anchor.
+  row-switched gold submission; its normalized score is recorded as a
+  reference (what a trivial valid submission earns), not as a threshold.
 * ``qualify`` copies ``evaluation_assets`` and ``fixtures`` of each task into a
   fresh scratch directory and runs ``source_verifier.verify`` on every fixture
   in the same image with ``--network none``. Results come back through a
-  bind-mounted output directory. Performance bands are derived here (see
-  ``derive_bands``) because they use the shuffled-gold anchor.
+  bind-mounted output directory. The Turn score is the clipped AIRS
+  normalized score of a valid submission (``TURN_SCORE_RULE``); the
+  shuffled-gold score is kept as ``reference_scores`` for reporting.
 * ``index`` writes ``INDEX.jsonl`` (one line per candidate, admitted or not).
 
 Third-party checkouts are read-only inputs. Docker bind mounts only use fresh
@@ -60,8 +62,12 @@ SCHEMA = "l2_v5_pool_task/1.0"
 DOCKER_ENV = dict(os.environ)
 if os.environ.get("L2V5_DOCKER_HOST"):
     DOCKER_ENV["DOCKER_HOST"] = os.environ["L2V5_DOCKER_HOST"]
-PARTIAL_FRACTION = 0.5
-FULL_FRACTION = 0.8
+# V5 Turn score for AutoResearch: the upstream AIRS normalized score, clipped
+# to [0, 1], when the Judge finds the submission valid; 0 otherwise.
+TURN_SCORE_RULE = "native_normalized_score_if_valid"
+# Admission sanity only: where gold labels exist, they must reach this
+# fraction of the way from the shuffled-gold score to 1.
+GOLD_SANITY_FRACTION = 0.8
 
 AIRS_LICENSE = ("AIRS-Bench task code: CC BY-NC 4.0 (facebookresearch/airs-bench). Data is the upstream "
                 "Hugging Face dataset named in benchmark_native_labels.dataset under its own license; "
@@ -624,7 +630,7 @@ def prepare_airs(spec: dict[str, Any], stage: Path) -> dict[str, Any]:
         (fixtures / sub).mkdir(parents=True)
     gold = out / "gold"
     shutil.copy2(gold / "gold_submission.csv", fixtures / "sanity_gold" / "submission.csv")
-    # known_correct doubles as the shuffled-gold band anchor (upstream permuted_2 convention)
+    # known_correct is the shuffled-gold reference submission (upstream permuted_2 convention)
     shutil.copy2(gold / "gold_submission_permuted_2.csv", fixtures / "known_correct" / "submission.csv")
     _write_truncated(gold / "gold_submission.csv", fixtures / "known_broken" / "submission.csv")
     shutil.rmtree(out, ignore_errors=True)
@@ -651,7 +657,7 @@ def prepare_airs(spec: dict[str, Any], stage: Path) -> dict[str, Any]:
             "workspace_seed/data = output of upstream prepare.py; evaluation_assets/data = output of upstream "
             "evaluate_prepare.py (test_with_labels); both executed in the task image with network disabled",
             "known_correct = heavily row-switched gold submission (upstream test_task_folder.py "
-            "gold_submission_permuted_2 convention, seeded); it is also the band anchor; known_broken = gold "
+            "gold_submission_permuted_2 convention, seeded); its score is the recorded shuffled-gold reference; known_broken = gold "
             "header + first 10 rows (row count mismatch)",
             "turn_timeout_seconds = training_timeout from upstream airsbench/tasks/mlgym config (unchanged)",
         ] + (["upstream prepare.py leaves the scoring label `no_answer` in the agent test split (its prompt says "
@@ -921,23 +927,20 @@ print("QUALIFY_DONE")
 '''
 
 
-def derive_bands(norm: dict[str, Any], shuffled_score: float | None) -> tuple[dict[str, float], str]:
-    anchor = 0.0
+def reference_scores(norm: dict[str, Any], shuffled_score: float | None) -> tuple[dict[str, Any], str]:
+    anchor = None
     if shuffled_score is not None and math.isfinite(shuffled_score):
         anchor = max(0.0, min(1.0, shuffled_score))
-    partial = anchor + PARTIAL_FRACTION * (1.0 - anchor)
-    full = anchor + FULL_FRACTION * (1.0 - anchor)
     if norm["method"] == "airs_log":
         scale = "AIRS log-normalized score (fraction of the log-error gap from the worst anchor to the reference)"
     else:
         scale = "AIRS linear normalized score"
-    text = (f"Bands on the {scale}: NS=0 at worst={norm['worst']}, NS=1 at reference={norm['reference']}. "
-            f"V5 band style (partial/full thresholds on the normalized score) with partial = a + "
-            f"{PARTIAL_FRACTION}*(1-a) and full = a + {FULL_FRACTION}*(1-a), where a = "
-            f"{anchor:.4f} is the normalized score of the shuffled-gold known_correct fixture (upstream permuted_2 "
-            "convention) "
-            "for AIRS, or 0 for MLGym (worst anchor = upstream baseline, so the starter solution scores 0).")
-    return {"partial_min_inclusive": round(partial, 6), "full_min_inclusive": round(full, 6)}, text
+    text = (f"Turn score = {scale}, clipped to [0, 1], for a valid submission: NS=0 at worst={norm['worst']}, "
+            f"NS=1 at reference={norm['reference']}. Reference only: a shuffled-gold submission (upstream "
+            f"permuted_2 convention) scores "
+            + (f"{anchor:.4f}." if anchor is not None else "n/a (MLGym: the worst anchor is the upstream baseline, "
+               "so the starter solution scores 0)."))
+    return {"shuffled_gold_normalized": None if anchor is None else round(anchor, 6)}, text
 
 
 def raw_threshold(norm: dict[str, Any], ns: float) -> float | None:
@@ -978,7 +981,9 @@ def qualify_one(spec: dict[str, Any]) -> dict[str, Any]:
     norm = record.pop("_pending_norm", None) or (record.get("metric_profile") or {}).get("normalization")
     shuffled = results.get("known_correct", {}) if spec["source"] == "airs" else {}
     shuffled_score = shuffled.get("score") if shuffled.get("status") == "pass" else None
-    bands, band_source = derive_bands(norm, shuffled_score if spec["source"] == "airs" else None)
+    references, score_source = reference_scores(norm, shuffled_score if spec["source"] == "airs" else None)
+    floor = references["shuffled_gold_normalized"] or 0.0
+    gold_threshold = floor + GOLD_SANITY_FRACTION * (1.0 - floor)
     checks: dict[str, bool] = {}
     kc, kb = results.get("known_correct", {}), results.get("known_broken", {})
     checks["known_correct_pass"] = kc.get("status") == "pass" and kc.get("score") is not None and \
@@ -987,8 +992,8 @@ def qualify_one(spec: dict[str, Any]) -> dict[str, Any]:
     checks["missing_artifact_fail"] = results.get("sanity_missing", {}).get("status") == "fail"
     if "sanity_gold" in results:
         gold = results["sanity_gold"]
-        checks["gold_reaches_full_band"] = gold.get("status") == "pass" and \
-            float(gold.get("score") or 0) >= bands["full_min_inclusive"]
+        checks["gold_reaches_reference_region"] = gold.get("status") == "pass" and \
+            float(gold.get("score") or 0) >= gold_threshold
         if shuffled_score is not None:
             checks["gold_above_shuffled"] = float(gold.get("score") or 0) > shuffled_score or \
                 float(gold.get("score") or 0) == 1.0 and shuffled_score < 1.0
@@ -1005,10 +1010,10 @@ def qualify_one(spec: dict[str, Any]) -> dict[str, Any]:
         "judge_value_source": "native_verifier_result.score",
         "judge_value_semantics": "normalized_higher_is_better_0_1",
         "normalization": norm,
-        "performance_bands": bands,
-        "band_source": band_source,
-        "raw_band_thresholds": {"partial": raw_threshold(norm, bands["partial_min_inclusive"]),
-                                "full": raw_threshold(norm, bands["full_min_inclusive"])},
+        "turn_score_rule": TURN_SCORE_RULE,
+        "reference_scores": references,
+        "score_source": score_source,
+        "raw_at_normalized": {str(ns): raw_threshold(norm, ns) for ns in (0.25, 0.5, 0.75)},
     }
     image = image_id(CPU_IMAGE)
     record["metric_profile"] = metric_profile
@@ -1034,7 +1039,7 @@ def qualify_one(spec: dict[str, Any]) -> dict[str, Any]:
             "failed checks: " + ", ".join(k for k, v in checks.items() if not v)
     write_json(dest / "pool_task.json", record)
     return {"source_id": sid, "status": "admitted" if admitted else "rejected", "checks": checks,
-            "known_correct": brief(kc), "bands": bands}
+            "known_correct": brief(kc), "reference_scores": references}
 
 
 def _direction(spec: dict[str, Any], norm: dict[str, Any]) -> str:
@@ -1063,7 +1068,7 @@ def write_index() -> Path:
             rec = json.loads(path.read_text())
             qual = rec.get("qualification", {})
             row.update({"admitted": bool(qual.get("admitted")), "timeout": rec["runtime"]["turn_timeout_seconds"],
-                        "bands": (rec.get("metric_profile") or {}).get("performance_bands"),
+                        "reference_scores": (rec.get("metric_profile") or {}).get("reference_scores"),
                         "known_correct": qual.get("known_correct"),
                         "size_bytes": du_bytes(path.parent)})
             if not qual.get("admitted"):

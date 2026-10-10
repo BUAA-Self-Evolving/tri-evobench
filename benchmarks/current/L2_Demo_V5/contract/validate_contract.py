@@ -22,6 +22,7 @@ from judge_reference import (
     aggregate_judge_score,
     load_routed_rubrics,
     render_judge_prompt,
+    turn_score,
     validate_evaluation_profile,
     validate_judge_output,
     validate_native_metric_result,
@@ -421,6 +422,67 @@ except ValueError:
     pass
 else:
     raise AssertionError("expected inverted AutoResearch performance bands to fail")
+# l2_taskstream/1.2 AutoResearch (§17.6): the Judge decides validity and the
+# Turn score is the clipped native normalized score of a valid submission.
+continuous_task = deepcopy(auto_research_task)
+continuous_task["evaluation"]["metric_profile"] = {
+    key: value for key, value in auto_research_task["evaluation"]["metric_profile"].items()
+    if key != "performance_bands"
+}
+continuous_task["evaluation"]["metric_profile"].update({
+    "turn_score_rule": "native_normalized_score_if_valid",
+    "validity_check_id": "auto_research_validity",
+})
+continuous_task["evaluation"]["checks"] = [{
+    "check_id": "auto_research_validity",
+    "dimension": "task_success",
+    "weight": 1.0,
+    "scoring": "ordinal",
+    "instruction": "Decide only whether the submission is valid under the routed AutoResearch rubric.",
+}]
+continuous_task["evaluation"]["judge_config"]["rubric_route"]["domain_rubric"].update({
+    "version": "2.0",
+    "path": "prompts/rubrics/auto_research_v2.md",
+})
+continuous_task["evaluation"]["success_policy"]["turn_score_threshold"] = 1.0
+validate(continuous_task, "l2-task.schema.json")
+validate_evaluation_profile(continuous_task)
+assert (PROMPT_DIR / "rubrics" / "auto_research_v2.md").is_file()
+
+for broken_key, broken_value in (
+    ("performance_bands", {"partial_min_inclusive": 0.5, "full_min_inclusive": 0.8}),
+    ("turn_score_rule", "judge_ordinal"),
+):
+    broken = deepcopy(continuous_task)
+    broken["evaluation"]["metric_profile"][broken_key] = broken_value
+    expect_schema_invalid(broken, "l2-task.schema.json")
+broken = deepcopy(continuous_task)
+broken["evaluation"]["checks"][0]["check_id"] = "auto_research_overall"
+try:
+    validate_evaluation_profile(broken)
+except ValueError:
+    pass
+else:
+    raise AssertionError("expected continuous scoring with the banded check to fail")
+broken = deepcopy(continuous_task)
+broken["evaluation"]["judge_config"]["rubric_route"]["domain_rubric"].update(
+    {"version": "1.0", "path": "prompts/rubrics/auto_research_v1.md"}
+)
+try:
+    validate_evaluation_profile(broken)
+except ValueError:
+    pass
+else:
+    raise AssertionError("expected continuous scoring with the banded rubric to fail")
+
+# Turn score vectors: HousePrice R2 0.8936 normalizes to 0.2175 (AIRS log
+# normalization, worst 0.88, reference 0.931, optimal 1).
+valid_native = {"status": "pass", "score": 0.2174921241041658}
+assert math.isclose(turn_score(continuous_task, 1.0, valid_native), 0.2174921241041658)
+assert turn_score(continuous_task, 0.0, valid_native) == 0.0
+assert turn_score(continuous_task, 1.0, {"status": "fail", "score": 0.0}) == 0.0
+assert turn_score(continuous_task, 1.0, {"status": "pass", "score": 1.4}) == 1.0
+assert turn_score(auto_research_task, 0.5, valid_native) == 0.5
 validate(
     {
         "schema_version": "l2_native_verifier_request/1.0",

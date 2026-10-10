@@ -8,7 +8,7 @@
 - `L2_EVALUATION_SPEC_zh.md`：native verifier、Judge、Profile/Rubric 路由、聚合、成功条件和反馈投影。
 - `prompts/l2_judge_prompt.md`：兼容既有 General Task 的 Judge Prompt V1。
 - `prompts/l2_judge_prompt_v2.md`：在固定位置组合 Domain/Benchmark Rubric 的 Judge Prompt V2。
-- `prompts/rubrics/auto_research_v1.md`：AutoResearch 通用 Domain Rubric；Benchmark-specific Rubric 通过同一路由按需追加。
+- `prompts/rubrics/auto_research_v1.md`：AutoResearch 分档评分的 Domain Rubric（1.0/1.1 包与 Release `l2-demo-v5`）；`prompts/rubrics/auto_research_v2.md`：1.2 连续分数的 Domain Rubric，Judge 只判定有效性。Benchmark-specific Rubric 通过同一路由按需追加。
 - `prompts/rubrics/airs_sick_v1.md`：AIRS SICK 的 artifact、官方归一化和可复现性细化规则。
 - `prompts/rubrics/mlgym_titanic_v1.md`：MLGym Titanic 的 CSV/PassengerId、Accuracy 和可复现性细化规则。
 - `judge_reference.py`：Judge literal 模板渲染、输出覆盖校验和确定性聚合参考实现。
@@ -42,7 +42,7 @@
 
 当前 `1.0` 已完成数据侧验证，但尚未被 L1/Runtime 正式消费。除必要缺口或用户批准外暂不修改；一旦跨组正式接入，新增必填字段或不兼容语义必须发布 `1.1`，不能继续原地修改 `1.0`。
 
-本次在跨组接入前增加的是向后兼容的 Judge Prompt V2 路由：既有 Task 未声明 `evaluation_profile` 时继续按 legacy General Profile 与 `l2_judge/1.0` 解释；显式 General Task 也固定使用 `l2_judge/1.0`。新 AutoResearch Task 必须显式声明 `evaluation_profile=auto_research`、`metric_profile` 和 `l2_judge/2.0` Rubric route。Contract V1 不支持 General + Judge V2；未来若需要该组合，必须在后续兼容版本中补齐 route 与验证样例。V5（`l2_taskstream/1.2`）是这个后续版本：General Task 统一使用 `l2_judge/2.0`，不带 Domain Rubric route，Stream 构成、Workspace 持久和显式依赖见 `L2_BENCHMARK_SPEC_zh.md` 第 17 节。
+本次在跨组接入前增加的是向后兼容的 Judge Prompt V2 路由：既有 Task 未声明 `evaluation_profile` 时继续按 legacy General Profile 与 `l2_judge/1.0` 解释；显式 General Task 也固定使用 `l2_judge/1.0`。新 AutoResearch Task 必须显式声明 `evaluation_profile=auto_research`、`metric_profile` 和 `l2_judge/2.0` Rubric route。Contract V1 不支持 General + Judge V2；未来若需要该组合，必须在后续兼容版本中补齐 route 与验证样例。V5（`l2_taskstream/1.2`）是这个后续版本：General Task 统一使用 `l2_judge/2.0`，不带 Domain Rubric route，Stream 构成、Workspace 持久和显式依赖见 `L2_BENCHMARK_SPEC_zh.md` 第 17 节。 V5 的 AutoResearch Task 以截断到 `[0, 1]` 的上游归一化分数作为有效提交的 Turn score，不再分档（`L2_EVALUATION_SPEC_zh.md` 2.1 节）。
 
 只包含一种 Judge Prompt 的 manifest 继续使用 `judge_prompt_version`；同时包含 V1/V2 Task 的发布包改用互斥字段 `judge_prompt_versions`，列出实际使用的全部版本。具体 Task 仍以 `evaluation.judge_config.prompt_version` 为准。
 

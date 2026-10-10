@@ -364,7 +364,11 @@
       "additionalProperties": false,
       "required": [
         "profile_id", "metric_name", "raw_direction", "raw_metric_required",
-        "judge_value_source", "judge_value_semantics", "performance_bands"
+        "judge_value_source", "judge_value_semantics"
+      ],
+      "oneOf": [
+        {"required": ["performance_bands"], "not": {"anyOf": [{"required": ["turn_score_rule"]}, {"required": ["validity_check_id"]}]}},
+        {"required": ["turn_score_rule", "validity_check_id"], "not": {"required": ["performance_bands"]}}
       ],
       "properties": {
         "profile_id": {"$ref": "#/$defs/id"},
@@ -373,6 +377,8 @@
         "raw_metric_required": {"const": true},
         "judge_value_source": {"const": "native_verifier_result.score"},
         "judge_value_semantics": {"const": "normalized_higher_is_better_0_1"},
+        "turn_score_rule": {"const": "native_normalized_score_if_valid"},
+        "validity_check_id": {"const": "auto_research_validity"},
         "performance_bands": {
           "type": "object",
           "additionalProperties": false,
@@ -492,7 +498,7 @@
                     {"$ref": "#/$defs/check"},
                     {
                       "properties": {
-                        "check_id": {"const": "auto_research_overall"},
+                        "check_id": {"enum": ["auto_research_overall", "auto_research_validity"]},
                         "weight": {"const": 1},
                         "scoring": {"const": "ordinal"}
                       }
@@ -511,8 +517,8 @@
                           "domain_rubric": {
                             "properties": {
                               "rubric_id": {"const": "auto_research"},
-                              "version": {"const": "1.0"},
-                              "path": {"const": "prompts/rubrics/auto_research_v1.md"}
+                              "version": {"enum": ["1.0", "2.0"]},
+                              "path": {"enum": ["prompts/rubrics/auto_research_v1.md", "prompts/rubrics/auto_research_v2.md"]}
                             }
                           }
                         }

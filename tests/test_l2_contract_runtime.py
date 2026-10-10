@@ -17,6 +17,7 @@ from trievo_bench.l2_agent import (
     L2AgentStreamRunner,
     _project_bounded_feedback,
     _taskstream_retryable,
+    _taskstream_turn_score,
     _user_simulator_output_error,
     _TaskSandboxSession,
     _runtime_profile_work_limits,
@@ -996,6 +997,27 @@ def test_general_judge_only_failure_retries_but_auto_research_valid_low_does_not
         }
     }
     assert not _taskstream_retryable(auto, verification)
+
+
+def test_auto_research_continuous_turn_score_uses_clipped_native_score_when_valid():
+    task = {"evaluation": {
+        "evaluation_profile": "auto_research",
+        "metric_profile": {"turn_score_rule": "native_normalized_score_if_valid"},
+        "success_policy": {"turn_score_threshold": 1.0},
+    }}
+    # HousePrice: R2 0.8936 is 0.2175 on the AIRS log-normalized scale.
+    valid = {"native_result": {"status": "pass", "score": 0.2174921241041658}}
+    assert _taskstream_turn_score(task, valid, 1.0, True) == pytest.approx(0.2174921241041658)
+    assert _taskstream_turn_score(task, valid, 0.0, False) == 0.0
+    assert _taskstream_turn_score(task, {"native_result": {"status": "fail", "score": 0.0}}, 1.0, True) == 0.0
+    assert _taskstream_turn_score(task, {"native_result": {"status": "pass", "score": 1.7}}, 1.0, True) == 1.0
+    with pytest.raises(L2AgentRunError):
+        _taskstream_turn_score(task, {"native_result": {"status": "pass", "score": None}}, 1.0, True)
+    banded = {"evaluation": {"evaluation_profile": "auto_research",
+                             "metric_profile": {"performance_bands": {}}}}
+    assert _taskstream_turn_score(banded, valid, 0.5, False) == 0.5
+    general = {"evaluation": {"evaluation_profile": "general"}}
+    assert _taskstream_turn_score(general, valid, 0.85, True) == 0.85
 
 
 def test_bounded_feedback_uses_public_summary_and_failed_dimensions_only():

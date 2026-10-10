@@ -43,7 +43,7 @@ feedback_projection
 - `type = "llm_as_judge"`
 - `protocol = "l2_native_evidence_llm_judge_v1"`
 
-未声明 `evaluation_profile` 的既有 Task 继续按 legacy General Profile 与 `l2_judge/1.0` 解释。新 Task 应显式声明 Profile；`auto_research` 必须使用 Judge Prompt V2。`l2_taskstream/1.2`（V5）包的 General Task 也使用 Judge Prompt V2（`l2_judge/2.0`），不带 Domain Rubric route，checks 为 `task_completion` 0.6、`requirement_and_output_compliance` 0.25、`evidence_and_side_effect_integrity` 0.15。
+未声明 `evaluation_profile` 的既有 Task 继续按 legacy General Profile 与 `l2_judge/1.0` 解释。新 Task 应显式声明 Profile；`auto_research` 必须使用 Judge Prompt V2。`l2_taskstream/1.2`（V5）包的 General Task 也使用 Judge Prompt V2（`l2_judge/2.0`），不带 Domain Rubric route，checks 为 `task_completion` 0.6、`requirement_and_output_compliance` 0.25、`evidence_and_side_effect_integrity` 0.15。V5 的 AutoResearch Task 使用连续分数，见 2.1 节"AutoResearch 连续分数（1.2）"。
 
 ## 2.1 Evaluation Profile 与 Rubric route
 
@@ -111,7 +111,36 @@ AutoResearch 只声明一个 Judge-owned check：
 }
 ```
 
-因此 framework 仍按既有确定性聚合实现，但最终 Turn score 必然是 `0`、`0.5` 或 `1`。连续 native metric 只是该 ordinal 判断的强制证据，不与 Judge 分数做算术加权。
+因此 framework 仍按既有确定性聚合实现，但最终 Turn score 必然是 `0`、`0.5` 或 `1`。连续 native metric 只是该 ordinal 判断的强制证据，不与 Judge 分数做算术加权。上面的分档规则适用于 `l2_taskstream/1.0|1.1` 包，以及 1.2 中尚未声明 `turn_score_rule` 的旧包（Release `l2-demo-v5`）。
+
+### AutoResearch 连续分数（1.2）
+
+`l2_taskstream/1.2` 的 AutoResearch Task 不再分档。Turn score 规则为：
+
+> 有效提交的 Turn score 等于 native verifier 给出的上游 AIRS 归一化分数（顶层 `score`），截断到 `[0, 1]`；提交缺失、非法、不可复现或实质违反约束时，Turn score 为 `0`。归一化方法和锚点沿用上游，不扣除打乱 gold 的参考分。
+
+Task 声明：
+
+```json
+"metric_profile": {
+  "profile_id": "regressionKaggleHousePrice_v5",
+  "metric_name": "r2",
+  "raw_direction": "maximize",
+  "raw_metric_required": true,
+  "judge_value_source": "native_verifier_result.score",
+  "judge_value_semantics": "normalized_higher_is_better_0_1",
+  "turn_score_rule": "native_normalized_score_if_valid",
+  "validity_check_id": "auto_research_validity"
+}
+```
+
+- 不得声明 `performance_bands`。
+- 唯一的 Judge check 为 `auto_research_validity`（`ordinal`，权重 1），Judge 只给 `0`（无效）或 `1`（有效），不评价 metric 高低；路由 `prompts/rubrics/auto_research_v2.md`（version `2.0`）及对应的 Benchmark Rubric v2。
+- `success_policy.turn_score_threshold` 固定为 `1`：Judge 分数达到 1 且 native verifier `status=pass` 时，提交有效，`passed=true`。
+- Framework 计算 Turn score：有效时取 `clip(native.score, 0, 1)`，否则取 `0`。`judge_reference.turn_score` 是可执行参考。
+- 打乱 gold 提交的归一化分数只作为参考，写在 `reference_context.reference_scores.shuffled_gold_normalized`（MLGym 为 `null`），不参与计分。
+
+例：MLGym HousePrice 的上游 baseline R² 0.880 为 0 分锚点，最好结果 0.931 为 1 分锚点（AIRS 对数归一化，optimal 为 1）。有效提交 R² 0.8936 的 Turn score 约为 0.218。
 
 ## 2.2 Submission contract
 
@@ -233,7 +262,7 @@ AutoResearch 的合法 verifier result 还必须保留原始 metric：
 }
 ```
 
-`metric.normalized_value` 必须与顶层 `score` 一致。`raw_value` 用于审计和未来重新校准 performance bands；Judge 使用 `metric_profile.judge_value_source` 指向的顶层归一化 `score` 进行分档，不得自行重算归一化。General Profile 的 verifier result 可以省略 `metric`。
+`metric.normalized_value` 必须与顶层 `score` 一致。`raw_value` 用于审计。分档包中，Judge 使用 `metric_profile.judge_value_source` 指向的顶层归一化 `score` 进行分档；1.2 连续分数包中，framework 直接取该 `score` 作为有效提交的 Turn score。两者都不得自行重算归一化。General Profile 的 verifier result 可以省略 `metric`。
 
 `public_summary` 可用于 feedback projection；`private_diagnostics` 只能进入 evaluator/Judge audit，不得直接进入 User Simulator。
 
@@ -295,7 +324,7 @@ Judge 逐条输出 `source_rubric_scores`，框架计算非 null 均值。
 
 所有 checks 权重之和必须为 1。
 
-AutoResearch 是例外 Profile，而不是另一套 native/Judge 加权公式：它使用一个权重为 `1` 的 `auto_research_overall` check，将提交有效性、可复现性、约束遵循和 native performance band 统一映射到 `0/0.5/1`。细分判断保存在 reason、evidence refs、source rubric scores 和审计记录中，不产生第二个平行总分。
+AutoResearch 是例外 Profile，而不是另一套 native/Judge 加权公式：分档包使用一个权重为 `1` 的 `auto_research_overall` check，将提交有效性、可复现性、约束遵循和 native performance band 统一映射到 `0/0.5/1`；1.2 连续分数包使用一个 `auto_research_validity` check 判定有效性，Turn score 由 framework 按 2.1 节取归一化分数。细分判断保存在 reason、evidence refs、source rubric scores 和审计记录中，不产生第二个平行总分。
 
 ## 6. Rubrics 与 GT
 
@@ -381,7 +410,7 @@ Judge：
 - 检查 Agent 声称与可观察执行证据是否一致；
 - 检查无关副作用、路径越界、未授权工具和任务要求覆盖；
 - 输出简短、可复核 evidence refs。
-- 在 AutoResearch Profile 中，按声明的 performance bands 解释 native score，并对唯一 `auto_research_overall` check 给出离散分；
+- 在 AutoResearch Profile 中，分档包按声明的 performance bands 解释 native score，并对唯一 `auto_research_overall` check 给出离散分；1.2 连续分数包只对 `auto_research_validity` 给出 `0` 或 `1`，不评价 metric 高低；
 
 Judge 不得：
 
@@ -505,7 +534,7 @@ AutoResearch 把“是否继续 Interaction”与“最终分数是否达到 suc
 ```
 
 - submission 缺失、格式非法、Agent 执行失败或结果不可验证时，仍有 Interaction 预算才可调用 User Simulator；
-- submission 合法且 verifier 成功时，无论 native metric 落入 `full`、`partial` 还是 `insufficient` band，当前 Turn 都结束并记录 Judge 给出的离散终态分；
+- submission 合法且 verifier 成功时，无论 native metric 高低，当前 Turn 都结束：分档包记录 Judge 给出的离散终态分，1.2 连续分数包记录截断后的归一化分数；
 - verifier 自身 crash/timeout 属于 evaluation error，不能伪装成 Agent failure，也不能用 User Simulator 向 Agent泄露 evaluator 故障；
 - `turn_score_threshold` 仍可用于报告 success/failure 标签，但不能作为 AutoResearch retry 条件。
 

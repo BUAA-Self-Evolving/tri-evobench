@@ -570,3 +570,55 @@ def test_v5_artifact_dependency_rejects_future_or_malformed_reference(turn_ids: 
         package = _minimal_v5(Path(tmp), persistence="stream", task_patch=_dependency_patch(turn_ids))
         with pytest.raises(L2SpecError, match="artifact dependencies"):
             inspect_l2_package(package)
+
+
+def _autoresearch_evaluation(*, continuous: bool = True) -> dict:
+    metric = {
+        "profile_id": "house_v5", "metric_name": "r2", "raw_direction": "maximize",
+        "raw_metric_required": True, "judge_value_source": "native_verifier_result.score",
+        "judge_value_semantics": "normalized_higher_is_better_0_1",
+    }
+    if continuous:
+        metric.update({"turn_score_rule": "native_normalized_score_if_valid",
+                       "validity_check_id": "auto_research_validity"})
+        check_id, version = "auto_research_validity", "2.0"
+    else:
+        metric["performance_bands"] = {"partial_min_inclusive": 0.5, "full_min_inclusive": 0.8}
+        check_id, version = "auto_research_overall", "1.0"
+    return {
+        "native_verifier": {"required": True},
+        "evaluation_profile": "auto_research",
+        "metric_profile": metric,
+        "checks": [{"check_id": check_id, "dimension": "task_success", "weight": 1.0, "scoring": "ordinal"}],
+        "success_policy": {"turn_score_threshold": 1.0},
+        "judge_config": {"rubric_route": {"domain_rubric": {
+            "rubric_id": "auto_research", "version": version,
+            "path": f"prompts/rubrics/auto_research_v{version[0]}.md"}}},
+    }
+
+
+@pytest.mark.parametrize("continuous", [True, False])
+def test_v5_autoresearch_scoring_accepts_continuous_and_legacy_bands(continuous: bool) -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        patch = {"evaluation": _autoresearch_evaluation(continuous=continuous)}
+        inspect_l2_package(_minimal_v5(Path(tmp), persistence="stream", task_patch=patch))
+
+
+@pytest.mark.parametrize("mutation", ["bands", "check", "rubric", "threshold", "rule"])
+def test_v5_continuous_autoresearch_scoring_fails_closed(mutation: str) -> None:
+    evaluation = _autoresearch_evaluation()
+    if mutation == "bands":
+        evaluation["metric_profile"]["performance_bands"] = {"partial_min_inclusive": 0.5, "full_min_inclusive": 0.8}
+    elif mutation == "check":
+        evaluation["checks"][0]["check_id"] = "auto_research_overall"
+    elif mutation == "rubric":
+        evaluation["judge_config"]["rubric_route"]["domain_rubric"]["version"] = "1.0"
+    elif mutation == "threshold":
+        evaluation["success_policy"]["turn_score_threshold"] = 0.5
+    else:
+        evaluation["metric_profile"]["turn_score_rule"] = "judge_ordinal"
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), persistence="stream", task_patch={"evaluation": evaluation})
+        with pytest.raises(L2SpecError, match="AutoResearch|turn_score_rule|performance_bands"):
+            inspect_l2_package(package)
+

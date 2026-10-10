@@ -511,6 +511,55 @@ def _transfer_related(
     )
 
 
+AUTO_RESEARCH_TURN_SCORE_RULE = "native_normalized_score_if_valid"
+
+
+def _validate_v5_autoresearch_scoring(stream_id: str, task: dict[str, Any]) -> None:
+    """Contract §17.6: AutoResearch Turns score the clipped normalized metric.
+
+    The Judge owns one ``auto_research_validity`` check (0 or 1) and the
+    framework sets the Turn score. Packages composed before this rule (release
+    ``l2-demo-v5``) still declare ``performance_bands`` and the ordinal
+    ``auto_research_overall`` check; they remain loadable.
+    """
+    evaluation = task.get("evaluation")
+    if not isinstance(evaluation, dict) or evaluation.get("evaluation_profile") != "auto_research":
+        return
+    where = f"{stream_id}/{task.get('turn_id')}"
+    metric = evaluation.get("metric_profile")
+    if not isinstance(metric, dict):
+        raise L2SpecError(f"{where}: AutoResearch metric_profile is required")
+    checks = evaluation.get("checks")
+    if "turn_score_rule" not in metric:
+        bands = metric.get("performance_bands")
+        if not isinstance(bands, dict) or not isinstance(checks, list) or len(checks) != 1 \
+                or checks[0].get("check_id") != "auto_research_overall":
+            raise L2SpecError(f"{where}: AutoResearch scoring must declare turn_score_rule or legacy bands")
+        return
+    if metric["turn_score_rule"] != AUTO_RESEARCH_TURN_SCORE_RULE:
+        raise L2SpecError(f"{where}: unsupported AutoResearch turn_score_rule")
+    if "performance_bands" in metric:
+        raise L2SpecError(f"{where}: continuous AutoResearch scoring must not declare performance_bands")
+    if metric.get("validity_check_id") != "auto_research_validity" or metric.get(
+        "judge_value_source"
+    ) != "native_verifier_result.score":
+        raise L2SpecError(f"{where}: AutoResearch validity check or score source is wrong")
+    if (
+        not isinstance(checks, list)
+        or len(checks) != 1
+        or checks[0].get("check_id") != "auto_research_validity"
+        or checks[0].get("scoring") != "ordinal"
+        or float(checks[0].get("weight", 0)) != 1.0
+    ):
+        raise L2SpecError(f"{where}: AutoResearch must declare one auto_research_validity check")
+    if float(evaluation.get("success_policy", {}).get("turn_score_threshold", -1)) != 1.0:
+        raise L2SpecError(f"{where}: AutoResearch validity requires turn_score_threshold 1.0")
+    route = evaluation.get("judge_config", {}).get("rubric_route", {})
+    domain = route.get("domain_rubric") or {}
+    if domain.get("rubric_id") != "auto_research" or domain.get("version") != "2.0":
+        raise L2SpecError(f"{where}: continuous AutoResearch scoring requires the auto_research 2.0 rubric")
+
+
 def _validate_v5_task(
     *,
     stream_id: str,
@@ -546,6 +595,7 @@ def _validate_v5_task(
         or taxonomy.get("task_type_ids") != capability.get("task_type_ids")
     ):
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: taxonomy fields do not match codebook")
+    _validate_v5_autoresearch_scoring(stream_id, task)
     profile_id = task.get("runtime_profile_id")
     if profile_id not in v5_contract["profile_map"]:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: unknown runtime profile {profile_id!r}")

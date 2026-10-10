@@ -126,9 +126,18 @@ agent failure. All Turns use `l2_judge/2.0`. General Turns keep V4's three check
 `evidence_and_side_effect_integrity` 0.15). AutoResearch Turns use one ordinal
 check with the AutoResearch domain rubric and an AIRS-Bench or MLGym benchmark
 rubric (`prompts/rubrics/`). Their verifier score is the upstream AIRS
-normalized score; bands are $a + 0.5(1-a)$ (partial) and $a + 0.8(1-a)$ (full),
-where $a$ is the normalized score of the shuffled-gold fixture for AIRS and 0
-for MLGym. tau2 Turns submit a JSON trajectory that the verifier replays in the
+normalized score; in the released package (`l2-demo-v5`) the Judge maps it to
+0/0.5/1 with bands $a + 0.5(1-a)$ (partial) and $a + 0.8(1-a)$ (full), where
+$a$ is the normalized score of the shuffled-gold fixture for AIRS and 0 for
+MLGym.
+
+Scoring change (2026-10-10, contract §17.6; takes effect from the next package
+build): an AutoResearch Turn scores the upstream normalized score clipped to
+[0, 1] when the Judge finds the submission valid, and 0 otherwise. The Judge
+check becomes `auto_research_validity` (0 or 1, rubrics `*_v2.md`), bands are
+removed, and $a$ is kept only as `reference_context.reference_scores`. For
+example, the DeepSeek smoke HousePrice submission (R² 0.8936) scores 0.218 instead of
+0. The runtime still scores the released package by its bands. tau2 Turns submit a JSON trajectory that the verifier replays in the
 real tau2 environment and scores with the native DB-state and assertion reward.
 
 ### Images

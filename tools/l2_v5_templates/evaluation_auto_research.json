@@ -4,19 +4,19 @@
   "evaluation_profile": "auto_research",
   "checks": [
     {
-      "check_id": "auto_research_overall",
+      "check_id": "auto_research_validity",
       "dimension": "task_success",
       "weight": 1.0,
       "scoring": "ordinal",
-      "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+      "instruction": "Decide only whether the submission is a valid, reproducible AutoResearch result under the routed rubrics: 1 = valid, 0 = missing, invalid, unreproducible, or materially violating constraints. Do not grade the metric value; the framework sets the Turn score from the native normalized score."
     }
   ],
   "rubrics": {
     "source_rubrics": [],
     "behavioral_rubrics": [
       {
-        "rubric_id": "auto_research_overall",
-        "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+        "rubric_id": "auto_research_validity",
+        "instruction": "Decide only whether the submission is a valid, reproducible AutoResearch result under the routed rubrics: 1 = valid, 0 = missing, invalid, unreproducible, or materially violating constraints. Do not grade the metric value; the framework sets the Turn score from the native normalized score."
       }
     ]
   },
@@ -32,7 +32,7 @@
     },
     "rubric_gt": {
       "behavioral_check_ids": [
-        "auto_research_overall"
+        "auto_research_validity"
       ]
     },
     "state_gt": {
@@ -47,7 +47,7 @@
       "Do not modify unrelated persistent Workspace content.",
       "Do not claim execution without observable evidence."
     ],
-    "notes": "Gold and native assets are evaluator-private. The continuous native metric is mandatory Judge evidence; the sole AutoResearch check produces the unified discrete score."
+    "notes": "Gold and native assets are evaluator-private. The Judge decides submission validity only; for a valid submission the Turn score is the native normalized score clipped to [0, 1] (metric_profile.turn_score_rule), otherwise 0."
   },
   "expected_state": {
     "target_facts": []

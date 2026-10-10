@@ -143,6 +143,29 @@ sys.stdout.write("\\n")
 # ---------------------------------------------------------------------------
 
 
+# AutoResearch Turn score (contract §17.6): clipped AIRS normalized score of a
+# submission the Judge finds valid; 0 otherwise.
+TURN_SCORE_RULE = "native_normalized_score_if_valid"
+
+
+def autoresearch_reference_scores(record: dict[str, Any]) -> dict[str, Any]:
+    """Reference scores reported next to the Turn score; never thresholds.
+
+    Pool records built before the continuous score carry ``performance_bands``
+    instead of ``reference_scores``; for those the shuffled-gold reference is
+    the AIRS ``known_correct`` fixture score (MLGym has none).
+    """
+    metric = record["metric_profile"]
+    if isinstance(metric.get("reference_scores"), dict):
+        return dict(metric["reference_scores"])
+    shuffled = None
+    if record["source"]["benchmark_id"] == "airs_bench":
+        known = record.get("qualification", {}).get("known_correct") or {}
+        if known.get("status") == "pass" and known.get("score") is not None:
+            shuffled = round(min(1.0, max(0.0, float(known["score"]))), 6)
+    return {"shuffled_gold_normalized": shuffled}
+
+
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -358,17 +381,18 @@ def evaluation_block(stream_id: str, turn_id: str, record: dict[str, Any], turn_
             "metric_name": metric["metric_name"], "raw_direction": metric["raw_direction"],
             "raw_metric_required": True, "judge_value_source": "native_verifier_result.score",
             "judge_value_semantics": "normalized_higher_is_better_0_1",
-            "performance_bands": metric["performance_bands"],
+            "turn_score_rule": TURN_SCORE_RULE, "validity_check_id": "auto_research_validity",
         }
         evaluation["reference_context"].update({
             "raw_metric_name": metric["metric_name"], "raw_metric_direction": metric["raw_direction"],
-            "normalization": metric["normalization"], "performance_band_source": metric["band_source"],
+            "normalization": metric["normalization"],
+            "reference_scores": autoresearch_reference_scores(record),
             "native_scoring_method": "upstream_normalized_metric",
         })
         evaluation["judge_config"]["rubric_route"] = {
             "composition": "common_then_domain_then_benchmark",
-            "domain_rubric": {"rubric_id": "auto_research", "version": "1.0", "path": rubric_paths["auto_research"]},
-            "benchmark_rubric": {"rubric_id": benchmark, "version": "1.0", "path": rubric_paths[benchmark]},
+            "domain_rubric": {"rubric_id": "auto_research", "version": "2.0", "path": rubric_paths["auto_research"]},
+            "benchmark_rubric": {"rubric_id": benchmark, "version": "2.0", "path": rubric_paths[benchmark]},
         }
     return evaluation
 
@@ -397,8 +421,8 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
     with tempfile.TemporaryDirectory(prefix="l2-v5-compose-", dir=out.parent) as temporary:
         stage = Path(temporary) / out.name
         stage.mkdir()
-        rubric_paths = {"auto_research": "prompts/rubrics/auto_research_v1.md",
-                        "airs_bench": "prompts/rubrics/airs_bench_v1.md", "mlgym": "prompts/rubrics/mlgym_v1.md"}
+        rubric_paths = {"auto_research": "prompts/rubrics/auto_research_v2.md",
+                        "airs_bench": "prompts/rubrics/airs_bench_v2.md", "mlgym": "prompts/rubrics/mlgym_v2.md"}
         # The runtime reads routed rubrics from the package root; always ship them.
         shutil.copytree(rubric_dir or TEMPLATES / "rubrics", stage / "prompts" / "rubrics")
         missing = [path for path in rubric_paths.values() if not (stage / path).is_file()]

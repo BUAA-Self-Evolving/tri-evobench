@@ -536,3 +536,10 @@ V5 Stream 的 `workspace_persistence` 为 `stream`：整条 Stream 共用一个 
 ### 17.5 Runtime profile
 
 `runtime_profiles.json` 中每个 profile 固定 task 与 verifier 镜像的 digest、`turn_timeout_seconds`、`requires_gpu` 与 `gpu_count`。`requires_gpu=true` 的 Turn 只能在提供 GPU 直通的 Runtime 上运行；没有 GPU 直通时，Runtime 必须把这类 Stream 报告为不可运行，不能降级到 CPU 后计分。
+
+### 17.6 AutoResearch Turn score
+
+AutoResearch Turn（AIRS-Bench、MLGym，含显式依赖 Stream 的阶段 2 与 probe）的 Turn score 是有效提交的上游 AIRS 归一化分数，截断到 `[0, 1]`；无效提交为 `0`。Judge 只判定有效性。字段与计算见 `L2_EVALUATION_SPEC_zh.md` 2.1 节"AutoResearch 连续分数（1.2）"。连续分数让同一能力的进步在 Turn score 上可见，不再被分档抹平。
+
+显式依赖 Stream 的阶段 1 是为 V5 编写的派生检查，只有通过/不通过，没有上游归一化分数，因此按 General Profile 计分（三项加权 check，Turn score 在 `[0, 1]`）。
+

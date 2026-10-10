@@ -64,6 +64,9 @@ benchmark measures what the agent learns along the Stream.
   the AIRS normalized score; $a$ is the shuffled-gold score for AIRS and 0 for
   MLGym (whose worst anchor is the upstream baseline). With the network disabled,
   the agent has no pretrained models, so the bands may be strict.
+  Superseded on 2026-10-10 (user decision): the Turn score is now the clipped
+  upstream normalized score of a valid submission, because three bands hide
+  most of the progress the benchmark is meant to measure (contract §17.6).
 - **GPU image.** Built on the CPU image, with only torch/torchvision (CUDA 12.4),
   jax (CUDA 12), and xgboost swapped. A full re-resolution of the package set had
   pip backtracking for more than 30 minutes. `JAX_PLATFORMS` is reset to auto,

@@ -58,9 +58,16 @@ For `auto_research`, `metric_profile` is:
 {"metric_name": "...", "raw_direction": "maximize | minimize",
  "normalization": {"method": "...", "worst": 0.0, "reference": 0.0, "optimal": 0.0,
                    "source": "upstream metadata path"},
- "performance_bands": {"partial_min_inclusive": 0.0, "full_min_inclusive": 0.0},
- "band_source": "how the bands derive from upstream baseline/SOTA"}
+ "turn_score_rule": "native_normalized_score_if_valid",
+ "reference_scores": {"shuffled_gold_normalized": 0.0},
+ "score_source": "normalization anchors and the shuffled-gold reference, in words"}
 ```
+
+The Turn score of a valid submission is the normalized score clipped to
+[0, 1]; `reference_scores` are reported, never used as thresholds. Pool records
+built before 2026-10-10 carry `performance_bands`/`band_source` instead; the
+composer ignores them and takes the shuffled-gold reference from the AIRS
+`known_correct` qualification score.
 
 ## Path mapping
 

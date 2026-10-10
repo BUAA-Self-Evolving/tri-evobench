@@ -832,9 +832,10 @@ class L2AgentStreamRunner:
                                     .get("turn_score_threshold", 1.0)
                                 )
                                 passed = score >= threshold
+                                turn_score = _taskstream_turn_score(task, verification, score, passed)
                                 feedback = None if passed else _project_bounded_feedback(task, verification)
                                 outcome = EvaluationOutcome.scored(
-                                    turn_score=score,
+                                    turn_score=turn_score,
                                     passed=passed,
                                     bounded_feedback=feedback,
                                     private_diagnostics={
@@ -2154,6 +2155,35 @@ def _public_taskstream_trajectory(item: dict[str, Any]) -> dict[str, Any]:
         "score": item.get("score"),
         "passed": item.get("passed"),
     }
+
+
+AUTO_RESEARCH_TURN_SCORE_RULE = "native_normalized_score_if_valid"
+
+
+def _taskstream_turn_score(
+    task: dict[str, Any], verification: dict[str, Any], judge_score: float, passed: bool
+) -> float:
+    """Turn score from the Judge score, or the AutoResearch continuous rule.
+
+    ``l2_taskstream/1.2`` AutoResearch Turns declare
+    ``metric_profile.turn_score_rule = native_normalized_score_if_valid``: the
+    Judge only decides validity (``passed``), and a valid submission scores
+    the native verifier's upstream normalized score clipped to [0, 1]. Tasks
+    without the rule (General, legacy banded AutoResearch) keep the Judge score.
+    """
+    evaluation = task.get("evaluation", {})
+    metric = evaluation.get("metric_profile") if isinstance(evaluation, dict) else None
+    if not isinstance(metric, dict) or "turn_score_rule" not in metric:
+        return judge_score
+    if metric["turn_score_rule"] != AUTO_RESEARCH_TURN_SCORE_RULE:
+        raise L2AgentRunError(f"unsupported turn_score_rule: {metric['turn_score_rule']!r}")
+    native = verification.get("native_result", {})
+    if not passed or native.get("status") != "pass":
+        return 0.0
+    value = native.get("score")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value != value:
+        raise L2AgentRunError("AutoResearch native result has no numeric normalized score")
+    return min(1.0, max(0.0, float(value)))
 
 
 def _taskstream_retryable(task: dict[str, Any], verification: dict[str, Any]) -> bool:

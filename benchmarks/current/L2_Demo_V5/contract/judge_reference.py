@@ -19,6 +19,9 @@ JUDGE_OUTPUT_SCHEMA = json.loads(
 PLACEHOLDER = re.compile(r"\{([a-z][a-z0-9_]*)\}")
 
 
+AUTO_RESEARCH_TURN_SCORE_RULE = "native_normalized_score_if_valid"
+
+
 def validate_evaluation_profile(task: dict[str, Any]) -> None:
     """Validate cross-field rules that JSON Schema cannot express cleanly."""
 
@@ -39,20 +42,37 @@ def validate_evaluation_profile(task: dict[str, Any]) -> None:
         raise ValueError(f"unsupported evaluation profile: {profile}")
 
     metric = evaluation["metric_profile"]
-    bands = metric["performance_bands"]
-    if bands["full_min_inclusive"] < bands["partial_min_inclusive"]:
-        raise ValueError("full performance threshold must be >= partial threshold")
-
     checks = evaluation["checks"]
-    if len(checks) != 1 or checks[0]["check_id"] != "auto_research_overall":
-        raise ValueError("AutoResearch must use one auto_research_overall ordinal check")
-    if checks[0]["scoring"] != "ordinal" or not math.isclose(checks[0]["weight"], 1.0):
-        raise ValueError("AutoResearch overall check must be ordinal with weight 1")
-
     judge_config = evaluation["judge_config"]
+    domain = judge_config["rubric_route"]["domain_rubric"]
+    if metric.get("turn_score_rule") is not None:
+        # l2_taskstream/1.2 (§17.6): the Judge decides validity; the Turn score
+        # is the clipped native normalized score of a valid submission.
+        if metric["turn_score_rule"] != AUTO_RESEARCH_TURN_SCORE_RULE or "performance_bands" in metric:
+            raise ValueError("continuous AutoResearch scoring must not declare performance bands")
+        expected_check = metric.get("validity_check_id")
+        if expected_check != "auto_research_validity":
+            raise ValueError("continuous AutoResearch scoring requires the auto_research_validity check")
+        if domain.get("version") != "2.0":
+            raise ValueError("continuous AutoResearch scoring requires the auto_research 2.0 rubric")
+        if not math.isclose(float(evaluation["success_policy"]["turn_score_threshold"]), 1.0):
+            raise ValueError("AutoResearch validity requires turn_score_threshold 1")
+    else:
+        bands = metric["performance_bands"]
+        if bands["full_min_inclusive"] < bands["partial_min_inclusive"]:
+            raise ValueError("full performance threshold must be >= partial threshold")
+        expected_check = "auto_research_overall"
+        if domain.get("version") != "1.0":
+            raise ValueError("banded AutoResearch scoring requires the auto_research 1.0 rubric")
+
+    if len(checks) != 1 or checks[0]["check_id"] != expected_check:
+        raise ValueError(f"AutoResearch must use one {expected_check} ordinal check")
+    if checks[0]["scoring"] != "ordinal" or not math.isclose(checks[0]["weight"], 1.0):
+        raise ValueError("AutoResearch check must be ordinal with weight 1")
+
     if judge_config["prompt_version"] != "l2_judge/2.0":
         raise ValueError("AutoResearch requires Judge Prompt V2")
-    if judge_config["rubric_route"]["domain_rubric"]["rubric_id"] != "auto_research":
+    if domain["rubric_id"] != "auto_research":
         raise ValueError("AutoResearch must route the auto_research domain rubric")
 
     success_policy = evaluation["success_policy"]
@@ -146,6 +166,31 @@ def validate_judge_output(task: dict[str, Any], interaction_index: int, output: 
     expected_rubrics = list(range(1, rubric_count + 1))
     if sorted(returned_rubrics) != expected_rubrics or len(returned_rubrics) != len(set(returned_rubrics)):
         raise ValueError("Judge output must cover every source rubric exactly once")
+
+
+def turn_score(task: dict[str, Any], judge_score: float, native_result: dict[str, Any]) -> float:
+    """Final Turn score from the aggregated Judge score and the native result.
+
+    Without ``metric_profile.turn_score_rule`` the Turn score is the Judge
+    score. With ``native_normalized_score_if_valid`` the Judge score is the
+    validity decision: a submission is valid when it reaches
+    ``success_policy.turn_score_threshold`` (1) and the native verifier passed;
+    a valid submission scores the native normalized ``score`` clipped to
+    [0, 1], an invalid one scores 0.
+    """
+
+    validate_evaluation_profile(task)
+    evaluation = task["evaluation"]
+    metric = evaluation.get("metric_profile") or {}
+    if metric.get("turn_score_rule") is None:
+        return judge_score
+    threshold = float(evaluation["success_policy"]["turn_score_threshold"])
+    if judge_score < threshold or native_result.get("status") != "pass":
+        return 0.0
+    value = native_result["score"]
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise ValueError("AutoResearch native result needs a finite normalized score")
+    return min(1.0, max(0.0, float(value)))
 
 
 def aggregate_judge_score(task: dict[str, Any], output: dict[str, Any]) -> float:
