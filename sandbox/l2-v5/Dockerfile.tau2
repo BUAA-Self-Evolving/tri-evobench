@@ -1,0 +1,33 @@
+ARG BASE_IMAGE=trievo-l2-v5:0.4
+FROM ${BASE_IMAGE}
+
+# tau2-bench (sierra-research/tau2-bench a2c024725189473d2d7cea3a5cfdbcc67478e41f,
+# MIT) for the rebuilt L2 V5 pool. tools/l2_v5_tau2.py assembles the build
+# context from the read-only checkout:
+#   tau2-src/   pyproject.toml, LICENSE, README.md, src/tau2 (minus the telecom
+#               task generator, which can regenerate gold solutions)
+#   tau2-data/  domain DBs, policies and knowledge documents only; no tasks*.json,
+#               splits, voice/audio files. Task definitions with evaluation
+#               criteria live in each pool task's private evaluation_assets.
+#
+# The base interpreter is Python 3.11; upstream declares >=3.12 but the source
+# compiles and contains no 3.12-only stdlib usage. tau2 is installed into its
+# own venv that reuses the base site-packages, so base packages are untouched.
+# Red/green qualification of every admitted task runs in this image.
+
+ARG PIP_INDEX_URL=https://pypi.org/simple
+
+COPY tau2-src /opt/tau2/src
+COPY tau2-data /opt/tau2/data
+
+RUN python -m venv --system-site-packages /opt/tau2/venv \
+    && /opt/tau2/venv/bin/pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" \
+        --ignore-requires-python /opt/tau2/src \
+    && rm -rf /opt/tau2/src \
+    && find /opt/tau2/venv -name '__pycache__' -prune -exec rm -rf {} +
+
+ENV TAU2_DATA_DIR=/opt/tau2/data \
+    TAU2_PYTHON=/opt/tau2/venv/bin/python
+
+WORKDIR /workspace
+CMD ["sleep", "infinity"]

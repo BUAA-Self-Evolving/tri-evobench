@@ -32,7 +32,14 @@ def _rewrite_binding(package: Path, key: str) -> None:
     _write_json(package / "manifest.json", manifest)
 
 
-def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dict | None = None) -> Path:
+def _minimal_v5(
+    root: Path,
+    *,
+    stream_patch: dict | None = None,
+    task_patch: dict | None = None,
+    persistence: str = "task_local",
+    taxonomy_extra: dict | None = None,
+) -> Path:
     package = root / "L2_Demo_V5"
     stream = package / "streams" / "s"
     (stream / "agent_workspace").mkdir(parents=True)
@@ -78,7 +85,10 @@ def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dic
                 "parent_turn_ids": [],
             },
             "agent_input": {"messages": [{"role": "user", "content": "write TOKEN"}]},
-            "workspace_transition": {"mode": "task_local_seed", "operations": []},
+            "workspace_transition": {
+                "mode": "task_local_seed" if persistence == "task_local" else "continue_with_patch",
+                "operations": [],
+            },
             "evaluation": {"native_verifier": {"required": True}},
         }
         if role == "probe":
@@ -93,6 +103,7 @@ def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dic
             }
         if task_patch and turn_id == "turn10":
             task.update(task_patch)
+            summaries[-1]["capability_id"] = task["taxonomy_ref"]["capability_id"]
         _write_json(stream / turn_id / "task.json", task)
     stream_manifest = {
         "schema_version": "l2_taskstream/1.2",
@@ -103,7 +114,7 @@ def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dic
         "turn_count": 12,
         "task_layout": "turn_directories",
         "agent_workspace": "agent_workspace",
-        "workspace_persistence": "task_local",
+        "workspace_persistence": persistence,
         "turn_type_counts": {"capability_application": 12},
         "fact_thread_count": 0,
         "stream_design": {
@@ -176,8 +187,9 @@ def _minimal_v5(root: Path, *, stream_patch: dict | None = None, task_patch: dic
         "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
         "capabilities": {
             cap: {"domain_id": "software_engineering", "task_type_ids": ["analysis"]}
-            for cap in caps
+            for cap in [*caps, *(taxonomy_extra or {}).get("capabilities", [])]
         },
+        "transfer_groups": (taxonomy_extra or {}).get("transfer_groups", []),
     })
     bindings = {}
     for name in ("pools.json", "panels.json", "taxonomy.json", "runtime_profiles.json"):
@@ -250,7 +262,7 @@ def test_v5_panel_schema_preserves_v4_panel_document_compatibility() -> None:
     ("patch", "message"),
     [
         ({"turn_count": 21}, "turn_count"),
-        ({"workspace_persistence": "stream"}, "workspace_persistence"),
+        ({"workspace_persistence": "bogus"}, "workspace_persistence"),
         ({"capabilities": [{"capability_id": "a", "domain_id": "d", "task_type_ids": ["t"], "source_benchmark": "x"}]}, "at least 3"),
     ],
 )
@@ -455,3 +467,84 @@ def test_l2_demo_v5_tasks_embed_full_judge_and_simulator_prompts() -> None:
         task = _read_json(path)
         assert task["evaluation"]["judge_config"]["judge_prompt"] == judge_prompt
         assert task["user_simulator"]["simulator_prompt"] == simulator_prompt
+
+
+def _probe_patch(**overrides: object) -> dict:
+    probe = {
+        "target_capability_id": "cap_a",
+        "expected_transfer_from_turn_ids": ["turn1", "turn4", "turn7"],
+        "interference_capability_ids": ["cap_b", "cap_c"],
+        "probe_gap_turns": 2,
+        "claim_scope": "within_benchmark_retention",
+        "held_out_source_task_id": "cap_a-10",
+    }
+    probe.update(overrides)
+    return {"probe_spec": probe}
+
+
+def test_v5_stream_persistent_workspace_package_passes() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        inventory = inspect_l2_package(_minimal_v5(Path(tmp), persistence="stream"))
+    assert inventory[0].episode_count == 12
+
+
+def test_v5_stream_persistent_package_rejects_task_local_transition() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), persistence="stream", task_patch={
+            "workspace_transition": {"mode": "task_local_seed", "operations": []},
+        })
+        with pytest.raises(L2SpecError, match="unsupported transition"):
+            inspect_l2_package(package)
+
+
+def test_v5_probe_accepts_empty_interference_for_blocked_schedule() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), task_patch=_probe_patch(interference_capability_ids=[], probe_gap_turns=0))
+        inspect_l2_package(package)
+
+
+def test_v5_probe_rejects_negative_gap() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), task_patch=_probe_patch(probe_gap_turns=-1))
+        with pytest.raises(L2SpecError, match="probe_gap_turns"):
+            inspect_l2_package(package)
+
+
+def _transfer_patch() -> dict:
+    patch = _probe_patch(
+        target_capability_id="cap_x",
+        claim_scope="cross_benchmark_transfer",
+        transfer_source_capability_id="cap_a",
+        transfer_group_id="g",
+    )
+    patch.update({
+        "relation_class": "cross_benchmark_transfer",
+        "taxonomy_ref": {
+            "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+            "domain_id": "software_engineering",
+            "task_type_ids": ["analysis"],
+            "capability_id": "cap_x",
+            "native_labels": {},
+        },
+        "capability_relation": {"capability_id": "cap_x", "parent_turn_ids": []},
+    })
+    return patch
+
+
+def test_v5_transfer_probe_passes_with_declared_transfer_group() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), task_patch=_transfer_patch(), taxonomy_extra={
+            "capabilities": ["cap_x"],
+            "transfer_groups": [{"group_id": "g", "capability_ids": ["cap_a", "cap_x"]}],
+        })
+        inspect_l2_package(package)
+
+
+def test_v5_transfer_probe_rejects_capabilities_outside_transfer_group() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), task_patch=_transfer_patch(), taxonomy_extra={
+            "capabilities": ["cap_x"],
+            "transfer_groups": [{"group_id": "g", "capability_ids": ["cap_b", "cap_x"]}],
+        })
+        with pytest.raises(L2SpecError, match="another capability"):
+            inspect_l2_package(package)

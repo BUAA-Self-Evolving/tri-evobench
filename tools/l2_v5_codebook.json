@@ -1,0 +1,484 @@
+{
+  "schema_version": "l2_capability_codebook/2.0",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0",
+  "capabilities": [
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "benchmark_id": "mlgym",
+      "domain_id": "auto_research",
+      "task_type_ids": [
+        "iterated_game_strategy"
+      ],
+      "description": "game-theoretic strategies and reinforcement learning policies. Pure-Python game simulation; CPU.",
+      "grouping_rule": "game-theoretic strategies and reinforcement learning policies. Pure-Python game simulation; CPU.",
+      "admitted_pool_tasks": 6
+    },
+    {
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "benchmark_id": "airs-bench",
+      "domain_id": "auto_research",
+      "task_type_ids": [
+        "code_retrieval",
+        "ranking"
+      ],
+      "description": "time-series forecasting, math word problems, code retrieval/generation. NL-to-code retrieval scored by MRR; lexical retrieval (TF-IDF/BM25) runs on CPU.",
+      "grouping_rule": "time-series forecasting, math word problems, code retrieval/generation. NL-to-code retrieval scored by MRR; lexical retrieval (TF-IDF/BM25) runs on CPU.",
+      "admitted_pool_tasks": 5
+    },
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "benchmark_id": "airs-bench",
+      "domain_id": "auto_research",
+      "task_type_ids": [
+        "coreference_resolution"
+      ],
+      "description": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "grouping_rule": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "admitted_pool_tasks": 11
+    },
+    {
+      "capability_id": "ar.vision_and_deep_models",
+      "benchmark_id": "airs-bench",
+      "domain_id": "auto_research",
+      "task_type_ids": [
+        "molecular_property_regression"
+      ],
+      "description": "image, molecular and graph models that need deep-network training. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "grouping_rule": "image, molecular and graph models that need deep-network training. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "admitted_pool_tasks": 7
+    },
+    {
+      "capability_id": "skilllearn.court-form-filling",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "office_documents",
+      "task_type_ids": [
+        "document_processing"
+      ],
+      "description": "SkillLearnBench task family 'court-form-filling' (upstream category document-processing); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 6
+    },
+    {
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'dbscan-parameter-tuning' (upstream category data-science); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 5
+    },
+    {
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'earthquake-plate-calculation' (upstream category geophysics); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 2
+    },
+    {
+      "capability_id": "skilllearn.offer-letter-generator",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'offer-letter-generator' (upstream category document-generation); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 6
+    },
+    {
+      "capability_id": "skilllearn.stock-data-visualization",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'stock-data-visualization' (upstream category Data Visualization); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 5
+    },
+    {
+      "capability_id": "skilllearn.video-object-counting",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'video-object-counting' (upstream category image-processing); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 5
+    },
+    {
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "benchmark_id": "skilllearnbench",
+      "domain_id": "general",
+      "task_type_ids": [
+        "file_artifact_generation"
+      ],
+      "description": "SkillLearnBench task family 'weighted-gdp-calculation' (upstream category financial-analysis); instances are native siblings.",
+      "grouping_rule": "upstream task family (native siblings)",
+      "admitted_pool_tasks": 5
+    },
+    {
+      "capability_id": "skillsbench.cybersecurity",
+      "benchmark_id": "skillsbench",
+      "domain_id": "cybersecurity",
+      "task_type_ids": [
+        "security_analysis"
+      ],
+      "description": "SkillsBench tasks in upstream category 'cybersecurity'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 1
+    },
+    {
+      "capability_id": "skillsbench.finance-economics",
+      "benchmark_id": "skillsbench",
+      "domain_id": "finance_economics",
+      "task_type_ids": [
+        "quantitative_analysis"
+      ],
+      "description": "SkillsBench tasks in upstream category 'finance-economics'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 7
+    },
+    {
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "benchmark_id": "skillsbench",
+      "domain_id": "industrial_engineering",
+      "task_type_ids": [
+        "simulation_and_control"
+      ],
+      "description": "SkillsBench tasks in upstream category 'industrial-physical-systems'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 9
+    },
+    {
+      "capability_id": "skillsbench.mathematics-or-formal-reasoning",
+      "benchmark_id": "skillsbench",
+      "domain_id": "formal_reasoning",
+      "task_type_ids": [
+        "planning_and_optimization"
+      ],
+      "description": "SkillsBench tasks in upstream category 'mathematics-or-formal-reasoning'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 3
+    },
+    {
+      "capability_id": "skillsbench.media-content-production",
+      "benchmark_id": "skillsbench",
+      "domain_id": "media_production",
+      "task_type_ids": [
+        "media_processing"
+      ],
+      "description": "SkillsBench tasks in upstream category 'media-content-production'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 2
+    },
+    {
+      "capability_id": "skillsbench.natural-science",
+      "benchmark_id": "skillsbench",
+      "domain_id": "natural_science",
+      "task_type_ids": [
+        "scientific_data_analysis"
+      ],
+      "description": "SkillsBench tasks in upstream category 'natural-science'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 6
+    },
+    {
+      "capability_id": "skillsbench.office-white-collar",
+      "benchmark_id": "skillsbench",
+      "domain_id": "office_documents",
+      "task_type_ids": [
+        "document_processing"
+      ],
+      "description": "SkillsBench tasks in upstream category 'office-white-collar'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 10
+    },
+    {
+      "capability_id": "skillsbench.software-engineering",
+      "benchmark_id": "skillsbench",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "software_modification"
+      ],
+      "description": "SkillsBench tasks in upstream category 'software-engineering'.",
+      "grouping_rule": "upstream metadata.category (coarse group)",
+      "admitted_pool_tasks": 7
+    },
+    {
+      "capability_id": "sra.data_visualization",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "data_visualization"
+      ],
+      "description": "Plot data with matplotlib/seaborn and return the expected Axes or figure objects.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 314
+    },
+    {
+      "capability_id": "sra.dataframe_analysis",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "tabular_data_analysis"
+      ],
+      "description": "Construct, transform, and summarize pandas DataFrames.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 236
+    },
+    {
+      "capability_id": "sra.datetime_and_time",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "datetime"
+      ],
+      "description": "Date, time, and timezone computation.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 10
+    },
+    {
+      "capability_id": "sra.encoding_and_hashing",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "encoding"
+      ],
+      "description": "Binary encodings, hashing, and codecs.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 10
+    },
+    {
+      "capability_id": "sra.filesystem_and_io",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "file_io"
+      ],
+      "description": "Files, directories, archives, CSV/JSON, sqlite, and subprocess I/O.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 173
+    },
+    {
+      "capability_id": "sra.general_python",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation"
+      ],
+      "description": "Other standard-library Python tasks.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 16
+    },
+    {
+      "capability_id": "sra.numerical_and_ml",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "numerical_computing"
+      ],
+      "description": "Numerical computing and classical ML with numpy, scipy, scikit-learn, statistics.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 99
+    },
+    {
+      "capability_id": "sra.text_processing",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "text_processing"
+      ],
+      "description": "Regex, string handling, counting, and NLP text processing.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 77
+    },
+    {
+      "capability_id": "sra.web_and_network",
+      "benchmark_id": "sr_agents",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "web_io"
+      ],
+      "description": "HTTP, URL, and HTML parsing code; tests run offline with mocks.",
+      "grouping_rule": "first matching coarse group over upstream gold skill_annotations",
+      "admitted_pool_tasks": 52
+    },
+    {
+      "capability_id": "tau2.airline.booking_cancellation",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "airline_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "gold actions book or cancel a reservation",
+      "grouping_rule": "gold actions book or cancel a reservation",
+      "admitted_pool_tasks": 12
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "airline_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "gold actions contain no reservation write (refuse/inform/transfer)",
+      "grouping_rule": "gold actions contain no reservation write (refuse/inform/transfer)",
+      "admitted_pool_tasks": 24
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "airline_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "gold actions modify an existing reservation",
+      "grouping_rule": "gold actions modify an existing reservation",
+      "admitted_pool_tasks": 14
+    },
+    {
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "banking_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "banking_knowledge tasks: KB-guided account procedures",
+      "grouping_rule": "banking_knowledge tasks: KB-guided account procedures",
+      "admitted_pool_tasks": 30
+    },
+    {
+      "capability_id": "tau2.retail.order_modification",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "retail_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "first gold write cancels/modifies a pending order or user address",
+      "grouping_rule": "first gold write cancels/modifies a pending order or user address",
+      "admitted_pool_tasks": 52
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "retail_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "gold actions contain no order write (refuse/inform/transfer)",
+      "grouping_rule": "gold actions contain no order write (refuse/inform/transfer)",
+      "admitted_pool_tasks": 10
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "retail_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "first gold write returns/exchanges a delivered order",
+      "grouping_rule": "first gold write returns/exchanges a delivered order",
+      "admitted_pool_tasks": 51
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "telecom_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "upstream telecom issue type [mms_issue] in the task id",
+      "grouping_rule": "upstream telecom issue type [mms_issue] in the task id",
+      "admitted_pool_tasks": 57
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "telecom_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "upstream telecom issue type [mobile_data_issue] in the task id",
+      "grouping_rule": "upstream telecom issue type [mobile_data_issue] in the task id",
+      "admitted_pool_tasks": 77
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "benchmark_id": "tau2_bench",
+      "domain_id": "telecom_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "description": "upstream telecom issue type [service_issue] in the task id",
+      "grouping_rule": "upstream telecom issue type [service_issue] in the task id",
+      "admitted_pool_tasks": 41
+    }
+  ],
+  "transfer_groups": [
+    {
+      "group_id": "document_generation",
+      "rationale": "Fill or generate structured office documents from a specification.",
+      "capability_ids": [
+        "skilllearn.court-form-filling",
+        "skilllearn.offer-letter-generator",
+        "skillsbench.office-white-collar"
+      ]
+    },
+    {
+      "group_id": "tabular_analysis_and_reporting",
+      "rationale": "Load tabular data, compute aggregates, and report or plot them.",
+      "capability_ids": [
+        "sra.dataframe_analysis",
+        "sra.data_visualization",
+        "skilllearn.weighted-gdp-calculation",
+        "skilllearn.stock-data-visualization",
+        "skillsbench.finance-economics"
+      ]
+    },
+    {
+      "group_id": "numerical_modeling",
+      "rationale": "Fit, tune, or evaluate numerical and ML models on data.",
+      "capability_ids": [
+        "sra.numerical_and_ml",
+        "skilllearn.dbscan-parameter-tuning",
+        "skillsbench.natural-science",
+        "ar.tabular_and_text_prediction"
+      ]
+    },
+    {
+      "group_id": "program_construction",
+      "rationale": "Write or repair programs against a test-defined contract.",
+      "capability_ids": [
+        "sra.filesystem_and_io",
+        "sra.text_processing",
+        "skillsbench.software-engineering"
+      ]
+    }
+  ]
+}

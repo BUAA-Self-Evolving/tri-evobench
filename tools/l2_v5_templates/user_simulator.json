@@ -1,0 +1,15 @@
+{
+  "type": "llm_post_failure",
+  "trigger": "interaction_unsuccessful_and_budget_remaining",
+  "prompt_version": "l2_user_simulator/1.0",
+  "simulator_prompt": null,
+  "inputs": [
+    "agent_input",
+    "interaction_transcript",
+    "latest_agent_response",
+    "bounded_evaluation_feedback"
+  ],
+  "temperature": 0,
+  "output_schema": "l2_user_simulator_output/1.0",
+  "max_generated_messages": 2
+}

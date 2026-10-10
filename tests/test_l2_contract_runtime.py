@@ -117,6 +117,7 @@ def test_v5_task_local_seed_can_copy_directory_contents_to_workspace_root(
     workspace.mkdir()
     runner = object.__new__(L2AgentStreamRunner)
     runner._taskstream_schema_version = "l2_taskstream/1.2"
+    runner._v5_task_local = True
 
     runner._apply_taskstream_transition(
         {
@@ -134,6 +135,47 @@ def test_v5_task_local_seed_can_copy_directory_contents_to_workspace_root(
     )
 
     assert (workspace / "input.txt").read_text(encoding="utf-8") == "seed\n"
+
+
+def test_v5_stream_persistent_transition_adds_turn_directory_and_keeps_prior_files(
+    tmp_path,
+) -> None:
+    turn_dir = tmp_path / "turn2"
+    seed = turn_dir / "workspace_seed"
+    seed.mkdir(parents=True)
+    (seed / "input.txt").write_text("seed\n", encoding="utf-8")
+    workspace = tmp_path / "workspace"
+    (workspace / "tasks" / "turn1").mkdir(parents=True)
+    (workspace / "tasks" / "turn1" / "answer.txt").write_text("prior\n", encoding="utf-8")
+    runner = object.__new__(L2AgentStreamRunner)
+    runner._taskstream_schema_version = "l2_taskstream/1.2"
+    runner._v5_task_local = False
+
+    runner._apply_taskstream_transition(
+        {
+            "workspace_transition": {
+                "mode": "continue_with_patch",
+                "operations": [{"op": "copy", "source": "workspace_seed", "target": "agent_workspace/tasks/turn2"}],
+            }
+        },
+        turn_dir,
+        workspace,
+    )
+
+    assert (workspace / "tasks" / "turn2" / "input.txt").read_text(encoding="utf-8") == "seed\n"
+    assert (workspace / "tasks" / "turn1" / "answer.txt").read_text(encoding="utf-8") == "prior\n"
+
+
+def test_v5_stream_persistent_runner_rejects_task_local_seed(tmp_path) -> None:
+    runner = object.__new__(L2AgentStreamRunner)
+    runner._taskstream_schema_version = "l2_taskstream/1.2"
+    runner._v5_task_local = False
+    with pytest.raises(L2AgentRunError, match="unsupported TaskStream workspace transition"):
+        runner._apply_taskstream_transition(
+            {"workspace_transition": {"mode": "task_local_seed", "operations": []}},
+            tmp_path,
+            tmp_path,
+        )
 
 
 def _package(root: Path, *, turns: int = 2, simulator_messages: int = 0) -> Path:

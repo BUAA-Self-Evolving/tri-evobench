@@ -80,6 +80,8 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
 
     v5_contract = _load_v5_contract(root)
     v5_source_identities: set[tuple[str, str, str]] = set()
+    # A source task may appear once per pool; pools are aggregated separately.
+    v5_pool_identities: set[tuple[str, tuple[str, str, str]]] = set()
     v5_turn_count = 0
 
     result: list[L2StreamInfo] = []
@@ -162,8 +164,14 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
                         },
                         v5_contract=v5_contract,
                     )
-                    if source_identity in v5_source_identities:
-                        raise L2SpecError(f"{stream_id}/{item}: duplicate source identity")
+                    pool_id = next(
+                        (pid for pid, pool in v5_contract["pool_map"].items()
+                         if stream_id in pool.get("stream_ids", [])),
+                        None,
+                    )
+                    if (pool_id, source_identity) in v5_pool_identities:
+                        raise L2SpecError(f"{stream_id}/{item}: duplicate source identity within pool {pool_id}")
+                    v5_pool_identities.add((pool_id, source_identity))
                     v5_source_identities.add(source_identity)
                     _validate_v5_source_selection(stream_id, item, task, summary, v5_contract)
                 _validate_taskstream_transition(
@@ -171,7 +179,8 @@ def inspect_l2_package(package_dir: str | Path) -> list[L2StreamInfo]:
                     task_path.parent,
                     workspace_seed,
                     task,
-                    task_local=v5_contract is not None,
+                    task_local=v5_contract is not None
+                    and manifest.get("workspace_persistence") == "task_local",
                 )
                 v5_turn_count += int(v5_contract is not None)
             result.append(L2StreamInfo(str(stream_id), len(turns), "taskstream", workspace_name))
@@ -445,10 +454,10 @@ def _validate_v5_stream(
     v5_contract: dict[str, Any],
 ) -> None:
     turn_count = stream.get("turn_count")
-    if not isinstance(turn_count, int) or isinstance(turn_count, bool) or not 12 <= turn_count <= 20:
-        raise L2SpecError(f"{stream_id}: turn_count must be between 12 and 20")
-    if stream.get("workspace_persistence") != "task_local":
-        raise L2SpecError(f"{stream_id}: workspace_persistence must be task_local")
+    if not isinstance(turn_count, int) or isinstance(turn_count, bool) or not 9 <= turn_count <= 20:
+        raise L2SpecError(f"{stream_id}: turn_count must be between 9 and 20")
+    if stream.get("workspace_persistence") not in {"stream", "task_local"}:
+        raise L2SpecError(f"{stream_id}: workspace_persistence must be stream or task_local")
     design = stream.get("stream_design")
     if not isinstance(design, dict):
         raise L2SpecError(f"{stream_id}: stream_design is required")
@@ -472,10 +481,34 @@ def _validate_v5_stream(
         raise L2SpecError(f"{stream_id}: same benchmark pool requires one source benchmark")
     if pool_type == "cross_benchmark" and len(benchmarks) != 3:
         raise L2SpecError(f"{stream_id}: cross pool requires exactly 3 benchmarks")
-    if pool_type not in {"same_benchmark", "cross_benchmark"}:
+    if pool_type == "auto_research" and not benchmarks <= {"airs_bench", "mlgym"}:
+        raise L2SpecError(f"{stream_id}: auto_research pool only admits AIRS-Bench and MLGym")
+    if pool_type not in {"same_benchmark", "cross_benchmark", "auto_research"}:
         raise L2SpecError(f"{stream_id}: unsupported pool_type {pool_type!r}")
     if not isinstance(stream.get("selection_provenance"), dict):
         raise L2SpecError(f"{stream_id}: selection_provenance is required")
+
+
+def _transfer_related(
+    task: dict[str, Any],
+    probe: dict[str, Any],
+    source_capability: Any,
+    target_capability: str,
+    v5_contract: dict[str, Any],
+) -> bool:
+    """A cross-benchmark transfer probe may cite Turns of a capability in the same transfer group."""
+    if task.get("relation_class") != "cross_benchmark_transfer":
+        return False
+    if probe.get("transfer_source_capability_id") != source_capability:
+        return False
+    group_id = probe.get("transfer_group_id")
+    groups = v5_contract["taxonomy_manifest"].get("transfer_groups", [])
+    return any(
+        isinstance(group, dict)
+        and group.get("group_id") == group_id
+        and {source_capability, target_capability} <= set(group.get("capability_ids", []))
+        for group in groups
+    )
 
 
 def _validate_v5_task(
@@ -521,7 +554,9 @@ def _validate_v5_task(
     relation = task.get("capability_relation")
     if not isinstance(relation, dict) or relation.get("capability_id") != capability_id:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: capability relation mismatch")
-    if task.get("relation_class") not in {"native_family_sibling", "reviewed_shared_procedure"}:
+    if task.get("relation_class") not in {
+        "native_family_sibling", "reviewed_shared_procedure", "cross_benchmark_transfer",
+    }:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: invalid relation_class")
     role = task.get("sequence_role")
     probe = task.get("probe_spec")
@@ -538,8 +573,10 @@ def _validate_v5_task(
             if parent not in earlier:
                 raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe references a future Turn")
             parent_task = tasks_by_id.get(str(parent), {})
-            parent_taxonomy = parent_task.get("taxonomy_ref", {})
-            if parent_taxonomy.get("capability_id") != capability_id:
+            parent_capability = parent_task.get("taxonomy_ref", {}).get("capability_id")
+            if parent_capability != capability_id and not _transfer_related(
+                task, probe, parent_capability, capability_id, v5_contract
+            ):
                 raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe references another capability")
         if len(set(parents)) != len(parents):
             raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe transfer references must be unique")
@@ -548,14 +585,18 @@ def _validate_v5_task(
             item.get("capability_id") for item in v5_contract.get("stream_capabilities", {}).get(stream_id, [])
             if isinstance(item, dict)
         }
+        # Interference lists the other capabilities placed between the last
+        # same-capability Turn and the probe; blocked schedules have none.
         if (
             not isinstance(interference, list)
-            or len(interference) < 2
             or len(set(interference)) != len(interference)
             or capability_id in interference
             or not set(interference).issubset(stream_capabilities)
         ):
             raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: invalid probe interference capabilities")
+        gap = probe.get("probe_gap_turns")
+        if gap is not None and (not isinstance(gap, int) or isinstance(gap, bool) or gap < 0):
+            raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe_gap_turns must be a non-negative integer")
         if probe.get("held_out_source_task_id") != source["source_task_id"]:
             raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: probe held-out source does not match task")
     elif probe is not None:

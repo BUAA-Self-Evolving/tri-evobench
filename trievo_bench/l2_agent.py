@@ -234,6 +234,7 @@ class L2AgentStreamRunner:
         self._v5_runtime_profiles: dict[str, dict[str, Any]] = {}
         self._current_v5_profile: dict[str, Any] | None = None
         self._taskstream_schema_version = "l2_taskstream/1.0"
+        self._v5_task_local = False
         self.budget_profile = _budget_profile(options.baseline_overrides)
         self._applied_stream_limit_overrides: list[dict[str, Any]] = []
         if options.retry_interrupted_run_id and self.condition not in {
@@ -421,6 +422,9 @@ class L2AgentStreamRunner:
             raise L2AgentRunError("TaskStream stream id does not match stream directory")
         self._taskstream_schema_version = str(manifest.get("schema_version"))
         is_v5 = self._taskstream_schema_version == "l2_taskstream/1.2"
+        # 1.2 packages built before the persistent-Workspace correction declare
+        # task-local Workspaces; newer packages declare stream persistence.
+        self._v5_task_local = is_v5 and manifest.get("workspace_persistence") == "task_local"
         if is_v5:
             self.v5_metadata, self._v5_runtime_profiles = _load_v5_runtime_binding(
                 self.package_dir,
@@ -601,7 +605,7 @@ class L2AgentStreamRunner:
                             self._runtime.end_flow()
                             runtime_started = False
                         _replace_tree(agent_workspace, workspace)
-                    elif is_v5:
+                    elif self._v5_task_local:
                         _replace_tree(agent_workspace, workspace)
                     self._apply_taskstream_transition(task, turn_dir, workspace)
                     self._sync_workspace_to_volume()
@@ -1153,7 +1157,7 @@ class L2AgentStreamRunner:
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
         allowed_modes = {"continue", "continue_with_patch"}
-        if self._taskstream_schema_version == "l2_taskstream/1.2":
+        if self._taskstream_schema_version == "l2_taskstream/1.2" and self._v5_task_local:
             allowed_modes = {"task_local_seed"}
         if not isinstance(transition, dict) or transition.get("mode") not in allowed_modes:
             raise L2AgentRunError("unsupported TaskStream workspace transition")

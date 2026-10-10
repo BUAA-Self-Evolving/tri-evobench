@@ -1,0 +1,32 @@
+# AutoResearch GPU task image for the rebuilt L2 V5 pool (requires_gpu tasks).
+#
+# Same package superset as Dockerfile.autoresearch-cpu, but torch from the
+# CUDA 12.4 wheel index and jax with CUDA 12 plugins, matching the MLGym
+# rl*/requirements.txt (jax[cuda12]). Verifiers never need a GPU; this image
+# only matters once runtime GPU passthrough exists. Building it pulls ~6 GB of
+# CUDA wheels.
+ARG BASE_IMAGE=trievo-l2-v5:0.6-native
+FROM ${BASE_IMAGE}
+
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cu124
+
+RUN pip install --no-cache-dir --index-url "${TORCH_INDEX_URL}" \
+        'torch==2.6.0' 'torchvision==0.21.0'
+
+RUN pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" \
+        'datasets==4.0.0' 'torchmetrics>=1.4,<2' 'transformers>=4.44,<5' \
+        'tokenizers>=0.19' 'safetensors>=0.4' 'accelerate>=0.33,<2' \
+        'scikit-learn>=1.5' 'lightgbm>=4.3,<5' 'xgboost>=2.1,<4' \
+        'sktime>=0.30,<1' 'statsforecast>=1.7,<3' 'rouge_score==0.1.2' 'evaluate>=0.4,<1' \
+        'nltk>=3.8' 'sentencepiece>=0.2' 'torch_geometric>=2.5,<3' \
+        'jax[cuda12]==0.5.3' 'flax==0.10.4' 'optax>=0.2,<0.3' 'chex>=0.1.86' \
+        'gymnax==0.0.8' 'tensorflow-probability>=0.24,<0.26' 'dotmap>=1.3' \
+        'pyyaml>=6' 'tqdm>=4'
+
+RUN python -c "import torch, datasets, transformers, jax, flax, gymnax, sktime; print(torch.__version__, torch.version.cuda, jax.__version__)"
+
+ENV HF_DATASETS_OFFLINE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+    TOKENIZERS_PARALLELISM=false
+WORKDIR /workspace
+CMD ["sleep", "infinity"]

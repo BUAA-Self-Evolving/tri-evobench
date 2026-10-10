@@ -1,0 +1,5 @@
+# Adds Python modules that qualified upstream SkillLearnBench/SkillsBench tasks import.
+FROM trievo-l2-v5:0.5-native
+ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --no-cache-dir -i "$PIP_INDEX_URL" \
+      cvxpy ezdxf pymannkendall ortools polars obspy lightkurve pymatgen "jax[cpu]"

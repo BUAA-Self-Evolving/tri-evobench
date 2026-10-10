@@ -1,0 +1,23 @@
+# Superset task/verifier image for L2 V5 file-artifact and SR-Agents tasks.
+# Adds the browser toolchain that D3/HTML tasks and their Playwright tests use.
+# d3@6.7.0 and its dependencies are preloaded into an npm cache and npm runs
+# offline, so upstream `npm install d3@6.7.0` works in a network-disabled
+# sandbox. Caches live under /opt because tasks own /root and /app.
+FROM trievo-l2-v5:0.6-native
+ARG APT_ORIGIN=https://mirrors.tuna.tsinghua.edu.cn
+ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+ARG PLAYWRIGHT_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries/playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir -i "$PIP_INDEX_URL" 'playwright>=1.50,<2'
+RUN playwright install-deps chromium && rm -rf /var/lib/apt/lists/*
+RUN PLAYWRIGHT_DOWNLOAD_HOST="$PLAYWRIGHT_DOWNLOAD_HOST" playwright install --only-shell chromium \
+    && chmod -R a+rX /opt/ms-playwright
+RUN npm config set registry "$NPM_REGISTRY" --global \
+    && npm config set cache /opt/npm-cache --global \
+    && mkdir /tmp/d3-cache && cd /tmp/d3-cache && npm install d3@6.7.0 --no-audit --no-fund \
+    && cd / && rm -rf /tmp/d3-cache \
+    && npm config set offline true --global \
+    && chmod -R a+rwX /opt/npm-cache

@@ -1,0 +1,150 @@
+{
+  "type": "llm_as_judge",
+  "protocol": "l2_native_evidence_llm_judge_v1",
+  "evaluation_profile": "general",
+  "checks": [
+    {
+      "check_id": "task_completion",
+      "dimension": "task_success",
+      "weight": 0.6,
+      "scoring": "ordinal",
+      "instruction": "Use the native verifier result as authoritative evidence for objective task completion, together with declared GT and observable terminal state. A native failure that establishes the required outcome was not achieved scores 0; use 0.5 only when native evidence explicitly supports material partial completion."
+    },
+    {
+      "check_id": "requirement_and_output_compliance",
+      "dimension": "requirement_coverage",
+      "weight": 0.25,
+      "scoring": "ordinal",
+      "instruction": "Check that the submitted response, artifact, tool trajectory, and output format cover the explicit user requirements without substituting a different deliverable."
+    },
+    {
+      "check_id": "evidence_and_side_effect_integrity",
+      "dimension": "execution_integrity",
+      "weight": 0.15,
+      "scoring": "ordinal",
+      "instruction": "Check that execution claims match observable evidence, declared tools and paths are respected, prior Stream state is preserved, and no unrelated or destructive side effects occurred."
+    }
+  ],
+  "rubrics": {
+    "source_rubrics": [],
+    "behavioral_rubrics": [
+      {
+        "rubric_id": "task_completion",
+        "instruction": "Use the native verifier result as authoritative evidence for objective task completion, together with declared GT and observable terminal state. A native failure that establishes the required outcome was not achieved scores 0; use 0.5 only when native evidence explicitly supports material partial completion."
+      },
+      {
+        "rubric_id": "requirement_and_output_compliance",
+        "instruction": "Check that the submitted response, artifact, tool trajectory, and output format cover the explicit user requirements without substituting a different deliverable."
+      },
+      {
+        "rubric_id": "evidence_and_side_effect_integrity",
+        "instruction": "Check that execution claims match observable evidence, declared tools and paths are respected, prior Stream state is preserved, and no unrelated or destructive side effects occurred."
+      }
+    ]
+  },
+  "gt": {
+    "gt_version": "l2_task_gt/1.0",
+    "status": "complete",
+    "answer_gt": {
+      "mode": "native_verifier_and_behavioral_rubrics",
+      "canonical_response": null,
+      "acceptable_answer_values": [],
+      "normalization": "native_verifier_contract",
+      "placeholder_reason": "The L2 task has no single canonical free-text response; correctness is defined by the materialized native verifier, behavioral rubric, and structured expected effects."
+    },
+    "rubric_gt": {
+      "behavioral_check_ids": [
+        "task_completion",
+        "requirement_and_output_compliance",
+        "evidence_and_side_effect_integrity"
+      ]
+    },
+    "state_gt": {
+      "target_facts": []
+    },
+    "tool_gt": null,
+    "workspace_gt": {
+      "required_outputs": []
+    },
+    "negative_constraints": [
+      "Do not use undeclared tools.",
+      "Do not modify unrelated persistent Workspace content.",
+      "Do not claim execution without observable evidence."
+    ],
+    "notes": "Gold and native assets are evaluator-private. The native result is authoritative Judge evidence; only Judge check scores are aggregated."
+  },
+  "expected_state": {
+    "target_facts": []
+  },
+  "expected_tool_call": null,
+  "expected_workspace_effect": {
+    "required_outputs": []
+  },
+  "reference_context": {
+    "visibility": "sealed_evaluator_only",
+    "native_success_threshold": 1.0,
+    "native_scoring_method": "binary_pass",
+    "scoring_configuration_scope": "contract_v1_demo_stream_configuration",
+    "submission_mode": "final_response"
+  },
+  "judge_config": {
+    "prompt_version": "l2_judge/2.0",
+    "model_role": "reference_judge",
+    "temperature": 0,
+    "inputs": [
+      "agent_input",
+      "checks",
+      "execution_error",
+      "expected_state",
+      "expected_tool_call",
+      "expected_workspace_effect",
+      "final_response",
+      "gt",
+      "interaction_index",
+      "interaction_transcript",
+      "native_verifier_result",
+      "reference_context",
+      "resource_usage",
+      "rubrics",
+      "state_after",
+      "state_before",
+      "state_diff",
+      "stream_id",
+      "tool_calls",
+      "tool_results",
+      "turn_id",
+      "turn_origin",
+      "turn_type",
+      "workspace_after",
+      "workspace_before",
+      "workspace_diff",
+      "workspace_transition_record"
+    ],
+    "output_format": "json",
+    "output_schema": "l2_judge_output/1.0",
+    "aggregation": "framework_weighted_non_null_mean",
+    "failure_policy": "one_repair_then_turn_unsuccessful"
+  },
+  "success_policy": {
+    "native_verifier_requirement": "valid_result_before_judge",
+    "turn_score_threshold": 0.8,
+    "judge_failure_blocks_success": true,
+    "interaction_selection": "latest_only"
+  },
+  "feedback_policy": "bounded_public_failure_feedback_only",
+  "feedback_projection": {
+    "include": [
+      "failed_dimensions",
+      "observable_deficiency",
+      "public_result_category"
+    ],
+    "exclude": [
+      "gt",
+      "private_diagnostics",
+      "evaluation_assets",
+      "future_turns",
+      "exact_fix_steps"
+    ],
+    "output_schema": "l2_bounded_feedback/1.0"
+  }
+}

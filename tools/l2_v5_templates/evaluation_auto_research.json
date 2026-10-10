@@ -1,0 +1,130 @@
+{
+  "type": "llm_as_judge",
+  "protocol": "l2_native_evidence_llm_judge_v1",
+  "evaluation_profile": "auto_research",
+  "checks": [
+    {
+      "check_id": "auto_research_overall",
+      "dimension": "task_success",
+      "weight": 1.0,
+      "scoring": "ordinal",
+      "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+    }
+  ],
+  "rubrics": {
+    "source_rubrics": [],
+    "behavioral_rubrics": [
+      {
+        "rubric_id": "auto_research_overall",
+        "instruction": "Apply the routed AutoResearch rubric to all declared evidence."
+      }
+    ]
+  },
+  "gt": {
+    "gt_version": "l2_task_gt/1.0",
+    "status": "complete",
+    "answer_gt": {
+      "mode": "workspace_artifact_with_native_metric",
+      "canonical_response": null,
+      "acceptable_answer_values": [],
+      "normalization": "declared_metric_profile",
+      "placeholder_reason": "Correctness is defined by the materialized submission.csv, native metric, execution evidence, and routed AutoResearch rubrics."
+    },
+    "rubric_gt": {
+      "behavioral_check_ids": [
+        "auto_research_overall"
+      ]
+    },
+    "state_gt": {
+      "target_facts": []
+    },
+    "tool_gt": null,
+    "workspace_gt": {
+      "required_outputs": []
+    },
+    "negative_constraints": [
+      "Do not use undeclared tools.",
+      "Do not modify unrelated persistent Workspace content.",
+      "Do not claim execution without observable evidence."
+    ],
+    "notes": "Gold and native assets are evaluator-private. The continuous native metric is mandatory Judge evidence; the sole AutoResearch check produces the unified discrete score."
+  },
+  "expected_state": {
+    "target_facts": []
+  },
+  "expected_tool_call": null,
+  "expected_workspace_effect": {
+    "required_outputs": []
+  },
+  "reference_context": {
+    "visibility": "sealed_evaluator_only",
+    "scoring_configuration_scope": "contract_v1_demo_stream_configuration",
+    "submission_mode": "workspace_artifact"
+  },
+  "judge_config": {
+    "prompt_version": "l2_judge/2.0",
+    "model_role": "reference_judge",
+    "temperature": 0,
+    "inputs": [
+      "agent_input",
+      "benchmark_rubric",
+      "checks",
+      "domain_rubric",
+      "evaluation_profile",
+      "execution_error",
+      "expected_state",
+      "expected_tool_call",
+      "expected_workspace_effect",
+      "final_response",
+      "gt",
+      "interaction_index",
+      "interaction_transcript",
+      "metric_profile",
+      "native_verifier_result",
+      "reference_context",
+      "resource_usage",
+      "rubrics",
+      "state_after",
+      "state_before",
+      "state_diff",
+      "stream_id",
+      "tool_calls",
+      "tool_results",
+      "turn_id",
+      "turn_origin",
+      "turn_type",
+      "workspace_after",
+      "workspace_before",
+      "workspace_diff",
+      "workspace_transition_record"
+    ],
+    "output_format": "json",
+    "output_schema": "l2_judge_output/1.0",
+    "aggregation": "framework_weighted_non_null_mean",
+    "failure_policy": "one_repair_then_turn_unsuccessful"
+  },
+  "success_policy": {
+    "native_verifier_requirement": "valid_result_before_judge",
+    "turn_score_threshold": 1.0,
+    "judge_failure_blocks_success": true,
+    "interaction_selection": "latest_only",
+    "interaction_continuation": "invalid_or_unverifiable_submission_only",
+    "low_metric_is_retryable": false
+  },
+  "feedback_policy": "bounded_public_failure_feedback_only",
+  "feedback_projection": {
+    "include": [
+      "failed_dimensions",
+      "observable_deficiency",
+      "public_result_category"
+    ],
+    "exclude": [
+      "gt",
+      "private_diagnostics",
+      "evaluation_assets",
+      "future_turns",
+      "exact_fix_steps"
+    ],
+    "output_schema": "l2_bounded_feedback/1.0"
+  }
+}
