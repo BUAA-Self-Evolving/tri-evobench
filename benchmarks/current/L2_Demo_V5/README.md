@@ -17,11 +17,22 @@ package-level catalog (`manifest.json`, `pools.json`, `panels.json`,
 too large for Git; several AutoResearch data files exceed GitHub's 100 MB file
 limit. It is published as a dataset artifact:
 
-| Artifact | Location (PHAI) |
+| Artifact | Location |
 |---|---|
-| Package directory | `/data_storage/yl_test/lgx/data-1/code/_datasets/tri-evobench/L2_Demo_V5/` |
-| Archive | `.../_datasets/tri-evobench/L2_Demo_V5.tar` (SHA-256 in `L2_Demo_V5.tar.sha256` and in `benchmarks/README.md`) |
+| GitHub Release | [`l2-demo-v5`](https://github.com/BUAA-Self-Evolving/tri-evobench/releases/tag/l2-demo-v5): `L2_Demo_V5.tar.part-00`, `L2_Demo_V5.tar.part-01`, `SHA256SUMS` |
+| Package directory (PHAI) | `/data_storage/yl_test/lgx/data-1/code/_datasets/tri-evobench/L2_Demo_V5/` |
+| Archive (PHAI) | `.../_datasets/tri-evobench/L2_Demo_V5.tar` (SHA-256 in `L2_Demo_V5.tar.sha256` and in `benchmarks/README.md`) |
 | Per-file digests | `PACKAGE_FILES.sha256` in this directory |
+
+GitHub limits a release asset to 2 GiB, so the archive is split into two parts.
+To restore it:
+
+```bash
+gh release download l2-demo-v5 --repo BUAA-Self-Evolving/tri-evobench
+cat L2_Demo_V5.tar.part-00 L2_Demo_V5.tar.part-01 > L2_Demo_V5.tar
+sha256sum -c SHA256SUMS    # checks both parts and the joined archive
+tar -xf L2_Demo_V5.tar     # creates L2_Demo_V5/
+```
 
 The catalogs here are byte-identical to the package copies, so the manifest
 bindings below verify both.
