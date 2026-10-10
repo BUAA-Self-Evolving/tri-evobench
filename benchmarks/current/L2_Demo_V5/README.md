@@ -20,7 +20,7 @@ limit. It is published as a dataset artifact:
 | Artifact | Location (PHAI) |
 |---|---|
 | Package directory | `/data_storage/yl_test/lgx/data-1/code/_datasets/tri-evobench/L2_Demo_V5/` |
-| Archive | `.../_datasets/tri-evobench/L2_Demo_V5.tar` (SHA-256 in `L2_Demo_V5.tar.sha256`) |
+| Archive | `.../_datasets/tri-evobench/L2_Demo_V5.tar` (SHA-256 in `L2_Demo_V5.tar.sha256` and in `benchmarks/README.md`) |
 | Per-file digests | `PACKAGE_FILES.sha256` in this directory |
 
 The catalogs here are byte-identical to the package copies, so the manifest

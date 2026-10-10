@@ -97,7 +97,7 @@ results.
 | `intra_sra_*` (earlier package build) | 2 | native verifier and Judge ran; scores recorded |
 | `intra_skilllearn_interleaved_01` | turn1–turn2 | turn1 0.0 (agent hit `max_tool_calls`, an agent failure); turn2 1.0 |
 | `intra_tau2_interleaved_01` | turn1–turn2 | 0.2 and 0.275; stopped at the 3M-token budget (3.4M used) |
-| `dependency_autoresearch_cpu_interleaved_01` | turn1–turn4 | SMOKE_DEPENDENCY_RESULT |
+| `dependency_autoresearch_cpu_interleaved_01` | turn1–turn4 | turn1 pass (236 feature columns); turn2 0 (agent hit its work limit); turn3 pass (payoff estimates within 0.006 of the references); turn4 first attempt stopped at the 3M-token budget, then resumed from the turn3 checkpoint with an 8M budget: the agent read `tasks/turn1/features/*.csv`, wrote `tasks/turn4/submission.csv`, native R² 0.894 (normalized 0.218, below the 0.5 partial band), Turn score 0, 131k tokens |
 
 ### Known limits
 
