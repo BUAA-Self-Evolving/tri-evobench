@@ -5,7 +5,8 @@
       "domain_id": "auto_research",
       "source_benchmark": "mlgym",
       "task_type_ids": [
-        "iterated_game_strategy"
+        "game_strategy",
+        "reinforcement_learning"
       ]
     },
     {
@@ -13,8 +14,9 @@
       "domain_id": "auto_research",
       "source_benchmark": "airs_bench",
       "task_type_ids": [
-        "code_retrieval",
-        "ranking"
+        "time_series_forecasting",
+        "retrieval",
+        "math_reasoning"
       ]
     },
     {
@@ -22,7 +24,8 @@
       "domain_id": "auto_research",
       "source_benchmark": "airs_bench",
       "task_type_ids": [
-        "coreference_resolution"
+        "tabular_prediction",
+        "text_prediction"
       ]
     },
     {
@@ -30,7 +33,8 @@
       "domain_id": "auto_research",
       "source_benchmark": "airs_bench",
       "task_type_ids": [
-        "molecular_property_regression"
+        "image_classification",
+        "molecular_property_prediction"
       ]
     },
     {
@@ -38,47 +42,47 @@
       "domain_id": "office_documents",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "document_processing"
+        "form_filling"
       ]
     },
     {
       "capability_id": "skilllearn.dbscan-parameter-tuning",
-      "domain_id": "general",
+      "domain_id": "data_analysis",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "file_artifact_generation"
+        "model_tuning"
       ]
     },
     {
       "capability_id": "skilllearn.offer-letter-generator",
-      "domain_id": "general",
+      "domain_id": "office_documents",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "file_artifact_generation"
+        "document_generation"
       ]
     },
     {
       "capability_id": "skilllearn.stock-data-visualization",
-      "domain_id": "general",
+      "domain_id": "finance_economics",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "file_artifact_generation"
+        "data_visualization"
       ]
     },
     {
       "capability_id": "skilllearn.video-object-counting",
-      "domain_id": "general",
+      "domain_id": "media_production",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "file_artifact_generation"
+        "media_processing"
       ]
     },
     {
       "capability_id": "skilllearn.weighted-gdp-calculation",
-      "domain_id": "general",
+      "domain_id": "finance_economics",
       "source_benchmark": "skilllearnbench",
       "task_type_ids": [
-        "file_artifact_generation"
+        "quantitative_analysis"
       ]
     },
     {

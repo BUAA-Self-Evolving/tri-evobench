@@ -7,9 +7,10 @@
       "benchmark_id": "mlgym",
       "domain_id": "auto_research",
       "task_type_ids": [
-        "iterated_game_strategy"
+        "game_strategy",
+        "reinforcement_learning"
       ],
-      "description": "game-theoretic strategies and reinforcement learning policies. Pure-Python game simulation; CPU.",
+      "description": "Iterated-game strategies and reinforcement-learning control.",
       "grouping_rule": "game-theoretic strategies and reinforcement learning policies. Pure-Python game simulation; CPU.",
       "admitted_pool_tasks": 6
     },
@@ -18,10 +19,11 @@
       "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
-        "code_retrieval",
-        "ranking"
+        "time_series_forecasting",
+        "retrieval",
+        "math_reasoning"
       ],
-      "description": "time-series forecasting, math word problems, code retrieval/generation. NL-to-code retrieval scored by MRR; lexical retrieval (TF-IDF/BM25) runs on CPU.",
+      "description": "Time-series forecasting, code retrieval, and math word problems.",
       "grouping_rule": "time-series forecasting, math word problems, code retrieval/generation. NL-to-code retrieval scored by MRR; lexical retrieval (TF-IDF/BM25) runs on CPU.",
       "admitted_pool_tasks": 5
     },
@@ -30,9 +32,10 @@
       "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
-        "coreference_resolution"
+        "tabular_prediction",
+        "text_prediction"
       ],
-      "description": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "description": "Classification, regression, and QA on tabular or natural-language data.",
       "grouping_rule": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
       "admitted_pool_tasks": 10
     },
@@ -41,9 +44,10 @@
       "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
-        "molecular_property_regression"
+        "image_classification",
+        "molecular_property_prediction"
       ],
-      "description": "image, molecular and graph models that need deep-network training. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
+      "description": "Image classification and graph or molecular property models.",
       "grouping_rule": "image, molecular and graph models that need deep-network training. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
       "admitted_pool_tasks": 7
     },
@@ -52,7 +56,7 @@
       "benchmark_id": "skilllearnbench",
       "domain_id": "office_documents",
       "task_type_ids": [
-        "document_processing"
+        "form_filling"
       ],
       "description": "SkillLearnBench task family 'court-form-filling' (upstream category document-processing); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -61,9 +65,9 @@
     {
       "capability_id": "skilllearn.dbscan-parameter-tuning",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "data_analysis",
       "task_type_ids": [
-        "file_artifact_generation"
+        "model_tuning"
       ],
       "description": "SkillLearnBench task family 'dbscan-parameter-tuning' (upstream category data-science); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -72,9 +76,9 @@
     {
       "capability_id": "skilllearn.earthquake-plate-calculation",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "natural_science",
       "task_type_ids": [
-        "file_artifact_generation"
+        "scientific_data_analysis"
       ],
       "description": "SkillLearnBench task family 'earthquake-plate-calculation' (upstream category geophysics); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -83,9 +87,9 @@
     {
       "capability_id": "skilllearn.offer-letter-generator",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "office_documents",
       "task_type_ids": [
-        "file_artifact_generation"
+        "document_generation"
       ],
       "description": "SkillLearnBench task family 'offer-letter-generator' (upstream category document-generation); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -94,9 +98,9 @@
     {
       "capability_id": "skilllearn.stock-data-visualization",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "finance_economics",
       "task_type_ids": [
-        "file_artifact_generation"
+        "data_visualization"
       ],
       "description": "SkillLearnBench task family 'stock-data-visualization' (upstream category Data Visualization); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -105,9 +109,9 @@
     {
       "capability_id": "skilllearn.video-object-counting",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "media_production",
       "task_type_ids": [
-        "file_artifact_generation"
+        "media_processing"
       ],
       "description": "SkillLearnBench task family 'video-object-counting' (upstream category image-processing); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",
@@ -116,9 +120,9 @@
     {
       "capability_id": "skilllearn.weighted-gdp-calculation",
       "benchmark_id": "skilllearnbench",
-      "domain_id": "general",
+      "domain_id": "finance_economics",
       "task_type_ids": [
-        "file_artifact_generation"
+        "quantitative_analysis"
       ],
       "description": "SkillLearnBench task family 'weighted-gdp-calculation' (upstream category financial-analysis); instances are native siblings.",
       "grouping_rule": "upstream task family (native siblings)",

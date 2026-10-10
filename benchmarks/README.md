@@ -3,7 +3,7 @@
 全部数据以可直接读取的目录提交，不需要 Git LFS 或另行解压。例外是 L2 Demo V5：完整包 2.9 GB，
 部分 AutoResearch 数据文件超过 GitHub 单文件 100 MB 上限，因此仓库只放包描述，完整包按
 `current/L2_Demo_V5/README.md` 的位置获取，归档 `L2_Demo_V5.tar` 的 SHA-256 为
-`36fb722d924ea6f30345ed9eeb8275e05a450625cbdf47eeb2e8a1ec3f5f3177`，逐文件摘要见该目录的 `PACKAGE_FILES.sha256`。
+`cd2f9175933a6710ed9a9b9e99c04d9ffb043cba9ba051aeecb850a216cf9c99`，逐文件摘要见该目录的 `PACKAGE_FILES.sha256`。
 当前矩阵使用 `current/` 下的两个数据包；其他目录用于保留历史版本，不能混算成绩。
 
 | 路径 | 版本与用途 | 规模 |

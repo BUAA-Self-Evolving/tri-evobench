@@ -34,6 +34,25 @@ STATIC = {
                             "HTTP, URL, and HTML parsing code; tests run offline with mocks."),
     "sra.general_python": ("software_engineering", ["code_generation"], "Other standard-library Python tasks."),
 }
+# Capabilities whose builder hint is per task (AutoResearch) or whose upstream
+# category does not name a domain (SkillLearnBench families) get a fixed entry.
+CAPABILITY_OVERRIDES = {
+    "ar.tabular_and_text_prediction": ("auto_research", ["tabular_prediction", "text_prediction"],
+                                       "Classification, regression, and QA on tabular or natural-language data."),
+    "ar.sequence_and_math_reasoning": ("auto_research", ["time_series_forecasting", "retrieval", "math_reasoning"],
+                                       "Time-series forecasting, code retrieval, and math word problems."),
+    "ar.decision_and_game_strategy": ("auto_research", ["game_strategy", "reinforcement_learning"],
+                                      "Iterated-game strategies and reinforcement-learning control."),
+    "ar.vision_and_deep_models": ("auto_research", ["image_classification", "molecular_property_prediction"],
+                                  "Image classification and graph or molecular property models."),
+    "skilllearn.court-form-filling": ("office_documents", ["form_filling"], None),
+    "skilllearn.offer-letter-generator": ("office_documents", ["document_generation"], None),
+    "skilllearn.stock-data-visualization": ("finance_economics", ["data_visualization"], None),
+    "skilllearn.weighted-gdp-calculation": ("finance_economics", ["quantitative_analysis"], None),
+    "skilllearn.dbscan-parameter-tuning": ("data_analysis", ["model_tuning"], None),
+    "skilllearn.video-object-counting": ("media_production", ["media_processing"], None),
+    "skilllearn.earthquake-plate-calculation": ("natural_science", ["scientific_data_analysis"], None),
+}
 NATIVE_DOMAIN = {
     "office-white-collar": ("office_documents", ["document_processing"]),
     "industrial-physical-systems": ("industrial_engineering", ["simulation_and_control"]),
@@ -92,6 +111,9 @@ def main() -> int:
         benchmark = record["source"]["benchmark_id"]
         if cap in STATIC:
             domain, types, description = STATIC[cap]
+        elif cap in CAPABILITY_OVERRIDES:
+            domain, types, description = CAPABILITY_OVERRIDES[cap]
+            description = description or native_entry(cap, hint)[2]
         elif hint.get("domain_id") and hint.get("task_type_ids"):
             domain, types, description = hint["domain_id"], hint["task_type_ids"], hint.get("description") or hint.get("rationale", "")
         else:
