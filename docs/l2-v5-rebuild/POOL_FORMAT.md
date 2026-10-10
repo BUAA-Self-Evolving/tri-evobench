@@ -83,9 +83,27 @@ verbatim and record any unavoidable edit in `qualification.notes`.
 * Runs offline inside the declared task image as root with the network
   disabled; may copy files to `/root`, `/app`, `/tests` for upstream compatibility.
 
+## Explicit-dependency records
+
+`tools/l2_v5_dependency.py` writes `<pool>/dependency/`, whose records add:
+
+* `pool_scope: "explicit_dependency_only"`: the planner uses the record only
+  when a stream spec pins it.
+* `turn_origin`: `derived_evolution_turn` for a stage-1 preparation task (its
+  `source` also has `parent_source_task_ids` and `derivation`; its
+  `source_task_id` is `<parent>#stage1_<stage>`), `source_task` for stage 2.
+* `dependency` (stage 2 only): `{"requires_source_id": "<stage-1 source_id>",
+  "placeholder": "{{dependency_dir}}"}`. The composer replaces the placeholder
+  (and `{{turn_dir}}`) with the actual Turn directories and records the stage-1
+  Turn in `capability_relation.artifact_dependency_turn_ids`. Stage-2 seeds are
+  empty: their inputs exist only in the stage-1 Turn directory.
+
 ## Qualification
 
 Builders run `known_correct` and `known_broken` through `source_verifier`
 inside the declared image (network none) and record the result. Only tasks with
 correct=pass and broken=fail are admitted. Docker on PHAI is rootless: collect
 results through bind-mounted files, because attached stdout is unreliable.
+After composing, `tools/l2_v5_qualify_package.py` repeats the red/green check
+for every Turn of the package through its `verifier_cli.py`, one fresh
+container per fixture.

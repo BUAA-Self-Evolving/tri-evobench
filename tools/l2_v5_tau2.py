@@ -51,7 +51,8 @@ DOCKERFILE = REPO_ROOT / "sandbox" / "l2-v5" / "Dockerfile.tau2"
 REPLAY_SOURCE = REPO_ROOT / "tools" / "l2_v5_tau2_replay.py"
 VERIFIER_SOURCE = REPO_ROOT / "tools" / "l2_v5_tau2_source_verifier.py"
 V4_ROOT = REPO_ROOT / "benchmarks" / "current" / "L2_Demo_V4"
-V5_ROOT = REPO_ROOT / "benchmarks" / "current" / "L2_Demo_V5"
+# The September heterogeneous V5 candidate, read only for source continuity.
+V5_ROOT = REPO_ROOT / "benchmarks" / "archive" / "L2_Demo_V5_heterogeneous_candidate"
 DOMAINS = ("airline", "retail", "telecom", "banking_knowledge")
 TRAJECTORY_PATH = "submission/trajectory.json"
 RUNTIME_PROFILE = "tau2_offline_trajectory_v1"

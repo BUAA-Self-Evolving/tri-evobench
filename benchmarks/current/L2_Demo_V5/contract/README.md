@@ -42,7 +42,7 @@
 
 当前 `1.0` 已完成数据侧验证，但尚未被 L1/Runtime 正式消费。除必要缺口或用户批准外暂不修改；一旦跨组正式接入，新增必填字段或不兼容语义必须发布 `1.1`，不能继续原地修改 `1.0`。
 
-本次在跨组接入前增加的是向后兼容的 Judge Prompt V2 路由：既有 Task 未声明 `evaluation_profile` 时继续按 legacy General Profile 与 `l2_judge/1.0` 解释；显式 General Task 也固定使用 `l2_judge/1.0`。新 AutoResearch Task 必须显式声明 `evaluation_profile=auto_research`、`metric_profile` 和 `l2_judge/2.0` Rubric route。Contract V1 不支持 General + Judge V2；未来若需要该组合，必须在后续兼容版本中补齐 route 与验证样例。
+本次在跨组接入前增加的是向后兼容的 Judge Prompt V2 路由：既有 Task 未声明 `evaluation_profile` 时继续按 legacy General Profile 与 `l2_judge/1.0` 解释；显式 General Task 也固定使用 `l2_judge/1.0`。新 AutoResearch Task 必须显式声明 `evaluation_profile=auto_research`、`metric_profile` 和 `l2_judge/2.0` Rubric route。Contract V1 不支持 General + Judge V2；未来若需要该组合，必须在后续兼容版本中补齐 route 与验证样例。V5（`l2_taskstream/1.2`）是这个后续版本：General Task 统一使用 `l2_judge/2.0`，不带 Domain Rubric route，Stream 构成、Workspace 持久和显式依赖见 `L2_BENCHMARK_SPEC_zh.md` 第 17 节。
 
 只包含一种 Judge Prompt 的 manifest 继续使用 `judge_prompt_version`；同时包含 V1/V2 Task 的发布包改用互斥字段 `judge_prompt_versions`，列出实际使用的全部版本。具体 Task 仍以 `evaluation.judge_config.prompt_version` 为准。
 

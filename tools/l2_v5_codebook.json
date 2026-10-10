@@ -15,7 +15,7 @@
     },
     {
       "capability_id": "ar.sequence_and_math_reasoning",
-      "benchmark_id": "airs-bench",
+      "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
         "code_retrieval",
@@ -27,18 +27,18 @@
     },
     {
       "capability_id": "ar.tabular_and_text_prediction",
-      "benchmark_id": "airs-bench",
+      "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
         "coreference_resolution"
       ],
       "description": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
       "grouping_rule": "classification/regression/QA on tabular or natural-language data. AIRS assumes one GPU per agent; competitive solutions need pretrained-transformer fine-tuning or deep models, so the task is GPU-class. The verifier itself is CPU-only.",
-      "admitted_pool_tasks": 11
+      "admitted_pool_tasks": 10
     },
     {
       "capability_id": "ar.vision_and_deep_models",
-      "benchmark_id": "airs-bench",
+      "benchmark_id": "airs_bench",
       "domain_id": "auto_research",
       "task_type_ids": [
         "molecular_property_regression"
@@ -166,7 +166,7 @@
       ],
       "description": "SkillsBench tasks in upstream category 'mathematics-or-formal-reasoning'.",
       "grouping_rule": "upstream metadata.category (coarse group)",
-      "admitted_pool_tasks": 3
+      "admitted_pool_tasks": 4
     },
     {
       "capability_id": "skillsbench.media-content-production",

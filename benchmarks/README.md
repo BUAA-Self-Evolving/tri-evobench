@@ -1,12 +1,16 @@
 # 数据包目录
 
-全部数据以可直接读取的目录提交，不需要 Git LFS 或另行解压。
+全部数据以可直接读取的目录提交，不需要 Git LFS 或另行解压。例外是 L2 Demo V5：完整包 2.9 GB，
+部分 AutoResearch 数据文件超过 GitHub 单文件 100 MB 上限，因此仓库只放包描述，完整包按
+`current/L2_Demo_V5/README.md` 的位置和 SHA-256 获取。
 当前矩阵使用 `current/` 下的两个数据包；其他目录用于保留历史版本，不能混算成绩。
 
 | 路径 | 版本与用途 | 规模 |
 |---|---|---|
 | `current/l1_arena` | 2026-09-03 导入的最新 L1 Arena | 23 streams，423 turns |
 | `current/L2_Demo_V4` | 当前 panel-aware L2 Demo V4 | 24-shard primary + 6-parent diagnostic；各 290 turns |
+| `current/L2_Demo_V5` | L2 Demo V5（`l2_taskstream/1.2`）的包描述：文档、合同和全部包级目录；完整包（含 `streams/`，2.9 GB）作为数据集制品另行发布，位置见该目录 README | 5 个 pool，18 streams，252 turns |
+| `archive/L2_Demo_V5_heterogeneous_candidate` | 2026-09 的 V5 候选包，已被上一行替代，仅用于复现 | 10 streams，150 turns |
 | `l1_demo` | 原始 L1 七轮 Demo | 1 session，7 turns |
 | `l2_demo` | 旧 episode 格式 L2 Demo 的本地评测输入版本 | 6 streams，17 episodes |
 | `l1_life_v2` | 已有的 L1 Life V2 数据包 | 以包内 manifest 为准 |

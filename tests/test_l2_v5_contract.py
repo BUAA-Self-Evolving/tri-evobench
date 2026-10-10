@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import hashlib
 import tempfile
 from pathlib import Path
@@ -455,11 +456,14 @@ def test_v5_panel_pool_must_exist_and_match_selected_stream() -> None:
 
 
 def test_l2_demo_v5_tasks_embed_full_judge_and_simulator_prompts() -> None:
-    package = Path("benchmarks/current/L2_Demo_V5")
-    if not package.is_dir():
-        pytest.skip("L2_Demo_V5 package is not present")
-    judge_prompt = (package / "contract/prompts/l2_judge_prompt_v2.md").read_text(encoding="utf-8")
-    simulator_prompt = (package / "contract/prompts/l2_user_simulator_prompt.md").read_text(encoding="utf-8")
+    # Git carries the V5 descriptor; the full package (with streams/) is a dataset
+    # artifact selected through TRIEVO_L2_V5_PACKAGE.
+    contract = Path("benchmarks/current/L2_Demo_V5/contract")
+    package = Path(os.environ.get("TRIEVO_L2_V5_PACKAGE", "benchmarks/current/L2_Demo_V5"))
+    if not (package / "streams").is_dir():
+        pytest.skip("full L2_Demo_V5 package is not present")
+    judge_prompt = (contract / "prompts/l2_judge_prompt_v2.md").read_text(encoding="utf-8")
+    simulator_prompt = (contract / "prompts/l2_user_simulator_prompt.md").read_text(encoding="utf-8")
     task_paths = sorted((package / "streams").glob("*/*/task.json"))
 
     assert task_paths
@@ -547,4 +551,22 @@ def test_v5_transfer_probe_rejects_capabilities_outside_transfer_group() -> None
             "transfer_groups": [{"group_id": "g", "capability_ids": ["cap_b", "cap_x"]}],
         })
         with pytest.raises(L2SpecError, match="another capability"):
+            inspect_l2_package(package)
+
+
+def _dependency_patch(turn_ids: list[str]) -> dict:
+    return {"capability_relation": {"capability_id": "cap_a", "parent_turn_ids": ["turn1", "turn4", "turn7"],
+                                    "artifact_dependency_turn_ids": turn_ids}}
+
+
+def test_v5_artifact_dependency_on_earlier_turn_passes() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        inspect_l2_package(_minimal_v5(Path(tmp), persistence="stream", task_patch=_dependency_patch(["turn7"])))
+
+
+@pytest.mark.parametrize("turn_ids", [["turn11"], ["turn10"], "turn7"])
+def test_v5_artifact_dependency_rejects_future_or_malformed_reference(turn_ids: object) -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        package = _minimal_v5(Path(tmp), persistence="stream", task_patch=_dependency_patch(turn_ids))
+        with pytest.raises(L2SpecError, match="artifact dependencies"):
             inspect_l2_package(package)

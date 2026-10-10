@@ -1,31 +1,63 @@
 {
-  "schema_version": "l2_panels/1.0",
   "panels": [
     {
+      "allows_cross_panel_aggregation": false,
       "panel_id": "intra_benchmark_multi_capability_primary",
-      "purpose": "primary",
       "pool_id": "intra_benchmark_multi_capability",
+      "purpose": "primary",
       "stream_ids": [
-        "intra_sr_python_data_01",
-        "intra_sr_python_visual_01",
-        "intra_sr_python_io_02",
-        "intra_tau2_service_01",
-        "intra_tau2_support_02"
-      ],
-      "allows_cross_panel_aggregation": false
+        "intra_sra_blocked_01",
+        "intra_sra_interleaved_01",
+        "intra_sra_delayed_01",
+        "intra_tau2_blocked_01",
+        "intra_tau2_interleaved_01",
+        "intra_tau2_delayed_01",
+        "intra_skilllearn_interleaved_01",
+        "intra_skilllearn_delayed_01",
+        "intra_skillsbench_blocked_01",
+        "intra_skillsbench_delayed_01"
+      ]
     },
     {
+      "allows_cross_panel_aggregation": false,
       "panel_id": "cross_benchmark_multi_capability_primary",
-      "purpose": "primary",
       "pool_id": "cross_benchmark_multi_capability",
+      "purpose": "primary",
       "stream_ids": [
-        "cross_offer_retail_filesystem_01",
-        "cross_court_airline_plotting_01",
-        "cross_dbscan_telecom_pandas_01",
-        "cross_weighted_gdp_telecom_numpy_01",
-        "cross_office_retail_filesystem_01"
-      ],
-      "allows_cross_panel_aggregation": false
+        "cross_blocked_01",
+        "cross_interleaved_01",
+        "cross_delayed_01",
+        "cross_transfer_interleaved_01",
+        "cross_transfer_delayed_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "auto_research_cpu_primary",
+      "pool_id": "auto_research_cpu",
+      "purpose": "primary",
+      "stream_ids": [
+        "auto_research_cpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "auto_research_cpu_gpu_primary",
+      "pool_id": "auto_research_cpu_gpu",
+      "purpose": "primary",
+      "stream_ids": [
+        "auto_research_cpu_gpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "explicit_dependency_primary",
+      "pool_id": "explicit_dependency",
+      "purpose": "primary",
+      "stream_ids": [
+        "dependency_autoresearch_cpu_interleaved_01"
+      ]
     }
-  ]
+  ],
+  "schema_version": "l2_panels/1.0"
 }

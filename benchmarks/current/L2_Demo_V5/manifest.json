@@ -1,101 +1,150 @@
 {
-  "schema_version": "l2_taskstream/1.2",
-  "benchmark": "L2_Demo_V5",
   "aggregation_profile": "l2_evolution_aggregation/1.2",
-  "stream_count": 10,
-  "total_turn_count": 150,
-  "unique_source_task_count": 150,
-  "turn_placement_count": 150,
-  "streams": [
-    {
-      "stream_id": "intra_sr_python_data_01",
-      "directory": "intra_sr_python_data_01",
-      "turn_count": 15,
-      "path": "streams/intra_sr_python_data_01/stream.json"
-    },
-    {
-      "stream_id": "intra_sr_python_visual_01",
-      "directory": "intra_sr_python_visual_01",
-      "turn_count": 15,
-      "path": "streams/intra_sr_python_visual_01/stream.json"
-    },
-    {
-      "stream_id": "intra_sr_python_io_02",
-      "directory": "intra_sr_python_io_02",
-      "turn_count": 15,
-      "path": "streams/intra_sr_python_io_02/stream.json"
-    },
-    {
-      "stream_id": "intra_tau2_service_01",
-      "directory": "intra_tau2_service_01",
-      "turn_count": 15,
-      "path": "streams/intra_tau2_service_01/stream.json"
-    },
-    {
-      "stream_id": "intra_tau2_support_02",
-      "directory": "intra_tau2_support_02",
-      "turn_count": 15,
-      "path": "streams/intra_tau2_support_02/stream.json"
-    },
-    {
-      "stream_id": "cross_offer_retail_filesystem_01",
-      "directory": "cross_offer_retail_filesystem_01",
-      "turn_count": 15,
-      "path": "streams/cross_offer_retail_filesystem_01/stream.json"
-    },
-    {
-      "stream_id": "cross_court_airline_plotting_01",
-      "directory": "cross_court_airline_plotting_01",
-      "turn_count": 15,
-      "path": "streams/cross_court_airline_plotting_01/stream.json"
-    },
-    {
-      "stream_id": "cross_dbscan_telecom_pandas_01",
-      "directory": "cross_dbscan_telecom_pandas_01",
-      "turn_count": 15,
-      "path": "streams/cross_dbscan_telecom_pandas_01/stream.json"
-    },
-    {
-      "stream_id": "cross_weighted_gdp_telecom_numpy_01",
-      "directory": "cross_weighted_gdp_telecom_numpy_01",
-      "turn_count": 15,
-      "path": "streams/cross_weighted_gdp_telecom_numpy_01/stream.json"
-    },
-    {
-      "stream_id": "cross_office_retail_filesystem_01",
-      "directory": "cross_office_retail_filesystem_01",
-      "turn_count": 15,
-      "path": "streams/cross_office_retail_filesystem_01/stream.json"
-    }
-  ],
-  "pool_manifest": {
-    "schema_version": "l2_pools/1.0",
-    "path": "pools.json",
-    "sha256": "5df1f227cc379e4e3f9c9df3062620295ffdc7944c6779b6ed8c8758e92b1521"
-  },
+  "benchmark": "L2_Demo_V5",
   "panel_manifest": {
-    "schema_version": "l2_panels/1.0",
     "path": "panels.json",
-    "sha256": "af0a1a0267ccb89a6ecfd9e93e4d564b1ed4ab625e5893239a620a0bb788dbad"
+    "schema_version": "l2_panels/1.0",
+    "sha256": "8a475de3b888e82cca6f610b331348c609ce319c8d3f1cd1adba92b260fc9ab4"
   },
-  "taxonomy_manifest": {
-    "schema_version": "l2_taxonomy/1.0",
-    "path": "taxonomy.json",
-    "sha256": "af06f18804dd52d02c7dedc0730a98c09574bb2674ed65ad806e5c71a992093d"
+  "pool_manifest": {
+    "path": "pools.json",
+    "schema_version": "l2_pools/1.0",
+    "sha256": "ed0d176df474da8f3df28f057e5677cb9bff3d6ef921e1f06c9f93befb44d17e"
   },
   "runtime_profiles": {
-    "schema_version": "l2_runtime_profiles/1.0",
     "path": "runtime_profiles.json",
-    "sha256": "1b23773e81323dd292a813bae19e8e05efb1e3b739a5718460cc9cd94ea54e74"
+    "schema_version": "l2_runtime_profiles/1.0",
+    "sha256": "d44064e46c3867347b845c8a3bfbc1bb73f2a61f593fbb785fd80ec7d08a52e5"
+  },
+  "schema_version": "l2_taskstream/1.2",
+  "selection_manifest": {
+    "path": "stream_plan.json",
+    "schema_version": "l2_stream_plan/1.0",
+    "sha256": "2ada42838b6833b6fb084c72da4d82e922b42a885a7955edcbd048ff9d85b6ef"
   },
   "source_catalog": {
-    "schema_version": "l2_source_catalog/1.0",
     "path": "source_tasks.jsonl",
-    "sha256": "cfb01b03d924b7f2a23f31fc0fef4684568b7121133f855b83292f1d7297c741"
+    "schema_version": "l2_source_catalog/1.0",
+    "sha256": "7f72068a15fe50ef40d8ade68f1d30d842550fde7f6d3842fe2e3240acaf09d5"
   },
-  "selection_manifest": {
-    "schema_version": "l2_stream_plan/1.0",
-    "path": "stream_plan.json",
-    "sha256": "032f29fa261eb26ab27eb05a8ef102c124346df0712b09d5478dec4384e241fa"
-  }
+  "stream_count": 18,
+  "streams": [
+    {
+      "directory": "intra_sra_blocked_01",
+      "path": "streams/intra_sra_blocked_01/stream.json",
+      "stream_id": "intra_sra_blocked_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_sra_interleaved_01",
+      "path": "streams/intra_sra_interleaved_01/stream.json",
+      "stream_id": "intra_sra_interleaved_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_sra_delayed_01",
+      "path": "streams/intra_sra_delayed_01/stream.json",
+      "stream_id": "intra_sra_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_tau2_blocked_01",
+      "path": "streams/intra_tau2_blocked_01/stream.json",
+      "stream_id": "intra_tau2_blocked_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_tau2_interleaved_01",
+      "path": "streams/intra_tau2_interleaved_01/stream.json",
+      "stream_id": "intra_tau2_interleaved_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_tau2_delayed_01",
+      "path": "streams/intra_tau2_delayed_01/stream.json",
+      "stream_id": "intra_tau2_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_skilllearn_interleaved_01",
+      "path": "streams/intra_skilllearn_interleaved_01/stream.json",
+      "stream_id": "intra_skilllearn_interleaved_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_skilllearn_delayed_01",
+      "path": "streams/intra_skilllearn_delayed_01/stream.json",
+      "stream_id": "intra_skilllearn_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_skillsbench_blocked_01",
+      "path": "streams/intra_skillsbench_blocked_01/stream.json",
+      "stream_id": "intra_skillsbench_blocked_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "intra_skillsbench_delayed_01",
+      "path": "streams/intra_skillsbench_delayed_01/stream.json",
+      "stream_id": "intra_skillsbench_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "cross_blocked_01",
+      "path": "streams/cross_blocked_01/stream.json",
+      "stream_id": "cross_blocked_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "cross_interleaved_01",
+      "path": "streams/cross_interleaved_01/stream.json",
+      "stream_id": "cross_interleaved_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "cross_delayed_01",
+      "path": "streams/cross_delayed_01/stream.json",
+      "stream_id": "cross_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "cross_transfer_interleaved_01",
+      "path": "streams/cross_transfer_interleaved_01/stream.json",
+      "stream_id": "cross_transfer_interleaved_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "cross_transfer_delayed_01",
+      "path": "streams/cross_transfer_delayed_01/stream.json",
+      "stream_id": "cross_transfer_delayed_01",
+      "turn_count": 15
+    },
+    {
+      "directory": "auto_research_cpu_interleaved_01",
+      "path": "streams/auto_research_cpu_interleaved_01/stream.json",
+      "stream_id": "auto_research_cpu_interleaved_01",
+      "turn_count": 9
+    },
+    {
+      "directory": "auto_research_cpu_gpu_interleaved_01",
+      "path": "streams/auto_research_cpu_gpu_interleaved_01/stream.json",
+      "stream_id": "auto_research_cpu_gpu_interleaved_01",
+      "turn_count": 9
+    },
+    {
+      "directory": "dependency_autoresearch_cpu_interleaved_01",
+      "path": "streams/dependency_autoresearch_cpu_interleaved_01/stream.json",
+      "stream_id": "dependency_autoresearch_cpu_interleaved_01",
+      "turn_count": 9
+    }
+  ],
+  "taxonomy_manifest": {
+    "path": "taxonomy.json",
+    "schema_version": "l2_taxonomy/1.0",
+    "sha256": "ee00fd63b35914d9f18c3d579cdb169d497d39d236b9a1b554a881beea273bd7"
+  },
+  "total_turn_count": 252,
+  "turn_placement_count": 252,
+  "unique_source_task_count": 181,
+  "workspace_persistence": "stream"
 }

@@ -481,3 +481,58 @@ GT、rubrics、weights、expected evidence、private diagnostics、Judge rationa
 - `evaluation_profile=auto_research` 必须使用 `l2_judge/2.0`、结构化 `metric_profile` 与 AutoResearch Domain Rubric。
 
 General Profile 若未来需要 Domain-specific Rubric，必须先在后续兼容版本中补齐对应 schema、rubric route 和验证样例，不能在 Contract V1 Runtime 中自行组合 General + Judge V2。
+
+上述两条路由约束 `l2_taskstream/1.0` 与 `1.1` 包。`l2_taskstream/1.2`（L2 Demo V5）统一使用 `l2_judge/2.0`：General Task 使用 Judge Prompt V2，但不带 Domain Rubric route，沿用 V4 的三项 checks（`task_completion` 0.6、`requirement_and_output_compliance` 0.25、`evidence_and_side_effect_integrity` 0.15）；AutoResearch Task 规则不变。详见第 17 节。
+
+## 17. V5（`l2_taskstream/1.2`）补充
+
+本节只约束 `l2_taskstream/1.2` 包；1.0/1.1 包仍按前文解释。
+
+### 17.1 Pool 与 Stream 构成
+
+每条 Stream 由 3 个 capability 组成，每个 capability 放 `tasks_per_capability` 个不同的 source task（普通 Stream 为 5，AutoResearch 与显式依赖 Stream 为 3），因此 `turn_count` 在 9–20 之间。`stream.json.stream_design.pool_id` 必须出现在根 `pools.json`，不同 pool 不能合并计算均值。V5 的 pool 类型：
+
+| `pool_type` | 构成约束 |
+|---|---|
+| `same_benchmark` | 3 个 capability 来自同一个 benchmark |
+| `cross_benchmark` | 3 个 capability 来自 3 个不同 benchmark |
+| `auto_research` | 只收 AIRS-Bench 与 MLGym 的原生任务，每个 Turn 是一个带完整测试集的原生任务 |
+| `explicit_dependency` | 原生任务拆成阶段，后一阶段使用前一阶段的产物（见 17.4） |
+
+同一 source task 在一个 pool 内最多出现一次；不同 pool 独立聚合，因此同一任务可以出现在两个 pool。
+
+### 17.2 排布与 probe
+
+`ordering.method` 为 `fixed_blocked`、`fixed_interleaved` 或 `fixed_delayed`。以每个 capability 5 道题为例：
+
+| 排布 | 顺序 | 每个 probe 与同能力上一道题之间隔的 Turn 数 |
+|---|---|---|
+| blocked | A1–A5、B1–B5、C1–C5 | 0 / 0 / 0 |
+| interleaved | A1 B1 C1 A2 B2 C2 … | 2 / 2 / 2 |
+| delayed | A1–A4、B1–B4、C1–C4、C5、B5、A5 | 0 / 5 / 10 |
+
+每个 capability 的最后一道题是 `probe`。普通 Stream 前 2 道为 `learning`，3 道题的 Stream 前 1 道为 `learning`，其余为 `application`。probe 与 application 的区别只在位置：它是该能力在 Stream 中的最后一个新实例。`probe_spec` 必须给出：
+
+- `target_capability_id`、`held_out_source_task_id`；
+- `expected_transfer_from_turn_ids`：同能力的更早 Turn；
+- `interference_capability_ids`：上一道同能力 Turn 与 probe 之间出现过的其他能力（blocked 排布可以为空）；
+- `probe_gap_turns`：两者之间的 Turn 数，非负整数。
+
+### 17.3 跨 benchmark 迁移 probe
+
+`relation_class=cross_benchmark_transfer` 的 probe 来自另一个 benchmark 的同类能力，`probe_spec` 额外给出 `transfer_source_capability_id` 与 `transfer_group_id`，两个 capability 必须同属 `taxonomy.json.transfer_groups` 中的同一组。迁移组由 capability codebook 维护，每组至少跨两个 benchmark。
+
+### 17.4 Workspace 持久与显式依赖
+
+V5 Stream 的 `workspace_persistence` 为 `stream`：整条 Stream 共用一个 `agent_workspace`，每个 Turn 的 `workspace_transition` 为 `continue_with_patch`，把该 Turn 的 `workspace_seed` 复制到 `agent_workspace/tasks/<turn_id>/`，不删除先前 Turn 的文件。Task prompt 开头说明本 Turn 的目录。
+
+显式依赖 Stream 把一个原生任务拆成两个阶段：
+
+- 阶段 1 的 `turn_origin` 为 `derived_evolution_turn`，`source_basis` 额外给出 `parent_source_task_ids` 与 `derivation`；它的 verifier 是为 V5 编写的派生检查，不是上游检查。
+- 阶段 2 使用原生 verifier，但 `workspace_seed` 为空：数据、代码和阶段 1 的产物只存在于阶段 1 的 Turn 目录。`capability_relation.artifact_dependency_turn_ids` 列出被依赖的 Turn，必须是更早的 Turn。
+
+`reset` condition 每个 Turn 都从 Stream 初始 Workspace 重建，因此阶段 2 在 `reset` 下拿不到输入。按第 6.1 节，这类 Turn 不能用于严格的 Reset 对照；V5 的主条件是 `evolving`，`reset` 只作为 Runtime 消融。
+
+### 17.5 Runtime profile
+
+`runtime_profiles.json` 中每个 profile 固定 task 与 verifier 镜像的 digest、`turn_timeout_seconds`、`requires_gpu` 与 `gpu_count`。`requires_gpu=true` 的 Turn 只能在提供 GPU 直通的 Runtime 上运行；没有 GPU 直通时，Runtime 必须把这类 Stream 报告为不可运行，不能降级到 CPU 后计分。

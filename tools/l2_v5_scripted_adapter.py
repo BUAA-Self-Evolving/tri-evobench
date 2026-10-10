@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -26,7 +27,8 @@ def _reply(request_id: int, result: dict[str, Any]) -> None:
 
 
 def _turn_dir() -> Path:
-    return Path.cwd() / "benchmarks/current/L2_Demo_V5/streams" / flow_id / turn_id
+    package = os.environ.get("TRIEVO_L2_V5_PACKAGE", "benchmarks/current/L2_Demo_V5")
+    return Path(package).resolve() / "streams" / flow_id / turn_id
 
 
 def _known_correct_reply(params: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:

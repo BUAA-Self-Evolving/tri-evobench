@@ -1,0 +1,27 @@
+{
+  "schema_version": "l2_native_verifier_result/1.0",
+  "verifier_id": "example_native_verifier",
+  "status": "pass",
+  "score": 0.86,
+  "checks": [
+    {
+      "check_id": "submission_schema",
+      "status": "pass",
+      "score": 1.0,
+      "evidence": ["submission.csv contains the required columns"]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "agent_workspace/submission.csv",
+      "exists": true,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "public_summary": {
+    "result_category": "pass",
+    "observable_deficiencies": []
+  },
+  "private_diagnostics": {},
+  "error": null
+}

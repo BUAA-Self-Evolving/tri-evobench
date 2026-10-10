@@ -1,0 +1,37 @@
+{
+  "schema_version": "l2_pools/1.0",
+  "pools": [
+    {
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "stream_ids": [
+        "intra_sr_python_data_01",
+        "intra_sr_python_visual_01",
+        "intra_sr_python_io_02",
+        "intra_tau2_service_01",
+        "intra_tau2_support_02"
+      ],
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scopes": [
+        "permissive"
+      ],
+      "allows_cross_pool_aggregation": false
+    },
+    {
+      "pool_id": "cross_benchmark_multi_capability",
+      "pool_type": "cross_benchmark",
+      "stream_ids": [
+        "cross_offer_retail_filesystem_01",
+        "cross_court_airline_plotting_01",
+        "cross_dbscan_telecom_pandas_01",
+        "cross_weighted_gdp_telecom_numpy_01",
+        "cross_office_retail_filesystem_01"
+      ],
+      "composition_policy": "three_capabilities_three_benchmarks",
+      "license_scopes": [
+        "permissive"
+      ],
+      "allows_cross_pool_aggregation": false
+    }
+  ]
+}

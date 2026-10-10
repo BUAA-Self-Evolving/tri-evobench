@@ -43,7 +43,7 @@ feedback_projection
 - `type = "llm_as_judge"`
 - `protocol = "l2_native_evidence_llm_judge_v1"`
 
-未声明 `evaluation_profile` 的既有 Task 继续按 legacy General Profile 与 `l2_judge/1.0` 解释。新 Task 应显式声明 Profile；`auto_research` 必须使用 Judge Prompt V2。
+未声明 `evaluation_profile` 的既有 Task 继续按 legacy General Profile 与 `l2_judge/1.0` 解释。新 Task 应显式声明 Profile；`auto_research` 必须使用 Judge Prompt V2。`l2_taskstream/1.2`（V5）包的 General Task 也使用 Judge Prompt V2（`l2_judge/2.0`），不带 Domain Rubric route，checks 为 `task_completion` 0.6、`requirement_and_output_compliance` 0.25、`evidence_and_side_effect_integrity` 0.15。
 
 ## 2.1 Evaluation Profile 与 Rubric route
 

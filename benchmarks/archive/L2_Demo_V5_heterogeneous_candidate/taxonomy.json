@@ -1,0 +1,122 @@
+{
+  "schema_version": "l2_taxonomy/1.0",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/1.0",
+  "capabilities": [
+    {
+      "capability_id": "airline_booking_change",
+      "domain_id": "travel_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "source_benchmark": "tau2_bench"
+    },
+    {
+      "capability_id": "banking_product_application",
+      "domain_id": "banking_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "product_selection"
+      ],
+      "source_benchmark": "tau2_bench"
+    },
+    {
+      "capability_id": "court_form_filling",
+      "domain_id": "legal_operations",
+      "task_type_ids": [
+        "document_generation",
+        "structured_data_entry"
+      ],
+      "source_benchmark": "skilllearnbench"
+    },
+    {
+      "capability_id": "dbscan_parameter_tuning",
+      "domain_id": "machine_learning",
+      "task_type_ids": [
+        "model_tuning",
+        "analysis"
+      ],
+      "source_benchmark": "skilllearnbench"
+    },
+    {
+      "capability_id": "filesystem_path_operations",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "file_processing"
+      ],
+      "source_benchmark": "sr_agents"
+    },
+    {
+      "capability_id": "matplotlib_visualization",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "visualization"
+      ],
+      "source_benchmark": "sr_agents"
+    },
+    {
+      "capability_id": "numpy_numerical_computing",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "numerical_computing"
+      ],
+      "source_benchmark": "sr_agents"
+    },
+    {
+      "capability_id": "offer_letter_generation",
+      "domain_id": "office_productivity",
+      "task_type_ids": [
+        "document_generation"
+      ],
+      "source_benchmark": "skilllearnbench"
+    },
+    {
+      "capability_id": "office_document_automation",
+      "domain_id": "office_productivity",
+      "task_type_ids": [
+        "document_generation",
+        "document_transformation"
+      ],
+      "source_benchmark": "skillsbench"
+    },
+    {
+      "capability_id": "pandas_dataframe_manipulation",
+      "domain_id": "software_engineering",
+      "task_type_ids": [
+        "code_generation",
+        "data_transformation"
+      ],
+      "source_benchmark": "sr_agents"
+    },
+    {
+      "capability_id": "retail_exchange_resolution",
+      "domain_id": "retail_support",
+      "task_type_ids": [
+        "tool_workflow",
+        "policy_application"
+      ],
+      "source_benchmark": "tau2_bench"
+    },
+    {
+      "capability_id": "telecom_connectivity_troubleshooting",
+      "domain_id": "telecom_support",
+      "task_type_ids": [
+        "diagnosis",
+        "tool_workflow"
+      ],
+      "source_benchmark": "tau2_bench"
+    },
+    {
+      "capability_id": "weighted_gdp_analysis",
+      "domain_id": "finance_economics",
+      "task_type_ids": [
+        "calculation",
+        "analysis"
+      ],
+      "source_benchmark": "skilllearnbench"
+    }
+  ]
+}

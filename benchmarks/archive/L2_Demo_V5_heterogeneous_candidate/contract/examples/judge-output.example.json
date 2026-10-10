@@ -1,0 +1,15 @@
+{
+  "stream_id": "example_stream",
+  "turn_id": "turn1",
+  "interaction_index": 1,
+  "check_scores": [
+    {
+      "check_id": "side_effect_control",
+      "score": 1,
+      "reason": "Only the requested submission artifact changed.",
+      "evidence_refs": ["workspace_diff.changed_files[0]"]
+    }
+  ],
+  "source_rubric_scores": [],
+  "rationale": "The observable artifact and execution trace satisfy the LLM-owned check."
+}

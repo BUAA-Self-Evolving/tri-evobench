@@ -483,7 +483,7 @@ def _validate_v5_stream(
         raise L2SpecError(f"{stream_id}: cross pool requires exactly 3 benchmarks")
     if pool_type == "auto_research" and not benchmarks <= {"airs_bench", "mlgym"}:
         raise L2SpecError(f"{stream_id}: auto_research pool only admits AIRS-Bench and MLGym")
-    if pool_type not in {"same_benchmark", "cross_benchmark", "auto_research"}:
+    if pool_type not in {"same_benchmark", "cross_benchmark", "auto_research", "explicit_dependency"}:
         raise L2SpecError(f"{stream_id}: unsupported pool_type {pool_type!r}")
     if not isinstance(stream.get("selection_provenance"), dict):
         raise L2SpecError(f"{stream_id}: selection_provenance is required")
@@ -558,6 +558,10 @@ def _validate_v5_task(
         "native_family_sibling", "reviewed_shared_procedure", "cross_benchmark_transfer",
     }:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: invalid relation_class")
+    dependencies = relation.get("artifact_dependency_turn_ids", [])
+    earlier_turns = set(turn_order[: turn_index - 1])
+    if not isinstance(dependencies, list) or any(dep not in earlier_turns for dep in dependencies):
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: artifact dependencies must name earlier Turns")
     role = task.get("sequence_role")
     probe = task.get("probe_spec")
     if role == "probe":

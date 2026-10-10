@@ -82,7 +82,7 @@ def main() -> int:
     counts: Counter[str] = Counter()
     for path in sorted(args.pool.glob("*/*/pool_task.json")):
         record = json.loads(path.read_text())
-        if not record.get("qualification", {}).get("admitted"):
+        if not record.get("qualification", {}).get("admitted") or record.get("pool_scope") == "explicit_dependency_only":
             continue
         hint = record["capability_hint"]
         cap = hint["capability_id"]

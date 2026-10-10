@@ -1,0 +1,145 @@
+{
+  "pool_id": "cross_benchmark_multi_capability",
+  "schedule": "delayed",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "skilllearn.offer-letter-generator",
+      "pool_source_id": "skilllearnbench:offer-letter-generator-3",
+      "sequence_role": "learning",
+      "source_hash": "aeb2fba7f726973e367a2bb64d9af990ee93a29c2ff5c6216113ea086c16b202",
+      "source_id": "skilllearnbench:offer-letter-generator-3",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "skilllearn.offer-letter-generator",
+      "pool_source_id": "skilllearnbench:offer-letter-generator-4",
+      "sequence_role": "learning",
+      "source_hash": "fa98ef7809a9c7b33c2439b300fd46b3f69e448211cf4b740a36756874a507ae",
+      "source_id": "skilllearnbench:offer-letter-generator-4",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "skilllearn.offer-letter-generator",
+      "pool_source_id": "skilllearnbench:offer-letter-generator-1",
+      "sequence_role": "application",
+      "source_hash": "39d673a78f65dd5308a0cf0cd6f849ffdbf0522a95a457e777731ebf24b33fe5",
+      "source_id": "skilllearnbench:offer-letter-generator-1",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "skilllearn.offer-letter-generator",
+      "pool_source_id": "skilllearnbench:offer-letter-generator-5",
+      "sequence_role": "application",
+      "source_hash": "fae6070d22f21ee280ca91035b526ae4e1780dc5df2a97cdd9063a2e3f3533a3",
+      "source_id": "skilllearnbench:offer-letter-generator-5",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "sra.data_visualization",
+      "pool_source_id": "sr_agents:bigcodebench_00092",
+      "sequence_role": "learning",
+      "source_hash": "07d3db8a2a3dc70e615a4ce45c40a9c2a51dc296471edb51d1af972f64b2cafc",
+      "source_id": "sr_agents:bigcodebench_00092",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "sra.data_visualization",
+      "pool_source_id": "sr_agents:bigcodebench_00298",
+      "sequence_role": "learning",
+      "source_hash": "915bc78e8f0e11760f7b2a34f39ae97e5d2774a763f85aa602337a3eea8fdad0",
+      "source_id": "sr_agents:bigcodebench_00298",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "sra.data_visualization",
+      "pool_source_id": "sr_agents:bigcodebench_00047",
+      "sequence_role": "application",
+      "source_hash": "5e431f2085356ab51cbe384b246f26da94e79f69eab01c33ff26b70252c1d2bd",
+      "source_id": "sr_agents:bigcodebench_00047",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "sra.data_visualization",
+      "pool_source_id": "sr_agents:bigcodebench_00106",
+      "sequence_role": "application",
+      "source_hash": "c83b3e054704ba08a4c9558a9725c7640a1b2b51c6078ae8170edd1608c01c3a",
+      "source_id": "sr_agents:bigcodebench_00106",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "learning",
+      "source_hash": "2b798f26f4747678a75dc8943856f86e39abf2a935c363c000623913df974962",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn9",
+      "turn_index": 9
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+      "sequence_role": "learning",
+      "source_hash": "6e986e01e94a4acccc843c0f4d3e7bdbe3e0a12dae314566035869d99ffd0bfe",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+      "turn_id": "turn10",
+      "turn_index": 10
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "0c143a2ff07bf6aa9768d8747c565f896306bf1891813bf04ce93369b050f2fe",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+      "turn_id": "turn11",
+      "turn_index": 11
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "application",
+      "source_hash": "cdac43512b0ffdbbc89ffa1d0f7a0b03bc76bdd532f11faa6349cda1c4b0578f",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn12",
+      "turn_index": 12
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "sequence_role": "probe",
+      "source_hash": "c6e0c816107f8fb6e792038fd364f6690a43173ad285211fb931c3f67069578d",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "turn_id": "turn13",
+      "turn_index": 13
+    },
+    {
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "pool_source_id": "skilllearnbench:weighted-gdp-calculation-5",
+      "sequence_role": "probe",
+      "source_hash": "0aa90e0d544419373b90fddea8f2c94213713fc42213899b464d0d2251a62804",
+      "source_id": "skilllearnbench:weighted-gdp-calculation-5",
+      "turn_id": "turn14",
+      "turn_index": 14
+    },
+    {
+      "capability_id": "skillsbench.office-white-collar",
+      "pool_source_id": "skillsbench:paper-anonymizer",
+      "sequence_role": "probe",
+      "source_hash": "a8287f1b128a8a6c9b0ac0efde04656386c42c6cbfe6d60ccbf7b4cd75ec10ea",
+      "source_id": "skillsbench:paper-anonymizer",
+      "turn_id": "turn15",
+      "turn_index": 15
+    }
+  ],
+  "stream_id": "cross_transfer_delayed_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

@@ -486,6 +486,81 @@
         "skilllearn.offer-letter-generator": "skillsbench.office-white-collar",
         "sra.data_visualization": "skilllearn.weighted-gdp-calculation"
       }
+    },
+    {
+      "stream_id": "auto_research_cpu_interleaved_01",
+      "pool_id": "auto_research_cpu",
+      "schedule": "interleaved",
+      "tasks_per_capability": 3,
+      "capabilities": [
+        "ar.tabular_and_text_prediction",
+        "ar.sequence_and_math_reasoning",
+        "ar.decision_and_game_strategy"
+      ],
+      "filters": {
+        "ar.tabular_and_text_prediction": {
+          "requires_gpu": false
+        },
+        "ar.sequence_and_math_reasoning": {
+          "requires_gpu": false
+        },
+        "ar.decision_and_game_strategy": {
+          "requires_gpu": false
+        }
+      },
+      "relation_class": "reviewed_shared_procedure",
+      "theme": "AutoResearch CPU-only: text/tabular prediction, sequence and retrieval, game strategy"
+    },
+    {
+      "stream_id": "auto_research_cpu_gpu_interleaved_01",
+      "pool_id": "auto_research_cpu_gpu",
+      "schedule": "interleaved",
+      "tasks_per_capability": 3,
+      "capabilities": [
+        "ar.tabular_and_text_prediction",
+        "ar.vision_and_deep_models",
+        "ar.decision_and_game_strategy"
+      ],
+      "filters": {
+        "ar.tabular_and_text_prediction": {
+          "requires_gpu": true
+        },
+        "ar.decision_and_game_strategy": {
+          "requires_gpu": true
+        }
+      },
+      "relation_class": "reviewed_shared_procedure",
+      "theme": "AutoResearch CPU+GPU: transformer NLP, vision/graph deep models, RL control"
+    },
+    {
+      "stream_id": "dependency_autoresearch_cpu_interleaved_01",
+      "pool_id": "explicit_dependency",
+      "schedule": "interleaved",
+      "tasks_per_capability": 3,
+      "capabilities": [
+        "ar.tabular_and_text_prediction",
+        "ar.sequence_and_math_reasoning",
+        "ar.decision_and_game_strategy"
+      ],
+      "pinned": {
+        "ar.tabular_and_text_prediction": [
+          "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+          "mlgym:regressionKaggleHousePrice#stage2",
+          "airs_bench:TextualClassificationSickAccuracy"
+        ],
+        "ar.sequence_and_math_reasoning": [
+          "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+          "airs_bench:TimeSeriesForecastingRideshareMAE#stage2",
+          "airs_bench:TimeSeriesForecastingSolarWeeklyMAE"
+        ],
+        "ar.decision_and_game_strategy": [
+          "mlgym:blotto#stage1_evaluation_harness",
+          "mlgym:blotto#stage2",
+          "mlgym:prisonersDilemma"
+        ]
+      },
+      "relation_class": "reviewed_shared_procedure",
+      "theme": "Explicit dependency: feature tables -> house-price model; series cleaning -> forecasting; evaluation harness -> Blotto strategy; held-out native probes"
     }
   ]
 }

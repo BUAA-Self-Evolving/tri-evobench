@@ -50,6 +50,8 @@ POOLS = {
         "pool_type": "auto_research", "composition_policy": "three_autoresearch_capabilities_cpu_only"},
     "auto_research_cpu_gpu": {
         "pool_type": "auto_research", "composition_policy": "three_autoresearch_capabilities_cpu_and_gpu"},
+    "explicit_dependency": {
+        "pool_type": "explicit_dependency", "composition_policy": "staged_native_tasks_with_artifact_dependencies"},
 }
 LEARNER_ABI = {
     "learner_state_abi": "baseline_state/1.0", "learner_state_mount_profile": "baseline_explicit_v1",
@@ -236,6 +238,8 @@ def plan(pool_root: Path, codebook_path: Path, spec_path: Path, out: Path) -> No
                     break
                 if sid in used or sid in chosen:
                     continue
+                if pool[sid].get("pool_scope") == "explicit_dependency_only":
+                    continue
                 runtime = pool[sid]["runtime"]
                 if "requires_gpu" in filters and runtime.get("requires_gpu") != filters["requires_gpu"]:
                     continue
@@ -308,7 +312,10 @@ def submission_parts(turn_id: str, record: dict[str, Any]) -> tuple[dict[str, An
     relative = sub.get("relative_path") or ""
     path = f"agent_workspace/tasks/{turn_id}" + (f"/{relative}" if relative not in {"", "."} else "")
     contract = {"mode": "workspace_artifact", "payload_kind": sub["payload_kind"], "source_binding": "submission"}
-    bind = {"name": "submission", "source": "workspace", "path": path}
+    # Source verifiers take the Turn's task directory and resolve the declared
+    # artifact inside it (tau2 reads submission/trajectory.json, MLGym RL needs
+    # src/config.yaml next to checkpoints/), so the binding is the directory.
+    bind = {"name": "submission", "source": "workspace", "path": f"agent_workspace/tasks/{turn_id}"}
     return contract, bind, path
 
 
@@ -392,8 +399,11 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
         stage.mkdir()
         rubric_paths = {"auto_research": "prompts/rubrics/auto_research_v1.md",
                         "airs_bench": "prompts/rubrics/airs_bench_v1.md", "mlgym": "prompts/rubrics/mlgym_v1.md"}
-        if rubric_dir is not None:
-            shutil.copytree(rubric_dir, stage / "prompts" / "rubrics")
+        # The runtime reads routed rubrics from the package root; always ship them.
+        shutil.copytree(rubric_dir or TEMPLATES / "rubrics", stage / "prompts" / "rubrics")
+        missing = [path for path in rubric_paths.values() if not (stage / path).is_file()]
+        if missing:
+            raise ValueError(f"rubric files missing from the package: {missing}")
         profiles: dict[str, dict[str, Any]] = {}
         pool_streams: dict[str, list[str]] = defaultdict(list)
         manifest_streams, catalog_rows, taxonomy_used = [], {}, {}
@@ -440,15 +450,27 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                     "capability_id": capability_id, "domain_id": entry["domain_id"],
                     "task_type_ids": entry["task_type_ids"], "source_benchmark": entry["benchmark_id"]}
                 prompt = record["prompt"]
-                if record["submission"]["mode"] == "workspace_artifact" or any((turn_dir / "workspace_seed").iterdir()):
+                dependency_turns: list[str] = []
+                if record.get("dependency"):
+                    # Explicit-dependency stage: the inputs live in the earlier stage's
+                    # Turn directory, which the prompt names through a placeholder.
+                    required = record["dependency"]["requires_source_id"]
+                    dep_turn = next((t["turn_id"] for t in selected_turns if t["pool_source_id"] == required), None)
+                    if dep_turn is None:
+                        raise ValueError(f"{stream_id}/{turn_id}: dependency {required} is not placed earlier")
+                    dependency_turns.append(dep_turn)
+                    prompt = (prompt.replace(record["dependency"]["placeholder"], f"/workspace/tasks/{dep_turn}/")
+                              .replace("{{turn_dir}}", f"/workspace/tasks/{turn_id}/"))
+                elif record["submission"]["mode"] == "workspace_artifact" or any((turn_dir / "workspace_seed").iterdir()):
                     prompt = path_mapping_sentence(turn_id, record) + prompt
                 parents = list(seen[stream_capability])
                 task: dict[str, Any] = {
                     "schema_version": TASK_SCHEMA, "stream_id": stream_id, "turn_id": turn_id, "turn_index": index,
-                    "turn_type": "capability_application", "turn_origin": "source_task",
+                    "turn_type": "capability_application", "turn_origin": record.get("turn_origin", "source_task"),
                     "sequence_role": role, "interaction_arm": "llm_post_failure",
                     "source_basis": {key: record["source"][key] for key in
-                                     ("benchmark_id", "benchmark_revision", "source_hash", "source_path", "source_task_id")},
+                                     ("benchmark_id", "benchmark_revision", "source_hash", "source_path", "source_task_id",
+                                      "parent_source_task_ids", "derivation") if key in record["source"]},
                     "taxonomy_ref": {
                         "taxonomy_version": plan_doc["taxonomy_version"], "domain_id": entry["domain_id"],
                         "task_type_ids": entry["task_type_ids"], "capability_id": capability_id,
@@ -461,7 +483,9 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                     "relation_class": "cross_benchmark_transfer" if transfer
                     else stream_plan.get("relation_class", "native_family_sibling"),
                     "runtime_profile_id": profile["runtime_profile_id"],
-                    "capability_relation": {"capability_id": capability_id, "parent_turn_ids": parents},
+                    "capability_relation": {"capability_id": capability_id, "parent_turn_ids": parents,
+                                            **({"artifact_dependency_turn_ids": dependency_turns}
+                                               if dependency_turns else {})},
                     "agent_input": {
                         "agent_workspace": "agent_workspace", "workspace_persistence": "stream",
                         "messages": [{"role": "user", "content": prompt}], "available_tools": [], "assets": [],
@@ -492,7 +516,8 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                         "probe_gap_turns": gap,
                         "claim_scope": {"same_benchmark": "within_benchmark_retention",
                                         "cross_benchmark": "cross_benchmark_shift_retention",
-                                        "auto_research": "within_autoresearch_retention"}[pool_info["pool_type"]],
+                                        "auto_research": "within_autoresearch_retention",
+                                        "explicit_dependency": "within_autoresearch_retention"}[pool_info["pool_type"]],
                         "held_out_source_task_id": record["source"]["source_task_id"],
                     }
                     if transfer:
@@ -503,19 +528,24 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                 write_json(turn_dir / "task.json", task)
                 summaries.append({
                     "turn_id": turn_id, "turn_index": index, "turn_type": "capability_application",
-                    "turn_origin": "source_task", "sequence_role": role,
+                    "turn_origin": record.get("turn_origin", "source_task"), "sequence_role": role,
                     "source_task_id": record["source"]["source_task_id"], "capability_id": capability_id,
                     "runtime_profile_id": profile["runtime_profile_id"],
                 })
                 selected_turns.append({"turn_id": turn_id, "turn_index": index, "sequence_role": role,
-                                       "source_id": source_id, "source_hash": record["source"]["source_hash"],
+                                       "source_id": f"{record['source']['benchmark_id']}:{record['source']['source_task_id']}",
+                                       "pool_source_id": source_id, "source_hash": record["source"]["source_hash"],
                                        "capability_id": capability_id})
-                catalog_rows[source_id] = {
-                    "source_id": source_id, "source": record["source"], "prompt": record["prompt"],
+                # One catalog row per source identity: an explicit-dependency stage 2
+                # shares its row with the native task it runs.
+                identity = f"{record['source']['benchmark_id']}:{record['source']['source_task_id']}"
+                catalog_rows.setdefault(identity, {
+                    "source_id": identity, "source": task["source_basis"], "license": record["source"].get("license"),
+                    "prompt": record["prompt"],
                     "benchmark_native_labels": record.get("benchmark_native_labels", {}),
                     "capability_id": capability_id, "runtime": record["runtime"],
                     "evaluation_profile": record["evaluation_profile"], "qualification": record["qualification"],
-                }
+                })
                 seen[stream_capability].append(turn_id)
                 last_seen_index[stream_capability] = index
                 placements += 1
