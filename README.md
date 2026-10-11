@@ -77,6 +77,11 @@ Responses API。默认关闭跨 Turn 学习；使用 `examples/codex-evolving.ov
 仅基于公开轨迹、在 Turn 末执行的记忆更新。每个 Turn 新建会话，同一 Turn 内的 Interaction
 继续该会话。完整 L1 Arena / L2 命令与状态边界见 [Codex 接入说明](docs/codex-baseline.md)。
 
+DeepSeek Harness 与 ZCode 已注册为 `deepseek-harness`、`zcode`，可通过
+`--baseline` 或 spec 的 `baseline.type` 切换。构建命令、超参数、原生会话和状态边界见
+[接入说明](docs/deepseek-harness-zcode-baselines.md)，示例配置位于
+`examples/deepseek-harness-baseline.override.json` 和 `examples/zcode-baseline.override.json`。
+
 ## Features
 
 - Flow 内共享 Sandbox，支持本地和 Ubuntu Docker 后端
@@ -92,7 +97,7 @@ Responses API。默认关闭跨 Turn 学习；使用 `examples/codex-evolving.ov
 ```bash
 git clone git@github.com:BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode baseline/codex
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode baseline/codex baseline/deepseek-harness baseline/ZCode
 uv sync --frozen --group dev
 ```
 

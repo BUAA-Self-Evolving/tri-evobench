@@ -6,6 +6,10 @@ Codex 已通过 `baseline/manifests/codex.json` 注册，支持 `--baseline code
 `baseline.type=codex`。构建、超参数、原生 JSONL 会话与可选 Turn 末记忆扩展见
 [Codex baseline 接入说明](codex-baseline.md)。
 
+DeepSeek Harness 与 ZCode 注册为 `deepseek-harness`、`zcode`，支持同样的参数切换方式。
+构建、原生 SDK/CLI 配置、会话和无跨 Turn 学习的状态边界见
+[接入说明](deepseek-harness-zcode-baselines.md)。
+
 ## 1. 设计目标
 
 本次改造解决三个问题：

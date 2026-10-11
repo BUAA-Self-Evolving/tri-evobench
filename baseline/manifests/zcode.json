@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "zcode",
+  "adapter": {
+    "type": "process", "timeout_seconds": 1800, "cwd": "{repo_root}",
+    "command": [
+      "docker", "run", "--rm", "-i", "--init",
+      "--name", "trievo-zcode-{instance_id}",
+      "--user", "{uid}:{gid}", "--cap-drop", "ALL",
+      "--security-opt", "no-new-privileges", "--pids-limit", "512",
+      "--memory", "8g", "--cpus", "4",
+      "-v", "{workspace_mount}:/workspace", "-v", "{state_mount}:/agent-state",
+      "-e", "TRIEVO_API_KEY", "-e", "TRIEVO_BASE_URL", "-e", "TRIEVO_MODEL",
+      "-e", "ZAI_API_KEY", "-e", "HTTP_PROXY", "-e", "HTTPS_PROXY", "-e", "NO_PROXY",
+      "-e", "http_proxy", "-e", "https_proxy", "-e", "no_proxy", "{image}"
+    ],
+    "cleanup_command": ["docker", "rm", "-f", "trievo-zcode-{instance_id}"]
+  },
+  "source": {
+    "path": "baseline/ZCode", "revision": "aac4755666d09fdcd70272fcf063c077a639015f"
+  },
+  "environment": {
+    "inherit": [
+      "TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL", "ZAI_API_KEY",
+      "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"
+    ]
+  },
+  "workspace": {"mode": "shared_volume", "adapter_path": "/workspace"},
+  "state": {
+    "scope": "flow", "adapter_path": "/agent-state",
+    "paths": ["learning/**/*"], "enforce_turn_freeze": true
+  },
+  "evolution": {"policy": "disabled", "timeout_seconds": 900},
+  "options": {
+    "image": "trievo-zcode:0.1",
+    "executable": ["node", "/opt/zcode/apps/zcode-cli/packages/cli/dist/zcode.cjs"],
+    "builtin_config": "/opt/zcode/config/provider/zcode-builtin.json",
+    "model": "glm-5", "base_url": "", "api_key_env": "TRIEVO_API_KEY",
+    "api_type": "openai-chat-completions", "context_window": 128000,
+    "reasoning_effort": null, "model_config": {},
+    "request_timeout_seconds": 1700, "allow_revision_mismatch": false
+  },
+  "capabilities": ["direct_workspace", "terminal", "tool_calls", "usage", "evolution_barrier"]
+}
