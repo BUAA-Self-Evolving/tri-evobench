@@ -107,6 +107,22 @@ def test_v5_runtime_profile_can_only_tighten_turn_limits() -> None:
     assert limits.max_output_tokens == 4096
 
 
+def test_v5_runtime_profile_scopes_model_calls_without_loosening() -> None:
+    ceiling = L2AgentWorkLimits(max_model_calls=80, max_tool_calls=60, episode_timeout_seconds=1800)
+    tau2 = _runtime_profile_work_limits(
+        ceiling, {"turn_timeout_seconds": 1800, "max_tool_calls": 60, "max_model_calls": 80}
+    )
+    other = _runtime_profile_work_limits(
+        ceiling, {"turn_timeout_seconds": 900, "max_tool_calls": 20, "max_model_calls": 24}
+    )
+    assert (tau2.max_model_calls, tau2.max_tool_calls, tau2.episode_timeout_seconds) == (80, 60, 1800)
+    assert (other.max_model_calls, other.max_tool_calls, other.episode_timeout_seconds) == (24, 20, 900)
+    tight = _runtime_profile_work_limits(
+        L2AgentWorkLimits(max_model_calls=10), {"max_model_calls": 80}
+    )
+    assert tight.max_model_calls == 10
+
+
 def test_v5_task_local_seed_can_copy_directory_contents_to_workspace_root(
     tmp_path,
 ) -> None:

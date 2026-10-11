@@ -2570,8 +2570,9 @@ def _runtime_profile_work_limits(
     """Apply a Turn profile without allowing it to loosen Stream limits."""
     timeout = int(profile.get("turn_timeout_seconds", stream_limits.episode_timeout_seconds))
     tool_calls = int(profile.get("max_tool_calls", stream_limits.max_tool_calls))
+    model_calls = int(profile.get("max_model_calls", stream_limits.max_model_calls))
     output_tokens = int(profile.get("max_output_tokens", stream_limits.max_output_tokens))
-    if timeout < 2 or tool_calls < 1 or output_tokens < 1:
+    if timeout < 2 or tool_calls < 1 or model_calls < 1 or output_tokens < 1:
         raise L2AgentRunError("runtime profile limits must be positive")
     episode_timeout = min(stream_limits.episode_timeout_seconds, timeout)
     return replace(
@@ -2582,6 +2583,7 @@ def _runtime_profile_work_limits(
             episode_timeout - 1,
         ),
         max_tool_calls=min(stream_limits.max_tool_calls, tool_calls),
+        max_model_calls=min(stream_limits.max_model_calls, model_calls),
         max_output_tokens=min(stream_limits.max_output_tokens, output_tokens),
     )
 

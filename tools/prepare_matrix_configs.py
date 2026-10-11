@@ -71,7 +71,10 @@ def generate(
     # The repaired SkillsBench package declares a 40-call ceiling. Other
     # streams keep their package-local 20-call ceiling through
     # _effective_work_limits(), so this does not silently widen them.
-    l2_limits = {**limits, "max_tool_calls": 40}
+    # V5 runtime profiles tighten these per Turn (tools, model calls, time);
+    # the ceiling is set by live τ² Turns (60 tool calls, 80 model calls,
+    # 1800 s). Other V5 profiles declare 20 tool calls and 24 model calls.
+    l2_limits = {**limits, "max_model_calls": 80, "max_tool_calls": 60, "episode_timeout_seconds": 1800}
 
     def save(name, value):
         (output / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")

@@ -62,6 +62,11 @@ PROFILE_FAMILY = {
     "tau2_bench": "tau2_live", "airs_bench": "autoresearch", "mlgym": "autoresearch",
 }
 DEFAULT_MAX_TOOL_CALLS = 20
+# Model calls per Interaction. Live τ² Turns hold a multi-turn conversation
+# with the user simulator, so they need more model calls than one-shot tasks;
+# every other profile keeps the 24-call budget of the formal matrix config.
+DEFAULT_MAX_MODEL_CALLS = 24
+PROFILE_MAX_MODEL_CALLS = {"tau2_live": 80}
 SUBMISSION_ADAPTER = {
     "final_response": "identity", "workspace_artifact": "identity",
 }
@@ -315,6 +320,8 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         "requires_gpu": bool(runtime.get("requires_gpu")),
         "gpu_count": int(runtime.get("gpu_count", 1 if runtime.get("requires_gpu") else 0)),
         "max_tool_calls": int(runtime.get("max_tool_calls", DEFAULT_MAX_TOOL_CALLS)),
+        "max_model_calls": int(runtime.get("max_model_calls",
+                                           PROFILE_MAX_MODEL_CALLS.get(family, DEFAULT_MAX_MODEL_CALLS))),
         # Live τ² Turns: the runtime starts a session service from the task image
         # next to the agent's sandbox (see trievo_bench/tau2_live).
         **({"live_session": runtime["live_session"]} if runtime.get("live_session") else {}),

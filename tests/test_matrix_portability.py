@@ -28,8 +28,12 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
             assert config["environment"]["set"]["TRIEVO_THINKING"] == "disabled"
             assert "TRIEVO_API_TIMEOUT_SECONDS" in config["adapter"]["command"]
             assert "TRIEVO_API_MAX_RETRIES" in config["adapter"]["command"]
-        expected_tool_limit = 40 if "_l2" in path.name or path.name == "tmp_hermes_cf_l2.override.json" else 20
-        assert config["options"]["l2_agent_limits"]["max_tool_calls"] == expected_tool_limit
+        is_l2 = "_l2" in path.name or path.name == "tmp_hermes_cf_l2.override.json"
+        limits = config["options"]["l2_agent_limits"]
+        # L2 ceiling = live tau2 profile; other V5 profiles tighten it per Turn.
+        assert limits["max_tool_calls"] == (60 if is_l2 else 20)
+        if is_l2:
+            assert (limits["max_model_calls"], limits["episode_timeout_seconds"]) == (80, 1800)
 
     hermes_l1 = (output / "hermes-l1-seed/config.yaml").read_text()
     hermes_l2 = (output / "hermes-l2-seed/config.yaml").read_text()
@@ -60,8 +64,8 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert trace_l2["options"]["generation_config"]["max_tokens"] == 12000
     assert trace_l2["options"]["request_timeout"] == 150
     assert "max_tokens" not in trace_l1["options"]["generation_config"]
-    assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
-    assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
+    assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 60
+    assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 60
     prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
     assert prime["options"]["request_timeout_seconds"] == 150
     assert prime["options"]["max_retries"] == 4
