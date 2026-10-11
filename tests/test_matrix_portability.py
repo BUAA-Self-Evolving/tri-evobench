@@ -5,6 +5,13 @@ import pytest
 
 from tools.prepare_matrix_configs import generate
 from tools.run_new_package_matrix import command, jobs
+from trievo_bench.l2_agent import _apply_stream_limit_overrides, _effective_work_limits, _work_limits
+
+V5_TAU2_STREAMS = (
+    "intra_tau2_blocked_01", "intra_tau2_interleaved_01", "intra_tau2_delayed_01",
+    "cross_blocked_01", "cross_interleaved_01", "cross_delayed_01",
+    "cross_transfer_interleaved_01", "cross_transfer_delayed_01",
+)
 
 
 def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
@@ -30,10 +37,18 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
             assert "TRIEVO_API_MAX_RETRIES" in config["adapter"]["command"]
         is_l2 = "_l2" in path.name or path.name == "tmp_hermes_cf_l2.override.json"
         limits = config["options"]["l2_agent_limits"]
-        # L2 ceiling = live tau2 profile; other V5 profiles tighten it per Turn.
-        assert limits["max_tool_calls"] == (60 if is_l2 else 20)
+        assert limits["max_tool_calls"] == (40 if is_l2 else 20)
+        assert (limits["max_model_calls"], limits["episode_timeout_seconds"]) == (24, 900)
+        overrides = config["options"].get("l2_stream_limit_overrides")
         if is_l2:
-            assert (limits["max_model_calls"], limits["episode_timeout_seconds"]) == (80, 1800)
+            # Only the V5 Streams with live tau2 Turns get the larger ceiling.
+            assert sorted(item["stream_id"] for item in overrides) == sorted(V5_TAU2_STREAMS)
+            for item in overrides:
+                assert item["limits"] == {
+                    "max_tool_calls": 60, "max_model_calls": 80, "episode_timeout_seconds": 1800,
+                }
+        else:
+            assert overrides is None
 
     hermes_l1 = (output / "hermes-l1-seed/config.yaml").read_text()
     hermes_l2 = (output / "hermes-l2-seed/config.yaml").read_text()
@@ -64,8 +79,8 @@ def test_generated_configs_are_portable_and_disable_thinking(tmp_path):
     assert trace_l2["options"]["generation_config"]["max_tokens"] == 12000
     assert trace_l2["options"]["request_timeout"] == 150
     assert "max_tokens" not in trace_l1["options"]["generation_config"]
-    assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 60
-    assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 60
+    assert skillopt_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
+    assert trace_l2["options"]["l2_agent_limits"]["max_tool_calls"] == 40
     prime = json.loads((output / "tmp_prime-agent_docker.override.json").read_text())
     assert prime["options"]["request_timeout_seconds"] == 150
     assert prime["options"]["max_retries"] == 4
@@ -208,3 +223,24 @@ def test_old_packages_parent_discovers_single_l2_child(tmp_path):
 def test_missing_packages_fail_instead_of_empty_success(tmp_path):
     with pytest.raises(ValueError, match="No l2 stream"):
         jobs(tmp_path, tmp_path / "results", tmp_path / "missing")
+
+
+def test_l2_tau2_override_raises_only_tau2_streams(tmp_path):
+    output = generate(tmp_path / "configs", "gpt-5.6-terra", "https://example.test/v1")
+    hermes_l2 = json.loads((output / "tmp_hermes_cf_l2.override.json").read_text())
+    v5_requirements = {"max_tool_calls_per_interaction": 60, "turn_timeout_seconds": 1800, "max_output_tokens": 12000}
+    v4_requirements = {"max_tool_calls_per_interaction": 20, "turn_timeout_seconds": 900, "max_output_tokens": 12000}
+
+    def limits(stream_id, requirements):
+        configured = _effective_work_limits(_work_limits(hermes_l2), requirements)
+        applied = []
+        result = _apply_stream_limit_overrides(
+            configured=configured, overrides=hermes_l2, baseline="hermes", stream_id=stream_id,
+            carriers=("tool_trajectory",), execution_requirements=requirements,
+            budget_profile="formal", applied=applied,
+        )
+        return (result.max_tool_calls, result.max_model_calls, result.episode_timeout_seconds), applied
+
+    assert limits("cross_blocked_01", v5_requirements)[0] == (60, 80, 1800)
+    unchanged, applied = limits("airs_sick_textual_entailment_accuracy_001", v4_requirements)
+    assert unchanged == (20, 24, 900) and applied == []

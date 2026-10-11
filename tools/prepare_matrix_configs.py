@@ -32,6 +32,18 @@ def _add_passthrough_env(command, names):
     return command
 
 
+V5_TAU2_LIVE_LIMITS = {"max_tool_calls": 60, "max_model_calls": 80, "episode_timeout_seconds": 1800}
+
+
+def _v5_tau2_stream_ids(repo: Path) -> list[str]:
+    plan = json.loads((repo / "benchmarks/current/L2_Demo_V5/stream_plan.json").read_text(encoding="utf-8"))
+    return [
+        stream["stream_id"]
+        for stream in plan["streams"]
+        if any(cap["capability_id"].startswith("tau2.") for cap in stream["capabilities"])
+    ]
+
+
 def generate(
     output: Path,
     model: str | None = None,
@@ -71,10 +83,15 @@ def generate(
     # The repaired SkillsBench package declares a 40-call ceiling. Other
     # streams keep their package-local 20-call ceiling through
     # _effective_work_limits(), so this does not silently widen them.
-    # V5 runtime profiles tighten these per Turn (tools, model calls, time);
-    # the ceiling is set by live τ² Turns (60 tool calls, 80 model calls,
-    # 1800 s). Other V5 profiles declare 20 tool calls and 24 model calls.
-    l2_limits = {**limits, "max_model_calls": 80, "max_tool_calls": 60, "episode_timeout_seconds": 1800}
+    l2_limits = {**limits, "max_tool_calls": 40}
+    # Live τ² Turns in L2 Demo V5 talk to the user simulator and need 60 tool
+    # calls, 80 model calls and 1800 s. Raise the ceiling only for the V5
+    # Streams that contain τ² Turns; their runtime profiles still hold every
+    # other Turn in those Streams to 20 tool calls and 24 model calls.
+    l2_stream_overrides = [
+        {"stream_id": stream_id, "limits": dict(V5_TAU2_LIVE_LIMITS)}
+        for stream_id in _v5_tau2_stream_ids(repo)
+    ]
 
     def save(name, value):
         (output / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -117,7 +134,8 @@ def generate(
             "state": {"seed_from": str(seed), "seed_files": ["config.yaml"]},
             "options": {"image": hermes_image, "approval_policy": "session",
                         "thinking": thinking,
-                        "l2_agent_limits": l2_limits if level == "l2" else limits},
+                        "l2_agent_limits": l2_limits if level == "l2" else limits,
+                        **({"l2_stream_limit_overrides": l2_stream_overrides} if level == "l2" else {})},
         })
 
     for agent, image, env_names, options in (
@@ -183,6 +201,7 @@ def generate(
                 "options": {
                     **config["options"],
                     "l2_agent_limits": l2_limits,
+                    "l2_stream_limit_overrides": l2_stream_overrides,
                     "max_completion_tokens": l2_max_output_tokens,
                     "openai_compatible_max_tokens": l2_max_output_tokens,
                 },
@@ -193,6 +212,7 @@ def generate(
                 "options": {
                     **config["options"],
                     "l2_agent_limits": l2_limits,
+                    "l2_stream_limit_overrides": l2_stream_overrides,
                     "request_timeout": api_timeout_seconds,
                     "max_tokens": l2_max_output_tokens,
                     "evolution_max_tokens": l2_max_output_tokens,
