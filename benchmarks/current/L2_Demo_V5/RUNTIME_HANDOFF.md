@@ -52,9 +52,37 @@ manifests use. Offline tooling that only needs bind mounts (for example
 `tools/l2_v5_qualify_package.py`) can use the proxy socket and reads results
 from files.
 
+### Live tau2 sessions (from the next package build)
+
+Profiles with a `live_session` block (`tau2_live_cpu_1800s_v5`) need, per
+Interaction (implemented in `trievo_bench/tau2_live/launcher.py`):
+
+1. Start a session container from the profile's task image with the Stream
+   Workspace volume at `/workspace` and default networking. Pass
+   `DEEPSEEK_API_KEY` (and any proxy variables) by name only. Copy the Turn's
+   `evaluation_assets/tau2_task.json` into the container, never into the
+   Workspace, and run `python -m tau2_session.service`. It is ready when
+   `/workspace/.tau2/session.sock` exists.
+2. Run the agent. Its own sandbox keeps `network: disabled`; it reaches the
+   conversation only through `/workspace/.tau2/tau2.py`.
+3. After the agent returns, before syncing the Workspace back, run
+   `python -m tau2_session.ctl finish` in the container, copy
+   `/out/record.json` out and remove the container. The service deletes
+   `/workspace/.tau2`. Pass the record inline to the native verifier for the
+   `interaction_record` / `tau2_live_session` binding, and keep it in the
+   checkpoint evidence (`tau2_live_record`) so a resume can re-verify it.
+4. A missing record or a session that failed for infrastructure reasons is an
+   evaluation error.
+
+The agent needs one terminal command per move: the profile sets
+`max_tool_calls: 60`, and the baseline's own `l2_agent_limits` must allow that
+(the smoke used `max_tool_calls` 60, `max_model_calls` 80,
+`episode_timeout_seconds` 1800).
+
 ### Known runtime cost
 
-tau2 Turns are token-heavy. The agent reads the policy, database, and tool
-documentation from the Workspace and writes a full trajectory; a DeepSeek smoke
-of `intra_tau2_interleaved_01` used about 3.4M tokens in two Turns before
-hitting a 3M budget. Plan budgets for tau2 Streams accordingly.
+tau2 Turns are token-heavy. Live, the agent's context grows with the
+conversation; a DeepSeek smoke of `intra_tau2_interleaved_01` turn1–turn2 used
+3.71M tokens (mostly cache reads) for two passing Turns. The user simulator
+re-reads the conversation on every reply (260k prompt tokens on the telecom
+Turn).

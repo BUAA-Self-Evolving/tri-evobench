@@ -543,3 +543,11 @@ AutoResearch Turn（AIRS-Bench、MLGym，含显式依赖 Stream 的阶段 2 与 
 
 显式依赖 Stream 的阶段 1 是为 V5 编写的派生检查，只有通过/不通过，没有上游归一化分数，因此按 General Profile 计分（三项加权 check，Turn score 在 `[0, 1]`）。
 
+### 17.7 tau2 live Turn
+
+tau2-bench Turn 是一次真实的 tau2 对话，不再提交离线轨迹。每个 Interaction 开始时，Runtime 用 Turn profile 的 task 镜像另起一个 session 容器：容器挂载同一个 Stream Workspace，只为 User Simulator 的 LLM 开放网络；私有任务 JSON 只复制进该容器，不进入 Workspace。容器里运行 AReaL `examples/tau2` 的 τ² harness（官方 orchestrator、非 solo、`max_steps=200`、DeepSeek `deepseek-flash` User Simulator，temperature 0），被测 Agent 替代其中的 policy LLM：Agent 通过 `/workspace/.tau2/tau2.py` 读取官方 `LLMAgent` system prompt 与 domain policy、读取工具 schema、向用户发消息、调用真实工具。Agent 自身的 sandbox 仍是 `network: disabled`。
+
+对话由用户结束（或达到 tau2 的步数、错误、超时上限）。Agent 的 Interaction 结束时对话仍未结束，按 `agent_error` 计，官方 evaluator 给 0 分。Runtime 随后结束 session：session 用官方 `evaluate_simulation(EvaluationType.ALL)` 在容器内计分（NL assertion judge 绑定 User Simulator 的模型），并封存为 `trievo_tau2_live_session/1.0` 记录。该记录就是 submission：`submission_contract.mode=tool_trajectory`、`payload_kind=tau2_live_session_record`，binding 为 `{"source": "interaction_record", "path": "tau2_live_session"}`，Runtime 以 inline 形式交给 native verifier。Verifier（无网络）核对记录的 task 哈希、tau2 revision 与 harness，再在记录的 simulation 上重跑官方 evaluator（NL assertion 使用记录中的 judge 结果），重算 reward 必须与记录一致；reward 为 1 时 `pass`。记录不属于本 Turn、或 session 因基础设施失败，属于 evaluator error。
+
+每个 Interaction 是一次新的 tau2 对话（环境从任务初始状态开始）；同一 Turn 最多 3 个 Interaction 的规则不变。tau2 profile 声明 `max_tool_calls: 60`（每个 Agent 动作是一条终端命令）与 `live_session` 块；Stream 的 `max_tool_calls_per_interaction` 取其各 profile 的最大值，其他 profile 声明 20。
+

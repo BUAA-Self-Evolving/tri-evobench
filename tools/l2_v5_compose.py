@@ -59,8 +59,9 @@ LEARNER_ABI = {
 }
 PROFILE_FAMILY = {
     "sr_agents": "sr_agents_python", "skilllearnbench": "skilllearn_task", "skillsbench": "skillsbench_task",
-    "tau2_bench": "tau2_replay", "airs_bench": "autoresearch", "mlgym": "autoresearch",
+    "tau2_bench": "tau2_live", "airs_bench": "autoresearch", "mlgym": "autoresearch",
 }
+DEFAULT_MAX_TOOL_CALLS = 20
 SUBMISSION_ADAPTER = {
     "final_response": "identity", "workspace_artifact": "identity",
 }
@@ -313,6 +314,10 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         "tool_profile_id": "terminal_filesystem_v1", "turn_timeout_seconds": timeout,
         "requires_gpu": bool(runtime.get("requires_gpu")),
         "gpu_count": int(runtime.get("gpu_count", 1 if runtime.get("requires_gpu") else 0)),
+        "max_tool_calls": int(runtime.get("max_tool_calls", DEFAULT_MAX_TOOL_CALLS)),
+        # Live τ² Turns: the runtime starts a session service from the task image
+        # next to the agent's sandbox (see trievo_bench/tau2_live).
+        **({"live_session": runtime["live_session"]} if runtime.get("live_session") else {}),
     }
 
 
@@ -328,6 +333,11 @@ def path_mapping_sentence(turn_id: str, record: dict[str, Any]) -> str:
 
 def submission_parts(turn_id: str, record: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any], str]:
     sub = record["submission"]
+    if sub["mode"] == "tool_trajectory":
+        # Live τ² Turns: the runtime passes the sealed session record inline.
+        contract = {"mode": "tool_trajectory", "payload_kind": sub["payload_kind"], "source_binding": "submission"}
+        bind = {"name": "submission", "source": "interaction_record", "path": "tau2_live_session"}
+        return contract, bind, "tau2_live_session"
     if sub["mode"] == "final_response":
         contract = {"mode": "final_response", "payload_kind": sub["payload_kind"], "source_binding": "submission"}
         bind = {"name": "submission", "source": "interaction_record", "path": "final_response"}
@@ -366,7 +376,7 @@ def evaluation_block(stream_id: str, turn_id: str, record: dict[str, Any], turn_
     assets = sorted(p.relative_to(turn_dir).as_posix() for p in (turn_dir / "evaluation_assets").rglob("*") if p.is_file())
     evaluation["reference_context"]["native_assets"] = assets
     evaluation["reference_context"]["submission_mode"] = contract["mode"]
-    required = [] if contract["mode"] == "final_response" else [submission_path]
+    required = [submission_path] if contract["mode"] == "workspace_artifact" else []
     evaluation["gt"]["workspace_gt"]["required_outputs"] = required
     evaluation["expected_workspace_effect"]["required_outputs"] = required
     if profile == "general":
@@ -592,7 +602,7 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                                       "delayed": "A1..A(n-1), B1..B(n-1), C1..C(n-1), Cn, Bn, An"}[schedule]},
                 "execution_requirements": {
                     "network": "disabled", "path_scope": "agent_workspace", "max_interactions": 3,
-                    "max_tool_calls_per_interaction": 20,
+                    "max_tool_calls_per_interaction": max(p["max_tool_calls"] for p in stream_profiles),
                     "turn_timeout_seconds": max(p["turn_timeout_seconds"] for p in stream_profiles),
                     "max_output_tokens": 12000,
                     "requires_gpu": any(p["requires_gpu"] for p in stream_profiles),

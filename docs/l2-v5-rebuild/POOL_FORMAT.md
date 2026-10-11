@@ -114,3 +114,13 @@ results through bind-mounted files, because attached stdout is unreliable.
 After composing, `tools/l2_v5_qualify_package.py` repeats the red/green check
 for every Turn of the package through its `verifier_cli.py`, one fresh
 container per fixture.
+
+### tau2 live tasks
+
+tau2 pool tasks have an empty `workspace_seed/`, `submission.mode:
+tool_trajectory` (`payload_kind: tau2_live_session_record`) and a
+`runtime.live_session` block. `evaluation_assets/` holds the private upstream
+task, `tau2_meta.json`, `tau2_scoring.py` and `source_verifier.py`; the
+fixtures are session records in `fixtures/<name>/response.txt`. See contract
+§17.7 and `tools/l2_v5_tau2.py`.
+

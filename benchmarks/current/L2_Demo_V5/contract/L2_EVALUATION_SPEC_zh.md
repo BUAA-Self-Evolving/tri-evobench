@@ -170,6 +170,7 @@ Runtime 不得猜测 response、Workspace 产物或 tool trajectory 应如何转
 ```
 
 - `mode` 只能是 `final_response`、`workspace_artifact` 或 `tool_trajectory`；
+- tau2 live Turn 使用 `tool_trajectory`：submission 是 Runtime 收集的 live session 记录（`payload_kind=tau2_live_session_record`，binding `interaction_record` / `tau2_live_session`，inline 转交），不是 Agent 的 final response。session 记录缺失或 session 基础设施失败是 evaluator error，不是 task failure；见 `L2_BENCHMARK_SPEC_zh.md` 17.7；
 - `source_binding` 必须精确引用当前 `native_verifier.input_bindings[]` 中同名 binding；
 - Runtime 只负责按 binding 冻结并转交原始 submission，不实现 source-specific parser；
 - `adapter.owner=native_verifier`。代码提取、轨迹解析、格式适配等逻辑随 Task 的私有 verifier 资产交付并版本化；

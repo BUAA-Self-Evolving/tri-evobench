@@ -1,33 +1,47 @@
 ARG BASE_IMAGE=trievo-l2-v5:0.4
 FROM ${BASE_IMAGE}
 
-# tau2-bench (sierra-research/tau2-bench a2c024725189473d2d7cea3a5cfdbcc67478e41f,
-# MIT) for the rebuilt L2 V5 pool. tools/l2_v5_tau2.py assembles the build
-# context from the read-only checkout:
-#   tau2-src/   pyproject.toml, LICENSE, README.md, src/tau2 (minus the telecom
-#               task generator, which can regenerate gold solutions)
-#   tau2-data/  domain DBs, policies and knowledge documents only; no tasks*.json,
-#               splits, voice/audio files. Task definitions with evaluation
-#               criteria live in each pool task's private evaluation_assets.
+# tau2-bench (sierra-research/tau2-bench, MIT) at the revision AReaL pins for
+# its τ² harness, plus the L2 live session package. tools/l2_v5_tau2.py
+# assembles the build context from the read-only checkout:
+#   tau2-src/      pyproject.toml, LICENSE, README.md, src/tau2 (minus the
+#                  telecom task generator, which can regenerate gold solutions)
+#   tau2-data/     domain DBs, policies, knowledge documents and the user
+#                  simulator guidelines only; no
+#                  tasks*.json, splits, voice/audio files. Task definitions with
+#                  evaluation criteria live in each pool task's private
+#                  evaluation_assets and reach only the session container.
+#   tau2_session/  trievo_bench/tau2_live/session: AReaL's τ² runner and user
+#                  simulator (copied, see areal/PROVENANCE.md), the bridge
+#                  agent, the session service and the agent CLI.
 #
 # The base interpreter is Python 3.11; upstream declares >=3.12 but the source
-# compiles and contains no 3.12-only stdlib usage. tau2 is installed into its
-# own venv that reuses the base site-packages, so base packages are untouched.
-# Red/green qualification of every admitted task runs in this image.
+# compiles under 3.11. tau2 is installed into its own venv that reuses the base
+# site-packages, so base packages are untouched. The same image is the Turn's
+# task sandbox (network none), the live session service (network for the user
+# simulator only) and the verifier (network none).
+#
+# websockets is in upstream's voice extra, but tau2.data_model.simulation imports
+# the OpenAI realtime provider unconditionally at b7ea907, so text runs need it.
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG TAU2_REVISION=b7ea9074c1cba482b30687fecdb5c8425fd6f619
 
 COPY tau2-src /opt/tau2/src
 COPY tau2-data /opt/tau2/data
 
 RUN python -m venv --system-site-packages /opt/tau2/venv \
     && /opt/tau2/venv/bin/pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" \
-        --ignore-requires-python /opt/tau2/src \
+        --ignore-requires-python /opt/tau2/src "websockets>=13.0" \
     && rm -rf /opt/tau2/src \
     && find /opt/tau2/venv -name '__pycache__' -prune -exec rm -rf {} +
 
+COPY tau2_session /opt/trievo/tau2_session
+
 ENV TAU2_DATA_DIR=/opt/tau2/data \
-    TAU2_PYTHON=/opt/tau2/venv/bin/python
+    TAU2_PYTHON=/opt/tau2/venv/bin/python \
+    TAU2_REVISION=${TAU2_REVISION} \
+    PYTHONPATH=/opt/trievo
 
 WORKDIR /workspace
 CMD ["sleep", "infinity"]

@@ -112,3 +112,33 @@ results.
 - MLGym game scores come from 10,000 Monte-Carlo games against an unseeded
   opponent, so repeated evaluations differ by about ±0.003.
 - The paper census and Section 4.2 have not been updated for this release.
+
+### tau2 live carrier (2026-10-10)
+
+The user rejected the offline trajectory replay: tau2 Turns must call live
+tools and talk to the user simulator, and the native evaluator must score the
+actual conversation.
+
+- Source: AReaL `examples/tau2` (PHAI worktree `codex-sao-math`, commit
+  `979f4221`): `user_simulator.py`, `benchmark_variant.py`,
+  `benchmark_fixes.json`, `contracts.py` verbatim, and the `Tau2Runner`
+  evaluation path in `runner.py` with `LLMAgent` replaced by the bridge agent
+  (`trievo_bench/tau2_live/session/areal/PROVENANCE.md`). tau2-bench moves to
+  `b7ea907`, the revision AReaL pins.
+- Pool (`tools/l2_v5_tau2.py`, candidate under
+  `tmp/l2v5/tau2_native/pool/tau2`): 364 of 369 tasks admitted. Red/green per
+  source: the upstream gold actions played through the native environment as a
+  conversation must score 1.0 with the official evaluator (NL assertions judged
+  live); a refusal, or a wrong write on refusal tasks, must score 0. The 5
+  rejected tasks (retail 105, 109, 110, 111; banking task_102) pass the DB
+  check but the NL judge rejects the synthetic gold conversation; none is used
+  by the package.
+- Composed candidate (`tmp/l2v5/tau2_native/L2_Demo_V5_tau2_native`, same
+  plan): all 70 tau2 Turn placements (50 sources) pass red/green through the
+  package verifier with network disabled.
+- DeepSeek live smoke, `intra_tau2_interleaved_01` turn1–turn2, Hermes,
+  `deepseek-flash`: turn1 telecom MMS (Easy persona) reward 1.0
+  (ENV_ASSERTION), 47 user-simulator messages, 21 user tool calls, 9 agent
+  tool calls; turn2 retail 100 reward 1.0 (DB, NL_ASSERTION), 9 user messages,
+  13 agent tool calls. Both Turns passed; 3.71M agent tokens.
+

@@ -137,8 +137,16 @@ build): an AutoResearch Turn scores the upstream normalized score clipped to
 check becomes `auto_research_validity` (0 or 1, rubrics `*_v2.md`), bands are
 removed, and $a$ is kept only as `reference_context.reference_scores`. For
 example, the DeepSeek smoke HousePrice submission (R² 0.8936) scores 0.218 instead of
-0. The runtime still scores the released package by its bands. tau2 Turns submit a JSON trajectory that the verifier replays in the
-real tau2 environment and scores with the native DB-state and assertion reward.
+0. The runtime still scores the released package by its bands.
+
+tau2 change (2026-10-10, contract §17.7; takes effect from the next package
+build): tau2 Turns run live. The runtime starts a session container from the
+tau2 image next to the agent; the agent reads the policy, calls the real
+domain tools and talks to the DeepSeek user simulator through
+`/workspace/.tau2/tau2.py`, and the official tau2 evaluator scores the actual
+conversation. The released package still uses the offline trajectory replay
+(`trievo-l2-v5-tau2:0.1`); the live carrier uses `trievo-l2-v5-tau2:0.2`
+(tau2-bench `b7ea907`, the revision AReaL pins).
 
 ### Images
 

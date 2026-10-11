@@ -29,6 +29,7 @@ from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationSt
 from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
 from .model import TokenBudget, client_from_config
 from .run_conditions import RunCondition, parse_run_condition
+from .tau2_live import Tau2LiveSession, Tau2LiveSessionError, is_live_profile
 from .verifier import L1LifeJudge
 
 
@@ -253,6 +254,8 @@ class L2AgentStreamRunner:
         self._package_volume: DockerVolumeMirror | None = None
         self._storage_gate = _storage_gate_from_environment()
         self._task_sandbox: _TaskSandboxSession | None = None
+        # Sealed record of the current Interaction's live tau2 session.
+        self._tau2_record: dict[str, Any] | None = None
 
     def _validate_panel_metadata(self, options: L2AgentRunOptions) -> dict[str, Any]:
         if options.panel_id is None:
@@ -699,8 +702,10 @@ class L2AgentStreamRunner:
                     before_files = resume_pending["before_files"] if resume_pending else _workspace_digest(workspace)
                     stream_key = hashlib.sha256(self.options.stream_id.encode("utf-8")).hexdigest()[:10]
                     started_checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"i{turn_index:04d}-{interaction_index:02d}"
+                    self._tau2_record = None
                     if resume_pending:
                         reply = _restored_reply(resume_pending["reply"])
+                        self._tau2_record = resume_pending.get("tau2_live_record")
                     else:
                         started_checkpoint.mkdir(parents=True, exist_ok=True)
                         _archive_tree(workspace, started_checkpoint / "workspace.zip")
@@ -715,20 +720,26 @@ class L2AgentStreamRunner:
                             "next_turn_index": turn_index, "interaction_index": interaction_index,
                             "token_budget": asdict(self.budget),
                         })
-                        reply = self._runtime.interact(
-                            InteractionContext(
-                                turn_id=turn_id,
-                                interaction_index=interaction_index,
-                                request=interaction_request,
-                                history=history,
-                                sandbox={
-                                    "workspace": "/workspace",
-                                    "files": _public_workspace_files(workspace),
-                                    **({"task_runtime": task_sandbox_evidence} if task_sandbox_evidence else {}),
-                                },
-                                remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                        live_session = self._start_tau2_live_session(turn_dir)
+                        try:
+                            reply = self._runtime.interact(
+                                InteractionContext(
+                                    turn_id=turn_id,
+                                    interaction_index=interaction_index,
+                                    request=interaction_request,
+                                    history=history,
+                                    sandbox={
+                                        "workspace": "/workspace",
+                                        "files": _public_workspace_files(workspace),
+                                        **({"task_runtime": task_sandbox_evidence} if task_sandbox_evidence else {}),
+                                        **({"live_session": live_session.evidence} if live_session else {}),
+                                    },
+                                    remaining_token_budget=max(0, self.budget.limit - self.budget.used),
+                                )
                             )
-                        )
+                        finally:
+                            if live_session is not None:
+                                self._tau2_record = self._finish_tau2_live_session(live_session)
                         self._write_reply_received_checkpoint(
                             output_root=output_root,
                             stream_key=stream_key,
@@ -756,6 +767,7 @@ class L2AgentStreamRunner:
                         "interaction_index": interaction_index, "request": interaction_request,
                         "reply": asdict(reply), "history": history, "interactions": interactions,
                         "before_files": before_files, "token_budget": asdict(self.budget),
+                        **({"tau2_live_record": self._tau2_record} if self._tau2_record is not None else {}),
                     })
                     _write_json(pending / "completed_turns.json", report["turns"])
                     _write_json(pending / "checkpoint.json", {
@@ -1049,6 +1061,36 @@ class L2AgentStreamRunner:
             shutil.rmtree(workspace, ignore_errors=True)
         return report
 
+    def _start_tau2_live_session(self, turn_dir: Path) -> Tau2LiveSession | None:
+        """Start the Turn's live tau2 session (one fresh conversation per Interaction)."""
+        profile = self._current_v5_profile
+        if not is_live_profile(profile):
+            return None
+        if self._workspace_volume is None:
+            raise L2AgentRunError("live tau2 sessions require Docker volume transport")
+        session = Tau2LiveSession(
+            profile=profile,
+            turn_dir=turn_dir,
+            workspace_mount_spec=self._workspace_volume.mount_spec("/workspace"),
+            timeout_seconds=self.work_limits.episode_timeout_seconds,
+        )
+        try:
+            session.start()
+        except Tau2LiveSessionError as exc:
+            session.close()
+            raise L2AgentRunError(f"live tau2 session failed to start: {exc}") from exc
+        return session
+
+    def _finish_tau2_live_session(self, session: Tau2LiveSession) -> dict[str, Any] | None:
+        """Score and collect the session before the Workspace is synchronized."""
+        try:
+            return session.finish()
+        except Tau2LiveSessionError as exc:
+            return {"schema_version": "trievo_tau2_live_session/1.0", "status": "error",
+                    "error": f"session collection failed: {exc}"}
+        finally:
+            session.close()
+
     def _close_task_sandbox(self) -> None:
         if self._task_sandbox is not None:
             self._task_sandbox.close()
@@ -1223,6 +1265,11 @@ class L2AgentStreamRunner:
                 bindings[binding_name] = {"kind": "path", "path": binding_path}
             elif binding_source == "interaction_record" and binding.get("path") == "final_response":
                 bindings[binding_name] = {"kind": "inline", "value": reply.text}
+            elif binding_source == "interaction_record" and binding.get("path") == "tau2_live_session":
+                record = getattr(self, "_tau2_record", None)
+                if record is None:
+                    return {"category": "error", "score": None, "details": {"type": "missing_tau2_live_record"}}
+                bindings[binding_name] = {"kind": "inline", "value": json.dumps(record, ensure_ascii=False)}
             else:
                 return {
                     "category": "error",
@@ -2100,6 +2147,12 @@ def _public_submission_instruction(task: dict[str, Any]) -> str:
             "SUBMISSION CONTRACT: create the requested artifact in /workspace using actual tool calls; "
             "a prose claim or final-response-only substitute is not a submission."
             + suffix
+        )
+    if mode == "tool_trajectory" and payload_kind == "tau2_live_session_record":
+        return (
+            "SUBMISSION CONTRACT: the live tau2-bench conversation you hold through /workspace/.tau2/tau2.py is "
+            "the submission. Continue it until the client reports that the conversation has ended; your final "
+            "response and Workspace files are not graded."
         )
     if mode == "final_response" and payload_kind == "python_source":
         return (

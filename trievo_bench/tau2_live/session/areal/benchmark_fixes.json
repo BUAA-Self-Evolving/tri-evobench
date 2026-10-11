@@ -1,0 +1,1017 @@
+{
+ "_doc": "Per-task fixes applied on top of tau2-bench b7ea907 to build the 'fixed' benchmark variant: reward bases and task replacements from the PR head commits in 'sources', then our own 'patches' from the 2026-10-10 Retail audit, and the train tasks left out of training. Build with scripts/tau2/build_fixed_data.py.",
+ "base_revision": "b7ea9074c1cba482b30687fecdb5c8425fd6f619",
+ "sources": {
+  "reward_basis": {
+   "pr": 411,
+   "commit": "3e61dee40468d0aba93b5524e618361a1125afbe"
+  },
+  "tasks": {
+   "pr": 571,
+   "commit": "cc3103351cdbb9cbdee446cf46cd857ac1e10972"
+  },
+  "patches": {
+   "audit": "docs/research/2026-10-09-tau2-high-baseline-audit/README.md"
+  }
+ },
+ "domains": {
+  "airline": {
+   "reward_basis": {
+    "0": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "1": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "2": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "4": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "5": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "6": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "8": [
+     "DB"
+    ],
+    "9": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "10": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "12": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "13": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "15": [
+     "DB"
+    ],
+    "16": [
+     "DB"
+    ],
+    "17": [
+     "DB"
+    ],
+    "19": [
+     "DB"
+    ],
+    "20": [
+     "DB"
+    ],
+    "21": [
+     "DB"
+    ],
+    "22": [
+     "DB"
+    ],
+    "24": [
+     "DB"
+    ],
+    "25": [
+     "DB"
+    ],
+    "26": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "27": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "28": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "29": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "30": [
+     "DB"
+    ],
+    "31": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "32": [
+     "DB"
+    ],
+    "33": [
+     "DB"
+    ],
+    "34": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "35": [
+     "DB"
+    ],
+    "36": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "37": [
+     "DB"
+    ],
+    "38": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "39": [
+     "DB"
+    ],
+    "40": [
+     "DB"
+    ],
+    "41": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "42": [
+     "DB"
+    ],
+    "43": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "44": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "45": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "46": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "47": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "48": [
+     "DB",
+     "NL_ASSERTION"
+    ],
+    "49": [
+     "DB",
+     "NL_ASSERTION"
+    ]
+   },
+   "replace_tasks": {},
+   "patches": {},
+   "exclude_from_train": {
+    "tasks": [],
+    "reason": ""
+   }
+  },
+  "retail": {
+   "reward_basis": {
+    "0": [
+     "DB"
+    ],
+    "1": [
+     "DB"
+    ],
+    "2": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "3": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "4": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "5": [
+     "DB"
+    ],
+    "6": [
+     "DB"
+    ],
+    "7": [
+     "DB"
+    ],
+    "8": [
+     "DB"
+    ],
+    "9": [
+     "DB"
+    ],
+    "10": [
+     "DB",
+     "ACTION"
+    ],
+    "11": [
+     "DB"
+    ],
+    "12": [
+     "DB",
+     "ACTION"
+    ],
+    "13": [
+     "DB"
+    ],
+    "14": [
+     "DB"
+    ],
+    "15": [
+     "DB"
+    ],
+    "16": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "17": [
+     "DB"
+    ],
+    "18": [
+     "DB"
+    ],
+    "19": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "20": [
+     "DB"
+    ],
+    "21": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "22": [
+     "DB"
+    ],
+    "23": [
+     "DB"
+    ],
+    "24": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "25": [
+     "DB"
+    ],
+    "26": [
+     "DB"
+    ],
+    "27": [
+     "DB"
+    ],
+    "28": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "29": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "30": [
+     "DB",
+     "COMMUNICATE"
+    ],
+    "31": [
+     "DB",
+     "COMMUNICATE"
+    ],
+    "32": [
+     "DB",
+     "COMMUNICATE"
+    ],
+    "35": [
+     "DB"
+    ],
+    "36": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "37": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "38": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "39": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "40": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "41": [
+     "DB"
+    ],
+    "42": [
+     "DB"
+    ],
+    "43": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "44": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "45": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "46": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "47": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "48": [
+     "DB"
+    ],
+    "49": [
+     "DB"
+    ],
+    "50": [
+     "DB",
+     "ACTION"
+    ],
+    "51": [
+     "DB"
+    ],
+    "52": [
+     "DB"
+    ],
+    "53": [
+     "DB"
+    ],
+    "54": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "55": [
+     "DB"
+    ],
+    "56": [
+     "DB"
+    ],
+    "57": [
+     "DB"
+    ],
+    "58": [
+     "DB"
+    ],
+    "59": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "60": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "61": [
+     "DB"
+    ],
+    "62": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "63": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "64": [
+     "DB"
+    ],
+    "65": [
+     "DB"
+    ],
+    "66": [
+     "DB"
+    ],
+    "67": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "68": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "69": [
+     "DB"
+    ],
+    "70": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "71": [
+     "DB"
+    ],
+    "72": [
+     "DB"
+    ],
+    "73": [
+     "DB"
+    ],
+    "74": [
+     "DB"
+    ],
+    "75": [
+     "DB"
+    ],
+    "76": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "77": [
+     "DB"
+    ],
+    "78": [
+     "DB"
+    ],
+    "79": [
+     "DB"
+    ],
+    "80": [
+     "DB"
+    ],
+    "81": [
+     "DB"
+    ],
+    "82": [
+     "DB"
+    ],
+    "83": [
+     "DB"
+    ],
+    "84": [
+     "DB"
+    ],
+    "85": [
+     "DB"
+    ],
+    "86": [
+     "DB"
+    ],
+    "87": [
+     "DB"
+    ],
+    "88": [
+     "DB"
+    ],
+    "89": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "90": [
+     "DB"
+    ],
+    "91": [
+     "DB"
+    ],
+    "92": [
+     "DB"
+    ],
+    "93": [
+     "DB"
+    ],
+    "94": [
+     "DB"
+    ],
+    "95": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "96": [
+     "DB"
+    ],
+    "97": [
+     "DB"
+    ],
+    "98": [
+     "DB"
+    ],
+    "99": [
+     "DB"
+    ],
+    "100": [
+     "DB"
+    ],
+    "101": [
+     "DB"
+    ],
+    "102": [
+     "DB"
+    ],
+    "103": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "104": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "108": [
+     "DB",
+     "NL_ASSERTION",
+     "COMMUNICATE"
+    ],
+    "112": [
+     "DB"
+    ]
+   },
+   "replace_tasks": {
+    "64": {
+     "id": "64",
+     "description": {
+      "purpose": null,
+      "relevant_policies": null,
+      "notes": null
+     },
+     "user_scenario": {
+      "persona": null,
+      "instructions": {
+       "task_instructions": ".",
+       "domain": "retail",
+       "reason_for_call": "You want to exchange the camera for the highest resolution, waterproof camera that you can get with the previous purchaced price.",
+       "known_info": "You are James Sanchez. You live in Chicago 60623.",
+       "unknown_info": "You do not remember your email address"
+      }
+     },
+     "initial_state": null,
+     "evaluation_criteria": {
+      "actions": [
+       {
+        "action_id": "64_0",
+        "name": "find_user_id_by_name_zip",
+        "arguments": {
+         "first_name": "James",
+         "last_name": "Sanchez",
+         "zip": "60623"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_1",
+        "name": "get_user_details",
+        "arguments": {
+         "user_id": "james_sanchez_3954"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_2",
+        "name": "get_order_details",
+        "arguments": {
+         "order_id": "#W7464385"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_3",
+        "name": "get_order_details",
+        "arguments": {
+         "order_id": "#W8499625"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_4",
+        "name": "get_order_details",
+        "arguments": {
+         "order_id": "#W1279004"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_5",
+        "name": "get_product_details",
+        "arguments": {
+         "product_id": "3377618313"
+        },
+        "info": null
+       },
+       {
+        "action_id": "64_7",
+        "name": "modify_pending_order_items",
+        "arguments": {
+         "order_id": "#W7464385",
+         "item_ids": [
+          "1810466394"
+         ],
+         "new_item_ids": [
+          "6700049080"
+         ],
+         "payment_method_id": "paypal_1261484"
+        },
+        "info": null
+       }
+      ],
+      "communicate_info": [],
+      "nl_assertions": null,
+      "reward_basis": [
+       "DB",
+       "NL_ASSERTION"
+      ]
+     }
+    },
+    "105": {
+     "id": "105",
+     "description": {
+      "purpose": null,
+      "relevant_policies": null,
+      "notes": null
+     },
+     "user_scenario": {
+      "persona": null,
+      "instructions": {
+       "task_instructions": "You are cautious, messy, rigid.",
+       "domain": "retail",
+       "reason_for_call": "For order #W4316152, you want to  exchange one Tea Kettle {'material': 'glass', 'capacity': '2 liters', 'stovetop compatibility': 'induction'} to {'material': 'ceramic', 'stovetop compatibility': 'gas'}; and another Tea Kettle {'material': 'glass', 'capacity': '2 liters', 'stovetop compatibility': 'induction'} to {'capacity': '1 liter', 'stovetop compatibility': 'gas'};",
+       "known_info": "You name is Aarav Anderson and your zip code is 19031.",
+       "unknown_info": "You do not remember your email address"
+      }
+     },
+     "initial_state": null,
+     "evaluation_criteria": {
+      "actions": [
+       {
+        "action_id": "106_0",
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+         "order_id": "#W4316152",
+         "item_ids": [
+          "7292993796",
+          "7292993796"
+         ],
+         "new_item_ids": [
+          "3761330360",
+          "3909406921"
+         ],
+         "payment_method_id": "gift_card_7245904"
+        },
+        "info": null
+       }
+      ],
+      "communicate_info": [],
+      "nl_assertions": [
+       "Agent should exchange both tea kettles (same style) to the items requested"
+      ],
+      "reward_basis": [
+       "DB",
+       "NL_ASSERTION"
+      ]
+     }
+    }
+   },
+   "patches": {
+    "16": {
+     "reason": "Refund method unspecified; gold refunds to PayPal.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks which payment method to use for a price difference or refund, choose your PayPal account."
+      }
+     ]
+    },
+    "25": {
+     "reason": "No gold write, so doing nothing scored 1. The user asks for the tracking number and for a human if the Amex refund is impossible.",
+     "ops": [
+      {
+       "op": "append",
+       "path": "evaluation_criteria.actions",
+       "value": {
+        "action_id": "25_transfer",
+        "requestor": "assistant",
+        "name": "transfer_to_human_agents",
+        "arguments": {
+         "summary": "The user wants the refund to an Amex credit card, which is not a payment method on the account."
+        },
+        "info": null,
+        "compare_args": []
+       }
+      },
+      {
+       "op": "set",
+       "path": "evaluation_criteria.communicate_info",
+       "value": [
+        "907614527588"
+       ]
+      },
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB",
+        "COMMUNICATE"
+       ]
+      }
+     ]
+    },
+    "26": {
+     "reason": "The gold transfer is copied from task 25 (its summary is about an Amex refund the user never asks for).",
+     "ops": [
+      {
+       "op": "remove",
+       "path": "evaluation_criteria.actions",
+       "match": {
+        "name": "transfer_to_human_agents"
+       }
+      }
+     ]
+    },
+    "38": {
+     "reason": "Cancel reason unspecified; gold uses 'no longer needed'.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks for the reason for cancelling an order, say it is no longer needed."
+      }
+     ]
+    },
+    "57": {
+     "reason": "No gold action, so doing nothing scored 1. The agent must at least look the order up.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.actions",
+       "value": [
+        {
+         "action_id": "57_lookup",
+         "requestor": "assistant",
+         "name": "get_order_details",
+         "arguments": {
+          "order_id": "#W4284542"
+         },
+         "info": null,
+         "compare_args": [
+          "order_id"
+         ]
+        }
+       ]
+      },
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB",
+        "ACTION"
+       ]
+      }
+     ]
+    },
+    "59": {
+     "reason": "Cancel reason unspecified; gold uses 'no longer needed'.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks for the reason for cancelling an order, say it is no longer needed."
+      }
+     ]
+    },
+    "60": {
+     "reason": "Payment method unspecified; gold uses PayPal.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks which payment method to use for a price difference or refund, choose your PayPal account."
+      }
+     ]
+    },
+    "61": {
+     "reason": "Payment method unspecified; gold uses PayPal.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks which payment method to use for a price difference or refund, choose your PayPal account."
+      }
+     ]
+    },
+    "63": {
+     "reason": "Payment method unspecified; gold uses PayPal.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks which payment method to use for a price difference or refund, choose your PayPal account."
+      }
+     ]
+    },
+    "64": {
+     "reason": "Two 4K waterproof cameras fit the budget (PR #571 replacement); gold takes the cheaper one.",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If several cameras fit, choose the cheapest one."
+      }
+     ]
+    },
+    "65": {
+     "reason": "No gold write, so doing nothing scored 1. The agent must at least look the order up.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.actions",
+       "value": [
+        {
+         "action_id": "65_lookup",
+         "requestor": "assistant",
+         "name": "get_order_details",
+         "arguments": {
+          "order_id": "#W5362037"
+         },
+         "info": null,
+         "compare_args": [
+          "order_id"
+         ]
+        }
+       ]
+      },
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB",
+        "ACTION"
+       ]
+      }
+     ]
+    },
+    "66": {
+     "reason": "Cancel reason unspecified; gold uses 'no longer needed' (as in PR #392).",
+     "ops": [
+      {
+       "op": "append_text",
+       "path": "user_scenario.instructions.task_instructions",
+       "text": "If the agent asks for the reason for cancelling an order, say it is no longer needed."
+      }
+     ]
+    },
+    "98": {
+     "reason": "'The other card' points away from the card gold uses for both exchanges.",
+     "ops": [
+      {
+       "op": "replace_text",
+       "path": "user_scenario.instructions.reason_for_call",
+       "old": "you'd prefer the other card as payment or refund method",
+       "new": "you'd prefer your Mastercard ending in 8484 as payment or refund method"
+      }
+     ]
+    },
+    "105": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "106": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "107": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "109": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "110": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "111": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    },
+    "113": {
+     "reason": "The NL assertion restates a write the DB check already scores; the judge sees only text.",
+     "ops": [
+      {
+       "op": "set",
+       "path": "evaluation_criteria.reward_basis",
+       "value": [
+        "DB"
+       ]
+      }
+     ]
+    }
+   },
+   "exclude_from_train": {
+    "tasks": [
+     "37",
+     "41",
+     "67",
+     "72",
+     "96"
+    ],
+    "reason": "Same user and identical gold writes as test tasks 36, 42, 68, 71 and 97."
+   }
+  }
+ }
+}
