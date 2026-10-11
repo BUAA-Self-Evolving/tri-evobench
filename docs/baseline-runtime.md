@@ -2,6 +2,10 @@
 
 本文说明 Tri-EvoBench 如何接入 Hermes Agent，以及后续如何在不修改 Runner 的情况下接入 OpenHands、AutoGen 或其他自进化 Agent 框架。
 
+Codex 已通过 `baseline/manifests/codex.json` 注册，支持 `--baseline codex` 或
+`baseline.type=codex`。构建、超参数、原生 JSONL 会话与可选 Turn 末记忆扩展见
+[Codex baseline 接入说明](codex-baseline.md)。
+
 ## 1. 设计目标
 
 本次改造解决三个问题：

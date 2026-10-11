@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "id": "codex",
+  "adapter": {
+    "type": "process",
+    "timeout_seconds": 1800,
+    "cwd": "{repo_root}",
+    "command": [
+      "docker", "run", "--rm", "-i", "--init",
+      "--name", "trievo-codex-{instance_id}",
+      "--user", "{uid}:{gid}",
+      "--cap-drop", "ALL",
+      "--security-opt", "no-new-privileges",
+      "--pids-limit", "512",
+      "--memory", "8g",
+      "--cpus", "4",
+      "-v", "{workspace_mount}:/workspace",
+      "-v", "{state_mount}:/agent-state",
+      "-e", "HOME=/agent-state/home",
+      "-e", "OPENAI_API_KEY",
+      "-e", "CODEX_API_KEY",
+      "-e", "OPENAI_BASE_URL",
+      "-e", "TRIEVO_API_KEY",
+      "-e", "TRIEVO_BASE_URL",
+      "-e", "TRIEVO_MODEL",
+      "-e", "HTTP_PROXY",
+      "-e", "HTTPS_PROXY",
+      "-e", "NO_PROXY",
+      "-e", "http_proxy",
+      "-e", "https_proxy",
+      "-e", "no_proxy",
+      "{image}"
+    ],
+    "cleanup_command": ["docker", "rm", "-f", "trievo-codex-{instance_id}"]
+  },
+  "source": {
+    "path": "baseline/codex",
+    "revision": "cc7ba33601286a751477832b01de7b6f8de0dd9c"
+  },
+  "environment": {
+    "inherit": [
+      "OPENAI_API_KEY", "CODEX_API_KEY", "OPENAI_BASE_URL",
+      "TRIEVO_API_KEY", "TRIEVO_BASE_URL", "TRIEVO_MODEL",
+      "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"
+    ]
+  },
+  "workspace": {"mode": "shared_volume", "adapter_path": "/workspace"},
+  "state": {
+    "scope": "flow",
+    "adapter_path": "/agent-state",
+    "paths": ["learning/**/*"],
+    "enforce_turn_freeze": true
+  },
+  "evolution": {"policy": "disabled", "timeout_seconds": 900},
+  "options": {
+    "image": "trievo-codex:0.1",
+    "executable": "/opt/trievo/bin/codex-cli",
+    "model": "",
+    "base_url": "",
+    "api_key_env": "TRIEVO_API_KEY",
+    "reasoning_effort": "medium",
+    "web_search": "disabled",
+    "request_timeout_seconds": 1700,
+    "request_max_retries": 2,
+    "memory_max_chars": 12000,
+    "allow_revision_mismatch": false
+  },
+  "capabilities": ["direct_workspace", "terminal", "tool_calls", "usage", "evolution_barrier"]
+}

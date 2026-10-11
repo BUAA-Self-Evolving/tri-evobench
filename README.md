@@ -61,6 +61,22 @@ trievo-bench --spec examples/smoke.json --baseline hermes --baseline-config exam
 
 Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baseline Runtime 接入说明](docs/baseline-runtime.md)。
 
+Codex 已注册为 `codex` baseline，使用仓库固定版本的 `baseline/codex` 源码构建：
+
+```bash
+git submodule update --init baseline/codex
+docker build -t trievo-codex:0.1 -f baseline/adapters/codex/Dockerfile .
+export OPENAI_API_KEY=<your-key>
+trievo-bench --spec <benchmark.json> --baseline codex \
+  --baseline-config examples/codex-baseline.override.json --output runs/codex
+```
+
+也可在 spec 中设置 `baseline.type=codex`。`options.model`、`reasoning_effort`、`base_url`、
+`api_key_env` 和 `request_timeout_seconds` 控制模型与执行参数。自定义模型服务必须支持
+Responses API。默认关闭跨 Turn 学习；使用 `examples/codex-evolving.override.json` 可启用
+仅基于公开轨迹、在 Turn 末执行的记忆更新。每个 Turn 新建会话，同一 Turn 内的 Interaction
+继续该会话。完整 L1 Arena / L2 命令与状态边界见 [Codex 接入说明](docs/codex-baseline.md)。
+
 ## Features
 
 - Flow 内共享 Sandbox，支持本地和 Ubuntu Docker 后端
@@ -76,7 +92,7 @@ Hermes 部署、协议字段和新增其他 baseline 的完整说明见 [Baselin
 ```bash
 git clone git@github.com:BUAA-Self-Evolving/tri-evobench.git
 cd tri-evobench
-git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode
+git submodule update --init baseline/hermes-agent baseline/prime-agent baseline/adaptive-auto-harness baseline/opencode baseline/codex
 uv sync --frozen --group dev
 ```
 
