@@ -142,3 +142,36 @@ actual conversation.
   tool calls; turn2 retail 100 reward 1.0 (DB, NL_ASSERTION), 9 user messages,
   13 agent tool calls. Both Turns passed; 3.71M agent tokens.
 
+### r2 rebuild (2026-10-10)
+
+r2 republishes V5 with the two scoring changes above built in. The plan,
+selections and Stream/Turn layout are unchanged: 18 Streams, 252 Turns, 181
+sources, and every Turn keeps its source and role (0 differences against the
+first release). It is composed from tri-evobench `main` `cbd8871c`.
+
+| | First release `l2-demo-v5` | r2 `l2-demo-v5-r2` |
+|---|---|---|
+| AutoResearch score | Judge bands 0 / 0.5 / 1 | normalized score in [0, 1] if the Judge finds it valid (`auto_research_validity`, rubrics `*_v2.md`) |
+| tau2 | offline replay, `trievo-l2-v5-tau2:0.1` | live session, `trievo-l2-v5-tau2:0.2`, profile `tau2_live_cpu_1800s_v5` (70 Turns) |
+| Per-Interaction calls | no call limits in runtime profiles; Stream `max_tool_calls_per_interaction` only | profiles set `max_tool_calls` / `max_model_calls`: tau2 live 60 / 80, others 20 / 24 |
+| Archive SHA-256 | `cd2f9175933a6710ed9a9b9e99c04d9ffb043cba9ba051aeecb850a216cf9c99` | see `benchmarks/README.md` |
+
+Pools: the live tau2 pool was promoted from the candidate
+(`tmp/l2v5/tau2_native/pool/tau2`) to `l2v5_pool/tau2` without rebuilding; its
+assets, session-package SHA-256 and image digest are identical to what `main`
+builds. The offline pool moved out of the pool root to
+`_datasets/tri-evobench/l2v5_pool_archive/tau2.offline-20261010` (the composer
+reads every pool subdirectory, so it cannot stay beside the live one). The
+AutoResearch pool was not rebuilt: the composer writes the continuous rule from
+the existing records.
+
+Runtime: profiles now declare `max_model_calls`, applied tighten-only like tool
+calls and time. The formal matrix L2 configs raise the ceiling to 60 / 80 /
+1800 s only for the eight Streams with tau2 Turns (`RUNTIME_HANDOFF.md`).
+
+Evidence (PHAI, under `/data_storage/yl_test/lgx/data-1/tmp/l2v5/r2/`):
+`inspect.json` (inspect exit 0); `qual_r2.jsonl` (252 / 252 red/green, exit 0);
+full test suite against the r2 package. No new DeepSeek smoke was run on r2;
+the tau2 live and AutoResearch smokes above ran on earlier candidate builds
+of the same Turns.
+

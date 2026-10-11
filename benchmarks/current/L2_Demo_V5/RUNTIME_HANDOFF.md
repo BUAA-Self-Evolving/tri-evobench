@@ -52,7 +52,7 @@ manifests use. Offline tooling that only needs bind mounts (for example
 `tools/l2_v5_qualify_package.py`) can use the proxy socket and reads results
 from files.
 
-### Live tau2 sessions (from the next package build)
+### Live tau2 sessions
 
 Profiles with a `live_session` block (`tau2_live_cpu_1800s_v5`) need, per
 Interaction (implemented in `trievo_bench/tau2_live/launcher.py`):
@@ -74,10 +74,19 @@ Interaction (implemented in `trievo_bench/tau2_live/launcher.py`):
 4. A missing record or a session that failed for infrastructure reasons is an
    evaluation error.
 
-The agent needs one terminal command per move: the profile sets
-`max_tool_calls: 60`, and the baseline's own `l2_agent_limits` must allow that
-(the smoke used `max_tool_calls` 60, `max_model_calls` 80,
-`episode_timeout_seconds` 1800).
+The agent needs one terminal command per move, so the live profile sets
+`max_tool_calls: 60` and `max_model_calls: 80`; every other profile sets 20 and
+24. The runtime takes the stricter of the profile and the baseline's
+`l2_agent_limits` for tool calls, model calls, and time
+(`_runtime_profile_work_limits` in `trievo_bench/l2_agent.py`), so the
+baseline ceiling must be at least the live profile. The formal matrix L2
+configs (`tools/prepare_matrix_configs.py`) keep `l2_agent_limits` at 40 tool
+calls, 24 model calls and 900 s, and add `l2_stream_limit_overrides` that raise
+the ceiling to 60 / 80 / 1800 s only for the eight V5 Streams containing tau2
+Turns (derived from `stream_plan.json`). Inside those Streams the non-tau2
+Turns are still held to 20 / 24 by their profiles; their time limit is the
+smaller of the profile's `turn_timeout_seconds` and 1800 s. V4 and the other
+V5 Streams are unaffected.
 
 ### Known runtime cost
 

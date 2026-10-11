@@ -25,7 +25,10 @@ Docker image/runtime smoke 与真实模型矩阵是另外两层证据；只有�
 `short_stream_main_panel`；`parent_stream_diagnostic` 只能单独跑诊断，不能和主面板混算。
 外部包应先解压到 Git checkout 之外，再通过 `--l2-package` 显式传入；Runtime 不需要也不直接读取 ZIP。
 L2 Demo V5 的完整包不在仓库内（见 `benchmarks/current/L2_Demo_V5/README.md`），按 pool 分别运行，
-运行要求见同目录的 `RUNTIME_HANDOFF.md`；本页的矩阵命令仍以 V4 为准。
+运行要求见同目录的 `RUNTIME_HANDOFF.md`；本页的矩阵命令仍以 V4 为准。当前完整包是 r2（Release
+`l2-demo-v5-r2`），首个发布 `l2-demo-v5` 已被取代。`tools/prepare_matrix_configs.py` 生成的 L2 配置通过
+`l2_stream_limit_overrides`，只给含 tau2 Turn 的 8 条 V5 Stream 放宽到 60 次工具调用、80 次模型调用、1800 s；
+这些 Stream 里的非 tau2 Turn 仍受各自 runtime profile 的 20 / 24 限制。V4 与其余 V5 Stream 的上限不变。
 全部数据版本见 [数据包目录](../benchmarks/README.md)，文件完整性可用
 `python tools/dataset_inventory.py --check` 检查。API key、付费运行日志和检查点不上传。
 不要用仓库旧 `benchmarks/l1_life_v2` 替代本次 `l1_arena`。

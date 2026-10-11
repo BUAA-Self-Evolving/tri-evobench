@@ -13,26 +13,38 @@ This directory is the package descriptor: documentation, the contract, and every
 package-level catalog (`manifest.json`, `pools.json`, `panels.json`,
 `runtime_profiles.json`, `taxonomy.json`, `capability_codebook.json`,
 `stream_plan.json`, `source_tasks.jsonl`, `selections/`). The full package with
-`streams/` (2.9 GB: workspace seeds, private evaluation assets, and fixtures) is
+`streams/` (3.0 GB: workspace seeds, private evaluation assets, and fixtures) is
 too large for Git; several AutoResearch data files exceed GitHub's 100 MB file
 limit. It is published as a dataset artifact:
 
 | Artifact | Location |
 |---|---|
-| GitHub Release | [`l2-demo-v5`](https://github.com/BUAA-Self-Evolving/tri-evobench/releases/tag/l2-demo-v5): `L2_Demo_V5.tar.part-00`, `L2_Demo_V5.tar.part-01`, `SHA256SUMS` |
-| Package directory (PHAI) | `/data_storage/yl_test/lgx/data-1/code/_datasets/tri-evobench/L2_Demo_V5/` |
-| Archive (PHAI) | `.../_datasets/tri-evobench/L2_Demo_V5.tar` (SHA-256 in `L2_Demo_V5.tar.sha256` and in `benchmarks/README.md`) |
+| GitHub Release | [`l2-demo-v5-r2`](https://github.com/BUAA-Self-Evolving/tri-evobench/releases/tag/l2-demo-v5-r2): `L2_Demo_V5_r2.tar.part-00`, `L2_Demo_V5_r2.tar.part-01`, `SHA256SUMS` |
+| Package directory (PHAI) | `/data_storage/yl_test/lgx/data-1/code/_datasets/tri-evobench/L2_Demo_V5_r2/` |
+| Archive (PHAI) | `.../_datasets/tri-evobench/L2_Demo_V5_r2.tar` (SHA-256 in `L2_Demo_V5_r2.tar.sha256` and in `benchmarks/README.md`) |
 | Per-file digests | `PACKAGE_FILES.sha256` in this directory |
 
 GitHub limits a release asset to 2 GiB, so the archive is split into two parts.
 To restore it:
 
 ```bash
-gh release download l2-demo-v5 --repo BUAA-Self-Evolving/tri-evobench
-cat L2_Demo_V5.tar.part-00 L2_Demo_V5.tar.part-01 > L2_Demo_V5.tar
-sha256sum -c SHA256SUMS    # checks both parts and the joined archive
-tar -xf L2_Demo_V5.tar     # creates L2_Demo_V5/
+gh release download l2-demo-v5-r2 --repo BUAA-Self-Evolving/tri-evobench
+cat L2_Demo_V5_r2.tar.part-00 L2_Demo_V5_r2.tar.part-01 > L2_Demo_V5_r2.tar
+sha256sum -c SHA256SUMS      # checks both parts and the joined archive
+tar -xf L2_Demo_V5_r2.tar    # creates L2_Demo_V5/
 ```
+
+The archive still unpacks to `L2_Demo_V5/`; r2 is a rebuild of the same
+release, not a new version. Same 18-Stream plan and source selections; what
+changed is listed in `WORK_REPORT.md` ("r2 rebuild").
+
+Superseded: the first release, tag
+[`l2-demo-v5`](https://github.com/BUAA-Self-Evolving/tri-evobench/releases/tag/l2-demo-v5)
+(archive `L2_Demo_V5.tar`, SHA-256
+`cd2f9175933a6710ed9a9b9e99c04d9ffb043cba9ba051aeecb850a216cf9c99`; PHAI
+`.../_datasets/tri-evobench/L2_Demo_V5/`). It is kept unchanged for reproducing
+runs made against it; it scores AutoResearch with bands and tau2 by offline
+replay.
 
 The catalogs here are byte-identical to the package copies, so the manifest
 bindings below verify both.
@@ -125,35 +137,31 @@ agent failure. All Turns use `l2_judge/2.0`. General Turns keep V4's three check
 (`task_completion` 0.6, `requirement_and_output_compliance` 0.25,
 `evidence_and_side_effect_integrity` 0.15). AutoResearch Turns use one ordinal
 check with the AutoResearch domain rubric and an AIRS-Bench or MLGym benchmark
-rubric (`prompts/rubrics/`). Their verifier score is the upstream AIRS
-normalized score; in the released package (`l2-demo-v5`) the Judge maps it to
-0/0.5/1 with bands $a + 0.5(1-a)$ (partial) and $a + 0.8(1-a)$ (full), where
-$a$ is the normalized score of the shuffled-gold fixture for AIRS and 0 for
-MLGym.
+rubric (`prompts/rubrics/*_v2.md`).
 
-Scoring change (2026-10-10, contract §17.6; takes effect from the next package
-build): an AutoResearch Turn scores the upstream normalized score clipped to
-[0, 1] when the Judge finds the submission valid, and 0 otherwise. The Judge
-check becomes `auto_research_validity` (0 or 1, rubrics `*_v2.md`), bands are
-removed, and $a$ is kept only as `reference_context.reference_scores`. For
-example, the DeepSeek smoke HousePrice submission (R² 0.8936) scores 0.218 instead of
-0. The runtime still scores the released package by its bands.
+AutoResearch scoring (contract §17.6): a Turn scores the upstream normalized
+score clipped to [0, 1] when the Judge finds the submission valid, and 0
+otherwise. The Judge check is `auto_research_validity` (0 or 1); there are no
+bands. The shuffled-gold score $a$ (AIRS; 0 for MLGym) is kept only as
+`reference_context.reference_scores`. For example, the DeepSeek smoke
+HousePrice submission (R² 0.8936) scores 0.218; under the first release's bands
+$a + 0.5(1-a)$ / $a + 0.8(1-a)$ it scored 0.
 
-tau2 change (2026-10-10, contract §17.7; takes effect from the next package
-build): tau2 Turns run live. The runtime starts a session container from the
-tau2 image next to the agent; the agent reads the policy, calls the real
+tau2 (contract §17.7): tau2 Turns run live. The runtime starts a session
+container from `trievo-l2-v5-tau2:0.2` (tau2-bench `b7ea907`, the revision
+AReaL pins) next to the agent; the agent reads the policy, calls the real
 domain tools and talks to the DeepSeek user simulator through
 `/workspace/.tau2/tau2.py`, and the official tau2 evaluator scores the actual
-conversation. The released package still uses the offline trajectory replay
-(`trievo-l2-v5-tau2:0.1`); the live carrier uses `trievo-l2-v5-tau2:0.2`
-(tau2-bench `b7ea907`, the revision AReaL pins).
+conversation. The first release (`l2-demo-v5`) replayed a fixed trajectory
+offline in `trievo-l2-v5-tau2:0.1`. Live tau2 profiles allow 60 tool calls and
+80 model calls per Interaction; all other profiles keep 20 and 24.
 
 ### Images
 
 | Image | ID | Used by |
 |---|---|---|
 | `trievo-l2-v5:0.7-native` | `sha256:7305c4e84e529f05b5e9e472c892aff6d6077b1fff0e95ecd0d820b3c85d9aef` | SRA, SkillLearnBench, SkillsBench (task and verifier) |
-| `trievo-l2-v5-tau2:0.1` | `sha256:430e741560dbc48d7d47c6754bd9fa12a2d73b1ad4a3ef24c9b79977eff81e20` | tau2 (task and verifier) |
+| `trievo-l2-v5-tau2:0.2` | `sha256:bfed80f2ef27f7244f1262a7f0dc752acc151dc8a4635be82d12a1d51b09e2ac` | tau2 live session and verifier (the first release used `0.1`, `sha256:430e7415…`) |
 | `trievo-l2-v5-ar-cpu:0.1` | `sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547` | AutoResearch CPU tasks; verifier for all AutoResearch tasks |
 | `trievo-l2-v5-ar-gpu:0.1` | `sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f` | AutoResearch GPU task sandbox |
 
@@ -169,9 +177,10 @@ python tools/l2_v5_qualify_package.py --package "$TRIEVO_L2_V5_PACKAGE" \
   --scratch /tmp/l2v5-qual --output qual.jsonl
 ```
 
-Qualification result (2026-10-10, PHAI): all 252 Turns pass red/green; in its
-declared verifier image with network disabled, each Turn's `known_correct`
-fixture returns `pass` and its `known_broken` fixture returns `fail`. The
+Qualification result for r2 (2026-10-10, PHAI): all 252 Turns pass red/green;
+in its declared verifier image with network disabled, each Turn's
+`known_correct` fixture returns `pass` and its `known_broken` fixture returns
+`fail` (155 Turns in `0.7-native`, 70 in `tau2:0.2`, 27 in `ar-cpu:0.1`). The
 DeepSeek smoke runs are listed in `WORK_REPORT.md`.
 
 How the package was built, the decisions behind it, and the known limits are in
