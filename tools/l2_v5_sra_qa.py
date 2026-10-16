@@ -12,7 +12,6 @@ import ast
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
 import shutil
@@ -121,10 +120,11 @@ def materialize(item: dict, upstream: Path, pool: Path, license_info: dict) -> d
         folder = dest / "fixtures" / name
         folder.mkdir(parents=True)
         (folder / "response.txt").write_text(value, encoding="utf-8")
-    spec = importlib.util.spec_from_file_location("sra_qa_prompts", upstream / "src/sragents/prompts.py")
-    prompts = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(prompts)
-    system, user = prompts.build_prompt(item)
+    prompt_path = upstream / "src/sragents/prompts.py"
+    namespace = {"__name__": "sra_qa_prompts"}
+    # Compile in memory: SourceFileLoader would write __pycache__ upstream.
+    exec(compile(prompt_path.read_text(), str(prompt_path), "exec"), namespace)
+    system, user = namespace["build_prompt"](item)
     record = {
         "schema_version": "l2_v5_pool_task/1.0", "source_id": f"sr_agents:{instance_id}",
         "source": {"benchmark_id": "sr_agents", "benchmark_revision": REVISION,

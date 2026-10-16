@@ -195,3 +195,15 @@ def test_resume_rebuilds_malformed_qualification_fields(tmp_path, monkeypatch):
     assert seen == ['known_correct', 'known_broken']
     assert result[0]['admitted']
     assert json.loads((task / 'pool_task.json').read_text())['qualification']['admitted']
+
+
+def test_materialization_does_not_write_upstream_bytecode(tmp_path, monkeypatch):
+    import shutil
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+    upstream = tmp_path / 'upstream'
+    shutil.copytree(FIXTURES, upstream, ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    pool = tmp_path / 'pool'
+    pool.mkdir()
+    builder.materialize(ITEMS[0], upstream, pool, LICENSE)
+    assert not list(upstream.rglob('__pycache__'))
+    assert not list(upstream.rglob('*.pyc'))
