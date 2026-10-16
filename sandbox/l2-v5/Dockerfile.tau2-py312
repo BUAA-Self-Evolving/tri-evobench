@@ -1,0 +1,23 @@
+# Python 3.12 carrier for the existing official/AReaL tau2 semantics.
+# Keep Dockerfile.tau2 unchanged for historical r2 image reproduction.
+ARG BASE_IMAGE=python:3.12-slim-bookworm
+FROM ${BASE_IMAGE}
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG TAU2_REVISION=b7ea9074c1cba482b30687fecdb5c8425fd6f619
+COPY tau2-src /opt/tau2/src
+COPY tau2-data /opt/tau2/data
+RUN python -m venv /opt/tau2/venv \
+    && /opt/tau2/venv/bin/pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" \
+        /opt/tau2/src 'websockets>=13.0' \
+    && /opt/tau2/venv/bin/python -c "import sys; assert sys.version_info[:2] == (3, 12); import tau2" \
+    && /opt/tau2/venv/bin/pip check \
+    && /opt/tau2/venv/bin/pip freeze --all > /opt/tau2/requirements-resolved.txt \
+    && rm -rf /opt/tau2/src \
+    && find /opt/tau2/venv -name '__pycache__' -prune -exec rm -rf {} +
+COPY tau2_session /opt/trievo/tau2_session
+ENV TAU2_DATA_DIR=/opt/tau2/data \
+    TAU2_PYTHON=/opt/tau2/venv/bin/python \
+    TAU2_REVISION=${TAU2_REVISION} \
+    PYTHONPATH=/opt/trievo
+WORKDIR /workspace
+CMD ["sleep", "infinity"]

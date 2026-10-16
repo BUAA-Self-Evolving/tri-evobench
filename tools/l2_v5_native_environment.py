@@ -1,0 +1,1131 @@
+#!/usr/bin/env python3
+"""Build, sanitize and qualify task-native SkillLearnBench / SkillsBench images.
+
+Inputs are read-only upstream checkouts. Existing pools are never rewritten.
+Every native oracle/fixture executes in a separate network-disabled container.
+"""
+from __future__ import annotations
+
+import argparse
+import concurrent.futures
+from contextlib import contextmanager
+import hashlib
+import inspect
+import io
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import tarfile
+import threading
+import tempfile
+import time
+from pathlib import Path, PurePosixPath
+from typing import Any
+
+import yaml
+
+try:
+    from . import l2_v5_native_sources as sources
+    from . import l2_v5_native_pool as legacy
+except ImportError:
+    import l2_v5_native_sources as sources
+    import l2_v5_native_pool as legacy
+
+_BUILD_SLOTS_FILE: Path | None = None
+BUILD_PYPI_INDEX = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+_IMAGE_LOCKS: dict[str, threading.Lock] = {}
+_IMAGE_LOCKS_GUARD = threading.Lock()
+
+ADAPTER_VERSION = "l2_native_environment/1.0"
+_LOADED_ADAPTER_SHA = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+PRIVATE_NAMES = {"skills", ".skills", "skill", "tests", "verifier", "oracle", "solution",
+                 "ground_truth", "ground-truth", "__pycache__"}
+HOME_INFRA = {".cache", ".local", ".config", ".npm", ".cargo", ".rustup", ".sdkman",
+              ".m2", ".gradle", ".venv", ".bashrc", ".profile", ".bash_logout",
+              ".wget-hsts", ".ssh", ".gitconfig", "node_modules", "venv"}
+
+
+def digest_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def dump(path: Path, value: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+
+
+def resource_capability_preflight(work: Path) -> dict[str, Any]:
+    """Reject incapable daemons before builds; containers still need readback."""
+    from trievo_bench.container_resources import docker_resource_capability_preflight
+    result=docker_resource_capability_preflight()
+    dump(work/"container-resource-capability.json",result)
+    if not result["passed"]:
+        raise RuntimeError("container_resource_limits_unverified:"+json.dumps(result))
+    return result
+
+
+def logical_shell_lines(text: str) -> list[str]:
+    """Join shell continuations only, retaining shell quoting and control flow."""
+    return re.sub(r"\\\n", " ", text).splitlines()
+
+
+def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
+    """Move standalone dependency setup to build; preserve all actual test code.
+
+    Unlike the historical Dockerfile replay, this never splits shell operators.
+    uvx itself is retained; its exact requested environment is warmed at build.
+    """
+    runtime: list[str] = []
+    setup: list[str] = ["#!/bin/bash", "set -e", "export DEBIAN_FRONTEND=noninteractive"]
+    adaptations: list[dict[str, str]] = []
+    setup_guards: list[bool] = []
+    for raw in logical_shell_lines(text):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            runtime.append(raw)
+            continue
+        if line.startswith("cd "):
+            setup.append(raw)
+        if line.startswith("if "):
+            selected=bool(re.match(r"if command -v curl|if \[ -x /opt/py310/bin/python",line))
+            setup_guards.append(selected)
+            if selected:setup.append(raw)
+        elif line == "else" or line.startswith("elif "):
+            if setup_guards and setup_guards[-1]:setup.append(raw)
+        elif line == "fi":
+            if setup_guards and setup_guards.pop():setup.append(raw)
+        network_setup = bool(re.match(
+            r"(?:apt(?:-get)?\s+(?:update|install)|(?:\S*/)?pip3?\s+install|"
+            r"(?:\S*/)?python[\d.]*\s+-m\s+pip\s+install|uv\s+(?:pip\s+install|python\s+install|init\b|add\b)|"
+            r"curl\s+.*(?:astral\.sh/uv/|github\.com/coursier/coursier/)|npm\s+(?:install|ci)|"
+            r"(?:python[\d.]*\s+-m\s+)?playwright\s+install)", line))
+        if network_setup:
+            setup_command=raw
+            if "github.com/coursier/coursier/" in line and "./cs setup" in line and "--yes" not in line:
+                setup_command=raw+" --yes"
+                adaptations.append({"kind":"noninteractive_installer_acknowledgement","original":raw,
+                                    "adapted":setup_command,"reason":"same pinned coursier install with unattended consent"})
+            setup.append(setup_command)
+            runtime.append(": # dependency setup moved to image build")
+            adaptations.append({"kind": "verifier_setup_at_build", "original": raw})
+        else:
+            runtime.append(raw)
+        # Preserve uv tool isolation and all --with/--python/index flags.
+        if re.match(r"uvx\s", line):
+            match = re.search(r"\b(?:python\s+-m\s+)?pytest\b(?=\s|$)", line)
+            # Skip '--with pytest==...' tokens: the real executable has no '='.
+            if match:
+                warm = line[:match.start()] + line[match.start():match.end()] + " --version"
+                setup.append(warm)
+                adaptations.append({"kind": "uvx_environment_prewarm", "command": warm})
+    setup.insert(3, 'export PATH="$HOME/.local/bin:$PATH"')
+    return "\n".join(runtime) + "\n", "\n".join(setup) + "\n", adaptations
+
+
+def private_member(name: str) -> bool:
+    parts = PurePosixPath(name.lstrip("./")).parts
+    if not parts:
+        return False
+    if any(p in {"skills", ".skills", "skill", "ground_truth", "ground-truth"} for p in parts):
+        return not any(p in {"site-packages", "dist-packages"} for p in parts)
+    # Benchmark evaluation mounts are private. Public source repositories may
+    # contain their own tests/solution/oracle directories; retain those exactly.
+    if parts[0] in {"tests", "verifier", "oracle", "solution"}:
+        return True
+    if parts[:2] == ("logs", "verifier"):
+        return True
+    return parts[-1] in {"SKILL.md", "reward.txt", "ctrf.json", "verifier-root-setup.sh", "verifier-user-setup.sh"}
+
+
+def sanitize_archive(source: Path, destination: Path) -> dict[str, Any]:
+    removed: list[str] = []
+    with tarfile.open(source, "r|*") as src, tarfile.open(destination, "w|") as dst:
+        for member in src:
+            if private_member(member.name) or ((member.issym() or member.islnk()) and private_member(member.linkname)):
+                removed.append(member.name)
+                continue
+            dst.addfile(member, src.extractfile(member) if member.isfile() else None)
+    return {"removed_paths": removed, "sha256": digest_file(destination),
+            "bytes": destination.stat().st_size}
+
+
+def image_config_changes(config: dict[str, Any]) -> list[str]:
+    """Restore supported image configuration after flattening its filesystem."""
+    changes=[]
+    if config.get("Env"):
+        changes += ["--change", "ENV " + " ".join(shlex.quote(v) for v in config["Env"])]
+    for key,directive in (("WorkingDir","WORKDIR"),("User","USER")):
+        if config.get(key):changes += ["--change",f"{directive} {config[key]}"]
+    for key in ("Entrypoint","Cmd"):
+        if config.get(key):changes += ["--change",key.upper()+" "+json.dumps(config[key])]
+    for key,value in (config.get("Labels") or {}).items():
+        changes += ["--change","LABEL "+key+"="+json.dumps(value)]
+    for port in (config.get("ExposedPorts") or {}):
+        changes += ["--change","EXPOSE "+port]
+    if config.get("StopSignal"):changes += ["--change","STOPSIGNAL "+config["StopSignal"]]
+    return changes
+
+
+def inspect_image(image: str) -> dict[str, Any]:
+    return json.loads(subprocess.check_output(["docker", "image", "inspect", image], text=True))[0]
+
+
+def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
+    started = time.time()
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("w") as handle:
+        try:
+            run = subprocess.run(argv, stdout=handle, stderr=subprocess.STDOUT,
+                                 timeout=timeout, text=True)
+            rc = run.returncode
+        except subprocess.TimeoutExpired:
+            rc = 124
+    return {"argv": argv, "returncode": rc, "seconds": round(time.time()-started, 2),
+            "log": str(log), "tail": log.read_text(errors="replace")[-4000:]}
+
+
+def check_result(log: str, reward: str | None, rc: int) -> dict[str, Any]:
+    """A native failing assertion is red; broken infrastructure is an error."""
+    infrastructure = re.search(
+        r"ModuleNotFoundError|ImportError|ERROR collecting|INTERNALERROR|no tests ran|"
+        r"command not found|PermissionError|Temporary failure in name resolution|"
+        r"Network is unreachable|Could not resolve|Cannot connect|No matching distribution", log)
+    exception_names=(re.findall(r"(?m)^E\s+([\w.]+):",log)+
+                     re.findall(r"(?m)^FAILED[^\n]* - ((?:[A-Za-z_]\w*\.)*[A-Z]\w*)(?::|\s|$)",log))
+    unexpected_exceptions = [name for name in exception_names
+                             if name.rsplit(".",1)[-1] not in {"AssertionError", "Failed"}]
+    collected = re.findall(r"collected\s+(\d+)\s+items?", log)
+    summaries = re.findall(r"(\d+)\s+(passed|failed|error|errors)(?:\s|,|$)", log)
+    count = int(collected[-1]) if collected else sum(int(n) for n, _ in summaries)
+    assertions = bool(re.search(r"AssertionError|E\s+assert\b|pytest\.fail\(", log))
+    try:
+        score = float((reward or "").strip())
+    except ValueError:
+        score = None
+    if rc not in {0, 1} or infrastructure or unexpected_exceptions or count == 0 or score is None:
+        status = "error"
+    elif rc == 0 and score == 1.0 and any(kind=="passed" and int(n)>0 for n,kind in summaries) and not any(kind in {"failed","error","errors"} and int(n)>0 for n,kind in summaries) and not re.search(r"\b(?:FAILED|ERROR)\b", log):
+        status = "pass"
+    elif score < 1.0 and assertions and not re.search(r"\d+ errors?\b", log):
+        status = "fail"
+    else:
+        status = "error"
+    return {"status": status, "score": 1.0 if status == "pass" else 0.0,
+            "native_reward": score, "tests_collected": count,
+            "assertion_failure": assertions, "infrastructure_error": infrastructure.group(0) if infrastructure else (unexpected_exceptions[0] if unexpected_exceptions else None),
+            "exit_code": rc, "output_tail": log[-5000:]}
+
+
+def mapping_script(environment: dict[str, Any], task_dir: str) -> str:
+    from trievo_bench.native_environment import mapping_script as shared_mapping_script
+    python = environment.get("python_executable", "python3")
+    return "set -e\n" + shlex.quote(python) + " -c " + shlex.quote(shared_mapping_script(environment, task_dir)) + "\n"
+
+
+VERIFIER = r'''"""Run the private native test runner against an isolated submission copy."""
+from __future__ import annotations
+import json, os, shutil, subprocess, tempfile, pwd, grp
+from pathlib import Path
+
+def _native_identity(user):
+    user_part,_,group_part=user.partition(":")
+    try:
+        account=pwd.getpwuid(int(user_part)) if user_part.isdigit() else pwd.getpwnam(user_part)
+    except KeyError:
+        account=None
+    uid=int(user_part) if user_part.isdigit() else account.pw_uid
+    gid=(int(group_part) if group_part.isdigit() else grp.getgrnam(group_part).gr_gid) if group_part else (account.pw_gid if account else 0)
+    return account,uid,gid
+
+def verify(submission, turn_dir):
+    assets=Path(turn_dir)/"evaluation_assets"
+    meta=json.loads((assets/"native_task.json").read_text())
+    submission=Path(submission)
+    if not submission.is_dir():
+        return {"status":"fail","score":0.0,"raw_metric":None,"details":{"reason":"missing_task_directory"}}
+    work=Path(tempfile.mkdtemp(prefix="native-verify-"))
+    shutil.copytree(submission,work,dirs_exist_ok=True,symlinks=True)
+    for row in meta["path_mappings"]:
+        native=Path(row["native_path"]); target=work/row["workspace_relative_path"]
+        if work.resolve() not in target.resolve().parents:
+            raise ValueError("native mapping target escapes copied submission")
+        if any(parent.is_symlink() for parent in native.parents):
+            raise ValueError("native mapping alias has symlink ancestor")
+        target.parent.mkdir(parents=True,exist_ok=True);native.parent.mkdir(parents=True,exist_ok=True)
+        if native.is_symlink() or native.is_file():native.unlink()
+        elif native.is_dir():shutil.rmtree(native)
+        native.symlink_to(target)
+    tests=Path(meta["tests_mount"])
+    if tests.exists():shutil.rmtree(tests)
+    shutil.copytree(assets/"native_tests",tests)
+    Path("/logs/verifier").mkdir(parents=True,exist_ok=True)
+    user=meta.get("native_user") or "0"
+    account,uid,gid=_native_identity(user)
+    if uid and os.geteuid()!=0:
+        raise RuntimeError("native verifier controller must bootstrap as root")
+    if uid:
+        os.chown("/logs/verifier",uid,gid)
+        for item in [work,*work.rglob("*")]:
+            os.chown(item,uid,gid,follow_symlinks=False)
+    def drop_user():
+        if uid:
+            if account:os.initgroups(account.pw_name,gid)
+            else:os.setgroups([])
+            os.setgid(gid);os.setuid(uid)
+    try:
+        run=subprocess.run(meta["verifier"]["command"],cwd=meta["cwd"],text=True,
+            stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=meta["verifier"]["timeout_seconds"],
+            env={**os.environ,**meta["verifier"].get("env",{}),"UV_OFFLINE":"1","PIP_NO_INDEX":"1"},preexec_fn=drop_user)
+        code,output=run.returncode,run.stdout
+    except subprocess.TimeoutExpired as exc:
+        code,output=124,str(exc.stdout or "timeout")
+    for logfile in Path("/logs/verifier").rglob("*"):
+        if logfile.is_file() and logfile.suffix in {".log",".txt"} and ("test" in logfile.name.lower() or "pytest" in logfile.name.lower()):
+            output+="\n"+logfile.read_text(errors="replace")[-2_000_000:]
+    reward=Path(meta["verifier"]["reward_path"])
+    result=classify(output,reward.read_text() if reward.exists() else None,code)
+    return {"status":result["status"],"score":result["score"],"raw_metric":None,"details":result}
+'''
+
+
+def verifier_text() -> str:
+    import inspect
+    return VERIFIER + "\nimport re\n" + inspect.getsource(check_result).replace("def check_result(", "def classify(").replace(" -> dict[str, Any]", "")
+
+
+def discover(upstream: Path) -> list[dict[str, Any]]:
+    sources.CHECKOUTS = {name: upstream/name for name in sources.CHECKOUTS}
+    legacy.CHECKOUTS = sources.CHECKOUTS
+    return sources.upstream_tasks()
+
+
+def source_metadata(row: dict[str, Any]) -> dict[str, Any]:
+    """Read complete native metadata; lossy frontmatter fallbacks are forbidden."""
+    if row["benchmark_id"] == "skilllearnbench":
+        return row["metadata"]
+    text=row["instruction"].read_text()
+    if not text.startswith("---\n"):
+        raise ValueError("native source missing YAML frontmatter")
+    value=yaml.safe_load(text.split("---\n",2)[1])
+    if not isinstance(value,dict):raise ValueError("native source frontmatter must be a mapping")
+    return value
+
+
+def source_info(row: dict[str, Any]) -> dict[str, Any]:
+    if row["benchmark_id"] == "skilllearnbench":return legacy.upstream_info(row)
+    meta=source_metadata(row)
+    return {"task_dir":row["task_dir"],"prompt":row["instruction"].read_text().split("---\n",2)[2].strip(),
+        "labels":{k:v for k,v in meta.get("metadata",{}).items() if k not in {"author_name","author_email"}},
+        "agent_timeout":int(float((meta.get("agent") or {}).get("timeout_sec",900))),
+        "verifier_timeout":int(float((meta.get("verifier") or {}).get("timeout_sec",600))),
+        "tests_dir":row["tests_dir"],"tests_mount":row["tests_mount"]}
+
+
+def stage_environment(metadata: dict[str, Any], stage: str) -> dict[str, str]:
+    value=(metadata.get(stage) or {}).get("env") or {}
+    if not isinstance(value,dict) or any(not isinstance(k,str) or not isinstance(v,str) or "\x00" in k+v for k,v in value.items()):
+        raise ValueError("native stage env must contain string names and values")
+    return dict(value)
+
+
+def task_inputs(row: dict[str, Any]) -> dict[str, Any]:
+    td: Path = row["task_dir"]
+    tests: Path = row["tests_dir"]
+    oracle: Path = row["oracle_dir"]
+    prompt = row["instruction"].read_text()
+    if row["benchmark_id"] == "skillsbench":
+        _, prompt = legacy.frontmatter(row["instruction"])
+    return {"tests": tests, "oracle": oracle, "dockerfile": td/"environment/Dockerfile",
+            "context": td/"environment", "prompt": prompt}
+
+
+def base_image_provenance(dockerfile: Path) -> list[dict[str, Any]]:
+    rows=[];arguments={};aliases=set()
+    for line in dockerfile.read_text().splitlines():
+        if line.startswith("ARG ") and "=" in line:
+            key,value=line[4:].split("=",1);arguments[key.strip()]=value.strip()
+        if not line.startswith("FROM "):continue
+        words=shlex.split(line)[1:];words=[w for w in words if not w.startswith("--")]
+        if not words:continue
+        reference=sources._expand(words[0],arguments)
+        if len(words)>=3 and words[-2].upper()=="AS":aliases.add(words[-1])
+        if reference in aliases:continue
+        row={"original_reference":words[0],"expanded_reference":reference,"local_id":None,"distribution_digests":[]}
+        try:
+            image=inspect_image(reference)
+            row.update(local_id=image["Id"],distribution_digests=image.get("RepoDigests") or [],
+                       os=image.get("Os"),architecture=image.get("Architecture"))
+        except (subprocess.CalledProcessError,json.JSONDecodeError):
+            row["resolution_note"]="base not registered as a local tag; immutable final image/archive and build log remain authoritative"
+        rows.append(row)
+    return rows
+
+
+def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
+    """Change only package-index transport, keeping earlier apt layers cached.
+
+    ARGs are scoped to build stages and do not persist in image Config.Env.
+    Every explicit package version and installer command remains upstream's.
+    """
+    instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
+    output = []; configured = False; debian_stage = apt_debian
+    for instruction in instructions:
+        if instruction.startswith("FROM "):
+            configured = False
+            debian_stage = apt_debian or bool(re.match(r"FROM\s+(?:--platform=\S+\s+)?(?:python:|debian:)", instruction))
+        if debian_stage and instruction.startswith("RUN ") and re.search(
+                r"\bapt(?:-get)?\s+(?:update|install)\b|verifier-root-setup\.sh", instruction):
+            # Preserve suites, signing keys and apt validation. Replace only the
+            # official Debian transport host; cached Ubuntu layers stay intact.
+            replacements = " ".join(
+                "-e " + shlex.quote("s|"+scheme+"://deb\\.debian\\.org/"+path+
+                    "|https://mirrors.tuna.tsinghua.edu.cn/"+path+"|g")
+                for path in ("debian-security", "debian") for scheme in ("http", "https"))
+            prefix=('for trievo_apt_source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do '
+                    'if [ -f "$trievo_apt_source" ]; then sed -i '+replacements+' "$trievo_apt_source" || exit 1; fi; done && ')
+            instruction="RUN "+prefix+instruction[4:]
+        if not configured and instruction.startswith("RUN ") and re.search(
+                r"\bpip3?\s+(?:install|download)\b|\buvx?\s|verifier-(?:root|user)-setup\.sh", instruction):
+            output.append(f"ARG PIP_INDEX_URL={BUILD_PYPI_INDEX}\nARG UV_INDEX_URL={BUILD_PYPI_INDEX}\n")
+            configured = True
+        output.append(instruction)
+    return "".join(output)
+
+
+def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
+                build_timeout: int) -> dict[str, Any]:
+    """Build unmodified upstream privately, then flatten a scrubbed filesystem."""
+    raw_tag = "trievo-r3-private:" + work.name
+    context=inputs["context"]
+    context_adaptations=[]
+    if row["benchmark_id"]=="skilllearnbench" and not (context/"skills").exists():
+        # Upstream core/skill_runner.py:711-717 performs exactly this staging.
+        context=work/"upstream-context"
+        if not context.exists():shutil.copytree(inputs["context"],context)
+        (context/"skills").mkdir(exist_ok=True)
+        context_adaptations.append({"kind":"upstream_empty_skill_stub",
+            "evidence":"SkillLearnBench core/skill_runner.py:711-717",
+            "reason":"upstream task environment omits skills but Dockerfile COPY requires directory"})
+    original_text=inputs["dockerfile"].read_text()
+    (work/"Dockerfile.upstream-original").write_text(original_text)
+    transported=work/"Dockerfile.upstream-transport"
+    transported.write_text(build_transport_dockerfile(original_text))
+    context_adaptations.append({"kind":"build_package_index_transport",
+        "original_sha256":digest_file(inputs["dockerfile"]),"adapted_sha256":digest_file(transported),
+        "index":BUILD_PYPI_INDEX,"scope":"build-only ARG; explicit versions and installer commands unchanged",
+        "evidence":"canonical PyPI reportlab4.2.5 wheel SHA256 eb2745525a982d9880babb991619e97ac3f661fae30571b7d50387026ca765ee matched mirror; 1942821 bytes in 0.195s"})
+    if "mirrors.tuna.tsinghua.edu.cn/debian" in transported.read_text():
+        context_adaptations.append({"kind":"build_debian_repository_transport",
+            "mirror":"https://mirrors.tuna.tsinghua.edu.cn","scope":"same Debian suites and native signed-repository validation; no package/test changes",
+            "evidence":"network-probe/apt-results.json: exact 151075-byte bookworm InRelease SHA256 matches official repository; TUNA ~0.299s versus official 1.5-3.2s"})
+    upstream_log = command(["docker", "build", "--network", "host", "-t", raw_tag,
+                           "-f", str(transported), str(context)],
+                          work/"upstream-build.log", build_timeout)
+    dump(work/"upstream-build.json", upstream_log)
+    if upstream_log["returncode"] and "Cannot change ownership" in upstream_log["tail"] and "Invalid argument" in upstream_log["tail"]:
+        # Rootless UID maps cannot represent archive authors' very large IDs.
+        # Keep archive bytes/modes and use build-only GNU tar ownership policy.
+        adapted_text=re.sub(r"(?m)^(FROM [^\n]+)$",r"\1\nARG TAR_OPTIONS=--no-same-owner",transported.read_text())
+        adapted=work/"Dockerfile.rootless-tar";adapted.write_text(adapted_text)
+        context_adaptations.append({"kind":"rootless_archive_ownership","original_sha256":digest_file(inputs["dockerfile"]),
+            "adapted_sha256":digest_file(adapted),"reason":"archive owner UID/GID exceeds rootless mapping; file contents and modes unchanged"})
+        upstream_log=command(["docker","build","--network","host","-t",raw_tag,"-f",str(adapted),str(context)],
+                             work/"upstream-rootless-build.log",build_timeout)
+        dump(work/"upstream-rootless-build.json",upstream_log)
+    dump(work/"ADAPTATIONS.json",context_adaptations)
+    if upstream_log["returncode"]:
+        raise RuntimeError("upstream_build_failed:" + upstream_log["tail"][-1800:])
+    raw = inspect_image(raw_tag)
+    bases=base_image_provenance(inputs["dockerfile"])
+    dump(work/"base-images.json",bases)
+    cfg = raw["Config"]
+    if cfg.get("Volumes"):
+        raise RuntimeError("native_declared_volumes_require_explicit_mount_adaptation:"+json.dumps(cfg["Volumes"]))
+    runner = inputs["tests"] / "test.sh"
+    runtime_runner, setup, adaptations = prepare_runner(runner.read_text())
+    adaptations=context_adaptations+adaptations
+    adaptations.append({"kind":"verifier_runner_transform","original_sha256":digest_file(runner),
+                        "adapted_sha256":hashlib.sha256(runtime_runner.encode()).hexdigest(),
+                        "reason":"dependency network setup moved to build, actual test logic/interpreter retained"})
+    dump(work/"ADAPTATIONS.json",adaptations)
+    (work/"test.sh").write_text(runtime_runner)
+    (work/"verifier-setup.sh").write_text(setup)
+    # Local verifier requirements/resources may be needed for dependency setup.
+    # These remain private intermediate layers and are removed by flattening.
+    private_copy=""
+    if row["tests_mount"] in setup:
+        shutil.copytree(inputs["tests"],work/"private-test-assets",dirs_exist_ok=True)
+        private_copy=f"COPY private-test-assets {row['tests_mount']}\n"
+        adaptations.append({"kind":"private_verifier_setup_assets","source_tree_sha256":sources.tree_sha256(inputs["tests"]),
+                            "reason":"setup references native verifier-local resources; final image scrubs native evaluation mount"})
+    root_setup=[];user_setup=[]
+    for line in setup.splitlines():
+        if re.match(r"apt(?:-get)?\s+(?:update|install)",line.strip()):root_setup.append(line)
+        else:user_setup.append(line)
+    (work/"verifier-root-setup.sh").write_text("#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\n"+"\n".join(root_setup)+"\n")
+    (work/"verifier-user-setup.sh").write_text("\n".join(user_setup)+"\n")
+    (work/"Dockerfile.verifier").write_text(build_transport_dockerfile(
+        f"FROM {raw_tag}\nUSER root\n"+private_copy+
+        "COPY verifier-root-setup.sh verifier-user-setup.sh /tmp/\n"
+        "RUN bash /tmp/verifier-root-setup.sh\n"+
+        (f"USER {cfg['User']}\n" if cfg.get("User") else "")+
+        "RUN bash /tmp/verifier-user-setup.sh\n",
+        apt_debian="mirrors.tuna.tsinghua.edu.cn/debian" in transported.read_text()))
+    dump(work/"ADAPTATIONS.json",adaptations)
+    aug_tag = "trievo-r3-private-verifier:" + work.name
+    aug_log = command(["docker", "build", "--network", "host", "-t", aug_tag,
+                       "-f", str(work/"Dockerfile.verifier"), str(work)],
+                      work/"verifier-build.log", build_timeout)
+    dump(work/"verifier-build.json", aug_log)
+    if aug_log["returncode"]:
+        raise RuntimeError("verifier_dependency_build_failed:" + aug_log["tail"][-1800:])
+    aug = inspect_image(aug_tag)
+    container = subprocess.check_output(["docker", "create", "--entrypoint", "/bin/sh", aug_tag], text=True).strip()
+    try:
+        with (work/"private-rootfs.tar").open("wb") as handle:
+            subprocess.run(["docker", "export", container], stdout=handle, check=True)
+    finally:
+        subprocess.run(["docker", "rm", container], capture_output=True, check=True)
+    scrub = sanitize_archive(work/"private-rootfs.tar", work/"safe-rootfs.tar")
+    restored_config={**aug["Config"],"User":cfg.get("User","")}
+    changes = image_config_changes(restored_config)
+    safe_tag = "trievo-r3-native:" + work.name
+    imported = command(["docker", "import", *changes, str(work/"safe-rootfs.tar"), safe_tag],
+                       work/"import.log", build_timeout)
+    if imported["returncode"]: raise RuntimeError("sanitized_import_failed:"+imported["tail"])
+    safe = inspect_image(safe_tag)
+    parity={}
+    for key in ("Env","User","WorkingDir","Entrypoint","Cmd","Labels","ExposedPorts","StopSignal"):
+        expected=restored_config.get(key);actual=safe["Config"].get(key)
+        # Docker normalizes absent/empty collection config equivalently.
+        match=actual==expected or (not actual and not expected)
+        parity[key]={"expected":expected,"actual":actual,"matches":match}
+        if not match:
+            dump(work/"config-parity.json",parity)
+            raise RuntimeError("sanitized_image_config_mismatch:"+key)
+    dump(work/"config-parity.json",parity)
+    inventory_code = """import sys,json,os,importlib.metadata as m,subprocess,shutil
+packages=[{'name':d.metadata.get('Name'),'version':d.version,'license':d.metadata.get('License-Expression') or d.metadata.get('License'),'location':str(d.locate_file(''))} for d in m.distributions()]
+commands={}
+for command in (['dpkg-query','-W'],['node','--version'],['java','-version'],['uv','--version']):
+ if shutil.which(command[0]):
+  r=subprocess.run(command,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);commands[' '.join(command)]={'returncode':r.returncode,'output':r.stdout}
+print(json.dumps({'python':sys.version,'python_executable':sys.executable,'uid':os.getuid(),'packages':packages,'commands':commands}))
+"""
+    interpreter_probe=('for trievo_python in python3 python '+
+        shlex.quote(str(PurePosixPath(cfg.get("WorkingDir") or "/")/".venv/bin/python"))+
+        ' /opt/py310/bin/python /root/.local/share/uv/python/*/bin/python3 /home/*/.local/share/uv/python/*/bin/python3; do '
+        'if command -v "$trievo_python" >/dev/null 2>&1; then exec "$trievo_python" -c "$1"; fi; done; exit 127')
+    probe = subprocess.run(["docker","run","--rm","--network","none","--workdir","/","--entrypoint","/bin/sh",safe["Id"],"-c",interpreter_probe,"native-inventory",inventory_code],
+                           capture_output=True,text=True,timeout=120)
+    if probe.returncode:
+        raise RuntimeError("sanitized_image_interpreter_readback_failed:"+probe.stderr[-1500:])
+    runtime_readback=json.loads(probe.stdout)
+    dump(work/"image-runtime-readback.json",runtime_readback)
+    # The flattened image has one new filesystem layer, no private lower layers.
+    if len(safe.get("RootFS", {}).get("Layers", [])) != 1:
+        raise RuntimeError("sanitized_image_not_flattened")
+    dump(work/"image.json", {"upstream": raw, "augmented": aug, "safe": safe, "scrub": scrub,
+                              "adaptations": adaptations})
+    return {"image": safe, "upstream": raw, "scrub": scrub, "adaptations": adaptations, "runtime_readback":runtime_readback,"base_images":bases}
+
+
+
+@contextmanager
+def build_slot(work_root: Path):
+    """Cross-process heavy-build quota; its reviewed limit can increase live."""
+    import fcntl
+    directory=work_root/".build-slots";directory.mkdir(exist_ok=True)
+    handle=None
+    while handle is None:
+        limit=int(_BUILD_SLOTS_FILE.read_text().strip()) if _BUILD_SLOTS_FILE else 2
+        if limit not in {1,2}:raise ValueError("native heavy-build quota must be 1 or 2")
+        for number in range(limit):
+            candidate=(directory/str(number)).open("a+")
+            try:fcntl.flock(candidate.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+            except BlockingIOError:candidate.close();continue
+            handle=candidate;break
+        if handle is None:time.sleep(0.25)
+    try:yield
+    finally:
+        fcntl.flock(handle.fileno(),fcntl.LOCK_UN);handle.close()
+
+
+def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
+                build_timeout: int) -> dict[str, Any]:
+    # Native siblings commonly have byte-identical environments. Share only
+    # identical context+runner content; never union distinct dependencies.
+    runner_outputs=json.dumps(prepare_runner((inputs["tests"]/"test.sh").read_text()),sort_keys=True)
+    key = hashlib.sha256((sources.tree_sha256(inputs["context"]) +
+                          sources.tree_sha256(inputs["tests"]) + runner_outputs + image_build_fingerprint()).encode()).hexdigest()
+    shared = work.parent / "images" / key
+    dump(work/"build_reference.json",{"cache_key":key,"image_work":str(shared)})
+    with _IMAGE_LOCKS_GUARD:
+        lock = _IMAGE_LOCKS.setdefault(key, threading.Lock())
+    with lock:
+        shared.mkdir(parents=True, exist_ok=True)
+        result_path = shared / "result.json"
+        if result_path.exists():
+            result = json.loads(result_path.read_text())
+            inspect_image(result["image"]["Id"])
+        else:
+            with build_slot(work.parent):
+                result = _build_image(row, inputs, shared, build_timeout)
+            dump(result_path, result)
+        for name in ("safe-rootfs.tar", "test.sh", "image.json", "image-runtime-readback.json"):
+            target=work/name
+            if target.is_symlink():
+                target.unlink()
+            if not target.exists():
+                target.symlink_to(shared/name)
+    return result
+
+
+def image_build_fingerprint() -> str:
+    """Bind image caches to image-producing code, independent of qualification."""
+    functions=(private_member,sanitize_archive,image_config_changes,
+               base_image_provenance,build_transport_dockerfile,_build_image)
+    payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
+             "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
+    return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
+
+
+def absolute_public_paths(row: dict[str, Any], cwd: str, archive: Path) -> list[str]:
+    """Combine original image public children with prompt/test/oracle path refs."""
+    paths: set[str] = set()
+    roots = {"/root", "/app", cwd} - {"/"}
+    # Only immediate public cwd children; never home dependency/tool directories.
+    with tarfile.open(archive) as tf:
+        for item in tf:
+            p = PurePosixPath("/" + item.name.lstrip("./"))
+            for root in roots:
+                r = PurePosixPath(root)
+                if p.parent == r and p.name not in HOME_INFRA and not p.name.startswith(".") and not private_member(str(p)):
+                    paths.add(str(p))
+    files = [row["instruction"]] + [p for parent in (row["tests_dir"],row["oracle_dir"])
+             for p in parent.rglob("*") if p.is_file() and p.suffix in {".sh", ".py", ".md"}]
+    for file in files:
+        text = file.read_text(errors="replace")
+        for match in re.finditer(r"/(?:root|app)/[A-Za-z0-9_.-]+", text):
+            path = match.group(0)
+            if PurePosixPath(path).name not in HOME_INFRA and not private_member(path) and not PurePosixPath(path).name.startswith("."):
+                paths.add(path)
+    # COPY destinations outside a home are real task assets too. This reads
+    # directive destinations only; Docker itself executes all build semantics.
+    dockerfile=(row["task_dir"]/"environment/Dockerfile").read_text()
+    for directive in logical_shell_lines(dockerfile):
+        if not directive.startswith(("COPY ", "ADD ")):
+            continue
+        try:
+            rest=directive.split(None,1)[1]
+            tokens=json.loads(rest) if rest.startswith("[") else shlex.split(rest)
+            destination=tokens[-1].rstrip("/")
+        except (ValueError,IndexError):
+            continue
+        if destination.startswith("/") and destination not in roots and not private_member(destination) and PurePosixPath(destination).name not in HOME_INFRA:
+            if not any(destination==r or destination.startswith(r+"/") for r in
+                       ("/usr","/opt","/bin","/lib","/etc","/tmp","/root/.local")):
+                paths.add(destination)
+    # Nested cwd is a public project tree only when outside infrastructure roots.
+    if cwd not in {"/", "/root", "/app", "/workspace"} and not (cwd.startswith("/home/") and len(PurePosixPath(cwd).parts)==3):
+        paths.add(cwd)
+    # Remove children whose parent itself is already mapped.
+    return sorted(p for p in paths if not any(p.startswith(other + "/") for other in paths if other != p))
+
+
+def materialize_seed(archive: Path, mappings: list[dict[str, str]], destination: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive) as tf:
+        for item in tf:
+            path = "/" + item.name.lstrip("./")
+            for mapping in mappings:
+                native = mapping["native_path"]
+                if path == native or path.startswith(native + "/"):
+                    suffix = path[len(native):].lstrip("/")
+                    target = str(PurePosixPath(mapping["workspace_relative_path"])/suffix)
+                    item.name = target
+                    tf.extract(item, destination, filter="data")
+                    break
+
+
+def fixture_run(image: str, environment: dict[str, Any], task: Path, submission: Path,
+                work: Path, name: str, *, oracle: bool = False,
+                private_skills: Path | None = None) -> dict[str, Any]:
+    run_dir=Path(tempfile.mkdtemp(prefix=name+"-",dir=work))
+    copied=run_dir/"submission";shutil.copytree(submission,copied,symlinks=True)
+    logs=run_dir/"logs";logs.mkdir()
+    meta=json.loads((task/"evaluation_assets/native_task.json").read_text())
+    runner=environment["oracle" if oracle else "verifier"]
+    container_name="l2-r3-"+hashlib.sha256(str(run_dir).encode()).hexdigest()[:20]
+    cmd=["docker","create","--name",container_name,"--network","none","--memory","4g","--cpus","2",
+         "--pids-limit","256","--cap-drop","ALL","--cap-add","CHOWN","--cap-add","DAC_OVERRIDE",
+         "--cap-add","SETUID","--cap-add","SETGID","--security-opt","no-new-privileges",
+         "--entrypoint","/bin/sh","-e","UV_OFFLINE=1","-e","PIP_NO_INDEX=1"]
+    if oracle:cmd += ["-e",f"ORACLE_DIR={meta['oracle_mount']}"]
+    for key,value in runner.get("env",{}).items():cmd += ["-e",key+"="+value]
+    cmd += [image,"-c","trap 'exit 0' TERM INT; while :; do sleep 3600; done"]
+    readback={};result={};rc=999;log="";unmapped=[]
+    def cp_to(source: Path, target: str) -> None:
+        subprocess.run(["docker","cp",str(source)+("/." if source.is_dir() else ""),container_name+":"+target],
+                       capture_output=True,text=True,check=True)
+    try:
+        subprocess.run(cmd,capture_output=True,text=True,check=True)
+        subprocess.run(["docker","start",container_name],capture_output=True,check=True)
+        observed=json.loads(subprocess.check_output(["docker","inspect",container_name],text=True))[0]
+        readback={"image_id":observed["Image"],"network":observed["HostConfig"]["NetworkMode"],
+                  "memory_bytes":observed["HostConfig"]["Memory"],"nano_cpus":observed["HostConfig"]["NanoCpus"],
+                  "pids_limit":observed["HostConfig"]["PidsLimit"],"native_user":observed["Config"].get("User"),
+                  "mounts":observed["Mounts"],"private_assets":"docker cp into isolated container; no live workspace bind"}
+        from trievo_bench import container_resources
+        cp_to(Path(container_resources.__file__),"/tmp/l2-container-resources.py")
+        checked=subprocess.run(["docker","exec","--user","0",container_name,environment["python_executable"],
+            "/tmp/l2-container-resources.py","--cpu","2","--memory-bytes","4294967296","--pids","256"],
+            capture_output=True,text=True,timeout=30)
+        resource_result={"returncode":checked.returncode,"stdout":checked.stdout,"stderr":checked.stderr}
+        dump(run_dir/"resource-readback.json",resource_result)
+        resource_snapshot=json.loads(checked.stdout)
+        readback["effective_resources"]=resource_snapshot
+        if checked.returncode or not resource_snapshot["validation"]["passed"]:
+            raise RuntimeError("container_resource_limits_unverified:"+checked.stdout)
+        roots=["/l2-submission","/l2-result","/logs/verifier",meta["tests_mount"]]
+        if oracle:roots.append(meta["oracle_mount"])
+        if private_skills:roots.append("/app/skills")
+        subprocess.run(["docker","exec","--user","0",container_name,"mkdir","-p",*roots],capture_output=True,check=True)
+        cp_to(copied,"/l2-submission");cp_to(task/"evaluation_assets/native_tests",meta["tests_mount"])
+        if oracle:cp_to(task/"evaluation_assets/native_oracle",meta["oracle_mount"])
+        if private_skills:cp_to(private_skills,"/app/skills")
+        bootstrap=mapping_script(environment,"/l2-submission")
+        user=observed["Config"].get("User")
+        if user:bootstrap+="chown -R "+shlex.quote(user)+" /l2-submission /l2-result /logs/verifier\n"
+        subprocess.run(["docker","exec","--user","0",container_name,"/bin/bash","-c",bootstrap],
+                       capture_output=True,text=True,check=True)
+        body="#!/bin/bash\nset +e\ncd "+shlex.quote(environment["cwd"])+"\n"
+        body+=" ".join(shlex.quote(x) for x in runner["command"])+" > /l2-result/output.log 2>&1\nrc=$?\necho $rc > /l2-result/rc\nexit 0\n"
+        (run_dir/"run.sh").write_text(body);cp_to(run_dir/"run.sh","/l2-result/run.sh")
+        result=command(["docker","exec",container_name,"/bin/bash","/l2-result/run.sh"],
+                       run_dir/"docker.log",runner["timeout_seconds"]+60)
+        result.update(create_argv=cmd,readback=readback)
+        subprocess.run(["docker","cp",container_name+":/l2-result/.",str(run_dir)],capture_output=True,check=True)
+        subprocess.run(["docker","cp",container_name+":/logs/verifier/.",str(logs)],capture_output=True,check=True)
+        if oracle:
+            changes=subprocess.check_output(["docker","diff",container_name],text=True).splitlines()
+            for change in changes:
+                if not change.startswith(("A ","C ")):continue
+                path=change[2:]
+                roots={"/root","/app",environment["cwd"]}-{ "/" }
+                for root in roots:
+                    if not path.startswith(root+"/"):continue
+                    relative=PurePosixPath(path).relative_to(root)
+                    if not relative.parts:continue
+                    candidate=str(PurePosixPath(root)/relative.parts[0])
+                    if relative.parts[0] in HOME_INFRA or relative.parts[0].startswith(".") or private_member(candidate):continue
+                    if not any(candidate==m["native_path"] or candidate.startswith(m["native_path"]+"/") for m in environment["path_mappings"]):
+                        unmapped.append(candidate)
+            # Capture exactly the mapped persistent tree. Unmapped rootfs changes
+            # are intentionally not carried to later images or fixtures.
+            shutil.rmtree(copied);copied.mkdir()
+            subprocess.run(["docker","cp",container_name+":/l2-submission/.",str(copied)],capture_output=True,check=True)
+        log=(run_dir/"output.log").read_text(errors="replace") if (run_dir/"output.log").exists() else result["tail"]
+        rc=int((run_dir/"rc").read_text()) if (run_dir/"rc").exists() else result["returncode"] or 999
+    finally:
+        subprocess.run(["docker","rm","-f",container_name],capture_output=True)
+    if oracle:
+        return {"status":"pass" if rc==0 else "error","exit_code":rc,"output_tail":log[-5000:],
+                "submission":str(copied),"execution":result,"network":"none","container":container_name,
+                "unmapped_public_writes":sorted(set(unmapped))}
+    for logfile in logs.rglob("*"):
+        if logfile.is_file() and logfile.suffix in {".log",".txt"} and ("test" in logfile.name.lower() or "pytest" in logfile.name.lower()):
+            log+="\n"+logfile.read_text(errors="replace")[-2_000_000:]
+    reward=logs/"reward.txt"
+    return {**check_result(log,reward.read_text() if reward.exists() else None,rc),
+            "execution":result,"network":"none","container":container_name}
+
+
+def assert_private_helpers_absent(public_tree: Path, helpers: Path | None = None) -> None:
+    forbidden_hashes=set()
+    if helpers:
+        forbidden_hashes={digest_file(p) for p in helpers.rglob("*") if p.is_file() and p.stat().st_size}
+    for path in public_tree.rglob("*"):
+        if not path.is_file():continue
+        relative=path.relative_to(public_tree)
+        if path.name=="SKILL.md" or any(p in {"skills",".skills","skill"} for p in relative.parts):
+            raise RuntimeError("private_skill_path_in_public_snapshot:"+str(relative))
+        if forbidden_hashes and path.stat().st_size and digest_file(path) in forbidden_hashes:
+            raise RuntimeError("private_skill_helper_bytes_in_public_snapshot:"+str(relative))
+
+
+def export_safe_image(image_result: dict[str, Any], pool: Path, work: Path) -> dict[str, Any]:
+    """Save each admitted sanitized image once; Docker load preserves config ID."""
+    import fcntl
+    image=image_result["image"];image_id=image["Id"]
+    directory=pool/"_images";directory.mkdir(exist_ok=True)
+    basename=image_id.removeprefix("sha256:")
+    archive=directory/(basename+".docker.tar");metadata=directory/(basename+".json")
+    with (directory/(basename+".lock")).open("a+") as handle:
+        fcntl.flock(handle.fileno(),fcntl.LOCK_EX)
+        if metadata.exists() and archive.exists():
+            record=json.loads(metadata.read_text())
+            if record["image_id"]!=image_id or digest_file(archive)!=record["archive_sha256"]:
+                raise RuntimeError("saved_native_image_archive_integrity_mismatch")
+        else:
+            temporary=directory/(basename+".partial.tar")
+            saved=command(["docker","save","--output",str(temporary),image_id],work/"docker-save.log",3600)
+            if saved["returncode"]:raise RuntimeError("safe_image_export_failed:"+saved["tail"])
+            temporary.replace(archive)
+            record={"image_id":image_id,"archive_relative_path":str(archive.relative_to(pool)),
+                "archive_sha256":digest_file(archive),"archive_bytes":archive.stat().st_size,
+                "filesystem_archive_sha256":image_result["scrub"]["sha256"],
+                "layers":image.get("RootFS",{}).get("Layers",[]),"config":image["Config"],
+                "os":image.get("Os"),"architecture":image.get("Architecture"),
+                "upstream_image_id":image_result["upstream"]["Id"],
+                "base_images":image_result.get("base_images",[]),
+                "restore_command":["docker","load","--input",str(archive.relative_to(pool))],
+                "verify_command":["docker","image","inspect",image_id,"--format","{{.Id}}"],
+                "note":"docker-save archive restores the exact config ID; rootfs import alone does not"}
+            dump(metadata,record)
+    with (directory/"catalog.lock").open("a+") as handle:
+        fcntl.flock(handle.fileno(),fcntl.LOCK_EX)
+        records=[json.loads(p.read_text()) for p in directory.glob("*.json") if p.name!="CATALOG.json"]
+        dump(directory/"CATALOG.json",{"schema_version":"l2_native_image_catalog/1.0","images":records})
+    return {k:record[k] for k in ("archive_relative_path","archive_sha256","archive_bytes")}
+
+
+def asset_inventory(row: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    """Record every copied asset and explicit external provenance separately.
+
+    A source repository license covers its own authored material; it does not
+    override dataset/model terms. External terms without evidence block admission.
+    """
+    repo_license = "MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0"
+    files=[];urls=set()
+    for file in sorted(p for p in inputs["context"].rglob("*") if p.is_file()):
+        relative=file.relative_to(inputs["context"]).as_posix()
+        if any(part in {"skills","skill",".skills"} for part in file.relative_to(inputs["context"]).parts):
+            visibility="private_oracle_only" if row["family"]=="travel-planning" else "excluded_skill"
+        else:
+            visibility="public_environment"
+        files.append({"path":relative,"sha256":digest_file(file),"bytes":file.stat().st_size,
+                      "visibility":visibility,"repository_license":repo_license})
+        if visibility=="public_environment" and (file.suffix in {".md",".txt",".py",".sh",".json",".toml"} or file.name=="Dockerfile"):
+            urls.update(re.findall(r"https?://[^\s\"'<>]+",file.read_text(errors="replace")))
+    urls.update(re.findall(r"https?://[^\s\"'<>]+",inputs["prompt"]))
+    external=[]
+    for url in sorted(urls):
+        if any(host in url for host in ("kaggle.com/","huggingface.co/","hf.co/","zenodo.org/","drive.google.com/","sec.gov/")):
+            sec="sec.gov/" in url
+            external.append({"url":url,"license":"US federal public-domain filing data" if sec else None,
+                             "status":"verified_public_domain" if sec else "terms_review_required",
+                             "evidence":"SEC EDGAR public filings; third-party incorporated materials retain their own terms" if sec else "No asset-specific redistribution grant inspected"})
+    # The approved seven tasks contain SEC 13F public filings; retain provenance
+    # even when the upstream context does not repeat the download URL.
+    if row["family"]=="financial-analysis" or row["source_task_id"]=="sec-financial-report":
+        external.append({"url":"https://www.sec.gov/dera/data/form-13f-data-sets",
+                         "license":"US federal public-domain filing data","status":"verified_public_domain",
+                         "evidence":"approved Phase2 task decision: bundled two SEC 13F zip datasets"})
+    return {"repository_license":repo_license,"assets":files,"external_assets":external,
+            "admission_blocked":any(x["status"]=="terms_review_required" for x in external)}
+
+
+def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
+    if hashlib.sha256(Path(__file__).read_bytes()).hexdigest()!=_LOADED_ADAPTER_SHA:
+        raise RuntimeError("native builder source changed after import; stop worker and restart")
+    sid = row["benchmark_id"]+":"+row["source_task_id"]
+    slug = sid.replace(":","__").replace("/","__")
+    work = args.work/slug;work.mkdir(parents=True,exist_ok=True)
+    task = args.pool/slug
+    result: dict[str,Any] = {"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
+                             "admitted":False,"stage":"inventory","adaptations":[],
+                             "license":"MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0",
+                             "adapter_sha256":_LOADED_ADAPTER_SHA}
+    if args.resume and (work/"outcome.json").exists():
+        previous=json.loads((work/"outcome.json").read_text())
+        if previous.get("admitted") and previous.get("adapter_sha256")==_LOADED_ADAPTER_SHA:return previous
+    if (task/"pool_task.json").exists():
+        stale=json.loads((task/"pool_task.json").read_text())
+        dump(work/"prior-pool-record.json",stale)
+        stale["qualification"]["admitted"]=False
+        stale["qualification"].setdefault("notes",[]).append("invalidated before adapter requalification")
+        dump(task/"pool_task.json",stale)
+    try:
+        inp=task_inputs(row)
+        configuration=source_metadata(row);info=source_info(row)
+        license_manifest=asset_inventory(row,inp)
+        dump(work/"ASSET_LICENSES.json",license_manifest)
+        result["asset_license_manifest"]=str(work/"ASSET_LICENSES.json")
+        result["license_review_required"]=license_manifest["admission_blocked"]
+        result["capability_id"]=("skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench"
+                                  else "skillsbench."+str(info["labels"].get("category") or "uncategorized"))
+        if not (inp["oracle"]/"solve.sh").exists():
+            result.update(stage="source",reason="missing_upstream_oracle");return result
+        if sid=="skillsbench:travel-planning":
+            result.update(stage="fairness",reason="prompt_refers_to_unprovided_available_skills");return result
+        if not (inp["tests"]/"test.sh").exists():
+            result.update(stage="source",reason="missing_upstream_test_entrypoint");return result
+        source_environment=configuration.get("environment") or configuration.get("sandbox") or {}
+        if int(source_environment.get("gpus") or 0)>0:
+            result.update(stage="unsupported",reason="native_gpu_requirement_outside_approved_passthrough_scope")
+            return result
+        image_result=build_image(row,inp,work,args.build_timeout)
+        image=image_result["image"];cfg=image["Config"];cwd=cfg.get("WorkingDir") or "/"
+        if cfg.get("Entrypoint"):
+            result["runtime_readiness_blocker"]="native_entrypoint_startup_not_replayed"
+            result["upstream_entrypoint"]=cfg["Entrypoint"]
+        if source_environment.get("workdir"):cwd=source_environment["workdir"]
+        result["image_id"]=image["Id"]
+        paths=absolute_public_paths(row,cwd,work/"safe-rootfs.tar")
+        mappings=[{"native_path":p,"workspace_relative_path":"rootfs/"+p.lstrip("/")} for p in paths]
+        environment={"schema_version":ADAPTER_VERSION,"cwd":cwd,"path_mappings":mappings,
+                     "python_executable":image_result["runtime_readback"]["python_executable"],"entrypoint":"/bin/sh","user":cfg.get("User",""),
+                     "image":{"local_id":image["Id"],"distribution_reference":None},
+                     "verifier":{"command":["bash",row["tests_mount"]+"/test.sh"],"cwd":cwd,
+                                 "timeout_seconds":info["verifier_timeout"],"env":stage_environment(configuration,"verifier"),
+                                 "reward_path":"/logs/verifier/reward.txt"},
+                     "oracle":{"command":["bash",row["oracle_mounts"][0]+"/solve.sh"],"cwd":cwd,
+                               "timeout_seconds":max(1800,info["agent_timeout"]),"env":stage_environment(configuration,"oracle")},
+                     "adaptations":image_result["adaptations"]+[{"kind":"flatten_private_image","removed_paths":image_result["scrub"]["removed_paths"]}]}
+        if sid=="skillsbench:edit-pdf":
+            result["time_sensitive_native_verifier"]=True
+            environment["adaptations"].append({"kind":"calendar_sensitive_fixture",
+                "reason":"unchanged test_todays_date_added expects current Pacific date plus/minus one day; static gold expires",
+                "qualification_observed_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),
+                "refresh_policy":"rerun unchanged upstream oracle; never freeze/patch clock or tests"})
+        if source_environment:
+            environment["adaptations"].append({"kind":"l2_runtime_resource_policy","upstream":source_environment,
+                "runtime":{"cpus":2,"memory_mb":4096,"pids_limit":256,"network":"disabled"},
+                "reason":"approved persistent Workspace/L2 runtime constraints retained"})
+        # Validation is also exercised during fixture run before executing a command.
+        from trievo_bench.native_environment import validate_native_environment
+        validate_native_environment(environment)
+        mapping_script(environment,"/l2-submission")
+        if task.exists():shutil.rmtree(task)
+        assets=task/"evaluation_assets";assets.mkdir(parents=True)
+        shutil.copytree(inp["tests"],assets/"native_tests",ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copy2(work/"test.sh",assets/"native_tests/test.sh")
+        shutil.copy2(inp["tests"]/"test.sh",assets/"upstream-test.sh")
+        shutil.copytree(inp["oracle"],assets/"native_oracle",ignore=shutil.ignore_patterns("__pycache__"))
+        (assets/"source_verifier.py").write_text(verifier_text())
+        meta={**environment,"tests_mount":row["tests_mount"],"oracle_mount":row["oracle_mounts"][0],"native_user":cfg.get("User","")}
+        dump(assets/"native_task.json",meta)
+        materialize_seed(work/"safe-rootfs.tar",mappings,task/"workspace_seed")
+        # Writable native output directories must have real backing directories
+        # before a symlink alias replaces them. File outputs stay absent for red.
+        for mapping in mappings:
+            name=PurePosixPath(mapping["native_path"]).name
+            if name in {"output", "outputs", "results", "workspace", "submission"}:
+                (task/"workspace_seed"/mapping["workspace_relative_path"]).mkdir(parents=True,exist_ok=True)
+        seed_bytes=sum(p.stat().st_size for p in (task/"workspace_seed").rglob("*") if p.is_file())
+        result["seed_bytes"]=seed_bytes
+        if seed_bytes>300_000_000:
+            if not (row["family"]=="financial-analysis" or row["source_task_id"]=="sec-financial-report"):
+                result.update(stage="size",reason=f"native_seed_bytes={seed_bytes} exceeds unraised 300000000 limit")
+                return result
+            environment["adaptations"].append({"kind":"large_native_seed","bytes":seed_bytes,"reason":"approved_financial_data_exception"})
+        private_skills=None
+        if row["benchmark_id"]=="skilllearnbench" and row["family"]=="travel-planning":
+            private_skills=inp["context"]/"skills"
+            if not private_skills.exists():
+                private_skills=sources.CHECKOUTS[row["benchmark_id"]]/"skills/human_authored/travel-planning"
+            shutil.copytree(private_skills,assets/"private_oracle_skills")
+            private_skills=assets/"private_oracle_skills"
+            license_manifest["private_oracle_helpers"]=[{"path":str(p.relative_to(assets)),"sha256":digest_file(p),
+                "license":"MIT","visibility":"private_oracle_only"} for p in private_skills.rglob("*") if p.is_file()]
+            dump(work/"ASSET_LICENSES.json",license_manifest)
+            environment["adaptations"].append({"kind":"private_oracle_skills","reason":"approved_qualification_only"})
+        oracle=fixture_run(image["Id"],environment,task,task/"workspace_seed",work,"oracle",oracle=True,private_skills=private_skills)
+        if oracle["status"]=="pass" and oracle.get("unmapped_public_writes"):
+            added=[]
+            for path in oracle["unmapped_public_writes"]:
+                mapping={"native_path":path,"workspace_relative_path":"rootfs/"+path.lstrip("/")}
+                if mapping not in mappings:mappings.append(mapping);added.append(path)
+            environment["adaptations"].append({"kind":"observed_oracle_output_mappings","paths":added,
+                "reason":"public oracle writes observed by docker diff; persist same paths across images"})
+            from trievo_bench.native_environment import validate_native_environment
+            validate_native_environment(environment)
+            meta.update(environment);dump(assets/"native_task.json",meta)
+            materialize_seed(work/"safe-rootfs.tar",mappings,task/"workspace_seed")
+            oracle=fixture_run(image["Id"],environment,task,task/"workspace_seed",work,"oracle-mapped",oracle=True,private_skills=private_skills)
+            if oracle.get("unmapped_public_writes"):
+                raise RuntimeError("unstable_oracle_public_outputs:"+str(oracle["unmapped_public_writes"]))
+        result["oracle"]=oracle
+        if oracle["status"]!="pass":
+            result.update(stage="oracle",reason="native_oracle_failed");return result
+        # Gold may never return private helpers into the agent-visible workspace.
+        gold=Path(oracle["submission"])
+        assert_private_helpers_absent(gold,private_skills)
+        assert_private_helpers_absent(task/"workspace_seed",private_skills)
+        shutil.copytree(gold,task/"fixtures/known_correct",symlinks=True)
+        shutil.copytree(task/"workspace_seed",task/"fixtures/known_broken",symlinks=True)
+        green=fixture_run(image["Id"],environment,task,task/"fixtures/known_correct",work,"known_correct")
+        red=fixture_run(image["Id"],environment,task,task/"fixtures/known_broken",work,"known_broken")
+        result.update(known_correct=green,known_broken=red)
+        admitted=green["status"]=="pass" and red["status"]=="fail" and not license_manifest["admission_blocked"] and not result.get("runtime_readiness_blocker")
+        result.update(admitted=admitted,stage="qualified",reason=None if admitted else (result.get("runtime_readiness_blocker") or ("external_asset_license_unverified" if license_manifest["admission_blocked"] else "native_red_green_failed")),task_dir=slug)
+        if admitted:
+            environment["image"].update(export_safe_image(image_result,args.pool,work))
+            meta.update(environment);dump(assets/"native_task.json",meta)
+        record={"schema_version":"l2_v5_pool_task/1.0","source_id":sid,
+                "source":{"benchmark_id":row["benchmark_id"],"benchmark_revision":legacy.REVISIONS[row["benchmark_id"]],
+                          "source_task_id":row["source_task_id"],"source_path":str(row["task_dir"].relative_to(sources.CHECKOUTS[row["benchmark_id"]])),
+                          "source_hash":sources.tree_sha256(row["task_dir"])},
+                "prompt":info["prompt"],"benchmark_native_labels":info["labels"],
+                "capability_hint":{"capability_id":result["capability_id"],"family":row["family"],"category":info["labels"].get("category")},
+                "runtime":{"runtime_profile_id":None,"requires_gpu":False,"network":"disabled","task_image":image["Id"],
+                           "task_image_digest":image["Id"],"turn_timeout_seconds":info["agent_timeout"],
+                           "verifier_timeout_seconds":environment["verifier"]["timeout_seconds"]+120,"native_environment":environment},
+                "submission":{"mode":"workspace_artifact","payload_kind":"directory","relative_path":""},
+                "evaluation_profile":"general","metric_profile":None,
+                "qualification":{"image_digest":image["Id"],"known_correct":green,"known_broken":red,"admitted":admitted,
+                                 "notes":["true upstream Docker build; flattened skill/private-safe image; original runner setup moved build-time"]},
+                "licenses":[{"asset":"upstream_task","license":result["license"],"source":str(sources.CHECKOUTS[row["benchmark_id"]]/"LICENSE")}],
+                "adaptations":environment["adaptations"]}
+        shutil.copy2(work/"ASSET_LICENSES.json",assets/"ASSET_LICENSES.json")
+        dump(task/"pool_task.json",record)
+        result["adaptations"]=environment["adaptations"]
+        return result
+    except Exception as exc:
+        result.update(admitted=False,stage="error",reason=f"{type(exc).__name__}:{exc}")
+        return result
+    finally:
+        if (work/"build_reference.json").exists():
+            reference=json.loads((work/"build_reference.json").read_text())
+            result["build_reference"]=reference
+            ledger=Path(reference["image_work"])/"ADAPTATIONS.json"
+            if ledger.exists() and not result.get("adaptations"):
+                result["adaptations"]=json.loads(ledger.read_text())
+        dump(work/"outcome.json",result)
+
+
+def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None, r2: Path | None) -> None:
+    pool.mkdir(parents=True,exist_ok=True)
+    (pool/"INDEX.jsonl").write_text("".join(json.dumps(r,ensure_ascii=False)+"\n" for r in sorted(rows,key=lambda r:r["source_id"])))
+    (pool/"ADAPTATIONS.jsonl").write_text("".join(json.dumps({"source_id":r["source_id"],"adaptations":r.get("adaptations",[])})+"\n" for r in rows))
+    old={r["source_id"]:r for r in map(json.loads,(old_pool/"INDEX.jsonl").read_text().splitlines())} if old_pool else {}
+    diff=[{"source_id":r["source_id"],"old_admitted":old.get(r["source_id"],{}).get("admitted"),
+           "new_admitted":r["admitted"],"reason":r.get("reason"),"environment_changed":True} for r in rows]
+    dump(pool/"SOURCE_DIFF.json",diff)
+    counts: dict[str,dict[str,int]]={}
+    used=set()
+    placements=[]
+    if r2 and r2.exists():
+        inventory=json.loads(r2.read_text())
+        if isinstance(inventory,dict):inventory=inventory.get("turns",inventory.get("rows",[]))
+        for item in inventory:
+            basis=item.get("source_basis",{})
+            sid=item.get("source_id") or (str(basis.get("benchmark_id"))+":"+str(basis.get("source_task_id")))
+            if str(item.get("stream_id","")).startswith("intra_"):
+                used.add(sid)
+            outcomes={r["source_id"]:r for r in rows}
+            if sid in outcomes:
+                result=outcomes[sid]
+                placements.append({"stream_id":item["stream_id"],"turn_id":item["turn_id"],"source_id":sid,
+                    "old_admitted":old.get(sid,{}).get("admitted"),"new_admitted":result["admitted"],
+                    "environment_changed":bool(result.get("image_id")),
+                    "new_stage":result.get("stage"),"reason":result.get("reason")})
+        dump(pool/"R2_PLACEMENT_DIFF.json",placements)
+    for r in rows:
+        cap=r.get("capability_id",r["family"])
+        count=counts.setdefault(cap,{"total":0,"admitted":0,"admitted_unused_intra":0})
+        count["total"]+=1;count["admitted"]+=int(r["admitted"])
+        count["admitted_unused_intra"]+=int(r["admitted"] and r["source_id"] not in used)
+    dump(pool/"CAPABILITY_COUNTS.json",counts)
+    recommendations={}
+    for prefix in ("skilllearn.","skillsbench."):
+        eligible=[(cap,c) for cap,c in counts.items() if cap.startswith(prefix) and c["admitted_unused_intra"]>=5]
+        eligible.sort(key=lambda pair:(-pair[1]["admitted_unused_intra"],pair[0]))
+        recommendations[prefix.rstrip(".")]={"capability_triple":[cap for cap,_ in eligible[:3]] if len(eligible)>=3 else None,
+            "eligible_capabilities":eligible,"shortfall_capabilities":max(0,3-len(eligible))}
+    dump(pool/"STREAM_RECOMMENDATIONS.json",recommendations)
+    from collections import Counter
+    stages=Counter(r.get("stage","unknown") for r in rows)
+    report=["# Native r3 pool build outcomes", "",
+        f"Inventory: {len(rows)} sources; admitted: {sum(bool(r['admitted']) for r in rows)}. Stages: {dict(stages)}.",
+        "", "Results are native image qualification outcomes only where fixtures ran. Pending and build errors do not establish source task defects.",
+        "", "Per-file asset terms, original and adapted runner hashes, image metadata, build logs, fresh-container fixture commands and readbacks are retained in the referenced work directories.",
+        "", "| Source | Stage | Admitted | Reason |", "|---|---|---|---|"]
+    for r in sorted(rows,key=lambda x:x["source_id"]):
+        reason=str(r.get("reason") or "").replace("\n"," ").replace("|","/")[:500]
+        report.append(f"| {r['source_id']} | {r.get('stage')} | {r['admitted']} | {reason} |")
+    report += ["", "R2 placement comparison: see R2_PLACEMENT_DIFF.json. Source outcomes: SOURCE_DIFF.json. Per-capability unused source counts: CAPABILITY_COUNTS.json. Capability triples: STREAM_RECOMMENDATIONS.json."]
+    (pool/"REPORT.md").write_text("\n".join(report)+"\n")
+
+
+def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[str, Any]:
+    """Reject Docker proxies that report success without executing commands."""
+    directory=Path(tempfile.mkdtemp(prefix="docker-exec-preflight-",dir=work))
+    name="native-preflight-"+directory.name[-12:]
+    result={"docker_host":os.environ.get("DOCKER_HOST"),"image":image}
+    try:
+        subprocess.run(["docker","run","-d","--name",name,"--network","none","--entrypoint","/bin/sh",
+                        image,"-c","sleep 300"],capture_output=True,text=True,check=True)
+        subprocess.run(["docker","exec",name,"/bin/sh","-c","printf executed > /tmp/native-preflight-marker"],
+                       capture_output=True,text=True,check=True)
+        subprocess.run(["docker","cp",name+":/tmp/native-preflight-marker",str(directory/"marker")],
+                       capture_output=True,text=True,check=True)
+        marker=(directory/"marker").read_text()
+        negative=subprocess.run(["docker","exec",name,"/bin/sh","-c","exit 17"],capture_output=True)
+        result.update(marker=marker,negative_exit_code=negative.returncode)
+        if marker!="executed" or negative.returncode!=17:
+            raise RuntimeError("Docker exec/copy readback failed; endpoint may be a no-op proxy")
+        result["passed"]=True
+        return result
+    finally:
+        dump(directory/"result.json",result)
+        subprocess.run(["docker","rm","-f",name],capture_output=True)
+
+
+def main() -> int:
+    global _BUILD_SLOTS_FILE
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
+    parser.add_argument("--upstream",type=Path,required=True)
+    parser.add_argument("--pool",type=Path,required=True)
+    parser.add_argument("--work",type=Path,required=True)
+    parser.add_argument("--old-pool",type=Path)
+    parser.add_argument("--r2-inventory",type=Path)
+    parser.add_argument("--only",nargs="*")
+    parser.add_argument("--jobs",type=int,default=2)
+    parser.add_argument("--build-slots-file",type=Path,help="Live heavy-build quota file containing 1 or 2")
+    parser.add_argument("--build-timeout",type=int,default=3600)
+    parser.add_argument("--resume",action="store_true")
+    parser.add_argument("--inventory-only",action="store_true")
+    args=parser.parse_args()
+    _BUILD_SLOTS_FILE=args.build_slots_file
+    if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
+    args.work.mkdir(parents=True,exist_ok=True);args.pool.mkdir(parents=True,exist_ok=True)
+    if not args.inventory_only:
+        resource_capability_preflight(args.work)
+        docker_exec_preflight(args.work)
+    all_tasks=discover(args.upstream)
+    tasks=[r for r in all_tasks if not args.only or r["benchmark_id"]+":"+r["source_task_id"] in args.only]
+    previous={}
+    if (args.pool/"INDEX.jsonl").exists():
+        previous={r["source_id"]:r for r in map(json.loads,(args.pool/"INDEX.jsonl").read_text().splitlines())}
+    outcomes={}
+    for row in all_tasks:
+        sid=row["benchmark_id"]+":"+row["source_task_id"]
+        info=source_info(row)
+        outcomes[sid]=previous.get(sid,{"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
+            "capability_id": "skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
+            "admitted":False,"stage":"pending","reason":"not_built"})
+    write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
+    if not args.inventory_only:
+        with concurrent.futures.ThreadPoolExecutor(args.jobs) as executor:
+            futures=[executor.submit(build_task,row,args) for row in tasks]
+            for future in concurrent.futures.as_completed(futures):
+                row=future.result();outcomes[row["source_id"]]=row
+                write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
+                print(row["source_id"],row["admitted"],row.get("reason"),flush=True)
+    write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
+    return 0
+
+
+if __name__=="__main__":
+    raise SystemExit(main())

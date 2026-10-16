@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -79,8 +80,16 @@ class _TaskSandboxSession:
         profile: dict[str, Any],
         workspace: Path,
         workspace_volume: DockerVolumeMirror,
+        turn_id: str | None = None,
     ) -> None:
         self.profile = profile
+        self.native_environment = profile.get("native_environment")
+        self.turn_id = turn_id
+        if self.native_environment is not None:
+            from .native_environment import validate_native_environment
+            validate_native_environment(self.native_environment)
+            if not turn_id or not re.fullmatch(r"[A-Za-z0-9_-]+", turn_id):
+                raise L2AgentRunError("native environment requires a safe Turn ID")
         self.workspace = workspace.resolve()
         self.workspace_volume = workspace_volume
         self.name = f"trievo-l2-task-{uuid4().hex[:12]}"
@@ -89,6 +98,14 @@ class _TaskSandboxSession:
         self.evidence: dict[str, Any] = {}
 
     def start(self) -> dict[str, Any]:
+        if self.native_environment or self.profile.get("environment_version"):
+            from .container_resources import docker_resource_capability_preflight
+            try:
+                capability = docker_resource_capability_preflight(docker=_docker_executable())
+                if not capability["passed"]:
+                    raise RuntimeError("; ".join(capability["errors"]))
+            except (RuntimeError, OSError, subprocess.SubprocessError) as exc:
+                raise L2AgentRunError(f"native resource enforcement unavailable: {exc}") from exc
         inspect = subprocess.run(
             [_docker_executable(), "image", "inspect", self.image, "--format", "{{.Id}}"],
             text=True,
@@ -105,11 +122,15 @@ class _TaskSandboxSession:
         command = [
             _docker_executable(), "run", "-d", "--name", self.name,
             "--network", "none", "--cap-drop", "ALL",
+            *(["--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE"] if self.native_environment else []),
             "--security-opt", "no-new-privileges", "--pids-limit", "256",
             "--memory", "4g", "--cpus", "2",
             "--mount", self.workspace_volume.mount_spec("/workspace"),
-            "-w", "/workspace", self.image,
-            "sh", "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
+            *(["--entrypoint", self.native_environment.get("entrypoint", "/bin/sh")]
+              if self.native_environment else []),
+            "-w", self.native_environment["cwd"] if self.native_environment else "/workspace", self.image,
+            *([] if self.native_environment else ["sh"]),
+            "-c" if self.native_environment else "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
         ]
         started = subprocess.run(
             command,
@@ -140,6 +161,44 @@ class _TaskSandboxSession:
         if inspected.returncode != 0 or fields != [self.image, "none", "true"]:
             self.close()
             raise L2AgentRunError("task sandbox runtime readback failed closed")
+        if self.native_environment or self.profile.get("environment_version"):
+            from .native_environment import mapping_script
+            from .container_resources import container_resource_check_script, validate_container_resources
+            marker = f"/tmp/{self.name}-readback.json"
+            script = (mapping_script(self.native_environment, f"/workspace/tasks/{self.turn_id}")
+                      if self.native_environment else "from pathlib import Path\nimport json\n")
+            script += "\n" + container_resource_check_script() + "\n"
+            expected = {"container": self.name, "aliases": {}}
+            if self.native_environment:
+                expected["aliases"] = {
+                    item["native_path"]: f"/workspace/tasks/{self.turn_id}/" + item["workspace_relative_path"]
+                    for item in self.native_environment["path_mappings"]}
+            script += ("\nPath(" + repr(marker) + ").write_text(json.dumps({'container': " + repr(self.name)
+                       + ", 'aliases': {p: str(Path(p).resolve()) for p in "
+                       + repr(list(expected["aliases"])) + "}, 'resources': resource_readback}))\n")
+            setup = subprocess.run(
+                [_docker_executable(), "exec", "--user", "0", self.name,
+                 (self.native_environment or {}).get("python_executable", "python"), "-c", script],
+                text=True, capture_output=True, check=False,
+            )
+            # Some Docker proxies fake successful exec status. Verify the actual effect.
+            with tempfile.TemporaryDirectory(prefix="trievo-native-readback-") as temp:
+                local_marker = Path(temp) / "readback.json"
+                copied = subprocess.run([_docker_executable(), "cp", f"{self.name}:{marker}", str(local_marker)],
+                                        text=True, capture_output=True, check=False)
+                try:
+                    observed = json.loads(local_marker.read_text())
+                except (OSError, ValueError):
+                    observed = None
+            resources = observed.pop("resources", None) if isinstance(observed, dict) else None
+            resource_validation = validate_container_resources(resources or {})
+            if (setup.returncode or copied.returncode or observed != expected
+                    or not resource_validation["passed"]):
+                self.close()
+                raise L2AgentRunError(
+                    "native setup readback failed; aliases or enforced resource limits are missing: "
+                    + (setup.stderr or copied.stderr or str(resource_validation["errors"]))[-4000:])
+            self.resource_readback = resources
         self.evidence = {
             "runtime_profile_id": self.profile["runtime_profile_id"],
             "container_name": self.name,
@@ -149,6 +208,13 @@ class _TaskSandboxSession:
             "workspace_transport": "docker_volume",
             "tool_profile_id": self.profile["tool_profile_id"],
             "dependency_class": self.profile["dependency_class"],
+            **({"environment_version": self.profile["environment_version"]} if self.profile.get("environment_version") else {}),
+            **({"resource_readback": self.resource_readback} if hasattr(self, "resource_readback") else {}),
+            **({"cwd": self.native_environment["cwd"],
+                "task_directory": f"/workspace/tasks/{self.turn_id}",
+                "python_executable": self.native_environment.get("python_executable", "python"),
+                "path_mappings": self.native_environment["path_mappings"]}
+               if self.native_environment else {}),
         }
         return dict(self.evidence)
 
@@ -632,6 +698,7 @@ class L2AgentStreamRunner:
                         profile=self._current_v5_profile,
                         workspace=workspace,
                         workspace_volume=self._workspace_volume,
+                        turn_id=turn_id,
                     )
                     task_sandbox_evidence = self._task_sandbox.start()
                 sequence_role = _validate_taskstream_turn_identity(
@@ -1233,6 +1300,27 @@ class L2AgentStreamRunner:
                 shutil.copy2(source, target)
 
     def _verify_taskstream(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
+        profile = getattr(self, "_current_v5_profile", None) or {}
+        if not profile.get("environment_version") and not profile.get("native_environment"):
+            return self._verify_taskstream_in_workspace(task=task, turn_dir=turn_dir, workspace=workspace, reply=reply)
+        # Native tests may write caches/output. Never give them the live agent volume.
+        original_volume = getattr(self, "_workspace_volume", None)
+        with tempfile.TemporaryDirectory(prefix="trievo-l2-verifier-snapshot-") as tmp:
+            snapshot = Path(tmp) / "workspace"
+            shutil.copytree(workspace, snapshot, symlinks=True)
+            mirror = None
+            try:
+                if original_volume is not None:
+                    mirror = DockerVolumeMirror.create(snapshot, role="l2-verifier-snapshot")
+                self._workspace_volume = mirror
+                return self._verify_taskstream_in_workspace(
+                    task=task, turn_dir=turn_dir, workspace=snapshot, reply=reply)
+            finally:
+                self._workspace_volume = original_volume
+                if mirror is not None:
+                    mirror.close()
+
+    def _verify_taskstream_in_workspace(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
         evaluation = task.get("evaluation", {})
         native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
         entrypoint = native.get("entrypoint")
@@ -1319,13 +1407,29 @@ class L2AgentStreamRunner:
             for item in ("-e", f"{name}=")
         ]
         verifier_container = f"trievo-l2-verifier-{uuid4().hex[:12]}"
+        native_environment = (current_v5_profile or {}).get("native_environment")
+        verifier_command = [verifier_image, "python", f"/opt/l2_demo/{verifier_rel}"]
+        if native_environment or (current_v5_profile or {}).get("environment_version"):
+            from .container_resources import container_resource_check_script
+            from .native_environment import mapping_script
+            bootstrap = container_resource_check_script() + "\n"
+            if native_environment:
+                bootstrap += mapping_script(native_environment, f"/workspace/tasks/{task['turn_id']}")
+            bootstrap += ("\nimport runpy, sys\nsys.argv = [" + repr(f"/opt/l2_demo/{verifier_rel}")
+                          + "]\nrunpy.run_path(sys.argv[0], run_name='__main__')\n")
+            verifier_command = [*(["--user", "0"] if native_environment else []), "--entrypoint",
+                                (native_environment or {}).get("python_executable", "python"),
+                                "-w", (native_environment or {}).get("cwd", "/workspace"),
+                                verifier_image, "-c", bootstrap]
         command = [
             _docker_executable(), "run", "--name", verifier_container, "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
+            *(["--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE", "--cap-add", "SETUID", "--cap-add", "SETGID"]
+              if native_environment else []),
             *package_mount_args, *workspace_mount_args,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
             *blocked_proxy_environment,
-            verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
+            *verifier_command,
         ]
         timeout = int(native.get("timeout_seconds", 300))
         transport_timeout = _verifier_transport_timeout(timeout)
@@ -2002,6 +2106,17 @@ def _load_v5_runtime_binding(
         profile = profiles[profile_id]
         if profile.get("network") != "disabled":
             raise L2AgentRunError(f"runtime profile {profile_id} must disable network")
+        if "environment_version" in profile and profile["environment_version"] != "l2_environment/1.0":
+            raise L2AgentRunError("unsupported environment_version")
+        if ((profile.get("environment_version") or "native_environment" in profile)
+                and profile.get("task_sandbox_image_digest") != profile.get("verifier_image_digest")):
+            raise L2AgentRunError("native task and verifier must use the same image")
+        if "native_environment" in profile:
+            from .native_environment import validate_native_environment
+            try:
+                validate_native_environment(profile["native_environment"])
+            except ValueError as exc:
+                raise L2AgentRunError(str(exc)) from exc
         image = profile.get("task_sandbox_image_digest")
         if not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71:
             raise L2AgentRunError(f"runtime profile {profile_id} image digest is not pinned")

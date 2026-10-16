@@ -399,6 +399,17 @@ def _load_v5_contract(root: Path) -> dict[str, Any] | None:
             or len(verifier_digest) != 71
         ):
             raise L2SpecError(f"{profile_id}: invalid verifier_image_digest")
+        if "environment_version" in profile and profile["environment_version"] != "l2_environment/1.0":
+            raise L2SpecError(f"{profile_id}: unsupported environment_version")
+        if ((profile.get("environment_version") or "native_environment" in profile)
+                and profile.get("task_sandbox_image_digest") != profile.get("verifier_image_digest")):
+            raise L2SpecError("native task and verifier must use the same image")
+        if "native_environment" in profile:
+            from .native_environment import validate_native_environment
+            try:
+                validate_native_environment(profile["native_environment"])
+            except ValueError as exc:
+                raise L2SpecError(f"{profile_id}: {exc}") from exc
         if profile.get("network") != "disabled":
             raise L2SpecError(f"{profile_id}: network must be disabled")
         if not isinstance(profile.get("learner_state_abi"), str) or not profile["learner_state_abi"]:

@@ -19,15 +19,21 @@ import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from uuid import uuid4
 
 FIXTURES = {"known_correct": "pass", "known_broken": "fail"}
 DRIVER = r'''
 import json, os, shutil, subprocess, sys
 from pathlib import Path
+from uuid import uuid4
 w = Path("/w"); turn = w / "turn"; spec = json.loads((w / "spec.json").read_text())
 fixture = sys.argv[1]
+resource_readback = None
+if spec.get("environment_version") or spec.get("native_environment"):
+    from container_resources import require_container_resources
+    resource_readback = require_container_resources()
 src = turn / "evaluation_assets" / "fixtures" / fixture
-ws = w / f"ws-{fixture}"
+ws = Path("/workspace") if spec.get("environment_version") else w / f"ws-{fixture}"
 task_dir = ws / "tasks" / spec["turn_id"]
 task_dir.mkdir(parents=True)
 if spec["source"] == "interaction_record":
@@ -37,6 +43,10 @@ else:
     binding = {"kind": "path", "path": spec["path"]}
 request = {"schema_version": "l2_native_verifier_request/1.0", "bindings": {"submission": binding}}
 env = {**os.environ, "L2_VERIFIER_WORKSPACE": str(ws)}
+if spec.get("native_environment"):
+    from native_environment import mapping_script
+    exec(mapping_script(spec["native_environment"], str(task_dir)))
+    os.chdir(spec["native_environment"]["cwd"])
 try:
     proc = subprocess.run([sys.executable, str(turn / "evaluation_assets" / "verifier_cli.py")],
                           input=json.dumps(request), text=True, capture_output=True, env=env,
@@ -46,16 +56,31 @@ try:
 except Exception as exc:
     result = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
 (w / f"result-{fixture}.json").write_text(json.dumps(
-    {"status": result.get("status"), "score": result.get("score"), "error": result.get("error")}))
+    {"status": result.get("status"), "score": result.get("score"), "error": result.get("error"),
+     "private_diagnostics": result.get("private_diagnostics"), "resource_readback": resource_readback}))
 '''
 
 
-def qualify_turn(turn_dir: Path, image: str, scratch: Path) -> dict:
+def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None = None) -> dict:
+    environment = (profile or {}).get("native_environment")
+    isolated = bool((profile or {}).get("environment_version") or environment)
+    if isolated and (profile or {}).get("task_sandbox_image_digest") != image:
+        raise ValueError("native task and verifier must use the same image")
+    if environment:
+        from trievo_bench.native_environment import validate_native_environment
+        validate_native_environment(environment)
+    if isolated:
+        from trievo_bench.container_resources import docker_resource_capability_preflight
+        capability = docker_resource_capability_preflight()
+        if not capability["passed"]:
+            raise RuntimeError("native resource enforcement unavailable: " + "; ".join(capability["errors"]))
+    interpreter = environment.get("python_executable", "python") if environment else "python"
     task = json.loads((turn_dir / "task.json").read_text())
     native = task["evaluation"]["native_verifier"]
     binding = next(b for b in native["input_bindings"] if b["name"] == "submission")
     spec = {"turn_id": task["turn_id"], "source": binding["source"], "path": binding["path"],
-            "timeout": int(native["timeout_seconds"])}
+            "timeout": int(native["timeout_seconds"]), "native_environment": environment,
+            "environment_version": (profile or {}).get("environment_version")}
     record = {"stream_id": task["stream_id"], "turn_id": task["turn_id"],
               "source_id": task["source_basis"].get("source_task_id"), "image": image, "fixtures": {}}
     work = Path(tempfile.mkdtemp(prefix="l2v5-qual-", dir=scratch))
@@ -63,14 +88,42 @@ def qualify_turn(turn_dir: Path, image: str, scratch: Path) -> dict:
         shutil.copytree(turn_dir, work / "turn", symlinks=True)
         (work / "spec.json").write_text(json.dumps(spec))
         (work / "driver.py").write_text(DRIVER)
+        if isolated:
+            import trievo_bench.container_resources as resource_module
+            shutil.copy2(resource_module.__file__, work / "container_resources.py")
+        if environment:
+            import trievo_bench.native_environment as native_module
+            shutil.copy2(native_module.__file__, work / "native_environment.py")
         for fixture, expected in FIXTURES.items():
-            cmd = ["docker", "run", "--rm", "--network", "none", "--memory", "4g", "--cpus", "2",
-                   "-v", f"{work}:/w", "--entrypoint", "python", image, "/w/driver.py", fixture]
+            container_name = "trievo-l2-qual-" + uuid4().hex[:12]
+            cmd = ["docker", *(["create", "--name", container_name] if isolated else ["run", "--rm"]),
+                   "--network", "none", "--memory", "4g", "--cpus", "2",
+                   *(["--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--pids-limit", "256"]
+                     if (profile or {}).get("environment_version") or environment else []),
+                   *(["--user", "0", "--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE",
+                      "--cap-add", "SETUID", "--cap-add", "SETGID"] if environment else []),
+                   *([] if isolated else ["-v", f"{work}:/w"]),
+                   "--entrypoint", interpreter, image, "/w/driver.py", fixture]
             try:
                 proc = subprocess.run(cmd, text=True, capture_output=True, timeout=spec["timeout"] + 300)
+                if isolated:
+                    proc.check_returncode()
+                    subprocess.run(["docker", "cp", str(work), f"{container_name}:/w"],
+                                   check=True, text=True, capture_output=True, timeout=300)
+                    proc = subprocess.run(["docker", "start", "-a", container_name],
+                                          text=True, capture_output=True, timeout=spec["timeout"] + 300)
+                    subprocess.run(["docker", "cp", f"{container_name}:/w/result-{fixture}.json",
+                                    str(work / f"result-{fixture}.json")],
+                                   check=True, text=True, capture_output=True, timeout=60)
                 detail = (proc.stderr or proc.stdout)[-1500:]
             except subprocess.TimeoutExpired:
-                detail = "docker run timed out"
+                detail = "docker qualification timed out"
+            except subprocess.CalledProcessError as exc:
+                detail = str(exc) + " " + str(exc.stderr or "")[-1500:]
+            finally:
+                if isolated:
+                    subprocess.run(["docker", "rm", "-f", container_name],
+                                   capture_output=True, timeout=60)
             result_file = work / f"result-{fixture}.json"
             outcome = (json.loads(result_file.read_text()) if result_file.exists()
                        else {"status": "docker_error", "score": None, "error": detail})
@@ -97,10 +150,10 @@ def main() -> int:
             continue
         for task_file in sorted(stream.glob("turn*/task.json")):
             task = json.loads(task_file.read_text())
-            turns.append((task_file.parent, profiles[task["runtime_profile_id"]]["verifier_image_digest"]))
+            turns.append((task_file.parent, profiles[task["runtime_profile_id"]]))
     args.scratch.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(args.jobs) as pool, args.output.open("w") as sink:
-        for record in pool.map(lambda t: qualify_turn(t[0], t[1], args.scratch), turns):
+        for record in pool.map(lambda t: qualify_turn(t[0], t[1]["verifier_image_digest"], args.scratch, t[1]), turns):
             sink.write(json.dumps(record) + "\n")
             sink.flush()
             if not record["ok"]:
