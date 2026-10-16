@@ -49,7 +49,7 @@ docker build --pull=false -t trievo-l2-v5-sra-qa:0.1 sandbox/l2-sra-qa
 python tools/l2_v5_sra_qa.py build --upstream "$UPSTREAM" --pool "$STAGING" \
   --licenses docs/l2-v5-rebuild/sra-qa-licenses/licenses.json
 python tools/l2_v5_sra_qa.py qualify --pool "$STAGING" \
-  --image trievo-l2-v5-sra-qa:0.1 --logs "$LOGS" --jobs 24
+  --image trievo-l2-v5-sra-qa:0.1 --logs "$LOGS" --jobs 64 --resume
 python tools/l2_v5_sra_qa.py publish --staging "$STAGING" --output "$OUTPUT" \
   --selection tools/l2_v5_sra_qa_selection.json
 uv run --frozen python -m pytest tests -q
@@ -79,3 +79,8 @@ copied into each task's private assets, independently of the upstream checkout.
 See `sra-qa-licenses/licenses.json` and the accompanying original license texts.
 ToolQA is not pooled; its external corpus and model staging require separate
 licensing and offline-runtime work.
+
+Interrupted qualification can use `--resume`: cached results are reused only when
+the image ID, source-item hash, native-file hashes, verifier, fixture contents,
+runner and saved results/commands match. Incomplete or changed checkpoints are
+rerun in fresh containers. Metadata writes use atomic replacement.

@@ -22,6 +22,8 @@ REVISION = "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f"
 FAMILIES = ("medcalcbench", "logicbench", "theoremqa", "champ")
 PREFIX = {"medcalcbench": "medcalc", "logicbench": "logic", "theoremqa": "theoremqa", "champ": "champ"}
 NATIVE_FILES = ["llm.py", "prompts.py", "evaluate/base.py", "evaluate/common.py"]
+PACKAGE_SHIMS = ("__init__.py", "evaluate/__init__.py", "evaluate/datasets/__init__.py")
+SHIM_CONTENT = "# L2 packaging shim; native evaluator files are unchanged.\n"
 VERIFIER = '''"""Carrier for verbatim SR-Agents QA evaluators; see PROVENANCE.json."""
 import importlib
 import json
@@ -54,7 +56,9 @@ Path("/out/result.json").write_text(json.dumps(result))
 
 
 def write_json(path: Path, value: object) -> None:
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
 
 
 def sha256(path: Path) -> str:
@@ -102,8 +106,8 @@ def materialize(item: dict, upstream: Path, pool: Path, license_info: dict) -> d
         shutil.copyfile(source, target)
         provenance.append({"path": f"src/sragents/{rel}", "revision": REVISION, "sha256": sha256(source)})
     # Namespace shims avoid importing the upstream dispatcher's unrelated datasets.
-    for rel in ("__init__.py", "evaluate/__init__.py", "evaluate/datasets/__init__.py"):
-        (native / rel).write_text("# L2 packaging shim; native evaluator files are unchanged.\n")
+    for rel in PACKAGE_SHIMS:
+        (native / rel).write_text(SHIM_CONTENT)
     shutil.copyfile(upstream / "LICENSE", assets / "SR_AGENTS_LICENSE")
     if license_path:
         shutil.copyfile(license_path, assets / "DATASET_LICENSE")
@@ -170,6 +174,14 @@ def write_index(pool: Path, rows: list[dict]) -> None:
     (pool / "INDEX.jsonl").write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows))
 
 
+def fixture_command(task: Path, fixture: str, digest: str, folder: Path) -> list[str]:
+    """Return the exact fresh-container command, also used for cache validation."""
+    name = "sra-qa-" + hashlib.sha256(str(folder).encode()).hexdigest()[:24]
+    return ["docker", "run", "--name", name, "--rm", "--network", "none", "--cpus", "1", "--memory", "1g",
+           "-v", f"{task.resolve()}:/task:ro", "-v", f"{folder.resolve()}:/out",
+           "--entrypoint", "python", digest, "/out/run.py", fixture]
+
+
 def qualify_fixture(task: Path, fixture: str, digest: str, logs: Path) -> dict:
     folder = logs / task.name / fixture
     folder.mkdir(parents=True, exist_ok=True)
@@ -177,10 +189,8 @@ def qualify_fixture(task: Path, fixture: str, digest: str, logs: Path) -> dict:
     runner.write_text(RUNNER)
     result_path = folder / "result.json"
     result_path.unlink(missing_ok=True)
-    name = "sra-qa-" + hashlib.sha256(str(folder).encode()).hexdigest()[:24]
-    cmd = ["docker", "run", "--name", name, "--rm", "--network", "none", "--cpus", "1", "--memory", "1g",
-           "-v", f"{task.resolve()}:/task:ro", "-v", f"{folder.resolve()}:/out",
-           "--entrypoint", "python", digest, "/out/run.py", fixture]
+    cmd = fixture_command(task, fixture, digest, folder)
+    name = cmd[cmd.index("--name") + 1]
     write_json(folder / "command.json", cmd)
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
@@ -193,7 +203,59 @@ def qualify_fixture(task: Path, fixture: str, digest: str, logs: Path) -> dict:
         return {"status": "error", "score": None, "details": "container timeout"}
 
 
-def qualify(pool: Path, image: str, logs: Path, jobs: int = 8) -> list[dict]:
+
+def cached_qualification(task: Path, digest: str, logs: Path) -> tuple[dict, dict] | None:
+    """Validate a checkpoint; incomplete or changed inputs require a fresh run."""
+    try:
+        return _cached_qualification(task, digest, logs)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, IndexError):
+        # A truncated/missing checkpoint is a cache miss, never an admission.
+        return None
+
+
+def _cached_qualification(task: Path, digest: str, logs: Path) -> tuple[dict, dict] | None:
+    """Reuse only complete results bound to unchanged native assets and fixtures."""
+    record = json.loads((task / "pool_task.json").read_text())
+    qualification = record["qualification"]
+    if qualification.get("image_digest") != digest:
+        return None
+    assets = task / "evaluation_assets"
+    item = json.loads((assets / "source_item.json").read_text())
+    item_hash = hashlib.sha256(json.dumps(item, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    if item_hash != record["source"]["source_hash"] or (assets / "source_verifier.py").read_text() != VERIFIER:
+        return None
+    provenance = json.loads((assets / "PROVENANCE.json").read_text())
+    if provenance.get("revision") != REVISION or record["source"].get("benchmark_revision") != REVISION:
+        return None
+    expected_paths = {f"src/sragents/{rel}" for rel in [*NATIVE_FILES, f"evaluate/datasets/{item['dataset']}.py"]}
+    if len(provenance["files"]) != len(expected_paths) or {e["path"] for e in provenance["files"]} != expected_paths:
+        return None
+    for rel in PACKAGE_SHIMS:
+        if (assets / "native/sragents" / rel).read_text() != SHIM_CONTENT:
+            return None
+    for entry in provenance["files"]:
+        if sha256(assets / "native" / entry["path"].removeprefix("src/")) != entry["sha256"]:
+            return None
+    results = []
+    for fixture, expected_body in (("known_correct", fixture_answer(item)), ("known_broken", "")):
+        result = qualification.get(fixture)
+        folder = logs / task.name / fixture
+        if not result or result.get("status") not in ("pass", "fail") or result.get("score") not in (0.0, 1.0):
+            return None
+        if (task / "fixtures" / fixture / "response.txt").read_text() != expected_body:
+            return None
+        if not (folder / "result.json").exists() or json.loads((folder / "result.json").read_text()) != result:
+            return None
+        if not (folder / "run.py").exists() or (folder / "run.py").read_text() != RUNNER:
+            return None
+        command = json.loads((folder / "command.json").read_text())
+        if command != fixture_command(task, fixture, digest, folder):
+            return None
+        results.append(result)
+    return results[0], results[1]
+
+
+def qualify(pool: Path, image: str, logs: Path, jobs: int = 8, resume: bool = False) -> list[dict]:
     digest = subprocess.run(["docker", "image", "inspect", "-f", "{{.Id}}", image], check=True, capture_output=True, text=True).stdout.strip()
     if not digest.startswith("sha256:"):
         raise ValueError("Missing immutable image ID")
@@ -201,11 +263,17 @@ def qualify(pool: Path, image: str, logs: Path, jobs: int = 8) -> list[dict]:
 
     def run(row: dict) -> dict:
         task = pool / row["task_dir"]
-        green = qualify_fixture(task, "known_correct", digest, logs)
-        red = qualify_fixture(task, "known_broken", digest, logs)
+        cached = cached_qualification(task, digest, logs) if resume else None
+        if cached is None:
+            green = qualify_fixture(task, "known_correct", digest, logs)
+            red = qualify_fixture(task, "known_broken", digest, logs)
+        else:
+            green, red = cached
         admitted = green.get("status") == "pass" and green.get("score") == 1.0 and red.get("status") == "fail" and red.get("score") == 0.0
         record = json.loads((task / "pool_task.json").read_text())
         record["runtime"].update(task_image=image, task_image_digest=digest)
+        if not isinstance(record.get("qualification"), dict):
+            record["qualification"] = {}
         record["qualification"].update(image_digest=digest, known_correct=green, known_broken=red, admitted=admitted)
         write_json(task / "pool_task.json", record)
         return {**row, "admitted": admitted, "reason": "native_red_green_pass" if admitted else "native_red_green_failed",
@@ -275,6 +343,7 @@ def main() -> None:
     q.add_argument("--image", required=True)
     q.add_argument("--logs", type=Path, required=True)
     q.add_argument("--jobs", type=int, default=8)
+    q.add_argument("--resume", action="store_true")
     p = sub.add_parser("publish")
     p.add_argument("--staging", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
@@ -286,7 +355,7 @@ def main() -> None:
             info["license_text_path"] = str((args.licenses.parent / info["license_text_path"]).resolve())
         build(args.upstream, args.pool, licenses)
     elif args.command == "qualify":
-        qualify(args.pool, args.image, args.logs, args.jobs)
+        qualify(args.pool, args.image, args.logs, args.jobs, args.resume)
     else:
         publish(args.staging, args.output, json.loads(args.selection.read_text()) if args.selection else None)
 

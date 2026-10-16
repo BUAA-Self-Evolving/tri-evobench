@@ -136,3 +136,62 @@ def test_curation_rejection_overrides_mechanical_admission(tmp_path):
     counts = json.loads((output / 'COUNTS.json').read_text())['medcalcbench']
     assert (counts['admitted'], counts['rejected']) == (0, 1)
     assert counts['per_capability'][row['capability_id']]['rejected'] == 1
+
+
+def test_resume_binds_results_to_image_assets_and_fixtures(tmp_path):
+    row = builder.materialize(ITEMS[0], FIXTURES, tmp_path, LICENSE)
+    task = tmp_path / row['task_dir']
+    record = json.loads((task / 'pool_task.json').read_text())
+    logs = tmp_path / 'logs'
+    record['qualification']['image_digest'] = 'sha256:pinned'
+    for fixture in ('known_correct', 'known_broken'):
+        result = {'status': 'pass' if fixture == 'known_correct' else 'fail',
+                  'score': float(fixture == 'known_correct')}
+        record['qualification'][fixture] = result
+        folder = logs / task.name / fixture
+        folder.mkdir(parents=True)
+        builder.write_json(folder / 'result.json', result)
+        (folder / 'run.py').write_text(builder.RUNNER)
+        builder.write_json(folder / 'command.json', builder.fixture_command(task, fixture, 'sha256:pinned', folder))
+    builder.write_json(task / 'pool_task.json', record)
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is not None
+    assert builder.cached_qualification(task, 'sha256:changed', logs) is None
+    source = task / 'evaluation_assets/native/sragents/evaluate/datasets/medcalcbench.py'
+    original = source.read_bytes()
+    source.write_bytes(original + b'\n# changed\n')
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is None
+    source.write_bytes(original)
+    (task / 'fixtures/known_broken/response.txt').write_text('injected')
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is None
+
+    (task / 'fixtures/known_broken/response.txt').write_text('')
+    shim = task / 'evaluation_assets/native/sragents/__init__.py'
+    shim.write_text('raise RuntimeError("changed")')
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is None
+    shim.write_text(builder.SHIM_CONTENT)
+    command_path = logs / task.name / 'known_correct/command.json'
+    command = json.loads(command_path.read_text())
+    command[-2] = '/out/different.py'
+    builder.write_json(command_path, command)
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is None
+    builder.write_json(task / 'pool_task.json', {'qualification': []})
+    assert builder.cached_qualification(task, 'sha256:pinned', logs) is None
+
+
+def test_resume_rebuilds_malformed_qualification_fields(tmp_path, monkeypatch):
+    row = builder.materialize(ITEMS[0], FIXTURES, tmp_path, LICENSE)
+    task = tmp_path / row['task_dir']
+    record = json.loads((task / 'pool_task.json').read_text())
+    record['qualification'] = []
+    builder.write_json(task / 'pool_task.json', record)
+    builder.write_index(tmp_path, [row])
+    monkeypatch.setattr(builder.subprocess, 'run', lambda *a, **k: types.SimpleNamespace(stdout='sha256:pinned'))
+    seen = []
+    def fixture(task, name, *args):
+        seen.append(name)
+        return {'status': 'pass' if name == 'known_correct' else 'fail', 'score': float(name == 'known_correct')}
+    monkeypatch.setattr(builder, 'qualify_fixture', fixture)
+    result = builder.qualify(tmp_path, 'image', tmp_path / 'logs', jobs=1, resume=True)
+    assert seen == ['known_correct', 'known_broken']
+    assert result[0]['admitted']
+    assert json.loads((task / 'pool_task.json').read_text())['qualification']['admitted']
