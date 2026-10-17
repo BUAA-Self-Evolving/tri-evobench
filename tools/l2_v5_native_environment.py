@@ -733,6 +733,8 @@ def druid_git_transport(text: str, context: Path, work: Path, *,
 def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
     """Build native sources with recorded transports, then scrub the filesystem."""
+    if inputs.get("recipe_task"):
+        return build_recipe_image(row, inputs, work, build_timeout)
     raw_tag = "trievo-r3-private:" + work.name
     context=inputs["context"]
     context_adaptations=[]
@@ -829,7 +831,45 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     if aug_log["returncode"]:
         raise RuntimeError("verifier_dependency_build_failed:" + aug_log["tail"][-1800:])
     aug = inspect_image(aug_tag)
-    container = subprocess.check_output(["docker", "create", "--label", "trievo.native.owner_pid="+str(os.getpid()), "--entrypoint", "/bin/sh", aug_tag], text=True).strip()
+    return finalize_image(row, inputs, work, build_timeout, raw, aug, cfg, adaptations, bases)
+
+
+def build_recipe_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
+                       build_timeout: int) -> dict[str, Any]:
+    """Build the delivered recipe, then use the normal native fixture pipeline."""
+    try:
+        from .l2_v5_build_task_images import build_selected
+    except ImportError:
+        from l2_v5_build_task_images import build_selected
+    task = inputs["recipe_task"]
+    record = json.loads((task / "pool_task.json").read_text())
+    planned = build_selected([(task, record)], build_args=build_proxy_args()[1::2],
+                             timeout=build_timeout, dry_run=True)["images"][0]
+    argv = planned["command"]
+    argv[argv.index("-t") + 1] = "trievo-r3-private:" + work.name
+    argv[2:2] = ["--network", "host"]
+    built = build_command(argv, work / "recipe-build.log", build_timeout)
+    if built["returncode"]:
+        raise RuntimeError("recipe_build_failed:" + built["tail"][-1800:])
+    image = inspect_image("trievo-r3-private:" + work.name)
+    if image["Config"].get("Volumes"):
+        raise RuntimeError("native_declared_volumes_require_explicit_mount_adaptation")
+    shutil.copy2(task / "evaluation_assets/native_tests/test.sh", work / "test.sh")
+    adaptations = record["recipe_adaptations"] + [{"kind": "executed_delivered_recipe",
+        "recipe_sha256": record["environment"]["recipe_sha256"],
+        "context_sha256": record["environment"]["context_sha256"],
+        "build_contexts": record["environment"].get("build_contexts", {})}]
+    dump(work / "ADAPTATIONS.json", adaptations)
+    return finalize_image(row, inputs, work, build_timeout, image, image,
+                          image["Config"], adaptations, base_image_provenance(inputs["dockerfile"]))
+
+
+def finalize_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
+                   build_timeout: int, raw: dict[str, Any], aug: dict[str, Any],
+                   cfg: dict[str, Any], adaptations: list[dict[str, Any]],
+                   bases: list[dict[str, Any]]) -> dict[str, Any]:
+    """Flatten and inspect an image built from upstream or a delivered recipe."""
+    container = subprocess.check_output(["docker", "create", "--label", "trievo.native.owner_pid="+str(os.getpid()), "--entrypoint", "/bin/sh", aug["Id"]], text=True).strip()
     try:
         with (work/"private-rootfs.tar").open("wb") as handle:
             subprocess.run(["docker", "export", container], stdout=handle, check=True)
@@ -926,7 +966,9 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     druid_git = bool(_DRUID_GIT_ARCHIVE and DRUID_GIT_URL in inputs["dockerfile"].read_text())
     key = hashlib.sha256((sources.tree_sha256(inputs["context"]) +
                           sources.tree_sha256(inputs["tests"]) + runner_outputs + str(uv_transport) +
-                          str(druid_transport) + str(druid_git) + image_build_fingerprint()).encode()).hexdigest()
+                          str(druid_transport) + str(druid_git) + image_build_fingerprint() +
+                          (json.dumps(json.loads((inputs["recipe_task"]/"pool_task.json").read_text())["environment"],sort_keys=True)
+                           if inputs.get("recipe_task") else "")).encode()).hexdigest()
     shared = work.parent / "images" / key
     dump(work/"build_reference.json",{"cache_key":key,"image_work":str(shared)})
     with _IMAGE_LOCKS_GUARD:
@@ -957,7 +999,7 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
 def image_build_fingerprint() -> str:
     """Bind image caches to image-producing code, independent of qualification."""
     functions=(private_member,sanitize_archive,image_config_changes,
-               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,druid_release_transport,druid_git_transport,_build_image)
+               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,druid_release_transport,druid_git_transport,_build_image,build_recipe_image,finalize_image)
     payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
              "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
     return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
@@ -1371,9 +1413,27 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             return retained_outcome(previous, assessment)
     try:
         result["source_hash"]=sources.tree_sha256(row["task_dir"])
+        recipe_task = None
+        if getattr(args, "recipe_pool", None):
+            source_task = args.recipe_pool / slug
+            recipe_task = work / "recipe-input"
+            if recipe_task.exists():shutil.rmtree(recipe_task)
+            recipe = json.loads((source_task/"pool_task.json").read_text())
+            # Copy only the recipe and its named build contexts before the normal
+            # qualification materializer replaces this task's runtime assets.
+            for path in [recipe["environment"]["context_path"], "evaluation_assets/native_tests"]:
+                source_path=(source_task/path).resolve()
+                if not source_path.is_relative_to(source_task.resolve()):
+                    raise ValueError("recipe input escapes task directory")
+                shutil.copytree(source_path, recipe_task/path, dirs_exist_ok=True, symlinks=True)
+            for name in ("Dockerfile.upstream", "Dockerfile.diff"):
+                shutil.copy2(source_task/name,recipe_task/name)
+            dump(recipe_task/"pool_task.json",recipe)
+            result["environment"]=recipe["environment"]
         historical=quarantine_prior_materialization(task,work)
         if historical:result["prior_task_materialization"]=historical
         inp=task_inputs(row)
+        if recipe_task is not None:inp["recipe_task"]=recipe_task
         configuration=source_metadata(row);info=source_info(row)
         result["license_note"]=asset_inventory(row,inp)["license_note"]
         result["capability_id"]=("skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench"
@@ -1389,6 +1449,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             result.update(stage="unsupported",reason="native_gpu_requirement_outside_approved_passthrough_scope")
             return result
         image_result=build_image(row,inp,work,args.build_timeout)
+        executed_recipe=next((a for a in image_result["adaptations"]
+                              if a.get("kind")=="executed_delivered_recipe"),None)
+        if executed_recipe is not None:result["recipe_verification"]=dict(executed_recipe)
         image=image_result["image"];cfg=image["Config"];cwd=cfg.get("WorkingDir") or "/"
         if cfg.get("Entrypoint"):
             result["runtime_readiness_blocker"]="native_entrypoint_startup_not_replayed"
@@ -1532,6 +1595,14 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                 "license_note":result["license_note"],
                 "adaptations":environment["adaptations"]}
         apply_resource_fields(record,fixture_fields)
+        if recipe_task is not None:
+            record["environment"]=recipe["environment"]
+            record["recipe_adaptations"]=recipe["recipe_adaptations"]
+            record["recipe_verification"]=result.get("recipe_verification")
+            shutil.copytree(recipe_task/recipe["environment"]["context_path"],
+                            task/recipe["environment"]["context_path"],dirs_exist_ok=True,symlinks=True)
+            for name in ("Dockerfile.upstream", "Dockerfile.diff"):
+                shutil.copy2(recipe_task/name,task/name)
         if sid=="skillsbench:edit-pdf":
             for section in (record["runtime"],record["qualification"]):
                 section.update(date_dependent=True,package_qualification_requires_oracle_regeneration=True)
@@ -1587,9 +1658,12 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
     (pool/"ADAPTATIONS.jsonl").write_text("".join(json.dumps({"source_id":r["source_id"],"adaptations":r.get("adaptations",[])})+"\n" for r in rows))
     old={r["source_id"]:r for r in map(json.loads,(old_pool/"INDEX.jsonl").read_text().splitlines())} if old_pool else {}
     diff=[{"source_id":r["source_id"],"old_admitted":old.get(r["source_id"],{}).get("admitted"),
-           "new_admitted":r["admitted"],"reason":r.get("reason"),"environment_changed":True} for r in rows]
+           "new_admitted":r["admitted"],"new_stage":r.get("stage"),
+           "recipe_ready":r.get("environment",{}).get("kind")=="dockerfile",
+           "family_sample_verified":r.get("family_sample_verified"),
+           "reason":r.get("reason"),"environment_changed":True} for r in rows]
     dump(pool/"SOURCE_DIFF.json",diff)
-    counts: dict[str,dict[str,int]]={}
+    counts: dict[str,dict[str,Any]]={}
     used=set()
     placements=[]
     if r2 and r2.exists():
@@ -1606,18 +1680,29 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
                 placements.append({"stream_id":item["stream_id"],"turn_id":item["turn_id"],"source_id":sid,
                     "old_admitted":old.get(sid,{}).get("admitted"),"new_admitted":result["admitted"],
                     "environment_changed":bool(result.get("image_id")),
-                    "new_stage":result.get("stage"),"reason":result.get("reason")})
+                    "new_stage":result.get("stage"),"reason":result.get("reason"),
+                    "recipe_ready":result.get("environment",{}).get("kind")=="dockerfile",
+                    "family_sample_verified":result.get("family_sample_verified")})
         dump(pool/"R2_PLACEMENT_DIFF.json",placements)
     for r in rows:
         cap=r.get("capability_id",r["family"])
-        count=counts.setdefault(cap,{"total":0,"admitted":0,"admitted_unused_intra":0})
+        count=counts.setdefault(cap,{"total":0,"admitted":0,"admitted_unused_intra":0,
+                                    "recipe_ready":0,"available":0,"available_unused_intra":0,
+                                    "family_sample_verified":None})
         count["total"]+=1;count["admitted"]+=int(r["admitted"])
         count["admitted_unused_intra"]+=int(r["admitted"] and r["source_id"] not in used)
+        ready=r.get("environment",{}).get("kind")=="dockerfile"
+        available=bool(r["admitted"] or ready)
+        count["recipe_ready"]+=int(ready)
+        count["available"]+=int(available)
+        count["available_unused_intra"]+=int(available and r["source_id"] not in used)
+        if r.get("family_sample_verified"):count["family_sample_verified"]=r["family_sample_verified"]
     dump(pool/"CAPABILITY_COUNTS.json",counts)
     recommendations={}
     for prefix in ("skilllearn.","skillsbench."):
-        eligible=[(cap,c) for cap,c in counts.items() if cap.startswith(prefix) and c["admitted_unused_intra"]>=5]
-        eligible.sort(key=lambda pair:(-pair[1]["admitted_unused_intra"],pair[0]))
+        eligible=[(cap,c) for cap,c in counts.items() if cap.startswith(prefix) and c["available_unused_intra"]>=5]
+        eligible.sort(key=lambda pair:(not bool(pair[1]["family_sample_verified"]),
+                                       -pair[1]["available_unused_intra"],pair[0]))
         recommendations[prefix.rstrip(".")]={"capability_triple":[cap for cap,_ in eligible[:3]] if len(eligible)>=3 else None,
             "eligible_capabilities":eligible,"shortfall_capabilities":max(0,3-len(eligible))}
     dump(pool/"STREAM_RECOMMENDATIONS.json",recommendations)
@@ -1625,7 +1710,7 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
     stages=Counter(r.get("stage","unknown") for r in rows)
     report=["# Native r3 pool build outcomes", "",
         f"Inventory: {len(rows)} sources; admitted: {sum(bool(r['admitted']) for r in rows)}. Stages: {dict(stages)}.",
-        "", "Results are native image qualification outcomes only where fixtures ran. Pending and build errors do not establish source task defects.",
+        "", "Only admitted sources have actual native image red/green qualification. recipe_ready sources provide Dockerfile recipes without claiming per-source execution; family_sample_verified identifies a separately executed family sample. Pending and build errors do not establish source task defects.",
         "", "Plain license notes, original and adapted runner hashes, image metadata, build logs, fresh-container fixture commands and readbacks are retained in the referenced work directories.",
         "", "| Source | Stage | Admitted | Reason |", "|---|---|---|---|"]
     if any(r.get("resource_enforcement")=="declared_not_enforced" for r in rows):
@@ -1765,6 +1850,7 @@ def main() -> int:
     parser.add_argument("--source-timeout",type=int,default=5400)
     parser.add_argument("--block",choices=("A","B","all"),default="all")
     parser.add_argument("--worker-source",help=argparse.SUPPRESS)
+    parser.add_argument("--recipe-pool",type=Path,help="qualify selected sources using their delivered Dockerfile recipes")
     parser.add_argument("--image-archives",type=Path)
     parser.add_argument("--build-proxy",default="direct",help="ordinary build proxy URL, or direct for domestic mirrors/direct foreign access")
     parser.add_argument("--known-broken-root",type=Path)
@@ -1831,12 +1917,15 @@ def main() -> int:
         sid=row["benchmark_id"]+":"+row["source_task_id"]
         retained=completed_work_outcome(row,args) if args.resume else None
         if retained is not None:
+            for field in ("environment", "family_sample_verified"):
+                if field in previous.get(sid,{}):retained[field]=previous[sid][field]
             outcomes[sid]=retained;completed.add(sid);continue
         info=source_info(row)
         outcomes[sid]=previous.get(sid,{"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
             "capability_id": "skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
             "admitted":False,"stage":"pending","reason":"not_built"})
-        if _RESOURCE_PREFLIGHT and outcomes[sid].get("adapter_sha256")!=_LOADED_ADAPTER_SHA:
+        if (_RESOURCE_PREFLIGHT and outcomes[sid].get("adapter_sha256")!=_LOADED_ADAPTER_SHA
+                and outcomes[sid].get("environment",{}).get("kind")!="dockerfile"):
             outcomes[sid]={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
                 "capability_id":"skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
                 "former_admission":row["former_admission"],"admitted":False,"stage":"pending","reason":"awaiting_current_adapter_qualification"}

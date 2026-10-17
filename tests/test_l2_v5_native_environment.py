@@ -7,10 +7,47 @@ import tarfile
 from pathlib import Path
 
 import pytest
+import json
+from types import SimpleNamespace
 
 TOOLS = Path(__file__).resolve().parents[1] / 'tools'
 sys.path.insert(0, str(TOOLS))
 import l2_v5_native_environment as native
+
+
+def test_recipe_qualification_builds_delivered_recipe_before_existing_finalizer(tmp_path, monkeypatch):
+    task = tmp_path / 'task'
+    work = tmp_path / 'work'
+    work.mkdir()
+    (task / 'evaluation_assets/native_tests').mkdir(parents=True)
+    (task / 'evaluation_assets/native_tests/test.sh').write_text('pytest /tests/test_output.py\n')
+    record = {'source_id': 'skillsbench:sample', 'environment': {
+        'recipe_sha256': 'recipe-hash', 'context_sha256': 'context-hash',
+        'build_contexts': {'trievo_verifier': {'path': 'evaluation_assets/native_tests', 'sha256': 'tests-hash'}}},
+        'recipe_adaptations': []}
+    (task / 'pool_task.json').write_text(json.dumps(record))
+    planned = ['docker', 'build', '-t', 'planned', '-f', str(task / 'environment/Dockerfile'),
+               '--build-context', 'trievo_verifier=' + str(task / 'evaluation_assets/native_tests'), str(task / 'environment')]
+    def planner(selected, **kwargs):
+        assert selected[0][0] == task and kwargs['dry_run'] is True
+        return {'images': [{'command': planned.copy()}]}
+    monkeypatch.setitem(sys.modules, 'l2_v5_build_task_images', SimpleNamespace(build_selected=planner))
+    commands = []
+    monkeypatch.setattr(native, 'build_command', lambda argv, *args: commands.append(argv) or {'returncode': 0})
+    image = {'Id': 'sha256:actual-recipe-image', 'Config': {'User': 'app'}}
+    monkeypatch.setattr(native, 'inspect_image', lambda tag: image)
+    monkeypatch.setattr(native, 'base_image_provenance', lambda path: [])
+    def finalize(row, inputs, directory, timeout, raw, augmented, config, adaptations, bases):
+        assert raw is image and augmented is image and config['User'] == 'app'
+        assert adaptations[-1]['kind'] == 'executed_delivered_recipe'
+        assert adaptations[-1]['context_sha256'] == 'context-hash'
+        return {'image': image}
+    monkeypatch.setattr(native, 'finalize_image', finalize)
+    result = native.build_recipe_image({}, {'recipe_task': task, 'dockerfile': tmp_path / 'upstream'}, work, 60)
+    assert commands[0][commands[0].index('-f') + 1] == str(task / 'environment/Dockerfile')
+    assert '--build-context' in commands[0]
+    assert commands[0][commands[0].index('-t') + 1] == 'trievo-r3-private:work'
+    assert result['image']['Id'] == 'sha256:actual-recipe-image'
 
 
 def test_native_main_rejects_incapable_daemon_before_exec_or_build(tmp_path, monkeypatch):
