@@ -142,3 +142,16 @@ def test_stale_verifier_cannot_clear_pending_task_materialization(tmp_path):
     composed = json.loads((output / 'streams/intra_test/turn1/task.json').read_text())
     assert composed['runtime_materialization_required'] is True
     assert composed['qualification']['admitted'] is False
+
+
+def test_materialized_native_copy_refreshes_stale_adapter_not_tests(tmp_path):
+    from tools.l2_v5_native_environment import verifier_text
+    task, record = _record(tmp_path / 'pool/native')
+    record['_dir'] = str(task)
+    record['runtime']['native_environment'] = {'schema_version': 'l2_native_environment/1.0'}
+    (task / 'evaluation_assets/source_verifier.py').write_text('# stale adapter\n')
+    target = tmp_path / 'turn1'
+    compose.copy_pool_task(record, target)
+    assert (target / 'evaluation_assets/source_verifier.py').read_text() == verifier_text()
+    assert (target / 'evaluation_assets/native_tests/test.sh').read_text() == 'exit 1\n'
+    assert (task / 'evaluation_assets/source_verifier.py').read_text() == '# stale adapter\n'

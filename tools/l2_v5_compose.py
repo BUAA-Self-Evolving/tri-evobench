@@ -490,6 +490,12 @@ def copy_pool_task(record: dict[str, Any], turn_dir: Path) -> None:
     else:
         seed.mkdir(parents=True)
     shutil.copytree(source / "evaluation_assets", turn_dir / "evaluation_assets", symlinks=True)
+    # Native pool snapshots can contain a stale generated transport/parser.
+    # Tests/oracles are upstream assets; this wrapper belongs to our adapter.
+    if record.get("runtime", {}).get("native_environment"):
+        from l2_v5_native_environment import verifier_text
+        (turn_dir / "evaluation_assets" / "source_verifier.py").write_text(
+            verifier_text(), encoding="utf-8")
     fixtures = turn_dir / "evaluation_assets" / "fixtures"
     if (source / "fixtures").is_dir():
         shutil.copytree(source / "fixtures", fixtures, symlinks=True)
