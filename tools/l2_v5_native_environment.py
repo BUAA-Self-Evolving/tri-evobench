@@ -39,6 +39,10 @@ _RESOURCE_MODE: str | None = None
 _RESOURCE_PREFLIGHT: dict[str, Any] = {}
 _UV_RELEASE_ARCHIVE: Path | None = None
 _DRUID_RELEASE_ARCHIVE: Path | None = None
+_DRUID_GIT_ARCHIVE: Path | None = None
+DRUID_GIT_URL = "https://github.com/apache/druid.git"
+DRUID_GIT_SHA256 = "135fef9aca3026517e9de6b5befcd4994755a3af3c34a6135506d7d5600b13cd"
+DRUID_GIT_BYTES = 516985846
 DRUID_RELEASE_URL = "https://archive.apache.org/dist/druid/0.20.0/apache-druid-0.20.0-bin.tar.gz"
 DRUID_RELEASE_SHA256 = "734f836375bc1121100712b0501149f8bcbcb6d4cf2109b522af06367a8b1cb5"
 DRUID_RELEASE_BYTES = 321988603
@@ -598,6 +602,46 @@ def druid_release_transport(text: str, context: Path, work: Path, *,
         "evidence": "package-transport/DRUID_OFFICIAL_ARCHIVE_PREFETCH.json; DRUID_BUILDKIT_TRANSPORT_PROOF.json"}]
 
 
+def druid_git_transport(text: str, context: Path, work: Path, *,
+                        stage_assets: bool = True) -> tuple[str, Path, list[dict[str, Any]]]:
+    """Restore the audited complete normal clone; retain native tag checkout."""
+    original = "git clone " + DRUID_GIT_URL
+    if _DRUID_GIT_ARCHIVE is None or original not in text:
+        return text, context, []
+    if text.count(original) != 1:
+        raise ValueError("unsupported_druid_git_clone_sequence")
+    instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
+    selected = next(instruction for instruction in instructions if original in instruction)
+    if not selected.startswith("RUN ") or not re.search(
+            re.escape(original) + r"\s*&&\s*(?:\\\s*)?cd druid\s*&&\s*(?:\\\s*)?git checkout druid-0\.20\.0(?:\s|$)", selected):
+        raise ValueError("unsupported_druid_git_clone_instruction")
+    archive = _DRUID_GIT_ARCHIVE
+    if archive.stat().st_size != DRUID_GIT_BYTES or digest_file(archive) != DRUID_GIT_SHA256:
+        raise ValueError("druid_git_transport_checksum_mismatch")
+    filename = "private-druid-full-git.tar.gz"
+    staged = work / "upstream-druid-git-context"
+    if stage_assets:
+        if (context / filename).exists():
+            raise ValueError("druid_git_transport_context_collision")
+        if not staged.exists():
+            shutil.copytree(context, staged, symlinks=True)
+        shutil.copy2(archive, staged / filename)
+    native = "/tmp/native-druid-full-git.tar.gz"
+    guard = (f"printf '%s  %s\\n' {DRUID_GIT_SHA256} {native} | sha256sum -c - && "
+             f"test $(wc -c < {native}) = {DRUID_GIT_BYTES} && "
+             '(test ! -e druid || (test -d druid && test -z "$(ls -A druid)")) && '
+             f"tar --no-same-owner -xzf {native}")
+    adapted = (f"RUN --mount=type=bind,source={filename},target={native},readonly " +
+               selected[4:].replace(original, guard))
+    return "".join(adapted if instruction == selected else instruction for instruction in instructions), staged, [{
+        "kind": "build_druid_full_git_transport", "source_url": DRUID_GIT_URL,
+        "archive_sha256": DRUID_GIT_SHA256, "archive_bytes": DRUID_GIT_BYTES,
+        "release_commit": "acdc6ee7ea3a81fb3e70b92d7cc682921f988eb5",
+        "scope": "complete canonical normal clone including all objects/refs/public config; original cd/tag checkout unchanged; omit only inactive sample hooks and host reflogs; read-only archive mount absent from final image",
+        "reason": "actual native GitHub clone failed128 receiving data from peer; complete official host clone verified without shallow history or alternates",
+        "evidence": "git-transport/DRUID_FULL_GIT_TRANSPORT_ASSET.json; DRUID_FULL_GIT_BUILDKIT_PROOF.json; git-transport/HOST_METADATA_EXCLUSION_AUDIT.json"}]
+
+
 def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
     """Build native sources with recorded transports, then scrub the filesystem."""
@@ -619,6 +663,8 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     transported_text, context, druid_adaptations = druid_release_transport(
         build_transport_dockerfile(original_text), context, work)
     context_adaptations.extend(druid_adaptations)
+    transported_text, context, git_adaptations = druid_git_transport(transported_text, context, work)
+    context_adaptations.extend(git_adaptations)
     transported.write_text(transported_text)
     context_adaptations.append({"kind":"build_package_index_transport",
         "original_sha256":digest_file(inputs["dockerfile"]),"adapted_sha256":digest_file(transported),
@@ -772,9 +818,10 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     runner_outputs=json.dumps(prepare_runner((inputs["tests"]/"test.sh").read_text()),sort_keys=True)
     uv_transport = bool(_UV_RELEASE_ARCHIVE and "https://astral.sh/uv/0.9.7/install.sh" in runner_outputs)
     druid_transport = bool(_DRUID_RELEASE_ARCHIVE and DRUID_RELEASE_URL in inputs["dockerfile"].read_text())
+    druid_git = bool(_DRUID_GIT_ARCHIVE and DRUID_GIT_URL in inputs["dockerfile"].read_text())
     key = hashlib.sha256((sources.tree_sha256(inputs["context"]) +
                           sources.tree_sha256(inputs["tests"]) + runner_outputs + str(uv_transport) +
-                          str(druid_transport) + image_build_fingerprint()).encode()).hexdigest()
+                          str(druid_transport) + str(druid_git) + image_build_fingerprint()).encode()).hexdigest()
     shared = work.parent / "images" / key
     dump(work/"build_reference.json",{"cache_key":key,"image_work":str(shared)})
     with _IMAGE_LOCKS_GUARD:
@@ -801,7 +848,7 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
 def image_build_fingerprint() -> str:
     """Bind image caches to image-producing code, independent of qualification."""
     functions=(private_member,sanitize_archive,image_config_changes,
-               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,druid_release_transport,_build_image)
+               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,druid_release_transport,druid_git_transport,_build_image)
     payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
              "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
     return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
@@ -1177,7 +1224,8 @@ def qualification_reuse(row: dict[str, Any], args: argparse.Namespace,
     from l2_v5_native_reuse_inputs import capture_inputs
     try:
         inputs = capture_inputs(Path(__file__), row, previous, pool=args.pool, work=args.work,
-                                uv_archive=_UV_RELEASE_ARCHIVE, druid_archive=_DRUID_RELEASE_ARCHIVE)
+                                uv_archive=_UV_RELEASE_ARCHIVE, druid_archive=_DRUID_RELEASE_ARCHIVE,
+                                druid_git_archive=_DRUID_GIT_ARCHIVE)
         assessment = assess_reuse(previous, source_id=sid, current_adapter_sha256=_LOADED_ADAPTER_SHA,
                                   current_inputs=inputs, manifest=manifest)
     except (ValueError, KeyError, OSError) as exc:
@@ -1482,7 +1530,7 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
 
 
 def main() -> int:
-    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE
+    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE,_DRUID_GIT_ARCHIVE
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
     parser.add_argument("--resource-enforcement",choices=("strict","declared_only"),default=None,
@@ -1500,6 +1548,8 @@ def main() -> int:
                         help="verified uv0.9.7 official archive; adjacent uv-0.9.7-install.sh required and hash checked")
     parser.add_argument("--druid-release-archive",type=Path,
                         help="verified official Druid0.20.0 archive; exact size and SHA256 checked on host and in build")
+    parser.add_argument("--druid-git-archive",type=Path,
+                        help="verified complete official Druid normal-clone archive; retains full Git history and public origin")
     parser.add_argument("--compatibility-manifest",type=Path,
                         help="explicit audited per-source reuse; historical executed SHA and evidence remain unchanged")
     parser.add_argument("--resume",action="store_true")
@@ -1508,6 +1558,7 @@ def main() -> int:
     _BUILD_SLOTS_FILE=args.build_slots_file
     _UV_RELEASE_ARCHIVE=args.uv_release_archive
     _DRUID_RELEASE_ARCHIVE=args.druid_release_archive
+    _DRUID_GIT_ARCHIVE=args.druid_git_archive
     from trievo_bench.container_resources import resource_enforcement_mode
     _RESOURCE_MODE=resource_enforcement_mode(args.resource_enforcement)
     if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
@@ -1518,6 +1569,9 @@ def main() -> int:
     if _DRUID_RELEASE_ARCHIVE:
         druid_release_transport("RUN wget " + DRUID_RELEASE_URL + "\n", args.upstream,
                                 args.work / "druid-transport-input-validation", stage_assets=False)
+    if _DRUID_GIT_ARCHIVE:
+        druid_git_transport("RUN git clone " + DRUID_GIT_URL + " && cd druid && git checkout druid-0.20.0\n",
+                            args.upstream, args.work / "druid-git-input-validation", stage_assets=False)
     if not args.inventory_only:
         resource_capability_preflight(args.work,_RESOURCE_MODE)
         preflight=docker_exec_preflight(args.work)

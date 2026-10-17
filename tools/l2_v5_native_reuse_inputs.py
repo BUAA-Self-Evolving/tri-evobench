@@ -118,7 +118,8 @@ def _historical_inputs(native: Any, row: dict[str, Any], inputs: dict[str, Any],
 
 def capture_inputs(module_path: Path, row: dict[str, Any], previous: dict[str, Any], *,
                    pool: Path, work: Path, uv_archive: Path | None,
-                   druid_archive: Path | None = None) -> dict[str, str]:
+                   druid_archive: Path | None = None,
+                   druid_git_archive: Path | None = None) -> dict[str, str]:
     """Read current inputs and render recipes in a separate module namespace."""
     if path_digest(Path(__file__)) != _CAPTURE_SHA256:
         raise ValueError('native recipe capture code changed after import')
@@ -132,6 +133,8 @@ def capture_inputs(module_path: Path, row: dict[str, Any], previous: dict[str, A
     native._UV_RELEASE_ARCHIVE = uv_archive
     if hasattr(native, '_DRUID_RELEASE_ARCHIVE'):
         native._DRUID_RELEASE_ARCHIVE = druid_archive
+    if hasattr(native, '_DRUID_GIT_ARCHIVE'):
+        native._DRUID_GIT_ARCHIVE = druid_git_archive
     inputs = native.task_inputs(row)
     _historical_inputs(native, row, inputs, previous, pool)
     sid = row['benchmark_id'] + ':' + row['source_task_id']

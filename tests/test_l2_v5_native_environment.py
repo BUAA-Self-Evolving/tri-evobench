@@ -657,6 +657,74 @@ def test_druid_transport_rejects_ambiguous_commands_and_preserves_default(tmp_pa
         native.druid_release_transport(text + text, context, tmp_path)
 
 
+def test_druid_git_transport_restores_complete_repo_and_keeps_native_checkout(tmp_path, monkeypatch):
+    import hashlib
+    source = tmp_path / 'canonical' / 'druid'
+    source.mkdir(parents=True)
+    def git(*args):
+        return subprocess.run(['git', '-C', str(source), *args], check=True,
+                              capture_output=True, text=True).stdout.strip()
+    git('init', '-b', 'master')
+    (source / 'source.txt').write_text('release bytes')
+    git('add', '.')
+    git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'release')
+    git('tag', 'druid-0.20.0')
+    release = git('rev-parse', 'HEAD')
+    (source / 'source.txt').write_text('later bytes')
+    git('add', '.')
+    git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'later')
+    git('remote', 'add', 'origin', native.DRUID_GIT_URL)
+    archive = tmp_path / 'full-git.tar.gz'
+    with tarfile.open(archive, 'w:gz') as output:
+        output.add(source, arcname='druid')
+    monkeypatch.setattr(native, '_DRUID_GIT_ARCHIVE', archive)
+    monkeypatch.setattr(native, 'DRUID_GIT_BYTES', archive.stat().st_size)
+    monkeypatch.setattr(native, 'DRUID_GIT_SHA256', hashlib.sha256(archive.read_bytes()).hexdigest())
+    context = tmp_path / 'context'
+    context.mkdir()
+    tail = ' && cd druid && git checkout druid-0.20.0\n'
+    original = 'RUN git clone ' + native.DRUID_GIT_URL + tail
+    changed, staged, ledger = native.druid_git_transport(original, context, tmp_path / 'work')
+    assert changed.endswith(tail) and ',readonly ' in changed
+    assert ledger[0]['kind'] == 'build_druid_full_git_transport'
+    staged_archive = staged / 'private-druid-full-git.tar.gz'
+    shell = changed.split('readonly ', 1)[1].replace('/tmp/native-druid-full-git.tar.gz', str(staged_archive))
+    destination = tmp_path / 'offline'
+    destination.mkdir()
+    (destination / 'druid').mkdir()  # Native Dockerfile precreates an empty destination.
+    result = subprocess.run(['bash', '-c', shell], cwd=destination, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert (destination / 'druid/source.txt').read_text() == 'release bytes'
+    assert subprocess.check_output(['git', '-C', str(destination / 'druid'), 'rev-parse', 'HEAD'], text=True).strip() == release
+    assert subprocess.check_output(['git', '-C', str(destination / 'druid'), 'rev-list', '--all', '--count'], text=True).strip() == '2'
+    # A nonempty clone destination and corrupted mounted bytes must both fail.
+    assert subprocess.run(['bash', '-c', shell], cwd=destination, capture_output=True).returncode != 0
+    staged_archive.write_bytes(b'corrupt after host validation')
+    empty = tmp_path / 'corrupt-control'
+    empty.mkdir()
+    failed = subprocess.run(['bash', '-c', shell], cwd=empty, capture_output=True, text=True)
+    assert failed.returncode != 0 and 'FAILED' in failed.stdout
+    assert not (empty / 'druid').exists()
+
+
+def test_druid_git_transport_rejects_ambiguous_and_corrupt_inputs(tmp_path, monkeypatch):
+    text = 'RUN git clone ' + native.DRUID_GIT_URL + ' && cd druid && git checkout druid-0.20.0\n'
+    context = tmp_path / 'context'
+    context.mkdir()
+    monkeypatch.setattr(native, '_DRUID_GIT_ARCHIVE', None)
+    assert native.druid_git_transport(text, context, tmp_path) == (text, context, [])
+    archive = tmp_path / 'invalid.tar.gz'
+    archive.write_bytes(b'invalid')
+    monkeypatch.setattr(native, '_DRUID_GIT_ARCHIVE', archive)
+    with pytest.raises(ValueError, match='unsupported_druid_git_clone_sequence'):
+        native.druid_git_transport(text + text, context, tmp_path)
+    with pytest.raises(ValueError, match='unsupported_druid_git_clone_instruction'):
+        native.druid_git_transport(text.replace(' && cd druid', ' target && cd druid'), context, tmp_path)
+    with pytest.raises(ValueError, match='checksum_mismatch'):
+        native.druid_git_transport(text, context, tmp_path / 'rejected')
+    assert not (tmp_path / 'rejected').exists()
+
+
 def test_build_task_reuse_preserves_original_outcome_and_executed_sha(tmp_path, monkeypatch):
     import argparse
     import json
