@@ -1,0 +1,1 @@
+Evaluator and helper files copied verbatim from SR-Agents revision 277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f (MIT). instances.json contains the first native instance from each of medcalcbench, logicbench, theoremqa and champ; MedCalc data is CC-BY-SA-4.0 (ncbi/MedCalc-Bench), others MIT. These are protocol fixtures, not curated Stream selections.

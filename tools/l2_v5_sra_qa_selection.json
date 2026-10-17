@@ -1,0 +1,254 @@
+{
+  "schema_version": "sra_qa_selection/1.0",
+  "upstream_revision": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f",
+  "source_id_prefix": "sr_agents:",
+  "scope": "Only these 84 instances individually reviewed; other mechanically admitted rows need curation before Stream use.",
+  "stream_patterns": {
+    "medcalcbench": "blocked",
+    "logicbench": "interleaved",
+    "theoremqa": "delayed",
+    "champ": "interleaved"
+  },
+  "capabilities": [
+    {
+      "family": "medcalcbench",
+      "upstream_skill_id": "medcalcbench_004",
+      "capability_slug": "body_mass_index",
+      "capability_name": "BMI",
+      "capability_rule": "One upstream skill; calculate mass divided by squared height, converting centimetres to metres. Assign only instances whose sole annotation is medcalcbench_004.",
+      "representative_ids": [
+        "medcalcbench_00098",
+        "medcalcbench_00084",
+        "medcalcbench_00082",
+        "medcalcbench_00093",
+        "medcalcbench_00086"
+      ],
+      "backup_ids": [
+        "medcalcbench_00088",
+        "medcalcbench_00080"
+      ],
+      "capability_id": "sra_qa.medcalc.medcalcbench_004"
+    },
+    {
+      "family": "medcalcbench",
+      "upstream_skill_id": "medcalcbench_009",
+      "capability_slug": "mean_arterial_pressure",
+      "capability_name": "MAP",
+      "capability_rule": "One upstream skill; calculate the conventional resting MAP estimate from systolic and diastolic pressure. Assign only sole annotation medcalcbench_009.",
+      "representative_ids": [
+        "medcalcbench_00073",
+        "medcalcbench_00070",
+        "medcalcbench_00065",
+        "medcalcbench_00069",
+        "medcalcbench_00061"
+      ],
+      "backup_ids": [
+        "medcalcbench_00066",
+        "medcalcbench_00078"
+      ],
+      "capability_id": "sra_qa.medcalc.medcalcbench_009"
+    },
+    {
+      "family": "medcalcbench",
+      "upstream_skill_id": "medcalcbench_035",
+      "capability_slug": "corrected_calcium",
+      "capability_name": "Calcium correction",
+      "capability_rule": "One upstream skill; apply the standard albumin correction with normal albumin explicitly fixed at 4 g/dL. Assign only sole annotation medcalcbench_035.",
+      "representative_ids": [
+        "medcalcbench_00100",
+        "medcalcbench_00105",
+        "medcalcbench_00106",
+        "medcalcbench_00115",
+        "medcalcbench_00118"
+      ],
+      "backup_ids": [
+        "medcalcbench_00102",
+        "medcalcbench_00114"
+      ],
+      "capability_id": "sra_qa.medcalc.medcalcbench_035"
+    },
+    {
+      "family": "logicbench",
+      "upstream_skill_id": "logicbench_000",
+      "capability_slug": "modus_ponens",
+      "capability_name": "Modus Ponens",
+      "capability_rule": "One upstream skill; instantiate a conditional and affirm its antecedent. Negative questions ask whether the opposite consequent follows. Assign only sole annotation logicbench_000.",
+      "representative_ids": [
+        "logicbench_00481",
+        "logicbench_00513",
+        "logicbench_00486",
+        "logicbench_00488",
+        "logicbench_00506"
+      ],
+      "backup_ids": [
+        "logicbench_00498",
+        "logicbench_00502"
+      ],
+      "capability_id": "sra_qa.logic.logicbench_000"
+    },
+    {
+      "family": "logicbench",
+      "upstream_skill_id": "logicbench_001",
+      "capability_slug": "modus_tollens",
+      "capability_name": "Modus Tollens",
+      "capability_rule": "One upstream skill; deny a consequent to infer the negated antecedent. Assign only sole annotation logicbench_001; exclude contradictory stories or probabilistic conditionals.",
+      "representative_ids": [
+        "logicbench_00522",
+        "logicbench_00523",
+        "logicbench_00549",
+        "logicbench_00539",
+        "logicbench_00540"
+      ],
+      "backup_ids": [
+        "logicbench_00552",
+        "logicbench_00555"
+      ],
+      "capability_id": "sra_qa.logic.logicbench_001"
+    },
+    {
+      "family": "logicbench",
+      "upstream_skill_id": "logicbench_002",
+      "capability_slug": "disjunctive_syllogism",
+      "capability_name": "Disjunctive Syllogism",
+      "capability_rule": "One upstream skill; eliminate a false disjunct from an inclusive disjunction, including double negation. Assign only sole annotation logicbench_002; exclude existential-to-individual substitutions and affirming-a-disjunct errors.",
+      "representative_ids": [
+        "logicbench_00323",
+        "logicbench_00329",
+        "logicbench_00341",
+        "logicbench_00350",
+        "logicbench_00355"
+      ],
+      "backup_ids": [
+        "logicbench_00320",
+        "logicbench_00338"
+      ],
+      "capability_id": "sra_qa.logic.logicbench_002"
+    },
+    {
+      "family": "theoremqa",
+      "upstream_skill_id": "theoremqa_292",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "capability_name": "Definite integration and accumulated change",
+      "capability_rule": "Exactly first skill theoremqa_292. Evaluate a definite integral by antiderivatives, symmetry, or integrating a stated rate; exclude rows requiring unrelated limit theory or missing geometry assumptions.",
+      "representative_ids": [
+        "theoremqa_00032",
+        "theoremqa_00042",
+        "theoremqa_00048",
+        "theoremqa_00058",
+        "theoremqa_00149"
+      ],
+      "backup_ids": [
+        "theoremqa_00264",
+        "theoremqa_00292"
+      ]
+    },
+    {
+      "family": "theoremqa",
+      "upstream_skill_id": "theoremqa_291",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "capability_name": "Binomial counting and coefficients",
+      "capability_rule": "Exactly first skill theoremqa_291. Count choices or position allocations with binomial coefficients, including constrained subsets and coefficients of a binomial power. No grouping by question keywords or secondary skills.",
+      "representative_ids": [
+        "theoremqa_00235",
+        "theoremqa_00389",
+        "theoremqa_00604",
+        "theoremqa_00563",
+        "theoremqa_00726"
+      ],
+      "backup_ids": [
+        "theoremqa_00161",
+        "theoremqa_00674"
+      ]
+    },
+    {
+      "family": "theoremqa",
+      "upstream_skill_id": "theoremqa_196",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "capability_name": "Limits of sequences and partial sums",
+      "capability_rule": "Exactly first skill theoremqa_196. Determine limits from asymptotic equivalence, monotonicity, weighted averaging, or partial-sum limits. Every row requires a limit argument; finite trivia and the malformed cosine row are excluded.",
+      "representative_ids": [
+        "theoremqa_00191",
+        "theoremqa_00206",
+        "theoremqa_00448",
+        "theoremqa_00679",
+        "theoremqa_00711"
+      ],
+      "backup_ids": [
+        "theoremqa_00135",
+        "theoremqa_00154"
+      ]
+    },
+    {
+      "family": "champ",
+      "upstream_skill_id": "champ_010",
+      "capability_id": "sra_qa.champ.champ_010",
+      "capability_name": "Congruence and residue constraints",
+      "capability_rule": "Exactly first skill champ_010. Use congruence classes to constrain prime tuples, eliminate integer solutions, prove divisibility, or evaluate powers. Secondary skills are retained as labels but never determine assignment.",
+      "representative_ids": [
+        "champ_00111",
+        "champ_00113",
+        "champ_00115",
+        "champ_00133",
+        "champ_00142"
+      ],
+      "backup_ids": [
+        "champ_00139",
+        "champ_00137"
+      ]
+    },
+    {
+      "family": "champ",
+      "upstream_skill_id": "champ_016",
+      "capability_id": "sra_qa.champ.champ_016",
+      "capability_name": "Binomial selections and counting identities",
+      "capability_rule": "Exactly first skill champ_016. Translate a counting or averaging question into binomial choices, stars and bars, or binomial identities. Prefer different structures rather than repeated increasing-digit variants.",
+      "representative_ids": [
+        "champ_00005",
+        "champ_00007",
+        "champ_00010",
+        "champ_00014",
+        "champ_00024"
+      ],
+      "backup_ids": [
+        "champ_00011",
+        "champ_00015"
+      ]
+    },
+    {
+      "family": "champ",
+      "upstream_skill_id": "champ_012",
+      "capability_id": "sra_qa.champ.champ_012",
+      "capability_name": "Counting by disjoint cases and state recurrences",
+      "capability_rule": "Exactly first skill champ_012. Partition configurations by the last symbol, boundary tile, or boundary occupancy, then add counts using a finite-state recurrence. This is a focused algorithmic use of the upstream rule of sum, not all additive formulas.",
+      "representative_ids": [
+        "champ_00000",
+        "champ_00006",
+        "champ_00012",
+        "champ_00032",
+        "champ_00038"
+      ],
+      "backup_ids": [
+        "champ_00034",
+        "champ_00035"
+      ]
+    }
+  ],
+  "rejected_instances": {
+    "logicbench_00344": "Affirming a disjunct does not entail the other disjunct.",
+    "logicbench_00356": "Existential assertion does not entail named John has the property.",
+    "logicbench_00358": "Existential assertion does not entail named John has the property.",
+    "logicbench_00531": "Narration asserts eating while native gold denies eating.",
+    "logicbench_00534": "Narration asserts eating while native gold denies eating.",
+    "logicbench_00542": "Narration asserts eating while native gold denies eating.",
+    "logicbench_00543": "Narration asserts eating while native gold denies eating.",
+    "logicbench_00512": "Probabilistic promotion premise does not entail promotion.",
+    "logicbench_00482": "Hindered focus does not entail inability to concentrate.",
+    "logicbench_00527": "Possessive his dog presupposes the dog denied by native gold.",
+    "logicbench_00495": "Running late while en route does not establish arriving late.",
+    "theoremqa_00512": "Independent determinant is zero, not native gold -3.",
+    "theoremqa_00730": "Second derivative is -8 sin(2), not native gold -4; cost is also malformed.",
+    "theoremqa_00252": "Undefined cost function; cannot silently repair to cos.",
+    "champ_00221": "Independent recurrence modulo 4 gives 2, not native gold 3.",
+    "champ_00119": "Native prose answer fails equivalent set/order representations."
+  }
+}
