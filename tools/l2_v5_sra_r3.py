@@ -19,6 +19,7 @@ import time
 from pathlib import Path
 
 import l2_v5_sra as legacy
+from l2_v5_native_sources import tree_sha256
 from trievo_bench.container_resources import (ContainerResourceError, docker_resource_capability_preflight,
                                              require_container_resources, resource_enforcement_mode, evaluate_resource_enforcement)
 
@@ -118,6 +119,75 @@ def diagnostic_valid(authority: dict, shadow: dict, *, red: bool) -> bool:
             and shadow.get("execution_errors", 0) == 0
             and (shadow.get("assertion_failures", 0) > 0 if red
                  else shadow.get("assertion_failures", 0) == 0 and shadow.get("tests_successful", 0) > 0))
+
+
+def upstream_red_valid(authority: dict) -> bool:
+    """Use upstream FAIL semantics, including candidate execution/test errors."""
+    for report in (authority,):
+        if not report.get("transport_verified") or report.get("transport_error"):
+            return False
+        try:
+            require_container_resources(report.get("resource_readback") or {})
+        except ContainerResourceError:
+            return False
+        result = report.get("verifier", {})
+        if (result.get("status") != "fail" or result.get("score") != 0
+                or result.get("details", {}).get("result") != "fail"):
+            return False
+    return True
+
+
+def placement_sources(package: Path) -> list[str]:
+    return sorted({"sr_agents:" + task["source_basis"]["source_task_id"]
+                   for path in package.glob("streams/*/*/task.json")
+                   if (task := json.loads(path.read_text())).get("source_basis", {}).get("benchmark_id") == "sr_agents"})
+
+
+def prepare_recipes(pool: Path, previous: Path) -> None:
+    """Materialize one shared locked recipe; unrun sources remain recipe-ready."""
+    protect_output(pool, previous)
+    context = pool / "environment"
+    context.mkdir(parents=True, exist_ok=True)
+    files = ["Dockerfile.sra-r3", "sra-build-requirements.in", "sra-build-requirements.lock",
+             "sra-requirements.in", "sra-requirements.lock", "sra-nltk-assets.json",
+             "sra-install-assets.py", "sra-BIGCODEBENCH-LICENSE", "sra-NLTK-DATA-LICENSE"]
+    for name in files:
+        shutil.copy2(ROOT / "sandbox/l2-v5" / name, context / ("Dockerfile" if name == "Dockerfile.sra-r3" else name))
+    hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(context.iterdir()) if p.is_file()}
+    environment = {"kind": "shared_dockerfile", "recipe_path": "../environment/Dockerfile",
+                   "context_path": "../environment", "recipe_sha256": hashes["Dockerfile"],
+                   "context_sha256": tree_sha256(context),
+                   "context_file_hashes": hashes, "shared_environment_id": VERSION}
+    rows = [json.loads(line) for line in (pool / "INDEX.jsonl").read_text().splitlines()]
+    for row in rows:
+        task = pool / row["task_dir"]
+        old_red = previous / row["task_dir"] / "fixtures/known_broken/response.txt"
+        shutil.copy2(old_red, task / "fixtures/known_broken/response.txt")
+        path = task / "pool_task.json"
+        record = json.loads(path.read_text())
+        record["environment"] = environment
+        fields = {"resource_enforcement": "unobserved", "resource_readback": {},
+                  "resource_observation_provenance": {"reason": "recipe only; no source qualification in current scope"}}
+        record.update(fields)
+        record["runtime"].update(fields, task_image=None, task_image_digest=None)
+        record["runtime"].pop("image_archive", None)
+        record["qualification"].update(fields, admitted=False, stage="recipe_ready", reason=None,
+                                        image_digest=None, known_correct=None, known_broken=None)
+        record["qualification"].pop("private_diagnostic_path", None)
+        record["qualification"]["notes"] = [note for note in record["qualification"].get("notes", [])
+                                               if not note.startswith("red admission requires")]
+        record["qualification"]["notes"].append("fixed old-pool red uses upstream FAIL semantics; no candidate search")
+        record["adaptations"] = [a for a in record.get("adaptations", []) if a.get("kind") != "resource_enforcement_waiver"]
+        row.update(fields, environment=environment, admitted=False, stage="recipe_ready", reason=None)
+        row.pop("image_archive", None)
+        write_json(path, record)
+    (pool / "INDEX.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    ledger = [json.loads(line) for line in (pool / "ADAPTATIONS.jsonl").read_text().splitlines()]
+    for entry in ledger:
+        entry.update(qualification="recipe_ready", **fields)
+        entry["adaptations"] = [a for a in entry["adaptations"] if a.get("kind") != "resource_enforcement_waiver"]
+        entry.pop("red_candidates", None)
+    (pool / "ADAPTATIONS.jsonl").write_text("".join(json.dumps(row) + "\n" for row in ledger))
 
 
 def resource_header(stdout: str, *, nonce: str, response_sha256: str, shadow: bool,
@@ -297,16 +367,20 @@ def red_candidates(task: Path):
         yield "constant_" + type(value).__name__, prompt + "    return " + repr(value) + "\n"
 
 
-def qualify_one(task: Path, image: str, artifacts: Path) -> dict:
+def qualify_one(task: Path, image: str, artifacts: Path, old_red_pool: Path | None = None) -> dict:
     deadline = time.monotonic() + 45 * 60
     try:
-        return _qualify_one(task, image, artifacts, deadline)
+        return _qualify_one(task, image, artifacts, deadline, old_red_pool)
     except TimeoutError:
+        observed = next((report for path in sorted((artifacts / task.name).glob("**/report.json"))
+                         if (report := json.loads(path.read_text())).get("resource_readback")), {})
         return {"task_dir": task.name, "fixtures": {}, "admitted": False,
+                "resource_report": observed,
                 "stage": "deferred", "reason": "source exceeded 45-minute qualification time box"}
 
 
-def _qualify_one(task: Path, image: str, artifacts: Path, deadline: float) -> dict:
+def _qualify_one(task: Path, image: str, artifacts: Path, deadline: float,
+                 old_red_pool: Path | None = None) -> dict:
     def run(fixture: Path, out: Path, *, shadow: bool) -> dict:
         if time.monotonic() >= deadline:
             raise TimeoutError("source time box expired")
@@ -329,29 +403,39 @@ def _qualify_one(task: Path, image: str, artifacts: Path, deadline: float) -> di
         result["reason"] = "gold_not_native_green_with_collected_tests"
         return result
     attempts = []
-    for label, response in red_candidates(task):
+    candidates = ([("old_pool_known_broken", (old_red_pool / task.name / "fixtures/known_broken/response.txt").read_text())]
+                  if old_red_pool is not None else red_candidates(task))
+    for label, response in candidates:
         out = artifacts / task.name / "known_broken" / label
         fixture = out / "fixture"
         fixture.mkdir(parents=True, exist_ok=True)
-        (fixture / "response.txt").write_text(response)
+        if old_red_pool is not None:
+            shutil.copy2(old_red_pool / task.name / "fixtures/known_broken/response.txt", fixture / "response.txt")
+        else:
+            (fixture / "response.txt").write_text(response)
         authority = run(fixture, out / "authoritative", shadow=False)
-        diagnostic = run(fixture, out / "diagnostic", shadow=True)
-        valid = diagnostic_valid(authority, diagnostic, red=True)
+        diagnostic = {} if old_red_pool is not None else run(fixture, out / "diagnostic", shadow=True)
+        valid = (upstream_red_valid(authority) if old_red_pool is not None
+                 else diagnostic_valid(authority, diagnostic, red=True))
         current = {"authoritative": authority, "diagnostic": diagnostic,
                    "valid": valid, "candidate": label}
         attempts.append({"candidate": label, "valid": valid})
         result["fixtures"]["known_broken"] = current
         if valid:
             shutil.copy2(fixture / "response.txt", task / "fixtures/known_broken/response.txt")
-            current["response_sha256"] = hashlib.sha256(response.encode()).hexdigest()
+            current["response_sha256"] = hashlib.sha256((fixture / "response.txt").read_bytes()).hexdigest()
             break
     result["red_candidates"] = attempts
     result["admitted"] = all(f["valid"] for f in result["fixtures"].values())
+    if not result["admitted"] and old_red_pool is not None:
+        result["reason"] = ("old_known_broken_passed" if authority.get("verifier", {}).get("status") == "pass"
+                            else "old_known_broken_not_native_fail_or_infrastructure_error")
     return result
 
 
 def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
-            image_archives: Path | None = None) -> None:
+            image_archives: Path | None = None, old_red_pool: Path | None = None,
+            r2_package: Path | None = None) -> None:
     protect_output(pool)
     artifacts.mkdir(parents=True, exist_ok=True)
     capability = docker_resource_capability_preflight()
@@ -360,6 +444,8 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
         raise ContainerResourceError("SRA qualification blocked before image/fixture work: " + json.dumps(capability))
     image_id = legacy.image_digest(image)
     rows = [json.loads(line) for line in (pool / "INDEX.jsonl").read_text().splitlines()]
+    if r2_package is not None:
+        only = placement_sources(r2_package)
     selected = [r for r in rows if not only or r["task_dir"] in only or r["source_id"] in only]
     artifacts.mkdir(parents=True, exist_ok=True)
     environment_files = ["Dockerfile.sra-r3", "sra-requirements.in", "sra-requirements.lock",
@@ -375,11 +461,18 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
                 "pids_limit": 256, "cap_drop": ["ALL"], "security_opt": ["no-new-privileges"],
                 "fixture_isolation": "fresh_container_per_authoritative_and_shadow",
                 "transport": "docker_cp_private_container"}
+    if (pool / "ENVIRONMENT.json").exists():
+        previous_identity = json.loads((pool / "ENVIRONMENT.json").read_text())
+        for key in ("build_adaptations", "actual_build_recipe", "resolved_dpkg_packages", "resolved_python_packages"):
+            if key in previous_identity:
+                identity[key] = previous_identity[key]
+    identity["qualification_scope"] = [row["source_id"] for row in selected]
+    identity["red_policy"] = "old_pool_upstream_fail" if old_red_pool is not None else "assertion_candidate_search"
     write_json(artifacts / "ENVIRONMENT.json", identity)
     write_json(pool / "ENVIRONMENT.json", identity)
     with ThreadPoolExecutor(max_workers=jobs) as executor, (artifacts / "results.jsonl").open("w") as log:
         results = {}
-        for result in executor.map(lambda r: qualify_one(pool / r["task_dir"], image_id, artifacts), selected):
+        for result in executor.map(lambda r: qualify_one(pool / r["task_dir"], image_id, artifacts, old_red_pool), selected):
             results[result["task_dir"]] = result
             log.write(json.dumps(result) + "\n")
             log.flush()
@@ -394,7 +487,7 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
         row["license_note"] = record["license_note"]
         record["runtime"].update(task_image=image, task_image_digest=image_id)
         resource_report = next((data[side] for data in result["fixtures"].values()
-            for side in ("authoritative", "diagnostic") if data[side].get("resource_readback")), {})
+            for side in ("authoritative", "diagnostic") if data[side].get("resource_readback")), result.get("resource_report", {}))
         resource_fields = {"resource_enforcement": resource_report.get("resource_enforcement", "unobserved"),
             "resource_readback": resource_report.get("resource_readback", {}),
             "resource_observation_provenance": resource_report.get("resource_observation_provenance", {"reason": "fixture transport failed before actual readback"})}
@@ -409,6 +502,7 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
                  known_correct=None, known_broken=None,
                  stage=result.get("stage", "qualified"), reason=result.get("reason"),
                  qualification_protocol=VERSION,
+                 red_policy=identity["red_policy"],
                  private_diagnostic_path=str((artifacts / row["task_dir"]).resolve()))
         for name, value in result["fixtures"].items():
             authoritative = value["authoritative"].get("verifier", {})
@@ -478,7 +572,6 @@ def compare(pool: Path, previous: Path, package: Path, out: Path) -> None:
                 for r in (json.loads(s) for s in (root / "INDEX.jsonl").read_text().splitlines())}
     old, new = records(previous), records(pool)
     diffs = []
-    used = set()
     placements = []
     for path in sorted(package.glob("streams/*/*/task.json")):
         task = json.loads(path.read_text())
@@ -486,24 +579,34 @@ def compare(pool: Path, previous: Path, package: Path, out: Path) -> None:
         if source.get("benchmark_id") != "sr_agents":
             continue
         sid = "sr_agents:" + source["source_task_id"]
-        if task["stream_id"].startswith("intra_"):
-            used.add(sid)
         placements.append({"stream_id": task["stream_id"], "turn_id": task["turn_id"], "source_id": sid})
     for sid in sorted(old.keys() | new.keys()):
         a = old.get(sid, ({}, {}))[1]; b = new.get(sid, ({}, {}))[1]
         diffs.append({"source_id": sid, "old_admitted": a.get("qualification", {}).get("admitted"),
                       "new_admitted": b.get("qualification", {}).get("admitted"),
+                      "old_stage": a.get("qualification", {}).get("stage"),
+                      "new_stage": b.get("qualification", {}).get("stage"),
+                      "new_reason": b.get("qualification", {}).get("reason") or new.get(sid, ({}, {}))[0].get("reason"),
+                      "new_green": b.get("qualification", {}).get("known_correct"),
+                      "new_red": b.get("qualification", {}).get("known_broken"),
                       "old_image": a.get("runtime", {}).get("task_image_digest"),
                       "new_image": b.get("runtime", {}).get("task_image_digest")})
     by_id = {r["source_id"]: r for r in diffs}
-    counts = {}
-    for sid, (row, record) in new.items():
-        if record["qualification"]["admitted"] and sid not in used:
-            cap = record["capability_hint"]["capability_id"]
-            counts[cap] = counts.get(cap, 0) + 1
+    placement_diff = [dict(p, **{k: v for k, v in by_id[p["source_id"]].items() if k != "source_id"}) for p in placements]
+    qualified = [r for r in diffs if r["new_stage"] != "recipe_ready"]
+    summary = {"sources": len(new), "old_admitted": sum(bool(r[1].get("qualification", {}).get("admitted")) for r in old.values()),
+               "recipe_ready": sum(r["new_stage"] == "recipe_ready" for r in diffs),
+               "requalified": len(qualified), "admitted": sum(bool(r["new_admitted"]) for r in qualified),
+               "deferred": sum(r["new_stage"] == "deferred" for r in qualified),
+               "retained": sum(bool(r["old_admitted"] and r["new_admitted"]) for r in qualified),
+               "gained": sum(bool(not r["old_admitted"] and r["new_admitted"]) for r in qualified),
+               "lost": sum(bool(r["old_admitted"] and not r["new_admitted"]) for r in qualified),
+               "scope": "existing r2 SRA placements only; recipe_ready is not a failed qualification"}
+    summary["rejected"] = summary["requalified"] - summary["admitted"] - summary["deferred"]
     write_json(out / "source-diff.json", diffs)
-    write_json(out / "r2-placement-diff.json", [dict(p, **{k: v for k, v in by_id[p["source_id"]].items() if k != "source_id"}) for p in placements])
-    write_json(out / "unused-intra-capability-counts.json", counts)
+    write_json(out / "r2-placement-diff.json", placement_diff)
+    write_json(out / "r2-intra-placement-diff.json", [r for r in placement_diff if r["stream_id"].startswith("intra_")])
+    write_json(out / "summary.json", summary)
 
 
 def main() -> None:
@@ -512,9 +615,12 @@ def main() -> None:
     b = sub.add_parser("build"); b.add_argument("--pool", type=Path, required=True); b.add_argument("--upstream", type=Path, required=True)
     q = sub.add_parser("qualify"); q.add_argument("--pool", type=Path, required=True); q.add_argument("--image", required=True); q.add_argument("--artifacts", type=Path, required=True); q.add_argument("--jobs", type=int, default=4); q.add_argument("--only", nargs="*", default=[])
     q.add_argument("--image-archives", type=Path, help="Save shared image here after qualification, record SHA, then rmi its task-owned tag")
+    q.add_argument("--old-red-pool", type=Path, help="Use exact previous known_broken once with upstream FAIL semantics")
+    q.add_argument("--r2-package", type=Path, help="Qualify only SR-Agents sources placed in this existing package")
+    p = sub.add_parser("prepare-recipes"); p.add_argument("--pool", type=Path, required=True); p.add_argument("--previous", type=Path, required=True)
     d = sub.add_parser("compare"); d.add_argument("--pool", type=Path, required=True); d.add_argument("--previous", type=Path, required=True); d.add_argument("--package", type=Path, required=True); d.add_argument("--out", type=Path, required=True)
     args = vars(parser.parse_args()); command = args.pop("command")
-    {"build": build, "qualify": qualify, "compare": compare}[command](**args)
+    {"build": build, "qualify": qualify, "compare": compare, "prepare-recipes": prepare_recipes}[command](**args)
 
 
 if __name__ == "__main__":

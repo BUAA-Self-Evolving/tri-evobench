@@ -52,6 +52,109 @@ def test_green_rejects_empty_collection_and_hidden_errors():
     assert not builder.diagnostic_valid(evidence("pass"), skipped, red=False)
 
 
+def test_fixed_upstream_red_accepts_native_errors_but_rejects_transport_and_timeout():
+    red = evidence("fail", errors=2, started=0, execution_errors=1)
+    assert builder.upstream_red_valid(red)
+    assert not builder.upstream_red_valid(evidence("pass"))
+    red["transport_verified"] = False
+    assert not builder.upstream_red_valid(red)
+    red["transport_verified"] = True
+    red["verifier"]["details"]["result"] = "timeout"
+    assert not builder.upstream_red_valid(red)
+    red["verifier"]["details"]["result"] = "fail"
+    red["resource_readback"] = {}
+    assert not builder.upstream_red_valid(red)
+
+
+@pytest.mark.parametrize("red_status", ["pass", "fail"])
+def test_old_pool_red_is_exactly_once_without_shadow_or_candidate_search(tmp_path, monkeypatch, red_status):
+    task = tmp_path / "pool/task"
+    (task / "fixtures/known_correct").mkdir(parents=True)
+    (task / "fixtures/known_broken").mkdir()
+    previous = tmp_path / "old"
+    old = previous / "task/fixtures/known_broken"
+    old.mkdir(parents=True)
+    payload = b"old broken bytes\r\n"
+    (old / "response.txt").write_bytes(payload)
+    calls = []
+
+    def run(task_path, fixture, image, out, **kwargs):
+        calls.append((fixture, kwargs["shadow"]))
+        if "known_broken" in fixture.parts:
+            assert fixture.joinpath("response.txt").read_bytes() == payload
+            return evidence(red_status, errors=1, execution_errors=1)
+        return evidence("pass")
+
+    def forbidden(*args):
+        raise AssertionError("fixed old-pool mode must not search candidates")
+
+    monkeypatch.setattr(builder, "fixture_run", run)
+    monkeypatch.setattr(builder, "red_candidates", forbidden)
+    result = builder.qualify_one(task, "image", tmp_path / "logs", previous)
+    assert [shadow for _, shadow in calls] == [False, True, False]
+    assert result["admitted"] is (red_status == "fail")
+    assert result["red_candidates"] == [{"candidate": "old_pool_known_broken", "valid": red_status == "fail"}]
+    assert result["fixtures"]["known_broken"]["diagnostic"] == {}
+    if red_status == "pass":
+        assert result["reason"] == "old_known_broken_passed"
+    else:
+        assert (task / "fixtures/known_broken/response.txt").read_bytes() == payload
+
+
+def test_shared_recipe_marks_unrun_sources_ready_and_preserves_old_red(tmp_path):
+    pool = tmp_path / "l2v5_pool_r3/sra"
+    previous = tmp_path / "previous"
+    task = pool / "task"
+    (task / "fixtures/known_broken").mkdir(parents=True)
+    old = previous / "task/fixtures/known_broken"
+    old.mkdir(parents=True)
+    (old / "response.txt").write_bytes(b"original red\r\n")
+    builder.write_json(task / "pool_task.json", {"runtime": {"task_image_digest": "stale"},
+                       "qualification": {"admitted": True, "notes": []}, "adaptations": []})
+    (pool / "INDEX.jsonl").write_text(json.dumps({"source_id": "sr_agents:task", "task_dir": "task"}) + "\n")
+    (pool / "ADAPTATIONS.jsonl").write_text(json.dumps({"source_id": "sr_agents:task", "adaptations": []}) + "\n")
+    builder.prepare_recipes(pool, previous)
+    record = json.loads((task / "pool_task.json").read_text())
+    assert record["qualification"]["stage"] == "recipe_ready"
+    assert record["qualification"]["admitted"] is False
+    assert record["runtime"]["task_image_digest"] is None
+    assert record["resource_readback"] == {}
+    environment = record["environment"]
+    assert environment["kind"] == "shared_dockerfile"
+    assert environment["context_sha256"] == builder.tree_sha256(pool / "environment")
+    assert (task / environment["recipe_path"]).is_file()
+    assert not list((pool / "environment").glob("**/response.txt"))
+    assert (task / "fixtures/known_broken/response.txt").read_bytes() == b"original red\r\n"
+
+
+def test_comparison_does_not_count_unrun_recipes_as_admission_losses(tmp_path):
+    pool = tmp_path / "new"
+    old = tmp_path / "old"
+    package = tmp_path / "r2"
+    for root in (pool, old):
+        root.mkdir()
+        rows = []
+        for name in ("used", "unused"):
+            rows.append({"source_id": "sr_agents:" + name, "task_dir": name})
+            stage = "recipe_ready" if root == pool and name == "unused" else "qualified"
+            builder.write_json(root / name / "pool_task.json", {
+                "runtime": {}, "qualification": {"admitted": root == old, "stage": stage,
+                "reason": "old_known_broken_passed" if root == pool and name == "used" else None}})
+        (root / "INDEX.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    for turn in (1, 2):
+        builder.write_json(package / f"streams/intra_sra_example/turn{turn}/task.json", {
+            "stream_id": "intra_sra_example", "turn_id": turn,
+            "source_basis": {"benchmark_id": "sr_agents", "source_task_id": "used"}})
+    assert builder.placement_sources(package) == ["sr_agents:used"]
+    builder.compare(pool, old, package, tmp_path / "comparison")
+    result = json.loads((tmp_path / "comparison/summary.json").read_text())
+    assert result["recipe_ready"] == result["requalified"] == result["lost"] == 1
+    assert result["rejected"] == 1
+    placements = json.loads((tmp_path / "comparison/r2-intra-placement-diff.json").read_text())
+    assert len(placements) == 2
+    assert all(row["new_reason"] == "old_known_broken_passed" for row in placements)
+
+
 def test_output_guard_protects_old_pool_and_releases(tmp_path):
     for path in [tmp_path / "l2v5_pool" / "sra", tmp_path / "L2_Demo_V5_r2"]:
         with pytest.raises(ValueError):
