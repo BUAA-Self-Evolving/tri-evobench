@@ -205,6 +205,11 @@ def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
                 setup_command=raw+" --yes"
                 adaptations.append({"kind":"noninteractive_installer_acknowledgement","original":raw,
                                     "adapted":setup_command,"reason":"same pinned coursier install with unattended consent"})
+            if not original_errexit:
+                setup_command = "{\n" + setup_command + "\n} || :"
+                adaptations.append({"kind": "verifier_setup_command_error_policy",
+                    "original": raw, "adapted": setup_command,
+                    "reason": "native verifier has errexit disabled; preserve its nonfatal dependency setup while requiring separate cache prewarm to succeed"})
             setup.append(setup_command)
             runtime.append(": # dependency setup moved to image build")
             adaptations.append({"kind": "verifier_setup_at_build", "original": raw})
@@ -224,16 +229,34 @@ def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
             adaptations.append({"kind": "verifier_setup_native_path", "original": raw,
                 "reason": "preserve native executable lookup in original order for moved dependency commands"})
         # Preserve uv tool isolation and all --with/--python/index flags.
-        if re.match(r"uvx\s", line):
+        uvx_line = re.sub(r"^if\s+(?=uvx\s)", "", line)
+        if re.match(r"uvx\s", uvx_line):
             if unknown_setup_cwd:
                 raise ValueError("ambiguous_verifier_cd_before_moved_setup")
-            match = re.search(r"\b(?:python\s+-m\s+)?pytest\b(?=\s|$)", line)
+            match = re.search(r"\b(?:python\s+-m\s+)?pytest\b(?=\s|$)", uvx_line)
             # Skip '--with pytest==...' tokens: the real executable has no '='.
             if match:
-                warm = line[:match.start()] + line[match.start():match.end()] + " --version"
+                warm = uvx_line[:match.start()] + uvx_line[match.start():match.end()] + " --version"
                 setup.append(warm)
                 adaptations.append({"kind": "uvx_environment_prewarm", "command": warm})
     return "\n".join(runtime) + "\n", "\n".join(setup) + "\n", adaptations
+
+
+def split_verifier_setup(setup: str) -> tuple[list[str], list[str]]:
+    """Keep generated nonfatal command groups intact when selecting root apt setup."""
+    root, user = [], []
+    lines = iter(setup.splitlines())
+    for line in lines:
+        block = [line]
+        if line == "{":
+            for member in lines:
+                block.append(member)
+                if member == "} || :":
+                    break
+        command_line = block[1] if line == "{" else line
+        target = root if re.match(r"apt(?:-get)?\s+(?:update|install)", command_line.strip()) else user
+        target.extend(block)
+    return root, user
 
 
 def private_member(name: str) -> bool:
@@ -336,7 +359,7 @@ def check_result(log: str, reward: str | None, rc: int) -> dict[str, Any]:
         r"ModuleNotFoundError|ImportError|ERROR collecting|INTERNALERROR|no tests ran|"
         r"command not found|PermissionError|Temporary failure in name resolution|"
         r"Network is unreachable|Could not resolve|Cannot connect|No matching distribution", log)
-    exception_names=(re.findall(r"(?m)^E\s+([\w.]+):",log)+
+    exception_names=(re.findall(r"(?m)^E {1,3}([\w.]+):",log)+
                      re.findall(r"(?m)^FAILED[^\n]* - ((?:[A-Za-z_]\w*\.)*[A-Z]\w*)(?::|\s|$)",log))
     unexpected_exceptions = [name for name in exception_names
                              if name.rsplit(".",1)[-1] not in {"AssertionError", "Failed"}]
@@ -798,10 +821,7 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         private_copy=f"COPY private-test-assets {row['tests_mount']}\n"
         adaptations.append({"kind":"private_verifier_setup_assets","source_tree_sha256":sources.tree_sha256(inputs["tests"]),
                             "reason":"setup references native verifier-local resources; final image scrubs native evaluation mount"})
-    root_setup=[];user_setup=[]
-    for line in setup.splitlines():
-        if re.match(r"apt(?:-get)?\s+(?:update|install)",line.strip()):root_setup.append(line)
-        else:user_setup.append(line)
+    root_setup, user_setup = split_verifier_setup(setup)
     if row["benchmark_id"]=="skilllearnbench" and row["family"]=="stock-data-visualization":
         oracle_text=(inputs["oracle"]/"solve.sh").read_text()
         if "npm install d3@6.7.0 --silent" not in oracle_text:
@@ -1478,6 +1498,10 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             environment["oracle"]["env"].update(npm_config_offline="true",npm_config_cache="/root/.npm",
                 npm_config_registry="https://registry.npmmirror.com",npm_config_audit="false",npm_config_fund="false")
         if _RESOURCE_PREFLIGHT:environment["adaptations"].append(resource_adaptation(_RESOURCE_PREFLIGHT))
+        if sid == "skillsbench:lab-unit-harmonization":
+            environment["oracle"]["env"]["TMPDIR"] = "/dev/shm"
+            environment["adaptations"].append({"kind": "oracle_heredoc_tmpdir", "value": "/dev/shm",
+                "reason": "same unchanged heredoc fails on both upstream base and flattened image with default temporary storage; /dev/shm reproduced its exact expected output bytes"})
         if sid=="skillsbench:edit-pdf":
             result["time_sensitive_native_verifier"]=True
             environment["adaptations"].append({"kind":"calendar_sensitive_fixture",

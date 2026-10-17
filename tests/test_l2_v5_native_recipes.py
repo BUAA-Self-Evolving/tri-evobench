@@ -19,7 +19,7 @@ def test_recipe_excludes_skill_copies_and_mounts_private_setup_without_layers():
     assert 'source=.trievo-verifier-root-setup.sh' in text
     assert 'mirrors.tuna.tsinghua.edu.cn/ubuntu' in text
     assert 'ARG npm_config_registry=https://registry.npmmirror.com' in text
-    assert 'ARG UV_INSTALLER_GITHUB_BASE_URL=https://ghproxy.net/https://github.com' in text
+    assert 'ARG UV_INSTALLER_GITHUB_BASE_URL=https://gh-proxy.com/https://github.com' in text
 
 
 @pytest.mark.parametrize('family', ['demo', 'travel-planning'])

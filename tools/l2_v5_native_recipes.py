@@ -36,7 +36,7 @@ def recipe_dockerfile(original: str, tests_mount: str) -> str:
              f"ARG UV_INDEX_URL={native.BUILD_PYPI_INDEX}\n"
              "ARG npm_config_registry=https://registry.npmmirror.com\n"
              "ARG PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright\n"
-             "ARG UV_INSTALLER_GITHUB_BASE_URL=https://ghproxy.net/https://github.com\n"
+             "ARG UV_INSTALLER_GITHUB_BASE_URL=https://gh-proxy.com/https://github.com\n"
              "USER root\n"
              "RUN --mount=type=bind,source=.trievo-verifier-root-setup.sh,target=/tmp/verifier-root-setup.sh,readonly "
              f"--mount=type=bind,from=trievo_verifier,target={tests_mount},readonly "
@@ -74,9 +74,7 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
         shutil.rmtree(environment_dir)
     shutil.copytree(inp["context"], environment_dir, symlinks=True,
                     ignore=shutil.ignore_patterns("skills", ".skills", "__pycache__"))
-    root_setup, user_setup = [], []
-    for line in setup.splitlines():
-        (root_setup if re.match(r"apt(?:-get)?\s+(?:update|install)", line.strip()) else user_setup).append(line)
+    root_setup, user_setup = native.split_verifier_setup(setup)
     (environment_dir / ".trievo-verifier-root-setup.sh").write_text(
         "#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\n" + "\n".join(root_setup) + "\n")
     (environment_dir / ".trievo-verifier-user-setup.sh").write_text("\n".join(user_setup) + "\n")
@@ -99,6 +97,10 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
     verifier_env, _ = native.verifier_cache_environment(native.stage_environment(metadata, "verifier"), adaptations)
     verifier_env.update(UV_OFFLINE="1", PIP_NO_INDEX="1")
     oracle_env = native.stage_environment(metadata, "oracle")
+    if sid == "skillsbench:lab-unit-harmonization":
+        oracle_env["TMPDIR"] = "/dev/shm"
+        adaptations.append({"kind": "oracle_heredoc_tmpdir", "value": "/dev/shm",
+            "reason": "same unchanged heredoc fails on both upstream base and flattened image with default temporary storage; /dev/shm reproduced its exact expected output bytes"})
     if row["benchmark_id"] == "skilllearnbench" and row["family"] == "stock-data-visualization":
         oracle_env.update(npm_config_offline="true", npm_config_cache="/root/.npm",
                           npm_config_registry="https://registry.npmmirror.com", npm_config_audit="false", npm_config_fund="false")
@@ -142,12 +144,16 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
         "evaluation_profile": "general", "metric_profile": None,
         "qualification": {"admitted": False, "stage": "recipe_ready"}, "license_note": base["license_note"]}
     record["environment"] = environment
+    if sid == "skillsbench:edit-pdf":
+        for section in (record["runtime"], record["qualification"]):
+            section.update(date_dependent=True, package_qualification_requires_oracle_regeneration=True)
+        record["time_sensitive_native_verifier"] = True
     record["recipe_adaptations"] = adaptations + [{"kind": "skills_excluded_from_build_context"},
         {"kind": "ordinary_domestic_mirrors"}, {"kind": "private_verifier_bind_mount_at_build_only"}]
     if "https://astral.sh/uv/0.9.7/install.sh" in setup:
         record["recipe_adaptations"].append({"kind": "ordinary_uv_installer_mirror",
-            "variable": "UV_INSTALLER_GITHUB_BASE_URL", "value": "https://ghproxy.net/https://github.com",
-            "version": "0.9.7", "reason": "pinned installer release download produced no progress for about 25 minutes; installer and requested version unchanged"})
+            "variable": "UV_INSTALLER_GITHUB_BASE_URL", "value": "https://gh-proxy.com/https://github.com",
+            "version": "0.9.7", "reason": "first ordinary mirror returned curl92; this mirror completed the pinned installer in the manufacturing sample; installer and requested version unchanged"})
     attempted = (outcome or {}).get("environment", {})
     failed_current_recipe = (not (outcome or {}).get("admitted")
         and (outcome or {}).get("stage") not in {None, "pending", "recipe_ready", "inventory"}

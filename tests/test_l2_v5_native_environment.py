@@ -15,6 +15,40 @@ sys.path.insert(0, str(TOOLS))
 import l2_v5_native_environment as native
 
 
+def test_assertion_message_cell_label_is_not_an_exception():
+    log = ('collected 27 items\nE   AssertionError: Weighted mean mismatches:\n'
+           'E         H50: expected 12.2, got 30\n'
+           'FAILED test_outputs.py::test_weighted - AssertionError: mismatch\n'
+           '1 failed, 26 passed in 9.51s\n')
+    assert native.check_result(log, '0', 0)['status'] == 'fail'
+    broken = log.replace('AssertionError:', 'ValueError:')
+    assert native.check_result(broken, '0', 0)['status'] == 'error'
+
+
+def test_conditional_uvx_prewarm_preserves_runtime_control_flow():
+    original = ('if uvx --with pytest==8.4.1 --with pytest-json-ctrf==0.3.5 '
+                'pytest --ctrf /logs/verifier/ctrf.json /verifier/test_outputs.py -rA\n'
+                'then\n echo 1\nelse\n echo 0\nfi\n')
+    runtime, setup, adaptations = native.prepare_runner(original)
+    assert runtime == original
+    assert 'uvx --with pytest==8.4.1 --with pytest-json-ctrf==0.3.5 pytest --version' in setup
+    assert 'if uvx' not in setup
+    assert any(a['kind'] == 'uvx_environment_prewarm' for a in adaptations)
+    subprocess.run(['bash', '-n'], input=setup, text=True, check=True)
+
+
+def test_moved_setup_preserves_nonfatal_errors_and_root_groups():
+    original = 'apt-get update # native setup\nuv pip install pandas\n'
+    runtime, setup, adaptations = native.prepare_runner(original)
+    root, user = native.split_verifier_setup(setup)
+    assert root == ['{', 'apt-get update # native setup', '} || :']
+    assert 'uv pip install pandas' in user
+    for script in ('\n'.join(root), '\n'.join(user)):
+        subprocess.run(['bash', '-n'], input=script, text=True, check=True)
+    _, strict, _ = native.prepare_runner('set -e\nuv pip install pandas\n')
+    assert '} || :' not in strict
+
+
 def test_recipe_counters_separate_qualified_ready_and_failed_samples(tmp_path):
     rows = [{"source_id": "skillsbench:" + name, "family": "sample",
              "capability_id": "skillsbench.sample", "admitted": admitted,

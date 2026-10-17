@@ -144,6 +144,34 @@ def _dialogue(dest: Path) -> dict[str, Any]:
             "node_id": "KiraWarning", "field": "text"}
 
 
+def _invoice(dest: Path) -> dict[str, Any]:
+    path = dest / "rootfs/root/fraud_report.json"
+    rows = json.loads(path.read_text())
+    if not isinstance(rows, list) or not rows or rows[0].get("reason") == "Clean":
+        raise ValueError("gold fraud report unavailable")
+    rows[0]["reason"] = "Clean"
+    path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n")
+    return {"kind": "wrong_invoice_fraud_reason", "file": str(path.relative_to(dest)),
+            "row": 0, "field": "reason", "value": "Clean"}
+
+
+def _lab(dest: Path) -> dict[str, Any]:
+    path = dest / "rootfs/root/ckd_lab_data_harmonized.csv"
+    reader = csv.DictReader(io.StringIO(path.read_text()))
+    fields, rows = reader.fieldnames, list(reader)
+    if not rows or not fields or "Serum_Creatinine" not in fields:
+        raise ValueError("gold harmonized lab data unavailable")
+    for row in rows:
+        row["Serum_Creatinine"] = "9999.00"
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fields, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    path.write_text(output.getvalue())
+    return {"kind": "wrong_lab_unit_values", "file": str(path.relative_to(dest)),
+            "column": "Serum_Creatinine", "value": "9999.00"}
+
+
 def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
                    existing_work: Path | None = None) -> dict[str, Any] | None:
     """Return a mutation note, or None so the caller can use its seed fallback.
@@ -177,6 +205,8 @@ def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
     mutation = (_offer if "offer-letter-generator" in source_id else
                 _organize if "organize-messy-files" in source_id else
                 _dialogue if source_id == "skillsbench:dialogue-parser" else
+                _invoice if source_id == "skillsbench:invoice-fraud-detection" else
+                _lab if source_id == "skillsbench:lab-unit-harmonization" else
                 _stock if "stock-data-visualization" in source_id else
                 _gdp if "weighted-gdp" in source_id else None)
     if mutation is None:
