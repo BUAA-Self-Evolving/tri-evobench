@@ -79,3 +79,80 @@ def test_handoff_preserves_waiver_and_does_not_invent_missing_image_change(tmp_p
     assert result['placement_diffs'][0]['resource_enforcement'] == 'declared_not_enforced'
     assert result['resource_enforcement_counts'] == {'declared_not_enforced':1}
     assert result['observed_resources'][0]['cpu_limit'] == 108.04
+
+
+def test_index_only_rejection_has_capability_count_and_placement(tmp_path):
+    pool = tmp_path / 'new'; (pool / 'native').mkdir(parents=True)
+    sid = 'skillsbench:early-failure'
+    (pool / 'native/INDEX.jsonl').write_text(json.dumps({'source_id': sid, 'benchmark_id': 'skillsbench',
+        'capability_id': 'skillsbench.data', 'admitted': False, 'reason': 'missing_upstream_oracle'}))
+    package = tmp_path / 'package'; turn = package / 'streams/intra_test/turn1'; turn.mkdir(parents=True)
+    (turn / 'task.json').write_text(json.dumps({'stream_id': 'intra_test', 'turn_id': 'turn1',
+        'source_basis': {'benchmark_id': 'skillsbench', 'source_task_id': 'early-failure'}}))
+    result = handoff(tmp_path / 'old', pool, package)
+    assert result['inventory_counts'] == {'skillsbench': 1}
+    assert result['counts'][0]['rejected_with_capability_record'] == 1
+    assert result['counts'][0]['capability_id'] == 'skillsbench.data'
+    assert result['placement_diffs'][0]['source_id'] == sid
+    assert result['placement_coverage']['affected_placements'] == 1
+
+
+def test_missing_affected_index_decision_cannot_silently_drop_placement(tmp_path):
+    import pytest
+    turn = tmp_path / 'package/streams/intra_test/turn1'; turn.mkdir(parents=True)
+    (turn / 'task.json').write_text(json.dumps({'stream_id': 'intra_test', 'turn_id': 'turn1',
+        'source_basis': {'benchmark_id': 'sr_agents', 'source_task_id': 'missing'}}))
+    with pytest.raises(ValueError, match='no new INDEX decision'):
+        handoff(tmp_path / 'old', tmp_path / 'new', tmp_path / 'package')
+
+
+def test_frozen_inventory_detects_missing_and_replaced_placements(tmp_path):
+    import pytest
+    pool = tmp_path / 'new'; (pool / 'sra').mkdir(parents=True)
+    (pool / 'sra/INDEX.jsonl').write_text(json.dumps({'source_id': 'sr_agents:present', 'admitted': False}))
+    row = {'stream_id': 'intra_test', 'turn_id': 'turn1',
+           'source_basis': {'benchmark_id': 'sr_agents', 'source_task_id': 'present'}}
+    turn = tmp_path / 'package/streams/intra_test/turn1'; turn.mkdir(parents=True)
+    (turn / 'task.json').write_text(json.dumps(row))
+    inventory = tmp_path / 'inventory.json'; inventory.write_text(json.dumps([row]))
+    result = handoff(tmp_path / 'old', pool, tmp_path / 'package', r2_inventory=inventory)
+    assert result['placement_coverage']['frozen_inventory_checked'] is True
+    for changed in [[], [{**row, 'source_basis': {'benchmark_id': 'sr_agents', 'source_task_id': 'replaced'}}]]:
+        inventory.write_text(json.dumps(changed))
+        with pytest.raises(ValueError, match='coverage/source identity'):
+            handoff(tmp_path / 'old', pool, tmp_path / 'package', r2_inventory=inventory)
+    (turn / 'task.json').unlink()
+    inventory.write_text(json.dumps([row]))
+    with pytest.raises(ValueError, match='coverage/source identity'):
+        handoff(tmp_path / 'old', pool, tmp_path / 'package', r2_inventory=inventory)
+
+
+def test_requested_streams_report_each_approved_triple_without_reservation(tmp_path):
+    from l2_v5_r3_handoff import REQUESTED_STREAMS
+    pool = tmp_path / 'new'; (pool / 'sra').mkdir(parents=True)
+    capability = 'sra.filesystem_and_io'
+    rows = []
+    for i in range(5):
+        sid = f'sr_agents:task{i}'; directory = pool / 'sra' / str(i); directory.mkdir()
+        (directory / 'pool_task.json').write_text(json.dumps({'source_id': sid,
+            'source': {'benchmark_id': 'sr_agents', 'source_task_id': f'task{i}'},
+            'capability_hint': {'capability_id': capability}, 'qualification': {'admitted': True}}))
+        rows.append({'source_id': sid, 'admitted': True})
+    (pool / 'sra/INDEX.jsonl').write_text('\n'.join(map(json.dumps, rows)))
+    result = handoff(tmp_path / 'old', pool, tmp_path / 'package')
+    assert set(result['requested_streams']) == set(REQUESTED_STREAMS)
+    first = result['requested_streams']['intra_sra_interleaved_02']
+    assert first['availability'][0] == {'capability_id': capability, 'unused_in_r2_intra': 5, 'shortfall': 0}
+    assert first['three_by_five_shortfall'] == 10
+    assert first['source_reservations'] == []
+    assert result['requested_streams']['intra_sra_blocked_02']['three_by_five_shortfall'] == 15
+    assert all('W3-compose-r3.md' in row['provenance'] for row in result['requested_streams'].values())
+
+
+def test_changed_source_basis_cannot_relabel_a_pool_source(tmp_path):
+    import pytest
+    pool = tmp_path / 'new'; record_dir = pool / 'sra/task'; record_dir.mkdir(parents=True)
+    (record_dir / 'pool_task.json').write_text(json.dumps({'source_id': 'sr_agents:original',
+        'source': {'benchmark_id': 'sr_agents', 'source_task_id': 'changed'}}))
+    with pytest.raises(ValueError, match='identity conflicts'):
+        handoff(tmp_path / 'old', pool, tmp_path / 'package')

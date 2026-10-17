@@ -9,6 +9,16 @@ from pathlib import Path
 from typing import Any
 
 
+AFFECTED_BENCHMARKS = {"skilllearnbench", "skillsbench", "sr_agents", "tau2_bench"}
+# Approved W3-compose-r3.md, New Streams table; existing spec/codebook unchanged.
+REQUESTED_STREAMS = {
+    "intra_sra_interleaved_02": ("sr_agents", "interleaved", ["sra.filesystem_and_io", "sra.text_processing", "sra.numerical_and_ml"]),
+    "intra_sra_blocked_02": ("sr_agents", "blocked", ["sra.data_visualization", "sra.dataframe_analysis", "sra.web_and_network"]),
+    "intra_tau2_telecom_delayed_01": ("tau2_bench", "delayed", ["tau2.telecom.mobile_data_troubleshooting", "tau2.telecom.mms_troubleshooting", "tau2.telecom.service_troubleshooting"]),
+    "intra_tau2_airline_interleaved_01": ("tau2_bench", "interleaved", ["tau2.airline.booking_cancellation", "tau2.airline.policy_refusal", "tau2.airline.reservation_changes"]),
+}
+
+
 def load_records(root: Path, families: tuple[str, ...] = ("native", "sra", "tau2")) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
     records, decisions = {}, {}
     for family in families:
@@ -16,14 +26,19 @@ def load_records(root: Path, families: tuple[str, ...] = ("native", "sra", "tau2
         if index.exists():
             for line in index.read_text().splitlines():
                 item = json.loads(line)
+                if item["source_id"] in decisions:
+                    raise ValueError("duplicate INDEX source: " + item["source_id"])
                 decisions[item["source_id"]] = item
         for file in (root / family).glob("*/pool_task.json"):
             item = json.loads(file.read_text())
+            if item["source_id"] in records:
+                raise ValueError("duplicate pool record source: " + item["source_id"])
             records[item["source_id"]] = item
     return records, decisions
 
 
-def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Path | None = None) -> dict[str, Any]:
+def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Path | None = None,
+            r2_inventory: Path | None = None) -> dict[str, Any]:
     rechecks = {}
     if r2_qualification is not None:
         for line in r2_qualification.read_text().splitlines():
@@ -31,16 +46,28 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
             rechecks[(row["stream_id"], row["turn_id"])] = row
     old, _ = load_records(old_pool)
     new, decisions = load_records(new_pool)
+    for sid, record in {**old, **new}.items():
+        source = record["source"]
+        if sid != source["benchmark_id"] + ":" + source["source_task_id"]:
+            raise ValueError("pool source identity conflicts with source basis: " + sid)
     identities = {(r["source"]["benchmark_id"], r["source"]["source_task_id"]): sid
                   for sid, r in {**old, **new}.items()}
     used = set()
     placements = []
+    package_placements = {}
     for file in sorted((package / "streams").glob("*/turn*/task.json")):
         task = json.loads(file.read_text())
         basis = task["source_basis"]
-        sid = identities.get((basis["benchmark_id"], basis["source_task_id"]))
-        if sid is None:
+        if basis["benchmark_id"] not in AFFECTED_BENCHMARKS:
             continue
+        sid = identities.get((basis["benchmark_id"], basis["source_task_id"]),
+                             basis["benchmark_id"] + ":" + basis["source_task_id"])
+        key = (task["stream_id"], task["turn_id"])
+        if key in package_placements:
+            raise ValueError("duplicate affected package placement: " + repr(key))
+        package_placements[key] = sid
+        if sid not in decisions:
+            raise ValueError("affected r2 placement has no new INDEX decision: " + sid + " " + repr(key))
         if task["stream_id"].startswith("intra_"):
             used.add(sid)
         previous, candidate = old.get(sid, {}), new.get(sid, {})
@@ -55,19 +82,43 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
                            "resource_enforcement": candidate.get("runtime", {}).get("resource_enforcement", decision.get("resource_enforcement")),
                            "resource_readback": candidate.get("runtime", {}).get("resource_readback", decision.get("resource_readback")),
                            "date_dependent": candidate.get("date_dependent", candidate.get("runtime", {}).get("date_dependent", False)),
+                           "old_admitted": previous.get("qualification", {}).get("admitted"),
+                           "outcome_changed": (previous["qualification"]["admitted"] != new_admitted
+                               if "admitted" in previous.get("qualification", {}) else None),
                            "new_admitted": new_admitted, "reason": decision.get("reason"),
                            "new_stage": decision.get("stage"),
                            "old_qualification": previous.get("qualification"),
                            "old_current_recheck": rechecks.get((task["stream_id"], task["turn_id"])),
                            "new_qualification": candidate.get("qualification"),
                            "agent_score_delta": None})
+    if r2_inventory is not None:
+        inventory = json.loads(r2_inventory.read_text())
+        if isinstance(inventory, dict):
+            inventory = inventory.get("turns", inventory.get("rows", []))
+        expected_placements = {}
+        for row in inventory:
+            basis = row["source_basis"]
+            if basis["benchmark_id"] not in AFFECTED_BENCHMARKS:
+                continue
+            key = (row["stream_id"], row["turn_id"])
+            if key in expected_placements:
+                raise ValueError("duplicate frozen affected placement: " + repr(key))
+            expected_placements[key] = identities.get((basis["benchmark_id"], basis["source_task_id"]),
+                                                      basis["benchmark_id"] + ":" + basis["source_task_id"])
+        if package_placements != expected_placements:
+            raise ValueError("r2 affected placement coverage/source identity differs from frozen inventory")
     unused = defaultdict(list)
     totals = Counter()
     rejected = Counter()
-    for sid, row in new.items():
-        admitted = decisions.get(sid, {}).get("admitted", row.get("qualification", {}).get("admitted", False))
-        cap = row.get("capability_hint", {}).get("capability_id", "unassigned")
-        benchmark = row["source"]["benchmark_id"]
+    inventory_counts = Counter()
+    for sid in sorted(new.keys() | decisions.keys()):
+        row, decision = new.get(sid, {}), decisions.get(sid, {})
+        admitted = decision.get("admitted", row.get("qualification", {}).get("admitted", False))
+        if admitted and sid not in new:
+            raise ValueError("admitted INDEX source lacks pool record: " + sid)
+        cap = row.get("capability_hint", {}).get("capability_id", decision.get("capability_id", "unassigned"))
+        benchmark = row.get("source", {}).get("benchmark_id", decision.get("benchmark_id", sid.split(":", 1)[0]))
+        inventory_counts[benchmark] += 1
         if admitted:
             totals[(benchmark, cap)] += 1
             if sid not in used:
@@ -86,11 +137,27 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         recommendations[source] = {"capability_triple": [r["capability_id"] for r in choices],
                                    "three_by_five_shortfall": deficit,
                                    "feasible": len(choices) == 3 and deficit == 0}
+    requested_streams = {}
+    by_capability = {(r["benchmark_id"], r["capability_id"]): r for r in counts}
+    for stream_id, (benchmark, schedule, capabilities) in REQUESTED_STREAMS.items():
+        availability = [{"capability_id": cap,
+                         "unused_in_r2_intra": by_capability.get((benchmark, cap), {}).get("unused_in_r2_intra", 0),
+                         "shortfall": max(0, 5 - by_capability.get((benchmark, cap), {}).get("unused_in_r2_intra", 0))}
+                        for cap in capabilities]
+        shortfall = sum(r["shortfall"] for r in availability)
+        requested_streams[stream_id] = {"benchmark_id": benchmark, "schedule": schedule,
+            "capability_triple": capabilities, "tasks_per_capability": 5, "availability": availability,
+            "three_by_five_shortfall": shortfall, "feasible": shortfall == 0,
+            "source_reservations": [], "provenance": "W3-compose-r3.md New Streams table (2026-10-16)"}
     resource_counts = Counter(row.get("resource_enforcement", "unrecorded") for row in decisions.values())
     observed_resources = sorted({json.dumps({key: row.get("resource_readback", {}).get(key)
         for key in ("cpu_limit", "memory_limit_bytes", "pids_limit")}, sort_keys=True)
         for row in decisions.values() if isinstance(row.get("resource_readback"), dict)})
     return {"schema_version": "l2_r3_handoff/1.0", "counts": counts, "recommendations": recommendations,
+            "inventory_counts": dict(inventory_counts), "requested_streams": requested_streams,
+            "placement_coverage": {"affected_placements": len(placements),
+                "by_benchmark": dict(Counter(r["source_id"].split(":", 1)[0] for r in placements)),
+                "frozen_inventory_checked": r2_inventory is not None},
             "resource_enforcement_counts": dict(resource_counts),
             "observed_resources": [json.loads(value) for value in observed_resources],
             "placement_diffs": placements, "decisions": decisions,
@@ -104,23 +171,28 @@ def main() -> int:
     parser.add_argument("--r2-package", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--r2-qualification", type=Path)
+    parser.add_argument("--r2-inventory", type=Path)
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
-    result = handoff(args.old_pool, args.new_pool, args.r2_package, args.r2_qualification)
+    result = handoff(args.old_pool, args.new_pool, args.r2_package, args.r2_qualification, args.r2_inventory)
     (args.out / "W3_HANDOFF.json").write_text(json.dumps(result, indent=2, ensure_ascii=False)+"\n")
     lines = ["# W3 r3 environment handoff", "", result["note"], "",
              "Unused means not used in any existing r2 intra_* Stream. Recommendations do not reserve sources for either new SRA/tau Stream.", "",
-             "| Source | Capability | Admitted | Unused |", "|---|---|---:|---:|"]
+             "| Source | Capability | Admitted | Rejected | Unused |", "|---|---|---:|---:|---:|"]
     if result["resource_enforcement_counts"].get("declared_not_enforced"):
         lines[4:4] = ["**Resource waiver:** Qualification used an explicitly approved declared_only waiver. "
                       "Docker resource flags were requested but not enforced. New executions still need explicit host opt-in; "
                       "saved profile metadata is provenance, not authorization.",
                       "Observed controller values: `" + json.dumps(result["observed_resources"], sort_keys=True) + "`.", ""]
-    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
+    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['rejected_with_capability_record']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
     lines += ["", "## Recommended triples", ""]
     lines += [f"- {b}: {', '.join(r['capability_triple']) or 'none'}; shortfall {r['three_by_five_shortfall']} tasks for one 3×5 Stream." for b, r in result["recommendations"].items()]
-    lines += ["", "## Every affected r2 placement", "", "| Stream | Turn | Source | Environment changed | New admitted | Current r2 fixtures OK | Reason |", "|---|---|---|---|---|---|---|"]
-    lines += [f"| {r['stream_id']} | {r['turn_id']} | {r['source_id']} | {r['environment_changed']} | {r['new_admitted']} | {(r['old_current_recheck'] or {}).get('ok', 'not checked')} | {str(r['reason']).replace('|', '/')} |" for r in result["placement_diffs"]]
+    lines += ["", "## Requested Stream readiness (no sources reserved)", ""]
+    for stream_id, row in result["requested_streams"].items():
+        values = "; ".join(f"{r['capability_id']}: {r['unused_in_r2_intra']} unused, {r['shortfall']} short" for r in row["availability"])
+        lines.append(f"- {stream_id}: {values}; total shortfall {row['three_by_five_shortfall']}.")
+    lines += ["", "## Every affected r2 placement", "", "| Stream | Turn | Source | Environment changed | Old admitted | New admitted | Outcome changed | Current r2 fixtures OK | Reason |", "|---|---|---|---|---|---|---|---|---|"]
+    lines += [f"| {r['stream_id']} | {r['turn_id']} | {r['source_id']} | {r['environment_changed']} | {r['old_admitted']} | {r['new_admitted']} | {r['outcome_changed']} | {(r['old_current_recheck'] or {}).get('ok', 'not checked')} | {str(r['reason']).replace('|', '/')} |" for r in result["placement_diffs"]]
     (args.out / "W3_HANDOFF.md").write_text("\n".join(lines)+"\n")
     return 0
 
