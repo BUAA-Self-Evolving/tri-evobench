@@ -466,7 +466,14 @@ def docker_run_staged(image: str, mounts: dict[Path, str], command: list[str], l
             except subprocess.TimeoutExpired:
                 return 124
             finally:
-                subprocess.run(["docker", "rm", "-f", name], capture_output=True, timeout=60, check=False)
+                try:
+                    cleanup = subprocess.run(["docker", "rm", "-f", name],
+                                             capture_output=True, timeout=60, check=False)
+                except subprocess.TimeoutExpired:
+                    handle.write(f"\ncleanup warning: docker rm timed out after 60s: {name}\n")
+                else:
+                    if cleanup.returncode:
+                        handle.write(f"\ncleanup warning: docker rm rc={cleanup.returncode}: {name}\n")
 
 def require_resource_capability(evidence: Path) -> dict[str, Any]:
     """Reject incapable daemons before build/API work; retain the readback."""

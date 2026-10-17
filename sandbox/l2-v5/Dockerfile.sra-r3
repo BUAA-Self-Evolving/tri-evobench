@@ -1,14 +1,14 @@
 # Dedicated task/evaluator closure for SR-Agents 277fd8d2 BigCodeBench.
 # No benchmark source, gold, private tests or retrieved skills enter any layer.
 FROM python:3.11.16-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e
-ARG DEBIAN_SNAPSHOT=20261016T000000Z
+ARG DEBIAN_MIRROR=http://mirrors.tuna.tsinghua.edu.cn
 ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
 ENV DEBIAN_FRONTEND=noninteractive PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     MPLBACKEND=Agg NLTK_DATA=/opt/nltk_data TF_CPP_MIN_LOG_LEVEL=3 \
     TF_ENABLE_ONEDNN_OPTS=0 OMP_NUM_THREADS=1
-RUN sed -i "s|http://deb.debian.org/debian-security|https://snapshot.debian.org/archive/debian-security/${DEBIAN_SNAPSHOT}|g; s|http://deb.debian.org/debian|https://snapshot.debian.org/archive/debian/${DEBIAN_SNAPSHOT}|g" /etc/apt/sources.list.d/debian.sources \
-    && apt-get -o Acquire::Retries=1 -o Acquire::Check-Valid-Until=false update \
-    && apt-get -o Acquire::Retries=1 -o Acquire::Check-Valid-Until=false install -y --no-install-recommends \
+RUN sed -i "s|http://deb.debian.org/debian-security|${DEBIAN_MIRROR}/debian-security|g; s|http://deb.debian.org/debian|${DEBIAN_MIRROR}/debian|g" /etc/apt/sources.list.d/debian.sources \
+    && apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 update \
+    && apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 install -y --no-install-recommends \
        ca-certificates git curl wget zip unzip procps g++ python3-tk r-base \
        libgdal-dev libgl1 libglib2.0-0 libgomp1 libsndfile1 tesseract-ocr \
     && mkdir -p /opt/sra-environment \

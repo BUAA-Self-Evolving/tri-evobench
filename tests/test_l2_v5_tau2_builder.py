@@ -135,6 +135,44 @@ def test_staged_transport_rejects_noop_or_stale_output(tmp_path, stale_marker):
     assert not any("exec" in call or "-v" in call for call in calls)
 
 
+def test_staged_cleanup_timeout_preserves_valid_score(tmp_path):
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    nonce = None
+
+    def fake_run(argv, **kwargs):
+        nonlocal nonce
+        if argv[:3] == ["docker", "rm", "-f"]:
+            raise builder.subprocess.TimeoutExpired(argv, 60)
+        if argv[:2] == ["docker", "inspect"]:
+            return SimpleNamespace(returncode=0, stdout="sha256:pinned none 0", stderr="")
+        if argv[:2] == ["docker", "cp"]:
+            if argv[3].endswith(":/tau2-transport"):
+                nonce = json.loads((Path(argv[2]) / "spec.json").read_text())["nonce"]
+            elif argv[2].endswith(":/tau2-transport/result.json"):
+                Path(argv[3]).write_text(json.dumps(
+                    {"nonce": nonce, "returncode": 0, "resource_readback": {}}))
+            elif argv[2].endswith(":/work"):
+                downloaded = Path(argv[3])
+                downloaded.mkdir()
+                (downloaded / ".tau2-transport-nonce").write_text(nonce)
+                (downloaded / "result.json").write_text(json.dumps(
+                    {"result": {"status": "pass", "score": 1.0}}))
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    log = tmp_path / "run.log"
+    with patch.object(builder.subprocess, "run", side_effect=fake_run), \
+            patch.object(builder, "require_resource_capability"), \
+            patch.object(builder, "require_container_resources"), \
+            patch.object(builder, "image_digest", return_value="sha256:pinned"):
+        code = builder.docker_run_staged("sha256:pinned", {stage: "/work"},
+                                         ["python", "runner.py"], log, 30)
+    assert code == 0
+    assert json.loads((stage / "result.json").read_text())["result"] == {"status": "pass", "score": 1.0}
+    assert json.loads(log.with_suffix(".log.transport.json").read_text())["returncode"] == 0
+    assert "cleanup warning: docker rm timed out after 60s" in log.read_text()
+
+
 @pytest.mark.skipif(__import__('os').environ.get("TRIEVO_TEST_TAU2_DOCKER") != "1", reason="explicit real Docker transport test")
 @pytest.mark.parametrize("resource_mode", ["strict", "declared_only"])
 def test_real_staged_transport_copies_outputs_and_isolates_containers(tmp_path, monkeypatch, resource_mode):
