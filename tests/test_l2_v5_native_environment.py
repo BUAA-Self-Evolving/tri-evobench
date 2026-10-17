@@ -458,6 +458,22 @@ def test_source_budget_keeps_a_ninety_minutes_and_b_forty_five():
     assert native.source_budget({'former_admission':False},args)==2700
 
 
+def test_image_imports_share_one_slot(tmp_path,monkeypatch):
+    import threading
+    monkeypatch.setattr(native,'_RESOURCE_PREFLIGHT',{})
+    first=tmp_path/'first'/'safe-rootfs.tar';first.parent.mkdir()
+    second=tmp_path/'second'/'safe-rootfs.tar';second.parent.mkdir()
+    entered=threading.Event()
+    def other():
+        with native.import_slot(second):entered.set()
+    with native.import_slot(first):
+        worker=threading.Thread(target=other);worker.start()
+        assert not entered.wait(0.1)
+    assert entered.wait(2)
+    worker.join(timeout=2)
+    assert not worker.is_alive()
+
+
 def test_coursier_download_moves_to_build_but_local_healthcheck_stays():
     download='curl -fL https://github.com/coursier/coursier/releases/download/v2.1.25-M23/cs.gz | gzip -d > cs && chmod +x cs && ./cs setup'
     original=download+'\nif curl -s http://localhost:8888/status; then\n echo ready\nfi\n'

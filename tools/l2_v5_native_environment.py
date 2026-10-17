@@ -285,6 +285,31 @@ def inspect_image(image: str) -> dict[str, Any]:
 
 
 def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
+    if argv[:2]==["docker","import"]:
+        with import_slot(Path(argv[-2])):
+            return _command(argv,log,timeout)
+    return _command(argv,log,timeout)
+
+
+@contextmanager
+def import_slot(archive: Path):
+    """Serialize image imports and wait for the shared daemon disk floor."""
+    import fcntl
+    with (archive.parent.parent/".import.lock").open("a+") as lock:
+        fcntl.flock(lock.fileno(),fcntl.LOCK_EX)
+        if _RESOURCE_PREFLIGHT:
+            root=Path(subprocess.check_output(["docker","info","--format","{{.DockerRootDir}}"],text=True).strip())
+            paused=False
+            while shutil.disk_usage(root).free < 8*1024**3:
+                if not paused:print("PAUSE NATIVE IMPORT: Docker free space below 8 GiB",flush=True)
+                paused=True
+                if _SOURCE_DEADLINE is not None and time.monotonic()>=_SOURCE_DEADLINE:
+                    raise TimeoutError("source time box exceeded while waiting to import image")
+                time.sleep(5)
+        yield
+
+
+def _command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
     started = time.time()
     if _SOURCE_DEADLINE is not None:
         timeout = min(timeout, max(1, int(_SOURCE_DEADLINE - time.monotonic())))
@@ -1213,8 +1238,11 @@ def remove_source_images(image_result: dict[str, Any], work: Path) -> None:
     key=reference["cache_key"]
     for prefix in ("trievo-r3-native:","trievo-r3-private-verifier:","trievo-r3-private:"):
         tag=prefix+key
-        inspected=subprocess.run(["docker","image","inspect",tag],capture_output=True,text=True)
-        if inspected.returncode==0:subprocess.run(["docker","image","rm",tag],capture_output=True)
+        try:
+            inspected=subprocess.run(["docker","image","inspect",tag],capture_output=True,text=True,timeout=30)
+            if inspected.returncode==0:subprocess.run(["docker","image","rm",tag],capture_output=True,timeout=30)
+        except subprocess.TimeoutExpired:
+            print("OWNED IMAGE CLEANUP TIMED OUT: "+tag,flush=True)
 
 
 def asset_inventory(row: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
@@ -1695,11 +1723,16 @@ def run_source(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
 
 def stop_owned_sources(signum: int, frame: Any) -> None:
     _STOP_REQUESTED.set()
-    for pid in list(_ACTIVE_SOURCES):
+    owned=list(_ACTIVE_SOURCES)
+    for pid in owned:
         try:os.killpg(pid,signal.SIGTERM)
         except ProcessLookupError:pass
-        containers=subprocess.run(["docker","ps","-aq","--filter","label=trievo.native.owner_pid="+str(pid)],capture_output=True,text=True).stdout.split()
-        if containers:subprocess.run(["docker","rm","-f",*containers],capture_output=True)
+    for pid in owned:
+        try:
+            containers=subprocess.run(["docker","ps","-aq","--filter","label=trievo.native.owner_pid="+str(pid)],capture_output=True,text=True,timeout=15).stdout.split()
+            if containers:subprocess.run(["docker","rm","-f",*containers],capture_output=True,timeout=30)
+        except subprocess.TimeoutExpired:
+            print("OWNED CONTAINER CLEANUP TIMED OUT: owner_pid="+str(pid),flush=True)
     raise SystemExit(128+signum)
 
 
