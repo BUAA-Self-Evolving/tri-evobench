@@ -66,3 +66,14 @@ def test_materialize_recipe_does_not_claim_image_qualification(tmp_path, monkeyp
         assert helper['mount'] == '/app/skills' and helper['scope'] == 'oracle_only'
         assert (output / helper['assets_path'] / 'SKILL.md').read_text() == 'secret skill'
         assert 'private_oracle_skills' not in (output / 'environment/Dockerfile').read_text()
+    failed = recipes.materialize(row, tmp_path / 'pool', {
+        'admitted': False, 'stage': 'deferred_download', 'reason': 'two actual download failures',
+        'environment': result['environment']})
+    assert failed['stage'] == 'deferred_download'
+    assert failed['reason'] == 'two actual download failures'
+    record = json.loads((output / 'pool_task.json').read_text())
+    assert record['qualification']['stage'] == 'deferred_download'
+    # An old recipe's failure cannot be assigned to the changed delivered recipe.
+    stale = recipes.materialize(row, tmp_path / 'pool', {
+        **failed, 'environment': {**failed['environment'], 'recipe_sha256': 'different-old-recipe'}})
+    assert stale['stage'] == 'recipe_ready' and stale['reason'] is None

@@ -147,9 +147,19 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
         record["recipe_adaptations"].append({"kind": "ordinary_uv_installer_mirror",
             "variable": "UV_INSTALLER_GITHUB_BASE_URL", "value": "https://ghproxy.net/https://github.com",
             "version": "0.9.7", "reason": "pinned installer release download produced no progress for about 25 minutes; installer and requested version unchanged"})
+    attempted = (outcome or {}).get("environment", {})
+    failed_current_recipe = (not (outcome or {}).get("admitted")
+        and (outcome or {}).get("stage") not in {None, "pending", "recipe_ready", "inventory"}
+        and attempted.get("recipe_sha256") == environment["recipe_sha256"]
+        and attempted.get("context_sha256") == environment["context_sha256"])
+    if failed_current_recipe:
+        record["qualification"] = {"admitted": False, "stage": outcome["stage"],
+                                   "reason": outcome.get("reason")}
+        for key in ("oracle", "known_correct", "known_broken", "recipe_verification"):
+            if key in outcome:record["qualification"][key] = outcome[key]
     native.dump(record_path, record)
     result = {**base, **(outcome or {}), "environment": environment}
-    if not result.get("admitted"):
+    if not result.get("admitted") and not failed_current_recipe:
         # Historical build errors are not failures of unbuilt recipes.
         # In particular, a runner preflight is not a recipe resource readback.
         result = {**base, "environment": environment, "admitted": False,
