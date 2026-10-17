@@ -1,6 +1,9 @@
 """Prepare submission-only red candidates; fresh native tests decide validity."""
 from __future__ import annotations
 
+import csv
+import hashlib
+import io
 import json
 import posixpath
 import re
@@ -10,6 +13,8 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
+
+_LOADED_HELPER_SHA=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 
 def _copy(source: Path, dest: Path) -> None:
@@ -108,6 +113,25 @@ def _organize(dest: Path) -> dict[str, Any]:
     raise ValueError("gold subject PDF unavailable")
 
 
+def _stock(dest: Path) -> dict[str, Any]:
+    directory=dest/"rootfs/root/output/data"
+    path=directory/"stock-descriptions.json"
+    if path.exists():
+        rows=json.loads(path.read_text())
+        if not isinstance(rows,list) or len(rows)<2:raise ValueError("gold stock rows unavailable")
+        path.write_text(json.dumps(rows[:-1],ensure_ascii=False,indent=2)+"\n")
+        count=len(rows)-1
+    else:
+        path=directory/"stock-descriptions.csv"
+        if not path.exists():path=directory/"stock-descriptions.tsv"
+        delimiter="\t" if path.suffix==".tsv" else ","
+        rows=list(csv.reader(io.StringIO(path.read_text()),delimiter=delimiter))
+        if len(rows)<3:raise ValueError("gold stock rows unavailable")
+        output=io.StringIO();csv.writer(output,delimiter=delimiter,lineterminator="\n").writerows(rows[:-1])
+        path.write_text(output.getvalue());count=len(rows)-2
+    return {"kind":"wrong_stock_row_count","file":str(path.relative_to(dest)),"retained_rows":count}
+
+
 def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
                    existing_work: Path | None = None) -> dict[str, Any] | None:
     """Return a mutation note, or None so the caller can use its seed fallback.
@@ -135,18 +159,20 @@ def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
                             continue
                         _copy(candidate, dest)
                     return {"kind": "reused_red_candidate", "candidate": str(candidate),
-                            "mutation": record.get("mutation")}
+                            "mutation": record.get("mutation"),"helper_sha256":_LOADED_HELPER_SHA}
             except (OSError, ValueError, KeyError, TypeError):
                 continue
     mutation = (_offer if "offer-letter-generator" in source_id else
                 _organize if "organize-messy-files" in source_id else
+                _stock if "stock-data-visualization" in source_id else
                 _gdp if "weighted-gdp" in source_id else None)
     if mutation is None:
         return None
     try:
         _copy(gold_dir, dest)
-        return mutation(source_id, dest) if mutation is _gdp else mutation(dest)
-    except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile):
+        note=mutation(source_id, dest) if mutation is _gdp else mutation(dest)
+        return {**note,"helper_sha256":_LOADED_HELPER_SHA}
+    except (OSError, ValueError, KeyError, csv.Error, ET.ParseError, zipfile.BadZipFile):
         if dest.is_dir() and not dest.is_symlink():
             shutil.rmtree(dest)
         return None
