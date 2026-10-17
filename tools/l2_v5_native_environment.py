@@ -37,6 +37,7 @@ except ImportError:
 _BUILD_SLOTS_FILE: Path | None = None
 _RESOURCE_MODE: str | None = None
 _RESOURCE_PREFLIGHT: dict[str, Any] = {}
+_UV_RELEASE_ARCHIVE: Path | None = None
 BUILD_PYPI_INDEX = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 _IMAGE_LOCKS: dict[str, threading.Lock] = {}
@@ -117,13 +118,53 @@ def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
     setup: list[str] = ["#!/bin/bash", "set -e", "export DEBIAN_FRONTEND=noninteractive"]
     adaptations: list[dict[str, str]] = []
     setup_guards: list[bool] = []
+    original_errexit = False  # Native verifier is invoked explicitly with bash.
+    unknown_setup_cwd = False
     for raw in logical_shell_lines(text):
         line = raw.strip()
         if not line or line.startswith("#"):
             runtime.append(raw)
             continue
-        if line.startswith("cd "):
-            setup.append(raw)
+        if line.startswith("set "):
+            lexer = shlex.shlex(line, posix=True, punctuation_chars=True)
+            lexer.whitespace_split = True
+            options = list(lexer)
+            if any(token in {";", "&&", "||", "|", "&"} for token in options):
+                raise ValueError("ambiguous_verifier_errexit_syntax")
+            index = 1
+            while index < len(options):
+                option = options[index]
+                if option == "--":
+                    break
+                if option in {"-o", "+o"}:
+                    if index + 1 < len(options) and options[index + 1] == "errexit":
+                        original_errexit = option == "-o"
+                    index += 2
+                    continue
+                if option.startswith(("-", "+")) and "e" in option[1:]:
+                    original_errexit = option.startswith("-")
+                index += 1
+        if line == "cd" or line.startswith("cd "):
+            lexer = shlex.shlex(line, posix=True, punctuation_chars=True)
+            lexer.whitespace_split = True
+            parts = list(lexer)
+            compound = len(parts) > 2 or any(token in {";", "&&", "||", "|", "&"} for token in parts)
+            if compound:
+                asynchronous = parts[-1:] == ["&"] and not any(
+                    token in {";", "|", "&"} for token in parts[:-1])
+                if not asynchronous:
+                    unknown_setup_cwd = True
+                adaptations.append({"kind": "verifier_compound_cd_runtime_only",
+                    "original": raw, "reason": "asynchronous AND-list changes cwd only in its subshell" if asynchronous
+                    else "keep compound evaluator code exclusively at runtime; reject any later moved setup requiring its unknown cwd"})
+            elif original_errexit:
+                setup.append(raw)
+            else:
+                adapted_cd = "{\n" + raw + "\n} || :"
+                setup.append(adapted_cd)
+                adaptations.append({"kind": "verifier_setup_cd_error_policy",
+                    "original": raw, "adapted": adapted_cd,
+                    "reason": "native bash verifier has errexit disabled here; failed cd must retain cwd and continue during build setup too"})
         if line.startswith("if "):
             selected=bool(re.match(r"if command -v curl|if \[ -x /opt/py310/bin/python",line))
             setup_guards.append(selected)
@@ -138,6 +179,8 @@ def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
             r"curl\s+.*(?:astral\.sh/uv/|github\.com/coursier/coursier/)|npm\s+(?:install|ci)|"
             r"(?:python[\d.]*\s+-m\s+)?playwright\s+install)", line))
         if network_setup:
+            if unknown_setup_cwd:
+                raise ValueError("ambiguous_verifier_cd_before_moved_setup")
             setup_command=raw
             if "github.com/coursier/coursier/" in line and "./cs setup" in line and "--yes" not in line:
                 setup_command=raw+" --yes"
@@ -148,15 +191,29 @@ def prepare_runner(text: str) -> tuple[str, str, list[dict[str, str]]]:
             adaptations.append({"kind": "verifier_setup_at_build", "original": raw})
         else:
             runtime.append(raw)
+        # The installer decides whether to write its env script from the PATH
+        # it observes. Preserve that native ordering, then source the same file
+        # for build-time uv commands as the unchanged runtime runner does.
+        if re.fullmatch(r'(?:source|\.)\s+(?:"\$HOME/\.local/bin/env"|\$HOME/\.local/bin/env)', line):
+            setup.append(raw)
+            adaptations.append({"kind": "verifier_setup_native_uv_environment", "original": raw,
+                "reason": "source the native installer environment in original order for moved setup and uvx prewarm"})
+        if line.startswith("export PATH="):
+            if not re.fullmatch(r'export PATH="[A-Za-z0-9_./:$\{\}-]+"', line):
+                raise ValueError("ambiguous_verifier_setup_path_export")
+            setup.append(raw)
+            adaptations.append({"kind": "verifier_setup_native_path", "original": raw,
+                "reason": "preserve native executable lookup in original order for moved dependency commands"})
         # Preserve uv tool isolation and all --with/--python/index flags.
         if re.match(r"uvx\s", line):
+            if unknown_setup_cwd:
+                raise ValueError("ambiguous_verifier_cd_before_moved_setup")
             match = re.search(r"\b(?:python\s+-m\s+)?pytest\b(?=\s|$)", line)
             # Skip '--with pytest==...' tokens: the real executable has no '='.
             if match:
                 warm = line[:match.start()] + line[match.start():match.end()] + " --version"
                 setup.append(warm)
                 adaptations.append({"kind": "uvx_environment_prewarm", "command": warm})
-    setup.insert(3, 'export PATH="$HOME/.local/bin:$PATH"')
     return "\n".join(runtime) + "\n", "\n".join(setup) + "\n", adaptations
 
 
@@ -466,6 +523,36 @@ def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
     return "".join(output)
 
 
+def uv_release_transport(setup: str, work: Path) -> tuple[str, str, list[dict[str, Any]]]:
+    """Use verified release bytes through the unchanged native uv installer."""
+    original = "curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh"
+    if _UV_RELEASE_ARCHIVE is None or original not in setup:
+        return setup, "", []
+    archive = _UV_RELEASE_ARCHIVE
+    installer = archive.with_name("uv-0.9.7-install.sh")
+    archive_sha = "b26fcc8dfa1c39b5a5613445af3be3eefda45d9a39359bee271eafe34913583e"
+    installer_sha = "ef72d0c2b8f2d2a0d7c6b2d866339869a3f0cbd31e8f1b6901f2064c16d47b58"
+    for path, expected in ((archive, archive_sha), (installer, installer_sha)):
+        if digest_file(path) != expected:
+            raise ValueError("uv_release_transport_checksum_mismatch:" + path.name)
+    directory = work / "private-uv-release"
+    directory.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(archive, directory / "uv-x86_64-unknown-linux-gnu.tar.gz")
+    shutil.copy2(installer, directory / "installer.sh")
+    native = "/tmp/native-uv-release"
+    guard = (f"printf '%s  %s\\n' {archive_sha} {native}/uv-x86_64-unknown-linux-gnu.tar.gz | sha256sum -c - && "
+             f"printf '%s  %s\\n' {installer_sha} {native}/installer.sh | sha256sum -c - && "
+             f"UV_DOWNLOAD_URL=file://{native} sh {native}/installer.sh")
+    adapted = setup.replace(original, guard)
+    return adapted, f"COPY private-uv-release {native}\n", [{
+        "kind": "build_uv_release_transport", "version": "0.9.7", "architecture": "x86_64-unknown-linux-gnu",
+        "archive_sha256": archive_sha, "archive_bytes": archive.stat().st_size,
+        "installer_url": "https://astral.sh/uv/0.9.7/install.sh", "installer_sha256": installer_sha,
+        "override": "UV_DOWNLOAD_URL=file:///tmp/native-uv-release",
+        "scope": "unchanged official installer and release bytes, host and build checksum guards; transient assets removed before flattened export",
+        "reason": "actual GitHub archive transfers took 678.8 seconds then failed with curl56 unexpected TLS EOF on retry"}]
+
+
 def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
     """Build native sources with recorded transports, then scrub the filesystem."""
@@ -518,6 +605,8 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         raise RuntimeError("native_declared_volumes_require_explicit_mount_adaptation:"+json.dumps(cfg["Volumes"]))
     runner = inputs["tests"] / "test.sh"
     runtime_runner, setup, adaptations = prepare_runner(runner.read_text())
+    setup, uv_copy, uv_adaptations = uv_release_transport(setup, work)
+    adaptations.extend(uv_adaptations)
     adaptations=context_adaptations+adaptations
     adaptations.append({"kind":"verifier_runner_transform","original_sha256":digest_file(runner),
                         "adapted_sha256":hashlib.sha256(runtime_runner.encode()).hexdigest(),
@@ -540,11 +629,13 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     (work/"verifier-root-setup.sh").write_text("#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\n"+"\n".join(root_setup)+"\n")
     (work/"verifier-user-setup.sh").write_text("\n".join(user_setup)+"\n")
     (work/"Dockerfile.verifier").write_text(build_transport_dockerfile(
-        f"FROM {raw_tag}\nUSER root\n"+private_copy+
+        f"FROM {raw_tag}\nUSER root\n"+private_copy+uv_copy+
         "COPY verifier-root-setup.sh verifier-user-setup.sh /tmp/\n"
         "RUN bash /tmp/verifier-root-setup.sh\n"+
         (f"USER {cfg['User']}\n" if cfg.get("User") else "")+
-        "RUN bash /tmp/verifier-user-setup.sh\n",
+        "RUN bash /tmp/verifier-user-setup.sh\n"+
+        ("USER root\nRUN rm -rf /tmp/native-uv-release\n"+
+         (f"USER {cfg['User']}\n" if cfg.get("User") else "") if uv_copy else ""),
         apt_debian="mirrors.tuna.tsinghua.edu.cn/debian" in transported.read_text()))
     dump(work/"ADAPTATIONS.json",adaptations)
     aug_tag = "trievo-r3-private-verifier:" + work.name
@@ -631,8 +722,9 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     # Native siblings commonly have byte-identical environments. Share only
     # identical context+runner content; never union distinct dependencies.
     runner_outputs=json.dumps(prepare_runner((inputs["tests"]/"test.sh").read_text()),sort_keys=True)
+    uv_transport = bool(_UV_RELEASE_ARCHIVE and "https://astral.sh/uv/0.9.7/install.sh" in runner_outputs)
     key = hashlib.sha256((sources.tree_sha256(inputs["context"]) +
-                          sources.tree_sha256(inputs["tests"]) + runner_outputs + image_build_fingerprint()).encode()).hexdigest()
+                          sources.tree_sha256(inputs["tests"]) + runner_outputs + str(uv_transport) + image_build_fingerprint()).encode()).hexdigest()
     shared = work.parent / "images" / key
     dump(work/"build_reference.json",{"cache_key":key,"image_work":str(shared)})
     with _IMAGE_LOCKS_GUARD:
@@ -659,10 +751,80 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
 def image_build_fingerprint() -> str:
     """Bind image caches to image-producing code, independent of qualification."""
     functions=(private_member,sanitize_archive,image_config_changes,
-               base_image_provenance,build_asset_transport,build_transport_dockerfile,_build_image)
+               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,_build_image)
     payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
              "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
     return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
+
+
+def retained_dependency_cache_aliases(row: dict[str, Any], archive: Path) -> list[dict[str, Any]]:
+    """Recognize only the inspected Trivy input cache retained in the image.
+
+    Absolute submission links remain subject to tarfile's strict data filter.
+    This alias is a dependency input, not a persistent submission output.
+    """
+    sid = row["benchmark_id"] + ":" + row["source_task_id"]
+    inspected = {f"skilllearnbench:dependency-vulnerability-check-{i}" for i in range(1, 6)}
+    inspected.add("skillsbench:software-dependency-audit")
+    if sid not in inspected:
+        return []
+    with tarfile.open(archive) as tf:
+        members = {"/" + m.name.lstrip("./").rstrip("/"): m for m in tf}
+    alias = members.get("/root/trivy-cache")
+    target = "/root/.cache/trivy"
+    directory = members.get(target)
+    database = members.get(target + "/db/trivy.db")
+    if not (alias and alias.issym() and alias.linkname == target and directory and
+            directory.isdir() and database and database.isfile() and database.size > 0):
+        return []
+    # No indirect/escaping links may hide under the inspected target tree.
+    descendants = [m for p, m in members.items() if p.startswith(target + "/")]
+    if any(m.issym() or m.islnk() for m in descendants):
+        return []
+    return [{"kind": "image_retained_dependency_cache_alias", "native_path": "/root/trivy-cache",
+        "target": target, "target_bytes": sum(m.size for m in descendants if m.isfile()),
+        "database_bytes": database.size, "source_id": sid,
+        "canonical_commit": "d005409588e3f74449ab3f13cde29cfea87a80bc",
+        "asset_sha256": "e67dd9144e93897c5e2dbe4228e3444e4818130923e39389f32164a01bb62d0f",
+        "scope": "native alias and verified database retained unchanged in pinned image; omitted from workspace seed and mappings",
+        "reason": "unchanged oracle uses --cache-dir /root/trivy-cache as dependency input; public submission output /root/security_audit.csv is mapped separately"}]
+
+
+def retained_native_input_assets(row: dict[str, Any], archive: Path) -> list[dict[str, Any]]:
+    """Retain the inspected scanner input as its original regular image file."""
+    sid = row["benchmark_id"] + ":" + row["source_task_id"]
+    inspected = {f"skilllearnbench:dependency-vulnerability-check-{i}" for i in range(1, 6)}
+    inspected.add("skillsbench:software-dependency-audit")
+    if sid not in inspected:
+        return []
+    source = row["task_dir"] / "environment/package-lock.json"
+    if source.is_symlink() or not source.is_file():
+        raise ValueError("native_retained_input_source_not_regular:" + sid)
+    with tarfile.open(archive) as tf:
+        members = [m for m in tf if m.name.lstrip("./").rstrip("/") == "root/package-lock.json"]
+        if len(members) != 1 or not members[0].isfile():
+            raise ValueError("native_retained_input_archive_not_regular:" + sid)
+        parent = next((m for m in tf.getmembers() if m.name.lstrip("./").rstrip("/") == "root"), None)
+        if parent and not parent.isdir():
+            raise ValueError("native_retained_input_unsafe_parent:" + sid)
+        member = members[0]
+        image_sha = hashlib.sha256(tf.extractfile(member).read()).hexdigest()
+    source_sha = digest_file(source)
+    if image_sha != source_sha or member.size != source.stat().st_size:
+        raise ValueError("native_retained_input_source_image_mismatch:" + sid)
+    anchors = []
+    for path in (row["instruction"], row["task_dir"] / "environment/Dockerfile"):
+        anchors.append({"source_path": str(path.relative_to(row["task_dir"])), "sha256": digest_file(path),
+            "lines": [i for i, text in enumerate(path.read_text().splitlines(), 1)
+                      if "package-lock.json" in text or "security_audit.csv" in text]})
+    return [{"kind": "image_retained_native_input", "source_id": sid,
+        "native_path": "/root/package-lock.json", "bytes": member.size, "sha256": image_sha,
+        "source_path": "environment/package-lock.json", "source_sha256": source_sha,
+        "source_anchors": anchors, "archive_member_type": "regular_file",
+        "scope": "public input remains unchanged in pinned sanitized image and exported image; omitted from persistent workspace mappings",
+        "mutation_policy": "upstream image permissions unchanged; edits to this image-layer input are transient and do not persist as workspace state",
+        "reason": "all six inspected tasks consume this dependency manifest and submit CSV reports; actual Trivy ignores symlink input but scans original regular file",
+        "evidence": "TRIVY_IMAGE_RETAINED_INPUT_REVIEW.json; TRIVY_INPUT_ALIAS_ACTUAL_AB_PROBE.json"}]
 
 
 def absolute_public_paths(row: dict[str, Any], cwd: str, archive: Path) -> list[str]:
@@ -704,6 +866,8 @@ def absolute_public_paths(row: dict[str, Any], cwd: str, archive: Path) -> list[
     # Nested cwd is a public project tree only when outside infrastructure roots.
     if cwd not in {"/", "/root", "/app", "/workspace"} and not (cwd.startswith("/home/") and len(PurePosixPath(cwd).parts)==3):
         paths.add(cwd)
+    for retained in retained_dependency_cache_aliases(row, archive) + retained_native_input_assets(row, archive):
+        paths.discard(retained["native_path"])
     # Remove children whose parent itself is already mapped.
     return sorted(p for p in paths if not any(p.startswith(other + "/") for other in paths if other != p))
 
@@ -909,6 +1073,39 @@ def asset_inventory(row: dict[str, Any], inputs: dict[str, Any]) -> dict[str, An
             "admission_blocked":any(x["status"]=="terms_review_required" for x in external)}
 
 
+def quarantine_prior_materialization(task: Path, work: Path) -> dict[str, Any] | None:
+    """Keep prior task bytes and executed observations outside the new pool."""
+    if not task.exists():
+        return None
+    if task.is_symlink() or not task.is_dir():
+        raise ValueError("prior_native_materialization_not_directory:" + str(task))
+    history = work / "prior-task-materializations"
+    history.mkdir(parents=True, exist_ok=True)
+    destination = history / str(time.time_ns())
+    record = task / "pool_task.json"
+    record_sha = digest_file(record) if record.exists() else None
+    shutil.move(str(task), str(destination))
+    return {"path": str(destination), "prior_pool_task_sha256": record_sha,
+        "invalidated_by_adapter_sha256": _LOADED_ADAPTER_SHA,
+        "reason": "previous materialization preserved byte-for-byte as historical evidence before fresh qualification; no resource observations relabeled"}
+
+
+def verifier_cache_environment(environment: dict[str, str], adaptations: list[dict[str, Any]]) -> tuple[dict[str, str], list[dict[str, Any]]]:
+    """Select the prewarmed uv namespace while resolving strictly offline."""
+    result = dict(environment)
+    if not any(a.get("kind") == "uvx_environment_prewarm" for a in adaptations):
+        return result, []
+    for key in ("UV_INDEX_URL", "UV_DEFAULT_INDEX", "UV_INDEX"):
+        if key in result and result[key] != BUILD_PYPI_INDEX:
+            raise ValueError("native_uv_index_conflicts_with_prewarmer:" + key)
+    result.setdefault("UV_INDEX_URL", BUILD_PYPI_INDEX)
+    return result, [{"kind": "uv_offline_cache_index_identity", "stage": "verifier",
+        "env": {"UV_INDEX_URL": result["UV_INDEX_URL"]},
+        "scope": "same index identity as verified build prewarm; UV_OFFLINE=1 and network none remain enforced",
+        "reason": "uv resolves cache entries by index namespace; same-image actual A/B failed with default index and passed with prewarm index",
+        "evidence": "UV_OFFLINE_INDEX_IDENTITY_ACTUAL_AB.json"}]
+
+
 def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     if hashlib.sha256(Path(__file__).read_bytes()).hexdigest()!=_LOADED_ADAPTER_SHA:
         raise RuntimeError("native builder source changed after import; stop worker and restart")
@@ -925,14 +1122,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     if args.resume and (work/"outcome.json").exists():
         previous=json.loads((work/"outcome.json").read_text())
         if previous.get("adapter_sha256")==_LOADED_ADAPTER_SHA and previous.get("stage") not in {"error","pending","resource_blocked"} and sid!="skillsbench:edit-pdf":return previous
-    if (task/"pool_task.json").exists():
-        stale=json.loads((task/"pool_task.json").read_text())
-        dump(work/"prior-pool-record.json",stale)
-        stale["qualification"]["admitted"]=False
-        if _RESOURCE_PREFLIGHT:apply_resource_fields(stale,_RESOURCE_PREFLIGHT)
-        stale["qualification"].setdefault("notes",[]).append("invalidated before adapter requalification")
-        dump(task/"pool_task.json",stale)
     try:
+        historical=quarantine_prior_materialization(task,work)
+        if historical:result["prior_task_materialization"]=historical
         inp=task_inputs(row)
         configuration=source_metadata(row);info=source_info(row)
         license_manifest=asset_inventory(row,inp)
@@ -958,17 +1150,22 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             result["upstream_entrypoint"]=cfg["Entrypoint"]
         if source_environment.get("workdir"):cwd=source_environment["workdir"]
         result["image_id"]=image["Id"]
+        verifier_env,cache_index_adaptations=verifier_cache_environment(stage_environment(configuration,"verifier"),image_result["adaptations"])
+        cache_aliases=retained_dependency_cache_aliases(row,work/"safe-rootfs.tar")+retained_native_input_assets(row,work/"safe-rootfs.tar")
+        for adaptation in cache_aliases:
+            adaptation["image_id"]=image["Id"]
+        result.setdefault("adaptations",[]).extend(cache_aliases+cache_index_adaptations)
         paths=absolute_public_paths(row,cwd,work/"safe-rootfs.tar")
         mappings=[{"native_path":p,"workspace_relative_path":"rootfs/"+p.lstrip("/")} for p in paths]
         environment={"schema_version":ADAPTER_VERSION,"cwd":cwd,"path_mappings":mappings,
                      "python_executable":image_result["runtime_readback"]["python_executable"],"entrypoint":"/bin/sh","user":cfg.get("User",""),
                      "image":{"local_id":image["Id"],"distribution_reference":None},
                      "verifier":{"command":["bash",row["tests_mount"]+"/test.sh"],"cwd":cwd,
-                                 "timeout_seconds":info["verifier_timeout"],"env":stage_environment(configuration,"verifier"),
+                                 "timeout_seconds":info["verifier_timeout"],"env":verifier_env,
                                  "reward_path":"/logs/verifier/reward.txt"},
                      "oracle":{"command":["bash",row["oracle_mounts"][0]+"/solve.sh"],"cwd":cwd,
                                "timeout_seconds":max(1800,info["agent_timeout"]),"env":stage_environment(configuration,"oracle")},
-                     "adaptations":image_result["adaptations"]+[{"kind":"flatten_private_image","removed_paths":image_result["scrub"]["removed_paths"]}]}
+                     "adaptations":image_result["adaptations"]+cache_aliases+cache_index_adaptations+[{"kind":"flatten_private_image","removed_paths":image_result["scrub"]["removed_paths"]}]}
         if _RESOURCE_PREFLIGHT:environment["adaptations"].append(resource_adaptation(_RESOURCE_PREFLIGHT))
         if sid=="skillsbench:edit-pdf":
             result["time_sensitive_native_verifier"]=True
@@ -1194,7 +1391,7 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
 
 
 def main() -> int:
-    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT
+    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
     parser.add_argument("--resource-enforcement",choices=("strict","declared_only"),default=None,
@@ -1208,14 +1405,20 @@ def main() -> int:
     parser.add_argument("--jobs",type=int,default=2)
     parser.add_argument("--build-slots-file",type=Path,help="Live heavy-build quota file containing 1 or 2")
     parser.add_argument("--build-timeout",type=int,default=3600)
+    parser.add_argument("--uv-release-archive",type=Path,
+                        help="verified uv0.9.7 official archive; adjacent uv-0.9.7-install.sh required and hash checked")
     parser.add_argument("--resume",action="store_true")
     parser.add_argument("--inventory-only",action="store_true")
     args=parser.parse_args()
     _BUILD_SLOTS_FILE=args.build_slots_file
+    _UV_RELEASE_ARCHIVE=args.uv_release_archive
     from trievo_bench.container_resources import resource_enforcement_mode
     _RESOURCE_MODE=resource_enforcement_mode(args.resource_enforcement)
     if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
     args.work.mkdir(parents=True,exist_ok=True);args.pool.mkdir(parents=True,exist_ok=True)
+    if _UV_RELEASE_ARCHIVE:
+        uv_release_transport("curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh",
+                             args.work / "uv-transport-input-validation")
     if not args.inventory_only:
         resource_capability_preflight(args.work,_RESOURCE_MODE)
         preflight=docker_exec_preflight(args.work)

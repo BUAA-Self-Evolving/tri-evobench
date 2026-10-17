@@ -81,6 +81,50 @@ def test_command_retry_preserves_prior_failure_log(tmp_path):
     assert Path(second['log']).read_text() == 'retry success\n'
 
 
+@pytest.mark.parametrize('policy,nonfatal', [
+    ('', True), ('set -e\n', False), ('set -e\nset +e\n', True),
+    ('set +e\nset -o errexit\n', False),
+    ('set -o errexit\nset +o errexit\n', True), ('set -euxo pipefail\n', False),
+])
+def test_setup_cd_preserves_native_error_policy(tmp_path, policy, nonfatal):
+    original = policy + 'cd ./missing-native-directory # native comment\n'
+    runtime, setup, adaptations = native.prepare_runner(original)
+    assert runtime == original
+    result = subprocess.run(['bash', '-c', setup + '\nprintf "%s" "$PWD"\n'],
+                            cwd=tmp_path, text=True, capture_output=True)
+    assert (result.returncode == 0) == nonfatal
+    if nonfatal:
+        assert result.stdout == str(tmp_path)
+        assert adaptations[-1]['kind'] == 'verifier_setup_cd_error_policy'
+    else:
+        assert not any(a['kind'] == 'verifier_setup_cd_error_policy' for a in adaptations)
+
+
+@pytest.mark.parametrize('compound', ['cd /app && echo run', 'cd /app; echo run',
+                                      'cd /app || exit 1', 'cd /app | cat'])
+def test_setup_cd_rejects_ambiguous_compound_shell(compound):
+    with pytest.raises(ValueError, match='ambiguous_verifier_cd_before_moved_setup'):
+        native.prepare_runner(compound + '\npip install required-package\n')
+
+
+def test_post_test_compound_cd_and_heredoc_stay_runtime_only():
+    original = ('cd /tests && uvx --with numpy python3 << "PYTHON_EOF"\n'
+                'print("runtime score generation")\nPYTHON_EOF\n')
+    runtime, setup, adaptations = native.prepare_runner(original)
+    assert runtime == original
+    assert 'cd /tests' not in setup and 'score generation' not in setup
+    assert adaptations[-1]['kind'] == 'verifier_compound_cd_runtime_only'
+
+
+def test_asynchronous_service_cd_does_not_change_setup_cwd():
+    original = 'cd /services/api-simulator && npm start &\ncd /app\npip install needed\n'
+    runtime, setup, adaptations = native.prepare_runner(original)
+    assert 'cd /services/api-simulator && npm start &' in runtime
+    assert 'api-simulator' not in setup and 'npm start' not in setup
+    assert 'cd /app' in setup and 'pip install needed' in setup
+    assert 'subshell' in adaptations[0]['reason']
+
+
 def test_generated_verifier_numeric_user_without_passwd_defaults_gid_zero(tmp_path, monkeypatch):
     generated=tmp_path/'source_verifier.py';generated.write_text(native.verifier_text())
     spec=importlib.util.spec_from_file_location('identity_verifier',generated)
@@ -399,3 +443,172 @@ def test_npm_setup_preserves_native_cwd_and_runtime_build():
     assert 'npm install' not in runtime
     assert 'npm run build' in runtime and 'npm run build' not in setup
     assert 'playwright install chromium' in setup and 'playwright install chromium' not in runtime
+
+
+def test_inspected_trivy_cache_stays_in_image_and_public_output_maps(tmp_path):
+    source=tmp_path/'rootfs.tar'
+    with tarfile.open(source,'w') as tf:
+        directory=tarfile.TarInfo('root/.cache/trivy');directory.type=tarfile.DIRTYPE;tf.addfile(directory)
+        db=tarfile.TarInfo('root/.cache/trivy/db/trivy.db');db.size=3;tf.addfile(db,io.BytesIO(b'db!'))
+        alias=tarfile.TarInfo('root/trivy-cache');alias.type=tarfile.SYMTYPE;alias.linkname='/root/.cache/trivy';tf.addfile(alias)
+        lock=tarfile.TarInfo('root/package-lock.json');lock.size=4;tf.addfile(lock,io.BytesIO(b'lock'))
+    instruction=tmp_path/'instruction.md';instruction.write_text('Use /root/trivy-cache and write /root/security_audit.csv')
+    tests=tmp_path/'tests';tests.mkdir()
+    oracle=tmp_path/'oracle';oracle.mkdir()
+    environment=tmp_path/'environment';environment.mkdir();(environment/'Dockerfile').write_text('FROM ubuntu\n')
+    (environment/'package-lock.json').write_bytes(b'lock')
+    row={'benchmark_id':'skilllearnbench','source_task_id':'dependency-vulnerability-check-1',
+         'instruction':instruction,'tests_dir':tests,'oracle_dir':oracle,'task_dir':tmp_path}
+    caches=native.retained_dependency_cache_aliases(row,source)
+    assert caches[0]['target_bytes']==3 and caches[0]['database_bytes']==3
+    assert caches[0]['canonical_commit']=='d005409588e3f74449ab3f13cde29cfea87a80bc'
+    assert len(caches[0]['asset_sha256'])==64
+    paths=native.absolute_public_paths(row,'/root',source)
+    assert paths==['/root/security_audit.csv']
+    native.materialize_seed(source,[{'native_path':p,'workspace_relative_path':'rootfs'+p} for p in paths],tmp_path/'seed')
+    assert not (tmp_path/'seed/rootfs/root/trivy-cache').exists()
+    with tarfile.open(source) as tf:
+        assert tf.getmember('root/trivy-cache').linkname=='/root/.cache/trivy'
+        assert tf.extractfile('root/.cache/trivy/db/trivy.db').read()==b'db!'
+    assert native.retained_dependency_cache_aliases(dict(row,source_task_id='unknown'),source)==[]
+
+
+@pytest.mark.parametrize('target,with_db',[
+    ('/root/unknown',True),('/root/oracle',True),('/root/.cache/trivy',False),
+])
+def test_unknown_private_or_dangling_absolute_cache_link_still_rejected(tmp_path,target,with_db):
+    source=tmp_path/'rootfs.tar'
+    with tarfile.open(source,'w') as tf:
+        if with_db:
+            directory=tarfile.TarInfo('root/.cache/trivy');directory.type=tarfile.DIRTYPE;tf.addfile(directory)
+            db=tarfile.TarInfo('root/.cache/trivy/db/trivy.db');db.size=1;tf.addfile(db,io.BytesIO(b'x'))
+        alias=tarfile.TarInfo('root/trivy-cache');alias.type=tarfile.SYMTYPE;alias.linkname=target;tf.addfile(alias)
+    row={'benchmark_id':'skilllearnbench','source_task_id':'dependency-vulnerability-check-1'}
+    assert native.retained_dependency_cache_aliases(row,source)==[]
+    with pytest.raises(tarfile.AbsoluteLinkError):
+        native.materialize_seed(source,[{'native_path':'/root/trivy-cache',
+            'workspace_relative_path':'rootfs/root/trivy-cache'}],tmp_path/'seed')
+
+
+@pytest.mark.parametrize('source_line',['source $HOME/.local/bin/env','source "$HOME/.local/bin/env"'])
+def test_uv_installer_observes_native_path_then_sources_environment(tmp_path,source_line):
+    import os,subprocess
+    fake_bin=tmp_path/'bin';fake_bin.mkdir()
+    # This reproduces the installer's relevant decision: a preconfigured PATH
+    # suppresses env creation, so the old blanket export makes this check fail.
+    installer='''#!/bin/sh
+case ":$PATH:" in *":$HOME/.local/bin:"*) exit 0;; esac
+mkdir -p "$HOME/.local/bin"
+printf 'export PATH="$HOME/.local/bin:$PATH"\\n' > "$HOME/.local/bin/env"
+printf '#!/bin/sh\\nprintf "pytest 8.4.1\\\\n"\\n' > "$HOME/.local/bin/uvx"
+chmod +x "$HOME/.local/bin/uvx"
+'''
+    installer_path=tmp_path/'installer';installer_path.write_text(installer)
+    curl=fake_bin/'curl';curl.write_text('#!/bin/sh\ncat "$NATIVE_TEST_INSTALLER"\n');curl.chmod(0o755)
+    original='curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh\n'+source_line+'\nuvx --with pytest==8.4.1 pytest /tests/test_outputs.py\n'
+    runtime,setup,_=native.prepare_runner(original)
+    assert source_line in runtime
+    assert setup.index('curl -LsSf') < setup.index(source_line) < setup.index('uvx ')
+    home=tmp_path/'home';home.mkdir()
+    observed=subprocess.run(['bash','-c',setup],env={**os.environ,'HOME':str(home),
+        'PATH':str(fake_bin)+':/usr/bin:/bin','NATIVE_TEST_INSTALLER':str(installer_path)},capture_output=True,text=True)
+    assert observed.returncode==0,observed.stderr
+    assert 'pytest 8.4.1' in observed.stdout
+    assert (home/'.local/bin/env').is_file()
+    negative_home=tmp_path/'negative-home';negative_home.mkdir()
+    old_setup=setup.replace('export DEBIAN_FRONTEND=noninteractive\n',
+        'export DEBIAN_FRONTEND=noninteractive\nexport PATH="$HOME/.local/bin:$PATH"\n',1)
+    negative=subprocess.run(['bash','-c',old_setup],env={**os.environ,'HOME':str(negative_home),
+        'PATH':str(fake_bin)+':/usr/bin:/bin','NATIVE_TEST_INSTALLER':str(installer_path)},capture_output=True,text=True)
+    assert negative.returncode!=0
+    assert not (negative_home/'.local/bin/env').exists()
+
+
+def test_native_explicit_path_precedes_moved_uv_setup():
+    original='export PATH="/root/.local/bin:/home/github/.local/bin:$PATH"\nuv init --python 3.10\nuv add pytest==8.4.1\n'
+    runtime,setup,_=native.prepare_runner(original)
+    assert original.splitlines()[0] in runtime
+    assert setup.index('export PATH=') < setup.index('uv init') < setup.index('uv add')
+    with pytest.raises(ValueError,match='ambiguous_verifier_setup_path_export'):
+        native.prepare_runner('export PATH="$(unknown):$PATH"\nuv add pytest\n')
+
+
+def test_uv_release_transport_is_optional_and_checksum_guarded(tmp_path,monkeypatch):
+    original='curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh > /dev/null 2>&1\nsource $HOME/.local/bin/env\n'
+    monkeypatch.setattr(native,'_UV_RELEASE_ARCHIVE',None)
+    assert native.uv_release_transport(original,tmp_path/'work')==(original,'',[])
+    archive=tmp_path/'release.tar.gz';archive.write_bytes(b'corrupt archive')
+    (tmp_path/'uv-0.9.7-install.sh').write_text('installer')
+    monkeypatch.setattr(native,'_UV_RELEASE_ARCHIVE',archive)
+    with pytest.raises(ValueError,match='uv_release_transport_checksum_mismatch'):
+        native.uv_release_transport(original,tmp_path/'work')
+    monkeypatch.setattr(native,'digest_file',lambda p: 'ef72d0c2b8f2d2a0d7c6b2d866339869a3f0cbd31e8f1b6901f2064c16d47b58' if p.name.endswith('install.sh') else 'b26fcc8dfa1c39b5a5613445af3be3eefda45d9a39359bee271eafe34913583e')
+    setup,copy,ledger=native.uv_release_transport(original,tmp_path/'work')
+    assert setup.count('sha256sum -c -')==2
+    assert 'UV_DOWNLOAD_URL=file:///tmp/native-uv-release sh /tmp/native-uv-release/installer.sh > /dev/null 2>&1' in setup
+    assert 'source $HOME/.local/bin/env' in setup
+    assert copy=='COPY private-uv-release /tmp/native-uv-release\n'
+    assert ledger[0]['archive_bytes']==len(b'corrupt archive')
+    assert (tmp_path/'work/private-uv-release/installer.sh').read_text()=='installer'
+
+
+@pytest.mark.parametrize('member_kind',['regular','symlink','hardlink','wrong_bytes','unsafe_parent'])
+def test_retained_scanner_input_requires_exact_regular_source_bytes(tmp_path,member_kind):
+    environment=tmp_path/'environment';environment.mkdir()
+    (environment/'package-lock.json').write_bytes(b'original lock')
+    (environment/'Dockerfile').write_text('COPY package-lock.json /root/\n')
+    instruction=tmp_path/'instruction.md';instruction.write_text('Read /root/package-lock.json and write /root/security_audit.csv')
+    archive=tmp_path/'image.tar'
+    with tarfile.open(archive,'w') as tf:
+        parent=tarfile.TarInfo('root');parent.type=tarfile.SYMTYPE if member_kind=='unsafe_parent' else tarfile.DIRTYPE
+        parent.linkname='/private';tf.addfile(parent)
+        member=tarfile.TarInfo('root/package-lock.json')
+        if member_kind in {'symlink','hardlink'}:
+            member.type=tarfile.SYMTYPE if member_kind=='symlink' else tarfile.LNKTYPE
+            member.linkname='/private/lock';tf.addfile(member)
+        else:
+            payload=b'changed lock' if member_kind=='wrong_bytes' else b'original lock'
+            member.size=len(payload);tf.addfile(member,io.BytesIO(payload))
+    row={'benchmark_id':'skilllearnbench','source_task_id':'dependency-vulnerability-check-1','task_dir':tmp_path,'instruction':instruction}
+    if member_kind=='regular':
+        asset=native.retained_native_input_assets(row,archive)[0]
+        assert asset['sha256']==native.digest_file(environment/'package-lock.json')
+        assert asset['bytes']==13 and asset['archive_member_type']=='regular_file'
+        assert 'transient' in asset['mutation_policy']
+        with tarfile.open(archive) as tf:
+            assert tf.getmember('root/package-lock.json').isfile()
+            assert tf.extractfile('root/package-lock.json').read()==b'original lock'
+        assert native.retained_native_input_assets(dict(row,source_task_id='unknown'),archive)==[]
+    else:
+        with pytest.raises(ValueError,match='native_retained_input_'):
+            native.retained_native_input_assets(row,archive)
+
+
+def test_prior_materialization_quarantine_preserves_executed_resource_bytes(tmp_path):
+    import json
+    task=tmp_path/'pool/task';task.mkdir(parents=True)
+    prior={'qualification':{'admitted':True,'resource_observation_provenance':{'kind':'fixture','stage':'known_correct'},
+                           'resource_readback':{'cpu_limit':108.04,'memory_limit_bytes':12345}}}
+    exact=json.dumps(prior,indent=2)+'\n';(task/'pool_task.json').write_text(exact)
+    (task/'workspace_seed').mkdir();(task/'workspace_seed/input').write_bytes(b'original')
+    evidence=native.quarantine_prior_materialization(task,tmp_path/'work')
+    assert not task.exists()
+    saved=Path(evidence['path'])
+    assert (saved/'pool_task.json').read_text()==exact
+    assert evidence['prior_pool_task_sha256']==native.digest_file(saved/'pool_task.json')
+    assert (saved/'workspace_seed/input').read_bytes()==b'original'
+    assert native.quarantine_prior_materialization(task,tmp_path/'work') is None
+    task.mkdir();(task/'pool_task.json').write_text('{"qualification":{"admitted":false}}')
+    assert (saved/'pool_task.json').read_text()==exact
+
+
+def test_offline_uv_cache_keeps_prewarmed_index_identity_and_rejects_conflicts():
+    original={'NATIVE':'keep'}
+    env,ledger=native.verifier_cache_environment(original,[{'kind':'uvx_environment_prewarm'}])
+    assert original=={'NATIVE':'keep'}
+    assert env=={'NATIVE':'keep','UV_INDEX_URL':native.BUILD_PYPI_INDEX}
+    assert ledger[0]['kind']=='uv_offline_cache_index_identity'
+    assert native.verifier_cache_environment(original,[])==(original,[])
+    for key in ['UV_INDEX_URL','UV_DEFAULT_INDEX','UV_INDEX']:
+        with pytest.raises(ValueError,match='native_uv_index_conflicts_with_prewarmer'):
+            native.verifier_cache_environment({key:'https://upstream.example/simple'},[{'kind':'uvx_environment_prewarm'}])
