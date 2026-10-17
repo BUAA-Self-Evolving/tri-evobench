@@ -330,6 +330,14 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         if runtime.get("environment_version", "l2_environment/1.0") != "l2_environment/1.0":
             raise ValueError("unsupported environment_version")
         profile["environment_version"] = "l2_environment/1.0"
+        if "resource_enforcement" in runtime:
+            if runtime["resource_enforcement"] not in {"enforced", "declared_not_enforced"}:
+                raise ValueError("unsupported resource_enforcement metadata")
+            if not isinstance(runtime.get("resource_readback"), dict):
+                raise ValueError("resource enforcement metadata requires actual readback")
+            for field in ("resource_enforcement", "resource_readback", "resource_observation_provenance"):
+                if field in runtime:
+                    profile[field] = copy.deepcopy(runtime[field])
         if "native_environment" in runtime:
             from trievo_bench.native_environment import validate_native_environment
             profile["native_environment"] = copy.deepcopy(validate_native_environment(runtime["native_environment"]))

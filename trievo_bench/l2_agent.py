@@ -102,7 +102,7 @@ class _TaskSandboxSession:
             from .container_resources import docker_resource_capability_preflight
             try:
                 capability = docker_resource_capability_preflight(docker=_docker_executable())
-                if not capability["passed"]:
+                if not capability.get("allowed", capability["passed"]):
                     raise RuntimeError("; ".join(capability["errors"]))
             except (RuntimeError, OSError, subprocess.SubprocessError) as exc:
                 raise L2AgentRunError(f"native resource enforcement unavailable: {exc}") from exc
@@ -163,7 +163,7 @@ class _TaskSandboxSession:
             raise L2AgentRunError("task sandbox runtime readback failed closed")
         if self.native_environment or self.profile.get("environment_version"):
             from .native_environment import mapping_script
-            from .container_resources import container_resource_check_script, validate_container_resources
+            from .container_resources import container_resource_check_script, evaluate_resource_enforcement
             marker = f"/tmp/{self.name}-readback.json"
             script = (mapping_script(self.native_environment, f"/workspace/tasks/{self.turn_id}")
                       if self.native_environment else "from pathlib import Path\nimport json\n")
@@ -191,14 +191,14 @@ class _TaskSandboxSession:
                 except (OSError, ValueError):
                     observed = None
             resources = observed.pop("resources", None) if isinstance(observed, dict) else None
-            resource_validation = validate_container_resources(resources or {})
+            resource_validation = evaluate_resource_enforcement(resources or {})
             if (setup.returncode or copied.returncode or observed != expected
-                    or not resource_validation["passed"]):
+                    or not resource_validation["accepted"]):
                 self.close()
                 raise L2AgentRunError(
                     "native setup readback failed; aliases or enforced resource limits are missing: "
-                    + (setup.stderr or copied.stderr or str(resource_validation["errors"]))[-4000:])
-            self.resource_readback = resources
+                    + (setup.stderr or copied.stderr or str(resource_validation["validation"]["errors"]))[-4000:])
+            self.resource_readback = {**resources, **resource_validation}
         self.evidence = {
             "runtime_profile_id": self.profile["runtime_profile_id"],
             "container_name": self.name,
@@ -209,7 +209,10 @@ class _TaskSandboxSession:
             "tool_profile_id": self.profile["tool_profile_id"],
             "dependency_class": self.profile["dependency_class"],
             **({"environment_version": self.profile["environment_version"]} if self.profile.get("environment_version") else {}),
-            **({"resource_readback": self.resource_readback} if hasattr(self, "resource_readback") else {}),
+            **({"resource_readback": self.resource_readback,
+                "resource_enforcement": self.resource_readback["resource_enforcement"],
+                "resource_observation_provenance": "task_container_startup"}
+               if hasattr(self, "resource_readback") else {}),
             **({"cwd": self.native_environment["cwd"],
                 "task_directory": f"/workspace/tasks/{self.turn_id}",
                 "python_executable": self.native_environment.get("python_executable", "python"),
@@ -1123,6 +1126,11 @@ class L2AgentStreamRunner:
             report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
             report["token_budget"] = asdict(self.budget)
             report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
+            resource_states = {turn.get("task_sandbox", {}).get("resource_enforcement")
+                               for turn in report.get("turns", [])} - {None}
+            if resource_states:
+                report["resource_enforcement"] = ("declared_not_enforced" if "declared_not_enforced" in resource_states else "enforced")
+                report["resource_enforcement_scope"] = "new profiles; per-container observations are retained in Turn evidence"
             _write_json(run_dir / "report.json", report)
             self._close_taskstream_volume_transport()
             shutil.rmtree(workspace, ignore_errors=True)
@@ -1409,10 +1417,14 @@ class L2AgentStreamRunner:
         verifier_container = f"trievo-l2-verifier-{uuid4().hex[:12]}"
         native_environment = (current_v5_profile or {}).get("native_environment")
         verifier_command = [verifier_image, "python", f"/opt/l2_demo/{verifier_rel}"]
+        resource_nonce = uuid4().hex
         if native_environment or (current_v5_profile or {}).get("environment_version"):
             from .container_resources import container_resource_check_script
             from .native_environment import mapping_script
             bootstrap = container_resource_check_script() + "\n"
+            bootstrap += ("print(json.dumps({'event': 'l2_resource_readback', 'nonce': " + repr(resource_nonce)
+                          + ", 'resource_readback': resource_readback}), flush=True)\n")
+            bootstrap += "os.environ['TRIEVO_RESOURCE_ENFORCEMENT'] = resource_readback['enforcement_mode']\n"
             if native_environment:
                 bootstrap += mapping_script(native_environment, f"/workspace/tasks/{task['turn_id']}")
             bootstrap += ("\nimport runpy, sys\nsys.argv = [" + repr(f"/opt/l2_demo/{verifier_rel}")
@@ -1433,6 +1445,8 @@ class L2AgentStreamRunner:
         ]
         timeout = int(native.get("timeout_seconds", 300))
         transport_timeout = _verifier_transport_timeout(timeout)
+        verifier_resource_readback = None
+        resource_checked = bool(native_environment or (current_v5_profile or {}).get("environment_version"))
         try:
             completed = subprocess.run(
                 command,
@@ -1489,22 +1503,42 @@ class L2AgentStreamRunner:
                 capture_output=True,
                 check=False,
             )
+        resource_evidence = {}
+        if resource_checked:
+            from .container_resources import evaluate_resource_enforcement
+            # The first flushed line predates evaluator/submission execution.
+            # A file copied after untrusted code runs would be mutable evidence.
+            try:
+                header = json.loads(completed.stdout.splitlines()[0])
+                if header.get("event") == "l2_resource_readback" and header.get("nonce") == resource_nonce:
+                    verifier_resource_readback = header.get("resource_readback")
+            except (ValueError, IndexError, AttributeError):
+                pass
+            assessment = evaluate_resource_enforcement(verifier_resource_readback or {})
+            if not assessment["accepted"]:
+                return {"category": "error", "score": None, "details": {
+                    "type": "verifier_resource_readback_rejected", "assessment": assessment}}
+            resource_evidence = {"resource_enforcement": assessment["resource_enforcement"],
+                                 "resource_readback": {**verifier_resource_readback, **assessment},
+                                 "resource_observation_provenance": "private_verifier_container"}
         if completed.returncode != 0:
-            return {"category": "error", "score": None, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
+            return {"category": "error", "score": None, **resource_evidence, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
         try:
             result = json.loads(completed.stdout.strip().splitlines()[-1])
         except (json.JSONDecodeError, IndexError) as exc:
-            return {"category": "error", "score": None, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
+            return {"category": "error", "score": None, **resource_evidence, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
         error = _native_result_error(native, result)
         if error:
             return {
                 "category": "error",
                 "score": None,
+                **resource_evidence,
                 "details": {"type": "invalid_verifier_output", "error": error},
                 "native_result": result,
             }
         category = str(result["status"])
         return {
+            **resource_evidence,
             "category": category,
             "score": None if category == "error" else float(result["score"]),
             "details": (

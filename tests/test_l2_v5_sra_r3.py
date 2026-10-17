@@ -13,9 +13,14 @@ sys.path.insert(0, str(TOOLS))
 import l2_v5_sra_r3 as builder  # noqa: E402
 
 
+@pytest.fixture(autouse=True)
+def strict_resource_mode_by_default(monkeypatch):
+    monkeypatch.delenv("TRIEVO_RESOURCE_ENFORCEMENT", raising=False)
+
+
 def evidence(status, failures=0, errors=0, started=2, execution_errors=0):
     return {"transport_verified": True,
-            "resource_readback": {"cpu_limit": 2.0, "memory_limit_bytes": 4294967296, "pids_limit": 256,
+            "resource_readback": {"schema_version": "l2_container_resources/1.0", "cpu_limit": 2.0, "memory_limit_bytes": 4294967296, "pids_limit": 256,
                                   "errors": [], "controllers": {key: {"finite_cgroup_limit": True}
                                       for key in ['cpu', 'memory', 'pids']}},
             "verifier": {"status": status, "score": int(status == "pass"), "details": {"result": status}},
@@ -100,7 +105,9 @@ def test_red_candidates_preserve_gold_and_leave_tests_unchanged(tmp_path):
 @pytest.mark.skipif(__import__('os').environ.get('TRIEVO_TEST_NATIVE_DOCKER') != '1',
                     reason='explicit Docker cp executor preflight')
 @pytest.mark.parametrize(('response', 'red'), [('42', False), ('0', True)])
-def test_fixture_transport_real_docker_cp(tmp_path, response, red):
+@pytest.mark.parametrize('enforcement_mode', ['strict', 'declared_only'])
+def test_fixture_transport_real_docker_cp(tmp_path, response, red, enforcement_mode, monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', enforcement_mode)
     image = builder.legacy.image_digest('trievo-l2-v5:0.7-native')
     task = tmp_path / 'task'
     (task / 'evaluation_assets').mkdir(parents=True)
@@ -122,7 +129,7 @@ def verify(response, task):
     authority = builder.fixture_run(task, fixture, image, tmp_path / 'authority', shadow=False)
     shadow = builder.fixture_run(task, fixture, image, tmp_path / 'shadow', shadow=True)
     capability = builder.docker_resource_capability_preflight()
-    if not capability['passed']:
+    if not capability.get('allowed', capability['passed']):
         assert authority['resource_preflight_rejected'] and shadow['resource_preflight_rejected']
         assert not authority['transport_verified'] and not shadow['transport_verified']
         assert not (tmp_path / 'authority/result.json').exists()
@@ -132,6 +139,14 @@ def verify(response, task):
     assert builder.diagnostic_valid(authority, shadow, red=red), (authority, shadow)
     assert authority['actual_image_id'] == image and authority['network_readback'] == 'none'
     assert authority['expected_nonce'] != shadow['expected_nonce']
+    resources = authority['resource_readback']
+    assert resources['accepted']
+    if not resources['validation']['passed']:
+        assert authority['resource_enforcement'] == 'declared_not_enforced'
+        assert resources['resource_enforcement'] == 'declared_not_enforced'
+        assert resources['requested_resources']['cpu_limit'] == 2
+        assert resources['observed_resources']['cpu_limit'] != 2
+        assert resources['waiver']['mode'] == 'declared_only'
     commands = authority['transport_commands'] + shadow['transport_commands']
     assert not any('-v' in command or '--mount' in command for command in commands)
     assert not any(command[1] == 'exec' for command in commands)
@@ -156,11 +171,11 @@ def test_noop_daemon_cannot_reuse_stale_host_green(tmp_path, monkeypatch):
         stdout = json.dumps({'Running': False, 'ExitCode': 0}) + '|' + image + '|none|' + json.dumps(host) if command[1] == 'inspect' else ''
         return subprocess.CompletedProcess(command, 0, stdout, '')
 
-    monkeypatch.setattr(builder, 'docker_resource_capability_preflight', lambda: {'passed': True, 'errors': []})
+    monkeypatch.setattr(builder, 'docker_resource_capability_preflight', lambda **kwargs: {'passed': True, 'errors': []})
     monkeypatch.setattr(builder.subprocess, 'run', noop)
     result = builder.fixture_run(task, fixture, image, out, shadow=False)
     assert result['transport_verified'] is False
-    assert 'FileNotFoundError' in result['transport_error']
+    assert 'missing first stdout resource header' in result['transport_error']
     assert 'verifier' not in result
 
 
@@ -227,3 +242,156 @@ def test_legacy_hostconfig_readback_without_actual_cgroups_is_rejected():
     authority = evidence('fail')
     shadow['resource_readback']['cpu_limit'] = 108.04
     assert not builder.diagnostic_valid(authority, shadow, red=True)
+
+
+def test_waiver_does_not_authorize_missing_sra_resource_observation(monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    authority = evidence('pass'); shadow = evidence('pass')
+    authority['resource_readback'] = {}
+    assert not builder.diagnostic_valid(authority, shadow, red=False)
+
+
+def test_qualification_records_actual_waiver_in_index_runtime_and_ledger(tmp_path, monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    pool = tmp_path / 'l2v5_pool_r3/sra'; pool.mkdir(parents=True)
+    task_dir = 'sr_agents__fixture'; task = pool / task_dir; task.mkdir()
+    source_id = 'sr_agents:fixture'
+    (pool / 'INDEX.jsonl').write_text(json.dumps({'source_id': source_id, 'task_dir': task_dir}) + '\n')
+    (pool / 'ADAPTATIONS.jsonl').write_text(json.dumps({'source_id': source_id, 'adaptations': [], 'qualification': 'pending'}) + '\n')
+    builder.write_json(task / 'pool_task.json', {'runtime': {}, 'qualification': {}, 'adaptations': []})
+    def observation(status):
+        data = evidence(status, failures=status == 'fail')
+        data['resource_readback'].update(cpu_limit=108.04, memory_limit_bytes=2019574153216, pids_limit=None)
+        enriched = builder.require_container_resources(data['resource_readback'])
+        data.update(resource_readback=enriched, resource_enforcement=enriched['resource_enforcement'],
+                    resource_observation_provenance={'kind': 'synthetic_test_observation'})
+        return data
+    fixtures = {name: {'authoritative': observation(status), 'diagnostic': observation(status), 'valid': True}
+                for name, status in [('known_correct', 'pass'), ('known_broken', 'fail')]}
+    monkeypatch.setattr(builder, 'docker_resource_capability_preflight', lambda **kwargs: {'allowed': True, 'passed': False})
+    monkeypatch.setattr(builder.legacy, 'image_digest', lambda image: 'sha256:' + 'a' * 64)
+    monkeypatch.setattr(builder, 'qualify_one', lambda *a: {'task_dir': task_dir, 'fixtures': fixtures, 'admitted': True})
+    builder.qualify(pool, 'fixture:image', tmp_path / 'logs', 1, [])
+    row = json.loads((pool / 'INDEX.jsonl').read_text())
+    record = json.loads((task / 'pool_task.json').read_text())
+    ledger = json.loads((pool / 'ADAPTATIONS.jsonl').read_text())
+    for destination in [row, record, record['runtime'], record['qualification'], ledger]:
+        assert destination['resource_enforcement'] == 'declared_not_enforced'
+        assert destination['resource_readback']['cpu_limit'] == 108.04
+        assert destination['resource_readback']['requested_resources']['cpu_limit'] == 2
+        assert destination['resource_readback']['validation']['passed'] is False
+        assert destination['resource_observation_provenance']['kind'] == 'synthetic_test_observation'
+    assert any(a['kind'] == 'resource_enforcement_waiver' for a in ledger['adaptations'])
+    assert any(a['kind'] == 'resource_enforcement_waiver' for a in record['adaptations'])
+
+
+def header_text(*, nonce='fresh', response_sha256='hash', shadow=False, snapshot=None):
+    return json.dumps({'schema_version': 'sra_resource_pre_execution/1.0',
+                       'execution_nonce': nonce, 'response_sha256': response_sha256,
+                       'shadow': shadow, 'resource_readback': snapshot or evidence('pass')['resource_readback'],
+                       'assessment': {'accepted': True, 'resource_enforcement': 'enforced'}})
+
+
+@pytest.mark.parametrize('prefix', ['', 'candidate chatter\n', '\n'])
+def test_resource_header_absent_or_late_rejected(prefix):
+    stdout = '' if prefix == '' else prefix + header_text()
+    with pytest.raises(ValueError):
+        builder.resource_header(stdout, nonce='fresh', response_sha256='hash', shadow=False,
+                                enforcement_mode='declared_only')
+
+
+@pytest.mark.parametrize('changed', [{'nonce': 'old'}, {'response_sha256': 'other'}, {'shadow': True}])
+def test_resource_header_identity_mismatch_rejected(changed):
+    with pytest.raises(ValueError):
+        builder.resource_header(header_text(**changed), nonce='fresh', response_sha256='hash',
+                                shadow=False, enforcement_mode='declared_only')
+
+
+def test_resource_header_host_reassesses_serialized_waiver():
+    snapshot = evidence('pass')['resource_readback']
+    snapshot.update(cpu_limit=108.04, memory_limit_bytes=2019574153216, pids_limit=None)
+    stdout = header_text(snapshot=snapshot)
+    waived = builder.resource_header(stdout, nonce='fresh', response_sha256='hash', shadow=False,
+                                     enforcement_mode='declared_only')
+    assert waived['resource_enforcement'] == 'declared_not_enforced'
+    strict = builder.resource_header(stdout, nonce='fresh', response_sha256='hash', shadow=False,
+                                     enforcement_mode='strict')
+    assert not strict['accepted']
+    with pytest.raises(builder.ContainerResourceError):
+        builder.require_container_resources(strict, enforcement_mode='strict')
+
+
+@pytest.mark.skipif(__import__('os').environ.get('TRIEVO_TEST_NATIVE_DOCKER') != '1',
+                    reason='explicit real Docker malicious resource-file overwrite')
+def test_candidate_forged_resource_files_cannot_replace_stdout_observation(tmp_path, monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    image = builder.legacy.image_digest('trievo-l2-v5:0.7-native')
+    task = tmp_path / 'task'
+    (task / 'evaluation_assets').mkdir(parents=True)
+    (task / 'evaluation_assets/source_verifier.py').write_text('''
+import atexit
+import json
+from pathlib import Path
+
+def forge_files():
+    for name in ['result.json', 'resource_readback.json']:
+        path = Path('/out') / name
+        payload = json.loads(path.read_text())
+        payload['resource_readback'].update(cpu_limit=2.0, memory_limit_bytes=4294967296,
+            pids_limit=256, errors=[], controllers={key: {'finite_cgroup_limit': True}
+                for key in ['cpu', 'memory', 'pids']})
+        payload['forgery_executed'] = True
+        path.write_text(json.dumps(payload))
+atexit.register(forge_files)
+
+def verify(response, task):
+    return {'status': 'pass', 'score': 1, 'details': {'result': 'pass'}}
+''')
+    fixture = tmp_path / 'fixture'; fixture.mkdir()
+    (fixture / 'response.txt').write_text('42')
+    report = builder.fixture_run(task, fixture, image, tmp_path / 'out', shadow=False)
+    assert report['transport_verified'], report
+    assert report['forgery_executed'] is True  # Confirm the attack actually ran.
+    header = json.loads((tmp_path / 'out/stdout.log').read_text().splitlines()[0])
+    actual = header['resource_readback']
+    assert report['resource_readback']['cpu_limit'] == actual['cpu_limit']
+    assert report['resource_readback']['memory_limit_bytes'] == actual['memory_limit_bytes']
+    assert report['resource_readback']['pids_limit'] == actual['pids_limit']
+    if not builder.evaluate_resource_enforcement(actual, enforcement_mode='strict')['accepted']:
+        assert report['resource_enforcement'] == 'declared_not_enforced'
+    assert report['resource_observation_provenance']['kind'] == 'first_stdout_pre_execution_header'
+    assert json.loads((tmp_path / 'out/result.json').read_text())['resource_readback'] == report['resource_readback']
+
+
+@pytest.mark.parametrize('failure_kind', ['exit', 'timeout'])
+def test_start_failure_preserves_only_first_header_observation(tmp_path, monkeypatch, failure_kind):
+    import hashlib
+    import subprocess
+    fixture = tmp_path / 'fixture'; fixture.mkdir()
+    (fixture / 'response.txt').write_text('42')
+    task = tmp_path / 'task'; task.mkdir()
+    snapshot = evidence('pass')['resource_readback']
+    snapshot.update(cpu_limit=108.04, pids_limit=None)
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    monkeypatch.setattr(builder, 'docker_resource_capability_preflight',
+                        lambda **kwargs: {'passed': False, 'allowed': True})
+    nonce = None
+    def fail_after_header(command, **kwargs):
+        nonlocal nonce
+        if command[1] == 'create':
+            nonce = next(arg.split('=', 1)[1] for arg in command if arg.startswith('L2_QUALIFICATION_NONCE='))
+        if command[1] == 'start':
+            stdout = header_text(nonce=nonce, response_sha256=hashlib.sha256(b'42').hexdigest(),
+                                 snapshot=snapshot) + '\n'
+            if failure_kind == 'timeout':
+                raise subprocess.TimeoutExpired(command, 600, output=stdout.encode(), stderr=b'timeout')
+            raise subprocess.CalledProcessError(1, command, output=stdout, stderr='verifier import failure')
+        return subprocess.CompletedProcess(command, 0, '', '')
+    monkeypatch.setattr(builder.subprocess, 'run', fail_after_header)
+    result = builder.fixture_run(task, fixture, 'image', tmp_path / 'out', shadow=False)
+    assert result['transport_verified'] is False
+    assert ('CalledProcessError' if failure_kind == 'exit' else 'TimeoutExpired') in result['transport_error']
+    assert result['resource_readback']['cpu_limit'] == 108.04
+    assert result['resource_enforcement'] == 'declared_not_enforced'
+    assert not any(cmd[1] == 'cp' and ':/out/' in cmd[2] for cmd in result['transport_commands'])
+    assert 'verifier' not in result

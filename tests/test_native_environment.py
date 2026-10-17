@@ -337,7 +337,8 @@ def test_native_runtime_rejects_resource_incapable_daemon_before_container(tmp_p
 
 
 @pytest.mark.skipif(os.environ.get('TRIEVO_TEST_NATIVE_DOCKER') != '1', reason='explicit real Docker negative control')
-def test_real_resource_daemon_rejection(tmp_path):
+def test_real_resource_daemon_rejection(tmp_path, monkeypatch):
+    monkeypatch.delenv("TRIEVO_RESOURCE_ENFORCEMENT", raising=False)
     from trievo_bench.container_resources import docker_resource_capability_preflight
     from trievo_bench.l2_agent import L2AgentRunError
     capability = docker_resource_capability_preflight()
@@ -348,3 +349,20 @@ def test_real_resource_daemon_rejection(tmp_path):
         workspace=tmp_path, workspace_volume=None)
     with pytest.raises(L2AgentRunError, match='native resource enforcement unavailable'):
         session.start()
+
+
+def test_profile_preserves_waiver_evidence_and_hashes_it():
+    item = record()
+    item["runtime"].update(environment_version="l2_environment/1.0",
+        resource_enforcement="declared_not_enforced", resource_readback={"cpu_limit":108.04},
+        resource_observation_provenance="fresh_qualification_container")
+    profile = runtime_profile(item)
+    assert profile["resource_enforcement"] == "declared_not_enforced"
+    assert profile["resource_readback"]["cpu_limit"] == 108.04
+    assert profile["resource_observation_provenance"] == "fresh_qualification_container"
+    changed = copy.deepcopy(item)
+    changed["runtime"]["resource_readback"]["cpu_limit"] = 2.0
+    assert runtime_profile(changed)["runtime_profile_id"] != profile["runtime_profile_id"]
+    item["runtime"].pop("resource_readback")
+    with pytest.raises(ValueError, match="actual readback"):
+        runtime_profile(item)

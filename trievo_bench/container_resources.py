@@ -209,7 +209,11 @@ def read_container_resources(proc_root=None, fs_root=None, affinity_cpus=None):
 
 
 def validate_container_resources(snapshot, cpu=2.0, memory_bytes=4294967296, pids=256):
-    errors = list(snapshot.get("errors", []))
+    if not isinstance(snapshot, dict):
+        return {"passed": False, "errors": ["resource snapshot must be an object"],
+                "expected": {"cpu_limit": cpu, "memory_limit_bytes": memory_bytes, "pids_limit": pids}, "observed": {}}
+    raw_errors = snapshot.get("errors", [])
+    errors = list(raw_errors) if isinstance(raw_errors, list) else ["malformed resource errors"]
     expected = {"cpu_limit": cpu, "memory_limit_bytes": memory_bytes, "pids_limit": pids}
     for field, wanted in expected.items():
         actual = snapshot.get(field)
@@ -218,45 +222,110 @@ def validate_container_resources(snapshot, cpu=2.0, memory_bytes=4294967296, pid
         elif not math.isclose(actual, wanted, rel_tol=0, abs_tol=1e-6):
             errors.append("{} mismatch: observed {}, expected {}".format(field, actual, wanted))
     for controller in ("cpu", "memory", "pids"):
-        if not snapshot.get("controllers", {}).get(controller, {}).get("finite_cgroup_limit"):
+        controllers = snapshot.get("controllers", {})
+        entry = controllers.get(controller, {}) if isinstance(controllers, dict) else {}
+        if not isinstance(entry, dict) or not entry.get("finite_cgroup_limit"):
             errors.append(controller + " lacks a finite enforced cgroup limit")
     return {"passed": not errors, "errors": errors, "expected": expected,
             "observed": {key: snapshot.get(key) for key in expected}}
 
 
-def require_container_resources(snapshot=None, cpu=2.0, memory_bytes=4294967296, pids=256):
-    """Return snapshot with validation; raise on mismatch/unreadable controls."""
+def resource_enforcement_mode(enforcement_mode=None):
+    """Resolve trusted host opt-in; serialized evidence never authorizes waiver."""
+    selected = os.environ.get("TRIEVO_RESOURCE_ENFORCEMENT", "strict") if enforcement_mode is None else enforcement_mode
+    if selected not in ("strict", "declared_only"):
+        raise ContainerResourceError("invalid TRIEVO_RESOURCE_ENFORCEMENT mode: " + repr(selected))
+    return selected
+
+
+def assess_container_resources(snapshot, mode=None, cpu=2.0, memory_bytes=4294967296, pids=256,
+                               enforcement_mode=None):
+    """Policy decision separate from strict physical-limit validation."""
+    if mode is not None and enforcement_mode is not None and mode != enforcement_mode:
+        raise ContainerResourceError("conflicting resource enforcement modes")
+    selected = resource_enforcement_mode(enforcement_mode if enforcement_mode is not None else mode)
+    validation = validate_container_resources(snapshot, cpu=cpu, memory_bytes=memory_bytes, pids=pids)
+    strict = validation["passed"]
+    # Waiver may cover real resource incapability/unreadability, not an absent
+    # or fabricated transport result. Actual observation attempts have this shape.
+    observed_snapshot = (isinstance(snapshot, dict) and snapshot.get("schema_version") == SCHEMA
+                         and isinstance(snapshot.get("controllers"), dict)
+                         and isinstance(snapshot.get("errors"), list)
+                         and all(isinstance(error, str) for error in snapshot["errors"])
+                         and all(isinstance(entry, dict) for entry in snapshot["controllers"].values())
+                         and all(key in snapshot and (snapshot[key] is None or
+                             (not isinstance(snapshot[key], bool) and isinstance(snapshot[key], (int, float))
+                              and math.isfinite(snapshot[key])))
+                             for key in ("cpu_limit", "memory_limit_bytes", "pids_limit")))
+    waived = not strict and selected == "declared_only" and observed_snapshot
+    accepted = (strict and observed_snapshot) or waived
+    label = "enforced" if strict and observed_snapshot else "declared_not_enforced" if waived else "not_enforced"
+    reason = ("Missing or malformed actual resource snapshot" if not observed_snapshot else
+              "Actual visible cgroup limits match declared policy" if strict else
+              "User-approved declared_only waiver: requested limits are not enforced; actual readback retained" if waived else
+              "Actual limits mismatch or are unavailable; no applicable host opt-in")
+    waiver = {"mode": "declared_only", "reason": reason, "actual_errors": validation["errors"]} if waived else None
+    return {"accepted": accepted, "strict_passed": strict, "resource_enforcement": label,
+            "validation": validation, "waiver": waiver, "requested_resources": validation["expected"],
+            "observed_resources": validation["observed"], "reason": reason,
+            "enforcement_mode": selected}
+
+
+def evaluate_resource_enforcement(snapshot, cpu=2.0, memory_bytes=4294967296, pids=256,
+                                  enforcement_mode=None):
+    """Compatibility spelling of assess_container_resources for runtime callers."""
+    return assess_container_resources(snapshot, cpu=cpu, memory_bytes=memory_bytes, pids=pids,
+                                      enforcement_mode=enforcement_mode)
+
+
+def require_container_resources(snapshot=None, cpu=2.0, memory_bytes=4294967296, pids=256,
+                                enforcement_mode=None, mode=None):
+    """Return snapshot plus truthful enforcement evidence; raise if unauthorized."""
     if snapshot is None:
         snapshot = read_container_resources()
-    validation = validate_container_resources(snapshot, cpu=cpu, memory_bytes=memory_bytes, pids=pids)
-    if not validation["passed"]:
-        raise ContainerResourceError(json.dumps({"resource_readback": snapshot, "validation": validation}, sort_keys=True))
-    return dict(snapshot, validation=validation)
+    assessment = assess_container_resources(snapshot, cpu=cpu, memory_bytes=memory_bytes, pids=pids,
+                                           mode=mode, enforcement_mode=enforcement_mode)
+    if not assessment["accepted"]:
+        raise ContainerResourceError(json.dumps({"resource_readback": snapshot, **assessment}, sort_keys=True))
+    return dict(snapshot, **assessment)
 
 
-def docker_resource_capability_preflight(docker="docker", timeout=30):
-    """Reject incapable daemons early; a pass is NOT enforcement evidence."""
-    result = {"passed": False, "errors": [], "proof_scope": "daemon capability only; actual container readback required"}
+def docker_resource_capability_preflight(docker="docker", timeout=30, enforcement_mode=None, mode=None):
+    """Strict capability plus waiver-aware allowed; never proof of enforcement."""
+    if mode is not None and enforcement_mode is not None and mode != enforcement_mode:
+        raise ContainerResourceError("conflicting resource enforcement modes")
+    selected = resource_enforcement_mode(enforcement_mode if enforcement_mode is not None else mode)
+    result = {"passed": False, "strict_passed": False, "allowed": False, "errors": [],
+              "enforcement_mode": selected,
+              "proof_scope": "daemon capability only; actual container readback required"}
     try:
         value = subprocess.run([docker, "info", "--format", "{{json .}}"], text=True, capture_output=True,
                                check=True, timeout=timeout)
         info = json.loads(value.stdout)
-        result.update(cgroup_driver=info.get("CgroupDriver"), cgroup_version=info.get("CgroupVersion"),
+        if not isinstance(info, dict) or not info.get("CgroupDriver") or str(info.get("CgroupVersion")) not in ("1", "2"):
+            raise ValueError("Docker info lacks valid cgroup capability fields")
+        result.update(cgroup_driver=info["CgroupDriver"], cgroup_version=info["CgroupVersion"],
                       security_options=info.get("SecurityOptions"), docker_host=os.environ.get("DOCKER_HOST"))
-        if not info.get("CgroupDriver") or str(info["CgroupDriver"]).lower() == "none":
+        if str(info["CgroupDriver"]).lower() == "none":
             result["errors"].append("Docker daemon has no cgroup driver; requested limits are not enforcement")
-        if str(info.get("CgroupVersion")) not in ("1", "2"):
-            result["errors"].append("Docker cgroup version is unavailable/unsupported")
-        result["passed"] = not result["errors"]
+        result["passed"] = result["strict_passed"] = not result["errors"]
+        waived = not result["passed"] and selected == "declared_only"
+        result["allowed"] = result["passed"] or waived
+        result["resource_enforcement"] = "declared_not_enforced" if waived else "capability_only" if result["passed"] else "not_enforced"
+        if waived:
+            result["waiver"] = {"mode": selected, "reason": "User-approved daemon incapability waiver; actual readback still required"}
     except (OSError, subprocess.SubprocessError, ValueError) as exc:
         result["errors"].append("Docker capability readback failed: " + str(exc))
     return result
 
 
-def container_resource_check_script(cpu=2.0, memory_bytes=4294967296, pids=256):
-    """Standalone Python source; defines resource_readback before caller work."""
+def container_resource_check_script(cpu=2.0, memory_bytes=4294967296, pids=256, enforcement_mode=None, mode=None):
+    """Embed trusted HOST selection; never assume the container inherited env."""
+    if mode is not None and enforcement_mode is not None and mode != enforcement_mode:
+        raise ContainerResourceError("conflicting resource enforcement modes")
+    selected = resource_enforcement_mode(enforcement_mode if enforcement_mode is not None else mode)
     source = Path(__file__).read_text().split("\n# CLI_ENTRYPOINT\n", 1)[0]
-    return source + "\nresource_readback = require_container_resources(cpu={!r}, memory_bytes={!r}, pids={!r})\n".format(cpu, memory_bytes, pids)
+    return source + "\nresource_readback = require_container_resources(cpu={!r}, memory_bytes={!r}, pids={!r}, enforcement_mode={!r})\n".format(cpu, memory_bytes, pids, selected)
 
 
 def main():
@@ -264,11 +333,12 @@ def main():
     parser.add_argument("--cpu", type=float, default=2.0)
     parser.add_argument("--memory-bytes", type=int, default=4294967296)
     parser.add_argument("--pids", type=int, default=256)
+    parser.add_argument("--resource-enforcement", choices=("strict", "declared_only"), default=None)
     args = parser.parse_args()
     snapshot = read_container_resources()
-    validation = validate_container_resources(snapshot, cpu=args.cpu, memory_bytes=args.memory_bytes, pids=args.pids)
-    print(json.dumps({"resource_readback": snapshot, "validation": validation}, sort_keys=True))
-    return 0 if validation["passed"] else 1
+    assessment = assess_container_resources(snapshot, cpu=args.cpu, memory_bytes=args.memory_bytes, pids=args.pids, enforcement_mode=args.resource_enforcement)
+    print(json.dumps({"resource_readback": snapshot, **assessment}, sort_keys=True))
+    return 0 if assessment["accepted"] else 1
 
 
 # CLI_ENTRYPOINT

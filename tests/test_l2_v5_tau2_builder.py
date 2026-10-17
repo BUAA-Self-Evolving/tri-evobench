@@ -136,10 +136,12 @@ def test_staged_transport_rejects_noop_or_stale_output(tmp_path, stale_marker):
 
 
 @pytest.mark.skipif(__import__('os').environ.get("TRIEVO_TEST_TAU2_DOCKER") != "1", reason="explicit real Docker transport test")
-def test_real_staged_transport_copies_outputs_and_isolates_containers(tmp_path):
+@pytest.mark.parametrize("resource_mode", ["strict", "declared_only"])
+def test_real_staged_transport_copies_outputs_and_isolates_containers(tmp_path, monkeypatch, resource_mode):
+    monkeypatch.setenv("TRIEVO_RESOURCE_ENFORCEMENT", resource_mode)
     import os
     capability = builder.docker_resource_capability_preflight()
-    if not capability["passed"]:
+    if not capability.get("allowed", capability["passed"]):
         stage = tmp_path / "blocked"
         stage.mkdir()
         with pytest.raises(builder.ContainerResourceError, match="resource preflight blocked"):
@@ -167,7 +169,12 @@ def test_real_staged_transport_copies_outputs_and_isolates_containers(tmp_path):
     assert observed["network_mode"] == "none"
     assert observed["image_digest"] == image
     assert observed["fresh_container"] is True
-    builder.require_container_resources(observed["resource_readback"])
+    checked = builder.require_container_resources(observed["resource_readback"])
+    assert observed["resource_enforcement"] == checked["resource_enforcement"]
+    if not checked["validation"]["passed"]:
+        assert checked["resource_enforcement"] == "declared_not_enforced"
+        assert checked["requested_resources"]["cpu_limit"] == 2
+        assert checked["observed_resources"] != checked["requested_resources"]
     assert [name for _, name in observed["network_interfaces"]] == ["lo"]
 
 
@@ -197,6 +204,7 @@ def test_daemon_runner_checks_actual_resources_before_command(tmp_path, version,
     work.mkdir()
     marker = work / "command-executed"
     snapshot = {
+        "schema_version": "l2_container_resources/1.0",
         "cpu_limit": 2.0 if enforced else 108.0,
         "memory_limit_bytes": 4294967296 if enforced else 2019574153216,
         "pids_limit": 256 if enforced else None, "errors": [],
@@ -207,7 +215,7 @@ def test_daemon_runner_checks_actual_resources_before_command(tmp_path, version,
     guard += "\ndef read_container_resources():\n    return " + repr(snapshot) + "\n"
     (payload / "resource_guard.py").write_text(guard)
     (payload / "spec.json").write_text(json.dumps({
-        "nonce": "current-run", "mounts": [str(work)], "timeout": 10,
+        "nonce": "current-run", "mounts": [str(work)], "timeout": 10, "resource_enforcement_mode": "strict",
         "command": [sys.executable, "-c", "from pathlib import Path; Path(" + repr(str(marker)) + ").touch()"],
     }))
     (payload / "runner.py").write_text(builder.DAEMON_RUNNER.replace("/tau2-transport", str(payload)))
@@ -222,3 +230,39 @@ def test_daemon_runner_checks_actual_resources_before_command(tmp_path, version,
     else:
         with pytest.raises(builder.ContainerResourceError):
             builder.require_container_resources(observed["resource_readback"])
+
+
+def test_waiver_metadata_survives_pool_index_runtime_and_adaptation_ledger(tmp_path, monkeypatch):
+    monkeypatch.setenv("TRIEVO_RESOURCE_ENFORCEMENT", "declared_only")
+    snapshot = {"schema_version": "l2_container_resources/1.0", "controllers": {}, "errors": [],
+                "cpu_limit": 108.04, "memory_limit_bytes": 2019574153216, "pids_limit": None}
+    metadata = builder.resource_metadata(snapshot)
+    assert metadata["resource_enforcement"] == "declared_not_enforced"
+    assert metadata["requested_resources"]["memory_limit_bytes"] == 4294967296
+    image = {"task_image": "existing", "task_image_digest": "sha256:pinned", "python_target": "3.12", **metadata}
+    target = tmp_path / "pool/task"
+    target.mkdir(parents=True)
+    row = {"domain": "retail", "task": {"id": "test"}, "in_v4": False, "in_v5": False,
+           "source_id": "tau2_bench:retail:test", "source_task_id": "retail:test", "source_path": "upstream", "splits": []}
+    built = builder.write_task(target, row, image, "# scoring", "# verifier")
+    assert built["resource_enforcement"] == "declared_not_enforced"
+    record = json.loads((target / "pool_task.json").read_text())
+    record["qualification"]["fixture_build"] = {"ok": False, "error": "no live call authorized"}
+    (target / "pool_task.json").write_text(json.dumps(record))
+    previous = tmp_path / "previous"; previous.mkdir()
+    r2 = tmp_path / "r2"; r2.mkdir()
+    with patch.object(builder, "POOL_ROOT", target.parent), patch.object(builder, "image_record", return_value=image):
+        builder.cmd_qualify(SimpleNamespace(batch=1))
+        builder.cmd_report(SimpleNamespace(previous_pool=previous, r2_package=r2))
+    record = json.loads((target / "pool_task.json").read_text())
+    index = json.loads((target.parent / "INDEX.jsonl").read_text())
+    ledger = json.loads((target.parent / "ADAPTATIONS.jsonl").read_text())
+    for value in (record, record["runtime"], record["qualification"], index, ledger):
+        assert value["resource_enforcement"] == "declared_not_enforced"
+        assert value["observed_resources"]["memory_limit_bytes"] == 2019574153216
+        assert value["resource_readback"]["validation"]["passed"] is False
+    assert any("waiver" in note for note in ledger["adaptations"])
+    # A stored waiver never authorizes later runs without host opt-in.
+    monkeypatch.delenv("TRIEVO_RESOURCE_ENFORCEMENT")
+    with pytest.raises(builder.ContainerResourceError):
+        builder.resource_metadata(record["resource_readback"])

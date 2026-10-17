@@ -57,6 +57,7 @@ from trievo_bench.container_resources import (
     ContainerResourceError,
     docker_resource_capability_preflight,
     require_container_resources,
+    resource_enforcement_mode,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -73,6 +74,7 @@ IMAGE_TAG = "trievo-l2-v5-tau2:0.2"
 DOCKERFILE = REPO_ROOT / "sandbox" / "l2-v5" / "Dockerfile.tau2"
 PY312_DOCKERFILE = DOCKERFILE.with_name("Dockerfile.tau2-py312")
 SESSION_PACKAGE = REPO_ROOT / "trievo_bench" / "tau2_live" / "session"
+RESOURCE_METADATA_KEYS = ("resource_enforcement", "resource_readback", "requested_resources", "observed_resources", "resource_observation_provenance")
 SCORING_SOURCE = SESSION_PACKAGE / "scoring.py"
 VERIFIER_SOURCE = REPO_ROOT / "tools" / "l2_v5_tau2_live_verifier.py"
 V4_ROOT = REPO_ROOT / "benchmarks" / "current" / "L2_Demo_V4"
@@ -315,6 +317,21 @@ def build_prompt(domain: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+def resource_metadata(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Carry actual resource evidence unchanged into portable task records."""
+    checked = require_container_resources(snapshot)
+    return {"resource_enforcement": checked["resource_enforcement"],
+            "resource_readback": checked,
+            "requested_resources": checked["validation"]["expected"],
+            "observed_resources": checked["validation"]["observed"],
+            "resource_observation_provenance": "actual fresh container guard; nonce-correlated Docker cp transport"}
+
+
+def transport_resource_metadata(log: Path) -> dict[str, Any]:
+    observed = json.loads(log.with_suffix(log.suffix + ".transport.json").read_text())
+    return resource_metadata(observed["resource_readback"])
+
+
 def docker_run(image: str, mounts: dict[Path, str], command: list[str], log: Path, timeout: int,
                *, network: bool = False, env_names: tuple[str, ...] = (), staged: bool = False) -> int:
     if staged:
@@ -346,7 +363,7 @@ from resource_guard import read_container_resources, require_container_resources
 spec = json.loads(Path("/tau2-transport/spec.json").read_text())
 resource_readback = read_container_resources()
 try:
-    resource_readback = require_container_resources(resource_readback)
+    resource_readback = require_container_resources(resource_readback, enforcement_mode=spec["resource_enforcement_mode"])
 except ContainerResourceError:
     code = 125
 else:
@@ -380,7 +397,8 @@ def docker_run_staged(image: str, mounts: dict[Path, str], command: list[str], l
         payload = local / "payload"
         payload.mkdir()
         write_json(payload / "spec.json", {"nonce": nonce, "command": command, "timeout": timeout,
-                                            "mounts": list(mounts.values())})
+                                            "mounts": list(mounts.values()),
+                                            "resource_enforcement_mode": resource_enforcement_mode()})
         (payload / "runner.py").write_text(DAEMON_RUNNER)
         shutil.copy2(REPO_ROOT / "trievo_bench/container_resources.py", payload / "resource_guard.py")
         args = ["docker", "create", "--name", name, "--user", "0:0", "--memory", "4g",
@@ -426,7 +444,8 @@ def docker_run_staged(image: str, mounts: dict[Path, str], command: list[str], l
                         or fields[2] != str(observed["returncode"])):
                     return 125
                 write_json(log.with_suffix(log.suffix + ".transport.json"), {
-                    **observed, "image_digest": fields[0], "network_mode": fields[1],
+                    **observed, "resource_enforcement": observed.get("resource_readback", {}).get("resource_enforcement", "not_enforced"),
+                    "image_digest": fields[0], "network_mode": fields[1],
                     "transport": "docker_create_cp_start_cp", "fresh_container": True})
                 try:
                     require_container_resources(observed.get("resource_readback", {}))
@@ -454,7 +473,7 @@ def require_resource_capability(evidence: Path) -> dict[str, Any]:
     result = docker_resource_capability_preflight()
     evidence.parent.mkdir(parents=True, exist_ok=True)
     write_json(evidence, result)
-    if not result["passed"]:
+    if not result.get("allowed", result["passed"]):
         raise ContainerResourceError("tau2 resource preflight blocked: " + "; ".join(result["errors"]))
     return result
 
@@ -541,12 +560,19 @@ def cmd_build_image(args: argparse.Namespace) -> None:
     if rc != 0:
         raise SystemExit(f"docker build failed rc={rc}; see {log}")
     digest = image_digest(args.tag)
+    resource_fields = {}
+    if args.python312:
+        probe_log = context.parent / f"{context.name}.resource-probe.log"
+        probe_code = docker_run_staged(digest, {}, ["python", "-c", "pass"], probe_log, 60)
+        if probe_code:
+            raise SystemExit(f"resource probe failed rc={probe_code}; see {probe_log}")
+        resource_fields = transport_resource_metadata(probe_log)
     session_context = context / "tau2_session"
     session_files = sorted(p for p in session_context.rglob("*") if p.is_file())
     session_digest = hashlib.sha256(b"".join(
         p.relative_to(session_context).as_posix().encode() + b"\0" + p.read_bytes() for p in session_files)).hexdigest()
     POOL_ROOT.mkdir(parents=True, exist_ok=True)
-    write_json(POOL_ROOT / "IMAGE.json", {"task_image": args.tag, "task_image_digest": digest,
+    write_json(POOL_ROOT / "IMAGE.json", {**resource_fields, "task_image": args.tag, "task_image_digest": digest,
                                           "base_image": args.base, "base_image_digest": image_digest(args.base),
                                           "tau2_revision": REVISION, "session_package_sha256": session_digest,
                                           "built_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -594,7 +620,8 @@ def cmd_build(args: argparse.Namespace) -> None:
         build_rows.append(write_task(target, row, image, scoring_text, verifier_text))
     write_json(POOL_ROOT / "BUILD.json", {"built_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "tasks": build_rows,
                                           "tau2_revision": REVISION,
-                                          "legacy_sources": {k: sorted(v) for k, v in legacy.items()}})
+                                          "legacy_sources": {k: sorted(v) for k, v in legacy.items()},
+                                          **({k: image[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})})
     print("wrote", len(build_rows), "pool tasks under", POOL_ROOT)
 
 
@@ -650,6 +677,12 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
         "l2_flags": {"in_v4": row["in_v4"], "in_v5": row["in_v5"]},
     }
     if image.get("python_target") == "3.12":
+        resource_fields = {k: image[k] for k in RESOURCE_METADATA_KEYS}
+        pool_task.update(resource_fields)
+        pool_task["runtime"].update(resource_fields)
+        if resource_fields["resource_enforcement"] == "declared_not_enforced":
+            pool_task["qualification"]["notes"].append(
+                "User-approved declared_only waiver: CPU/memory/PID limits are requested but not enforced; actual readback retained")
         pool_task["runtime"]["environment_version"] = "l2_environment/1.0"
         pool_task["qualification"]["notes"].append(
             "r3 adaptation: Python 3.12 isolated venv, enforced upstream requires-python; "
@@ -664,7 +697,8 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
     (target / "evaluation_assets" / "source_verifier.py").write_text(verifier_text, encoding="utf-8")
     write_json(target / "pool_task.json", pool_task)
     return {"source_id": row["source_id"], "task_dir": target.name, "capability_id": capability_id,
-            "in_v4": row["in_v4"], "in_v5": row["in_v5"]}
+            "in_v4": row["in_v4"], "in_v5": row["in_v5"],
+            **({k: image[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})}
 
 
 # ---------------------------------------------------------------------------
@@ -726,6 +760,11 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
                 (fixtures / name).mkdir(parents=True)
                 shutil.copy2(out / f"{name}.json", fixtures / name / "response.txt")
         pool_task = json.loads((target / "pool_task.json").read_text())
+        if image.get("python_target") == "3.12":
+            resource_fields = transport_resource_metadata(log)
+            summary.update(resource_fields)
+            pool_task.update(resource_fields)
+            pool_task["runtime"].update(resource_fields)
         pool_task["qualification"]["fixture_build"] = summary
         if summary.get("ok"):
             pool_task["qualification"]["fixture_kinds"] = {
@@ -757,7 +796,7 @@ Path("/work/result.json").write_text(json.dumps({"result": result, "python": sys
 
 
 def qualify_batch(dirs: list[Path], image: dict[str, Any], tag: str) -> dict[str, dict[str, Any]]:
-    """Each fixture gets a fresh container, at the actual runtime CPU/RAM limits."""
+    """Each fixture gets a fresh container with declared limits and actual readback."""
     def run_fixture(job: tuple[Path, str]) -> tuple[str, str, dict[str, Any]]:
         target, fixture = job
         stage = fresh_staging(f"tau2_qualify_{tag}_{fixture}_")
@@ -774,10 +813,12 @@ def qualify_batch(dirs: list[Path], image: dict[str, Any], tag: str) -> dict[str
             result = payload.get("result") or {"status": "error", "error": f"no result (docker rc={rc}, log {log})"}
             if rc != 0:
                 result = {"status": "error", "error": f"docker rc={rc}; log {log}"}
+            resource_fields = (transport_resource_metadata(log) if image.get("python_target") == "3.12"
+                               and log.with_suffix(log.suffix + ".transport.json").is_file() else {})
             result["qualification_container"] = {"image_digest": image["task_image_digest"],
                 "network": "none", "network_interfaces": payload.get("network_interfaces"),
                 "cpus": 2, "memory": "4g", "python": payload.get("python"),
-                "fresh_fixture_container": True, "returncode": rc, "log": str(log)}
+                "fresh_fixture_container": True, "returncode": rc, "log": str(log), **resource_fields}
             return target.name, fixture, result
         finally:
             shutil.rmtree(stage)
@@ -858,12 +899,20 @@ def cmd_qualify(args: argparse.Namespace) -> None:
                 _status(correct), default=str)[:600]
         else:
             reason = "known_broken did not fail with evaluator reward 0: " + json.dumps(_status(broken), default=str)[:600]
+        if image.get("python_target") == "3.12":
+            # Include rejected/missing-fixture rows using the actual image probe,
+            # then retain both per-fixture resource snapshots in qualification.
+            resource_fields = {k: image[k] for k in RESOURCE_METADATA_KEYS}
+            pool_task.update(resource_fields)
+            pool_task["runtime"].update(resource_fields)
+            q.update(resource_fields)
         q["admitted"] = admitted
         q["admission_reason"] = reason
         write_json(target / "pool_task.json", pool_task)
         index_rows.append({"source_id": pool_task["source_id"], "task_dir": target.name, "admitted": admitted,
                            "capability_id": pool_task["capability_hint"]["capability_id"], "reason": reason,
-                           "in_v4": pool_task["l2_flags"]["in_v4"], "in_v5": pool_task["l2_flags"]["in_v5"]})
+                           "in_v4": pool_task["l2_flags"]["in_v4"], "in_v5": pool_task["l2_flags"]["in_v5"],
+                           **({k: pool_task[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})})
     with (POOL_ROOT / "INDEX.jsonl").open("w", encoding="utf-8") as handle:
         for row in index_rows:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -901,10 +950,13 @@ def cmd_report(args: argparse.Namespace) -> None:
             "adapted": True, "adaptations": ["Python 3.12 isolated venv replaces Python 3.11 system-site venv",
                 "Inactive benchmark_fixes.json omitted before image build because it embeds private gold tasks",
                 "Agent image retains public domain assets only; private task/evaluator stays outside Workspace",
-                "Live DeepSeek NL judgment sealed for subsequent offline native rescoring"],
+                "Live DeepSeek NL judgment sealed for subsequent offline native rescoring"] +
+                (["User-approved declared_only resource waiver; declared limits are not enforced; actual readback retained"]
+                 if record.get("resource_enforcement") == "declared_not_enforced" else []),
             "preserved": {"revision": REVISION, "variant": "official", "user_model": "deepseek-flash",
                 "judge_model": "deepseek-flash", "carrier": "AReaL 979f4221"},
-            "qualification": q.get("admitted")})
+            "qualification": q.get("admitted"),
+            **{k: record[k] for k in RESOURCE_METADATA_KEYS if k in record}})
     placements, used = [], set()
     for task_path in sorted(args.r2_package.glob("streams/*/turn*/task.json")):
         task = json.loads(task_path.read_text())

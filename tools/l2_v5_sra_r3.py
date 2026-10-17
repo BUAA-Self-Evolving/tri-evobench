@@ -19,7 +19,7 @@ from pathlib import Path
 
 import l2_v5_sra as legacy
 from trievo_bench.container_resources import (ContainerResourceError, docker_resource_capability_preflight,
-                                             require_container_resources)
+                                             require_container_resources, resource_enforcement_mode, evaluate_resource_enforcement)
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "sra_r3_environment/1.0"
@@ -59,13 +59,17 @@ def build(pool: Path, upstream: Path) -> None:
         legacy.UPSTREAM = original_upstream
     license_text = (upstream / "LICENSE").read_text()
     ledger = []
+    index_rows = []
     for line in (pool / "INDEX.jsonl").read_text().splitlines():
         row = json.loads(line)
+        row.update(resource_enforcement="pending", resource_readback={}, resource_observation_provenance={"reason": "qualification not run"})
+        index_rows.append(row)
         task = pool / row["task_dir"]
         record = json.loads((task / "pool_task.json").read_text())
         helper = ROOT / "tools/l2_v5_sra_strip_think.py"
         shutil.copy2(helper, task / "evaluation_assets/sra_native/strip_think.py")
         (task / "evaluation_assets/source_verifier.py").write_text(r3_verifier_text())
+        record.update(resource_enforcement="pending", resource_readback={}, resource_observation_provenance={"reason": "qualification not run"})
         record["runtime"]["environment_version"] = "l2_environment/1.0"
         record["qualification"]["notes"].extend([
             "dedicated SR-Agents NumPy>=2 environment; unchanged native evaluator",
@@ -89,7 +93,10 @@ def build(pool: Path, upstream: Path) -> None:
              "revision": legacy.REVISION, "helper_sha256": hashlib.sha256(helper.read_bytes()).hexdigest(),
              "reason": "restore exact upstream post-think-tag whitespace handling for r3; legacy r2 untouched"}],
                        "qualification": "pending"})
+        record["adaptations"] = ledger[-1]["adaptations"]
+        write_json(task / "pool_task.json", record)
     (pool / "ADAPTATIONS.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ledger))
+    (pool / "INDEX.jsonl").write_text("".join(json.dumps(r) + "\n" for r in index_rows))
 
 
 def diagnostic_valid(authority: dict, shadow: dict, *, red: bool) -> bool:
@@ -116,6 +123,27 @@ def diagnostic_valid(authority: dict, shadow: dict, *, red: bool) -> bool:
                  else shadow.get("assertion_failures", 0) == 0 and shadow.get("tests_successful", 0) > 0))
 
 
+def resource_header(stdout: str, *, nonce: str, response_sha256: str, shadow: bool,
+                    enforcement_mode: str) -> dict:
+    """Authenticate only the first stdout line; never scan candidate output."""
+    lines = stdout.splitlines()
+    if not lines:
+        raise ValueError("missing first stdout resource header")
+    header = json.loads(lines[0])
+    if (not isinstance(header, dict)
+            or header.get("schema_version") != "sra_resource_pre_execution/1.0"
+            or header.get("execution_nonce") != nonce
+            or header.get("response_sha256") != response_sha256
+            or header.get("shadow") is not shadow):
+        raise ValueError("first stdout resource header identity mismatch")
+    snapshot = header.get("resource_readback")
+    # Ignore serialized assessments/waivers: the host chooses current policy.
+    assessment = evaluate_resource_enforcement(snapshot, enforcement_mode=enforcement_mode)
+    if not isinstance(snapshot, dict):
+        raise ContainerResourceError("missing resource snapshot in first stdout header")
+    return dict(snapshot, **assessment)
+
+
 def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: bool) -> dict:
     """Transfer private fixtures through docker cp, never daemon-host binds.
 
@@ -123,9 +151,10 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
     establish actual execution even where the default proxy no-ops docker exec.
     """
     out.mkdir(parents=True, exist_ok=True)
-    capability = docker_resource_capability_preflight()
+    selected_mode = resource_enforcement_mode()
+    capability = docker_resource_capability_preflight(enforcement_mode=selected_mode)
     write_json(out / "resource-capability.json", capability)
-    if not capability["passed"]:
+    if not capability.get("allowed", capability["passed"]):
         report = {"transport_verified": False, "resource_preflight_rejected": True,
                   "resource_capability": capability,
                   "transport_error": "Docker daemon cannot enforce required cgroups; no fixture container launched"}
@@ -138,11 +167,15 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
                "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--pids-limit", "256",
                "-e", "MPLBACKEND=Agg", "-e", "PYTHONDONTWRITEBYTECODE=1",
                "-e", "L2_QUALIFICATION_NONCE=" + nonce,
-               "--entrypoint", "python", image, "/runner.py"]
+               "--entrypoint", "python", image, "/runner.py", "--resource-enforcement", selected_mode]
     if shadow:
         command.append("--shadow")
     commands = []
     report = {"transport_verified": False}
+    trusted_resources = None
+    expected_hash = hashlib.sha256((fixture / "response.txt").read_bytes()).hexdigest()
+    provenance = {"kind": "first_stdout_pre_execution_header", "container_name": container_name,
+                  "image_id": image, "execution_nonce": nonce, "role": "shadow" if shadow else "authoritative"}
 
     def call(arguments, timeout=60):
         commands.append(arguments)
@@ -158,9 +191,27 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
               container_name + ":/container_resources.py"])
         call(["docker", "cp", str(ROOT / "tools/l2_v5_sra_diagnostics.py"),
               container_name + ":/runner.py"])
-        result = call(["docker", "start", "-a", container_name], timeout=600)
-        (out / "stdout.log").write_text(result.stdout)
-        (out / "stderr.log").write_text(result.stderr)
+        start_error = None
+        try:
+            result = call(["docker", "start", "-a", container_name], timeout=600)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+            result = exc
+            start_error = exc
+        stdout = result.stdout or ""
+        if isinstance(stdout, bytes):
+            stdout = stdout.decode("utf-8", errors="replace")
+        if not stdout:
+            stdout = call(["docker", "logs", container_name]).stdout
+        (out / "stdout.log").write_text(stdout)
+        stderr = result.stderr or ""
+        if isinstance(stderr, bytes):
+            stderr = stderr.decode("utf-8", errors="replace")
+        (out / "stderr.log").write_text(stderr)
+        trusted_resources = resource_header(stdout, nonce=nonce, response_sha256=expected_hash,
+                                            shadow=shadow, enforcement_mode=selected_mode)
+        require_container_resources(trusted_resources, enforcement_mode=selected_mode)
+        if start_error is not None:
+            raise start_error
         inspection = call(["docker", "inspect", "--format",
                            "{{json .State}}|{{.Image}}|{{.HostConfig.NetworkMode}}|{{json .HostConfig}}", container_name])
         raw_state, actual_image, network, raw_host_config = inspection.stdout.strip().split("|", 3)
@@ -178,25 +229,32 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
             destination = Path(staged) / "result.json"
             call(["docker", "cp", container_name + ":/out/result.json", str(destination)])
             payload = json.loads(destination.read_text())
-            expected_hash = hashlib.sha256((fixture / "response.txt").read_bytes()).hexdigest()
             if (payload.get("execution_nonce") != nonce or payload.get("shadow") is not shadow
                     or payload.get("response_sha256") != expected_hash):
                 raise ValueError("fixture execution readback identity mismatch")
-            require_container_resources(payload.get("resource_readback") or {})
+            payload["resource_readback"] = trusted_resources
             report = payload
             report.update(transport_verified=True, container_exit_code=state["ExitCode"],
                           actual_image_id=actual_image, network_readback=network, host_config_readback=host_config)
-            shutil.copy2(destination, out / "result.json")
     except (subprocess.SubprocessError, OSError, ValueError, ContainerResourceError) as exc:
         report = {"transport_verified": False, "transport_error": type(exc).__name__ + ": " + str(exc)}
-        if "payload" in locals():
-            report["resource_readback"] = payload.get("resource_readback")
         if isinstance(exc, subprocess.CalledProcessError):
             report["stderr"] = (exc.stderr or "")[-12000:]
     finally:
         subprocess.run(["docker", "rm", "-f", container_name], capture_output=True, timeout=30)
+    if trusted_resources is not None:
+        report.update(resource_readback=trusted_resources,
+                      resource_enforcement=trusted_resources["resource_enforcement"],
+                      requested_resources=trusted_resources["requested_resources"],
+                      observed_resources=trusted_resources["observed_resources"],
+                      resource_enforcement_reason=trusted_resources["reason"],
+                      resource_waiver=trusted_resources["waiver"],
+                      resource_observation_provenance=provenance)
+    report["resource_enforcement_mode"] = selected_mode
     report.update(command=command, transport_commands=commands, network="none", image_id=image,
                   expected_nonce=nonce, workspace_transport="docker_cp_private_container")
+    if report["transport_verified"]:
+        write_json(out / "result.json", report)
     write_json(out / "report.json", report)
     return report
 
@@ -269,7 +327,7 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
     artifacts.mkdir(parents=True, exist_ok=True)
     capability = docker_resource_capability_preflight()
     write_json(artifacts / "RESOURCE_PREFLIGHT.json", capability)
-    if not capability["passed"]:
+    if not capability.get("allowed", capability["passed"]):
         raise ContainerResourceError("SRA qualification blocked before image/fixture work: " + json.dumps(capability))
     image_id = legacy.image_digest(image)
     rows = [json.loads(line) for line in (pool / "INDEX.jsonl").read_text().splitlines()]
@@ -277,7 +335,7 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
     artifacts.mkdir(parents=True, exist_ok=True)
     environment_files = ["Dockerfile.sra-r3", "sra-requirements.in", "sra-requirements.lock",
                          "sra-build-requirements.lock", "sra-nltk-assets.json", "sra-install-assets.py"]
-    identity = {"protocol": VERSION, "image_tag": image, "image_id": image_id,
+    identity = {"resource_enforcement_mode": resource_enforcement_mode(), "protocol": VERSION, "image_tag": image, "image_id": image_id,
                 "dependency_hashes": {name: hashlib.sha256((ROOT / "sandbox/l2-v5" / name).read_bytes()).hexdigest()
                                       for name in environment_files},
                 "qualifier_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -303,7 +361,18 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
         path = pool / row["task_dir"] / "pool_task.json"
         record = json.loads(path.read_text())
         record["runtime"].update(task_image=image, task_image_digest=image_id)
+        resource_report = next((data[side] for data in result["fixtures"].values()
+            for side in ("authoritative", "diagnostic") if data[side].get("resource_readback")), {})
+        resource_fields = {"resource_enforcement": resource_report.get("resource_enforcement", "unobserved"),
+            "resource_readback": resource_report.get("resource_readback", {}),
+            "resource_observation_provenance": resource_report.get("resource_observation_provenance", {"reason": "fixture transport failed before actual readback"})}
+        record.update(resource_fields); record["runtime"].update(resource_fields); row.update(resource_fields)
+        record["adaptations"] = [item for item in record.get("adaptations", []) if item.get("kind") != "resource_enforcement_waiver"]
+        if record["resource_enforcement"] == "declared_not_enforced":
+            record["adaptations"].append({"kind": "resource_enforcement_waiver", "mode": "declared_only",
+                "reason": "explicit user approval W2-phase2-resume.md", **resource_fields})
         q = record["qualification"]
+        q.update(resource_fields)
         q.update(image_digest=image_id, admitted=result["admitted"],
                  qualification_protocol=VERSION,
                  private_diagnostic_path=str((artifacts / row["task_dir"]).resolve()))
@@ -323,6 +392,13 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
         task_dir = entry["source_id"].replace(":", "__")
         if task_dir in results:
             entry["qualification"] = "admitted" if results[task_dir]["admitted"] else "rejected"
+            record = json.loads((pool / task_dir / "pool_task.json").read_text())
+            entry.update({key: record[key] for key in ("resource_enforcement", "resource_readback", "resource_observation_provenance")})
+            entry["adaptations"] = [item for item in entry["adaptations"] if item.get("kind") != "resource_enforcement_waiver"]
+            if record["resource_enforcement"] == "declared_not_enforced":
+                entry["adaptations"].append({"kind": "resource_enforcement_waiver", "mode": "declared_only",
+                    "reason": "explicit user approval W2-phase2-resume.md", "resource_readback": record["resource_readback"],
+                    "resource_observation_provenance": record["resource_observation_provenance"]})
             entry["red_candidates"] = results[task_dir].get("red_candidates", [])
     (pool / "ADAPTATIONS.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ledger))
 

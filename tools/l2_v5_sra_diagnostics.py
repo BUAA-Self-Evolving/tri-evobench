@@ -15,22 +15,31 @@ import unittest
 from pathlib import Path
 
 
-def run(task: Path, response: str, output: Path, *, shadow: bool, resource_guard=False) -> dict:
+def run(task: Path, response: str, output: Path, *, shadow: bool, resource_guard=False, enforcement_mode="strict") -> dict:
     output.parent.mkdir(parents=True, exist_ok=True)
     events = output.parent / "events.jsonl"
     resource_readback = None
     if resource_guard:
-        from container_resources import read_container_resources, validate_container_resources
+        from container_resources import read_container_resources, evaluate_resource_enforcement, require_container_resources
         resource_readback = read_container_resources()
-        validation = validate_container_resources(resource_readback)
-        if not validation["passed"]:
+        assessment = evaluate_resource_enforcement(resource_readback, enforcement_mode=enforcement_mode)
+        checkpoint = {"schema_version": "sra_resource_pre_execution/1.0",
+                      "resource_readback": resource_readback, "assessment": assessment,
+                      "execution_nonce": os.environ.get("L2_QUALIFICATION_NONCE"),
+                      "response_sha256": hashlib.sha256(response.encode()).hexdigest(), "shadow": shadow}
+        # The first flushed stdout line precedes verifier imports/candidate code.
+        # Files below are diagnostics only: root candidate code can rewrite them.
+        print(json.dumps(checkpoint), flush=True)
+        (output.parent / "resource_readback.json").write_text(json.dumps(checkpoint, indent=2) + "\n")
+        if not assessment["accepted"]:
             report = {"verifier": {"status": "error", "score": None,
                                   "details": {"reason": "resource_enforcement_mismatch"}},
-                      "resource_readback": resource_readback, "resource_validation": validation,
+                      "resource_readback": resource_readback, "resource_validation": assessment["validation"],
                       "execution_nonce": os.environ.get("L2_QUALIFICATION_NONCE"),
                       "response_sha256": hashlib.sha256(response.encode()).hexdigest(), "shadow": shadow}
             output.write_text(json.dumps(report, indent=2) + "\n")
             return report
+        resource_readback = require_container_resources(resource_readback, enforcement_mode=enforcement_mode)
     if shadow:
         original = unittest.TestResult
 
@@ -104,5 +113,10 @@ def run(task: Path, response: str, output: Path, *, shadow: bool, resource_guard
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--shadow", action="store_true")
+    parser.add_argument("--resource-enforcement", choices=("strict", "declared_only"), default="strict")
+    options = parser.parse_args()
     run(Path("/task"), Path("/fixture/response.txt").read_text(), Path("/out/result.json"),
-        shadow="--shadow" in sys.argv, resource_guard=True)
+        shadow=options.shadow, resource_guard=True, enforcement_mode=options.resource_enforcement)

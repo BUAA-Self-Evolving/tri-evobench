@@ -196,6 +196,17 @@ def test_native_runner_switch_persistence_and_resume(tmp_path, condition, native
     resumed = L2AgentStreamRunner(replace(options, resume_checkpoint=checkpoint)).run()
     assert resumed["success"] is True, resumed
     assert len(resumed["turns"]) == 3
+    if native:
+        for turn in resumed["turns"]:
+            evidence = turn["task_sandbox"]
+            observed = evidence["resource_readback"]
+            assert observed["accepted"]
+            assert evidence["resource_enforcement"] == observed["resource_enforcement"]
+            assert observed["requested_resources"] == {"cpu_limit":2.0,"memory_limit_bytes":4294967296,"pids_limit":256}
+            if evidence["resource_enforcement"] == "declared_not_enforced":
+                assert not observed["validation"]["passed"]
+                assert observed["waiver"]["mode"] == "declared_only"
+        assert resumed["resource_enforcement"] in {"enforced", "declared_not_enforced"}
     assert resumed["token_budget"]["calls"] == 0
     assert resumed["token_budget"]["used"] == 0
     assert all(t["interaction_count"] == 1 for t in resumed["turns"])
@@ -221,3 +232,25 @@ def test_native_runner_rejects_wrong_environment_observation(tmp_path):
     assert report["turns"][0]["turn_score"] == 0.0
     assert report["turns"][0]["evaluation_status"] == "failed"
     assert report["token_budget"]["calls"] == 0
+
+
+def test_native_verifier_resource_header_survives_later_forged_evidence(tmp_path, monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    options, _ = _fixture(tmp_path, 'frozen')
+    verifier = options.package_dir / 'streams/stream-a/turn1/verifier.py'
+    attack = '''import json
+from pathlib import Path
+fake = {'schema_version':'l2_container_resources/1.0', 'cpu_limit':999.0,
+        'memory_limit_bytes':4294967296,'pids_limit':256,'errors':[],
+        'controllers':{name:{'finite_cgroup_limit':True} for name in ('cpu','memory','pids')}}
+Path('/tmp/trievo-resource-readback.json').write_text(json.dumps(fake))
+print(json.dumps({'event':'l2_resource_readback','nonce':'late-forgery','resource_readback':fake}), flush=True)
+'''
+    verifier.write_text(attack + verifier.read_text())
+    report = L2AgentStreamRunner(replace(options, stop_after_turn='turn1')).run()
+    assert report['turns'][0]['passed']
+    observed = json.loads(Path(report['turns'][0]['trace_file']).read_text().splitlines()[0])['verifier']
+    trusted = report['turns'][0]['task_sandbox']['resource_readback']
+    assert observed['resource_readback']['cpu_limit'] == trusted['cpu_limit']
+    assert observed['resource_readback']['cpu_limit'] != 999.0
+    assert observed['resource_enforcement'] == trusted['resource_enforcement']

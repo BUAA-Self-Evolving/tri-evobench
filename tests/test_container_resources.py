@@ -9,6 +9,11 @@ import pytest
 from trievo_bench import container_resources as resources
 
 
+@pytest.fixture(autouse=True)
+def strict_resource_mode_by_default(monkeypatch):
+    monkeypatch.delenv("TRIEVO_RESOURCE_ENFORCEMENT", raising=False)
+
+
 def _write(path, text):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text)
@@ -112,7 +117,7 @@ def test_embedded_source_is_python39_parseable_and_runs_before_user_work():
     scope = {'__name__': 'embedded_resource_guard'}
     exec('import os\nordinary_setup = True\n' + script, scope)
     assert scope['ordinary_setup'] is True
-    fake = {'cpu_limit': 2.0, 'memory_limit_bytes': 4294967296, 'pids_limit': 256, 'errors': [],
+    fake = {'schema_version': resources.SCHEMA, 'cpu_limit': 2.0, 'memory_limit_bytes': 4294967296, 'pids_limit': 256, 'errors': [],
             'controllers': {key: {'finite_cgroup_limit': True} for key in ['cpu', 'memory', 'pids']}}
     scope['read_container_resources'] = lambda: fake
     assert scope['require_container_resources']()['validation']['passed']
@@ -160,3 +165,53 @@ def test_only_verified_kernel_unified_root_may_omit_control_files(tmp_path):
     _write(mount / 'cgroup.type', 'domain')
     snapshot = resources.read_container_resources(proc, fs, affinity_cpus=64)
     assert not resources.validate_container_resources(snapshot)['passed']
+
+
+def test_explicit_waiver_does_not_turn_strict_validation_green(tmp_path, monkeypatch):
+    proc, fs, mount = v2(tmp_path)
+    (mount / 'parent/cpu.max').write_text('max 100000')
+    snapshot = resources.read_container_resources(proc, fs, affinity_cpus=64)
+    snapshot['resource_enforcement'] = 'declared_not_enforced'
+    assert not resources.validate_container_resources(snapshot)['passed']
+    assert not resources.evaluate_resource_enforcement(snapshot)['accepted']
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    decision = resources.evaluate_resource_enforcement(snapshot)
+    assert decision['accepted'] and not decision['strict_passed']
+    assert decision['resource_enforcement'] == 'declared_not_enforced'
+    assert decision['requested_resources']['cpu_limit'] == 2
+    assert decision['observed_resources']['cpu_limit'] == 4
+    assert not resources.require_container_resources(snapshot)['validation']['passed']
+    assert not resources.evaluate_resource_enforcement({})['accepted']
+    # Host-selected mode is embedded, even after the receiving env changes.
+    script = resources.container_resource_check_script()
+    assert "enforcement_mode='declared_only'" in script.splitlines()[-1]
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'strict')
+    assert not resources.evaluate_resource_enforcement(snapshot)['accepted']
+
+
+@pytest.mark.parametrize('mode', ['waived', 'true', '', 'DECLARED_ONLY'])
+def test_invalid_waiver_optin_rejected(mode, monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', mode)
+    with pytest.raises(resources.ContainerResourceError): resources.resource_enforcement_mode()
+    with pytest.raises(resources.ContainerResourceError): resources.docker_resource_capability_preflight()
+
+
+def test_waiver_never_accepts_daemon_transport_or_malformed_info(monkeypatch):
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT', 'declared_only')
+    monkeypatch.setattr(resources.subprocess, 'run', lambda *a, **kw: subprocess.CompletedProcess([], 0, '{}', ''))
+    result = resources.docker_resource_capability_preflight()
+    assert not result['allowed'] and not result['passed']
+    def failed(*a, **kw): raise subprocess.CalledProcessError(1, 'docker info')
+    monkeypatch.setattr(resources.subprocess, 'run', failed)
+    assert not resources.docker_resource_capability_preflight()['allowed']
+    monkeypatch.setattr(resources.subprocess, 'run', lambda *a, **kw: subprocess.CompletedProcess([], 0, json.dumps({'CgroupDriver': 'none', 'CgroupVersion': '1'}), ''))
+    result = resources.docker_resource_capability_preflight()
+    assert result['allowed'] and not result['passed'] and not result['strict_passed']
+    assert result['resource_enforcement'] == 'declared_not_enforced'
+
+
+@pytest.mark.parametrize('snapshot', [{}, [], {'schema_version': resources.SCHEMA},
+    {'schema_version': resources.SCHEMA, 'cpu_limit': 2, 'memory_limit_bytes': 4294967296,
+     'pids_limit': 256, 'errors': [], 'controllers': {'cpu': 1}}])
+def test_malformed_snapshot_rejected_even_with_waiver(snapshot):
+    assert not resources.evaluate_resource_enforcement(snapshot, enforcement_mode='declared_only')['accepted']

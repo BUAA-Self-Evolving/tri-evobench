@@ -35,6 +35,8 @@ except ImportError:
     import l2_v5_native_pool as legacy
 
 _BUILD_SLOTS_FILE: Path | None = None
+_RESOURCE_MODE: str | None = None
+_RESOURCE_PREFLIGHT: dict[str, Any] = {}
 BUILD_PYPI_INDEX = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 _IMAGE_LOCKS: dict[str, threading.Lock] = {}
@@ -62,14 +64,42 @@ def dump(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
 
 
-def resource_capability_preflight(work: Path) -> dict[str, Any]:
+def resource_capability_preflight(work: Path, mode: str | None = None) -> dict[str, Any]:
     """Reject incapable daemons before builds; containers still need readback."""
     from trievo_bench.container_resources import docker_resource_capability_preflight
-    result=docker_resource_capability_preflight()
+    result=docker_resource_capability_preflight(enforcement_mode=mode)
     dump(work/"container-resource-capability.json",result)
-    if not result["passed"]:
+    if not result.get("allowed",result["passed"]):
         raise RuntimeError("container_resource_limits_unverified:"+json.dumps(result))
     return result
+
+
+def resource_fields(payload: dict[str, Any], provenance: dict[str, Any]) -> dict[str, Any]:
+    """Carry actual observations separately from the requested Docker flags."""
+    if not payload.get("accepted"):
+        raise RuntimeError("container_resource_limits_unverified:"+json.dumps(payload))
+    snapshot={**payload["resource_readback"],**{k:v for k,v in payload.items() if k!="resource_readback"}}
+    return {"resource_enforcement":payload["resource_enforcement"],"resource_readback":snapshot,
+            "resource_observation_provenance":provenance}
+
+
+def resource_adaptation(fields: dict[str, Any]) -> dict[str, Any]:
+    snapshot=fields["resource_readback"]
+    return {"kind":"resource_enforcement_waiver" if snapshot.get("waiver") else "container_resource_enforcement",
+            "mode":snapshot["enforcement_mode"],"requested":snapshot["requested_resources"],
+            "observed":snapshot["observed_resources"],"reason":snapshot["reason"],
+            "resource_enforcement":fields["resource_enforcement"],
+            "observation_provenance":fields["resource_observation_provenance"]}
+
+
+def apply_resource_fields(record: dict[str, Any], fields: dict[str, Any]) -> None:
+    record.update(fields)
+    for section in ("runtime","qualification"):
+        if section in record:record[section].update(fields)
+    adaptation=resource_adaptation(fields)
+    record.setdefault("adaptations",[])
+    record["adaptations"]=[a for a in record["adaptations"] if a.get("kind") not in
+                           {"resource_enforcement_waiver","container_resource_enforcement"}]+[adaptation]
 
 
 def logical_shell_lines(text: str) -> list[str]:
@@ -248,6 +278,7 @@ def _native_identity(user):
 def verify(submission, turn_dir):
     assets=Path(turn_dir)/"evaluation_assets"
     meta=json.loads((assets/"native_task.json").read_text())
+    actual_resources=require_container_resources(enforcement_mode=resource_enforcement_mode())
     submission=Path(submission)
     if not submission.is_dir():
         return {"status":"fail","score":0.0,"raw_metric":None,"details":{"reason":"missing_task_directory"}}
@@ -292,13 +323,17 @@ def verify(submission, turn_dir):
             output+="\n"+logfile.read_text(errors="replace")[-2_000_000:]
     reward=Path(meta["verifier"]["reward_path"])
     result=classify(output,reward.read_text() if reward.exists() else None,code)
+    result.update(resource_enforcement=actual_resources["resource_enforcement"],resource_readback=actual_resources,
+                  resource_observation_provenance={"kind":"fixture","stage":"package_native_verifier"})
     return {"status":result["status"],"score":result["score"],"raw_metric":None,"details":result}
 '''
 
 
 def verifier_text() -> str:
     import inspect
-    return VERIFIER + "\nimport re\n" + inspect.getsource(check_result).replace("def check_result(", "def classify(").replace(" -> dict[str, Any]", "")
+    from trievo_bench import container_resources
+    resources=Path(container_resources.__file__).read_text().split("\n# CLI_ENTRYPOINT\n",1)[0]
+    return VERIFIER + "\n"+resources+"\nimport re\n" + inspect.getsource(check_result).replace("def check_result(", "def classify(").replace(" -> dict[str, Any]", "")
 
 
 def discover(upstream: Path) -> list[dict[str, Any]]:
@@ -664,11 +699,14 @@ def fixture_run(image: str, environment: dict[str, Any], task: Path, submission:
     logs=run_dir/"logs";logs.mkdir()
     meta=json.loads((task/"evaluation_assets/native_task.json").read_text())
     runner=environment["oracle" if oracle else "verifier"]
+    from trievo_bench.container_resources import resource_enforcement_mode
+    mode=resource_enforcement_mode(_RESOURCE_MODE)
     container_name="l2-r3-"+hashlib.sha256(str(run_dir).encode()).hexdigest()[:20]
     cmd=["docker","create","--name",container_name,"--network","none","--memory","4g","--cpus","2",
          "--pids-limit","256","--cap-drop","ALL","--cap-add","CHOWN","--cap-add","DAC_OVERRIDE",
          "--cap-add","SETUID","--cap-add","SETGID","--security-opt","no-new-privileges",
-         "--entrypoint","/bin/sh","-e","UV_OFFLINE=1","-e","PIP_NO_INDEX=1"]
+         "--entrypoint","/bin/sh","-e","UV_OFFLINE=1","-e","PIP_NO_INDEX=1",
+         "-e","TRIEVO_RESOURCE_ENFORCEMENT="+mode]
     if oracle:cmd += ["-e",f"ORACLE_DIR={meta['oracle_mount']}"]
     for key,value in runner.get("env",{}).items():cmd += ["-e",key+"="+value]
     cmd += [image,"-c","trap 'exit 0' TERM INT; while :; do sleep 3600; done"]
@@ -681,20 +719,24 @@ def fixture_run(image: str, environment: dict[str, Any], task: Path, submission:
         subprocess.run(["docker","start",container_name],capture_output=True,check=True)
         observed=json.loads(subprocess.check_output(["docker","inspect",container_name],text=True))[0]
         readback={"image_id":observed["Image"],"network":observed["HostConfig"]["NetworkMode"],
+                  "host_config_scope":"requested flags only; actual enforcement is resource_readback",
                   "memory_bytes":observed["HostConfig"]["Memory"],"nano_cpus":observed["HostConfig"]["NanoCpus"],
                   "pids_limit":observed["HostConfig"]["PidsLimit"],"native_user":observed["Config"].get("User"),
                   "mounts":observed["Mounts"],"private_assets":"docker cp into isolated container; no live workspace bind"}
         from trievo_bench import container_resources
         cp_to(Path(container_resources.__file__),"/tmp/l2-container-resources.py")
         checked=subprocess.run(["docker","exec","--user","0",container_name,environment["python_executable"],
-            "/tmp/l2-container-resources.py","--cpu","2","--memory-bytes","4294967296","--pids","256"],
+            "/tmp/l2-container-resources.py","--cpu","2","--memory-bytes","4294967296","--pids","256",
+            "--resource-enforcement",mode],
             capture_output=True,text=True,timeout=30)
         resource_result={"returncode":checked.returncode,"stdout":checked.stdout,"stderr":checked.stderr}
         dump(run_dir/"resource-readback.json",resource_result)
         resource_snapshot=json.loads(checked.stdout)
-        readback["effective_resources"]=resource_snapshot
-        if checked.returncode or not resource_snapshot["validation"]["passed"]:
+        if checked.returncode or not resource_snapshot.get("accepted"):
             raise RuntimeError("container_resource_limits_unverified:"+checked.stdout)
+        fields=resource_fields(resource_snapshot,{"kind":"fixture","stage":name,"container":container_name,
+            "artifact":str(run_dir/"resource-readback.json"),"observed_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())})
+        readback.update(fields)
         roots=["/l2-submission","/l2-result","/logs/verifier",meta["tests_mount"]]
         if oracle:roots.append(meta["oracle_mount"])
         if private_skills:roots.append("/app/skills")
@@ -708,7 +750,8 @@ def fixture_run(image: str, environment: dict[str, Any], task: Path, submission:
         subprocess.run(["docker","exec","--user","0",container_name,"/bin/bash","-c",bootstrap],
                        capture_output=True,text=True,check=True)
         body="#!/bin/bash\nset +e\ncd "+shlex.quote(environment["cwd"])+"\n"
-        body+=" ".join(shlex.quote(x) for x in runner["command"])+" > /l2-result/output.log 2>&1\nrc=$?\necho $rc > /l2-result/rc\nexit 0\n"
+        body+="printf '%s\\n' "+shlex.quote(json.dumps(fields))+" > /l2-result/output.log\n"
+        body+=" ".join(shlex.quote(x) for x in runner["command"])+" >> /l2-result/output.log 2>&1\nrc=$?\necho $rc > /l2-result/rc\nexit 0\n"
         (run_dir/"run.sh").write_text(body);cp_to(run_dir/"run.sh","/l2-result/run.sh")
         result=command(["docker","exec",container_name,"/bin/bash","/l2-result/run.sh"],
                        run_dir/"docker.log",runner["timeout_seconds"]+60)
@@ -738,14 +781,14 @@ def fixture_run(image: str, environment: dict[str, Any], task: Path, submission:
     finally:
         subprocess.run(["docker","rm","-f",container_name],capture_output=True)
     if oracle:
-        return {"status":"pass" if rc==0 else "error","exit_code":rc,"output_tail":log[-5000:],
+        return {**fields,"status":"pass" if rc==0 else "error","exit_code":rc,"output_tail":log[-5000:],
                 "submission":str(copied),"execution":result,"network":"none","container":container_name,
                 "unmapped_public_writes":sorted(set(unmapped))}
     for logfile in logs.rglob("*"):
         if logfile.is_file() and logfile.suffix in {".log",".txt"} and ("test" in logfile.name.lower() or "pytest" in logfile.name.lower()):
             log+="\n"+logfile.read_text(errors="replace")[-2_000_000:]
     reward=logs/"reward.txt"
-    return {**check_result(log,reward.read_text() if reward.exists() else None,rc),
+    return {**fields,**check_result(log,reward.read_text() if reward.exists() else None,rc),
             "execution":result,"network":"none","container":container_name}
 
 
@@ -843,15 +886,18 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     task = args.pool/slug
     result: dict[str,Any] = {"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
                              "admitted":False,"stage":"inventory","adaptations":[],
+                             "former_admission":bool(row.get("former_admission")),
                              "license":"MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0",
                              "adapter_sha256":_LOADED_ADAPTER_SHA}
+    if _RESOURCE_PREFLIGHT:apply_resource_fields(result,_RESOURCE_PREFLIGHT)
     if args.resume and (work/"outcome.json").exists():
         previous=json.loads((work/"outcome.json").read_text())
-        if previous.get("admitted") and previous.get("adapter_sha256")==_LOADED_ADAPTER_SHA:return previous
+        if previous.get("adapter_sha256")==_LOADED_ADAPTER_SHA and previous.get("stage") not in {"error","pending","resource_blocked"} and sid!="skillsbench:edit-pdf":return previous
     if (task/"pool_task.json").exists():
         stale=json.loads((task/"pool_task.json").read_text())
         dump(work/"prior-pool-record.json",stale)
         stale["qualification"]["admitted"]=False
+        if _RESOURCE_PREFLIGHT:apply_resource_fields(stale,_RESOURCE_PREFLIGHT)
         stale["qualification"].setdefault("notes",[]).append("invalidated before adapter requalification")
         dump(task/"pool_task.json",stale)
     try:
@@ -891,16 +937,19 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                      "oracle":{"command":["bash",row["oracle_mounts"][0]+"/solve.sh"],"cwd":cwd,
                                "timeout_seconds":max(1800,info["agent_timeout"]),"env":stage_environment(configuration,"oracle")},
                      "adaptations":image_result["adaptations"]+[{"kind":"flatten_private_image","removed_paths":image_result["scrub"]["removed_paths"]}]}
+        if _RESOURCE_PREFLIGHT:environment["adaptations"].append(resource_adaptation(_RESOURCE_PREFLIGHT))
         if sid=="skillsbench:edit-pdf":
             result["time_sensitive_native_verifier"]=True
             environment["adaptations"].append({"kind":"calendar_sensitive_fixture",
                 "reason":"unchanged test_todays_date_added expects current Pacific date plus/minus one day; static gold expires",
                 "qualification_observed_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),
-                "refresh_policy":"rerun unchanged upstream oracle; never freeze/patch clock or tests"})
+                "refresh_policy":"rerun unchanged upstream oracle at source and W3 package qualification; never freeze/patch clock or tests",
+                "package_qualification_requires_oracle_regeneration":True})
         if source_environment:
             environment["adaptations"].append({"kind":"l2_runtime_resource_policy","upstream":source_environment,
-                "runtime":{"cpus":2,"memory_mb":4096,"pids_limit":256,"network":"disabled"},
-                "reason":"approved persistent Workspace/L2 runtime constraints retained"})
+                "declared_runtime":{"cpus":2,"memory_mb":4096,"pids_limit":256,"network":"disabled"},
+                "resource_enforcement":result.get("resource_enforcement","unknown"),
+                "reason":"declared Docker flags retained; actual enforcement recorded separately under approved waiver"})
         # Validation is also exercised during fixture run before executing a command.
         from trievo_bench.native_environment import validate_native_environment
         validate_native_environment(environment)
@@ -913,6 +962,10 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
         shutil.copytree(inp["oracle"],assets/"native_oracle",ignore=shutil.ignore_patterns("__pycache__"))
         (assets/"source_verifier.py").write_text(verifier_text())
         meta={**environment,"tests_mount":row["tests_mount"],"oracle_mount":row["oracle_mounts"][0],"native_user":cfg.get("User","")}
+        if _RESOURCE_PREFLIGHT:apply_resource_fields(meta,_RESOURCE_PREFLIGHT)
+        if sid=="skillsbench:edit-pdf":
+            meta.update(date_dependent=True,package_qualification_requires_oracle_regeneration=True,
+                        oracle_assets_relative_path="native_oracle")
         dump(assets/"native_task.json",meta)
         materialize_seed(work/"safe-rootfs.tar",mappings,task/"workspace_seed")
         # Writable native output directories must have real backing directories
@@ -955,6 +1008,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             if oracle.get("unmapped_public_writes"):
                 raise RuntimeError("unstable_oracle_public_outputs:"+str(oracle["unmapped_public_writes"]))
         result["oracle"]=oracle
+        oracle_fields={k:oracle[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
+        apply_resource_fields(result,oracle_fields);apply_resource_fields(meta,oracle_fields)
+        dump(assets/"native_task.json",meta)
         if oracle["status"]!="pass":
             result.update(stage="oracle",reason="native_oracle_failed");return result
         # Gold may never return private helpers into the agent-visible workspace.
@@ -966,6 +1022,11 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
         green=fixture_run(image["Id"],environment,task,task/"fixtures/known_correct",work,"known_correct")
         red=fixture_run(image["Id"],environment,task,task/"fixtures/known_broken",work,"known_broken")
         result.update(known_correct=green,known_broken=red)
+        fixture_fields={k:green[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
+        apply_resource_fields(result,fixture_fields);apply_resource_fields(meta,fixture_fields)
+        environment["adaptations"]=[a for a in environment["adaptations"] if a.get("kind") not in
+                                    {"resource_enforcement_waiver","container_resource_enforcement"}]+[resource_adaptation(fixture_fields)]
+        meta["adaptations"]=environment["adaptations"];dump(assets/"native_task.json",meta)
         admitted=green["status"]=="pass" and red["status"]=="fail" and not license_manifest["admission_blocked"] and not result.get("runtime_readiness_blocker")
         result.update(admitted=admitted,stage="qualified",reason=None if admitted else (result.get("runtime_readiness_blocker") or ("external_asset_license_unverified" if license_manifest["admission_blocked"] else "native_red_green_failed")),task_dir=slug)
         if admitted:
@@ -986,6 +1047,10 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                                  "notes":["true upstream Docker build; flattened skill/private-safe image; original runner setup moved build-time"]},
                 "licenses":[{"asset":"upstream_task","license":result["license"],"source":str(sources.CHECKOUTS[row["benchmark_id"]]/"LICENSE")}],
                 "adaptations":environment["adaptations"]}
+        apply_resource_fields(record,fixture_fields)
+        if sid=="skillsbench:edit-pdf":
+            for section in (record["runtime"],record["qualification"]):
+                section.update(date_dependent=True,package_qualification_requires_oracle_regeneration=True)
         shutil.copy2(work/"ASSET_LICENSES.json",assets/"ASSET_LICENSES.json")
         dump(task/"pool_task.json",record)
         result["adaptations"]=environment["adaptations"]
@@ -998,8 +1063,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
             reference=json.loads((work/"build_reference.json").read_text())
             result["build_reference"]=reference
             ledger=Path(reference["image_work"])/"ADAPTATIONS.json"
-            if ledger.exists() and not result.get("adaptations"):
-                result["adaptations"]=json.loads(ledger.read_text())
+            if ledger.exists():
+                for adaptation in json.loads(ledger.read_text()):
+                    if adaptation not in result.setdefault("adaptations",[]):result["adaptations"].append(adaptation)
         dump(work/"outcome.json",result)
 
 
@@ -1050,6 +1116,8 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
         "", "Results are native image qualification outcomes only where fixtures ran. Pending and build errors do not establish source task defects.",
         "", "Per-file asset terms, original and adapted runner hashes, image metadata, build logs, fresh-container fixture commands and readbacks are retained in the referenced work directories.",
         "", "| Source | Stage | Admitted | Reason |", "|---|---|---|---|"]
+    if any(r.get("resource_enforcement")=="declared_not_enforced" for r in rows):
+        report[3:3]=["", "**Resource-enforcement waiver:** declared 2 CPU / 4 GiB / 256 PID flags were not enforced on this daemon. Actual CPU, memory and PID observations, waiver reason and per-fixture versus unexecuted-preflight provenance are retained in every source row. These outcomes do not establish behavior under enforced resource caps."]
     for r in sorted(rows,key=lambda x:x["source_id"]):
         reason=str(r.get("reason") or "").replace("\n"," ").replace("|","/")[:500]
         report.append(f"| {r['source_id']} | {r.get('stage')} | {r['admitted']} | {reason} |")
@@ -1063,7 +1131,8 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
     name="native-preflight-"+directory.name[-12:]
     result={"docker_host":os.environ.get("DOCKER_HOST"),"image":image}
     try:
-        subprocess.run(["docker","run","-d","--name",name,"--network","none","--entrypoint","/bin/sh",
+        subprocess.run(["docker","run","-d","--name",name,"--network","none","--memory","4g","--cpus","2",
+                        "--pids-limit","256","--entrypoint","/bin/sh",
                         image,"-c","sleep 300"],capture_output=True,text=True,check=True)
         subprocess.run(["docker","exec",name,"/bin/sh","-c","printf executed > /tmp/native-preflight-marker"],
                        capture_output=True,text=True,check=True)
@@ -1074,6 +1143,17 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
         result.update(marker=marker,negative_exit_code=negative.returncode)
         if marker!="executed" or negative.returncode!=17:
             raise RuntimeError("Docker exec/copy readback failed; endpoint may be a no-op proxy")
+        from trievo_bench import container_resources
+        mode=container_resources.resource_enforcement_mode(_RESOURCE_MODE)
+        subprocess.run(["docker","cp",container_resources.__file__,name+":/tmp/l2-container-resources.py"],
+                       capture_output=True,text=True,check=True)
+        checked=subprocess.run(["docker","exec",name,"python3","/tmp/l2-container-resources.py",
+            "--cpu","2","--memory-bytes","4294967296","--pids","256","--resource-enforcement",mode],
+            capture_output=True,text=True,timeout=30)
+        dump(directory/"resource-readback.json",{"returncode":checked.returncode,"stdout":checked.stdout,"stderr":checked.stderr})
+        if checked.returncode:raise RuntimeError("container_resource_limits_unverified:"+checked.stdout)
+        result.update(resource_fields(json.loads(checked.stdout),{"kind":"preflight_unexecuted","task_executed":False,
+            "container":name,"artifact":str(directory/"resource-readback.json"),"observed_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())}))
         result["passed"]=True
         return result
     finally:
@@ -1082,9 +1162,11 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
 
 
 def main() -> int:
-    global _BUILD_SLOTS_FILE
+    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
+    parser.add_argument("--resource-enforcement",choices=("strict","declared_only"),default=None,
+                        help="explicit resource waiver; default stays strict, or use TRIEVO_RESOURCE_ENFORCEMENT")
     parser.add_argument("--upstream",type=Path,required=True)
     parser.add_argument("--pool",type=Path,required=True)
     parser.add_argument("--work",type=Path,required=True)
@@ -1098,12 +1180,19 @@ def main() -> int:
     parser.add_argument("--inventory-only",action="store_true")
     args=parser.parse_args()
     _BUILD_SLOTS_FILE=args.build_slots_file
+    from trievo_bench.container_resources import resource_enforcement_mode
+    _RESOURCE_MODE=resource_enforcement_mode(args.resource_enforcement)
     if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
     args.work.mkdir(parents=True,exist_ok=True);args.pool.mkdir(parents=True,exist_ok=True)
     if not args.inventory_only:
-        resource_capability_preflight(args.work)
-        docker_exec_preflight(args.work)
+        resource_capability_preflight(args.work,_RESOURCE_MODE)
+        preflight=docker_exec_preflight(args.work)
+        _RESOURCE_PREFLIGHT={k:preflight[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
     all_tasks=discover(args.upstream)
+    former={}
+    if args.old_pool and (args.old_pool/"INDEX.jsonl").exists():
+        former={r["source_id"]:bool(r.get("admitted")) for r in map(json.loads,(args.old_pool/"INDEX.jsonl").read_text().splitlines())}
+    for row in all_tasks:row["former_admission"]=former.get(row["benchmark_id"]+":"+row["source_task_id"],False)
     tasks=[r for r in all_tasks if not args.only or r["benchmark_id"]+":"+r["source_task_id"] in args.only]
     previous={}
     if (args.pool/"INDEX.jsonl").exists():
@@ -1115,6 +1204,11 @@ def main() -> int:
         outcomes[sid]=previous.get(sid,{"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
             "capability_id": "skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
             "admitted":False,"stage":"pending","reason":"not_built"})
+        if _RESOURCE_PREFLIGHT and outcomes[sid].get("adapter_sha256")!=_LOADED_ADAPTER_SHA:
+            outcomes[sid]={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
+                "capability_id":"skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
+                "former_admission":row["former_admission"],"admitted":False,"stage":"pending","reason":"awaiting_current_adapter_qualification"}
+            apply_resource_fields(outcomes[sid],_RESOURCE_PREFLIGHT)
     write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
     if not args.inventory_only:
         with concurrent.futures.ThreadPoolExecutor(args.jobs) as executor:

@@ -20,6 +20,17 @@ before new-profile private verification and source qualification. A rootless
 daemon without cgroups cannot qualify or execute new profiles; legacy profiles
 retain their historical behavior.
 
+An explicitly approved run may opt in with
+`TRIEVO_RESOURCE_ENFORCEMENT=declared_only`. Without that opt-in, strict refusal
+remains the default. The waiver keeps the declared Docker CPU/memory/PID flags,
+records actual controller values and strict validation failures, and labels
+unequal/unavailable limits `resource_enforcement: declared_not_enforced`.
+Missing execution evidence, failed transport and invalid option values still
+fail. Saved pool/profile waiver metadata cannot authorize a future execution;
+the executing host must opt in again. Pool records, indexes, adaptations,
+configuration-hashed profiles and run reports retain the requested and observed
+resources. Such runs must never be described as resource-enforced evaluations.
+
 Startup checks immutable image identity and offline state, installs only declared
 aliases, and reads a generated marker back with `docker cp`. A Docker endpoint
 that reports successful `exec` without performing it fails startup. Use a Docker

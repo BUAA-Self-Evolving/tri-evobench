@@ -57,3 +57,25 @@ def test_image_archive_identity_detects_mislabeled_image(tmp_path):
     with pytest.raises(ValueError, match="does not match"):
         validate_archive_identity(archive, "sha256:" + "0"*64)
     validate_archive_identity(archive, "sha256:" + hashlib.sha256(config).hexdigest())
+
+
+def test_handoff_preserves_waiver_and_does_not_invent_missing_image_change(tmp_path):
+    old, new, package = (tmp_path / name for name in ('old', 'new', 'package'))
+    source = {'benchmark_id': 'skillsbench', 'source_task_id': 'case'}
+    directory = old / 'native' / 'case'
+    directory.mkdir(parents=True)
+    (directory / 'pool_task.json').write_text(json.dumps({'source_id': 'skillsbench:case',
+        'source': source, 'runtime': {'task_image_digest': 'old-image'}, 'qualification': {'admitted': True}}))
+    (new / 'native').mkdir(parents=True)
+    (new / 'native/INDEX.jsonl').write_text(json.dumps({'source_id': 'skillsbench:case', 'admitted': False,
+        'stage': 'build_error', 'resource_enforcement': 'declared_not_enforced',
+        'resource_readback': {'cpu_limit':108.04, 'memory_limit_bytes':2019574153216, 'pids_limit':None}}))
+    turn = package / 'streams/intra_native/turn1'
+    turn.mkdir(parents=True)
+    (turn / 'task.json').write_text(json.dumps({'stream_id': 'intra_native', 'turn_id':'turn1', 'source_basis':source}))
+    result = handoff(old, new, package)
+    assert result['placement_diffs'][0]['environment_changed'] is None
+    assert result['placement_diffs'][0]['environment_comparison'] == 'not_materialized'
+    assert result['placement_diffs'][0]['resource_enforcement'] == 'declared_not_enforced'
+    assert result['resource_enforcement_counts'] == {'declared_not_enforced':1}
+    assert result['observed_resources'][0]['cpu_limit'] == 108.04

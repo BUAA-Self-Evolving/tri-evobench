@@ -50,7 +50,11 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         new_admitted = decision.get("admitted", candidate.get("qualification", {}).get("admitted", False))
         placements.append({"stream_id": task["stream_id"], "turn_id": task["turn_id"], "source_id": sid,
                            "old_image": old_digest, "new_image": new_digest,
-                           "environment_changed": old_digest != new_digest,
+                           "environment_changed": old_digest != new_digest if new_digest is not None else None,
+                           "environment_comparison": "observed_images" if new_digest is not None else "not_materialized",
+                           "resource_enforcement": candidate.get("runtime", {}).get("resource_enforcement", decision.get("resource_enforcement")),
+                           "resource_readback": candidate.get("runtime", {}).get("resource_readback", decision.get("resource_readback")),
+                           "date_dependent": candidate.get("date_dependent", candidate.get("runtime", {}).get("date_dependent", False)),
                            "new_admitted": new_admitted, "reason": decision.get("reason"),
                            "new_stage": decision.get("stage"),
                            "old_qualification": previous.get("qualification"),
@@ -82,7 +86,13 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         recommendations[source] = {"capability_triple": [r["capability_id"] for r in choices],
                                    "three_by_five_shortfall": deficit,
                                    "feasible": len(choices) == 3 and deficit == 0}
+    resource_counts = Counter(row.get("resource_enforcement", "unrecorded") for row in decisions.values())
+    observed_resources = sorted({json.dumps({key: row.get("resource_readback", {}).get(key)
+        for key in ("cpu_limit", "memory_limit_bytes", "pids_limit")}, sort_keys=True)
+        for row in decisions.values() if isinstance(row.get("resource_readback"), dict)})
     return {"schema_version": "l2_r3_handoff/1.0", "counts": counts, "recommendations": recommendations,
+            "resource_enforcement_counts": dict(resource_counts),
+            "observed_resources": [json.loads(value) for value in observed_resources],
             "placement_diffs": placements, "decisions": decisions,
             "note": "Environment/fixture differences are not measured agent score differences. No Stream spec or codebook changed."}
 
@@ -101,6 +111,11 @@ def main() -> int:
     lines = ["# W3 r3 environment handoff", "", result["note"], "",
              "Unused means not used in any existing r2 intra_* Stream. Recommendations do not reserve sources for either new SRA/tau Stream.", "",
              "| Source | Capability | Admitted | Unused |", "|---|---|---:|---:|"]
+    if result["resource_enforcement_counts"].get("declared_not_enforced"):
+        lines[4:4] = ["**Resource waiver:** Qualification used an explicitly approved declared_only waiver. "
+                      "Docker resource flags were requested but not enforced. New executions still need explicit host opt-in; "
+                      "saved profile metadata is provenance, not authorization.",
+                      "Observed controller values: `" + json.dumps(result["observed_resources"], sort_keys=True) + "`.", ""]
     lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
     lines += ["", "## Recommended triples", ""]
     lines += [f"- {b}: {', '.join(r['capability_triple']) or 'none'}; shortfall {r['three_by_five_shortfall']} tasks for one 3×5 Stream." for b, r in result["recommendations"].items()]

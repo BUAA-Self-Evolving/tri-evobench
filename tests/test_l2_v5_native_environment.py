@@ -15,7 +15,7 @@ import l2_v5_native_environment as native
 def test_native_main_rejects_incapable_daemon_before_exec_or_build(tmp_path, monkeypatch):
     from trievo_bench import container_resources
     monkeypatch.setattr(container_resources,'docker_resource_capability_preflight',
-                        lambda:{'passed':False,'errors':['no cgroup driver']})
+                        lambda **kwargs:{'passed':False,'errors':['no cgroup driver']})
     touched=[]
     monkeypatch.setattr(native,'docker_exec_preflight',lambda work:touched.append('exec'))
     monkeypatch.setattr(native,'discover',lambda path:touched.append('discovery'))
@@ -61,11 +61,12 @@ def test_generated_verifier_numeric_user_without_passwd_defaults_gid_zero(tmp_pa
     assert module._native_identity('12345:23456') == (None,12345,23456)
 
 
-def test_generated_verifier_rejects_native_alias_symlink_ancestor(tmp_path):
+def test_generated_verifier_rejects_native_alias_symlink_ancestor(tmp_path,monkeypatch):
     import json
     generated=tmp_path/'source_verifier.py';generated.write_text(native.verifier_text())
     spec=importlib.util.spec_from_file_location('ancestor_verifier',generated)
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    monkeypatch.setattr(module,'require_container_resources',lambda **kwargs:{'resource_enforcement':'enforced'})
     outside=tmp_path/'protected';outside.mkdir();marker=outside/'data';marker.write_text('preserve')
     parent=tmp_path/'native-link';parent.symlink_to(outside)
     submission=tmp_path/'submission';submission.mkdir()
@@ -75,6 +76,24 @@ def test_generated_verifier_rejects_native_alias_symlink_ancestor(tmp_path):
     with pytest.raises(ValueError,match='symlink ancestor'):
         module.verify(submission,assets.parent)
     assert marker.read_text() == 'preserve'
+
+
+def test_generated_verifier_saved_waiver_is_not_host_authority(tmp_path,monkeypatch):
+    import json
+    generated=tmp_path/'source_verifier.py';generated.write_text(native.verifier_text())
+    spec=importlib.util.spec_from_file_location('waiver_authority_verifier',generated)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    assets=tmp_path/'turn/evaluation_assets';assets.mkdir(parents=True)
+    (assets/'native_task.json').write_text(json.dumps({'resource_enforcement':'declared_not_enforced'}))
+    modes=[]
+    def reject(**kwargs):modes.append(kwargs['enforcement_mode']);raise RuntimeError('guard stopped')
+    monkeypatch.setattr(module,'require_container_resources',reject)
+    monkeypatch.delenv('TRIEVO_RESOURCE_ENFORCEMENT',raising=False)
+    with pytest.raises(RuntimeError,match='guard stopped'):module.verify(tmp_path,assets.parent)
+    assert modes == ['strict']
+    monkeypatch.setenv('TRIEVO_RESOURCE_ENFORCEMENT','declared_only')
+    with pytest.raises(RuntimeError,match='guard stopped'):module.verify(tmp_path,assets.parent)
+    assert modes == ['strict','declared_only']
 
 
 def test_runner_retains_preprocessing_and_interpreter_flags():
@@ -250,18 +269,40 @@ def test_private_travel_helpers_cannot_flow_into_exported_gold(tmp_path):
 
 def test_docker_exec_preflight_rejects_fake_success(monkeypatch,tmp_path):
     from types import SimpleNamespace
+    import json
     broken=True
     def fake_run(argv,**kwargs):
-        if argv[1]=='cp':
+        if argv[1]=='cp' and ':' not in argv[-1]:
             Path(argv[-1]).write_text('executed')
         code=0 if broken else (17 if argv[-1]=='exit 17' else 0)
-        return SimpleNamespace(returncode=code,stdout='',stderr='')
+        payload={'accepted':True,'resource_enforcement':'enforced','resource_readback':{},
+                 'enforcement_mode':'strict','requested_resources':{},'observed_resources':{},'reason':'mock enforced'}
+        return SimpleNamespace(returncode=code,stdout=json.dumps(payload) if '/tmp/l2-container-resources.py' in argv else '',stderr='')
     monkeypatch.setattr(native.subprocess,'run',fake_run)
     with pytest.raises(RuntimeError,match='no-op proxy'):
         native.docker_exec_preflight(tmp_path)
     broken=False
     result=native.docker_exec_preflight(tmp_path)
     assert result['passed'] and result['negative_exit_code']==17
+
+
+def test_waiver_metadata_never_relabels_preflight_as_task_execution():
+    payload={'accepted':True,'strict_passed':False,'resource_enforcement':'declared_not_enforced',
+             'resource_readback':{'cpu_limit':108.04,'memory_limit_bytes':2019574153216,'pids_limit':None},
+             'enforcement_mode':'declared_only','requested_resources':{'cpu_limit':2,'memory_limit_bytes':4294967296,'pids_limit':256},
+             'observed_resources':{'cpu_limit':108.04,'memory_limit_bytes':2019574153216,'pids_limit':None},
+             'reason':'approved waiver','waiver':{'mode':'declared_only'}}
+    fields=native.resource_fields(payload,{'kind':'preflight_unexecuted','task_executed':False})
+    record={'runtime':{},'qualification':{}}
+    native.apply_resource_fields(record,fields)
+    for value in [record,record['runtime'],record['qualification']]:
+        assert value['resource_enforcement']=='declared_not_enforced'
+        assert value['resource_readback']['cpu_limit']==108.04
+        assert value['resource_observation_provenance']['task_executed'] is False
+    assert record['adaptations'][0]['mode']=='declared_only'
+    assert record['adaptations'][0]['observed']['pids_limit'] is None
+    with pytest.raises(RuntimeError,match='container_resource_limits_unverified'):
+        native.resource_fields(dict(payload,accepted=False),{})
 
 
 def test_flatten_restores_nullable_docker_image_configuration():
