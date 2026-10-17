@@ -7,6 +7,7 @@ from tools import l2_v5_native_recipes as recipes
 
 def test_recipe_excludes_skill_copies_and_mounts_private_setup_without_layers():
     original = ('FROM ubuntu:24.04\nCOPY public.txt /root/public.txt\n'
+                '# Install dependencies for skills\n'
                 'COPY skills /root/.claude/skills\nRUN apt-get update && apt-get install -y wget\n')
     text = recipes.recipe_dockerfile(original, '/tests')
     assert 'COPY skills' not in text

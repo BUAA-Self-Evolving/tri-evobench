@@ -21,8 +21,9 @@ def recipe_dockerfile(original: str, tests_mount: str) -> str:
     instructions = re.split(r"(?mi)(?=^(?:FROM|RUN|COPY|ADD|ARG|ENV|USER|WORKDIR|CMD|ENTRYPOINT|LABEL|EXPOSE|VOLUME|SHELL|HEALTHCHECK|STOPSIGNAL|ONBUILD)\s)", original)
     public = []
     for instruction in instructions:
+        directive = native.logical_shell_lines(instruction)[0] if instruction else ""
         if re.match(r"(?:COPY|ADD)\s", instruction, re.I) and re.search(
-                r"(?:^|[\s/\"'])\.?skills?(?:[\s/\"']|$)", instruction, re.I):
+                r"(?:^|[\s/\"'])\.?skills?(?:[\s/\"']|$)", directive, re.I):
             continue
         public.append(instruction)
     text = "".join(public).rstrip() + "\n"
