@@ -132,6 +132,18 @@ def _stock(dest: Path) -> dict[str, Any]:
     return {"kind":"wrong_stock_row_count","file":str(path.relative_to(dest)),"retained_rows":count}
 
 
+def _dialogue(dest: Path) -> dict[str, Any]:
+    path = dest / "rootfs/app/dialogue.json"
+    data = json.loads(path.read_text())
+    nodes = [node for node in data["nodes"] if node["id"] == "KiraWarning"]
+    if len(nodes) != 1 or "She's never failed a contract" not in nodes[0]["text"]:
+        raise ValueError("gold dialogue text unavailable")
+    nodes[0]["text"] = "Incorrect dialogue text."
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+    return {"kind": "wrong_dialogue_text", "file": str(path.relative_to(dest)),
+            "node_id": "KiraWarning", "field": "text"}
+
+
 def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
                    existing_work: Path | None = None) -> dict[str, Any] | None:
     """Return a mutation note, or None so the caller can use its seed fallback.
@@ -164,6 +176,7 @@ def prepare_broken(source_id: str, gold_dir: Path, dest: Path,
                 continue
     mutation = (_offer if "offer-letter-generator" in source_id else
                 _organize if "organize-messy-files" in source_id else
+                _dialogue if source_id == "skillsbench:dialogue-parser" else
                 _stock if "stock-data-visualization" in source_id else
                 _gdp if "weighted-gdp" in source_id else None)
     if mutation is None:
