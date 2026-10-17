@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import pytest
 
 from tools import l2_v5_native_recipes as recipes
 
@@ -20,7 +21,8 @@ def test_recipe_excludes_skill_copies_and_mounts_private_setup_without_layers():
     assert 'ARG UV_INSTALLER_GITHUB_BASE_URL=https://ghproxy.net/https://github.com' in text
 
 
-def test_materialize_recipe_does_not_claim_image_qualification(tmp_path, monkeypatch):
+@pytest.mark.parametrize('family', ['demo', 'travel-planning'])
+def test_materialize_recipe_does_not_claim_image_qualification(tmp_path, monkeypatch, family):
     native = recipes.native
     root = tmp_path / 'upstream'
     task = root / 'tasks/demo'
@@ -32,7 +34,7 @@ def test_materialize_recipe_does_not_claim_image_qualification(tmp_path, monkeyp
     (task / 'tests/test.sh').write_text('#!/bin/bash\npip install pytest==8.4.1\npytest /tests/test_output.py\n')
     (task / 'tests/test_output.py').write_text('def test_output(): assert False\n')
     (task / 'solution/solve.sh').write_text('#!/bin/bash\necho actual-oracle\n')
-    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'demo', 'family': 'demo',
+    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'demo', 'family': family,
            'task_dir': task, 'tests_mount': '/tests', 'oracle_mounts': ['/solution']}
     monkeypatch.setattr(native, 'task_inputs', lambda r: {
         'context': task / 'environment', 'dockerfile': task / 'environment/Dockerfile',
@@ -59,3 +61,8 @@ def test_materialize_recipe_does_not_claim_image_qualification(tmp_path, monkeyp
     assert (output / 'environment/.trievo-verifier-user-setup.sh').read_text().count('pip install pytest==8.4.1') == 1
     assert record['environment']['context_sha256'] == native.sources.tree_sha256(output / 'environment')
     assert record['environment']['verifier']['env']['UV_OFFLINE'] == '1'
+    if family == 'travel-planning':
+        helper = record['environment']['oracle']['private_helpers'][0]
+        assert helper['mount'] == '/app/skills' and helper['scope'] == 'oracle_only'
+        assert (output / helper['assets_path'] / 'SKILL.md').read_text() == 'secret skill'
+        assert 'private_oracle_skills' not in (output / 'environment/Dockerfile').read_text()

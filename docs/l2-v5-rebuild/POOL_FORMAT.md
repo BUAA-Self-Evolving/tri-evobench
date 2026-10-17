@@ -88,7 +88,9 @@ same family/category, or is null. The top-level `environment` contains:
 ```
 
 The task retains its private oracle/tests, adapted verifier entrypoint and
-verifier environment variables. Recipes record their upstream adaptations as a
+verifier environment variables. Existing oracle-only helper dependencies are
+listed in `environment.oracle.private_helpers` with an asset path, mount,
+`scope: "oracle_only"`, and hash; they stay out of build contexts and images. Recipes record their upstream adaptations as a
 diff. An `image_archive` is retained only for an image actually built and
 verified. Missing-oracle sources remain excluded. Unbuilt native recipes do not
 claim an observed per-task image ID, resource enforcement, or fixture verdict.

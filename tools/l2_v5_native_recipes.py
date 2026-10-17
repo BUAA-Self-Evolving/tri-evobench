@@ -116,6 +116,16 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
                    "oracle": {"command": ["bash", row["oracle_mounts"][0] + "/solve.sh"],
                               "assets_path": "evaluation_assets/native_oracle", "mount": row["oracle_mounts"][0],
                               "env": oracle_env, "timeout_seconds": max(1800, info["agent_timeout"])}}
+    if row["benchmark_id"] == "skilllearnbench" and row["family"] == "travel-planning":
+        helper = inp["context"] / "skills"
+        if not helper.exists():
+            helper = native.sources.CHECKOUTS[row["benchmark_id"]] / "skills/human_authored/travel-planning"
+        private_helper = assets / "private_oracle_skills"
+        if private_helper.exists():shutil.rmtree(private_helper)
+        shutil.copytree(helper, private_helper, symlinks=True)
+        environment["oracle"]["private_helpers"] = [{
+            "assets_path": "evaluation_assets/private_oracle_skills", "mount": "/app/skills",
+            "scope": "oracle_only", "sha256": native.sources.tree_sha256(private_helper)}]
     record_path = task / "pool_task.json"
     record = json.loads(record_path.read_text()) if record_path.exists() and (outcome or {}).get("admitted") else {
         "schema_version": "l2_v5_pool_task/1.0", "source_id": sid,
