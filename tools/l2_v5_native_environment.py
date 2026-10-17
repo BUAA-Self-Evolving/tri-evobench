@@ -800,6 +800,15 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     for line in setup.splitlines():
         if re.match(r"apt(?:-get)?\s+(?:update|install)",line.strip()):root_setup.append(line)
         else:user_setup.append(line)
+    if row["benchmark_id"]=="skilllearnbench" and row["family"]=="stock-data-visualization":
+        oracle_text=(inputs["oracle"]/"solve.sh").read_text()
+        if "npm install d3@6.7.0 --silent" not in oracle_text:
+            raise ValueError("stock oracle npm dependency differs from pinned d3@6.7.0")
+        user_setup.extend(["cd /tmp",
+            "npm install d3@6.7.0 --registry https://registry.npmmirror.com --cache /root/.npm --no-audit --no-fund"])
+        adaptations.append({"kind":"oracle_dependency_prewarm","dependency":"d3@6.7.0",
+            "registry":"https://registry.npmmirror.com","cwd":"/tmp","home":"/root","cache":"/root/.npm",
+            "reason":"unchanged pinned oracle installs this exact npm package; normal build cache supports network-none execution"})
     (work/"verifier-root-setup.sh").write_text("#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\n"+"\n".join(root_setup)+"\n")
     (work/"verifier-user-setup.sh").write_text("\n".join(user_setup)+"\n")
     (work/"Dockerfile.verifier").write_text(build_transport_dockerfile(
@@ -1402,6 +1411,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                      "oracle":{"command":["bash",row["oracle_mounts"][0]+"/solve.sh"],"cwd":cwd,
                                "timeout_seconds":max(1800,info["agent_timeout"]),"env":stage_environment(configuration,"oracle")},
                      "adaptations":image_result["adaptations"]+cache_aliases+cache_index_adaptations+[{"kind":"flatten_private_image","removed_paths":image_result["scrub"]["removed_paths"]}]}
+        if row["benchmark_id"]=="skilllearnbench" and row["family"]=="stock-data-visualization":
+            environment["oracle"]["env"].update(npm_config_offline="true",npm_config_cache="/root/.npm",
+                npm_config_registry="https://registry.npmmirror.com",npm_config_audit="false",npm_config_fund="false")
         if _RESOURCE_PREFLIGHT:environment["adaptations"].append(resource_adaptation(_RESOURCE_PREFLIGHT))
         if sid=="skillsbench:edit-pdf":
             result["time_sensitive_native_verifier"]=True
