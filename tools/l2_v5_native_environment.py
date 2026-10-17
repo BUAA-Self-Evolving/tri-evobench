@@ -289,7 +289,7 @@ def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
     if _SOURCE_DEADLINE is not None:
         timeout = min(timeout, max(1, int(_SOURCE_DEADLINE - time.monotonic())))
         if time.monotonic() >= _SOURCE_DEADLINE:
-            raise TimeoutError("45 minute source time box exceeded")
+            raise TimeoutError("source time box exceeded")
     log.parent.mkdir(parents=True, exist_ok=True)
     if log.exists():
         # Shared-image retries must not replace earlier failure evidence.
@@ -533,7 +533,9 @@ def build_proxy_args() -> list[str]:
             "HTTPS_PROXY":_BUILD_PROXY if _BUILD_PROXY is not None else os.environ.get("HTTPS_PROXY",os.environ.get("https_proxy","")),
             "ALL_PROXY":_BUILD_PROXY or "",
             "NO_PROXY":"*" if _BUILD_PROXY=="" else no_proxy,"PIP_INDEX_URL":BUILD_PYPI_INDEX,"UV_INDEX_URL":BUILD_PYPI_INDEX,
-            "PIP_RETRIES":"0","UV_HTTP_RETRIES":"0","HF_ENDPOINT":"https://hf-mirror.com"}
+            "PIP_RETRIES":"0","UV_HTTP_RETRIES":"0","HF_ENDPOINT":"https://hf-mirror.com",
+            "PLAYWRIGHT_DOWNLOAD_HOST":"https://npmmirror.com/mirrors/playwright",
+            "NPM_CONFIG_REGISTRY":"https://registry.npmmirror.com"}
     return [part for key,value in values.items() for name in (key,key.lower())
             for part in ("--build-arg",name+"="+value)]
 
@@ -563,30 +565,27 @@ def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
     text=plain_download_commands(text)
     instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
     output = []; configured = False; debian_stage = apt_debian; ubuntu_stage = False
+    mirror_configured = False
     for instruction in instructions:
         if instruction.startswith("FROM "):
-            configured = False
+            configured = False; mirror_configured = False
             output.append(instruction)
-            output.append("ARG PIP_RETRIES=0\nARG UV_HTTP_RETRIES=0\nARG HF_ENDPOINT=https://hf-mirror.com\n")
+            output.append("ARG PIP_RETRIES=0\nARG UV_HTTP_RETRIES=0\nARG HF_ENDPOINT=https://hf-mirror.com\n"
+                          "ARG PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright\n"
+                          "ARG npm_config_registry=https://registry.npmmirror.com\n")
             ubuntu_stage = bool(re.match(r"FROM\s+(?:--platform=\S+\s+)?ubuntu(?::|\s|$)",instruction))
             debian_stage = apt_debian or bool(re.match(r"FROM\s+(?:--platform=\S+\s+)?(?:python:|debian:)", instruction))
-        if debian_stage and instruction.startswith("RUN ") and re.search(
+        if (debian_stage or ubuntu_stage) and not mirror_configured and instruction.startswith("RUN ") and re.search(
                 r"\bapt(?:-get)?\s+(?:update|install)\b|verifier-root-setup\.sh", instruction):
-            # Preserve suites, signing keys and apt validation. Replace only the
-            # official Debian transport host; cached Ubuntu layers stay intact.
-            replacements = " ".join(
-                "-e " + shlex.quote("s|"+scheme+"://deb\\.debian\\.org/"+path+
-                    "|http://mirrors.tuna.tsinghua.edu.cn/"+path+"|g")
-                for path in ("debian-security", "debian") for scheme in ("http", "https"))
-            prefix=('for trievo_apt_source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do '
-                    'if [ -f "$trievo_apt_source" ]; then sed -i '+replacements+' "$trievo_apt_source" || exit 1; fi; done && ')
-            instruction="RUN "+prefix+instruction[4:]
-        if ubuntu_stage and instruction.startswith("RUN ") and re.search(r"\bapt(?:-get)?\s+(?:update|install)\b|verifier-root-setup\.sh",instruction):
-            replacements=" ".join("-e "+shlex.quote("s|"+scheme+"://"+host+"/ubuntu|http://mirrors.tuna.tsinghua.edu.cn/ubuntu|g")
-                for host in ("archive.ubuntu.com","security.ubuntu.com") for scheme in ("http","https"))
-            prefix=('for trievo_apt_source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do '
-                'if [ -f "$trievo_apt_source" ]; then sed -i '+replacements+' "$trievo_apt_source" || exit 1; fi; done && ')
-            instruction="RUN "+prefix+instruction[4:]
+            hosts = (("archive.ubuntu.com/ubuntu", "ubuntu"), ("security.ubuntu.com/ubuntu", "ubuntu")) if ubuntu_stage else (
+                ("deb.debian.org/debian-security", "debian-security"), ("deb.debian.org/debian", "debian"),
+                ("security.debian.org/debian-security", "debian-security"))
+            replacements=" ".join("-e "+shlex.quote("s|"+scheme+"://"+host+
+                "|http://mirrors.tuna.tsinghua.edu.cn/"+target+"|g")
+                for host,target in hosts for scheme in ("http","https"))
+            output.append("RUN find /etc/apt -type f \\( -name '*.list' -o -name '*.sources' \\) "
+                          "-exec sed -i "+replacements+" {} +\n")
+            mirror_configured=True
         if not configured and instruction.startswith("RUN ") and re.search(
                 r"\bpip3?\s+(?:install|download)\b|\buvx?\s|verifier-(?:root|user)-setup\.sh", instruction):
             output.append(f"ARG PIP_INDEX_URL={BUILD_PYPI_INDEX}\nARG UV_INDEX_URL={BUILD_PYPI_INDEX}\n")
@@ -727,6 +726,8 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     transported.write_text(transported_text)
     context_adaptations.append({"kind":"ordinary_build_network",
         "index":BUILD_PYPI_INDEX,"proxy_mode":_BUILD_PROXY or "direct",
+        "playwright_download_host":"https://npmmirror.com/mirrors/playwright",
+        "npm_registry":"https://registry.npmmirror.com",
         "scope":"ordinary domestic mirrors/direct downloads; host-loopback proxy unavailable in rootless build namespace; upstream task/tests/oracle unchanged"})
     upstream_log = build_command(["docker", "build", "--network", "host", *build_proxy_args(), "-t", raw_tag,
                            "-f", str(transported), str(context)],
@@ -1218,7 +1219,7 @@ def remove_source_images(image_result: dict[str, Any], work: Path) -> None:
 
 def asset_inventory(row: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     """License information is a plain note, never an admission criterion."""
-    return {"license_note": "MIT" if row["benchmark_id"] == "skilllearnbench" else "Apache-2.0"}
+    return {"license_note": "Repository license: "+("MIT" if row["benchmark_id"] == "skilllearnbench" else "Apache-2.0")}
 
 
 def quarantine_prior_materialization(task: Path, work: Path) -> dict[str, Any] | None:
@@ -1292,6 +1293,23 @@ def retained_outcome(previous: dict[str, Any], assessment: dict[str, Any]) -> di
         return previous
     return {**previous, "executed_adapter_sha256": previous["adapter_sha256"],
             "inventory_adapter_sha256": _LOADED_ADAPTER_SHA, "compatibility_reuse": assessment}
+
+
+def completed_work_outcome(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any] | None:
+    """Resume completed qualifications from this work directory without relabeling execution."""
+    sid=row["benchmark_id"]+":"+row["source_task_id"]
+    slug=sid.replace(":","__").replace("/","__")
+    outcome=args.work/slug/"outcome.json"
+    record=args.pool/slug/"pool_task.json"
+    if not outcome.exists() or not record.exists():return None
+    result=json.loads(outcome.read_text())
+    if (result.get("source_id")!=sid or not result.get("admitted") or result.get("known_correct",{}).get("status")!="pass"
+            or result.get("known_broken",{}).get("status")!="fail"
+            or result.get("source_hash")!=sources.tree_sha256(row["task_dir"])
+            or not json.loads(record.read_text()).get("qualification",{}).get("admitted")
+            or sid=="skillsbench:edit-pdf"):
+        return None
+    return result
 
 
 def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
@@ -1484,6 +1502,7 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
         return result
     except TimeoutError as exc:
         result.update(admitted=False,stage="deferred",reason=str(exc))
+        if row.get("former_admission"):result["retry_required"]=True
         return result
     except Exception as exc:
         result.update(admitted=False,stage="error",reason=f"{type(exc).__name__}:{exc}")
@@ -1623,6 +1642,10 @@ def check_supervisor_notes(path: Path | None) -> None:
         _SUPERVISOR_MTIME=modified
 
 
+def source_budget(row: dict[str, Any], args: argparse.Namespace) -> int:
+    return min(args.source_timeout,5400 if row["former_admission"] else 2700)
+
+
 def run_source(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     """A separate owned process enforces the total build/qualification budget."""
     if _STOP_REQUESTED.is_set():raise RuntimeError("native runner stopped")
@@ -1636,7 +1659,7 @@ def run_source(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     _ACTIVE_SOURCES.add(process.pid)
     if _STOP_REQUESTED.is_set():os.killpg(process.pid,signal.SIGTERM)
     try:
-        process.wait(timeout=args.source_timeout)
+        process.wait(timeout=source_budget(row,args))
     except subprocess.TimeoutExpired:
         os.killpg(process.pid,signal.SIGTERM)
         try:process.wait(timeout=5)
@@ -1647,8 +1670,11 @@ def run_source(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
         if containers:subprocess.run(["docker","rm","-f",*containers],capture_output=True)
         result={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
                 "former_admission":row["former_admission"],"adapter_sha256":_LOADED_ADAPTER_SHA,
-                "admitted":False,"stage":"deferred","reason":"45 minute total source time box exceeded",
-                "license_note":"MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0"}
+                "admitted":False,"stage":"deferred","reason":("90 minute total source time box exceeded; cause fix and one retry required" if row["former_admission"] else "45 minute total source time box exceeded"),
+                "retry_required":bool(row["former_admission"]),
+                "license_note":asset_inventory(row,{})["license_note"],
+                "source_hash":sources.tree_sha256(row["task_dir"])}
+        if _RESOURCE_PREFLIGHT:apply_resource_fields(result,_RESOURCE_PREFLIGHT)
         package_path=args.pool/sid.replace(":","__")/"pool_task.json"
         if package_path.exists():
             package=json.loads(package_path.read_text());package["qualification"]["admitted"]=False
@@ -1690,7 +1716,7 @@ def main() -> int:
     parser.add_argument("--r2-inventory",type=Path)
     parser.add_argument("--only",nargs="*")
     parser.add_argument("--jobs",type=int,default=4)
-    parser.add_argument("--source-timeout",type=int,default=2700)
+    parser.add_argument("--source-timeout",type=int,default=5400)
     parser.add_argument("--block",choices=("A","B","all"),default="all")
     parser.add_argument("--worker-source",help=argparse.SUPPRESS)
     parser.add_argument("--image-archives",type=Path)
@@ -1698,7 +1724,7 @@ def main() -> int:
     parser.add_argument("--known-broken-root",type=Path)
     parser.add_argument("--supervisor-notes",type=Path)
     parser.add_argument("--build-slots-file",type=Path,help="Live heavy-build quota file containing 1 or 2")
-    parser.add_argument("--build-timeout",type=int,default=3600)
+    parser.add_argument("--build-timeout",type=int,default=5400)
     parser.add_argument("--uv-release-archive",type=Path,
                         help="verified uv0.9.7 official archive; adjacent uv-0.9.7-install.sh required and hash checked")
     parser.add_argument("--druid-release-archive",type=Path,
@@ -1710,7 +1736,7 @@ def main() -> int:
     parser.add_argument("--resume",action="store_true")
     parser.add_argument("--inventory-only",action="store_true")
     args=parser.parse_args()
-    args.source_timeout=min(args.source_timeout,2700)
+    args.source_timeout=min(args.source_timeout,5400)
     if args.source_timeout<=0 or not 1<=args.jobs<=8:raise ValueError("positive source timeout and1–8jobs required")
     if not args.worker_source:
         signal.signal(signal.SIGTERM,stop_owned_sources)
@@ -1742,7 +1768,7 @@ def main() -> int:
     for row in all_tasks:row["former_admission"]=former.get(row["benchmark_id"]+":"+row["source_task_id"],False)
     if args.worker_source:
         selected=next(r for r in all_tasks if r["benchmark_id"]+":"+r["source_task_id"]==args.worker_source)
-        _SOURCE_DEADLINE=time.monotonic()+args.source_timeout
+        _SOURCE_DEADLINE=time.monotonic()+source_budget(selected,args)
         _DOWNLOAD_FAILURES=0
         build_task(selected,args)
         return 0
@@ -1754,20 +1780,17 @@ def main() -> int:
     previous={}
     if (args.pool/"INDEX.jsonl").exists():
         previous={r["source_id"]:r for r in map(json.loads,(args.pool/"INDEX.jsonl").read_text().splitlines())}
-    outcomes={}
+    outcomes={};completed=set()
     for row in all_tasks:
         sid=row["benchmark_id"]+":"+row["source_task_id"]
+        retained=completed_work_outcome(row,args) if args.resume else None
+        if retained is not None:
+            outcomes[sid]=retained;completed.add(sid);continue
         info=source_info(row)
         outcomes[sid]=previous.get(sid,{"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
             "capability_id": "skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
             "admitted":False,"stage":"pending","reason":"not_built"})
         if _RESOURCE_PREFLIGHT and outcomes[sid].get("adapter_sha256")!=_LOADED_ADAPTER_SHA:
-            historical = args.work / sid.replace(":", "__").replace("/", "__") / "outcome.json"
-            prior = json.loads(historical.read_text()) if historical.exists() else outcomes[sid]
-            assessment = qualification_reuse(row, args, prior) if args.resume else {"eligible": False}
-            if assessment["eligible"]:
-                outcomes[sid] = retained_outcome(prior, assessment)
-                continue
             outcomes[sid]={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
                 "capability_id":"skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
                 "former_admission":row["former_admission"],"admitted":False,"stage":"pending","reason":"awaiting_current_adapter_qualification"}
@@ -1778,9 +1801,10 @@ def main() -> int:
                 ("B",[r for r in tasks if not r["former_admission"]])]
         for block,selected in blocks:
             if not selected:continue
-            print("BLOCK "+block+" START "+str(len(selected)),flush=True)
+            pending=[row for row in selected if row["benchmark_id"]+":"+row["source_task_id"] not in completed]
+            print("BLOCK "+block+" START "+str(len(selected))+" pending="+str(len(pending))+" completed="+str(len(selected)-len(pending)),flush=True)
             with concurrent.futures.ThreadPoolExecutor(args.jobs) as executor:
-                futures=[executor.submit(run_source,row,args) for row in selected]
+                futures=[executor.submit(run_source,row,args) for row in pending]
                 for future in concurrent.futures.as_completed(futures):
                     row=future.result();outcomes[row["source_id"]]=row
                     write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)

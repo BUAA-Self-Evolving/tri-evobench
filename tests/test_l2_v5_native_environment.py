@@ -42,7 +42,11 @@ def test_package_transport_preserves_apt_cache_and_pinned_install_commands():
     assert 'RUN pip3 install --break-system-packages pypdf==5.1.0 \\\n    reportlab==4.2.5' in adapted
     assert 'ENV PIP_INDEX_URL' not in adapted
     assert 'RUN uvx --with pytest==8.4.1 pytest --version' in adapted
-    assert native.build_transport_dockerfile('FROM ubuntu\nRUN apt-get update\n').endswith('&& apt-get update\n')
+    assert native.build_transport_dockerfile('FROM ubuntu\nRUN apt-get update\n').endswith('RUN apt-get update\n')
+    assert 'for trievo_apt_source' not in adapted
+    assert adapted.count('RUN find /etc/apt')==1
+    assert 'ARG PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright' in adapted
+    assert 'ARG npm_config_registry=https://registry.npmmirror.com' in adapted
 
 
 def test_debian_transport_preserves_suites_signatures_and_installer():
@@ -447,6 +451,13 @@ def test_wget_retry_option_preserves_apt_package_names():
     assert adapted.count('wget --tries=1')==2
 
 
+def test_source_budget_keeps_a_ninety_minutes_and_b_forty_five():
+    from argparse import Namespace
+    args=Namespace(source_timeout=5400)
+    assert native.source_budget({'former_admission':True},args)==5400
+    assert native.source_budget({'former_admission':False},args)==2700
+
+
 def test_coursier_download_moves_to_build_but_local_healthcheck_stays():
     download='curl -fL https://github.com/coursier/coursier/releases/download/v2.1.25-M23/cs.gz | gzip -d > cs && chmod +x cs && ./cs setup'
     original=download+'\nif curl -s http://localhost:8888/status; then\n echo ready\nfi\n'
@@ -772,17 +783,21 @@ def test_build_task_reuse_preserves_original_outcome_and_executed_sha(tmp_path, 
     assert (source_work / 'outcome.json').read_text() == raw
 
 
-def test_initial_inventory_reset_uses_same_reuse_gate_and_historical_outcome(tmp_path, monkeypatch):
+def test_resume_keeps_completed_current_work_without_relabeling(tmp_path, monkeypatch):
     import json
     sid = 'skilllearnbench:completed'
-    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'completed', 'family': 'completed'}
+    task_dir=tmp_path/'source';task_dir.mkdir();(task_dir/'instruction.md').write_text('source')
+    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'completed', 'family': 'completed', 'task_dir':task_dir}
     work = tmp_path / 'work'
     source_work = work / sid.replace(':', '__')
     source_work.mkdir(parents=True)
-    previous = {'source_id': sid, 'stage': 'source', 'adapter_sha256': 'executed-old-sha',
-                'admitted': False, 'reason': 'missing_upstream_oracle'}
+    previous = {'source_id': sid, 'stage': 'qualified', 'adapter_sha256': 'executed-old-sha',
+                'admitted': True, 'source_hash':native.sources.tree_sha256(task_dir),
+                'known_correct':{'status':'pass'},'known_broken':{'status':'fail'}}
     raw = json.dumps(previous) + '\n'
     (source_work / 'outcome.json').write_text(raw)
+    record=tmp_path/'pool'/sid.replace(':','__')/'pool_task.json';record.parent.mkdir(parents=True)
+    record.write_text(json.dumps({'source_id':sid,'qualification':{'admitted':True}}))
     calls, inventories = [], []
     monkeypatch.setattr(native, '_RESOURCE_PREFLIGHT', {'historical_preflight_sentinel': True})
     monkeypatch.setattr(native, 'discover', lambda path: [row])
@@ -794,7 +809,10 @@ def test_initial_inventory_reset_uses_same_reuse_gate_and_historical_outcome(tmp
                                    '--upstream', str(tmp_path / 'upstream'), '--pool', str(tmp_path / 'pool'),
                                    '--work', str(work)])
     assert native.main() == 0
-    assert calls == [previous]
+    assert calls == []
     assert inventories[-1][0]['adapter_sha256'] == 'executed-old-sha'
-    assert inventories[-1][0]['compatibility_reuse']['eligible'] is True
+    assert 'compatibility_reuse' not in inventories[-1][0]
     assert (source_work / 'outcome.json').read_text() == raw
+    (task_dir/'instruction.md').write_text('changed source')
+    from argparse import Namespace
+    assert native.completed_work_outcome(row,Namespace(work=work,pool=tmp_path/'pool')) is None
