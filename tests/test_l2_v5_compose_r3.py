@@ -155,3 +155,28 @@ def test_materialized_native_copy_refreshes_stale_adapter_not_tests(tmp_path):
     assert (target / 'evaluation_assets/source_verifier.py').read_text() == verifier_text()
     assert (target / 'evaluation_assets/native_tests/test.sh').read_text() == 'exit 1\n'
     assert (task / 'evaluation_assets/source_verifier.py').read_text() == '# stale adapter\n'
+
+
+def test_verifier_cli_preserves_source_error_diagnostics(tmp_path):
+    import subprocess
+    import sys
+    assets = tmp_path / 'turn/evaluation_assets'
+    assets.mkdir(parents=True)
+    (assets.parent / 'task.json').write_text(json.dumps({'evaluation': {'native_verifier': {
+        'verifier_id': 'native-test',
+        'input_bindings': [{'name': 'submission', 'source': 'interaction_record', 'path': ''}],
+    }}}))
+    (assets / 'source_verifier.py').write_text(
+        "def verify(submission, turn_dir):\n"
+        "    return {'status': 'error', 'score': None, 'details': "
+        "{'infrastructure_error': 'ModuleNotFoundError', 'output_tail': 'missing dependency'}}\n")
+    (assets / 'verifier_cli.py').write_text(compose.VERIFIER_CLI)
+    request = {'schema_version': 'l2_native_verifier_request/1.0',
+               'bindings': {'submission': {'kind': 'inline', 'value': 'answer'}}}
+    proc = subprocess.run([sys.executable, str(assets / 'verifier_cli.py')],
+                          input=json.dumps(request), text=True, capture_output=True, check=True)
+    result = json.loads(proc.stdout)
+    assert result['status'] == 'error' and result['score'] is None
+    assert result['error'] == 'ModuleNotFoundError'
+    assert result['private_diagnostics']['output_tail'] == 'missing dependency'
+    assert result['checks'] == []

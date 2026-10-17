@@ -920,3 +920,59 @@ def test_resume_keeps_completed_current_work_without_relabeling(tmp_path, monkey
     (task_dir/'instruction.md').write_text('changed source')
     from argparse import Namespace
     assert native.completed_work_outcome(row,Namespace(work=work,pool=tmp_path/'pool')) is None
+
+
+@pytest.mark.parametrize('reward, status', [('0.1', 'fail'), ('0', 'fail'), ('1', 'pass')])
+def test_completed_native_scorer_preserves_fractional_reward(reward, status):
+    log = 'collected 3 items\n3 passed in 0.1s\nPolicy-ladder reward: ' + reward + '\n'
+    result = native.check_result(log, reward, 0)
+    assert result['status'] == status
+    assert result['score'] == result['native_reward'] == float(reward)
+    assert not result['assertion_failure']
+
+
+@pytest.mark.parametrize('reward', ['bad', '', 'nan', 'inf', '-inf', '-0.1', '1.1'])
+def test_completed_native_scorer_rejects_invalid_reward(reward):
+    assert native.check_result('collected 3 items\n3 passed in 0.1s', reward, 0)['status'] == 'error'
+
+
+@pytest.mark.parametrize('log, rc', [
+    ('collected 3 items\nModuleNotFoundError: dependency\n3 passed', 0),
+    ('collected 3 items\nE TypeError: broken evaluator\n3 passed', 0),
+    ('collected 3 items\n1 failed, 2 passed', 0),
+    ('collected 3 items\n3 passed', 1),
+    ('collected 3 items\n3 passed', 124),
+    ('collected 3 items\n3 skipped', 0),
+])
+def test_fractional_reward_does_not_hide_execution_failures(log, rc):
+    assert native.check_result(log, '0.1', rc)['status'] == 'error'
+
+
+def test_generated_native_classifier_preserves_fractional_reward(tmp_path):
+    generated = tmp_path / 'partial_verifier.py'
+    generated.write_text(native.verifier_text())
+    spec = importlib.util.spec_from_file_location('partial_verifier', generated)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    result = module.classify('collected 3 items\n3 passed in 0.1s', '0.1', 0)
+    assert result['status'] == 'fail'
+    assert result['score'] == result['native_reward'] == 0.1
+
+
+def test_caught_native_scoring_exception_is_not_zero_credit():
+    log = ('collected 3 items\n3 passed in 0.1s\n'
+           'Policy-ladder reward: 0.000000000000 '
+           "(invalid output or scoring error: [Errno 2] No such file or directory: "
+           "'/verifier/expected_unnecessary_abort_txn_ids.json')\n")
+    result = native.check_result(log, '0', 0)
+    assert result['status'] == 'error'
+    assert 'expected_unnecessary_abort_txn_ids.json' in result['infrastructure_error']
+
+
+def test_invalid_public_output_assertion_stays_native_red():
+    log = ('collected 3 items\nE AssertionError: output must be an integer array\n'
+           'FAILED test_outputs.py::test_output - AssertionError\n1 failed, 2 passed\n'
+           'invalid output or scoring error: public output is invalid\n')
+    result = native.check_result(log, '0', 0)
+    assert result['status'] == 'fail' and result['score'] == 0
+    assert result['infrastructure_error'] is None

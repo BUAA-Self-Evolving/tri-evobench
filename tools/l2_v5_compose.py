@@ -121,22 +121,30 @@ try:
         outcome = {"status": "pass" if outcome[0] else "fail", "score": 1.0 if outcome[0] else 0.0,
                    "raw_metric": None, "details": outcome[1]}
     status = outcome["status"]
-    if status not in {"pass", "fail"}:
-        raise ValueError(f"unknown verifier status {status!r}")
-    score = float(outcome["score"]) if outcome.get("score") is not None else 0.0
-    score = min(1.0, max(0.0, score))
-    result = {"schema_version": "l2_native_verifier_result/1.0", "verifier_id": verifier_id,
-              "status": status, "score": score,
-              "checks": [{"check_id": "native_verifier_outcome", "status": status, "score": score,
-                          "evidence": ["package-local native verifier completed"]}],
-              "artifacts": [],
-              "public_summary": {"result_category": status, "observable_deficiencies": [] if status == "pass"
-                                 else ["The submitted result did not satisfy the native success condition."]},
-              "private_diagnostics": outcome.get("details", {}), "error": None}
-    if evaluation.get("evaluation_profile") == "auto_research" and status == "pass":
-        profile = evaluation["metric_profile"]
-        result["metric"] = {"name": profile["metric_name"], "raw_value": outcome.get("raw_metric"),
-                            "raw_direction": profile["raw_direction"], "normalized_value": score}
+    if status == "error":
+        diagnostics = outcome.get("details", {})
+        message = outcome.get("error")
+        if not message and isinstance(diagnostics, dict):
+            message = (diagnostics.get("error") or diagnostics.get("infrastructure_error")
+                       or diagnostics.get("reason"))
+        result = error(message or "source verifier returned error", diagnostics)
+    else:
+        if status not in {"pass", "fail"}:
+            raise ValueError(f"unknown verifier status {status!r}")
+        score = float(outcome["score"]) if outcome.get("score") is not None else 0.0
+        score = min(1.0, max(0.0, score))
+        result = {"schema_version": "l2_native_verifier_result/1.0", "verifier_id": verifier_id,
+                  "status": status, "score": score,
+                  "checks": [{"check_id": "native_verifier_outcome", "status": status, "score": score,
+                              "evidence": ["package-local native verifier completed"]}],
+                  "artifacts": [],
+                  "public_summary": {"result_category": status, "observable_deficiencies": [] if status == "pass"
+                                     else ["The submitted result did not satisfy the native success condition."]},
+                  "private_diagnostics": outcome.get("details", {}), "error": None}
+        if evaluation.get("evaluation_profile") == "auto_research" and status == "pass":
+            profile = evaluation["metric_profile"]
+            result["metric"] = {"name": profile["metric_name"], "raw_value": outcome.get("raw_metric"),
+                                "raw_direction": profile["raw_direction"], "normalized_value": score}
 except Exception as exc:
     result = error(f"{type(exc).__name__}: {exc}")
 json.dump(result, sys.stdout, ensure_ascii=False, sort_keys=True, default=str)

@@ -372,17 +372,29 @@ def check_result(log: str, reward: str | None, rc: int) -> dict[str, Any]:
         score = float((reward or "").strip())
     except ValueError:
         score = None
-    if rc not in {0, 1} or infrastructure or unexpected_exceptions or count == 0 or score is None:
+    successful_tests = (
+        rc == 0
+        and any(kind == "passed" and int(n) > 0 for n, kind in summaries)
+        and not any(kind in {"failed", "error", "errors"} and int(n) > 0 for n, kind in summaries)
+        and not re.search(r"\b(?:FAILED|ERROR)\b", log)
+    )
+    # Some native scorers catch exceptions and write zero despite passing
+    # shape checks. A reported scoring exception is not measured partial credit.
+    scorer_error = (re.search(r"invalid output or scoring error:[^\n]*", log, re.I)
+                    if successful_tests else None)
+    if (rc not in {0, 1} or infrastructure or scorer_error or unexpected_exceptions or count == 0
+            or score is None or not 0.0 <= score <= 1.0):
         status = "error"
-    elif rc == 0 and score == 1.0 and any(kind=="passed" and int(n)>0 for n,kind in summaries) and not any(kind in {"failed","error","errors"} and int(n)>0 for n,kind in summaries) and not re.search(r"\b(?:FAILED|ERROR)\b", log):
-        status = "pass"
+    elif successful_tests:
+        # Native scorers can assign partial credit after their shape tests pass.
+        status = "pass" if score == 1.0 else "fail"
     elif score < 1.0 and assertions and not re.search(r"\d+ errors?\b", log):
         status = "fail"
     else:
         status = "error"
-    return {"status": status, "score": 1.0 if status == "pass" else 0.0,
+    return {"status": status, "score": score if successful_tests and status != "error" else 0.0,
             "native_reward": score, "tests_collected": count,
-            "assertion_failure": assertions, "infrastructure_error": infrastructure.group(0) if infrastructure else (unexpected_exceptions[0] if unexpected_exceptions else None),
+            "assertion_failure": assertions, "infrastructure_error": infrastructure.group(0) if infrastructure else (scorer_error.group(0) if scorer_error else (unexpected_exceptions[0] if unexpected_exceptions else None)),
             "exit_code": rc, "output_tail": log[-5000:]}
 
 
