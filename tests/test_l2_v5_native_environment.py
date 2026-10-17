@@ -428,6 +428,18 @@ def test_loaded_builder_hash_cannot_relabel_old_bytecode(monkeypatch):
         native.build_task({},None)
 
 
+def test_new_build_waits_for_docker_disk_floor(monkeypatch,tmp_path):
+    from types import SimpleNamespace
+    free=iter([7*1024**3,9*1024**3])
+    sleeps=[]
+    monkeypatch.setattr(native,'_RESOURCE_PREFLIGHT',{'resource_enforcement':'declared_only'})
+    monkeypatch.setattr(native.subprocess,'check_output',lambda *a,**k:str(tmp_path))
+    monkeypatch.setattr(native.shutil,'disk_usage',lambda p:SimpleNamespace(free=next(free)))
+    monkeypatch.setattr(native.time,'sleep',lambda seconds:sleeps.append(seconds))
+    with native.build_slot(tmp_path):
+        assert sleeps==[5]
+
+
 def test_coursier_download_moves_to_build_but_local_healthcheck_stays():
     download='curl -fL https://github.com/coursier/coursier/releases/download/v2.1.25-M23/cs.gz | gzip -d > cs && chmod +x cs && ./cs setup'
     original=download+'\nif curl -s http://localhost:8888/status; then\n echo ready\nfi\n'

@@ -850,7 +850,22 @@ def build_slot(work_root: Path):
     import fcntl
     directory=work_root/".build-slots";directory.mkdir(exist_ok=True)
     handle=None
+    docker_root=None
+    if _RESOURCE_PREFLIGHT:
+        docker_root=Path(subprocess.check_output(
+            ["docker","info","--format","{{.DockerRootDir}}"],text=True).strip())
+    disk_paused=False
     while handle is None:
+        if docker_root is not None and shutil.disk_usage(docker_root).free < 8*1024**3:
+            if not disk_paused:print("PAUSE NEW NATIVE BUILD: Docker free space below 8 GiB",flush=True)
+            disk_paused=True
+            if _SOURCE_DEADLINE is not None and time.monotonic()>=_SOURCE_DEADLINE:
+                raise TimeoutError("source time box exceeded while waiting for Docker disk space")
+            time.sleep(5)
+            continue
+        if disk_paused:
+            print("RESUME NEW NATIVE BUILD: Docker free space at least 8 GiB",flush=True)
+            disk_paused=False
         limit=int(_BUILD_SLOTS_FILE.read_text().strip()) if _BUILD_SLOTS_FILE else _BUILD_JOBS
         if not 1 <= limit <= 8:raise ValueError("native heavy-build quota must be between 1 and 8")
         for number in range(limit):
