@@ -359,10 +359,11 @@ def check_result(log: str, reward: str | None, rc: int) -> dict[str, Any]:
         r"ModuleNotFoundError|ImportError|ERROR collecting|INTERNALERROR|no tests ran|"
         r"command not found|PermissionError|Temporary failure in name resolution|"
         r"Network is unreachable|Could not resolve|Cannot connect|No matching distribution", log)
-    exception_names=(re.findall(r"(?m)^E {1,3}([\w.]+):",log)+
+    exception_names=(re.findall(r"(?m)^E\s+([\w.]+):",log)+
                      re.findall(r"(?m)^FAILED[^\n]* - ((?:[A-Za-z_]\w*\.)*[A-Z]\w*)(?::|\s|$)",log))
     unexpected_exceptions = [name for name in exception_names
-                             if name.rsplit(".",1)[-1] not in {"AssertionError", "Failed"}]
+                             if name.rsplit(".",1)[-1] not in {"AssertionError", "Failed"}
+                             and not re.fullmatch(r"[A-Z]{1,3}[1-9]\d*", name)]
     collected = re.findall(r"collected\s+(\d+)\s+items?", log)
     summaries = re.findall(r"(\d+)\s+(passed|failed|error|errors)(?:\s|,|$)", log)
     count = int(collected[-1]) if collected else sum(int(n) for n, _ in summaries)

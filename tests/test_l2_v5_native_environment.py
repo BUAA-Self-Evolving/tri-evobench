@@ -23,6 +23,8 @@ def test_assertion_message_cell_label_is_not_an_exception():
     assert native.check_result(log, '0', 0)['status'] == 'fail'
     broken = log.replace('AssertionError:', 'ValueError:')
     assert native.check_result(broken, '0', 0)['status'] == 'error'
+    nested = log + "E           AttributeError: 'NoneType' object has no attribute 'shape'\n"
+    assert native.check_result(nested, '0', 0)['status'] == 'error'
 
 
 def test_conditional_uvx_prewarm_preserves_runtime_control_flow():
