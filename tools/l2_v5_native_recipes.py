@@ -35,6 +35,7 @@ def recipe_dockerfile(original: str, tests_mount: str) -> str:
              f"ARG UV_INDEX_URL={native.BUILD_PYPI_INDEX}\n"
              "ARG npm_config_registry=https://registry.npmmirror.com\n"
              "ARG PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright\n"
+             "ARG UV_INSTALLER_GITHUB_BASE_URL=https://ghproxy.net/https://github.com\n"
              "USER root\n"
              "RUN --mount=type=bind,source=.trievo-verifier-root-setup.sh,target=/tmp/verifier-root-setup.sh,readonly "
              f"--mount=type=bind,from=trievo_verifier,target={tests_mount},readonly "
@@ -132,6 +133,10 @@ def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None 
     record["environment"] = environment
     record["recipe_adaptations"] = adaptations + [{"kind": "skills_excluded_from_build_context"},
         {"kind": "ordinary_domestic_mirrors"}, {"kind": "private_verifier_bind_mount_at_build_only"}]
+    if "https://astral.sh/uv/0.9.7/install.sh" in setup:
+        record["recipe_adaptations"].append({"kind": "ordinary_uv_installer_mirror",
+            "variable": "UV_INSTALLER_GITHUB_BASE_URL", "value": "https://ghproxy.net/https://github.com",
+            "version": "0.9.7", "reason": "pinned installer release download produced no progress for about 25 minutes; installer and requested version unchanged"})
     native.dump(record_path, record)
     result = {**base, **(outcome or {}), "environment": environment}
     if not result.get("admitted"):
