@@ -440,6 +440,13 @@ def test_new_build_waits_for_docker_disk_floor(monkeypatch,tmp_path):
         assert sleeps==[5]
 
 
+def test_wget_retry_option_preserves_apt_package_names():
+    original='RUN apt-get install -y \\\n    ffmpeg \\\n    wget \\\n    imagemagick\nRUN wget https://example.com/a && \\\n    wget https://example.com/b\n'
+    adapted=native.plain_download_commands(original)
+    assert '    wget \\\n    imagemagick' in adapted
+    assert adapted.count('wget --tries=1')==2
+
+
 def test_coursier_download_moves_to_build_but_local_healthcheck_stays():
     download='curl -fL https://github.com/coursier/coursier/releases/download/v2.1.25-M23/cs.gz | gzip -d > cs && chmod +x cs && ./cs setup'
     original=download+'\nif curl -s http://localhost:8888/status; then\n echo ready\nfi\n'

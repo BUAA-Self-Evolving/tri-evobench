@@ -521,7 +521,8 @@ class DeferredDownload(RuntimeError):
 def plain_download_commands(text: str) -> str:
     text=re.sub(r"--retry(?:=|\s+)\d+", "--retry 0", text)
     text=re.sub(r"--tries(?:=|\s+)\d+", "--tries=1", text)
-    return re.sub(r"\bwget(?=\s)", "wget --tries=1", text)
+    return re.sub(r"(?m)(^|(?:&&|\|\||[;|])(?:[ \t]|\\\r?\n)*|^RUN[ \t]+)wget(?=\s)",
+                  r"\1wget --tries=1", text)
 
 
 def build_proxy_args() -> list[str]:
