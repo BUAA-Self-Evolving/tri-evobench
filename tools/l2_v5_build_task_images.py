@@ -31,7 +31,7 @@ def select_recipes(package: Path, pool: Path | None = None,
         sid = record["source_id"]
         if sid in records:
             raise ValueError("duplicate pool source: " + sid)
-        if record.get("environment", {}).get("kind") == "dockerfile":
+        if record.get("environment", {}).get("kind") in {"dockerfile", "shared_dockerfile"}:
             records[sid] = (path.parent, record)
     turns = sorted((package / "streams").glob("*/turn*/task.json"))
     selected = set()
@@ -47,7 +47,7 @@ def select_recipes(package: Path, pool: Path | None = None,
             sid = basis["benchmark_id"] + ":" + basis["source_task_id"]
             if sources and sid not in sources:
                 continue
-            if task.get("environment", {}).get("kind") == "dockerfile":
+            if task.get("environment", {}).get("kind") in {"dockerfile", "shared_dockerfile"}:
                 records.setdefault(sid, (path.parent, {**task, "source_id": sid}))
             if sid in records:
                 selected.add(sid)
@@ -71,9 +71,10 @@ def select_recipes(package: Path, pool: Path | None = None,
 def recipe_paths(task: Path, environment: dict[str, Any]) -> tuple[Path, Path]:
     """Check the materialized recipe and context against their recorded hashes."""
     task = task.resolve()
+    allowed = task.parent if environment.get("kind") == "shared_dockerfile" else task
     context = (task / environment["context_path"]).resolve()
     recipe = (task / environment["recipe_path"]).resolve()
-    if not context.is_relative_to(task) or not recipe.is_relative_to(context):
+    if not context.is_relative_to(allowed) or not recipe.is_relative_to(context):
         raise ValueError("recipe/context escapes task directory")
     if hashlib.sha256(recipe.read_bytes()).hexdigest() != environment["recipe_sha256"]:
         raise ValueError("Dockerfile hash mismatch: " + str(recipe))
@@ -91,9 +92,10 @@ def build_selected(selected: list[tuple[Path, dict[str, Any]]], *,
         recipe, context = recipe_paths(task, environment)
         key = environment["context_sha256"]
         extra_contexts = {}
+        allowed = task.resolve().parent if environment.get("kind") == "shared_dockerfile" else task.resolve()
         for name, value in environment.get("build_contexts", {}).items():
             path = (task / value["path"]).resolve()
-            if not path.is_relative_to(task.resolve()) or not path.is_dir():
+            if not path.is_relative_to(allowed) or not path.is_dir():
                 raise ValueError("named build context escapes task directory: " + name)
             if tree_sha256(path) != value["sha256"]:
                 raise ValueError("named build context hash mismatch: " + name)

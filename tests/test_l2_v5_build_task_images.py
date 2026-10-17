@@ -94,3 +94,30 @@ def test_named_private_context_is_separate_and_hash_checked(tmp_path):
     (private / "test.sh").write_text("changed")
     with pytest.raises(ValueError, match="named build context hash"):
         builder.build_selected([(task, record)], build_args=[], timeout=90, dry_run=True)
+
+
+def test_shared_recipe_builds_once_for_two_sources_and_cannot_escape_pool(tmp_path):
+    context = tmp_path / "environment"
+    context.mkdir()
+    recipe = context / "Dockerfile"
+    recipe.write_text("FROM busybox:stable\n")
+    selected = []
+    for sid in ("sr_agents:first", "sr_agents:second"):
+        task = tmp_path / sid.replace(":", "__")
+        task.mkdir()
+        record = {"source_id": sid, "environment": {
+            "kind": "shared_dockerfile", "context_path": "../environment",
+            "recipe_path": "../environment/Dockerfile",
+            "recipe_sha256": hashlib.sha256(recipe.read_bytes()).hexdigest(),
+            "context_sha256": builder.tree_sha256(context)}}
+        (task / "pool_task.json").write_text(json.dumps(record))
+        selected.append((task, record))
+    assert len(builder.select_recipes(tmp_path)) == 2
+    with patch.object(builder.subprocess, "run") as run, \
+            patch.object(builder.subprocess, "check_output", return_value="sha256:" + "c" * 64):
+        result = builder.build_selected(selected, build_args=[], timeout=90)
+    assert run.call_count == 1
+    assert len({row["task_image_digest"] for row in result["images"]}) == 1
+    selected[0][1]["environment"]["context_path"] = "../../outside"
+    with pytest.raises(ValueError, match="escapes"):
+        builder.recipe_paths(*[selected[0][0], selected[0][1]["environment"]])

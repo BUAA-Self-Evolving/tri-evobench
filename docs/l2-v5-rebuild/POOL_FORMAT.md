@@ -90,8 +90,8 @@ same family/category, or is null. The top-level `environment` contains:
 The task retains its private oracle/tests, adapted verifier entrypoint and
 verifier environment variables. Recipes record their upstream adaptations as a
 diff. An `image_archive` is retained only for an image actually built and
-verified. Missing-oracle sources remain excluded. Recipe-only records do not
-claim an observed image ID, resource enforcement, or fixture verdict.
+verified. Missing-oracle sources remain excluded. Unbuilt native recipes do not
+claim an observed per-task image ID, resource enforcement, or fixture verdict.
 
 The runtime team can build selected recipes with ordinary Docker:
 
@@ -111,6 +111,14 @@ recipe build-time mounts of private verifier setup resources. Named private
 contexts are recorded in `environment.build_contexts` as name-to-`{path, sha256}`
 entries; they are separate from the public build context, so upstream `COPY .`
 cannot place private tests in an image layer.
+
+BigCodeBench can use `environment.kind = "shared_dockerfile"`, with a single
+recipe/context in the family pool's `environment/` directory and relative
+`../environment/...` references from each task. The builder validates that shared
+paths stay within the family directory and builds identical contexts only once.
+A recipe-ready BigCodeBench record may reference the actually built shared image;
+it does not claim per-source fixture execution. Only the selected existing r2
+sources receive fresh qualification; other records remain recipe-ready.
 
 ## Path mapping
 

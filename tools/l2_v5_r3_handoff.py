@@ -130,7 +130,7 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
             samples[(benchmark, cap)].add(sample)
         if admitted or recipe_ready:
             if recipe_ready:
-                if sid not in new or row.get("environment", {}).get("kind") != "dockerfile":
+                if sid not in new or row.get("environment", {}).get("kind") not in {"dockerfile", "shared_dockerfile"}:
                     raise ValueError("recipe_ready source lacks materialized recipe: " + sid)
                 recipes[(benchmark, cap)] += 1
             else:
