@@ -244,7 +244,15 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
         if isinstance(exc, subprocess.CalledProcessError):
             report["stderr"] = (exc.stderr or "")[-12000:]
     finally:
-        subprocess.run(["docker", "rm", "-f", container_name], capture_output=True, timeout=30)
+        try:
+            cleanup = subprocess.run(["docker", "rm", "-f", container_name],
+                                     capture_output=True, timeout=30, check=False)
+        except subprocess.TimeoutExpired:
+            report["cleanup_warning"] = "cleanup warning: docker rm timed out after 30s: " + container_name
+        else:
+            if cleanup.returncode:
+                report["cleanup_warning"] = ("cleanup warning: docker rm rc=" +
+                                             str(cleanup.returncode) + ": " + container_name)
     if trusted_resources is not None:
         report.update(resource_readback=trusted_resources,
                       resource_enforcement=trusted_resources["resource_enforcement"],

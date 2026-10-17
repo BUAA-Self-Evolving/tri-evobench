@@ -485,3 +485,42 @@ def test_nltk_install_does_not_gate_on_license_metadata(tmp_path, monkeypatch):
     runpy.run_path(str(builder.ROOT / 'sandbox/l2-v5/sra-install-assets.py'), run_name='__main__')
     assert (destination / 'corpora/fixture/data.txt').read_text() == 'asset'
     assert commands[0][commands[0].index('--retry') + 1] == '1'
+
+
+@pytest.mark.parametrize('cleanup_failure', ['timeout', 'returncode'])
+def test_cleanup_warning_preserves_valid_fixture_result(tmp_path, monkeypatch, cleanup_failure):
+    import hashlib
+    import subprocess
+    image = 'sha256:' + 'a' * 64
+    task = tmp_path / 'task'; task.mkdir()
+    fixture = tmp_path / 'fixture'; fixture.mkdir()
+    (fixture / 'response.txt').write_text('42')
+    response_hash = hashlib.sha256(b'42').hexdigest()
+    nonce = []
+    monkeypatch.setattr(builder, 'docker_resource_capability_preflight', lambda **kwargs: {'passed': True})
+
+    def docker(argv, **kwargs):
+        stdout = ''
+        if argv[1] == 'create':
+            nonce.append(next(arg.split('=', 1)[1] for arg in argv if arg.startswith('L2_QUALIFICATION_NONCE=')))
+        elif argv[1] == 'start':
+            stdout = header_text(nonce=nonce[0], response_sha256=response_hash)
+        elif argv[1] == 'inspect':
+            host = {'PidsLimit': 256, 'CapDrop': ['ALL'], 'SecurityOpt': ['no-new-privileges'],
+                    'Memory': 4 * 1024**3, 'NanoCpus': 2 * 10**9}
+            stdout = json.dumps({'Running': False, 'ExitCode': 0}) + '|' + image + '|none|' + json.dumps(host)
+        elif argv[1] == 'cp' and argv[2].endswith(':/out/result.json'):
+            payload = dict(evidence('pass'), execution_nonce=nonce[0], shadow=False, response_sha256=response_hash)
+            Path(argv[3]).write_text(json.dumps(payload))
+        elif argv[1] == 'rm':
+            if cleanup_failure == 'timeout':
+                raise subprocess.TimeoutExpired(argv, 30)
+            return subprocess.CompletedProcess(argv, 1, '', 'container removal delayed')
+        return subprocess.CompletedProcess(argv, 0, stdout, '')
+
+    monkeypatch.setattr(builder.subprocess, 'run', docker)
+    report = builder.fixture_run(task, fixture, image, tmp_path / 'out', shadow=False)
+    assert report['transport_verified'] is True
+    assert report['verifier']['status'] == 'pass'
+    assert 'cleanup warning' in report['cleanup_warning']
+    assert json.loads((tmp_path / 'out/report.json').read_text())['cleanup_warning'] == report['cleanup_warning']
