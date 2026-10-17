@@ -211,6 +211,9 @@ def inspect_image(image: str) -> dict[str, Any]:
 def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
     started = time.time()
     log.parent.mkdir(parents=True, exist_ok=True)
+    if log.exists():
+        # Shared-image retries must not replace earlier failure evidence.
+        log = log.with_name(f"{log.stem}-{time.time_ns()}{log.suffix}")
     with log.open("w") as handle:
         try:
             run = subprocess.run(argv, stdout=handle, stderr=subprocess.STDOUT,
@@ -404,12 +407,40 @@ def base_image_provenance(dockerfile: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def build_asset_transport(text: str) -> tuple[str, list[dict[str, Any]]]:
+    """Fetch the exact consumed LFS object when public Git transport is blocked."""
+    repository = "https://huggingface.co/datasets/zodi1121/skillbench-software-db"
+    if repository not in text:
+        return text, []
+    commit = "d005409588e3f74449ab3f13cde29cfea87a80bc"
+    sha256 = "e67dd9144e93897c5e2dbe4228e3444e4818130923e39389f32164a01bb62d0f"
+    url = f"https://hf-mirror.com/datasets/zodi1121/skillbench-software-db/resolve/{commit}/db.zip"
+    join = r"\s*&&[\\\s]*"
+    pattern = (r"git clone " + re.escape(repository) + join +
+               r"cd skillbench-software-db" + join + r"git lfs pull" + join + r"cd /root")
+    replacement = ("mkdir -p skillbench-software-db && "
+                   "curl -fL --retry 2 --connect-timeout 20 --max-time 300 " +
+                   shlex.quote(url) + " -o skillbench-software-db/db.zip && " +
+                   "printf '%s  %s\\n' " + shlex.quote(sha256) +
+                   " skillbench-software-db/db.zip | sha256sum -c -")
+    changed, count = re.subn(pattern, lambda match: replacement, text)
+    if count != 1:
+        raise ValueError("unsupported_software_database_clone_sequence")
+    return changed, [{"kind": "build_asset_transport", "repository": repository,
+        "canonical_commit": commit, "asset": "db.zip", "asset_bytes": 84027328,
+        "asset_sha256": sha256, "transport_url": url,
+        "scope": "replace only clone/LFS transfer; retain upstream git-lfs installation, unzip, cache paths and cleanup",
+        "reason": "actual build Git connection to huggingface.co:443 failed; mirror Git is forbidden but pinned asset is byte-identical",
+        "evidence": "hf-container-mirror-wholefile-proof.json: actual network-host container fetched 84027328 bytes with official Git LFS SHA256 in 6.16 seconds"}]
+
+
 def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
-    """Change only package-index transport, keeping earlier apt layers cached.
+    """Adapt recorded build transports, keeping unrelated apt layers cached.
 
     ARGs are scoped to build stages and do not persist in image Config.Env.
-    Every explicit package version and installer command remains upstream's.
+    Explicit package versions stay upstream's; consumed LFS bytes are pinned.
     """
+    text, _ = build_asset_transport(text)
     instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
     output = []; configured = False; debian_stage = apt_debian
     for instruction in instructions:
@@ -437,7 +468,7 @@ def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
 
 def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
-    """Build unmodified upstream privately, then flatten a scrubbed filesystem."""
+    """Build native sources with recorded transports, then scrub the filesystem."""
     raw_tag = "trievo-r3-private:" + work.name
     context=inputs["context"]
     context_adaptations=[]
@@ -450,6 +481,7 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
             "evidence":"SkillLearnBench core/skill_runner.py:711-717",
             "reason":"upstream task environment omits skills but Dockerfile COPY requires directory"})
     original_text=inputs["dockerfile"].read_text()
+    context_adaptations.extend(build_asset_transport(original_text)[1])
     (work/"Dockerfile.upstream-original").write_text(original_text)
     transported=work/"Dockerfile.upstream-transport"
     transported.write_text(build_transport_dockerfile(original_text))
@@ -627,7 +659,7 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
 def image_build_fingerprint() -> str:
     """Bind image caches to image-producing code, independent of qualification."""
     functions=(private_member,sanitize_archive,image_config_changes,
-               base_image_provenance,build_transport_dockerfile,_build_image)
+               base_image_provenance,build_asset_transport,build_transport_dockerfile,_build_image)
     payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
              "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
     return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()

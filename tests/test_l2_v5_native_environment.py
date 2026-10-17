@@ -2,6 +2,7 @@
 import importlib.util
 import io
 import sys
+import subprocess
 import tarfile
 from pathlib import Path
 
@@ -49,6 +50,35 @@ def test_debian_transport_preserves_suites_signatures_and_installer():
     assert 'apt-get update && apt-get install -y gcc' in adapted
     assert 'trusted=yes' not in adapted and 'AllowUnauthenticated' not in adapted
     assert 'bookworm' not in adapted  # suite names are never substituted
+
+
+def test_lfs_asset_transport_preserves_consumed_bytes_and_extraction():
+    original = ('RUN git lfs install && git clone '
+                'https://huggingface.co/datasets/zodi1121/skillbench-software-db && \\\n'
+                ' cd skillbench-software-db && git lfs pull && cd /root && \\\n'
+                ' unzip skillbench-software-db/db.zip -d /root/.cache/trivy && '
+                'ln -s /root/.cache/trivy /root/trivy-cache && rm -rf skillbench-software-db\n')
+    changed, adaptations = native.build_asset_transport(original)
+    assert 'git lfs install && mkdir -p skillbench-software-db' in changed
+    assert '/resolve/d005409588e3f74449ab3f13cde29cfea87a80bc/db.zip' in changed
+    assert adaptations[0]['asset_sha256'] in changed
+    assert 'sha256sum -c -' in changed
+    assert original[original.index(' unzip '):] == changed[changed.index(' unzip '):]
+    subprocess.run(['bash', '-n'], input=changed.removeprefix('RUN '), text=True, check=True)
+    unrelated = 'RUN git clone https://example.org/another/repo\n'
+    assert native.build_asset_transport(unrelated) == (unrelated, [])
+    with pytest.raises(ValueError, match='unsupported_software_database_clone_sequence'):
+        native.build_asset_transport('RUN git clone https://huggingface.co/datasets/zodi1121/skillbench-software-db\n')
+
+
+def test_command_retry_preserves_prior_failure_log(tmp_path):
+    log = tmp_path / 'build.log'
+    first = native.command([sys.executable, '-c', "print('original failure'); raise SystemExit(1)"], log)
+    second = native.command([sys.executable, '-c', "print('retry success')"], log)
+    assert first['returncode'] == 1 and second['returncode'] == 0
+    assert first['log'] != second['log']
+    assert Path(first['log']).read_text() == 'original failure\n'
+    assert Path(second['log']).read_text() == 'retry success\n'
 
 
 def test_generated_verifier_numeric_user_without_passwd_defaults_gid_zero(tmp_path, monkeypatch):
