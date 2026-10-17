@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from ..model import TokenBudget
+from ..model import TokenBudget, TokenBudgetExceeded
 from .base import (
     RUNTIME_PROTOCOL_VERSION,
     BaselineInteractionError,
@@ -474,7 +474,16 @@ class ProcessBaselineRuntime(BaselineRuntime):
             timeout=timeout,
         )
         usage = UsageDetails.from_mapping(result.get("usage"))
-        self._record_usage(usage)
+        try:
+            self._record_usage(usage)
+        except TokenBudgetExceeded:
+            # The adapter has already returned and may have written learning
+            # state. Roll back this uncommitted evolution, keep its paid usage,
+            # and cross the lifecycle barrier before the runner checkpoints.
+            self._restore_state(before_capture)
+            self._stable_state = before_capture
+            self._turn_evolved = True
+            raise
         if not bool(result.get("completed", True)):
             self._restore_state(before_capture)
             self._stable_state = before_capture

@@ -23,12 +23,12 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from uuid import uuid4
 
-from .baselines.base import BaselineReply, EvolutionContext, FlowContext, InteractionContext, TurnContext, UsageDetails
+from .baselines.base import BaselineReply, EvolutionContext, EvolutionResult, FlowContext, InteractionContext, TurnContext, UsageDetails
 from .baselines.manifest import BaselineManifest, find_manifest, load_manifest, merge_mappings
 from .baselines.process import ProcessBaselineRuntime
 from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationStatus
 from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
-from .model import TokenBudget, client_from_config
+from .model import TokenBudget, TokenBudgetExceeded, client_from_config
 from .run_conditions import RunCondition, parse_run_condition
 from .tau2_live import Tau2LiveSession, Tau2LiveSessionError, is_live_profile
 from .verifier import L1LifeJudge
@@ -701,6 +701,23 @@ class L2AgentStreamRunner:
         runtime_started = False
         stream_work_limits = self.work_limits
         try:
+            if (resume_pending is not None and self.budget.used >= self.budget.limit
+                    and not _limit_reasons(resume_pending.get("reply", {}).get("raw"))):
+                raise L2AgentRunError(
+                    "exhausted adjudication checkpoint has no saved work-limit result; "
+                    "cannot reconstruct its score without repeating evaluation"
+                )
+            if self.budget.used >= self.budget.limit and resume_pending is None:
+                report.update(
+                    budget_exhausted=True, stop_reason="token_budget_exhausted",
+                    completed=len(completed_turns) == len(turn_order),
+                    evaluation_complete=all(t.get("evaluation_status") != "evaluation_error" for t in completed_turns),
+                    success=(len(completed_turns) == len(turn_order)
+                             and all(t.get("passed") is True for t in completed_turns)),
+                )
+                if completed_turns:
+                    report["stopped_after_turn"] = completed_turns[-1]["turn_id"]
+                return report
             # Only preflight the next Turn. Later recipe-only Turns must not
             # prevent a bounded smoke of an earlier materialized Turn.
             if is_v5 and resume_index < len(turn_order):
@@ -1091,8 +1108,14 @@ class L2AgentStreamRunner:
                     turn_id=turn_id,
                     interaction_index=len(interactions),
                 )
-                evolution = self._runtime.evolve(
-                    EvolutionContext(
+                evolution_budget_exhausted = False
+                evolution_usage_before = (self.budget.used, self.budget.calls)
+                try:
+                    if self.budget.used >= self.budget.limit:
+                        raise TokenBudgetExceeded(
+                            f"token budget exhausted before evolution: {self.budget.used} >= {self.budget.limit}"
+                        )
+                    evolution = self._runtime.evolve(EvolutionContext(
                         turn_id=turn_id,
                         trajectory=[_public_taskstream_trajectory(item) for item in interactions],
                         feedback=[{
@@ -1107,8 +1130,18 @@ class L2AgentStreamRunner:
                             if terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
                             else f"condition:{self.condition.value}"
                         ),
+                    ))
+                except TokenBudgetExceeded as exc:
+                    evolution_budget_exhausted = True
+                    evolution = EvolutionResult(
+                        completed=False,
+                        events=[{"type": "evolution.budget_exhausted", "error": str(exc),
+                                 "checkpoint_state": "before_evolution"}],
+                        usage=UsageDetails(
+                            total_tokens=self.budget.used - evolution_usage_before[0],
+                            api_calls=self.budget.calls - evolution_usage_before[1],
+                        ),
                     )
-                )
                 self._sync_workspace_from_volume()
                 evolution_record = {"record_type": "evolution", "turn_id": turn_id, "evolution": evolution.to_dict()}
                 with trace_path.open("a", encoding="utf-8") as trace:
@@ -1142,7 +1175,13 @@ class L2AgentStreamRunner:
                 checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"t{turn_index + 1:04d}"
                 checkpoint.mkdir(parents=True, exist_ok=True)
                 _archive_tree(workspace, checkpoint / "workspace.zip")
-                self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
+                if evolution_budget_exhausted:
+                    # A completed response may cross the token limit while its
+                    # usage is recorded. Preserve the last trusted learner state
+                    # instead of committing an unacknowledged partial evolution.
+                    shutil.copy2(pending / "baseline_state.zip", checkpoint / "baseline_state.zip")
+                else:
+                    self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
                 report["turns"][-1]["checkpoint"] = str(checkpoint)
                 _write_json(checkpoint / "completed_turns.json", report["turns"])
                 _write_json(checkpoint / "checkpoint.json", {
@@ -1157,6 +1196,12 @@ class L2AgentStreamRunner:
                     "token_budget": asdict(self.budget),
                 })
                 _write_json(run_dir / "report.json", report)
+                if evolution_budget_exhausted:
+                    report["budget_exhausted"] = True
+                    report["stop_reason"] = "token_budget_exhausted_during_evolution"
+                    report["stopped_after_turn"] = turn_id
+                    _write_json(run_dir / "report.json", report)
+                    break
                 if (
                     terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
                     and self.evaluation_error_policy == "stop"
