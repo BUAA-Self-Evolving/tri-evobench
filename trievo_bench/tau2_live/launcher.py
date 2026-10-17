@@ -36,6 +36,39 @@ _SERVICE_ALIVE = (
 )
 
 
+
+_GUARDED_SERVICE = r'''
+import json, subprocess, time
+from pathlib import Path
+from resource_guard import require_container_resources
+root = Path("/private")
+spec = json.loads((root / "spec.json").read_text())
+Path("/out").mkdir(exist_ok=True)
+resources = require_container_resources(enforcement_mode=spec["mode"])
+(root / "resources.json").write_text(json.dumps({"nonce": spec["nonce"], "resource_readback": resources}))
+with Path("/out/service.log").open("w") as log:
+    log.write(json.dumps({"resource_readback": resources, "resource_enforcement": resources["resource_enforcement"]}) + "\n")
+    log.flush()
+    deadline = time.monotonic() + spec["ready_timeout"]
+    while not (root / "authorization.json").exists():
+        if time.monotonic() >= deadline:
+            raise RuntimeError("host resource authorization timed out")
+        time.sleep(0.1)
+    authorization = json.loads((root / "authorization.json").read_text())
+    if authorization.get("nonce") != spec["nonce"]:
+        raise RuntimeError("invalid host resource authorization")
+    ready_socket = Path("/workspace/.tau2/session.sock")
+    if ready_socket.exists() or ready_socket.is_symlink():
+        ready_socket.unlink()
+    process = subprocess.Popen(spec["command"], cwd="/out", stdout=log, stderr=subprocess.STDOUT)
+    while not Path("/workspace/.tau2/session.sock").is_socket():
+        if process.poll() is not None or time.monotonic() >= deadline:
+            raise RuntimeError("tau2 service exited or did not create its socket")
+        time.sleep(0.1)
+    (root / "ready.json").write_text(json.dumps({"nonce": spec["nonce"]}))
+    raise SystemExit(process.wait())
+'''
+
 class Tau2LiveSessionError(RuntimeError):
     """The live session could not be started or collected (infrastructure)."""
 
@@ -83,6 +116,8 @@ class Tau2LiveSession:
         missing = [name for name in self.credential_env if not os.environ.get(name)]
         if missing:
             raise Tau2LiveSessionError(f"live tau2 session needs {missing} in the runtime environment")
+        if self.profile.get("environment_version"):
+            return self._start_guarded()
         env_args: list[str] = []
         for name in (*self.credential_env, *PROXY_ENV_NAMES):
             if os.environ.get(name):
@@ -139,6 +174,92 @@ class Tau2LiveSession:
             "agent_entrypoint": "/workspace/.tau2/tau2.py",
         }
         return dict(self.evidence)
+
+    def _start_guarded(self) -> dict[str, Any]:
+        from ..container_resources import (
+            ContainerResourceError, docker_resource_capability_preflight,
+            require_container_resources, resource_enforcement_mode,
+        )
+        import trievo_bench.container_resources as resource_module
+
+        try:
+            mode = resource_enforcement_mode()
+            capability = docker_resource_capability_preflight(docker=_docker())
+        except ContainerResourceError as exc:
+            raise Tau2LiveSessionError(str(exc)) from exc
+        if not capability.get("allowed", capability["passed"]):
+            raise Tau2LiveSessionError("tau2 service resource enforcement unavailable: " + "; ".join(capability["errors"]))
+        nonce = uuid4().hex
+        env_args = [value for name in (*self.credential_env, *PROXY_ENV_NAMES) if os.environ.get(name)
+                    for value in ("-e", name)]
+        command = [SERVICE_PYTHON, "-m", "tau2_session.service", "--task", "/private/task.json",
+                   "--domain", self.meta["domain"], "--config", "/private/config.json",
+                   "--timeout", str(int(self.timeout_seconds)), "--tau2-revision", self.meta["revision"]]
+        try:
+            with tempfile.TemporaryDirectory(prefix="trievo-tau2-guard-") as scratch:
+                local = Path(scratch)
+                payload = local / "payload"
+                payload.mkdir()
+                (payload / "spec.json").write_text(json.dumps({"nonce": nonce, "mode": mode, "command": command,
+                    "ready_timeout": READY_TIMEOUT_SECONDS}))
+                (payload / "config.json").write_text(json.dumps(self.meta.get("live_config") or {}))
+                (payload / "bootstrap.py").write_text(_GUARDED_SERVICE)
+                import shutil
+                shutil.copy2(resource_module.__file__, payload / "resource_guard.py")
+                shutil.copy2(self.assets / "tau2_task.json", payload / "task.json")
+                created = _run(["create", "--name", self.name, "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+                    "--pids-limit", "256", "--memory", "4g", "--cpus", "2", "--mount", self.workspace_mount_spec,
+                    *env_args, "-e", "TAU2_RUN_ROOT=/out/run", "--entrypoint", SERVICE_PYTHON,
+                    self.image, "/private/bootstrap.py"])
+                if created.returncode:
+                    raise Tau2LiveSessionError("failed to create guarded tau2 service: " + created.stderr[-2000:])
+                self._started = True
+                copied = _run(["cp", str(payload), f"{self.name}:/private"])
+                if copied.returncode or _run(["start", self.name]).returncode:
+                    raise Tau2LiveSessionError("failed to stage/start guarded tau2 service")
+                observed = self._wait_guard_marker("resources", nonce, local)
+                readback = observed.get("resource_readback")
+                if not isinstance(readback, dict):
+                    raise Tau2LiveSessionError("guarded tau2 service resource snapshot is missing")
+                checked = require_container_resources(readback, enforcement_mode=mode)
+                inspected = _run(["inspect", self.name, "--format", "{{.Image}} {{.State.Running}} {{.HostConfig.NetworkMode}}"])
+                if inspected.returncode or inspected.stdout.strip().split() != [self.image, "true", "default"]:
+                    raise Tau2LiveSessionError("guarded tau2 service image/network readback mismatch")
+                # The copied authorization is private to this fresh container;
+                # no simulator/import/model code runs until host validation.
+                authorization = local / "authorization.json"
+                authorization.write_text(json.dumps({"nonce": nonce}))
+                if _run(["cp", str(authorization), f"{self.name}:/private/authorization.json"]).returncode:
+                    raise Tau2LiveSessionError("failed to authorize guarded tau2 service")
+                self._wait_guard_marker("ready", nonce, local)
+                self.evidence = {"kind": "tau2_live_session", "container_name": self.name,
+                    "image_digest": self.image, "domain": self.meta["domain"], "task_id": self.meta["task_id"],
+                    "tau2_revision": self.meta["revision"], "network": "default (user-simulator LLM only)",
+                    "agent_entrypoint": "/workspace/.tau2/tau2.py", "resource_readback": checked,
+                    "resource_enforcement": checked["resource_enforcement"],
+                    "requested_resources": checked["requested_resources"], "observed_resources": checked["observed_resources"],
+                    "resource_observation_provenance": "actual service container before host authorization/model calls"}
+                return dict(self.evidence)
+        except (ContainerResourceError, OSError, ValueError, subprocess.SubprocessError, Tau2LiveSessionError) as exc:
+            self.close()
+            raise Tau2LiveSessionError("guarded tau2 service startup failed: " + str(exc)) from exc
+
+    def _wait_guard_marker(self, kind: str, nonce: str, local: Path) -> dict[str, Any]:
+        deadline = time.monotonic() + READY_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            # A fresh destination per attempt rejects no-op cp and stale files.
+            target = local / (kind + "-" + uuid4().hex + ".json")
+            copied = _run(["cp", f"{self.name}:/private/{kind}.json", str(target)])
+            if copied.returncode == 0 and target.is_file():
+                value = json.loads(target.read_text())
+                if not isinstance(value, dict) or value.get("nonce") != nonce:
+                    raise Tau2LiveSessionError("guarded tau2 service nonce mismatch")
+                return value
+            state = _run(["inspect", self.name, "--format", "{{.State.Running}}"])
+            if state.returncode or state.stdout.strip() != "true":
+                raise Tau2LiveSessionError("guarded tau2 service exited before " + kind + ": " + self._service_log()[-2000:])
+            time.sleep(0.2)
+        raise Tau2LiveSessionError("guarded tau2 service timed out before " + kind)
 
     def finish(self) -> dict[str, Any]:
         """End the conversation if still open, score it and return the record."""

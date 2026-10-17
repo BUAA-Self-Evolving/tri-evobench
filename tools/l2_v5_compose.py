@@ -311,7 +311,7 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
     family = PROFILE_FAMILY[benchmark]
     profile_id = f"{family}_{compute}_{timeout}s_v5"
     digest = runtime["task_image_digest"]
-    return {
+    profile = {
         **LEARNER_ABI,
         "runtime_profile_id": profile_id, "dependency_class": "source_native", "network": "disabled",
         "task_sandbox_image": runtime["task_image"], "task_sandbox_image_digest": digest,
@@ -326,9 +326,45 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         # next to the agent's sandbox (see trievo_bench/tau2_live).
         **({"live_session": runtime["live_session"]} if runtime.get("live_session") else {}),
     }
+    if runtime.get("environment_version") or "native_environment" in runtime:
+        if runtime.get("environment_version", "l2_environment/1.0") != "l2_environment/1.0":
+            raise ValueError("unsupported environment_version")
+        profile["environment_version"] = "l2_environment/1.0"
+        if runtime.get("image_archive"):
+            profile["image_archive"] = copy.deepcopy(runtime["image_archive"])
+        if "resource_enforcement" in runtime:
+            if runtime["resource_enforcement"] not in {"enforced", "declared_not_enforced"}:
+                raise ValueError("unsupported resource_enforcement metadata")
+            if not isinstance(runtime.get("resource_readback"), dict):
+                raise ValueError("resource enforcement metadata requires actual readback")
+            for field in ("resource_enforcement", "resource_readback", "resource_observation_provenance"):
+                if field in runtime:
+                    profile[field] = copy.deepcopy(runtime[field])
+        if "native_environment" in runtime:
+            from trievo_bench.native_environment import validate_native_environment
+            profile["native_environment"] = copy.deepcopy(validate_native_environment(runtime["native_environment"]))
+        if profile["task_sandbox_image_digest"] != profile["verifier_image_digest"]:
+            raise ValueError("native task and verifier must use the same image")
+        identity = json.dumps(profile, sort_keys=True, separators=(",", ":")).encode()
+        profile["runtime_profile_id"] = profile_id + "_" + hashlib.sha256(identity).hexdigest()[:20]
+    return profile
+
+
+def register_runtime_profile(profiles: dict[str, Any], profile: dict[str, Any]) -> None:
+    key = profile["runtime_profile_id"]
+    if key in profiles and profiles[key] != profile:
+        raise ValueError(f"conflicting runtime profile: {key}")
+    profiles[key] = profile
 
 
 def path_mapping_sentence(turn_id: str, record: dict[str, Any]) -> str:
+    environment = record["runtime"].get("native_environment")
+    if environment:
+        aliases = "; ".join(
+            f"{item['native_path']} -> /workspace/tasks/{turn_id}/{item['workspace_relative_path']}"
+            for item in environment["path_mappings"])
+        return (f"Work in the native directory {environment['cwd']}. Declared native aliases are "
+                f"Workspace paths for this Turn: {aliases}. Files in /workspace persist according to the run condition.\n\n")
     roots = record["runtime"].get("upstream_workdirs") or []
     task_dir = f"/workspace/tasks/{turn_id}/"
     if roots:
@@ -485,7 +521,7 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                 turn_dir = stream_dir / turn_id
                 copy_pool_task(record, turn_dir)
                 profile = runtime_profile(record)
-                profiles[profile["runtime_profile_id"]] = profile
+                register_runtime_profile(profiles, profile)
                 entry = capability_map[capability_id]
                 taxonomy_used[capability_id] = {
                     "capability_id": capability_id, "domain_id": entry["domain_id"],

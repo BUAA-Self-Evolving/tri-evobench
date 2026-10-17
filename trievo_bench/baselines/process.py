@@ -54,6 +54,7 @@ class NdjsonProcess:
     ) -> None:
         self.command = command
         self.timeout_seconds = timeout_seconds
+        self.native_tool_handler = None
         # A reset-condition Stream starts a fresh runtime for every Turn but
         # intentionally keeps one run directory. Append so later runtimes (or
         # an exact checkpoint resume) cannot erase earlier diagnostic logs.
@@ -137,6 +138,22 @@ class NdjsonProcess:
                 raise BaselineProtocolError("baseline adapter emitted a non-object message")
             if message.get("protocol_error"):
                 raise BaselineProtocolError(str(message["protocol_error"]))
+            if message.get("event") == "native_tool_request":
+                tool_id = message.get("tool_request_id")
+                if not isinstance(tool_id, str) or not tool_id:
+                    raise BaselineProtocolError("native tool request has no ID")
+                try:
+                    if method != "interact":
+                        raise BaselineProtocolError("native tools are restricted to interact")
+                    if self.native_tool_handler is None:
+                        raise BaselineProtocolError("native tool transport unavailable")
+                    result = self.native_tool_handler(message.get("params"), max(0.1, deadline - time.monotonic()))
+                    reply = {"tool_response_id": tool_id, "result": result}
+                except Exception as exc:
+                    reply = {"tool_response_id": tool_id, "error": str(exc)}
+                stream.write(json.dumps(reply, ensure_ascii=True) + "\n")
+                stream.flush()
+                continue
             if message.get("event"):
                 continue
             if message.get("id") != request_id:
@@ -279,6 +296,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 stderr_path=context.output_dir / "baseline.stderr.log",
                 timeout_seconds=timeout,
             )
+            self._transport.native_tool_handler = self._native_tool_request
             initialized = self._request(
                 "initialize",
                 {
@@ -318,6 +336,9 @@ class ProcessBaselineRuntime(BaselineRuntime):
             raise RuntimeError("baseline flow has not started")
         if self._current_turn is not None and not self._turn_evolved:
             raise RuntimeError(f"turn {self._current_turn} has not completed evolution")
+        if (context.metadata.get("task_sandbox") or {}).get("environment_version"):
+            if "native_task_execution" not in self._adapter_metadata.get("capabilities", []):
+                raise BaselineProtocolError("baseline adapter does not support native task execution")
         self._ensure_stable_state("between evolution and the next Turn")
         prior_state = self._stable_state
         self._request(
@@ -346,7 +367,36 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 )
         self._stable_state = started_state
 
+    def _native_tool_request(self, params: Any, remaining_seconds: float) -> dict[str, Any]:
+        """Execute only in the host-selected task sandbox, never a caller-selected container."""
+        sandbox = self._current_turn_metadata.get("task_sandbox") or {}
+        name = sandbox.get("container_name", "")
+        if (not self._current_turn or sandbox.get("environment_version") != "l2_environment/1.0"
+                or not re.fullmatch(r"trievo-l2-task-[0-9a-f]{12}", name)):
+            raise BaselineProtocolError("no active native task sandbox")
+        if not isinstance(params, dict) or set(params) - {"command", "timeout_seconds"}:
+            raise BaselineProtocolError("invalid native tool request fields")
+        command = params.get("command")
+        if not isinstance(command, str) or not command.strip():
+            raise BaselineProtocolError("native tool command must be nonempty")
+        requested_timeout = params.get("timeout_seconds", 180)
+        if isinstance(requested_timeout, bool) or not isinstance(requested_timeout, (int, float)) or requested_timeout <= 0:
+            raise BaselineProtocolError("invalid native tool timeout")
+        limit = int(self._current_turn_metadata.get("agent_limits", {}).get("max_tool_calls", 20))
+        self._native_terminal_calls = getattr(self, "_native_terminal_calls", 0) + 1
+        if self._native_terminal_calls > limit:
+            raise BaselineProtocolError("native terminal call limit exceeded")
+        timeout = min(float(requested_timeout), remaining_seconds, 1800.0)
+        completed = subprocess.run(
+            [_resolve_executable("docker"), "exec", "-w", sandbox.get("cwd", "/workspace"),
+             name, "timeout", "--signal=TERM", "--kill-after=5s", str(max(0.1, timeout - 1)),
+             "bash", "-c", command], text=True, capture_output=True, timeout=timeout,
+            check=False, encoding="utf-8", errors="replace",
+        )
+        return {"output": (completed.stdout + completed.stderr)[-100000:], "exit_code": completed.returncode}
+
     def interact(self, context: InteractionContext) -> BaselineReply:
+        self._native_terminal_calls = 0
         if context.turn_id != self._current_turn:
             raise RuntimeError(f"interaction belongs to inactive turn: {context.turn_id}")
         self._ensure_stable_state("before interact", interaction_error=True)
