@@ -15,6 +15,21 @@ sys.path.insert(0, str(TOOLS))
 import l2_v5_native_environment as native
 
 
+def test_recipe_counters_separate_qualified_ready_and_failed_samples(tmp_path):
+    rows = [{"source_id": "skillsbench:" + name, "family": "sample",
+             "capability_id": "skillsbench.sample", "admitted": admitted,
+             "stage": stage, "environment": {"kind": "dockerfile"}}
+            for name, admitted, stage in [("qualified", True, "qualified"),
+                                           ("unbuilt", False, "recipe_ready"),
+                                           ("failed-sample", False, "oracle")]]
+    native.write_summaries(tmp_path, rows, None, None)
+    count = json.loads((tmp_path / "CAPABILITY_COUNTS.json").read_text())["skillsbench.sample"]
+    assert count["recipes_total"] == 3
+    assert count["admitted"] == 1
+    assert count["recipe_ready"] == 1
+    assert count["available"] == count["available_unused_intra"] == 2
+
+
 def test_recipe_qualification_builds_delivered_recipe_before_existing_finalizer(tmp_path, monkeypatch):
     task = tmp_path / 'task'
     work = tmp_path / 'work'

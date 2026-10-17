@@ -44,7 +44,9 @@ def recipe_dockerfile(original: str, tests_mount: str) -> str:
              f"--mount=type=bind,from=trievo_verifier,target={tests_mount},readonly "
              "bash /tmp/verifier-user-setup.sh\n")
     # Some upstream Dockerfiles lack a final newline; Docker syntax stays explicit.
-    return "# syntax=docker/dockerfile:1\n" + re.sub(r"(?m)^# syntax=.*\n", "", native.build_transport_dockerfile(text))
+    # Use Docker's bundled BuildKit frontend. An optional external syntax image
+    # added an unrelated registry pull and failed with the daemon mirror's 401.
+    return re.sub(r"(?m)^# syntax=.*\n", "", native.build_transport_dockerfile(text))
 
 
 def materialize(row: dict[str, Any], pool: Path, outcome: dict[str, Any] | None = None) -> dict[str, Any]:

@@ -1687,13 +1687,14 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
     for r in rows:
         cap=r.get("capability_id",r["family"])
         count=counts.setdefault(cap,{"total":0,"admitted":0,"admitted_unused_intra":0,
-                                    "recipe_ready":0,"available":0,"available_unused_intra":0,
+                                    "recipe_ready":0,"recipes_total":0,"available":0,"available_unused_intra":0,
                                     "family_sample_verified":None})
         count["total"]+=1;count["admitted"]+=int(r["admitted"])
         count["admitted_unused_intra"]+=int(r["admitted"] and r["source_id"] not in used)
         ready=r.get("environment",{}).get("kind")=="dockerfile"
-        available=bool(r["admitted"] or ready)
-        count["recipe_ready"]+=int(ready)
+        available=bool(r["admitted"] or r.get("stage")=="recipe_ready")
+        count["recipe_ready"]+=int(r.get("stage")=="recipe_ready")
+        count["recipes_total"]+=int(ready)
         count["available"]+=int(available)
         count["available_unused_intra"]+=int(available and r["source_id"] not in used)
         if r.get("family_sample_verified"):count["family_sample_verified"]=r["family_sample_verified"]

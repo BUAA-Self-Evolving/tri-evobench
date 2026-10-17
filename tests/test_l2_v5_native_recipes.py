@@ -9,6 +9,7 @@ def test_recipe_excludes_skill_copies_and_mounts_private_setup_without_layers():
                 'COPY skills /root/.claude/skills\nRUN apt-get update && apt-get install -y wget\n')
     text = recipes.recipe_dockerfile(original, '/tests')
     assert 'COPY skills' not in text
+    assert '# syntax=' not in text
     assert 'COPY public.txt /root/public.txt' in text
     assert 'apt-get update && apt-get install -y wget\n' in text
     assert 'COPY .trievo-private-tests' not in text
