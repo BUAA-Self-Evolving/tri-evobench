@@ -612,3 +612,100 @@ def test_offline_uv_cache_keeps_prewarmed_index_identity_and_rejects_conflicts()
     for key in ['UV_INDEX_URL','UV_DEFAULT_INDEX','UV_INDEX']:
         with pytest.raises(ValueError,match='native_uv_index_conflicts_with_prewarmer'):
             native.verifier_cache_environment({key:'https://upstream.example/simple'},[{'kind':'uvx_environment_prewarm'}])
+
+
+def test_druid_transport_keeps_native_extract_cleanup_and_source_commands(tmp_path, monkeypatch):
+    import hashlib
+    context = tmp_path / 'source'
+    context.mkdir()
+    (context / 'unchanged').write_bytes(b'upstream')
+    archive = tmp_path / 'official.tar.gz'
+    archive.write_bytes(b'verified official release bytes')
+    monkeypatch.setattr(native, '_DRUID_RELEASE_ARCHIVE', archive)
+    monkeypatch.setattr(native, 'DRUID_RELEASE_BYTES', archive.stat().st_size)
+    monkeypatch.setattr(native, 'DRUID_RELEASE_SHA256', hashlib.sha256(archive.read_bytes()).hexdigest())
+    tail = (' && tar -xzf apache-druid-0.20.0-bin.tar.gz'
+            ' && mv apache-druid-0.20.0/* /opt/druid/'
+            ' && rm -rf apache-druid-0.20.0-bin.tar.gz apache-druid-0.20.0\n'
+            'RUN git clone https://github.com/apache/druid.git && git checkout druid-0.20.0\n')
+    original = 'FROM ubuntu:24.04\nRUN cd /tmp && wget ' + native.DRUID_RELEASE_URL + tail
+    changed, staged, ledger = native.druid_release_transport(original, context, tmp_path / 'work')
+    assert changed.endswith(tail)
+    assert '--mount=type=bind' in changed and ',readonly ' in changed
+    assert 'sha256sum -c -' in changed
+    assert 'COPY ' not in changed
+    assert (staged / 'private-druid-release.tar.gz').read_bytes() == archive.read_bytes()
+    assert (staged / 'unchanged').read_bytes() == b'upstream'
+    assert not (context / 'private-druid-release.tar.gz').exists()
+    assert ledger[0]['archive_sha256'] == hashlib.sha256(archive.read_bytes()).hexdigest()
+    unrelated = 'FROM ubuntu:24.04\nRUN echo keep\n'
+    assert native.druid_release_transport(unrelated, context, tmp_path) == (unrelated, context, [])
+    archive.write_bytes(b'corrupted official release byte')
+    with pytest.raises(ValueError, match='checksum_mismatch'):
+        native.druid_release_transport(original, context, tmp_path / 'rejected')
+    assert not (tmp_path / 'rejected').exists()
+
+
+def test_druid_transport_rejects_ambiguous_commands_and_preserves_default(tmp_path, monkeypatch):
+    context = tmp_path / 'source'
+    context.mkdir()
+    text = 'RUN wget ' + native.DRUID_RELEASE_URL + '\n'
+    monkeypatch.setattr(native, '_DRUID_RELEASE_ARCHIVE', None)
+    assert native.druid_release_transport(text, context, tmp_path) == (text, context, [])
+    monkeypatch.setattr(native, '_DRUID_RELEASE_ARCHIVE', tmp_path / 'unread')
+    with pytest.raises(ValueError, match='unsupported_druid_release_download_sequence'):
+        native.druid_release_transport(text + text, context, tmp_path)
+
+
+def test_build_task_reuse_preserves_original_outcome_and_executed_sha(tmp_path, monkeypatch):
+    import argparse
+    import json
+    sid = 'skilllearnbench:completed'
+    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'completed', 'family': 'completed'}
+    work = tmp_path / 'work'
+    source_work = work / sid.replace(':', '__')
+    source_work.mkdir(parents=True)
+    previous = {'source_id': sid, 'stage': 'qualified', 'adapter_sha256': 'executed-old-sha',
+                'admitted': False, 'resource_observation_provenance': {'kind': 'fixture'}}
+    raw = json.dumps(previous, indent=2) + '\n'
+    (source_work / 'outcome.json').write_text(raw)
+    calls = []
+    monkeypatch.setattr(native, '_RESOURCE_PREFLIGHT', {})
+    monkeypatch.setattr(native, 'qualification_reuse', lambda row, args, prior:
+                        calls.append(prior) or {'eligible': True, 'proof': 'independent gate'})
+    monkeypatch.setattr(native, 'task_inputs', lambda row: pytest.fail('reused source rebuilt'))
+    result = native.build_task(row, argparse.Namespace(work=work, pool=tmp_path / 'pool', resume=True))
+    assert calls == [previous]
+    assert result['adapter_sha256'] == 'executed-old-sha'
+    assert result['executed_adapter_sha256'] == 'executed-old-sha'
+    assert result['inventory_adapter_sha256'] == native._LOADED_ADAPTER_SHA
+    assert result['resource_observation_provenance'] == {'kind': 'fixture'}
+    assert (source_work / 'outcome.json').read_text() == raw
+
+
+def test_initial_inventory_reset_uses_same_reuse_gate_and_historical_outcome(tmp_path, monkeypatch):
+    import json
+    sid = 'skilllearnbench:completed'
+    row = {'benchmark_id': 'skilllearnbench', 'source_task_id': 'completed', 'family': 'completed'}
+    work = tmp_path / 'work'
+    source_work = work / sid.replace(':', '__')
+    source_work.mkdir(parents=True)
+    previous = {'source_id': sid, 'stage': 'source', 'adapter_sha256': 'executed-old-sha',
+                'admitted': False, 'reason': 'missing_upstream_oracle'}
+    raw = json.dumps(previous) + '\n'
+    (source_work / 'outcome.json').write_text(raw)
+    calls, inventories = [], []
+    monkeypatch.setattr(native, '_RESOURCE_PREFLIGHT', {'historical_preflight_sentinel': True})
+    monkeypatch.setattr(native, 'discover', lambda path: [row])
+    monkeypatch.setattr(native, 'source_info', lambda row: {'labels': {}})
+    monkeypatch.setattr(native, 'qualification_reuse', lambda row, args, prior:
+                        calls.append(prior) or {'eligible': True})
+    monkeypatch.setattr(native, 'write_summaries', lambda pool, outcomes, *args: inventories.append(outcomes))
+    monkeypatch.setattr(sys, 'argv', ['native', '--inventory-only', '--resume',
+                                   '--upstream', str(tmp_path / 'upstream'), '--pool', str(tmp_path / 'pool'),
+                                   '--work', str(work)])
+    assert native.main() == 0
+    assert calls == [previous]
+    assert inventories[-1][0]['adapter_sha256'] == 'executed-old-sha'
+    assert inventories[-1][0]['compatibility_reuse']['eligible'] is True
+    assert (source_work / 'outcome.json').read_text() == raw

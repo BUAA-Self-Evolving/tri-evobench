@@ -38,6 +38,10 @@ _BUILD_SLOTS_FILE: Path | None = None
 _RESOURCE_MODE: str | None = None
 _RESOURCE_PREFLIGHT: dict[str, Any] = {}
 _UV_RELEASE_ARCHIVE: Path | None = None
+_DRUID_RELEASE_ARCHIVE: Path | None = None
+DRUID_RELEASE_URL = "https://archive.apache.org/dist/druid/0.20.0/apache-druid-0.20.0-bin.tar.gz"
+DRUID_RELEASE_SHA256 = "734f836375bc1121100712b0501149f8bcbcb6d4cf2109b522af06367a8b1cb5"
+DRUID_RELEASE_BYTES = 321988603
 BUILD_PYPI_INDEX = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 _IMAGE_LOCKS: dict[str, threading.Lock] = {}
@@ -553,6 +557,47 @@ def uv_release_transport(setup: str, work: Path) -> tuple[str, str, list[dict[st
         "reason": "actual GitHub archive transfers took 678.8 seconds then failed with curl56 unexpected TLS EOF on retry"}]
 
 
+def druid_release_transport(text: str, context: Path, work: Path, *,
+                            stage_assets: bool = True) -> tuple[str, Path, list[dict[str, Any]]]:
+    """Replace only Druid's measured slow release transfer with verified bytes."""
+    original = "wget " + DRUID_RELEASE_URL
+    if _DRUID_RELEASE_ARCHIVE is None or original not in text:
+        return text, context, []
+    if text.count(original) != 1:
+        raise ValueError("unsupported_druid_release_download_sequence")
+    archive = _DRUID_RELEASE_ARCHIVE
+    if archive.stat().st_size != DRUID_RELEASE_BYTES or digest_file(archive) != DRUID_RELEASE_SHA256:
+        raise ValueError("druid_release_transport_checksum_mismatch")
+    filename = "private-druid-release.tar.gz"
+    staged = work / "upstream-druid-context"
+    if stage_assets:
+        if (context / filename).exists():
+            raise ValueError("druid_release_transport_context_collision")
+        if not staged.exists():
+            shutil.copytree(context, staged, symlinks=True)
+        shutil.copy2(archive, staged / filename)
+    native = "/tmp/native-druid-release.tar.gz"
+    guard = (f"printf '%s  %s\\n' {DRUID_RELEASE_SHA256} {native} | sha256sum -c - && "
+             f"test $(wc -c < {native}) = {DRUID_RELEASE_BYTES} && "
+             f"cp {native} apache-druid-0.20.0-bin.tar.gz")
+    instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
+    output = []
+    for instruction in instructions:
+        if original in instruction:
+            if not instruction.startswith("RUN "):
+                raise ValueError("unsupported_druid_release_download_instruction")
+            instruction = (f"RUN --mount=type=bind,source={filename},target={native},readonly " +
+                           instruction[4:].replace(original, guard))
+        output.append(instruction)
+    return "".join(output), staged, [{
+        "kind": "build_druid_release_transport", "version": "0.20.0",
+        "source_url": DRUID_RELEASE_URL, "archive_sha256": DRUID_RELEASE_SHA256,
+        "archive_bytes": DRUID_RELEASE_BYTES,
+        "scope": "replace only wget transfer; original tar/move/removal and source/dependency commands unchanged; read-only build mount absent from final image",
+        "reason": "actual official single-stream transfer measured about20KiB/s, exceeding source build budget; official ranged prefetch checksum verified",
+        "evidence": "package-transport/DRUID_OFFICIAL_ARCHIVE_PREFETCH.json; DRUID_BUILDKIT_TRANSPORT_PROOF.json"}]
+
+
 def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
     """Build native sources with recorded transports, then scrub the filesystem."""
@@ -571,7 +616,10 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     context_adaptations.extend(build_asset_transport(original_text)[1])
     (work/"Dockerfile.upstream-original").write_text(original_text)
     transported=work/"Dockerfile.upstream-transport"
-    transported.write_text(build_transport_dockerfile(original_text))
+    transported_text, context, druid_adaptations = druid_release_transport(
+        build_transport_dockerfile(original_text), context, work)
+    context_adaptations.extend(druid_adaptations)
+    transported.write_text(transported_text)
     context_adaptations.append({"kind":"build_package_index_transport",
         "original_sha256":digest_file(inputs["dockerfile"]),"adapted_sha256":digest_file(transported),
         "index":BUILD_PYPI_INDEX,"scope":"build-only ARG; explicit versions and installer commands unchanged",
@@ -723,8 +771,10 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     # identical context+runner content; never union distinct dependencies.
     runner_outputs=json.dumps(prepare_runner((inputs["tests"]/"test.sh").read_text()),sort_keys=True)
     uv_transport = bool(_UV_RELEASE_ARCHIVE and "https://astral.sh/uv/0.9.7/install.sh" in runner_outputs)
+    druid_transport = bool(_DRUID_RELEASE_ARCHIVE and DRUID_RELEASE_URL in inputs["dockerfile"].read_text())
     key = hashlib.sha256((sources.tree_sha256(inputs["context"]) +
-                          sources.tree_sha256(inputs["tests"]) + runner_outputs + str(uv_transport) + image_build_fingerprint()).encode()).hexdigest()
+                          sources.tree_sha256(inputs["tests"]) + runner_outputs + str(uv_transport) +
+                          str(druid_transport) + image_build_fingerprint()).encode()).hexdigest()
     shared = work.parent / "images" / key
     dump(work/"build_reference.json",{"cache_key":key,"image_work":str(shared)})
     with _IMAGE_LOCKS_GUARD:
@@ -751,7 +801,7 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
 def image_build_fingerprint() -> str:
     """Bind image caches to image-producing code, independent of qualification."""
     functions=(private_member,sanitize_archive,image_config_changes,
-               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,_build_image)
+               base_image_provenance,build_asset_transport,build_transport_dockerfile,uv_release_transport,druid_release_transport,_build_image)
     payload={"schema":"native_image_build/2","functions":[inspect.getsource(fn) for fn in functions],
              "private_names":sorted(PRIVATE_NAMES),"home_infra":sorted(HOME_INFRA),"index":BUILD_PYPI_INDEX}
     return hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
@@ -1106,6 +1156,45 @@ def verifier_cache_environment(environment: dict[str, str], adaptations: list[di
         "evidence": "UV_OFFLINE_INDEX_IDENTITY_ACTUAL_AB.json"}]
 
 
+def qualification_reuse(row: dict[str, Any], args: argparse.Namespace,
+                        previous: dict[str, Any]) -> dict[str, Any]:
+    """Use one gate for inventory retention and task resume; keep executed SHA."""
+    sid = row["benchmark_id"] + ":" + row["source_task_id"]
+    if previous.get("adapter_sha256") == _LOADED_ADAPTER_SHA:
+        return {"eligible": previous.get("stage") in {"qualified", "source", "fairness", "unsupported"}
+                and sid != "skillsbench:edit-pdf" and not any(previous.get(key) for key in (
+                    "date_dependent", "time_sensitive_native_verifier", "package_qualification_requires_oracle_regeneration")),
+                "reason": "same adapter resume policy",
+                "executed_adapter_sha256": previous.get("adapter_sha256"),
+                "reuse_validated_by_adapter_sha256": _LOADED_ADAPTER_SHA}
+    manifest_path = getattr(args, "compatibility_manifest", None)
+    if not manifest_path:
+        return {"eligible": False, "reason": "no explicit compatibility manifest"}
+    manifest = json.loads(Path(manifest_path).read_text())
+    if sid not in manifest.get("entries", {}):
+        return {"eligible": False, "reason": "source absent from explicit compatibility manifest"}
+    from l2_v5_native_reuse import assess_reuse
+    from l2_v5_native_reuse_inputs import capture_inputs
+    try:
+        inputs = capture_inputs(Path(__file__), row, previous, pool=args.pool, work=args.work,
+                                uv_archive=_UV_RELEASE_ARCHIVE, druid_archive=_DRUID_RELEASE_ARCHIVE)
+        assessment = assess_reuse(previous, source_id=sid, current_adapter_sha256=_LOADED_ADAPTER_SHA,
+                                  current_inputs=inputs, manifest=manifest)
+    except (ValueError, KeyError, OSError) as exc:
+        assessment = {"eligible": False, "reason": "current recipe/input capture failed: " + str(exc)}
+    assessment["manifest"] = str(manifest_path)
+    dump(args.work / sid.replace(":", "__").replace("/", "__") / "reuse-assessment.json", assessment)
+    return assessment
+
+
+def retained_outcome(previous: dict[str, Any], assessment: dict[str, Any]) -> dict[str, Any]:
+    """Inventory annotations are separate from unchanged historical outcomes."""
+    if previous.get("adapter_sha256") == _LOADED_ADAPTER_SHA:
+        return previous
+    return {**previous, "executed_adapter_sha256": previous["adapter_sha256"],
+            "inventory_adapter_sha256": _LOADED_ADAPTER_SHA, "compatibility_reuse": assessment}
+
+
 def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     if hashlib.sha256(Path(__file__).read_bytes()).hexdigest()!=_LOADED_ADAPTER_SHA:
         raise RuntimeError("native builder source changed after import; stop worker and restart")
@@ -1121,7 +1210,9 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     if _RESOURCE_PREFLIGHT:apply_resource_fields(result,_RESOURCE_PREFLIGHT)
     if args.resume and (work/"outcome.json").exists():
         previous=json.loads((work/"outcome.json").read_text())
-        if previous.get("adapter_sha256")==_LOADED_ADAPTER_SHA and previous.get("stage") not in {"error","pending","resource_blocked"} and sid!="skillsbench:edit-pdf":return previous
+        assessment = qualification_reuse(row, args, previous)
+        if assessment["eligible"]:
+            return retained_outcome(previous, assessment)
     try:
         historical=quarantine_prior_materialization(task,work)
         if historical:result["prior_task_materialization"]=historical
@@ -1391,7 +1482,7 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
 
 
 def main() -> int:
-    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE
+    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
     parser.add_argument("--resource-enforcement",choices=("strict","declared_only"),default=None,
@@ -1407,11 +1498,16 @@ def main() -> int:
     parser.add_argument("--build-timeout",type=int,default=3600)
     parser.add_argument("--uv-release-archive",type=Path,
                         help="verified uv0.9.7 official archive; adjacent uv-0.9.7-install.sh required and hash checked")
+    parser.add_argument("--druid-release-archive",type=Path,
+                        help="verified official Druid0.20.0 archive; exact size and SHA256 checked on host and in build")
+    parser.add_argument("--compatibility-manifest",type=Path,
+                        help="explicit audited per-source reuse; historical executed SHA and evidence remain unchanged")
     parser.add_argument("--resume",action="store_true")
     parser.add_argument("--inventory-only",action="store_true")
     args=parser.parse_args()
     _BUILD_SLOTS_FILE=args.build_slots_file
     _UV_RELEASE_ARCHIVE=args.uv_release_archive
+    _DRUID_RELEASE_ARCHIVE=args.druid_release_archive
     from trievo_bench.container_resources import resource_enforcement_mode
     _RESOURCE_MODE=resource_enforcement_mode(args.resource_enforcement)
     if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
@@ -1419,6 +1515,9 @@ def main() -> int:
     if _UV_RELEASE_ARCHIVE:
         uv_release_transport("curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh",
                              args.work / "uv-transport-input-validation")
+    if _DRUID_RELEASE_ARCHIVE:
+        druid_release_transport("RUN wget " + DRUID_RELEASE_URL + "\n", args.upstream,
+                                args.work / "druid-transport-input-validation", stage_assets=False)
     if not args.inventory_only:
         resource_capability_preflight(args.work,_RESOURCE_MODE)
         preflight=docker_exec_preflight(args.work)
@@ -1440,6 +1539,12 @@ def main() -> int:
             "capability_id": "skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
             "admitted":False,"stage":"pending","reason":"not_built"})
         if _RESOURCE_PREFLIGHT and outcomes[sid].get("adapter_sha256")!=_LOADED_ADAPTER_SHA:
+            historical = args.work / sid.replace(":", "__").replace("/", "__") / "outcome.json"
+            prior = json.loads(historical.read_text()) if historical.exists() else outcomes[sid]
+            assessment = qualification_reuse(row, args, prior) if args.resume else {"eligible": False}
+            if assessment["eligible"]:
+                outcomes[sid] = retained_outcome(prior, assessment)
+                continue
             outcomes[sid]={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
                 "capability_id":"skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench" else "skillsbench."+str(info["labels"].get("category") or "uncategorized"),
                 "former_admission":row["former_admission"],"admitted":False,"stage":"pending","reason":"awaiting_current_adapter_qualification"}
