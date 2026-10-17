@@ -1,0 +1,49 @@
+{
+  "schema_version": "l2_external_artifact_references/1.0",
+  "package_id": "L2_Demo_V5_r3",
+  "status": "qualification_complete_bounded_execution_complete_with_AR_scoring_coverage_limit",
+  "snapshot_pending_profiles": 58,
+  "catalogs": [
+    {
+      "artifact_relative_path": "manifest.json",
+      "sha256": "813142cb95370a1929bd1c75753ac6c59b02fa038f1beffaf19bf86e797ba04b",
+      "bytes": 5669,
+      "included_in_descriptor": false,
+      "reason": "authoritative full-package manifest; referenced catalogs/streams are external"
+    },
+    {
+      "artifact_relative_path": "runtime_profiles.json",
+      "sha256": "f62cee13f77193fb1f02756e9b0e6f27b46959e0b24d7072e9444522b787cb0a",
+      "bytes": 931131,
+      "included_in_descriptor": false,
+      "reason": "actual package bindings/provenance; runtime catalogs contain host-bound archive or evidence paths"
+    },
+    {
+      "artifact_relative_path": "source_tasks.jsonl",
+      "sha256": "460e1a4d4609bfc571618d5d9426861ae9b2e5312559a3ddc674aaeebd062e29",
+      "bytes": 4880043,
+      "included_in_descriptor": false,
+      "reason": "actual package bindings/provenance; runtime catalogs contain host-bound archive or evidence paths"
+    }
+  ],
+  "portable_catalogs": "byte-identical copies; host-bound catalogs remain external and are not sanitized",
+  "implementation_commit": "d56034ef",
+  "tests": {
+    "passed": 741,
+    "skipped": 31
+  },
+  "qualification_counts": {
+    "executed_pass": 222,
+    "static_only": 75,
+    "executed_unique_sources": 216,
+    "strict_hash_bound": 162,
+    "unbound_QA": 54,
+    "resource_only_profile_drift": 6
+  },
+  "smoke_coverage": {
+    "turn_execution_completed": 9,
+    "native_judge_exercised": 8,
+    "autoresearch_sample_completed": false
+  },
+  "supplemental_autoresearch_scorer_diagnostic": "completed_on_saved_paid_submission; official execution-limit score unchanged"
+}

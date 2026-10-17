@@ -1,0 +1,145 @@
+{
+  "pool_id": "intra_benchmark_multi_capability",
+  "schedule": "delayed",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "sequence_role": "learning",
+      "source_hash": "d658587d1f36610d46f802cdf795731ac3cb8770e2f2cb10b6fd65cde31878da",
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+      "sequence_role": "learning",
+      "source_hash": "111c3a108e85eb12c003a980b1b6334896f5d683c54c39e2438719b2dbcbd63c",
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "sequence_role": "application",
+      "source_hash": "c902f538e7b708abfae1f9b7e9e57d6531b90811db68db243a5b5215f51bb83b",
+      "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "d82584fbf38b003d7c1395eb386972cf3fe81f0cfe36868321c0bf80daaa48f6",
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "pool_source_id": "tau2_bench:airline:32",
+      "sequence_role": "learning",
+      "source_hash": "db442df041dcc0fd7f127681391345890562db1322fcd5b2199d4dfb831eb9e0",
+      "source_id": "tau2_bench:airline:32",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "pool_source_id": "tau2_bench:airline:16",
+      "sequence_role": "learning",
+      "source_hash": "99ff3fbfaf656b5e77e108def6c8f35b38c6dda7ed05236bfd2036de6436ebf4",
+      "source_id": "tau2_bench:airline:16",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "pool_source_id": "tau2_bench:airline:30",
+      "sequence_role": "application",
+      "source_hash": "49e4797993529a661a4f3860d3707b0804566bbe53269496f312cfa01e71279b",
+      "source_id": "tau2_bench:airline:30",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "pool_source_id": "tau2_bench:airline:15",
+      "sequence_role": "application",
+      "source_hash": "df69592080cb6cf748177608e726824221144beab193302196d095ed3fcccaa8",
+      "source_id": "tau2_bench:airline:15",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "pool_source_id": "tau2_bench:retail:65",
+      "sequence_role": "learning",
+      "source_hash": "8dae113cb83a83a81b69778dfed6b6ba12ff96f57bd02e726e54710aadfc5b66",
+      "source_id": "tau2_bench:retail:65",
+      "turn_id": "turn9",
+      "turn_index": 9
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "pool_source_id": "tau2_bench:retail:57",
+      "sequence_role": "learning",
+      "source_hash": "4c4ff215426c188639d3e35cab504cf2e83f4b1985e49c90d02706209f2447eb",
+      "source_id": "tau2_bench:retail:57",
+      "turn_id": "turn10",
+      "turn_index": 10
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "pool_source_id": "tau2_bench:retail:62",
+      "sequence_role": "application",
+      "source_hash": "2f2e7704130a6ecbbc1e915efb61c1e66a4989a5a54e684476b3ef7027217f41",
+      "source_id": "tau2_bench:retail:62",
+      "turn_id": "turn11",
+      "turn_index": 11
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "pool_source_id": "tau2_bench:retail:25",
+      "sequence_role": "application",
+      "source_hash": "d07189e320ad272fba179da906ae92256ecac3bbea30cdf2aa413c50c1bd295b",
+      "source_id": "tau2_bench:retail:25",
+      "turn_id": "turn12",
+      "turn_index": 12
+    },
+    {
+      "capability_id": "tau2.retail.policy_refusal",
+      "pool_source_id": "tau2_bench:retail:24",
+      "sequence_role": "probe",
+      "source_hash": "ce2a3c2855b166a49990d2f09a849cc37b0f7f849f3cb7338f209747972e4f97",
+      "source_id": "tau2_bench:retail:24",
+      "turn_id": "turn13",
+      "turn_index": 13
+    },
+    {
+      "capability_id": "tau2.airline.reservation_changes",
+      "pool_source_id": "tau2_bench:airline:33",
+      "sequence_role": "probe",
+      "source_hash": "1d4d2cbf475cf9f7daef9fbaa9d3f54f5b201b912231257c5ab5f034daeb37e7",
+      "source_id": "tau2_bench:airline:33",
+      "turn_id": "turn14",
+      "turn_index": 14
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "sequence_role": "probe",
+      "source_hash": "4f88edf0b00aef53df435320b3a7fb044d4635a20cc41254afcf03be6797929f",
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "turn_id": "turn15",
+      "turn_index": 15
+    }
+  ],
+  "stream_id": "intra_tau2_delayed_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

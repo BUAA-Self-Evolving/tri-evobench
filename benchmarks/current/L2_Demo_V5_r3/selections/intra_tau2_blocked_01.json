@@ -1,0 +1,145 @@
+{
+  "pool_id": "intra_benchmark_multi_capability",
+  "schedule": "blocked",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "sequence_role": "learning",
+      "source_hash": "de21453c080b5cafc42d7adfb393e7b9a5e9167a27952130bf1a6a478fcede8b",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "sequence_role": "learning",
+      "source_hash": "cbed61ae7c62ca669191e8f4201e20bf64d8b4b9e5a4d1d8e5013afbc18ffd39",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "cbfe767592fdfca5e8484288aa2b0cd6cef806ec4e8054d894a1f351e17c4fcd",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+      "sequence_role": "application",
+      "source_hash": "4b03899b75a81b5f820ddac34ecd6a9a397010f716c489e20200785a01ac3737",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "probe",
+      "source_hash": "4b40ea8884545d88e5246bc53b4afb6059d66819fc3f82327298e0b41805a2da",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "pool_source_id": "tau2_bench:retail:18",
+      "sequence_role": "learning",
+      "source_hash": "e0b74e02fa5a3cb1864a94039da05fa9b6967c2577b9937edba9afb3ef0431e1",
+      "source_id": "tau2_bench:retail:18",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "pool_source_id": "tau2_bench:retail:19",
+      "sequence_role": "learning",
+      "source_hash": "606aedb73174e73fcf340b00164f9e973918c46893d12902177f748b375abe88",
+      "source_id": "tau2_bench:retail:19",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "pool_source_id": "tau2_bench:retail:104",
+      "sequence_role": "application",
+      "source_hash": "695ca20d68353398a9f2c0d7e9f941af01a0c1c289336980f32c9d9940e9a1cf",
+      "source_id": "tau2_bench:retail:104",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "pool_source_id": "tau2_bench:retail:2",
+      "sequence_role": "application",
+      "source_hash": "0264691c75c55cc3631b682b81106ed036288b4987633c91aa177b838a2bd62c",
+      "source_id": "tau2_bench:retail:2",
+      "turn_id": "turn9",
+      "turn_index": 9
+    },
+    {
+      "capability_id": "tau2.retail.returns_exchanges",
+      "pool_source_id": "tau2_bench:retail:27",
+      "sequence_role": "probe",
+      "source_hash": "168dbe31d1c4be065156e911cc8715429b428ce3be01496cbdda0d5956582b41",
+      "source_id": "tau2_bench:retail:27",
+      "turn_id": "turn10",
+      "turn_index": 10
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "pool_source_id": "tau2_bench:airline:3",
+      "sequence_role": "learning",
+      "source_hash": "21a59df1ca56b5332070868e6d1c696191623485b909385f4229759f4fc566ff",
+      "source_id": "tau2_bench:airline:3",
+      "turn_id": "turn11",
+      "turn_index": 11
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "pool_source_id": "tau2_bench:airline:5",
+      "sequence_role": "learning",
+      "source_hash": "e16b47dd111fe257cfeb2dc158975b196419f75e7de4d273be11d8b88154ce33",
+      "source_id": "tau2_bench:airline:5",
+      "turn_id": "turn12",
+      "turn_index": 12
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "pool_source_id": "tau2_bench:airline:1",
+      "sequence_role": "application",
+      "source_hash": "365091613cf731aaadac059d7a39b32b95a070bf358b4bd9f04ad836eec1a614",
+      "source_id": "tau2_bench:airline:1",
+      "turn_id": "turn13",
+      "turn_index": 13
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "pool_source_id": "tau2_bench:airline:38",
+      "sequence_role": "application",
+      "source_hash": "2da568178256a77e0d48f93351151b212cb3c0ba77dfb2f81d2922d5a7ef2c35",
+      "source_id": "tau2_bench:airline:38",
+      "turn_id": "turn14",
+      "turn_index": 14
+    },
+    {
+      "capability_id": "tau2.airline.policy_refusal",
+      "pool_source_id": "tau2_bench:airline:41",
+      "sequence_role": "probe",
+      "source_hash": "68046a6339af2a905b2e85b11ee323ca1f03139cf058ac27322932a6d281d2bb",
+      "source_id": "tau2_bench:airline:41",
+      "turn_id": "turn15",
+      "turn_index": 15
+    }
+  ],
+  "stream_id": "intra_tau2_blocked_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

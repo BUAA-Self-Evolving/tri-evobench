@@ -1,0 +1,3118 @@
+{
+  "resource_policy": "declared_not_enforced",
+  "streams": [
+    {
+      "stream_id": "auto_research_cpu_gpu_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "airs_bench:CoreferenceResolutionWinograndeAccuracy",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "airs_bench:CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "mlgym:rlMountainCarContinuous",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "airs_bench:CoreferenceResolutionSuperGLUEWSCAccuracy",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "airs_bench:R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "mlgym:rlBreakoutMinAtar",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "airs_bench:QuestionAnsweringEli5RougeL",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "mlgym:imageClassificationFMnist",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "mlgym:rlMetaMaze",
+          "task_image": "sha256:9c7c2879446a20b2dc9a3b6bd3adc78aa8953062b5e5a8e91c3d7121576f1e5f",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": true,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "auto_research_cpu_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "mlgym:regressionKaggleHousePrice",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "mlgym:prisonersDilemma",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "airs_bench:TextualSimilaritySickSpearmanCorrelation",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "mlgym:battleOfSexes",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "airs_bench:TextualClassificationSickAccuracy",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "airs_bench:CodeRetrievalCodeXGlueMRR",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "mlgym:blotto",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "dependency_autoresearch_cpu_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "mlgym:blotto#stage1_evaluation_harness",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "mlgym:regressionKaggleHousePrice",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "mlgym:blotto",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "airs_bench:TextualClassificationSickAccuracy",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "mlgym:prisonersDilemma",
+          "task_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "verifier_image": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_champ_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:champ_00111",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:champ_00005",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:champ_00000",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:champ_00113",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:champ_00007",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:champ_00006",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:champ_00115",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:champ_00010",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:champ_00012",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:champ_00133",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:champ_00014",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:champ_00032",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:champ_00142",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:champ_00024",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:champ_00038",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_logicbench_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:logicbench_00481",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:logicbench_00522",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:logicbench_00323",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:logicbench_00513",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:logicbench_00523",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:logicbench_00329",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:logicbench_00486",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:logicbench_00549",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:logicbench_00341",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:logicbench_00488",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:logicbench_00539",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:logicbench_00350",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:logicbench_00506",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:logicbench_00540",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:logicbench_00355",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_medcalc_blocked_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:medcalcbench_00098",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:medcalcbench_00084",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:medcalcbench_00082",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:medcalcbench_00093",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:medcalcbench_00086",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:medcalcbench_00073",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:medcalcbench_00070",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:medcalcbench_00065",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:medcalcbench_00069",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:medcalcbench_00061",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:medcalcbench_00100",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:medcalcbench_00105",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:medcalcbench_00106",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:medcalcbench_00115",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:medcalcbench_00118",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skilllearn_blocked_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skilllearnbench:earthquake-plate-calculation-1",
+          "task_image": "sha256:d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2",
+          "verifier_image": "sha256:d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skilllearnbench:earthquake-plate-calculation-6",
+          "task_image": "sha256:d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2",
+          "verifier_image": "sha256:d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "d9b89ba92d498b31ef2008630e3dd4eed0afcd3812b91c834048211f66a4b7d2.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skilllearnbench:earthquake-plate-calculation-4",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skilllearnbench:earthquake-plate-calculation-2",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skilllearnbench:earthquake-plate-calculation-3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skilllearnbench:financial-analysis-3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skilllearnbench:financial-analysis-1",
+          "task_image": "sha256:029395927ecc1d506908b0f63c5d4a05037e483da0764a72a47d7ba5f074532b",
+          "verifier_image": "sha256:029395927ecc1d506908b0f63c5d4a05037e483da0764a72a47d7ba5f074532b",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "029395927ecc1d506908b0f63c5d4a05037e483da0764a72a47d7ba5f074532b.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skilllearnbench:financial-analysis-6",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skilllearnbench:financial-analysis-4",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skilllearnbench:financial-analysis-2",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skilllearnbench:travel-planning-5",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skilllearnbench:travel-planning-1",
+          "task_image": "sha256:a8b3410f85a1657f2b2627d316ad18e5f9a4466719c291a363323bb6baf55680",
+          "verifier_image": "sha256:a8b3410f85a1657f2b2627d316ad18e5f9a4466719c291a363323bb6baf55680",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "a8b3410f85a1657f2b2627d316ad18e5f9a4466719c291a363323bb6baf55680.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skilllearnbench:travel-planning-2",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skilllearnbench:travel-planning-3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skilllearnbench:travel-planning-4",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skilllearn_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skilllearnbench:offer-letter-generator-3",
+          "task_image": "sha256:01741fc6ce0eeb1df3a36ebfd14204c678b0010de8df2cb5672850e90d583109",
+          "verifier_image": "sha256:01741fc6ce0eeb1df3a36ebfd14204c678b0010de8df2cb5672850e90d583109",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "01741fc6ce0eeb1df3a36ebfd14204c678b0010de8df2cb5672850e90d583109.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skilllearnbench:offer-letter-generator-4",
+          "task_image": "sha256:827428c383b3ac91f7e08fdeafe5e69a6564c54846ede7c1ae15ac345e9fc41e",
+          "verifier_image": "sha256:827428c383b3ac91f7e08fdeafe5e69a6564c54846ede7c1ae15ac345e9fc41e",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "827428c383b3ac91f7e08fdeafe5e69a6564c54846ede7c1ae15ac345e9fc41e.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skilllearnbench:offer-letter-generator-1",
+          "task_image": "sha256:8c6a514f1ea7b60ec11fff709745ac18cc7e37a22d6871e057a4cc5315867075",
+          "verifier_image": "sha256:8c6a514f1ea7b60ec11fff709745ac18cc7e37a22d6871e057a4cc5315867075",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "8c6a514f1ea7b60ec11fff709745ac18cc7e37a22d6871e057a4cc5315867075.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skilllearnbench:offer-letter-generator-5",
+          "task_image": "sha256:e10e50b0d7e6df6fbe6a69936f96999c4776f71d7c75ad038b2bfcd2414fa8bc",
+          "verifier_image": "sha256:e10e50b0d7e6df6fbe6a69936f96999c4776f71d7c75ad038b2bfcd2414fa8bc",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "e10e50b0d7e6df6fbe6a69936f96999c4776f71d7c75ad038b2bfcd2414fa8bc.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skilllearnbench:video-object-counting-3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skilllearnbench:video-object-counting-1",
+          "task_image": "sha256:5d410b0182f79980e4cdfe8c6bc56f8eb9b567db21c42509217bad51f995c7aa",
+          "verifier_image": "sha256:5d410b0182f79980e4cdfe8c6bc56f8eb9b567db21c42509217bad51f995c7aa",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "5d410b0182f79980e4cdfe8c6bc56f8eb9b567db21c42509217bad51f995c7aa.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skilllearnbench:video-object-counting-2",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skilllearnbench:video-object-counting-4",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skilllearnbench:weighted-gdp-calculation-5",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skilllearnbench:weighted-gdp-calculation-6",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skilllearnbench:weighted-gdp-calculation-3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skilllearnbench:weighted-gdp-calculation-1",
+          "task_image": "sha256:f0cef63a6195df8c460af9b1e1b4afaa50607680e7bf9e21c0e44813ae135326",
+          "verifier_image": "sha256:f0cef63a6195df8c460af9b1e1b4afaa50607680e7bf9e21c0e44813ae135326",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "f0cef63a6195df8c460af9b1e1b4afaa50607680e7bf9e21c0e44813ae135326.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skilllearnbench:weighted-gdp-calculation-4",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skilllearnbench:video-object-counting-5",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skilllearnbench:offer-letter-generator-2",
+          "task_image": "sha256:86a7bd7ff9d6fc61adf69cfd640f5516a2f1c7ca86014c1ed2a387c6d550051f",
+          "verifier_image": "sha256:86a7bd7ff9d6fc61adf69cfd640f5516a2f1c7ca86014c1ed2a387c6d550051f",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "86a7bd7ff9d6fc61adf69cfd640f5516a2f1c7ca86014c1ed2a387c6d550051f.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skilllearn_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skilllearnbench:court-form-filling-5",
+          "task_image": "sha256:9adc335569d04d3b6de4928f29f896dcc4af0a6f44786d2d09d5a54edd0af1f2",
+          "verifier_image": "sha256:9adc335569d04d3b6de4928f29f896dcc4af0a6f44786d2d09d5a54edd0af1f2",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "9adc335569d04d3b6de4928f29f896dcc4af0a6f44786d2d09d5a54edd0af1f2.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skilllearnbench:dbscan-parameter-tuning-5",
+          "task_image": "sha256:35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3",
+          "verifier_image": "sha256:35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skilllearnbench:stock-data-visualization-2",
+          "task_image": "sha256:d9dbb602aaa53d7de5d300010e72bb30fedcb6baa24bc9c54e467f8b66d2c7cc",
+          "verifier_image": "sha256:d9dbb602aaa53d7de5d300010e72bb30fedcb6baa24bc9c54e467f8b66d2c7cc",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "d9dbb602aaa53d7de5d300010e72bb30fedcb6baa24bc9c54e467f8b66d2c7cc.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skilllearnbench:court-form-filling-2",
+          "task_image": "sha256:0b598fa4ac472439f49e99792d6ea266105c25307d565d1dc1dca5775fb4ff41",
+          "verifier_image": "sha256:0b598fa4ac472439f49e99792d6ea266105c25307d565d1dc1dca5775fb4ff41",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "0b598fa4ac472439f49e99792d6ea266105c25307d565d1dc1dca5775fb4ff41.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skilllearnbench:dbscan-parameter-tuning-1",
+          "task_image": "sha256:35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3",
+          "verifier_image": "sha256:35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "35d83a95e31cc3ab62222c2cb9e05624069ccf988b256e500c68929dfee6c7c3.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skilllearnbench:stock-data-visualization-1",
+          "task_image": "sha256:36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9",
+          "verifier_image": "sha256:36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skilllearnbench:court-form-filling-1",
+          "task_image": "sha256:010a89cf4c449be68eed20728465a67be7328ae7c2a9b384b3e7f7541197a5f4",
+          "verifier_image": "sha256:010a89cf4c449be68eed20728465a67be7328ae7c2a9b384b3e7f7541197a5f4",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "010a89cf4c449be68eed20728465a67be7328ae7c2a9b384b3e7f7541197a5f4.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skilllearnbench:dbscan-parameter-tuning-3",
+          "task_image": "sha256:117997a1566ae480ab2406cd1f8dbe9f0742c9d9d4728a064b213322c6cbec49",
+          "verifier_image": "sha256:117997a1566ae480ab2406cd1f8dbe9f0742c9d9d4728a064b213322c6cbec49",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "117997a1566ae480ab2406cd1f8dbe9f0742c9d9d4728a064b213322c6cbec49.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skilllearnbench:stock-data-visualization-5",
+          "task_image": "sha256:36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9",
+          "verifier_image": "sha256:36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "36588b87d3dbeda5f41d23ea003ff4b617ef909fe4a48570cff6e6e875243fc9.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skilllearnbench:court-form-filling-3",
+          "task_image": "sha256:821d0c8d40822051dcc5b9396c264c3cfd91162653aaeb7b78d37ff7bc0d27e6",
+          "verifier_image": "sha256:821d0c8d40822051dcc5b9396c264c3cfd91162653aaeb7b78d37ff7bc0d27e6",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "821d0c8d40822051dcc5b9396c264c3cfd91162653aaeb7b78d37ff7bc0d27e6.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skilllearnbench:dbscan-parameter-tuning-4",
+          "task_image": "sha256:3e6af0845b60b5283326104f923f9d9b2c9dc75518e9d1c1332338fe587ada9c",
+          "verifier_image": "sha256:3e6af0845b60b5283326104f923f9d9b2c9dc75518e9d1c1332338fe587ada9c",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "3e6af0845b60b5283326104f923f9d9b2c9dc75518e9d1c1332338fe587ada9c.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skilllearnbench:stock-data-visualization-4",
+          "task_image": "sha256:d66b86c4af2ce5e7a8c4c48bdfdf456d666cfcae01824e74616f6a38e917dac2",
+          "verifier_image": "sha256:d66b86c4af2ce5e7a8c4c48bdfdf456d666cfcae01824e74616f6a38e917dac2",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "d66b86c4af2ce5e7a8c4c48bdfdf456d666cfcae01824e74616f6a38e917dac2.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skilllearnbench:court-form-filling-4",
+          "task_image": "sha256:5f1cca72ac51de6c33bcb7ce2baf5eabc55b07d9cf89aaefaf36651ed9b17e0e",
+          "verifier_image": "sha256:5f1cca72ac51de6c33bcb7ce2baf5eabc55b07d9cf89aaefaf36651ed9b17e0e",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "5f1cca72ac51de6c33bcb7ce2baf5eabc55b07d9cf89aaefaf36651ed9b17e0e.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skilllearnbench:dbscan-parameter-tuning-2",
+          "task_image": "sha256:3d934b818e807acbd0d8e2f48bf1b5dc843bcd6a7ea50c0883065600f80ddff6",
+          "verifier_image": "sha256:3d934b818e807acbd0d8e2f48bf1b5dc843bcd6a7ea50c0883065600f80ddff6",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "3d934b818e807acbd0d8e2f48bf1b5dc843bcd6a7ea50c0883065600f80ddff6.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skilllearnbench:stock-data-visualization-3",
+          "task_image": "sha256:fb9db3daa20eb374ec3a53a0261155b6cb15123008c9caa82e0938de1bad6da3",
+          "verifier_image": "sha256:fb9db3daa20eb374ec3a53a0261155b6cb15123008c9caa82e0938de1bad6da3",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "fb9db3daa20eb374ec3a53a0261155b6cb15123008c9caa82e0938de1bad6da3.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skillsbench_blocked_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skillsbench:pptx-reference-formatting",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skillsbench:edit-pdf",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skillsbench:court-form-filling",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skillsbench:exceltable-in-ppt",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skillsbench:offer-letter-generator",
+          "task_image": "sha256:665a053f893807a242de80ef26fa9554a50f52890176698747f4c02a6b6f72a2",
+          "verifier_image": "sha256:665a053f893807a242de80ef26fa9554a50f52890176698747f4c02a6b6f72a2",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "665a053f893807a242de80ef26fa9554a50f52890176698747f4c02a6b6f72a2.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skillsbench:drone-planning-control",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skillsbench:energy-unit-commitment",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skillsbench:manufacturing-equipment-maintenance",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skillsbench:manufacturing-codebook-normalization",
+          "task_image": "sha256:2cb16c7e567f0508b7ac37c2eee92c8ea0f352c5ad2f526fda5feee124497686",
+          "verifier_image": "sha256:2cb16c7e567f0508b7ac37c2eee92c8ea0f352c5ad2f526fda5feee124497686",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "2cb16c7e567f0508b7ac37c2eee92c8ea0f352c5ad2f526fda5feee124497686.tar",
+          "verifier_environment": {
+            "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+          }
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skillsbench:manufacturing-fjsp-optimization",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skillsbench:lab-unit-harmonization",
+          "task_image": "sha256:889171c4b7c128f398ec81dc1cdba6dfc76f9550be8dcad976ab695f742d5e9f",
+          "verifier_image": "sha256:889171c4b7c128f398ec81dc1cdba6dfc76f9550be8dcad976ab695f742d5e9f",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "889171c4b7c128f398ec81dc1cdba6dfc76f9550be8dcad976ab695f742d5e9f.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skillsbench:mars-clouds-clustering",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skillsbench:protein-expression-analysis",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skillsbench:flood-risk-analysis",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skillsbench:radar-vital-signs",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skillsbench_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skillsbench:shock-analysis-demand",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skillsbench:invoice-fraud-detection",
+          "task_image": "sha256:e9d74db97c09120039bf735fd73ce8032a3aef9581ef80a45f020a9f36c7eebd",
+          "verifier_image": "sha256:e9d74db97c09120039bf735fd73ce8032a3aef9581ef80a45f020a9f36c7eebd",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "e9d74db97c09120039bf735fd73ce8032a3aef9581ef80a45f020a9f36c7eebd.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skillsbench:shock-analysis-supply",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skillsbench:financial-modeling-qa",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skillsbench:data-to-d3",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skillsbench:azure-bgp-oscillation-route-leak",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skillsbench:dialogue-parser",
+          "task_image": "sha256:2b8939200a5c30af2a383bedc1dcb1f19c66db2cc4530777a6ead2d330dcb2aa",
+          "verifier_image": "sha256:2b8939200a5c30af2a383bedc1dcb1f19c66db2cc4530777a6ead2d330dcb2aa",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "2b8939200a5c30af2a383bedc1dcb1f19c66db2cc4530777a6ead2d330dcb2aa.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skillsbench:parallel-tfidf-search",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skillsbench:paper-anonymizer",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skillsbench:sales-pivot-analysis",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skillsbench:enterprise-information-search",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skillsbench:citation-check",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skillsbench:jpg-ocr-stat",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skillsbench:jax-computing-basics",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skillsbench:xlsx-recover-data",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_skillsbench_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "skillsbench:tictoc-unnecessary-abort-detection",
+          "task_image": "sha256:6324b9ed3f75f84e96a76bb456d521a2e0a93700967a8e82179bd26798d604c4",
+          "verifier_image": "sha256:6324b9ed3f75f84e96a76bb456d521a2e0a93700967a8e82179bd26798d604c4",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "6324b9ed3f75f84e96a76bb456d521a2e0a93700967a8e82179bd26798d604c4.tar",
+          "verifier_environment": {
+            "PIP_NO_INDEX": "1",
+            "UV_OFFLINE": "1"
+          }
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "skillsbench:energy-market-pricing",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "skillsbench:earthquake-phase-association",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "skillsbench:fix-build-agentops",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "skillsbench:adaptive-cruise-control",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "skillsbench:glm-lake-mendota",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "skillsbench:python-scala-translation",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "skillsbench:grid-dispatch-operator",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "skillsbench:earthquake-plate-calculation",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "skillsbench:simpo-code-reproduction",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "skillsbench:energy-ac-optimal-power-flow",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "skillsbench:crystallographic-wyckoff-position-analysis",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "skillsbench:flink-query",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "skillsbench:ada-bathroom-plan-repair",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "skillsbench:quantum-numerical-simulation",
+          "task_image": null,
+          "verifier_image": null,
+          "build_and_materialize_required": true,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_sra_blocked_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:bigcodebench_00092",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:bigcodebench_00298",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:bigcodebench_00047",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:bigcodebench_00106",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:bigcodebench_00069",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:bigcodebench_00131",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:bigcodebench_00206",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:bigcodebench_00260",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:bigcodebench_00265",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:bigcodebench_00015",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:bigcodebench_00991",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:bigcodebench_00861",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:bigcodebench_01119",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:bigcodebench_00956",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:bigcodebench_00817",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_sra_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:bigcodebench_00107",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:bigcodebench_00009",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:bigcodebench_00639",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:bigcodebench_00105",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:bigcodebench_00597",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:bigcodebench_00606",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:bigcodebench_00462",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:bigcodebench_00148",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:bigcodebench_01019",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:bigcodebench_00542",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:bigcodebench_00433",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:bigcodebench_01131",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:bigcodebench_01021",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:bigcodebench_01046",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:bigcodebench_00160",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_sra_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:bigcodebench_00060",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:bigcodebench_00033",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:bigcodebench_00211",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:bigcodebench_00055",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:bigcodebench_00011",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:bigcodebench_01013",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:bigcodebench_00641",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:bigcodebench_00029",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:bigcodebench_01120",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:bigcodebench_00571",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:bigcodebench_00023",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:bigcodebench_01010",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:bigcodebench_00676",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:bigcodebench_00003",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:bigcodebench_00189",
+          "task_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "verifier_image": "sha256:24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "24748f8e67730957495222ea10614fa51e1902b3278f673eb119299ca6a58d8a.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_airline_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "tau2_bench:airline:19",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "tau2_bench:airline:9",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "tau2_bench:airline:12",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "tau2_bench:airline:42",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "tau2_bench:airline:48",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "tau2_bench:airline:21",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "tau2_bench:airline:39",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "tau2_bench:airline:2",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "tau2_bench:airline:11",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "tau2_bench:airline:7",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "tau2_bench:airline:45",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "tau2_bench:airline:17",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "tau2_bench:airline:8",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "tau2_bench:airline:10",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "tau2_bench:airline:22",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_blocked_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "tau2_bench:retail:18",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "tau2_bench:retail:19",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "tau2_bench:retail:104",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "tau2_bench:retail:2",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "tau2_bench:retail:27",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "tau2_bench:airline:3",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "tau2_bench:airline:5",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "tau2_bench:airline:1",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "tau2_bench:airline:38",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "tau2_bench:airline:41",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "tau2_bench:airline:32",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "tau2_bench:airline:16",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "tau2_bench:airline:30",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "tau2_bench:airline:15",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "tau2_bench:retail:65",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "tau2_bench:retail:57",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "tau2_bench:retail:62",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "tau2_bench:retail:25",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "tau2_bench:retail:24",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "tau2_bench:airline:33",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_interleaved_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "tau2_bench:retail:100",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "tau2_bench:banking_knowledge:task_006",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "tau2_bench:retail:16",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "tau2_bench:banking_knowledge:task_003",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "tau2_bench:retail:31",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "tau2_bench:banking_knowledge:task_002",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "tau2_bench:retail:102",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "tau2_bench:banking_knowledge:task_007",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "tau2_bench:retail:39",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "tau2_bench:banking_knowledge:task_001",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_tau2_telecom_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+          "task_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "verifier_image": "sha256:1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": "1e9a2fc516c3564ebec7eb1235fd5eaa8f0c909c1af7933a7f96ab7c5007ed73.tar",
+          "verifier_environment": {}
+        }
+      ]
+    },
+    {
+      "stream_id": "intra_theoremqa_delayed_01",
+      "turns": [
+        {
+          "turn_id": "turn1",
+          "source_id": "sr_agents:theoremqa_00032",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn2",
+          "source_id": "sr_agents:theoremqa_00042",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn3",
+          "source_id": "sr_agents:theoremqa_00292",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn4",
+          "source_id": "sr_agents:theoremqa_00058",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn5",
+          "source_id": "sr_agents:theoremqa_00235",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn6",
+          "source_id": "sr_agents:theoremqa_00389",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn7",
+          "source_id": "sr_agents:theoremqa_00604",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn8",
+          "source_id": "sr_agents:theoremqa_00563",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn9",
+          "source_id": "sr_agents:theoremqa_00191",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn10",
+          "source_id": "sr_agents:theoremqa_00206",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn11",
+          "source_id": "sr_agents:theoremqa_00448",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn12",
+          "source_id": "sr_agents:theoremqa_00679",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn13",
+          "source_id": "sr_agents:theoremqa_00711",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn14",
+          "source_id": "sr_agents:theoremqa_00726",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        },
+        {
+          "turn_id": "turn15",
+          "source_id": "sr_agents:theoremqa_00149",
+          "task_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "verifier_image": "sha256:da7cdca10db3d35082f6dce1837384d2ce562698b91cdb44ba294227a6aa9102",
+          "build_and_materialize_required": false,
+          "requires_gpu": false,
+          "archive_filename": null,
+          "verifier_environment": {}
+        }
+      ]
+    }
+  ],
+  "manual_image_archives": [
+    {
+      "image_id": "sha256:c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547",
+      "archive_bytes": 6461537792,
+      "archive_sha256": "ce839b6d6e993ddc52b12fc6b9feda4325cd9d28c638e8e39e871555998da962",
+      "restore_mode": "manual docker load; existing runtime profiles unchanged to preserve qualification bindings",
+      "archive_filename": "c24b1f0fd2a529efe1479f5adadd735b67641fae820faaf9aa930f90bd069547.tar"
+    }
+  ]
+}
