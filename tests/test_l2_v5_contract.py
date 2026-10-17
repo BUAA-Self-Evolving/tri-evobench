@@ -236,6 +236,107 @@ def test_v5_package_passes_extended_contract() -> None:
     assert inventory[0].episode_count == 12
 
 
+def _with_pending_recipe(package: Path, turn_id: str = "turn2") -> dict:
+    task_path = package / "streams/s" / turn_id / "task.json"
+    task = _read_json(task_path)
+    profile_path = package / "runtime_profiles.json"
+    catalog = _read_json(profile_path)
+    profile = {
+        **catalog["profiles"][0],
+        "runtime_profile_id": "pending_native",
+        "image_build_required": True,
+        "runtime_materialization_required": True,
+        "source_id": "skilllearnbench:" + task["source_basis"]["source_task_id"],
+        "environment_version": "l2_environment/1.0",
+        "task_sandbox_image": None,
+        "task_sandbox_image_digest": None,
+        "verifier_image_digest": None,
+        "image_recipe": {"kind": "dockerfile", "recipe_path": "environment/Dockerfile",
+                         "context_path": "environment", "recipe_sha256": "a" * 64,
+                         "context_sha256": "b" * 64},
+    }
+    profile["recipe_source_id"] = profile["source_id"]
+    catalog["profiles"].append(profile)
+    _write_json(profile_path, catalog)
+    _rewrite_binding(package, "runtime_profiles")
+    task["runtime_profile_id"] = profile["runtime_profile_id"]
+    _write_json(task_path, task)
+    stream_path = package / "streams/s/stream.json"
+    stream = _read_json(stream_path)
+    next(t for t in stream["turns"] if t["turn_id"] == turn_id)["runtime_profile_id"] = profile["runtime_profile_id"]
+    _write_json(stream_path, stream)
+    return profile
+
+
+def test_v5_inspect_accepts_explicit_pending_recipe(tmp_path):
+    package = _minimal_v5(tmp_path)
+    _with_pending_recipe(package)
+    assert inspect_l2_package(package)[0].episode_count == 12
+
+
+@pytest.mark.parametrize("mutation", [
+    {"image_build_required": False},
+    {"runtime_materialization_required": "true"},
+    {"source_id": ""},
+    {"recipe_source_id": "other:task"},
+    {"task_sandbox_image_digest": "sha256:" + "a" * 64},
+    {"native_environment": {}},
+    {"image_recipe": {"kind": "dockerfile"}},
+    {"environment_version": "future"},
+])
+def test_v5_pending_recipe_does_not_relax_incomplete_profiles(tmp_path, mutation):
+    package = _minimal_v5(tmp_path)
+    _with_pending_recipe(package)
+    path = package / "runtime_profiles.json"
+    catalog = _read_json(path)
+    catalog["profiles"][-1].update(mutation)
+    _write_json(path, catalog)
+    _rewrite_binding(package, "runtime_profiles")
+    with pytest.raises(L2SpecError):
+        inspect_l2_package(package)
+
+
+def test_v5_pending_recipe_must_belong_to_turn_source(tmp_path):
+    package = _minimal_v5(tmp_path)
+    _with_pending_recipe(package)
+    path = package / "streams/s/turn2/task.json"
+    task = _read_json(path)
+    task["source_basis"]["source_task_id"] = "other-source"
+    _write_json(path, task)
+    with pytest.raises(L2SpecError, match="pending recipe source identity mismatch"):
+        inspect_l2_package(package)
+
+
+@pytest.mark.parametrize("field,value", [
+    ("recipe_path", "/outside/Dockerfile"),
+    ("context_path", ""),
+    ("recipe_sha256", "g" * 64),
+    ("context_sha256", "a" * 63),
+    ("kind", "unknown"),
+])
+def test_v5_pending_recipe_rejects_invalid_metadata(tmp_path, field, value):
+    package = _minimal_v5(tmp_path)
+    _with_pending_recipe(package)
+    path = package / "runtime_profiles.json"
+    catalog = _read_json(path)
+    catalog["profiles"][-1]["image_recipe"][field] = value
+    _write_json(path, catalog)
+    _rewrite_binding(package, "runtime_profiles")
+    with pytest.raises(L2SpecError):
+        inspect_l2_package(package)
+
+
+def test_v5_ordinary_null_image_still_fails(tmp_path):
+    package = _minimal_v5(tmp_path)
+    path = package / "runtime_profiles.json"
+    catalog = _read_json(path)
+    catalog["profiles"][0]["task_sandbox_image_digest"] = None
+    _write_json(path, catalog)
+    _rewrite_binding(package, "runtime_profiles")
+    with pytest.raises(L2SpecError, match="invalid task_sandbox_image_digest"):
+        inspect_l2_package(package)
+
+
 def test_v5_panel_schema_accepts_pool_bound_panel_document() -> None:
     schema = _read_json(PACKAGE_ROOT / "contract/schemas/l2-panels.schema.json")
     panels = _read_json(PACKAGE_ROOT / "panels.json")

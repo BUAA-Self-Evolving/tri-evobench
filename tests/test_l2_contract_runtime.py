@@ -587,6 +587,69 @@ def test_v5_rejects_task_runtime_profile_not_in_bound_catalog(tmp_path, monkeypa
         L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
 
 
+def _mark_runtime_recipe_pending(package: Path, turn_id: str) -> None:
+    path = package / "runtime_profiles.json"
+    catalog = json.loads(path.read_text())
+    profile = {**catalog["profiles"][0], "runtime_profile_id": "pending",
+               "environment_version": "l2_environment/1.0",
+               "image_build_required": True, "runtime_materialization_required": True,
+               "source_id": "skilllearnbench:pending", "recipe_source_id": "skilllearnbench:pending",
+               "task_sandbox_image": None, "task_sandbox_image_digest": None,
+               "verifier_image_digest": None,
+               "image_recipe": {"kind": "dockerfile", "recipe_path": "environment/Dockerfile",
+                                "context_path": "environment", "recipe_sha256": "a" * 64,
+                                "context_sha256": "b" * 64}}
+    catalog["profiles"].append(profile)
+    _write_json(path, catalog)
+    manifest_path = package / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["runtime_profiles"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    _write_json(manifest_path, manifest)
+    stream_path = package / "streams/stream-a/stream.json"
+    stream = json.loads(stream_path.read_text())
+    next(t for t in stream["turns"] if t["turn_id"] == turn_id)["runtime_profile_id"] = "pending"
+    _write_json(stream_path, stream)
+    task_path = package / "streams/stream-a" / turn_id / "task.json"
+    task = json.loads(task_path.read_text())
+    task["runtime_profile_id"] = "pending"
+    _write_json(task_path, task)
+
+
+def test_v5_turn1_smoke_allows_later_recipe_only_turn(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn2")
+    runtimes = _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    options = replace(_v5_options(package, tmp_path / "out", "evolving"), stop_after_turn="turn1")
+    report = L2AgentStreamRunner(options).run()
+    assert [t["turn_id"] for t in report["turns"]] == ["turn1"]
+    assert len(runtimes) == 1
+
+
+def test_v5_pending_first_turn_rejected_before_runtime_or_docker(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn1")
+    runtimes = _install_fake_runtime(monkeypatch)
+    def forbidden_transport(*args, **kwargs):
+        pytest.fail("pending Turn attempted Docker volume startup")
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", forbidden_transport)
+    monkeypatch.setattr("trievo_bench.l2_agent.docker_volume_transport_enabled", lambda: True)
+    with pytest.raises(L2AgentRunError, match="turn1: skilllearnbench:pending requires image build and runtime materialization"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
+    assert not runtimes
+
+
+def test_v5_reaching_later_recipe_rejects_it_before_agent_interaction(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn2")
+    runtimes = _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    with pytest.raises(L2AgentRunError, match="turn2:.*requires image build"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
+    assert len(runtimes) == 1
+    assert len(runtimes[0].visible_before_interact) == 1
+
+
 def test_evaluator_error_continue_is_null_unscored_and_does_not_evolve(tmp_path, monkeypatch):
     package = _package(tmp_path)
     runtimes = _install_fake_runtime(monkeypatch, verifier_error=True)

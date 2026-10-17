@@ -243,6 +243,18 @@ def parse_resource_header(output: str, nonce: str, mode: str) -> dict:
     return require_container_resources(header["resource_readback"], enforcement_mode=mode)
 
 
+def read_fixture_result(path: Path, transport_error: str) -> dict:
+    """A missing, truncated, or malformed Docker result is an infrastructure error."""
+    try:
+        value = json.loads(path.read_text())
+        if not isinstance(value, dict) or value.get("status") not in {"pass", "fail", "error"}:
+            raise ValueError("invalid fixture result object/status")
+        return value
+    except (OSError, ValueError) as exc:
+        return {"status": "docker_error", "score": None,
+                "error": f"{type(exc).__name__}: {exc}; {transport_error}"}
+
+
 def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None = None) -> dict:
     if (profile or {}).get("image_archive"):
         from trievo_bench.image_archive import ensure_image_available
@@ -303,22 +315,21 @@ def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None
             (work / "spec.json").write_text(json.dumps(spec))
             resource_header = None
             resource_header_source = None
-            cmd = ["docker", *(["create", "--name", container_name] if isolated else ["run", "--rm"]),
+            cmd = ["docker", "create", "--name", container_name,
                    "--network", "none", "--memory", "4g", "--cpus", "2",
                    *(["--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--pids-limit", "256"]
                      if (profile or {}).get("environment_version") or environment else []),
                    *(["--user", "0", "--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE",
                       "--cap-add", "SETUID", "--cap-add", "SETGID"] if environment else []),
-                   *([] if isolated else ["-v", f"{work}:/w"]),
                    "--entrypoint", interpreter, image, "/w/driver.py", fixture]
             try:
                 proc = subprocess.run(cmd, text=True, capture_output=True, timeout=spec["timeout"] + 300)
+                proc.check_returncode()
+                subprocess.run(["docker", "cp", str(work), f"{container_name}:/w"],
+                               check=True, text=True, capture_output=True, timeout=300)
+                proc = subprocess.run(["docker", "start", "-a", container_name],
+                                      text=True, capture_output=True, timeout=spec["timeout"] + 300)
                 if isolated:
-                    proc.check_returncode()
-                    subprocess.run(["docker", "cp", str(work), f"{container_name}:/w"],
-                                   check=True, text=True, capture_output=True, timeout=300)
-                    proc = subprocess.run(["docker", "start", "-a", container_name],
-                                          text=True, capture_output=True, timeout=spec["timeout"] + 300)
                     header_output = proc.stdout
                     resource_header_source = "attached_stdout"
                     if not header_output:
@@ -328,9 +339,9 @@ def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None
                         resource_header_source = "docker_logs"
                     resource_header = parse_resource_header(
                         header_output, spec["resource_nonce"], spec["resource_enforcement_mode"])
-                    subprocess.run(["docker", "cp", f"{container_name}:/w/result-{fixture}.json",
-                                    str(work / f"result-{fixture}.json")],
-                                   check=True, text=True, capture_output=True, timeout=60)
+                subprocess.run(["docker", "cp", f"{container_name}:/w/result-{fixture}.json",
+                                str(work / f"result-{fixture}.json")],
+                               check=True, text=True, capture_output=True, timeout=60)
                 detail = (proc.stderr or proc.stdout)[-1500:]
             except subprocess.TimeoutExpired:
                 detail = "docker qualification timed out"
@@ -339,12 +350,10 @@ def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None
             except (ValueError, RuntimeError) as exc:
                 detail = "qualification resource header rejected: " + str(exc)
             finally:
-                if isolated:
-                    subprocess.run(["docker", "rm", "-f", container_name],
-                                   capture_output=True, timeout=60)
+                subprocess.run(["docker", "rm", "-f", container_name],
+                               capture_output=True, timeout=60)
             result_file = work / f"result-{fixture}.json"
-            outcome = (json.loads(result_file.read_text()) if result_file.exists()
-                       else {"status": "docker_error", "score": None, "error": detail})
+            outcome = read_fixture_result(result_file, detail)
             if isolated:
                 if resource_header is None:
                     outcome = {**outcome, "status": "error", "score": None,

@@ -4,6 +4,9 @@
 --package accepts a pool directory or a composed package. For a composed
 package whose Turns do not embed recipes, supply the recipe pool with --pool.
 The resulting source-to-image manifest is printed, or written with --out.
+Use --materialize-package with explicit --stream/--source selection to sanitize
+native Skill images and bind their seeds, verifier assets and pinned profiles.
+This does not admit or qualify any source.
 """
 from __future__ import annotations
 
@@ -139,15 +142,48 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=5400)
     parser.add_argument("--docker-host")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--materialize-package", action="store_true")
+    parser.add_argument("--materialization-work", type=Path,
+                        help="persistent build evidence/archive directory outside the package")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
     if args.timeout <= 0:
         parser.error("--timeout must be positive")
+    if args.materialize_package and not (args.stream or args.source):
+        parser.error("--materialize-package requires explicit --stream or --source selection")
+    if args.materialize_package and args.pool:
+        parser.error("--materialize-package uses embedded package recipes; omit --pool")
+    work = args.materialization_work or args.package.parent / (args.package.name + ".build-work")
+    if args.materialize_package and work.resolve().is_relative_to(args.package.resolve()):
+        parser.error("--materialization-work must be outside the package")
     if args.docker_host:
         os.environ["DOCKER_HOST"] = args.docker_host
-    selected = select_recipes(args.package, args.pool, args.stream, args.source)
+    if args.materialize_package:
+        from l2_v5_materialize_package import pending_targets
+        pending = pending_targets(args.package, streams=args.stream, sources=args.source)
+        pending_ids = {profile["source_id"] for _, _, profile in pending}
+        if not pending_ids:
+            parser.error("selected Turns contain no pending native recipes")
+        selected = select_recipes(args.package, None, args.stream, sorted(pending_ids))
+    else:
+        selected = select_recipes(args.package, args.pool, args.stream, args.source)
     result = build_selected(selected, build_args=args.build_arg,
                             timeout=args.timeout, dry_run=args.dry_run)
+    if args.materialize_package:
+        result["materialization_requested"] = True
+        if args.dry_run:
+            result["materialization"] = {"planned_sources": sorted(pending_ids), "executed": False}
+        else:
+            from l2_v5_materialize_package import materialize_package
+            result["materialization"] = materialize_package(
+                args.package, result["images"], streams=args.stream, sources=args.source,
+                work_root=work, timeout=args.timeout)
+            bound = {row["source_id"]: row for row in result["materialization"]["turns_materialized"]}
+            for row in result["images"]:
+                actual = bound[row["source_id"]]
+                row["recipe_image_digest"] = row["task_image_digest"]
+                row.update(task_image=actual["image_id"], task_image_digest=actual["image_id"],
+                           verifier_image_digest=actual["image_id"], image_archive=actual["image_archive"])
     output = json.dumps(result, indent=2) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

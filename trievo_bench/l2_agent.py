@@ -71,6 +71,59 @@ class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
 
 
+def _require_materialized_runtime_profile(profile: dict[str, Any], turn_id: str) -> None:
+    """Fail before Docker or agent work when this Turn only ships a recipe."""
+    if profile.get("image_build_required") or profile.get("runtime_materialization_required"):
+        source_id = profile.get("source_id", "unknown source")
+        raise L2AgentRunError(
+            f"{turn_id}: {source_id} requires image build and runtime materialization; "
+            "run tools/l2_v5_build_task_images.py --package PACKAGE "
+            f"--source {source_id!r} --materialize-package to bind its sanitized image, "
+            "native environment, workspace seed and verifier assets before execution"
+        )
+
+
+def _stage_v5_verifier_package(package: Path, stream_dir: Path, destination: Path) -> None:
+    """Copy runtime verifier inputs without recipes, seeds or admission fixtures.
+
+    The original package remains the host-side source for transitions, Judge
+    rubrics and provenance. Only this private view is sent to verifier Docker.
+    """
+    for name in (
+        "manifest.json", "runtime_profiles.json", "pools.json", "panels.json",
+        "taxonomy.json", "source_tasks.jsonl", "capability_codebook.json",
+    ):
+        source = package / name
+        if source.is_file():
+            shutil.copy2(source, destination / name)
+    for name in ("runtime", "prompts"):
+        source = package / name
+        if source.is_dir():
+            shutil.copytree(source, destination / name, symlinks=True)
+    target_stream = destination / stream_dir.relative_to(package)
+    target_stream.mkdir(parents=True)
+    if (stream_dir / "stream.json").is_file():
+        shutil.copy2(stream_dir / "stream.json", target_stream / "stream.json")
+    for task_path in sorted(stream_dir.glob("turn*/task.json")):
+        target = target_stream / task_path.parent.name
+        target.mkdir()
+        shutil.copy2(task_path, target / "task.json")
+        assets = task_path.parent / "evaluation_assets"
+        if not assets.is_dir():
+            continue
+        target_assets = target / "evaluation_assets"
+        target_assets.mkdir()
+        for source in assets.iterdir():
+            # Exclude admission-only siblings, not nested upstream test data
+            # that may also happen to be named fixtures or native_oracle.
+            if source.name in {"fixtures", "native_oracle", "private_oracle_skills"}:
+                continue
+            if source.is_dir():
+                shutil.copytree(source, target_assets / source.name, symlinks=True)
+            else:
+                shutil.copy2(source, target_assets / source.name, follow_symlinks=False)
+
+
 class _TaskSandboxSession:
     """One disposable, network-disabled execution sandbox for a V5 Turn."""
 
@@ -82,6 +135,7 @@ class _TaskSandboxSession:
         workspace_volume: DockerVolumeMirror,
         turn_id: str | None = None,
     ) -> None:
+        _require_materialized_runtime_profile(profile, turn_id or "unknown Turn")
         self.profile = profile
         self.native_environment = profile.get("native_environment")
         self.turn_id = turn_id
@@ -324,6 +378,7 @@ class L2AgentStreamRunner:
             raise L2AgentRunError("interrupted Interaction retry requires a matrix job id")
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
+        self._package_staging: Path | None = None
         self._storage_gate = _storage_gate_from_environment()
         self._task_sandbox: _TaskSandboxSession | None = None
         # Sealed record of the current Interaction's live tau2 session.
@@ -646,6 +701,16 @@ class L2AgentStreamRunner:
         runtime_started = False
         stream_work_limits = self.work_limits
         try:
+            # Only preflight the next Turn. Later recipe-only Turns must not
+            # prevent a bounded smoke of an earlier materialized Turn.
+            if is_v5 and resume_index < len(turn_order):
+                next_turn_id = turn_order[resume_index]
+                next_task = _load_json(_under(self.stream_dir, next_turn_id) / "task.json")
+                next_profile = self._v5_runtime_profiles.get(
+                    str(next_task.get("runtime_profile_id"))
+                )
+                if next_profile is not None:
+                    _require_materialized_runtime_profile(next_profile, next_turn_id)
             if volume_transport:
                 self._start_taskstream_volume_transport(workspace)
             if self.condition is not RunCondition.RESET or resume_pending is not None or resume_interrupted:
@@ -672,6 +737,7 @@ class L2AgentStreamRunner:
                     profile = self._v5_runtime_profiles.get(str(profile_id))
                     if profile is None:
                         raise L2AgentRunError(f"unknown runtime profile: {profile_id!r}")
+                    _require_materialized_runtime_profile(profile, turn_id)
                     self._current_v5_profile = profile
                     self.work_limits = _runtime_profile_work_limits(stream_work_limits, profile)
                 if resume_pending is None and not resume_interrupted:
@@ -1119,24 +1185,28 @@ class L2AgentStreamRunner:
             _archive_tree(workspace, run_dir / "error_workspace.zip")
             raise
         finally:
-            self._close_task_sandbox()
-            if runtime_started and self._runtime is not None:
+            try:
+                self._close_task_sandbox()
+                if runtime_started and self._runtime is not None:
+                    try:
+                        self._runtime.end_flow()
+                    except BaseException as exc:
+                        report["cleanup_error"] = f"{type(exc).__name__}: {exc}"
+                report["finished_at"] = datetime.now(UTC).isoformat()
+                report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
+                report["token_budget"] = asdict(self.budget)
+                report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
+                resource_states = {turn.get("task_sandbox", {}).get("resource_enforcement")
+                                   for turn in report.get("turns", [])} - {None}
+                if resource_states:
+                    report["resource_enforcement"] = ("declared_not_enforced" if "declared_not_enforced" in resource_states else "enforced")
+                    report["resource_enforcement_scope"] = "new profiles; per-container observations are retained in Turn evidence"
+                _write_json(run_dir / "report.json", report)
+            finally:
                 try:
-                    self._runtime.end_flow()
-                except BaseException as exc:
-                    report["cleanup_error"] = f"{type(exc).__name__}: {exc}"
-            report["finished_at"] = datetime.now(UTC).isoformat()
-            report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
-            report["token_budget"] = asdict(self.budget)
-            report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
-            resource_states = {turn.get("task_sandbox", {}).get("resource_enforcement")
-                               for turn in report.get("turns", [])} - {None}
-            if resource_states:
-                report["resource_enforcement"] = ("declared_not_enforced" if "declared_not_enforced" in resource_states else "enforced")
-                report["resource_enforcement_scope"] = "new profiles; per-container observations are retained in Turn evidence"
-            _write_json(run_dir / "report.json", report)
-            self._close_taskstream_volume_transport()
-            shutil.rmtree(workspace, ignore_errors=True)
+                    self._close_taskstream_volume_transport()
+                finally:
+                    shutil.rmtree(workspace, ignore_errors=True)
         return report
 
     def _start_tau2_live_session(self, turn_dir: Path) -> Tau2LiveSession | None:
@@ -1178,12 +1248,22 @@ class L2AgentStreamRunner:
         if self._workspace_volume is not None or self._package_volume is not None:
             raise L2AgentRunError("TaskStream Docker volume transport already started")
         try:
+            package_source = self.package_dir
+            if self._taskstream_schema_version == "l2_taskstream/1.2":
+                output = self.options.output_root.resolve()
+                output.mkdir(parents=True, exist_ok=True)
+                staging_parent = self.package_dir.parent if output.is_relative_to(self.package_dir) else output
+                self._package_staging = Path(tempfile.mkdtemp(
+                    prefix=".l2-verifier-package-", dir=staging_parent,
+                ))
+                _stage_v5_verifier_package(self.package_dir, self.stream_dir, self._package_staging)
+                package_source = self._package_staging
             self._workspace_volume = DockerVolumeMirror.create(
                 workspace,
                 role="l2-workspace",
             )
             self._package_volume = DockerVolumeMirror.create(
-                self.package_dir,
+                package_source,
                 role="l2-package",
                 writable_uid=0,
                 writable_gid=0,
@@ -1269,11 +1349,21 @@ class L2AgentStreamRunner:
         })
 
     def _close_taskstream_volume_transport(self) -> None:
+        errors = []
         for mirror in (self._package_volume, self._workspace_volume):
             if mirror is not None:
-                mirror.close()
+                try:
+                    mirror.close()
+                except BaseException as exc:
+                    errors.append(exc)
         self._package_volume = None
         self._workspace_volume = None
+        staging = getattr(self, "_package_staging", None)
+        if staging is not None:
+            shutil.rmtree(staging)
+            self._package_staging = None
+        if errors:
+            raise errors[0]
 
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
@@ -2143,8 +2233,13 @@ def _load_v5_runtime_binding(
     abi_values = {tuple(profiles[profile_id].get(field) for field in abi_fields) for profile_id in referenced_ids}
     if len(abi_values) != 1 or any(not value for value in next(iter(abi_values), ())):
         raise L2AgentRunError("runtime profiles have incompatible learner-state ABI")
+    from .l2_compat import L2SpecError, _validate_pending_runtime_profile
     for profile_id in referenced_ids:
         profile = profiles[profile_id]
+        try:
+            pending_recipe = _validate_pending_runtime_profile(profile)
+        except L2SpecError as exc:
+            raise L2AgentRunError(f"runtime profile {profile_id}: {exc}") from exc
         if profile.get("network") != "disabled":
             raise L2AgentRunError(f"runtime profile {profile_id} must disable network")
         if "environment_version" in profile and profile["environment_version"] != "l2_environment/1.0":
@@ -2159,10 +2254,12 @@ def _load_v5_runtime_binding(
             except ValueError as exc:
                 raise L2AgentRunError(str(exc)) from exc
         image = profile.get("task_sandbox_image_digest")
-        if not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71:
+        if not pending_recipe and (
+            not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71
+        ):
             raise L2AgentRunError(f"runtime profile {profile_id} image digest is not pinned")
         verifier_image = profile.get("verifier_image_digest")
-        if (
+        if not pending_recipe and (
             not isinstance(verifier_image, str)
             or not verifier_image.startswith("sha256:")
             or len(verifier_image) != 71

@@ -16,12 +16,51 @@ import subprocess
 import sys
 import uuid
 from dataclasses import asdict, dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
 class L2SpecError(ValueError):
     """Raised when a materialized L2 package violates its public contract."""
+
+
+def _validate_pending_runtime_profile(profile: dict[str, Any]) -> bool:
+    """Recognize explicitly unbuilt recipes without treating them as runnable."""
+    flags = ("image_build_required", "runtime_materialization_required")
+    for field in flags:
+        if field in profile and not isinstance(profile[field], bool):
+            raise L2SpecError(f"{field} must be a boolean")
+    if not any(profile.get(field) for field in flags):
+        return False
+    if not all(profile.get(field) is True for field in flags):
+        raise L2SpecError("pending recipe requires both build and materialization flags")
+    source_id = profile.get("source_id")
+    if (not isinstance(source_id, str) or ":" not in source_id
+            or not all(source_id.split(":", 1)) or profile.get("recipe_source_id") != source_id):
+        raise L2SpecError("pending recipe requires matching source_id and recipe_source_id")
+    if profile.get("environment_version") != "l2_environment/1.0":
+        raise L2SpecError("pending recipe requires environment_version l2_environment/1.0")
+    for field in ("task_sandbox_image", "task_sandbox_image_digest", "verifier_image_digest"):
+        if field not in profile or profile[field] is not None:
+            raise L2SpecError(f"pending recipe must explicitly declare {field} null")
+    if "native_environment" in profile or "image_archive" in profile:
+        raise L2SpecError(
+            "pending recipe cannot claim a materialized native environment or image archive"
+        )
+    recipe = profile.get("image_recipe")
+    if not isinstance(recipe, dict) or recipe.get("kind") not in {"dockerfile", "shared_dockerfile"}:
+        raise L2SpecError("pending recipe requires Dockerfile recipe metadata")
+    for field in ("recipe_path", "context_path"):
+        value = recipe.get(field)
+        if (not isinstance(value, str) or not value or "\x00" in value
+                or PurePosixPath(value).is_absolute() or str(PurePosixPath(value)) != value):
+            raise L2SpecError(f"pending recipe requires relative {field}")
+    for field in ("recipe_sha256", "context_sha256"):
+        value = recipe.get(field)
+        if (not isinstance(value, str) or len(value) != 64
+                or any(c not in "0123456789abcdef" for c in value)):
+            raise L2SpecError(f"pending recipe requires valid {field}")
+    return True
 
 
 @dataclass(frozen=True)
@@ -389,11 +428,14 @@ def _load_v5_contract(root: Path) -> dict[str, Any] | None:
         profile_id = profile.get("runtime_profile_id")
         if not isinstance(profile_id, str) or not profile_id or profile_id in profile_map:
             raise L2SpecError("runtime_profile_id values must be non-empty and unique")
+        pending_recipe = _validate_pending_runtime_profile(profile)
         digest = profile.get("task_sandbox_image_digest")
-        if not isinstance(digest, str) or not digest.startswith("sha256:") or len(digest) != 71:
+        if not pending_recipe and (
+            not isinstance(digest, str) or not digest.startswith("sha256:") or len(digest) != 71
+        ):
             raise L2SpecError(f"{profile_id}: invalid task_sandbox_image_digest")
         verifier_digest = profile.get("verifier_image_digest")
-        if (
+        if not pending_recipe and (
             not isinstance(verifier_digest, str)
             or not verifier_digest.startswith("sha256:")
             or len(verifier_digest) != 71
@@ -610,6 +652,10 @@ def _validate_v5_task(
     profile_id = task.get("runtime_profile_id")
     if profile_id not in v5_contract["profile_map"]:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: unknown runtime profile {profile_id!r}")
+    profile = v5_contract["profile_map"][profile_id]
+    if (profile.get("image_build_required")
+            and profile["source_id"] != source["benchmark_id"] + ":" + source["source_task_id"]):
+        raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: pending recipe source identity mismatch")
     if summary.get("runtime_profile_id") != profile_id or summary.get("capability_id") != capability_id:
         raise L2SpecError(f"{stream_id}/{task.get('turn_id')}: summary taxonomy/runtime identity mismatch")
     relation = task.get("capability_relation")
