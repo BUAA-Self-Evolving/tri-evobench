@@ -26,6 +26,7 @@ def test_rejected_records_and_intra_reuse_are_not_free_sources(tmp_path):
     (directory / "task.json").write_text(json.dumps({"stream_id": "intra_sra_old", "turn_id": "turn1", "source_basis": source}))
     result = handoff(pool, pool, package)
     assert result["counts"] == [{"benchmark_id": "sr_agents", "capability_id": "python", "admitted": 2,
+        "recipe_ready": 0, "available": 2, "family_samples_verified": [],
         "rejected_with_capability_record": 1, "deferred": 0, "unused_in_r2_intra": 1, "unused_source_ids": ["sr_agents:task3"]}]
     assert "sr_agents" not in result["recommendations"]
     assert result["existing_sra_intra"]["placements"] == 1
@@ -149,7 +150,7 @@ def test_requested_streams_report_each_approved_triple_without_reservation(tmp_p
     assert first['availability'][0]['unused_in_r2_intra'] == 0
     assert first['three_by_five_shortfall'] == 15
     assert first['source_reservations'] == []
-    assert all('W3-compose-r3.md' in row['provenance'] for row in result['requested_streams'].values())
+    assert all('W3-compose-r3.md' in row['provenance'] or 'W2-supervisor-notes.md' in row['provenance'] for row in result['requested_streams'].values())
 
 
 def test_changed_source_basis_cannot_relabel_a_pool_source(tmp_path):
@@ -170,3 +171,23 @@ def test_deferred_download_is_not_a_source_rejection(tmp_path):
     result = handoff(tmp_path / "old", pool.parent, tmp_path / "package")
     assert result["counts"][0]["deferred"] == 1
     assert result["counts"][0]["rejected_with_capability_record"] == 0
+
+
+def test_recipe_ready_counts_as_available_without_claiming_measured_failure(tmp_path):
+    pool = tmp_path / "new"
+    task = pool / "native" / "one"
+    task.mkdir(parents=True)
+    sid = "skillsbench:one"
+    record = {"source_id": sid, "source": {"benchmark_id": "skillsbench", "source_task_id": "one"},
+              "capability_hint": {"capability_id": "skillsbench.software-engineering"},
+              "environment": {"kind": "dockerfile"}, "runtime": {},
+              "qualification": {"admitted": False, "stage": "recipe_ready"},
+              "family_sample_verified": "skillsbench:sample"}
+    (task / "pool_task.json").write_text(json.dumps(record))
+    (pool / "native/INDEX.jsonl").write_text(json.dumps({"source_id": sid, "admitted": False,
+        "stage": "recipe_ready", "family_sample_verified": "skillsbench:sample"}))
+    result = handoff(tmp_path / "old", pool, tmp_path / "package")
+    row = result["counts"][0]
+    assert row["admitted"] == row["rejected_with_capability_record"] == 0
+    assert row["recipe_ready"] == row["available"] == row["unused_in_r2_intra"] == 1
+    assert row["family_samples_verified"] == ["skillsbench:sample"]

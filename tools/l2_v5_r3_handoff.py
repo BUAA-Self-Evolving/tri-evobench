@@ -12,6 +12,8 @@ from typing import Any
 AFFECTED_BENCHMARKS = {"skilllearnbench", "skillsbench", "sr_agents", "tau2_bench"}
 # Native recovery only for SRA under W2-phase2c-resume.md; no new SRA Streams.
 REQUESTED_STREAMS = {
+    "intra_skilllearn_blocked_01": ("skilllearnbench", "blocked", ["skilllearn.earthquake-plate-calculation", "skilllearn.organize-messy-files", "skilllearn.dependency-vulnerability-check"]),
+    "intra_skillsbench_interleaved_01": ("skillsbench", "interleaved", ["skillsbench.software-engineering", "skillsbench.industrial-physical-systems", "skillsbench.natural-science"]),
     "intra_tau2_telecom_delayed_01": ("tau2_bench", "delayed", ["tau2.telecom.mobile_data_troubleshooting", "tau2.telecom.mms_troubleshooting", "tau2.telecom.service_troubleshooting"]),
     "intra_tau2_airline_interleaved_01": ("tau2_bench", "interleaved", ["tau2.airline.booking_cancellation", "tau2.airline.policy_refusal", "tau2.airline.reservation_changes"]),
 }
@@ -76,13 +78,15 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         placements.append({"stream_id": task["stream_id"], "turn_id": task["turn_id"], "source_id": sid,
                            "old_image": old_digest, "new_image": new_digest,
                            "environment_changed": old_digest != new_digest if new_digest is not None else None,
-                           "environment_comparison": "observed_images" if new_digest is not None else "not_materialized",
+                           "environment_comparison": "observed_images" if new_digest is not None else ("recipe_only" if candidate.get("environment", {}).get("kind") == "dockerfile" else "not_materialized"),
+                           "recipe_environment": candidate.get("environment"),
+                           "family_sample_verified": decision.get("family_sample_verified", candidate.get("family_sample_verified")),
                            "resource_enforcement": candidate.get("runtime", {}).get("resource_enforcement", decision.get("resource_enforcement")),
                            "resource_readback": candidate.get("runtime", {}).get("resource_readback", decision.get("resource_readback")),
                            "date_dependent": candidate.get("date_dependent", candidate.get("runtime", {}).get("date_dependent", False)),
                            "old_admitted": previous.get("qualification", {}).get("admitted"),
                            "outcome_changed": (previous["qualification"]["admitted"] != new_admitted
-                               if "admitted" in previous.get("qualification", {}) else None),
+                               if "admitted" in previous.get("qualification", {}) and decision.get("stage") != "recipe_ready" else None),
                            "new_admitted": new_admitted, "reason": decision.get("reason"),
                            "new_stage": decision.get("stage"),
                            "old_qualification": previous.get("qualification"),
@@ -107,6 +111,8 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
             raise ValueError("r2 affected placement coverage/source identity differs from frozen inventory")
     unused = defaultdict(list)
     totals = Counter()
+    recipes = Counter()
+    samples = defaultdict(set)
     rejected = Counter()
     deferred = Counter()
     inventory_counts = Counter()
@@ -118,21 +124,33 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         cap = row.get("capability_hint", {}).get("capability_id", decision.get("capability_id", "unassigned"))
         benchmark = row.get("source", {}).get("benchmark_id", decision.get("benchmark_id", sid.split(":", 1)[0]))
         inventory_counts[benchmark] += 1
-        if admitted:
-            totals[(benchmark, cap)] += 1
+        recipe_ready = decision.get("stage", row.get("qualification", {}).get("stage")) == "recipe_ready"
+        sample = decision.get("family_sample_verified", row.get("family_sample_verified"))
+        if sample:
+            samples[(benchmark, cap)].add(sample)
+        if admitted or recipe_ready:
+            if recipe_ready:
+                if sid not in new or row.get("environment", {}).get("kind") != "dockerfile":
+                    raise ValueError("recipe_ready source lacks materialized recipe: " + sid)
+                recipes[(benchmark, cap)] += 1
+            else:
+                totals[(benchmark, cap)] += 1
             if sid not in used:
                 unused[(benchmark, cap)].append(sid)
         elif str(decision.get("stage", "")).startswith("deferred"):
             deferred[(benchmark, cap)] += 1
         else:
             rejected[(benchmark, cap)] += 1
-    counts = [{"benchmark_id": b, "capability_id": c, "admitted": totals[(b, c)],
+    counts = [{"benchmark_id": b, "capability_id": c, "admitted": totals[(b, c)], "recipe_ready": recipes[(b, c)],
+               "available": totals[(b, c)] + recipes[(b, c)],
+               "family_samples_verified": sorted(samples[(b, c)]),
                "rejected_with_capability_record": rejected[(b, c)], "deferred": deferred[(b, c)],
                "unused_in_r2_intra": len(unused[(b, c)]), "unused_source_ids": sorted(unused[(b, c)])}
-              for b, c in sorted(totals.keys() | rejected.keys() | deferred.keys())]
+              for b, c in sorted(totals.keys() | recipes.keys() | rejected.keys() | deferred.keys())]
     recommendations = {}
     for source in ("skilllearnbench", "skillsbench", "tau2_bench"):
-        choices = sorted((row for row in counts if row["benchmark_id"] == source),
+        proposed = next((caps for benchmark, _, caps in REQUESTED_STREAMS.values() if benchmark == source), []) if source != "tau2_bench" else []
+        choices = sorted((row for row in counts if row["benchmark_id"] == source and (not proposed or row["capability_id"] in proposed)),
                          key=lambda r: (-r["unused_in_r2_intra"], r["capability_id"]))[:3]
         deficit = sum(max(0, 5-r["unused_in_r2_intra"]) for r in choices) + 5*(3-len(choices))
         recommendations[source] = {"capability_triple": [r["capability_id"] for r in choices],
@@ -143,13 +161,14 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
     for stream_id, (benchmark, schedule, capabilities) in REQUESTED_STREAMS.items():
         availability = [{"capability_id": cap,
                          "unused_in_r2_intra": by_capability.get((benchmark, cap), {}).get("unused_in_r2_intra", 0),
+                         "family_samples_verified": by_capability.get((benchmark, cap), {}).get("family_samples_verified", []),
                          "shortfall": max(0, 5 - by_capability.get((benchmark, cap), {}).get("unused_in_r2_intra", 0))}
                         for cap in capabilities]
         shortfall = sum(r["shortfall"] for r in availability)
         requested_streams[stream_id] = {"benchmark_id": benchmark, "schedule": schedule,
             "capability_triple": capabilities, "tasks_per_capability": 5, "availability": availability,
             "three_by_five_shortfall": shortfall, "feasible": shortfall == 0,
-            "source_reservations": [], "provenance": "W3-compose-r3.md New Streams table (2026-10-16)"}
+            "source_reservations": [], "provenance": ("W2-supervisor-notes.md recipe/sample scope; native proposed triple" if benchmark in {"skilllearnbench", "skillsbench"} else "W3-compose-r3.md New Streams table (2026-10-16)")}
     resource_counts = Counter(row.get("resource_enforcement", "unrecorded") for row in decisions.values())
     observed_resources = sorted({json.dumps({key: row.get("resource_readback", {}).get(key)
         for key in ("cpu_limit", "memory_limit_bytes", "pids_limit")}, sort_keys=True)
@@ -167,7 +186,7 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
             "resource_enforcement_counts": dict(resource_counts),
             "observed_resources": [json.loads(value) for value in observed_resources],
             "placement_diffs": placements, "decisions": decisions,
-            "note": "Environment/fixture differences are not measured agent score differences. No Stream spec or codebook changed."}
+            "note": "Recipe-ready sources count as available, not as individually red/green verified. Environment/fixture differences are not measured agent score differences. No Stream spec or codebook changed."}
 
 
 def main() -> int:
@@ -184,13 +203,13 @@ def main() -> int:
     (args.out / "W3_HANDOFF.json").write_text(json.dumps(result, indent=2, ensure_ascii=False)+"\n")
     lines = ["# W3 r3 environment handoff", "", result["note"], "",
              "Unused means not used in any existing r2 intra_* Stream. No new BigCodeBench Streams are planned; SRA results cover the existing pool and released placements.", "",
-             "| Source | Capability | Admitted | Rejected | Deferred | Unused |", "|---|---|---:|---:|---:|---:|"]
+             "| Source | Capability | Admitted | Recipe ready | Rejected | Deferred | Unused | Verified family samples |", "|---|---|---:|---:|---:|---:|---:|---|"]
     if result["resource_enforcement_counts"].get("declared_not_enforced"):
         lines[4:4] = ["**Resource waiver:** Qualification used an explicitly approved declared_only waiver. "
                       "Docker resource flags were requested but not enforced. New executions still need explicit host opt-in; "
                       "saved profile metadata is provenance, not authorization.",
                       "Observed controller values: `" + json.dumps(result["observed_resources"], sort_keys=True) + "`.", ""]
-    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['rejected_with_capability_record']} | {r['deferred']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
+    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['recipe_ready']} | {r['rejected_with_capability_record']} | {r['deferred']} | {r['unused_in_r2_intra']} | {', '.join(r['family_samples_verified']) or 'none'} |" for r in result["counts"]]
     lines += ["", "## Recommended triples", ""]
     lines += [f"- {b}: {', '.join(r['capability_triple']) or 'none'}; shortfall {r['three_by_five_shortfall']} tasks for one 3×5 Stream." for b, r in result["recommendations"].items()]
     lines += ["", "## Requested Stream readiness (no sources reserved)", ""]
