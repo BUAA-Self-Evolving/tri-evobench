@@ -386,6 +386,9 @@ def test_qualification_records_actual_waiver_in_index_runtime_and_ledger(tmp_pat
         assert destination['resource_observation_provenance']['kind'] == 'synthetic_test_observation'
     assert any(a['kind'] == 'resource_enforcement_waiver' for a in ledger['adaptations'])
     assert any(a['kind'] == 'resource_enforcement_waiver' for a in record['adaptations'])
+    waiver = next(a for a in ledger['adaptations'] if a['kind'] == 'resource_enforcement_waiver')
+    for key in ('resource_enforcement', 'resource_readback', 'resource_observation_provenance'):
+        assert waiver[key] == ledger[key]
 
 
 def header_text(*, nonce='fresh', response_sha256='hash', shadow=False, snapshot=None):

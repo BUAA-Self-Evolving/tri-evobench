@@ -526,7 +526,8 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
             entry["adaptations"] = [item for item in entry["adaptations"] if item.get("kind") != "resource_enforcement_waiver"]
             if record["resource_enforcement"] == "declared_not_enforced":
                 entry["adaptations"].append({"kind": "resource_enforcement_waiver", "mode": "declared_only",
-                    "reason": "explicit user approval W2-phase2-resume.md", "resource_readback": record["resource_readback"],
+                    "reason": "explicit user approval W2-phase2-resume.md", "resource_enforcement": record["resource_enforcement"],
+                    "resource_readback": record["resource_readback"],
                     "resource_observation_provenance": record["resource_observation_provenance"]})
             entry["red_candidates"] = results[task_dir].get("red_candidates", [])
     (pool / "ADAPTATIONS.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ledger))
