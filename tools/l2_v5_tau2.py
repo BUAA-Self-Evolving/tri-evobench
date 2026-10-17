@@ -655,6 +655,7 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
         "source": {"benchmark_id": BENCHMARK_ID, "benchmark_revision": REVISION,
                    "source_task_id": row["source_task_id"], "source_path": row["source_path"],
                    "source_hash": sha256_bytes(canonical(task))},
+        "license_note": "tau2-bench: MIT, as recorded in the pinned upstream manifest; informational only.",
         "prompt": build_prompt(domain),
         "benchmark_native_labels": {
             "domain": domain, "task_id": task["id"], "description": task.get("description"),

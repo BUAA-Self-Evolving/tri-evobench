@@ -366,3 +366,15 @@ def test_profile_preserves_waiver_evidence_and_hashes_it():
     item["runtime"].pop("resource_readback")
     with pytest.raises(ValueError, match="actual readback"):
         runtime_profile(item)
+
+
+def test_profile_carries_cold_image_archive():
+    item = record()
+    item["runtime"].update(environment_version="l2_environment/1.0", image_archive={
+        "image_id": item["runtime"]["task_image_digest"], "archive_path": "images/task.tar",
+        "archive_sha256": "b" * 64})
+    profile = runtime_profile(item)
+    assert profile["image_archive"] == item["runtime"]["image_archive"]
+    item["runtime"]["image_archive"]["archive_sha256"] = "c" * 64
+    assert profile["image_archive"]["archive_sha256"] == "b" * 64
+    assert runtime_profile(item)["runtime_profile_id"] != profile["runtime_profile_id"]

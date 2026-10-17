@@ -34,19 +34,21 @@ def test_package_transport_preserves_apt_cache_and_pinned_install_commands():
             'RUN pip3 install --break-system-packages pypdf==5.1.0 \\\n    reportlab==4.2.5\n'
             'ENV ORIGINAL=yes\nFROM ubuntu:22.04\nRUN uvx --with pytest==8.4.1 pytest --version\n')
     adapted = native.build_transport_dockerfile(text)
-    assert adapted.startswith(text[:text.index('RUN pip3')])
+    assert adapted.startswith('FROM ubuntu:24.04\n')
+    assert 'apt-get update && apt-get install -y python3-pip' in adapted
+    assert adapted.count('ARG HF_ENDPOINT=https://hf-mirror.com') == 2
     assert adapted.count('ARG PIP_INDEX_URL=') == 2
     assert adapted.count('ARG UV_INDEX_URL=') == 2
     assert 'RUN pip3 install --break-system-packages pypdf==5.1.0 \\\n    reportlab==4.2.5' in adapted
     assert 'ENV PIP_INDEX_URL' not in adapted
     assert 'RUN uvx --with pytest==8.4.1 pytest --version' in adapted
-    assert native.build_transport_dockerfile('FROM ubuntu\nRUN apt-get update\n') == 'FROM ubuntu\nRUN apt-get update\n'
+    assert native.build_transport_dockerfile('FROM ubuntu\nRUN apt-get update\n').endswith('&& apt-get update\n')
 
 
 def test_debian_transport_preserves_suites_signatures_and_installer():
     original='FROM python:3.9.19-slim\nRUN apt-get update && apt-get install -y gcc\n'
     adapted=native.build_transport_dockerfile(original)
-    assert 'https://mirrors.tuna.tsinghua.edu.cn/debian-security' in adapted
+    assert 'http://mirrors.tuna.tsinghua.edu.cn/debian-security' in adapted
     assert 'apt-get update && apt-get install -y gcc' in adapted
     assert 'trusted=yes' not in adapted and 'AllowUnauthenticated' not in adapted
     assert 'bookworm' not in adapted  # suite names are never substituted

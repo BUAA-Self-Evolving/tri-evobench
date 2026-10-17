@@ -10,10 +10,8 @@ from typing import Any
 
 
 AFFECTED_BENCHMARKS = {"skilllearnbench", "skillsbench", "sr_agents", "tau2_bench"}
-# Approved W3-compose-r3.md, New Streams table; existing spec/codebook unchanged.
+# Native recovery only for SRA under W2-phase2c-resume.md; no new SRA Streams.
 REQUESTED_STREAMS = {
-    "intra_sra_interleaved_02": ("sr_agents", "interleaved", ["sra.filesystem_and_io", "sra.text_processing", "sra.numerical_and_ml"]),
-    "intra_sra_blocked_02": ("sr_agents", "blocked", ["sra.data_visualization", "sra.dataframe_analysis", "sra.web_and_network"]),
     "intra_tau2_telecom_delayed_01": ("tau2_bench", "delayed", ["tau2.telecom.mobile_data_troubleshooting", "tau2.telecom.mms_troubleshooting", "tau2.telecom.service_troubleshooting"]),
     "intra_tau2_airline_interleaved_01": ("tau2_bench", "interleaved", ["tau2.airline.booking_cancellation", "tau2.airline.policy_refusal", "tau2.airline.reservation_changes"]),
 }
@@ -110,6 +108,7 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
     unused = defaultdict(list)
     totals = Counter()
     rejected = Counter()
+    deferred = Counter()
     inventory_counts = Counter()
     for sid in sorted(new.keys() | decisions.keys()):
         row, decision = new.get(sid, {}), decisions.get(sid, {})
@@ -123,14 +122,16 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
             totals[(benchmark, cap)] += 1
             if sid not in used:
                 unused[(benchmark, cap)].append(sid)
+        elif str(decision.get("stage", "")).startswith("deferred"):
+            deferred[(benchmark, cap)] += 1
         else:
             rejected[(benchmark, cap)] += 1
     counts = [{"benchmark_id": b, "capability_id": c, "admitted": totals[(b, c)],
-               "rejected_with_capability_record": rejected[(b, c)],
+               "rejected_with_capability_record": rejected[(b, c)], "deferred": deferred[(b, c)],
                "unused_in_r2_intra": len(unused[(b, c)]), "unused_source_ids": sorted(unused[(b, c)])}
-              for b, c in sorted(totals.keys() | rejected.keys())]
+              for b, c in sorted(totals.keys() | rejected.keys() | deferred.keys())]
     recommendations = {}
-    for source in ("skilllearnbench", "skillsbench", "sr_agents", "tau2_bench"):
+    for source in ("skilllearnbench", "skillsbench", "tau2_bench"):
         choices = sorted((row for row in counts if row["benchmark_id"] == source),
                          key=lambda r: (-r["unused_in_r2_intra"], r["capability_id"]))[:3]
         deficit = sum(max(0, 5-r["unused_in_r2_intra"]) for r in choices) + 5*(3-len(choices))
@@ -155,6 +156,11 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
         for row in decisions.values() if isinstance(row.get("resource_readback"), dict)})
     return {"schema_version": "l2_r3_handoff/1.0", "counts": counts, "recommendations": recommendations,
             "inventory_counts": dict(inventory_counts), "requested_streams": requested_streams,
+            "existing_sra_intra": {"streams": sorted({r["stream_id"] for r in placements
+                if r["source_id"].startswith("sr_agents:") and r["stream_id"].startswith("intra_")}),
+                "placements": sum(r["source_id"].startswith("sr_agents:") and r["stream_id"].startswith("intra_") for r in placements),
+                "source_ids": sorted(sid for sid in used if sid.startswith("sr_agents:")),
+                "new_streams_planned": False},
             "placement_coverage": {"affected_placements": len(placements),
                 "by_benchmark": dict(Counter(r["source_id"].split(":", 1)[0] for r in placements)),
                 "frozen_inventory_checked": r2_inventory is not None},
@@ -177,20 +183,22 @@ def main() -> int:
     result = handoff(args.old_pool, args.new_pool, args.r2_package, args.r2_qualification, args.r2_inventory)
     (args.out / "W3_HANDOFF.json").write_text(json.dumps(result, indent=2, ensure_ascii=False)+"\n")
     lines = ["# W3 r3 environment handoff", "", result["note"], "",
-             "Unused means not used in any existing r2 intra_* Stream. Recommendations do not reserve sources for either new SRA/tau Stream.", "",
-             "| Source | Capability | Admitted | Rejected | Unused |", "|---|---|---:|---:|---:|"]
+             "Unused means not used in any existing r2 intra_* Stream. No new BigCodeBench Streams are planned; SRA results cover the existing pool and released placements.", "",
+             "| Source | Capability | Admitted | Rejected | Deferred | Unused |", "|---|---|---:|---:|---:|---:|"]
     if result["resource_enforcement_counts"].get("declared_not_enforced"):
         lines[4:4] = ["**Resource waiver:** Qualification used an explicitly approved declared_only waiver. "
                       "Docker resource flags were requested but not enforced. New executions still need explicit host opt-in; "
                       "saved profile metadata is provenance, not authorization.",
                       "Observed controller values: `" + json.dumps(result["observed_resources"], sort_keys=True) + "`.", ""]
-    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['rejected_with_capability_record']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
+    lines += [f"| {r['benchmark_id']} | {r['capability_id']} | {r['admitted']} | {r['rejected_with_capability_record']} | {r['deferred']} | {r['unused_in_r2_intra']} |" for r in result["counts"]]
     lines += ["", "## Recommended triples", ""]
     lines += [f"- {b}: {', '.join(r['capability_triple']) or 'none'}; shortfall {r['three_by_five_shortfall']} tasks for one 3×5 Stream." for b, r in result["recommendations"].items()]
     lines += ["", "## Requested Stream readiness (no sources reserved)", ""]
     for stream_id, row in result["requested_streams"].items():
         values = "; ".join(f"{r['capability_id']}: {r['unused_in_r2_intra']} unused, {r['shortfall']} short" for r in row["availability"])
         lines.append(f"- {stream_id}: {values}; total shortfall {row['three_by_five_shortfall']}.")
+    lines += ["", "## Existing BigCodeBench Streams", "",
+              f"{len(result['existing_sra_intra']['streams'])} existing intra Streams; {result['existing_sra_intra']['placements']} placements; {len(result['existing_sra_intra']['source_ids'])} unique sources. No new BigCodeBench Streams."]
     lines += ["", "## Every affected r2 placement", "", "| Stream | Turn | Source | Environment changed | Old admitted | New admitted | Outcome changed | Current r2 fixtures OK | Reason |", "|---|---|---|---|---|---|---|---|---|"]
     lines += [f"| {r['stream_id']} | {r['turn_id']} | {r['source_id']} | {r['environment_changed']} | {r['old_admitted']} | {r['new_admitted']} | {r['outcome_changed']} | {(r['old_current_recheck'] or {}).get('ok', 'not checked')} | {str(r['reason']).replace('|', '/')} |" for r in result["placement_diffs"]]
     (args.out / "W3_HANDOFF.md").write_text("\n".join(lines)+"\n")

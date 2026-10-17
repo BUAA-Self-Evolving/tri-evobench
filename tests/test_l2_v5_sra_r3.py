@@ -395,3 +395,93 @@ def test_start_failure_preserves_only_first_header_observation(tmp_path, monkeyp
     assert result['resource_enforcement'] == 'declared_not_enforced'
     assert not any(cmd[1] == 'cp' and ':/out/' in cmd[2] for cmd in result['transport_commands'])
     assert 'verifier' not in result
+
+
+def test_source_timebox_covers_multiple_fixtures(tmp_path, monkeypatch):
+    clock = [0.0]
+    calls = []
+    monkeypatch.setattr(builder.time, 'monotonic', lambda: clock[0])
+
+    def fixture(*args, **kwargs):
+        calls.append(kwargs)
+        clock[0] = 2701.0
+        return {'transport_verified': False}
+
+    monkeypatch.setattr(builder, 'fixture_run', fixture)
+    result = builder.qualify_one(tmp_path / 'task', 'image', tmp_path / 'artifacts')
+    assert result['stage'] == 'deferred'
+    assert result['admitted'] is False
+    assert len(calls) == 1
+    assert calls[0]['deadline'] == 2700.0
+
+
+def test_archive_image_records_bytes_before_removing_owned_tag(tmp_path, monkeypatch):
+    import hashlib
+    import subprocess
+    pool = tmp_path / 'l2v5_pool_r3/sra'; pool.mkdir(parents=True)
+    task = pool / 'task'; task.mkdir()
+    image_id = 'sha256:' + 'a' * 64
+    builder.write_json(task / 'pool_task.json', {'runtime': {'task_image_digest': image_id}})
+    (pool / 'INDEX.jsonl').write_text(json.dumps({'task_dir': 'task'}) + '\n')
+    builder.write_json(pool / 'ENVIRONMENT.json', {'image_id': image_id})
+    monkeypatch.setattr(builder.legacy, 'image_digest', lambda image: image_id)
+    commands = []
+
+    def docker(argv, **kwargs):
+        commands.append(argv)
+        if argv[1] == 'save':
+            Path(argv[3]).write_bytes(b'saved Docker archive')
+        else:
+            saved = json.loads((task / 'pool_task.json').read_text())['runtime']['image_archive']
+            assert Path(saved['archive_path']).read_bytes() == b'saved Docker archive'
+            assert saved['archive_sha256'] == hashlib.sha256(b'saved Docker archive').hexdigest()
+            assert json.loads((pool / 'INDEX.jsonl').read_text())['image_archive'] == saved
+        return subprocess.CompletedProcess(argv, 0)
+
+    monkeypatch.setattr(builder.subprocess, 'run', docker)
+    builder.archive_image(pool, 'trievo-r3-sra:locked', tmp_path / 'images')
+    assert commands[-1] == ['docker', 'rmi', 'trievo-r3-sra:locked']
+
+
+def test_archive_failure_does_not_remove_image_or_change_pool(tmp_path, monkeypatch):
+    import subprocess
+    monkeypatch.setattr(builder.legacy, 'image_digest', lambda image: 'sha256:' + 'a' * 64)
+    commands = []
+
+    def fail(argv, **kwargs):
+        commands.append(argv)
+        raise subprocess.CalledProcessError(1, argv)
+
+    monkeypatch.setattr(builder.subprocess, 'run', fail)
+    with pytest.raises(subprocess.CalledProcessError):
+        builder.archive_image(tmp_path / 'l2v5_pool_r3/sra', 'trievo-r3-sra:locked', tmp_path / 'images')
+    assert len(commands) == 1 and commands[0][1] == 'save'
+
+
+def test_nltk_install_does_not_gate_on_license_metadata(tmp_path, monkeypatch):
+    import hashlib
+    import io
+    import runpy
+    import subprocess
+    import zipfile
+    blob = io.BytesIO()
+    with zipfile.ZipFile(blob, 'w') as archive:
+        archive.writestr('fixture/data.txt', 'asset')
+    payload = blob.getvalue()
+    manifest = tmp_path / 'assets.json'
+    manifest.write_text(json.dumps({'assets': [{'id': 'fixture', 'subdir': 'corpora',
+        'url': 'https://example.invalid/pinned.zip', 'redistribution_verified': False,
+        'sha256_checksum': hashlib.sha256(payload).hexdigest()}]}))
+    destination = tmp_path / 'installed'
+    commands = []
+
+    def curl(argv):
+        commands.append(argv)
+        Path(argv[argv.index('--output') + 1]).write_bytes(payload)
+        return subprocess.CompletedProcess(argv, 0)
+
+    monkeypatch.setattr(subprocess, 'run', curl)
+    monkeypatch.setattr(sys, 'argv', ['install', str(manifest), str(destination)])
+    runpy.run_path(str(builder.ROOT / 'sandbox/l2-v5/sra-install-assets.py'), run_name='__main__')
+    assert (destination / 'corpora/fixture/data.txt').read_text() == 'asset'
+    assert commands[0][commands[0].index('--retry') + 1] == '1'

@@ -98,6 +98,9 @@ class _TaskSandboxSession:
         self.evidence: dict[str, Any] = {}
 
     def start(self) -> dict[str, Any]:
+        if self.profile.get("image_archive"):
+            from .image_archive import ensure_image_available
+            ensure_image_available(self.image, self.profile["image_archive"], docker=_docker_executable())
         if self.native_environment or self.profile.get("environment_version"):
             from .container_resources import docker_resource_capability_preflight
             try:
@@ -1397,6 +1400,10 @@ class L2AgentStreamRunner:
                     "details": {"type": "invalid_runtime_profile_verifier_image"},
                 }
             verifier_image = declared_verifier
+            if current_v5_profile.get("image_archive"):
+                from .image_archive import ensure_image_available
+                ensure_image_available(verifier_image, current_v5_profile["image_archive"],
+                                       docker=_docker_executable())
         package_volume = getattr(self, "_package_volume", None)
         workspace_volume = getattr(self, "_workspace_volume", None)
         package_mount_args = (

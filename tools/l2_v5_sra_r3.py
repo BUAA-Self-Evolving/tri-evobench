@@ -15,6 +15,7 @@ import json
 import shutil
 import tempfile
 import subprocess
+import time
 from pathlib import Path
 
 import l2_v5_sra as legacy
@@ -57,7 +58,6 @@ def build(pool: Path, upstream: Path) -> None:
         legacy.build(pool)
     finally:
         legacy.UPSTREAM = original_upstream
-    license_text = (upstream / "LICENSE").read_text()
     ledger = []
     index_rows = []
     for line in (pool / "INDEX.jsonl").read_text().splitlines():
@@ -77,11 +77,8 @@ def build(pool: Path, upstream: Path) -> None:
             "r3 carrier uses source-exact upstream think-tag helper; legacy r2 omitted post-tag whitespace regex",
             "red admission requires collected tests and an assertion failure without test/infrastructure errors",
         ])
-        record["license"] = {"repository": "MIT", "dataset": "Apache-2.0",
-                             "dataset_url": "https://huggingface.co/datasets/bigcode/bigcodebench",
-                             "notice_path": "evaluation_assets/SOURCE_LICENSE.txt"}
-        (task / "evaluation_assets/SOURCE_LICENSE.txt").write_text(license_text)
-        shutil.copy2(ROOT / "sandbox/l2-v5/sra-BIGCODEBENCH-LICENSE", task / "evaluation_assets/BIGCODEBENCH_LICENSE.txt")
+        record["license_note"] = "SR-Agents repository: MIT; BigCodeBench dataset: Apache-2.0."
+        row["license_note"] = record["license_note"]
         hashes = {str(f.relative_to(task)): hashlib.sha256(f.read_bytes()).hexdigest()
                   for f in (task / "evaluation_assets").rglob("*") if f.is_file()}
         record["source_asset_hashes"] = hashes
@@ -144,7 +141,8 @@ def resource_header(stdout: str, *, nonce: str, response_sha256: str, shadow: bo
     return dict(snapshot, **assessment)
 
 
-def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: bool) -> dict:
+def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: bool,
+                deadline: float | None = None) -> dict:
     """Transfer private fixtures through docker cp, never daemon-host binds.
 
     A fresh nonce, container-state/image/network readback, and copied result
@@ -178,6 +176,11 @@ def fixture_run(task: Path, fixture: Path, image: str, out: Path, *, shadow: boo
                   "image_id": image, "execution_nonce": nonce, "role": "shadow" if shadow else "authoritative"}
 
     def call(arguments, timeout=60):
+        if deadline is not None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError("source exceeded 45-minute qualification time box")
+            timeout = min(timeout, remaining)
         commands.append(arguments)
         value = subprocess.run(arguments, capture_output=True, text=True,
                                timeout=timeout, check=True)
@@ -287,11 +290,28 @@ def red_candidates(task: Path):
 
 
 def qualify_one(task: Path, image: str, artifacts: Path) -> dict:
+    deadline = time.monotonic() + 45 * 60
+    try:
+        return _qualify_one(task, image, artifacts, deadline)
+    except TimeoutError:
+        return {"task_dir": task.name, "fixtures": {}, "admitted": False,
+                "stage": "deferred", "reason": "source exceeded 45-minute qualification time box"}
+
+
+def _qualify_one(task: Path, image: str, artifacts: Path, deadline: float) -> dict:
+    def run(fixture: Path, out: Path, *, shadow: bool) -> dict:
+        if time.monotonic() >= deadline:
+            raise TimeoutError("source time box expired")
+        report = fixture_run(task, fixture, image, out, shadow=shadow, deadline=deadline)
+        if time.monotonic() >= deadline:
+            raise TimeoutError("source time box expired")
+        return report
+
     result = {"task_dir": task.name, "fixtures": {}}
     fixture = task / "fixtures/known_correct"
     out = artifacts / task.name / "known_correct"
-    authority = fixture_run(task, fixture, image, out / "authoritative", shadow=False)
-    diagnostic = fixture_run(task, fixture, image, out / "diagnostic", shadow=True)
+    authority = run(fixture, out / "authoritative", shadow=False)
+    diagnostic = run(fixture, out / "diagnostic", shadow=True)
     result["fixtures"]["known_correct"] = {
         "authoritative": authority, "diagnostic": diagnostic,
         "valid": diagnostic_valid(authority, diagnostic, red=False)}
@@ -306,8 +326,8 @@ def qualify_one(task: Path, image: str, artifacts: Path) -> dict:
         fixture = out / "fixture"
         fixture.mkdir(parents=True, exist_ok=True)
         (fixture / "response.txt").write_text(response)
-        authority = fixture_run(task, fixture, image, out / "authoritative", shadow=False)
-        diagnostic = fixture_run(task, fixture, image, out / "diagnostic", shadow=True)
+        authority = run(fixture, out / "authoritative", shadow=False)
+        diagnostic = run(fixture, out / "diagnostic", shadow=True)
         valid = diagnostic_valid(authority, diagnostic, red=True)
         current = {"authoritative": authority, "diagnostic": diagnostic,
                    "valid": valid, "candidate": label}
@@ -322,7 +342,8 @@ def qualify_one(task: Path, image: str, artifacts: Path) -> dict:
     return result
 
 
-def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str]) -> None:
+def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str],
+            image_archives: Path | None = None) -> None:
     protect_output(pool)
     artifacts.mkdir(parents=True, exist_ok=True)
     capability = docker_resource_capability_preflight()
@@ -360,6 +381,9 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
             continue
         path = pool / row["task_dir"] / "pool_task.json"
         record = json.loads(path.read_text())
+        record.pop("license", None)
+        record["license_note"] = "SR-Agents repository: MIT; BigCodeBench dataset: Apache-2.0."
+        row["license_note"] = record["license_note"]
         record["runtime"].update(task_image=image, task_image_digest=image_id)
         resource_report = next((data[side] for data in result["fixtures"].values()
             for side in ("authoritative", "diagnostic") if data[side].get("resource_readback")), {})
@@ -374,14 +398,16 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
         q = record["qualification"]
         q.update(resource_fields)
         q.update(image_digest=image_id, admitted=result["admitted"],
+                 known_correct=None, known_broken=None,
+                 stage=result.get("stage", "qualified"), reason=result.get("reason"),
                  qualification_protocol=VERSION,
                  private_diagnostic_path=str((artifacts / row["task_dir"]).resolve()))
         for name, value in result["fixtures"].items():
             authoritative = value["authoritative"].get("verifier", {})
             q[name] = {"status": authoritative.get("status", "error"),
                        "score": authoritative.get("score"), "meaningful": value["valid"]}
-        row.update(admitted=result["admitted"],
-                   reason=None if result["admitted"] else {
+        row.update(admitted=result["admitted"], stage=result.get("stage", "qualified"),
+                   reason=None if result["admitted"] else result.get("reason") or {
                        name: {"authoritative": value["authoritative"].get("verifier", {}),
                               "diagnostic_valid": value["valid"]}
                        for name, value in result["fixtures"].items() if not value["valid"]})
@@ -391,7 +417,8 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
     for entry in ledger:
         task_dir = entry["source_id"].replace(":", "__")
         if task_dir in results:
-            entry["qualification"] = "admitted" if results[task_dir]["admitted"] else "rejected"
+            entry["qualification"] = ("admitted" if results[task_dir]["admitted"] else
+                                      results[task_dir].get("stage", "rejected"))
             record = json.loads((pool / task_dir / "pool_task.json").read_text())
             entry.update({key: record[key] for key in ("resource_enforcement", "resource_readback", "resource_observation_provenance")})
             entry["adaptations"] = [item for item in entry["adaptations"] if item.get("kind") != "resource_enforcement_waiver"]
@@ -401,6 +428,39 @@ def qualify(pool: Path, image: str, artifacts: Path, jobs: int, only: list[str])
                     "resource_observation_provenance": record["resource_observation_provenance"]})
             entry["red_candidates"] = results[task_dir].get("red_candidates", [])
     (pool / "ADAPTATIONS.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ledger))
+    if image_archives is not None:
+        archive_image(pool, image, image_archives)
+
+
+def archive_image(pool: Path, image: str, archive_dir: Path) -> None:
+    """Save the shared qualified image once; retain its path/hash before rmi."""
+    protect_output(pool)
+    if not image.startswith("trievo-r3-"):
+        raise ValueError("only task-owned trievo-r3-* image tags may be offloaded")
+    image_id = legacy.image_digest(image)
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    archive = archive_dir.resolve() / (image_id.removeprefix("sha256:") + ".tar")
+    partial = archive.with_suffix(".tar.partial")
+    subprocess.run(["docker", "save", "--output", str(partial), image_id], check=True)
+    with partial.open("rb") as stream:
+        digest = hashlib.file_digest(stream, "sha256").hexdigest()
+    partial.replace(archive)
+    saved = {"image_id": image_id, "archive_path": str(archive), "archive_sha256": digest}
+    rows = [json.loads(line) for line in (pool / "INDEX.jsonl").read_text().splitlines()]
+    for row in rows:
+        path = pool / row["task_dir"] / "pool_task.json"
+        record = json.loads(path.read_text())
+        if record["runtime"].get("task_image_digest") == image_id:
+            record["runtime"]["image_archive"] = saved
+            row["image_archive"] = saved
+            write_json(path, record)
+    (pool / "INDEX.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    environment = json.loads((pool / "ENVIRONMENT.json").read_text())
+    environment["image_archive"] = saved
+    write_json(pool / "ENVIRONMENT.json", environment)
+    if legacy.image_digest(image) != image_id:
+        raise ValueError("image tag changed during archival; retaining the loaded image")
+    subprocess.run(["docker", "rmi", image], check=True)
 
 
 def compare(pool: Path, previous: Path, package: Path, out: Path) -> None:
@@ -443,6 +503,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     b = sub.add_parser("build"); b.add_argument("--pool", type=Path, required=True); b.add_argument("--upstream", type=Path, required=True)
     q = sub.add_parser("qualify"); q.add_argument("--pool", type=Path, required=True); q.add_argument("--image", required=True); q.add_argument("--artifacts", type=Path, required=True); q.add_argument("--jobs", type=int, default=4); q.add_argument("--only", nargs="*", default=[])
+    q.add_argument("--image-archives", type=Path, help="Save shared image here after qualification, record SHA, then rmi its task-owned tag")
     d = sub.add_parser("compare"); d.add_argument("--pool", type=Path, required=True); d.add_argument("--previous", type=Path, required=True); d.add_argument("--package", type=Path, required=True); d.add_argument("--out", type=Path, required=True)
     args = vars(parser.parse_args()); command = args.pop("command")
     {"build": build, "qualify": qualify, "compare": compare}[command](**args)

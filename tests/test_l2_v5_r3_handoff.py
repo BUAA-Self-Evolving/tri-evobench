@@ -26,8 +26,10 @@ def test_rejected_records_and_intra_reuse_are_not_free_sources(tmp_path):
     (directory / "task.json").write_text(json.dumps({"stream_id": "intra_sra_old", "turn_id": "turn1", "source_basis": source}))
     result = handoff(pool, pool, package)
     assert result["counts"] == [{"benchmark_id": "sr_agents", "capability_id": "python", "admitted": 2,
-        "rejected_with_capability_record": 1, "unused_in_r2_intra": 1, "unused_source_ids": ["sr_agents:task3"]}]
-    assert result["recommendations"]["sr_agents"]["three_by_five_shortfall"] == 14
+        "rejected_with_capability_record": 1, "deferred": 0, "unused_in_r2_intra": 1, "unused_source_ids": ["sr_agents:task3"]}]
+    assert "sr_agents" not in result["recommendations"]
+    assert result["existing_sra_intra"]["placements"] == 1
+    assert result["existing_sra_intra"]["source_ids"] == ["sr_agents:task1"]
     assert result["placement_diffs"][0]["environment_changed"] is False
 
 
@@ -141,11 +143,12 @@ def test_requested_streams_report_each_approved_triple_without_reservation(tmp_p
     (pool / 'sra/INDEX.jsonl').write_text('\n'.join(map(json.dumps, rows)))
     result = handoff(tmp_path / 'old', pool, tmp_path / 'package')
     assert set(result['requested_streams']) == set(REQUESTED_STREAMS)
-    first = result['requested_streams']['intra_sra_interleaved_02']
-    assert first['availability'][0] == {'capability_id': capability, 'unused_in_r2_intra': 5, 'shortfall': 0}
-    assert first['three_by_five_shortfall'] == 10
+    assert not any('sra' in stream for stream in result['requested_streams'])
+    assert 'sr_agents' not in result['recommendations']
+    first = result['requested_streams']['intra_tau2_telecom_delayed_01']
+    assert first['availability'][0]['unused_in_r2_intra'] == 0
+    assert first['three_by_five_shortfall'] == 15
     assert first['source_reservations'] == []
-    assert result['requested_streams']['intra_sra_blocked_02']['three_by_five_shortfall'] == 15
     assert all('W3-compose-r3.md' in row['provenance'] for row in result['requested_streams'].values())
 
 
@@ -156,3 +159,14 @@ def test_changed_source_basis_cannot_relabel_a_pool_source(tmp_path):
         'source': {'benchmark_id': 'sr_agents', 'source_task_id': 'changed'}}))
     with pytest.raises(ValueError, match='identity conflicts'):
         handoff(tmp_path / 'old', pool, tmp_path / 'package')
+
+
+def test_deferred_download_is_not_a_source_rejection(tmp_path):
+    pool = tmp_path / "new/native"
+    pool.mkdir(parents=True)
+    (pool / "INDEX.jsonl").write_text(json.dumps({"source_id": "skillsbench:download",
+        "benchmark_id": "skillsbench", "capability_id": "skillsbench.data",
+        "admitted": False, "stage": "deferred_download", "reason": "two downloads failed"}))
+    result = handoff(tmp_path / "old", pool.parent, tmp_path / "package")
+    assert result["counts"][0]["deferred"] == 1
+    assert result["counts"][0]["rejected_with_capability_record"] == 0

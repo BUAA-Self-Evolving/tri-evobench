@@ -330,6 +330,8 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         if runtime.get("environment_version", "l2_environment/1.0") != "l2_environment/1.0":
             raise ValueError("unsupported environment_version")
         profile["environment_version"] = "l2_environment/1.0"
+        if runtime.get("image_archive"):
+            profile["image_archive"] = copy.deepcopy(runtime["image_archive"])
         if "resource_enforcement" in runtime:
             if runtime["resource_enforcement"] not in {"enforced", "declared_not_enforced"}:
                 raise ValueError("unsupported resource_enforcement metadata")

@@ -17,6 +17,8 @@ import os
 import re
 import shlex
 import shutil
+import signal
+import sys
 import subprocess
 import tarfile
 import threading
@@ -34,6 +36,15 @@ except ImportError:
     import l2_v5_native_sources as sources
     import l2_v5_native_pool as legacy
 
+_SOURCE_DEADLINE: float | None = None
+_IMAGE_ARCHIVES: Path | None = None
+_SOURCE_IMAGE_LEASE = None
+_DOWNLOAD_FAILURES = 0
+_BUILD_JOBS = 4
+_BUILD_PROXY: str | None = None
+_SUPERVISOR_MTIME: int | None = None
+_ACTIVE_SOURCES: set[int] = set()
+_STOP_REQUESTED = threading.Event()
 _BUILD_SLOTS_FILE: Path | None = None
 _RESOURCE_MODE: str | None = None
 _RESOURCE_PREFLIGHT: dict[str, Any] = {}
@@ -275,6 +286,10 @@ def inspect_image(image: str) -> dict[str, Any]:
 
 def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
     started = time.time()
+    if _SOURCE_DEADLINE is not None:
+        timeout = min(timeout, max(1, int(_SOURCE_DEADLINE - time.monotonic())))
+        if time.monotonic() >= _SOURCE_DEADLINE:
+            raise TimeoutError("45 minute source time box exceeded")
     log.parent.mkdir(parents=True, exist_ok=True)
     if log.exists():
         # Shared-image retries must not replace earlier failure evidence.
@@ -499,18 +514,60 @@ def build_asset_transport(text: str) -> tuple[str, list[dict[str, Any]]]:
         "evidence": "hf-container-mirror-wholefile-proof.json: actual network-host container fetched 84027328 bytes with official Git LFS SHA256 in 6.16 seconds"}]
 
 
+class DeferredDownload(RuntimeError):
+    pass
+
+
+def plain_download_commands(text: str) -> str:
+    text=re.sub(r"--retry(?:=|\s+)\d+", "--retry 0", text)
+    text=re.sub(r"--tries(?:=|\s+)\d+", "--tries=1", text)
+    return re.sub(r"\bwget(?=\s)", "wget --tries=1", text)
+
+
+def build_proxy_args() -> list[str]:
+    """Use Docker's ordinary build proxy args; domestic mirrors bypass it."""
+    no_proxy=os.environ.get("NO_PROXY",os.environ.get("no_proxy","localhost,127.0.0.1"))
+    no_proxy+=",.tsinghua.edu.cn,.tuna.tsinghua.edu.cn,.hf-mirror.com,hf-mirror.com,.aliyun.com,.ustc.edu.cn"
+    values={"HTTP_PROXY":_BUILD_PROXY if _BUILD_PROXY is not None else os.environ.get("HTTP_PROXY",os.environ.get("http_proxy","")),
+            "HTTPS_PROXY":_BUILD_PROXY if _BUILD_PROXY is not None else os.environ.get("HTTPS_PROXY",os.environ.get("https_proxy","")),
+            "ALL_PROXY":_BUILD_PROXY or "",
+            "NO_PROXY":"*" if _BUILD_PROXY=="" else no_proxy,"PIP_INDEX_URL":BUILD_PYPI_INDEX,"UV_INDEX_URL":BUILD_PYPI_INDEX,
+            "PIP_RETRIES":"0","UV_HTTP_RETRIES":"0","HF_ENDPOINT":"https://hf-mirror.com"}
+    return [part for key,value in values.items() for name in (key,key.lower())
+            for part in ("--build-arg",name+"="+value)]
+
+
+def build_command(argv: list[str], log: Path, timeout: int) -> dict[str, Any]:
+    """Two ordinary failed download attempts defer this source; no fallback."""
+    global _DOWNLOAD_FAILURES
+    while True:
+        result=command(argv,log,timeout)
+        if result["returncode"]==124:raise TimeoutError("source build time box exceeded")
+        failed=result["returncode"] and re.search(
+            r"failed to (?:download|fetch)|Failed to fetch|Could not (?:resolve|connect)|"
+            r"Connection (?:timed out|reset|refused)|TLS|SSL|HTTP(?:Error| error)|"
+            r"[45]\d\d (?:Bad Gateway|Service Unavailable|Not Found)|"
+            r"unable to access|Download.*failed|ReadTimeout|timed out",result["tail"],re.I)
+        if not failed:return result
+        _DOWNLOAD_FAILURES+=1
+        if _DOWNLOAD_FAILURES>=2:raise DeferredDownload("two download failures: "+result["tail"][-1000:])
+
+
 def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
     """Adapt recorded build transports, keeping unrelated apt layers cached.
 
     ARGs are scoped to build stages and do not persist in image Config.Env.
     Explicit package versions stay upstream's; consumed LFS bytes are pinned.
     """
-    text, _ = build_asset_transport(text)
+    text=plain_download_commands(text)
     instructions = re.split(r"(?m)(?=^[A-Z]+\s)", text)
-    output = []; configured = False; debian_stage = apt_debian
+    output = []; configured = False; debian_stage = apt_debian; ubuntu_stage = False
     for instruction in instructions:
         if instruction.startswith("FROM "):
             configured = False
+            output.append(instruction)
+            output.append("ARG PIP_RETRIES=0\nARG UV_HTTP_RETRIES=0\nARG HF_ENDPOINT=https://hf-mirror.com\n")
+            ubuntu_stage = bool(re.match(r"FROM\s+(?:--platform=\S+\s+)?ubuntu(?::|\s|$)",instruction))
             debian_stage = apt_debian or bool(re.match(r"FROM\s+(?:--platform=\S+\s+)?(?:python:|debian:)", instruction))
         if debian_stage and instruction.startswith("RUN ") and re.search(
                 r"\bapt(?:-get)?\s+(?:update|install)\b|verifier-root-setup\.sh", instruction):
@@ -518,16 +575,22 @@ def build_transport_dockerfile(text: str, *, apt_debian: bool = False) -> str:
             # official Debian transport host; cached Ubuntu layers stay intact.
             replacements = " ".join(
                 "-e " + shlex.quote("s|"+scheme+"://deb\\.debian\\.org/"+path+
-                    "|https://mirrors.tuna.tsinghua.edu.cn/"+path+"|g")
+                    "|http://mirrors.tuna.tsinghua.edu.cn/"+path+"|g")
                 for path in ("debian-security", "debian") for scheme in ("http", "https"))
             prefix=('for trievo_apt_source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do '
                     'if [ -f "$trievo_apt_source" ]; then sed -i '+replacements+' "$trievo_apt_source" || exit 1; fi; done && ')
+            instruction="RUN "+prefix+instruction[4:]
+        if ubuntu_stage and instruction.startswith("RUN ") and re.search(r"\bapt(?:-get)?\s+(?:update|install)\b|verifier-root-setup\.sh",instruction):
+            replacements=" ".join("-e "+shlex.quote("s|"+scheme+"://"+host+"/ubuntu|http://mirrors.tuna.tsinghua.edu.cn/ubuntu|g")
+                for host in ("archive.ubuntu.com","security.ubuntu.com") for scheme in ("http","https"))
+            prefix=('for trievo_apt_source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do '
+                'if [ -f "$trievo_apt_source" ]; then sed -i '+replacements+' "$trievo_apt_source" || exit 1; fi; done && ')
             instruction="RUN "+prefix+instruction[4:]
         if not configured and instruction.startswith("RUN ") and re.search(
                 r"\bpip3?\s+(?:install|download)\b|\buvx?\s|verifier-(?:root|user)-setup\.sh", instruction):
             output.append(f"ARG PIP_INDEX_URL={BUILD_PYPI_INDEX}\nARG UV_INDEX_URL={BUILD_PYPI_INDEX}\n")
             configured = True
-        output.append(instruction)
+        if not instruction.startswith("FROM "):output.append(instruction)
     return "".join(output)
 
 
@@ -657,24 +720,14 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
             "evidence":"SkillLearnBench core/skill_runner.py:711-717",
             "reason":"upstream task environment omits skills but Dockerfile COPY requires directory"})
     original_text=inputs["dockerfile"].read_text()
-    context_adaptations.extend(build_asset_transport(original_text)[1])
     (work/"Dockerfile.upstream-original").write_text(original_text)
     transported=work/"Dockerfile.upstream-transport"
-    transported_text, context, druid_adaptations = druid_release_transport(
-        build_transport_dockerfile(original_text), context, work)
-    context_adaptations.extend(druid_adaptations)
-    transported_text, context, git_adaptations = druid_git_transport(transported_text, context, work)
-    context_adaptations.extend(git_adaptations)
+    transported_text = build_transport_dockerfile(original_text)
     transported.write_text(transported_text)
-    context_adaptations.append({"kind":"build_package_index_transport",
-        "original_sha256":digest_file(inputs["dockerfile"]),"adapted_sha256":digest_file(transported),
-        "index":BUILD_PYPI_INDEX,"scope":"build-only ARG; explicit versions and installer commands unchanged",
-        "evidence":"canonical PyPI reportlab4.2.5 wheel SHA256 eb2745525a982d9880babb991619e97ac3f661fae30571b7d50387026ca765ee matched mirror; 1942821 bytes in 0.195s"})
-    if "mirrors.tuna.tsinghua.edu.cn/debian" in transported.read_text():
-        context_adaptations.append({"kind":"build_debian_repository_transport",
-            "mirror":"https://mirrors.tuna.tsinghua.edu.cn","scope":"same Debian suites and native signed-repository validation; no package/test changes",
-            "evidence":"network-probe/apt-results.json: exact 151075-byte bookworm InRelease SHA256 matches official repository; TUNA ~0.299s versus official 1.5-3.2s"})
-    upstream_log = command(["docker", "build", "--network", "host", "-t", raw_tag,
+    context_adaptations.append({"kind":"ordinary_build_network",
+        "index":BUILD_PYPI_INDEX,"proxy_mode":_BUILD_PROXY or "direct",
+        "scope":"ordinary domestic mirrors/direct downloads; host-loopback proxy unavailable in rootless build namespace; upstream task/tests/oracle unchanged"})
+    upstream_log = build_command(["docker", "build", "--network", "host", *build_proxy_args(), "-t", raw_tag,
                            "-f", str(transported), str(context)],
                           work/"upstream-build.log", build_timeout)
     dump(work/"upstream-build.json", upstream_log)
@@ -685,7 +738,7 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         adapted=work/"Dockerfile.rootless-tar";adapted.write_text(adapted_text)
         context_adaptations.append({"kind":"rootless_archive_ownership","original_sha256":digest_file(inputs["dockerfile"]),
             "adapted_sha256":digest_file(adapted),"reason":"archive owner UID/GID exceeds rootless mapping; file contents and modes unchanged"})
-        upstream_log=command(["docker","build","--network","host","-t",raw_tag,"-f",str(adapted),str(context)],
+        upstream_log=build_command(["docker","build","--network","host",*build_proxy_args(),"-t",raw_tag,"-f",str(adapted),str(context)],
                              work/"upstream-rootless-build.log",build_timeout)
         dump(work/"upstream-rootless-build.json",upstream_log)
     dump(work/"ADAPTATIONS.json",context_adaptations)
@@ -699,8 +752,8 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         raise RuntimeError("native_declared_volumes_require_explicit_mount_adaptation:"+json.dumps(cfg["Volumes"]))
     runner = inputs["tests"] / "test.sh"
     runtime_runner, setup, adaptations = prepare_runner(runner.read_text())
-    setup, uv_copy, uv_adaptations = uv_release_transport(setup, work)
-    adaptations.extend(uv_adaptations)
+    setup = plain_download_commands(setup)
+    uv_copy = ""
     adaptations=context_adaptations+adaptations
     adaptations.append({"kind":"verifier_runner_transform","original_sha256":digest_file(runner),
                         "adapted_sha256":hashlib.sha256(runtime_runner.encode()).hexdigest(),
@@ -733,14 +786,14 @@ def _build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         apt_debian="mirrors.tuna.tsinghua.edu.cn/debian" in transported.read_text()))
     dump(work/"ADAPTATIONS.json",adaptations)
     aug_tag = "trievo-r3-private-verifier:" + work.name
-    aug_log = command(["docker", "build", "--network", "host", "-t", aug_tag,
+    aug_log = build_command(["docker", "build", "--network", "host", *build_proxy_args(), "-t", aug_tag,
                        "-f", str(work/"Dockerfile.verifier"), str(work)],
                       work/"verifier-build.log", build_timeout)
     dump(work/"verifier-build.json", aug_log)
     if aug_log["returncode"]:
         raise RuntimeError("verifier_dependency_build_failed:" + aug_log["tail"][-1800:])
     aug = inspect_image(aug_tag)
-    container = subprocess.check_output(["docker", "create", "--entrypoint", "/bin/sh", aug_tag], text=True).strip()
+    container = subprocess.check_output(["docker", "create", "--label", "trievo.native.owner_pid="+str(os.getpid()), "--entrypoint", "/bin/sh", aug_tag], text=True).strip()
     try:
         with (work/"private-rootfs.tar").open("wb") as handle:
             subprocess.run(["docker", "export", container], stdout=handle, check=True)
@@ -798,8 +851,8 @@ def build_slot(work_root: Path):
     directory=work_root/".build-slots";directory.mkdir(exist_ok=True)
     handle=None
     while handle is None:
-        limit=int(_BUILD_SLOTS_FILE.read_text().strip()) if _BUILD_SLOTS_FILE else 2
-        if limit not in {1,2}:raise ValueError("native heavy-build quota must be 1 or 2")
+        limit=int(_BUILD_SLOTS_FILE.read_text().strip()) if _BUILD_SLOTS_FILE else _BUILD_JOBS
+        if not 1 <= limit <= 8:raise ValueError("native heavy-build quota must be between 1 and 8")
         for number in range(limit):
             candidate=(directory/str(number)).open("a+")
             try:fcntl.flock(candidate.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -813,6 +866,7 @@ def build_slot(work_root: Path):
 
 def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
                 build_timeout: int) -> dict[str, Any]:
+    global _SOURCE_IMAGE_LEASE
     # Native siblings commonly have byte-identical environments. Share only
     # identical context+runner content; never union distinct dependencies.
     runner_outputs=json.dumps(prepare_runner((inputs["tests"]/"test.sh").read_text()),sort_keys=True)
@@ -827,11 +881,15 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
     with _IMAGE_LOCKS_GUARD:
         lock = _IMAGE_LOCKS.setdefault(key, threading.Lock())
     with lock:
+        import fcntl
         shared.mkdir(parents=True, exist_ok=True)
+        lease=(shared/"qualification.lock").open("a+")
+        fcntl.flock(lease.fileno(),fcntl.LOCK_EX)
+        _SOURCE_IMAGE_LEASE=lease
         result_path = shared / "result.json"
         if result_path.exists():
             result = json.loads(result_path.read_text())
-            inspect_image(result["image"]["Id"])
+            ensure_image_loaded(result["image"]["Id"])
         else:
             with build_slot(work.parent):
                 result = _build_image(row, inputs, shared, build_timeout)
@@ -995,7 +1053,7 @@ def fixture_run(image: str, environment: dict[str, Any], task: Path, submission:
     from trievo_bench.container_resources import resource_enforcement_mode
     mode=resource_enforcement_mode(_RESOURCE_MODE)
     container_name="l2-r3-"+hashlib.sha256(str(run_dir).encode()).hexdigest()[:20]
-    cmd=["docker","create","--name",container_name,"--network","none","--memory","4g","--cpus","2",
+    cmd=["docker","create","--name",container_name,"--label","trievo.native.owner_pid="+str(os.getpid()),"--network","none","--memory","4g","--cpus","2",
          "--pids-limit","256","--cap-drop","ALL","--cap-add","CHOWN","--cap-add","DAC_OVERRIDE",
          "--cap-add","SETUID","--cap-add","SETGID","--security-opt","no-new-privileges",
          "--entrypoint","/bin/sh","-e","UV_OFFLINE=1","-e","PIP_NO_INDEX=1",
@@ -1098,76 +1156,53 @@ def assert_private_helpers_absent(public_tree: Path, helpers: Path | None = None
             raise RuntimeError("private_skill_helper_bytes_in_public_snapshot:"+str(relative))
 
 
+def ensure_image_loaded(image_id: str) -> None:
+    try:
+        inspect_image(image_id)
+        return
+    except subprocess.CalledProcessError:
+        pass
+    if not _IMAGE_ARCHIVES:raise RuntimeError("image missing and no archive directory: "+image_id)
+    archive=_IMAGE_ARCHIVES/(image_id.removeprefix("sha256:")+".tar")
+    if not archive.exists():raise RuntimeError("missing image archive: "+str(archive))
+    subprocess.run(["docker","load","--input",str(archive)],check=True,stdout=subprocess.DEVNULL)
+    inspect_image(image_id)
+
+
 def export_safe_image(image_result: dict[str, Any], pool: Path, work: Path) -> dict[str, Any]:
-    """Save each admitted sanitized image once; Docker load preserves config ID."""
+    """Save exact qualified image to the data disk; retain path and SHA."""
     import fcntl
-    image=image_result["image"];image_id=image["Id"]
-    directory=pool/"_images";directory.mkdir(exist_ok=True)
-    basename=image_id.removeprefix("sha256:")
-    archive=directory/(basename+".docker.tar");metadata=directory/(basename+".json")
-    with (directory/(basename+".lock")).open("a+") as handle:
-        fcntl.flock(handle.fileno(),fcntl.LOCK_EX)
-        if metadata.exists() and archive.exists():
-            record=json.loads(metadata.read_text())
-            if record["image_id"]!=image_id or digest_file(archive)!=record["archive_sha256"]:
-                raise RuntimeError("saved_native_image_archive_integrity_mismatch")
-        else:
-            temporary=directory/(basename+".partial.tar")
-            saved=command(["docker","save","--output",str(temporary),image_id],work/"docker-save.log",3600)
-            if saved["returncode"]:raise RuntimeError("safe_image_export_failed:"+saved["tail"])
+    image_id=image_result["image"]["Id"]
+    directory=_IMAGE_ARCHIVES or pool/"_images"
+    directory.mkdir(parents=True,exist_ok=True)
+    name=image_id.removeprefix("sha256:")
+    archive=directory/(name+".tar")
+    with (directory/(name+".lock")).open("a+") as lock:
+        fcntl.flock(lock.fileno(),fcntl.LOCK_EX)
+        if not archive.exists():
+            temporary=directory/(name+"."+str(os.getpid())+".partial")
+            saved=command(["docker","save","--output",str(temporary),image_id],work/"docker-save.log",2700)
+            if saved["returncode"]:raise RuntimeError("image archive failed: "+saved["tail"])
             temporary.replace(archive)
-            record={"image_id":image_id,"archive_relative_path":str(archive.relative_to(pool)),
-                "archive_sha256":digest_file(archive),"archive_bytes":archive.stat().st_size,
-                "filesystem_archive_sha256":image_result["scrub"]["sha256"],
-                "layers":image.get("RootFS",{}).get("Layers",[]),"config":image["Config"],
-                "os":image.get("Os"),"architecture":image.get("Architecture"),
-                "upstream_image_id":image_result["upstream"]["Id"],
-                "base_images":image_result.get("base_images",[]),
-                "restore_command":["docker","load","--input",str(archive.relative_to(pool))],
-                "verify_command":["docker","image","inspect",image_id,"--format","{{.Id}}"],
-                "note":"docker-save archive restores the exact config ID; rootfs import alone does not"}
-            dump(metadata,record)
-    with (directory/"catalog.lock").open("a+") as handle:
-        fcntl.flock(handle.fileno(),fcntl.LOCK_EX)
-        records=[json.loads(p.read_text()) for p in directory.glob("*.json") if p.name!="CATALOG.json"]
-        dump(directory/"CATALOG.json",{"schema_version":"l2_native_image_catalog/1.0","images":records})
-    return {k:record[k] for k in ("archive_relative_path","archive_sha256","archive_bytes")}
+        record={"image_id":image_id,"archive_path":str(archive.resolve()),
+                "archive_sha256":digest_file(archive),"archive_bytes":archive.stat().st_size}
+        dump(directory/(name+".json"),record)
+    return record
+
+
+def remove_source_images(image_result: dict[str, Any], work: Path) -> None:
+    """Remove only this source's own cache tags, after its image is saved."""
+    reference=json.loads((work/"build_reference.json").read_text())
+    key=reference["cache_key"]
+    for prefix in ("trievo-r3-native:","trievo-r3-private-verifier:","trievo-r3-private:"):
+        tag=prefix+key
+        inspected=subprocess.run(["docker","image","inspect",tag],capture_output=True,text=True)
+        if inspected.returncode==0:subprocess.run(["docker","image","rm",tag],capture_output=True)
 
 
 def asset_inventory(row: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    """Record every copied asset and explicit external provenance separately.
-
-    A source repository license covers its own authored material; it does not
-    override dataset/model terms. External terms without evidence block admission.
-    """
-    repo_license = "MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0"
-    files=[];urls=set()
-    for file in sorted(p for p in inputs["context"].rglob("*") if p.is_file()):
-        relative=file.relative_to(inputs["context"]).as_posix()
-        if any(part in {"skills","skill",".skills"} for part in file.relative_to(inputs["context"]).parts):
-            visibility="private_oracle_only" if row["family"]=="travel-planning" else "excluded_skill"
-        else:
-            visibility="public_environment"
-        files.append({"path":relative,"sha256":digest_file(file),"bytes":file.stat().st_size,
-                      "visibility":visibility,"repository_license":repo_license})
-        if visibility=="public_environment" and (file.suffix in {".md",".txt",".py",".sh",".json",".toml"} or file.name=="Dockerfile"):
-            urls.update(re.findall(r"https?://[^\s\"'<>]+",file.read_text(errors="replace")))
-    urls.update(re.findall(r"https?://[^\s\"'<>]+",inputs["prompt"]))
-    external=[]
-    for url in sorted(urls):
-        if any(host in url for host in ("kaggle.com/","huggingface.co/","hf.co/","zenodo.org/","drive.google.com/","sec.gov/")):
-            sec="sec.gov/" in url
-            external.append({"url":url,"license":"US federal public-domain filing data" if sec else None,
-                             "status":"verified_public_domain" if sec else "terms_review_required",
-                             "evidence":"SEC EDGAR public filings; third-party incorporated materials retain their own terms" if sec else "No asset-specific redistribution grant inspected"})
-    # The approved seven tasks contain SEC 13F public filings; retain provenance
-    # even when the upstream context does not repeat the download URL.
-    if row["family"]=="financial-analysis" or row["source_task_id"]=="sec-financial-report":
-        external.append({"url":"https://www.sec.gov/dera/data/form-13f-data-sets",
-                         "license":"US federal public-domain filing data","status":"verified_public_domain",
-                         "evidence":"approved Phase2 task decision: bundled two SEC 13F zip datasets"})
-    return {"repository_license":repo_license,"assets":files,"external_assets":external,
-            "admission_blocked":any(x["status"]=="terms_review_required" for x in external)}
+    """License information is a plain note, never an admission criterion."""
+    return {"license_note": "MIT" if row["benchmark_id"] == "skilllearnbench" else "Apache-2.0"}
 
 
 def quarantine_prior_materialization(task: Path, work: Path) -> dict[str, Any] | None:
@@ -1256,20 +1291,19 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                              "license":"MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0",
                              "adapter_sha256":_LOADED_ADAPTER_SHA}
     if _RESOURCE_PREFLIGHT:apply_resource_fields(result,_RESOURCE_PREFLIGHT)
+    image_result = None
     if args.resume and (work/"outcome.json").exists():
         previous=json.loads((work/"outcome.json").read_text())
         assessment = qualification_reuse(row, args, previous)
         if assessment["eligible"]:
             return retained_outcome(previous, assessment)
     try:
+        result["source_hash"]=sources.tree_sha256(row["task_dir"])
         historical=quarantine_prior_materialization(task,work)
         if historical:result["prior_task_materialization"]=historical
         inp=task_inputs(row)
         configuration=source_metadata(row);info=source_info(row)
-        license_manifest=asset_inventory(row,inp)
-        dump(work/"ASSET_LICENSES.json",license_manifest)
-        result["asset_license_manifest"]=str(work/"ASSET_LICENSES.json")
-        result["license_review_required"]=license_manifest["admission_blocked"]
+        result["license_note"]=asset_inventory(row,inp)["license_note"]
         result["capability_id"]=("skilllearn."+row["family"] if row["benchmark_id"]=="skilllearnbench"
                                   else "skillsbench."+str(info["labels"].get("category") or "uncategorized"))
         if not (inp["oracle"]/"solve.sh").exists():
@@ -1356,9 +1390,6 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                 private_skills=sources.CHECKOUTS[row["benchmark_id"]]/"skills/human_authored/travel-planning"
             shutil.copytree(private_skills,assets/"private_oracle_skills")
             private_skills=assets/"private_oracle_skills"
-            license_manifest["private_oracle_helpers"]=[{"path":str(p.relative_to(assets)),"sha256":digest_file(p),
-                "license":"MIT","visibility":"private_oracle_only"} for p in private_skills.rglob("*") if p.is_file()]
-            dump(work/"ASSET_LICENSES.json",license_manifest)
             environment["adaptations"].append({"kind":"private_oracle_skills","reason":"approved_qualification_only"})
         oracle=fixture_run(image["Id"],environment,task,task/"workspace_seed",work,"oracle",oracle=True,private_skills=private_skills)
         if oracle["status"]=="pass" and oracle.get("unmapped_public_writes"):
@@ -1386,17 +1417,27 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
         assert_private_helpers_absent(gold,private_skills)
         assert_private_helpers_absent(task/"workspace_seed",private_skills)
         shutil.copytree(gold,task/"fixtures/known_correct",symlinks=True)
-        shutil.copytree(task/"workspace_seed",task/"fixtures/known_broken",symlinks=True)
+        mutation = None
+        # Fresh green is executed before selecting a known-broken public output.
+
         green=fixture_run(image["Id"],environment,task,task/"fixtures/known_correct",work,"known_correct")
+        if green["status"] == "pass":
+            from l2_v5_native_red import prepare_broken
+            mutation = prepare_broken(sid, task/"fixtures/known_correct", task/"fixtures/known_broken",
+                                      getattr(args,"known_broken_root",None))
+        if mutation is None:
+            if (task/"fixtures/known_broken").exists():shutil.rmtree(task/"fixtures/known_broken")
+            shutil.copytree(task/"workspace_seed",task/"fixtures/known_broken",symlinks=True)
         red=fixture_run(image["Id"],environment,task,task/"fixtures/known_broken",work,"known_broken")
+        if mutation:result["known_broken_note"]=mutation
         result.update(known_correct=green,known_broken=red)
         fixture_fields={k:green[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
         apply_resource_fields(result,fixture_fields);apply_resource_fields(meta,fixture_fields)
         environment["adaptations"]=[a for a in environment["adaptations"] if a.get("kind") not in
                                     {"resource_enforcement_waiver","container_resource_enforcement"}]+[resource_adaptation(fixture_fields)]
         meta["adaptations"]=environment["adaptations"];dump(assets/"native_task.json",meta)
-        admitted=green["status"]=="pass" and red["status"]=="fail" and not license_manifest["admission_blocked"] and not result.get("runtime_readiness_blocker")
-        result.update(admitted=admitted,stage="qualified",reason=None if admitted else (result.get("runtime_readiness_blocker") or ("external_asset_license_unverified" if license_manifest["admission_blocked"] else "native_red_green_failed")),task_dir=slug)
+        admitted=green["status"]=="pass" and red["status"]=="fail" and not result.get("runtime_readiness_blocker")
+        result.update(admitted=admitted,stage="qualified",reason=None if admitted else (result.get("runtime_readiness_blocker") or "native_red_green_failed"),task_dir=slug)
         if admitted:
             environment["image"].update(export_safe_image(image_result,args.pool,work))
             meta.update(environment);dump(assets/"native_task.json",meta)
@@ -1413,20 +1454,47 @@ def build_task(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
                 "evaluation_profile":"general","metric_profile":None,
                 "qualification":{"image_digest":image["Id"],"known_correct":green,"known_broken":red,"admitted":admitted,
                                  "notes":["true upstream Docker build; flattened skill/private-safe image; original runner setup moved build-time"]},
-                "licenses":[{"asset":"upstream_task","license":result["license"],"source":str(sources.CHECKOUTS[row["benchmark_id"]]/"LICENSE")}],
+                "license_note":result["license_note"],
                 "adaptations":environment["adaptations"]}
         apply_resource_fields(record,fixture_fields)
         if sid=="skillsbench:edit-pdf":
             for section in (record["runtime"],record["qualification"]):
                 section.update(date_dependent=True,package_qualification_requires_oracle_regeneration=True)
-        shutil.copy2(work/"ASSET_LICENSES.json",assets/"ASSET_LICENSES.json")
         dump(task/"pool_task.json",record)
         result["adaptations"]=environment["adaptations"]
+        return result
+    except DeferredDownload as exc:
+        result.update(admitted=False,stage="deferred_download",reason=str(exc))
+        return result
+    except TimeoutError as exc:
+        result.update(admitted=False,stage="deferred",reason=str(exc))
         return result
     except Exception as exc:
         result.update(admitted=False,stage="error",reason=f"{type(exc).__name__}:{exc}")
         return result
     finally:
+        if image_result and _IMAGE_ARCHIVES:
+            try:
+                saved=export_safe_image(image_result,args.pool,work)
+                result["image_archive"]=saved
+                record_path=task/"pool_task.json"
+                if record_path.exists():
+                    package=json.loads(record_path.read_text())
+                    package["runtime"]["image_archive"]=saved
+                    package["runtime"]["native_environment"]["image"].update(saved)
+                    dump(record_path,package)
+                remove_source_images(image_result,work)
+            except Exception as exc:
+                result.update(admitted=False,stage="deferred",reason="image archive incomplete: "+str(exc))
+                if (task/"pool_task.json").exists():
+                    package=json.loads((task/"pool_task.json").read_text())
+                    package["qualification"]["admitted"]=False
+                    dump(task/"pool_task.json",package)
+        elif (work/"build_reference.json").exists():
+            remove_source_images({},work)
+        global _SOURCE_IMAGE_LEASE
+        if _SOURCE_IMAGE_LEASE is not None:
+            _SOURCE_IMAGE_LEASE.close();_SOURCE_IMAGE_LEASE=None
         if (work/"build_reference.json").exists():
             reference=json.loads((work/"build_reference.json").read_text())
             result["build_reference"]=reference
@@ -1482,7 +1550,7 @@ def write_summaries(pool: Path, rows: list[dict[str,Any]], old_pool: Path | None
     report=["# Native r3 pool build outcomes", "",
         f"Inventory: {len(rows)} sources; admitted: {sum(bool(r['admitted']) for r in rows)}. Stages: {dict(stages)}.",
         "", "Results are native image qualification outcomes only where fixtures ran. Pending and build errors do not establish source task defects.",
-        "", "Per-file asset terms, original and adapted runner hashes, image metadata, build logs, fresh-container fixture commands and readbacks are retained in the referenced work directories.",
+        "", "Plain license notes, original and adapted runner hashes, image metadata, build logs, fresh-container fixture commands and readbacks are retained in the referenced work directories.",
         "", "| Source | Stage | Admitted | Reason |", "|---|---|---|---|"]
     if any(r.get("resource_enforcement")=="declared_not_enforced" for r in rows):
         report[3:3]=["", "**Resource-enforcement waiver:** declared 2 CPU / 4 GiB / 256 PID flags were not enforced on this daemon. Actual CPU, memory and PID observations, waiver reason and per-fixture versus unexecuted-preflight provenance are retained in every source row. These outcomes do not establish behavior under enforced resource caps."]
@@ -1529,8 +1597,72 @@ def docker_exec_preflight(work: Path, image: str = "python:3.12-slim") -> dict[s
         subprocess.run(["docker","rm","-f",name],capture_output=True)
 
 
+def check_supervisor_notes(path: Path | None) -> None:
+    global _SUPERVISOR_MTIME
+    if path is None or not path.exists():return
+    modified=path.stat().st_mtime_ns
+    if modified!=_SUPERVISOR_MTIME:
+        text=path.read_text()
+        print("SUPERVISOR NOTES "+str(path)+"\n"+text,flush=True)
+        _SUPERVISOR_MTIME=modified
+
+
+def run_source(row: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
+    """A separate owned process enforces the total build/qualification budget."""
+    if _STOP_REQUESTED.is_set():raise RuntimeError("native runner stopped")
+    check_supervisor_notes(args.supervisor_notes)
+    sid=row["benchmark_id"]+":"+row["source_task_id"]
+    argv=[sys.executable,str(Path(__file__).resolve()),*sys.argv[1:],"--worker-source",sid]
+    env=dict(os.environ)
+    env["TRIEVO_NATIVE_PARENT_PREFLIGHT"]=json.dumps(_RESOURCE_PREFLIGHT)
+    started=time.monotonic()
+    process=subprocess.Popen(argv,env=env,start_new_session=True)
+    _ACTIVE_SOURCES.add(process.pid)
+    if _STOP_REQUESTED.is_set():os.killpg(process.pid,signal.SIGTERM)
+    try:
+        process.wait(timeout=args.source_timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid,signal.SIGTERM)
+        try:process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid,signal.SIGKILL);process.wait()
+        containers=subprocess.run(["docker","ps","-aq","--filter",
+            "label=trievo.native.owner_pid="+str(process.pid)],capture_output=True,text=True).stdout.split()
+        if containers:subprocess.run(["docker","rm","-f",*containers],capture_output=True)
+        result={"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
+                "former_admission":row["former_admission"],"adapter_sha256":_LOADED_ADAPTER_SHA,
+                "admitted":False,"stage":"deferred","reason":"45 minute total source time box exceeded",
+                "license_note":"MIT" if row["benchmark_id"]=="skilllearnbench" else "Apache-2.0"}
+        package_path=args.pool/sid.replace(":","__")/"pool_task.json"
+        if package_path.exists():
+            package=json.loads(package_path.read_text());package["qualification"]["admitted"]=False
+            dump(package_path,package)
+        dump(args.work/sid.replace(":","__")/"outcome.json",result)
+        _ACTIVE_SOURCES.discard(process.pid)
+        return result
+    _ACTIVE_SOURCES.discard(process.pid)
+    outcome=args.work/sid.replace(":","__")/"outcome.json"
+    if not outcome.exists():
+        return {"source_id":sid,"benchmark_id":row["benchmark_id"],"family":row["family"],
+                "admitted":False,"stage":"error","reason":"source process exited "+str(process.returncode),
+                "former_admission":row["former_admission"],"adapter_sha256":_LOADED_ADAPTER_SHA}
+    result=json.loads(outcome.read_text())
+    result["source_seconds"]=round(time.monotonic()-started,2)
+    return result
+
+
+def stop_owned_sources(signum: int, frame: Any) -> None:
+    _STOP_REQUESTED.set()
+    for pid in list(_ACTIVE_SOURCES):
+        try:os.killpg(pid,signal.SIGTERM)
+        except ProcessLookupError:pass
+        containers=subprocess.run(["docker","ps","-aq","--filter","label=trievo.native.owner_pid="+str(pid)],capture_output=True,text=True).stdout.split()
+        if containers:subprocess.run(["docker","rm","-f",*containers],capture_output=True)
+    raise SystemExit(128+signum)
+
+
 def main() -> int:
-    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE,_DRUID_GIT_ARCHIVE
+    global _BUILD_SLOTS_FILE,_RESOURCE_MODE,_RESOURCE_PREFLIGHT,_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE,_DRUID_GIT_ARCHIVE,_IMAGE_ARCHIVES,_SOURCE_DEADLINE,_DOWNLOAD_FAILURES,_BUILD_JOBS,_BUILD_PROXY
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker-host",help="Docker endpoint; must pass real exec/copy readback preflight")
     parser.add_argument("--resource-enforcement",choices=("strict","declared_only"),default=None,
@@ -1541,7 +1673,14 @@ def main() -> int:
     parser.add_argument("--old-pool",type=Path)
     parser.add_argument("--r2-inventory",type=Path)
     parser.add_argument("--only",nargs="*")
-    parser.add_argument("--jobs",type=int,default=2)
+    parser.add_argument("--jobs",type=int,default=4)
+    parser.add_argument("--source-timeout",type=int,default=2700)
+    parser.add_argument("--block",choices=("A","B","all"),default="all")
+    parser.add_argument("--worker-source",help=argparse.SUPPRESS)
+    parser.add_argument("--image-archives",type=Path)
+    parser.add_argument("--build-proxy",default="direct",help="ordinary build proxy URL, or direct for domestic mirrors/direct foreign access")
+    parser.add_argument("--known-broken-root",type=Path)
+    parser.add_argument("--supervisor-notes",type=Path)
     parser.add_argument("--build-slots-file",type=Path,help="Live heavy-build quota file containing 1 or 2")
     parser.add_argument("--build-timeout",type=int,default=3600)
     parser.add_argument("--uv-release-archive",type=Path,
@@ -1555,6 +1694,14 @@ def main() -> int:
     parser.add_argument("--resume",action="store_true")
     parser.add_argument("--inventory-only",action="store_true")
     args=parser.parse_args()
+    args.source_timeout=min(args.source_timeout,2700)
+    if args.source_timeout<=0 or not 1<=args.jobs<=8:raise ValueError("positive source timeout and1–8jobs required")
+    if not args.worker_source:
+        signal.signal(signal.SIGTERM,stop_owned_sources)
+        signal.signal(signal.SIGINT,stop_owned_sources)
+    _BUILD_PROXY="" if args.build_proxy=="direct" else args.build_proxy
+    _BUILD_JOBS=args.jobs
+    _IMAGE_ARCHIVES=args.image_archives
     _BUILD_SLOTS_FILE=args.build_slots_file
     _UV_RELEASE_ARCHIVE=args.uv_release_archive
     _DRUID_RELEASE_ARCHIVE=args.druid_release_archive
@@ -1563,25 +1710,31 @@ def main() -> int:
     _RESOURCE_MODE=resource_enforcement_mode(args.resource_enforcement)
     if args.docker_host:os.environ["DOCKER_HOST"]=args.docker_host
     args.work.mkdir(parents=True,exist_ok=True);args.pool.mkdir(parents=True,exist_ok=True)
-    if _UV_RELEASE_ARCHIVE:
-        uv_release_transport("curl -LsSf https://astral.sh/uv/0.9.7/install.sh | sh",
-                             args.work / "uv-transport-input-validation")
-    if _DRUID_RELEASE_ARCHIVE:
-        druid_release_transport("RUN wget " + DRUID_RELEASE_URL + "\n", args.upstream,
-                                args.work / "druid-transport-input-validation", stage_assets=False)
-    if _DRUID_GIT_ARCHIVE:
-        druid_git_transport("RUN git clone " + DRUID_GIT_URL + " && cd druid && git checkout druid-0.20.0\n",
-                            args.upstream, args.work / "druid-git-input-validation", stage_assets=False)
+    if any((_UV_RELEASE_ARCHIVE,_DRUID_RELEASE_ARCHIVE,_DRUID_GIT_ARCHIVE,args.compatibility_manifest)):
+        raise ValueError("Phase2c uses ordinary proxy/mirrors and fresh qualification; custom archives/manifests disabled")
     if not args.inventory_only:
-        resource_capability_preflight(args.work,_RESOURCE_MODE)
-        preflight=docker_exec_preflight(args.work)
-        _RESOURCE_PREFLIGHT={k:preflight[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
+        if args.worker_source:
+            _RESOURCE_PREFLIGHT=json.loads(os.environ.get("TRIEVO_NATIVE_PARENT_PREFLIGHT","{}"))
+        else:
+            resource_capability_preflight(args.work,_RESOURCE_MODE)
+            preflight=docker_exec_preflight(args.work)
+            _RESOURCE_PREFLIGHT={k:preflight[k] for k in ("resource_enforcement","resource_readback","resource_observation_provenance")}
     all_tasks=discover(args.upstream)
     former={}
     if args.old_pool and (args.old_pool/"INDEX.jsonl").exists():
         former={r["source_id"]:bool(r.get("admitted")) for r in map(json.loads,(args.old_pool/"INDEX.jsonl").read_text().splitlines())}
     for row in all_tasks:row["former_admission"]=former.get(row["benchmark_id"]+":"+row["source_task_id"],False)
+    if args.worker_source:
+        selected=next(r for r in all_tasks if r["benchmark_id"]+":"+r["source_task_id"]==args.worker_source)
+        _SOURCE_DEADLINE=time.monotonic()+args.source_timeout
+        _DOWNLOAD_FAILURES=0
+        build_task(selected,args)
+        return 0
     tasks=[r for r in all_tasks if not args.only or r["benchmark_id"]+":"+r["source_task_id"] in args.only]
+    if args.block=="A":tasks=[r for r in tasks if r["former_admission"]]
+    if args.block=="B":tasks=[r for r in tasks if not r["former_admission"]]
+    if args.old_pool and not args.only and args.block in {"A","all"}:
+        if sum(r["former_admission"] for r in all_tasks)!=80:raise ValueError("Block A must contain exactly80 r2 admissions")
     previous={}
     if (args.pool/"INDEX.jsonl").exists():
         previous={r["source_id"]:r for r in map(json.loads,(args.pool/"INDEX.jsonl").read_text().splitlines())}
@@ -1605,12 +1758,22 @@ def main() -> int:
             apply_resource_fields(outcomes[sid],_RESOURCE_PREFLIGHT)
     write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
     if not args.inventory_only:
-        with concurrent.futures.ThreadPoolExecutor(args.jobs) as executor:
-            futures=[executor.submit(build_task,row,args) for row in tasks]
-            for future in concurrent.futures.as_completed(futures):
-                row=future.result();outcomes[row["source_id"]]=row
-                write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
-                print(row["source_id"],row["admitted"],row.get("reason"),flush=True)
+        blocks=[("A",[r for r in tasks if r["former_admission"]]),
+                ("B",[r for r in tasks if not r["former_admission"]])]
+        for block,selected in blocks:
+            if not selected:continue
+            print("BLOCK "+block+" START "+str(len(selected)),flush=True)
+            with concurrent.futures.ThreadPoolExecutor(args.jobs) as executor:
+                futures=[executor.submit(run_source,row,args) for row in selected]
+                for future in concurrent.futures.as_completed(futures):
+                    row=future.result();outcomes[row["source_id"]]=row
+                    write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
+                    print(row["source_id"],row["admitted"],row.get("stage"),row.get("reason"),flush=True)
+            results=[outcomes[r["benchmark_id"]+":"+r["source_task_id"]] for r in selected]
+            print("BLOCK "+block+" COMPLETE "+json.dumps({"total":len(results),
+                "admitted":sum(r["admitted"] for r in results),
+                "deferred":sum(r["stage"].startswith("deferred") for r in results),
+                "rejected":sum(not r["admitted"] and not r["stage"].startswith("deferred") for r in results)}),flush=True)
     write_summaries(args.pool,list(outcomes.values()),args.old_pool,args.r2_inventory)
     return 0
 

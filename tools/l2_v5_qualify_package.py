@@ -244,6 +244,9 @@ def parse_resource_header(output: str, nonce: str, mode: str) -> dict:
 
 
 def qualify_turn(turn_dir: Path, image: str, scratch: Path, profile: dict | None = None) -> dict:
+    if (profile or {}).get("image_archive"):
+        from trievo_bench.image_archive import ensure_image_available
+        ensure_image_available(image, profile["image_archive"])
     environment = (profile or {}).get("native_environment")
     isolated = bool((profile or {}).get("environment_version") or environment)
     if isolated and (profile or {}).get("task_sandbox_image_digest") != image:
