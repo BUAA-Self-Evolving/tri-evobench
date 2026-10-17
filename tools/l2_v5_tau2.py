@@ -33,9 +33,9 @@ Commands:
   qualify      run both fixtures through source_verifier.py in the image with
                network disabled and record admission
 
-Third-party checkouts are read-only. Docker jobs bind-mount freshly created
-staging directories through the default DOCKER_HOST endpoint and read results
-from files (that endpoint drops attached stdout).
+Third-party checkouts are read-only. Python 3.12 jobs use fresh daemon-owned
+containers and nonce-checked Docker copy transport, with actual cgroup readback.
+Legacy jobs retain their original staging-directory bind transport.
 """
 
 from __future__ import annotations
@@ -49,8 +49,16 @@ import shutil
 import subprocess
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
+
+from trievo_bench.container_resources import (
+    ContainerResourceError,
+    docker_resource_capability_preflight,
+    require_container_resources,
+    resource_enforcement_mode,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 # tau2-bench at the revision AReaL pins (examples/tau2/contracts.py
@@ -64,7 +72,9 @@ POOL_ROOT = Path(os.environ.get(
 STAGING_ROOT = Path("/data_storage/yl_test/lgx/data-1/tmp/l2v5")
 IMAGE_TAG = "trievo-l2-v5-tau2:0.2"
 DOCKERFILE = REPO_ROOT / "sandbox" / "l2-v5" / "Dockerfile.tau2"
+PY312_DOCKERFILE = DOCKERFILE.with_name("Dockerfile.tau2-py312")
 SESSION_PACKAGE = REPO_ROOT / "trievo_bench" / "tau2_live" / "session"
+RESOURCE_METADATA_KEYS = ("resource_enforcement", "resource_readback", "requested_resources", "observed_resources", "resource_observation_provenance")
 SCORING_SOURCE = SESSION_PACKAGE / "scoring.py"
 VERIFIER_SOURCE = REPO_ROOT / "tools" / "l2_v5_tau2_live_verifier.py"
 V4_ROOT = REPO_ROOT / "benchmarks" / "current" / "L2_Demo_V4"
@@ -307,9 +317,28 @@ def build_prompt(domain: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+def resource_metadata(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Carry actual resource evidence unchanged into portable task records."""
+    checked = require_container_resources(snapshot)
+    return {"resource_enforcement": checked["resource_enforcement"],
+            "resource_readback": checked,
+            "requested_resources": checked["validation"]["expected"],
+            "observed_resources": checked["validation"]["observed"],
+            "resource_observation_provenance": "actual fresh container guard; nonce-correlated Docker cp transport"}
+
+
+def transport_resource_metadata(log: Path) -> dict[str, Any]:
+    observed = json.loads(log.with_suffix(log.suffix + ".transport.json").read_text())
+    return resource_metadata(observed["resource_readback"])
+
+
 def docker_run(image: str, mounts: dict[Path, str], command: list[str], log: Path, timeout: int,
-               *, network: bool = False, env_names: tuple[str, ...] = ()) -> int:
-    args = ["docker", "run", "--rm", "--user", "0:0"]
+               *, network: bool = False, env_names: tuple[str, ...] = (), staged: bool = False) -> int:
+    if staged:
+        return docker_run_staged(image, mounts, command, log, timeout, network=network, env_names=env_names)
+    container_name = "trievo-tau2-qual-" + os.urandom(6).hex()
+    args = ["docker", "run", "--rm", "--name", container_name, "--user", "0:0",
+            "--memory", "4g", "--cpus", "2", "--pids-limit", "256"]
     if not network:
         args += ["--network", "none"]
     for name in env_names:
@@ -318,8 +347,142 @@ def docker_run(image: str, mounts: dict[Path, str], command: list[str], log: Pat
         args += ["-v", f"{host}:{container}"]
     args += [image, *command]
     with log.open("w", encoding="utf-8") as handle:
-        run = subprocess.run(args, stdout=handle, stderr=subprocess.STDOUT, timeout=timeout)
+        try:
+            run = subprocess.run(args, stdout=handle, stderr=subprocess.STDOUT, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
+            return 124
     return run.returncode
+
+
+
+DAEMON_RUNNER = r'''
+import json, os, socket, subprocess, sys
+from pathlib import Path
+from resource_guard import read_container_resources, require_container_resources, ContainerResourceError
+spec = json.loads(Path("/tau2-transport/spec.json").read_text())
+resource_readback = read_container_resources()
+try:
+    resource_readback = require_container_resources(resource_readback, enforcement_mode=spec["resource_enforcement_mode"])
+except ContainerResourceError:
+    code = 125
+else:
+    try:
+        result = subprocess.run(spec["command"], timeout=spec["timeout"])
+        code = result.returncode
+    except subprocess.TimeoutExpired:
+        code = 124
+for mount in spec["mounts"]:
+    Path(mount, ".tau2-transport-nonce").write_text(spec["nonce"])
+Path("/tau2-transport/result.json").write_text(json.dumps({
+    "nonce": spec["nonce"], "returncode": code, "python": sys.version,
+    "network_interfaces": socket.if_nameindex(), "resource_readback": resource_readback}))
+sys.exit(code)
+'''
+
+
+def docker_run_staged(image: str, mounts: dict[Path, str], command: list[str], log: Path,
+                      timeout: int, *, network: bool = False, env_names: tuple[str, ...] = ()) -> int:
+    """Fresh daemon-owned filesystem, nonce-checked cp output; no binds or exec.
+
+    Only environment variable names enter argv. Credentials remain in Docker's
+    environment transport and must never be included in inspection output.
+    """
+    require_resource_capability(log.with_suffix(log.suffix + ".resources.json"))
+    name = "trievo-tau2-staged-" + os.urandom(6).hex()
+    nonce = os.urandom(24).hex()
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="tau2-transport-", dir=log.parent) as temporary:
+        local = Path(temporary)
+        payload = local / "payload"
+        payload.mkdir()
+        write_json(payload / "spec.json", {"nonce": nonce, "command": command, "timeout": timeout,
+                                            "mounts": list(mounts.values()),
+                                            "resource_enforcement_mode": resource_enforcement_mode()})
+        (payload / "runner.py").write_text(DAEMON_RUNNER)
+        shutil.copy2(REPO_ROOT / "trievo_bench/container_resources.py", payload / "resource_guard.py")
+        args = ["docker", "create", "--name", name, "--user", "0:0", "--memory", "4g",
+                "--cpus", "2", "--pids-limit", "256", "--cap-drop", "ALL",
+                "--security-opt", "no-new-privileges", "--entrypoint", "python"]
+        if not network:
+            args += ["--network", "none"]
+        for variable in env_names:
+            args += ["-e", variable]
+        args += [image, "/tau2-transport/runner.py"]
+        with log.open("w", encoding="utf-8") as handle:
+            def run(argv, *, limit=300):
+                return subprocess.run(argv, stdout=handle, stderr=subprocess.STDOUT,
+                                      timeout=limit, check=False)
+            try:
+                if run(args).returncode:
+                    return 125
+                if run(["docker", "cp", str(payload), f"{name}:/tau2-transport"]).returncode:
+                    return 125
+                for host, destination in mounts.items():
+                    if not host.is_dir() or not destination.startswith("/"):
+                        raise ValueError("staged Docker mounts require local directories and absolute destinations")
+                    if run(["docker", "cp", str(host), f"{name}:{destination}"]).returncode:
+                        return 125
+                run(["docker", "start", "-a", name], limit=timeout + 15)
+                run(["docker", "logs", name])
+                record_file = local / "observed.json"
+                if run(["docker", "cp", f"{name}:/tau2-transport/result.json", str(record_file)]).returncode:
+                    return 125
+                try:
+                    observed = json.loads(record_file.read_text())
+                except (OSError, ValueError):
+                    return 125
+                if observed.get("nonce") != nonce or not isinstance(observed.get("returncode"), int):
+                    return 125
+                inspection = subprocess.run(["docker", "inspect", name, "--format",
+                    "{{.Image}} {{.HostConfig.NetworkMode}} {{.State.ExitCode}}"],
+                    capture_output=True, text=True, timeout=30, check=False)
+                fields = inspection.stdout.strip().split()
+                expected_network = "default" if network else "none"
+                if (inspection.returncode or len(fields) != 3 or fields[0] != image_digest(image)
+                        or fields[1] not in ({"default", "bridge"} if network else {expected_network})
+                        or fields[2] != str(observed["returncode"])):
+                    return 125
+                write_json(log.with_suffix(log.suffix + ".transport.json"), {
+                    **observed, "resource_enforcement": observed.get("resource_readback", {}).get("resource_enforcement", "not_enforced"),
+                    "image_digest": fields[0], "network_mode": fields[1],
+                    "transport": "docker_create_cp_start_cp", "fresh_container": True})
+                try:
+                    require_container_resources(observed.get("resource_readback", {}))
+                except ContainerResourceError:
+                    return 125
+                # Copy into empty local directories and verify a per-run marker;
+                # neither a stale host result nor a no-op Docker cp can pass.
+                for index, (host, destination) in enumerate(mounts.items()):
+                    downloaded = local / f"mount-{index}"
+                    if run(["docker", "cp", f"{name}:{destination}", str(downloaded)]).returncode:
+                        return 125
+                    marker = downloaded / ".tau2-transport-nonce"
+                    if not marker.is_file() or marker.read_text() != nonce:
+                        return 125
+                    marker.unlink()
+                    shutil.copytree(downloaded, host, dirs_exist_ok=True)
+                return observed["returncode"]
+            except subprocess.TimeoutExpired:
+                return 124
+            finally:
+                try:
+                    cleanup = subprocess.run(["docker", "rm", "-f", name],
+                                             capture_output=True, timeout=60, check=False)
+                except subprocess.TimeoutExpired:
+                    handle.write(f"\ncleanup warning: docker rm timed out after 60s: {name}\n")
+                else:
+                    if cleanup.returncode:
+                        handle.write(f"\ncleanup warning: docker rm rc={cleanup.returncode}: {name}\n")
+
+def require_resource_capability(evidence: Path) -> dict[str, Any]:
+    """Reject incapable daemons before build/API work; retain the readback."""
+    result = docker_resource_capability_preflight()
+    evidence.parent.mkdir(parents=True, exist_ok=True)
+    write_json(evidence, result)
+    if not result.get("allowed", result["passed"]):
+        raise ContainerResourceError("tau2 resource preflight blocked: " + "; ".join(result["errors"]))
+    return result
 
 
 def image_digest(tag: str) -> str:
@@ -342,17 +505,45 @@ DATA_KEEP = {
 }
 
 
-def cmd_build_image(args: argparse.Namespace) -> None:
-    context = fresh_staging("tau2_image_ctx_")
+def stage_session_package(context: Path, *, python312: bool) -> None:
+    session_ignored = ["__pycache__", "*.pyc"]
+    if python312:
+        # Fixed-variant replacement tasks embed private gold actions. Official
+        # mode never loads this file, so omit it before any image layer exists.
+        session_ignored.append("benchmark_fixes.json")
+    shutil.copytree(SESSION_PACKAGE, context / "tau2_session",
+                    ignore=shutil.ignore_patterns(*session_ignored))
+
+
+def stage_upstream_source(context: Path) -> None:
+    """Public runtime code only, before any Docker COPY/layer can see it.
+
+    The pinned source tree contains only .py/.md runtime assets outside the
+    telecom task generator. Definition JSON lives in upstream data and is not
+    copied; domain data is separately allowlisted by DATA_KEEP.
+    """
     src = context / "tau2-src"
     src.mkdir()
     for name in ("pyproject.toml", "README.md", "LICENSE"):
         shutil.copy2(CHECKOUT / name, src / name)
-    shutil.copytree(CHECKOUT / "src" / "tau2", src / "src" / "tau2",
-                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    # The telecom task generator composes tasks with their gold solutions; the
-    # environment does not import it.
-    shutil.rmtree(src / "src" / "tau2" / "domains" / "telecom" / "tasks")
+
+    def public_runtime_only(directory: str, names: list[str]) -> list[str]:
+        return [name for name in names if name in {"__pycache__", "tasks", "tests", "fixtures"}
+                or (Path(directory, name).is_file() and Path(name).suffix not in {".py", ".md"})]
+
+    shutil.copytree(CHECKOUT / "src/tau2", src / "src/tau2", ignore=public_runtime_only)
+
+
+def cmd_build_image(args: argparse.Namespace) -> None:
+    dockerfile = PY312_DOCKERFILE if args.python312 else DOCKERFILE
+    if args.python312 and any(part.name == "l2v5_pool" for part in (POOL_ROOT.resolve(), *POOL_ROOT.resolve().parents)):
+        raise SystemExit("Python 3.12 builds require a new --pool-root; the released pool is immutable")
+    if args.python312:
+        require_resource_capability(STAGING_ROOT / "tau2-resource-capability.json")
+    args.base = args.base or ("python:3.12-slim-bookworm" if args.python312 else "trievo-l2-v5:0.4")
+    args.tag = args.tag or ("trievo-l2-v5-tau2:0.3-py312" if args.python312 else IMAGE_TAG)
+    context = fresh_staging("tau2_image_ctx_")
+    stage_upstream_source(context)
     for domain, names in DATA_KEEP.items():
         target = context / "tau2-data" / "tau2" / "domains" / domain
         target.mkdir(parents=True)
@@ -364,8 +555,8 @@ def cmd_build_image(args: argparse.Namespace) -> None:
                 shutil.copy2(source, target / name)
     # The user simulator reads its global guidelines from the data directory.
     shutil.copytree(CHECKOUT / "data" / "tau2" / "user_simulator", context / "tau2-data" / "tau2" / "user_simulator")
-    shutil.copytree(SESSION_PACKAGE, context / "tau2_session", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    shutil.copy2(DOCKERFILE, context / "Dockerfile")
+    stage_session_package(context, python312=args.python312)
+    shutil.copy2(dockerfile, context / "Dockerfile")
     log = context.parent / f"{context.name}.build.log"
     cmd = ["docker", "build", "-t", args.tag, "--build-arg", f"BASE_IMAGE={args.base}",
            "--build-arg", f"PIP_INDEX_URL={args.pip_index}", "--build-arg", f"TAU2_REVISION={REVISION}",
@@ -376,15 +567,28 @@ def cmd_build_image(args: argparse.Namespace) -> None:
     if rc != 0:
         raise SystemExit(f"docker build failed rc={rc}; see {log}")
     digest = image_digest(args.tag)
-    session_files = sorted(p for p in SESSION_PACKAGE.rglob("*") if p.is_file() and "__pycache__" not in p.parts)
+    resource_fields = {}
+    if args.python312:
+        probe_log = context.parent / f"{context.name}.resource-probe.log"
+        probe_code = docker_run_staged(digest, {}, ["python", "-c", "pass"], probe_log, 60)
+        if probe_code:
+            raise SystemExit(f"resource probe failed rc={probe_code}; see {probe_log}")
+        resource_fields = transport_resource_metadata(probe_log)
+    session_context = context / "tau2_session"
+    session_files = sorted(p for p in session_context.rglob("*") if p.is_file())
     session_digest = hashlib.sha256(b"".join(
-        p.relative_to(SESSION_PACKAGE).as_posix().encode() + b"\0" + p.read_bytes() for p in session_files)).hexdigest()
+        p.relative_to(session_context).as_posix().encode() + b"\0" + p.read_bytes() for p in session_files)).hexdigest()
     POOL_ROOT.mkdir(parents=True, exist_ok=True)
-    write_json(POOL_ROOT / "IMAGE.json", {"task_image": args.tag, "task_image_digest": digest,
+    write_json(POOL_ROOT / "IMAGE.json", {**resource_fields, "task_image": args.tag, "task_image_digest": digest,
                                           "base_image": args.base, "base_image_digest": image_digest(args.base),
                                           "tau2_revision": REVISION, "session_package_sha256": session_digest,
                                           "built_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                                          "dockerfile": str(DOCKERFILE.relative_to(REPO_ROOT))})
+                                          "dockerfile": str(dockerfile.relative_to(REPO_ROOT)),
+                                          "dockerfile_sha256": sha256_bytes(dockerfile.read_bytes()),
+                                          "python_target": "3.12" if args.python312 else "3.11",
+                                          "adaptations": ["Python 3.12 isolated venv; upstream requires-python enforced",
+                                                           "Omit inactive fixed-variant gold task payload benchmark_fixes.json"]
+                                          if args.python312 else []})
     shutil.rmtree(context)
     print("built", args.tag, digest)
 
@@ -423,7 +627,8 @@ def cmd_build(args: argparse.Namespace) -> None:
         build_rows.append(write_task(target, row, image, scoring_text, verifier_text))
     write_json(POOL_ROOT / "BUILD.json", {"built_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "tasks": build_rows,
                                           "tau2_revision": REVISION,
-                                          "legacy_sources": {k: sorted(v) for k, v in legacy.items()}})
+                                          "legacy_sources": {k: sorted(v) for k, v in legacy.items()},
+                                          **({k: image[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})})
     print("wrote", len(build_rows), "pool tasks under", POOL_ROOT)
 
 
@@ -457,6 +662,7 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
         "source": {"benchmark_id": BENCHMARK_ID, "benchmark_revision": REVISION,
                    "source_task_id": row["source_task_id"], "source_path": row["source_path"],
                    "source_hash": sha256_bytes(canonical(task))},
+        "license_note": "tau2-bench: MIT, as recorded in the pinned upstream manifest; informational only.",
         "prompt": build_prompt(domain),
         "benchmark_native_labels": {
             "domain": domain, "task_id": task["id"], "description": task.get("description"),
@@ -478,6 +684,17 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
                           "notes": notes, "reward_basis_graded": basis, "reward_basis_excluded": []},
         "l2_flags": {"in_v4": row["in_v4"], "in_v5": row["in_v5"]},
     }
+    if image.get("python_target") == "3.12":
+        resource_fields = {k: image[k] for k in RESOURCE_METADATA_KEYS}
+        pool_task.update(resource_fields)
+        pool_task["runtime"].update(resource_fields)
+        if resource_fields["resource_enforcement"] == "declared_not_enforced":
+            pool_task["qualification"]["notes"].append(
+                "User-approved declared_only waiver: CPU/memory/PID limits are requested but not enforced; actual readback retained")
+        pool_task["runtime"]["environment_version"] = "l2_environment/1.0"
+        pool_task["qualification"]["notes"].append(
+            "r3 adaptation: Python 3.12 isolated venv, enforced upstream requires-python; "
+            "official b7ea907, AReaL carrier and deepseek-flash model unchanged")
     (target / "workspace_seed").mkdir()
     (target / "evaluation_assets").mkdir()
     write_json(target / "evaluation_assets" / "tau2_task.json", task)
@@ -488,7 +705,8 @@ def write_task(target: Path, row: dict[str, Any], image: dict[str, Any], scoring
     (target / "evaluation_assets" / "source_verifier.py").write_text(verifier_text, encoding="utf-8")
     write_json(target / "pool_task.json", pool_task)
     return {"source_id": row["source_id"], "task_dir": target.name, "capability_id": capability_id,
-            "in_v4": row["in_v4"], "in_v5": row["in_v5"]}
+            "in_v4": row["in_v4"], "in_v5": row["in_v5"],
+            **({k: image[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})}
 
 
 # ---------------------------------------------------------------------------
@@ -531,10 +749,12 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
     write_json(stage / "jobs.json", jobs)
     log = stage.parent / f"{stage.name}.log"
     print(f"building fixtures for {len(jobs)} tasks; log {log}", flush=True)
-    rc = docker_run(image["task_image"], {stage: "/work"},
+    fixture_image = image["task_image_digest"] if image.get("python_target") == "3.12" else image["task_image"]
+    rc = docker_run(fixture_image, {stage: "/work"},
                     ["/opt/tau2/venv/bin/python", "-m", "tau2_session.fixtures", "--jobs", "/work/jobs.json",
                      "--revision", REVISION, "--workers", str(args.workers)],
-                    log, timeout=14400, network=True, env_names=(CREDENTIAL_ENV,))
+                    log, timeout=14400, network=True, env_names=(CREDENTIAL_ENV,),
+                    staged=image.get("python_target") == "3.12")
     print("fixtures rc", rc, flush=True)
     for index, target in enumerate(dirs):
         out = stage / f"{index:05d}" / "out"
@@ -548,6 +768,11 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
                 (fixtures / name).mkdir(parents=True)
                 shutil.copy2(out / f"{name}.json", fixtures / name / "response.txt")
         pool_task = json.loads((target / "pool_task.json").read_text())
+        if image.get("python_target") == "3.12":
+            resource_fields = transport_resource_metadata(log)
+            summary.update(resource_fields)
+            pool_task.update(resource_fields)
+            pool_task["runtime"].update(resource_fields)
         pool_task["qualification"]["fixture_build"] = summary
         if summary.get("ok"):
             pool_task["qualification"]["fixture_kinds"] = {
@@ -562,53 +787,54 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
 # ---------------------------------------------------------------------------
 
 QUALIFY_RUNNER = r'''
-import importlib.util, json, sys, traceback
-from concurrent.futures import ThreadPoolExecutor
+import importlib.util, json, sys, traceback, socket
 from pathlib import Path
-root = Path("/work")
-workers = int(sys.argv[1]) if len(sys.argv) > 1 else 8
-
-def run(job):
-    turn = root / job
-    out = {}
-    try:
-        spec = importlib.util.spec_from_file_location("sv_" + job, turn / "evaluation_assets" / "source_verifier.py")
-        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
-        for fixture in ("known_correct", "known_broken"):
-            try:
-                text = (turn / "fixtures" / fixture / "response.txt").read_text()
-                out[fixture] = mod.verify(text, turn)
-            except Exception as exc:
-                out[fixture] = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
-    except Exception:
-        out["error"] = traceback.format_exc()[-3000:]
-    (turn / "result.json").write_text(json.dumps(out, indent=2))
-
-# Each verify() re-scores in its own tau2 subprocess, so threads give
-# process-level parallelism without sharing tau2 state.
-with ThreadPoolExecutor(max_workers=workers) as pool:
-    list(pool.map(run, json.loads((root / "jobs.json").read_text())))
+turn = Path("/work/turn")
+fixture = sys.argv[1]
+try:
+    spec = importlib.util.spec_from_file_location("source_verifier", turn / "evaluation_assets/source_verifier.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    result = mod.verify((turn / "fixtures" / fixture / "response.txt").read_text(), turn)
+except Exception:
+    result = {"status": "error", "error": traceback.format_exc()[-3000:]}
+Path("/work/result.json").write_text(json.dumps({"result": result, "python": sys.version,
+    "network_interfaces": socket.if_nameindex()}, indent=2))
 '''
 
 
 def qualify_batch(dirs: list[Path], image: dict[str, Any], tag: str) -> dict[str, dict[str, Any]]:
-    stage = fresh_staging(f"tau2_qualify_{tag}_")
-    jobs = []
-    for index, target in enumerate(dirs):
-        name = f"{index:05d}"
-        turn = stage / name
-        shutil.copytree(target / "evaluation_assets", turn / "evaluation_assets")
-        shutil.copytree(target / "fixtures", turn / "fixtures")
-        jobs.append(name)
-    write_json(stage / "jobs.json", jobs)
-    (stage / "runner.py").write_text(QUALIFY_RUNNER, encoding="utf-8")
-    log = stage.parent / f"{stage.name}.log"
-    rc = docker_run(image["task_image"], {stage: "/work"}, ["python", "/work/runner.py", str(WORKERS)], log, timeout=7200)
-    results = {}
-    for index, target in enumerate(dirs):
-        path = stage / f"{index:05d}" / "result.json"
-        results[target.name] = json.loads(path.read_text()) if path.is_file() else {"error": f"no result (docker rc={rc}, log {log})"}
-    shutil.rmtree(stage)
+    """Each fixture gets a fresh container with declared limits and actual readback."""
+    def run_fixture(job: tuple[Path, str]) -> tuple[str, str, dict[str, Any]]:
+        target, fixture = job
+        stage = fresh_staging(f"tau2_qualify_{tag}_{fixture}_")
+        try:
+            turn = stage / "turn"
+            shutil.copytree(target / "evaluation_assets", turn / "evaluation_assets")
+            shutil.copytree(target / "fixtures" / fixture, turn / "fixtures" / fixture)
+            (stage / "runner.py").write_text(QUALIFY_RUNNER, encoding="utf-8")
+            log = stage.parent / f"{stage.name}.log"
+            rc = docker_run(image["task_image_digest"], {stage: "/work"},
+                            ["python", "/work/runner.py", fixture], log, timeout=1200, staged=image.get("python_target") == "3.12")
+            path = stage / "result.json"
+            payload = json.loads(path.read_text()) if path.is_file() else {}
+            result = payload.get("result") or {"status": "error", "error": f"no result (docker rc={rc}, log {log})"}
+            if rc != 0:
+                result = {"status": "error", "error": f"docker rc={rc}; log {log}"}
+            resource_fields = (transport_resource_metadata(log) if image.get("python_target") == "3.12"
+                               and log.with_suffix(log.suffix + ".transport.json").is_file() else {})
+            result["qualification_container"] = {"image_digest": image["task_image_digest"],
+                "network": "none", "network_interfaces": payload.get("network_interfaces"),
+                "cpus": 2, "memory": "4g", "python": payload.get("python"),
+                "fresh_fixture_container": True, "returncode": rc, "log": str(log), **resource_fields}
+            return target.name, fixture, result
+        finally:
+            shutil.rmtree(stage)
+    results: dict[str, dict[str, Any]] = {target.name: {} for target in dirs}
+    jobs = [(target, fixture) for target in dirs for fixture in ("known_correct", "known_broken")]
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        for name, fixture, result in pool.map(run_fixture, jobs):
+            results[name][fixture] = result
     return results
 
 
@@ -618,7 +844,8 @@ def _status(result: dict[str, Any] | None) -> dict[str, Any] | None:
     details = result.get("details") or {}
     return {"status": result.get("status"), "score": result.get("score"), "raw_metric": result.get("raw_metric"),
             "error": result.get("error"), "reward_breakdown": details.get("reward_breakdown"),
-            "termination_reason": details.get("termination_reason")}
+            "termination_reason": details.get("termination_reason"),
+            "container": result.get("qualification_container")}
 
 
 def _valid_failure(result: dict[str, Any] | None) -> bool:
@@ -680,12 +907,20 @@ def cmd_qualify(args: argparse.Namespace) -> None:
                 _status(correct), default=str)[:600]
         else:
             reason = "known_broken did not fail with evaluator reward 0: " + json.dumps(_status(broken), default=str)[:600]
+        if image.get("python_target") == "3.12":
+            # Include rejected/missing-fixture rows using the actual image probe,
+            # then retain both per-fixture resource snapshots in qualification.
+            resource_fields = {k: image[k] for k in RESOURCE_METADATA_KEYS}
+            pool_task.update(resource_fields)
+            pool_task["runtime"].update(resource_fields)
+            q.update(resource_fields)
         q["admitted"] = admitted
         q["admission_reason"] = reason
         write_json(target / "pool_task.json", pool_task)
         index_rows.append({"source_id": pool_task["source_id"], "task_dir": target.name, "admitted": admitted,
                            "capability_id": pool_task["capability_hint"]["capability_id"], "reason": reason,
-                           "in_v4": pool_task["l2_flags"]["in_v4"], "in_v5": pool_task["l2_flags"]["in_v5"]})
+                           "in_v4": pool_task["l2_flags"]["in_v4"], "in_v5": pool_task["l2_flags"]["in_v5"],
+                           **({k: pool_task[k] for k in RESOURCE_METADATA_KEYS} if image.get("python_target") == "3.12" else {})})
     with (POOL_ROOT / "INDEX.jsonl").open("w", encoding="utf-8") as handle:
         for row in index_rows:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -701,14 +936,71 @@ def cmd_qualify(args: argparse.Namespace) -> None:
     print(json.dumps(summary, indent=2))
 
 
+def cmd_report(args: argparse.Namespace) -> None:
+    """Write source/placement comparisons and W3 availability from actual records."""
+    current = {json.loads((p / "pool_task.json").read_text())["source_id"]: p for p in _pool_dirs(None)}
+    previous = {json.loads((p / "pool_task.json").read_text())["source_id"]: p
+                for p in args.previous_pool.iterdir() if (p / "pool_task.json").is_file()}
+    diffs, ledger = [], []
+    records = {}
+    for source_id, path in sorted(current.items()):
+        record = json.loads((path / "pool_task.json").read_text())
+        records[source_id] = record
+        old = json.loads((previous[source_id] / "pool_task.json").read_text()) if source_id in previous else {}
+        q, oq = record["qualification"], old.get("qualification", {})
+        diffs.append({"source_id": source_id, "old_admitted": oq.get("admitted"),
+            "new_admitted": q.get("admitted"), "old_image": old.get("runtime", {}).get("task_image_digest"),
+            "new_image": record["runtime"]["task_image_digest"],
+            "old_outcomes": {k: oq.get(k) for k in ("known_correct", "known_broken")},
+            "new_outcomes": {k: q.get(k) for k in ("known_correct", "known_broken")},
+            "reason": q.get("admission_reason")})
+        ledger.append({"source_id": source_id, "source_hash": record["source"]["source_hash"],
+            "adapted": True, "adaptations": ["Python 3.12 isolated venv replaces Python 3.11 system-site venv",
+                "Inactive benchmark_fixes.json omitted before image build because it embeds private gold tasks",
+                "Agent image retains public domain assets only; private task/evaluator stays outside Workspace",
+                "Live DeepSeek NL judgment sealed for subsequent offline native rescoring"] +
+                (["User-approved declared_only resource waiver; declared limits are not enforced; actual readback retained"]
+                 if record.get("resource_enforcement") == "declared_not_enforced" else []),
+            "preserved": {"revision": REVISION, "variant": "official", "user_model": "deepseek-flash",
+                "judge_model": "deepseek-flash", "carrier": "AReaL 979f4221"},
+            "qualification": q.get("admitted"),
+            **{k: record[k] for k in RESOURCE_METADATA_KEYS if k in record}})
+    placements, used = [], set()
+    for task_path in sorted(args.r2_package.glob("streams/*/turn*/task.json")):
+        task = json.loads(task_path.read_text())
+        basis = task.get("source_basis") or {}
+        source_id = f"{basis.get('benchmark_id')}:{basis.get('source_task_id')}"
+        if source_id not in records:
+            continue
+        if task_path.parents[1].name.startswith("intra_"):
+            used.add(source_id)
+        diff = next(d for d in diffs if d["source_id"] == source_id)
+        placements.append({"stream_id": task_path.parents[1].name, "turn_id": task_path.parent.name,
+                           **diff, "environment_changed": diff["old_image"] != diff["new_image"]})
+    counts = {}
+    for source_id, record in records.items():
+        if record["qualification"].get("admitted") and source_id not in used:
+            capability = record["capability_hint"]["capability_id"]
+            counts[capability] = counts.get(capability, 0) + 1
+    for name, rows in (("ADAPTATIONS.jsonl", ledger), ("OUTCOME_DIFF.jsonl", diffs),
+                       ("R2_PLACEMENT_DIFF.jsonl", placements)):
+        (POOL_ROOT / name).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
+    write_json(POOL_ROOT / "UNUSED_CAPABILITY_COUNTS.json", {
+        "exclusion_scope": "source IDs used by existing r2 intra_* Streams", "counts": counts})
+
+
 def main() -> None:
-    global POOL_ROOT
+    global POOL_ROOT, STAGING_ROOT
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--pool-root", type=Path, default=POOL_ROOT)
+    parser.add_argument("--staging-root", type=Path,
+                        default=Path(os.environ.get("TAU2_STAGING_ROOT", str(STAGING_ROOT))),
+                        help="scratch directories and retained logs (or TAU2_STAGING_ROOT)")
     sub = parser.add_subparsers(dest="command", required=True)
     p_image = sub.add_parser("build-image")
-    p_image.add_argument("--base", default="trievo-l2-v5:0.4")
-    p_image.add_argument("--tag", default=IMAGE_TAG)
+    p_image.add_argument("--base")
+    p_image.add_argument("--python312", action="store_true", help="build the r3 isolated Python 3.12 carrier")
+    p_image.add_argument("--tag")
     p_image.add_argument("--pip-index", default="https://pypi.tuna.tsinghua.edu.cn/simple")
     p_build = sub.add_parser("build")
     p_build.add_argument("--limit", type=int, default=0)
@@ -718,10 +1010,14 @@ def main() -> None:
     p_fix.add_argument("--workers", type=int, default=8)
     p_qualify = sub.add_parser("qualify")
     p_qualify.add_argument("--batch", type=int, default=400)
+    p_report = sub.add_parser("report")
+    p_report.add_argument("--previous-pool", type=Path, required=True)
+    p_report.add_argument("--r2-package", type=Path, required=True)
     args = parser.parse_args()
     POOL_ROOT = args.pool_root
+    STAGING_ROOT = args.staging_root
     {"build-image": cmd_build_image, "build": cmd_build, "fixtures": cmd_fixtures,
-     "qualify": cmd_qualify}[args.command](args)
+     "qualify": cmd_qualify, "report": cmd_report}[args.command](args)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,145 @@
+{
+  "pool_id": "intra_benchmark_multi_capability",
+  "schedule": "delayed",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "sequence_role": "learning",
+      "source_hash": "103c6007da9d58d5de4776833e824c47f06378d546f87355f88f412e707185db",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "sequence_role": "learning",
+      "source_hash": "fc18c2d140e675a6b8c4b18d101c65bbdc59d664b6fd94d21617ae395819650f",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "a26811d5a96e145efbc6c3c1877393d0656bd03ac862decda0e348b01dc73cfe",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "ccdaee49973a5947d8598fbe573743ad947a811d5b7cf7bf3848963774b14937",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "learning",
+      "source_hash": "92b3367f43bea49e782ec53b1e8dc2daf7cac77b2cbf09886962765afb858c1f",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "sequence_role": "learning",
+      "source_hash": "6a55800ca1c8d1eb816ff0ad3d72b1a05fc2d7055377246d85e89b82ff3fa0b8",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "sequence_role": "application",
+      "source_hash": "5c2337c47a9499d1eab9d70746f3d2d81c9436106dac60f7c25187be352b9f40",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "application",
+      "source_hash": "ac1c0fa459080a824e86c305ef1337be0c26f83dbe1c9b1766e4aa497b817c33",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+      "sequence_role": "learning",
+      "source_hash": "f570a96d514e93630b3565564ba2724d5d1c885ab1cfc999fb08020d68826543",
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+      "turn_id": "turn9",
+      "turn_index": 9
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+      "sequence_role": "learning",
+      "source_hash": "df2d66447377e23077cce283008029a7c78664cc0b15bfa5b002a4d5c7c9079a",
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+      "turn_id": "turn10",
+      "turn_index": 10
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+      "sequence_role": "application",
+      "source_hash": "34266631b8b7ec5a6d90384fd03eb06937a028386aeaa13664615b9e9d202b19",
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+      "turn_id": "turn11",
+      "turn_index": 11
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "sequence_role": "application",
+      "source_hash": "2b085a3565129d22aef5832a5b17501f80cbac0ea5eb14dc7595a251bc4e6e74",
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "turn_id": "turn12",
+      "turn_index": 12
+    },
+    {
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "sequence_role": "probe",
+      "source_hash": "b21dfeca75875d02bcb5ef7efa3dac55ee6fbd74e130f8eb8964a221e5acd451",
+      "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "turn_id": "turn13",
+      "turn_index": 13
+    },
+    {
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "sequence_role": "probe",
+      "source_hash": "4a7d525daa1ec2306973734529e194408dfff0591f1cd15db147cf678e315ef0",
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "turn_id": "turn14",
+      "turn_index": 14
+    },
+    {
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "pool_source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "sequence_role": "probe",
+      "source_hash": "3e14c9efd469b53f1975ecc47786b0820fe07680783af665716b0a38716207f2",
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "turn_id": "turn15",
+      "turn_index": 15
+    }
+  ],
+  "stream_id": "intra_tau2_telecom_delayed_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

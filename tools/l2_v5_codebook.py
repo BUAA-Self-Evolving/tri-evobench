@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Generate the L2 V5 capability codebook from the admitted task pool.
+"""Generate the L2 V5 capability codebook from composition-eligible task records.
 
-Every capability that has admitted pool tasks gets one entry. Domain and task
+Admitted and recipe-ready counts remain separate. Every available capability
+gets one entry. Domain and task
 types come from the builder's capability_hint when it declares them (tau2,
 AutoResearch) and from the table below otherwise. ``transfer_groups`` is the
 cross-benchmark mapping table: capabilities in one group share a procedure, so
@@ -13,6 +14,11 @@ import argparse
 import json
 from collections import Counter
 from pathlib import Path
+
+try:
+    from .l2_v5_compose import composition_eligible
+except ImportError:
+    from l2_v5_compose import composition_eligible
 
 TAXONOMY_VERSION = "tri-evobench-l2-v5-codebook/2.0"
 STATIC = {
@@ -34,6 +40,82 @@ STATIC = {
                             "HTTP, URL, and HTML parsing code; tests run offline with mocks."),
     "sra.general_python": ("software_engineering", ["code_generation"], "Other standard-library Python tasks."),
 }
+# Individually reviewed QA capability rules; IDs remain the upstream primary skill.
+STATIC.update({'sra_qa.medcalc.medcalcbench_004': ('clinical_reasoning',
+                                     ['clinical_calculation'],
+                                     'BMI. One upstream skill; calculate mass divided by squared '
+                                     'height, converting centimetres to metres. Assign only '
+                                     'instances whose sole annotation is medcalcbench_004.'),
+ 'sra_qa.medcalc.medcalcbench_009': ('clinical_reasoning',
+                                     ['clinical_calculation'],
+                                     'MAP. One upstream skill; calculate the conventional resting '
+                                     'MAP estimate from systolic and diastolic pressure. Assign '
+                                     'only sole annotation medcalcbench_009.'),
+ 'sra_qa.medcalc.medcalcbench_035': ('clinical_reasoning',
+                                     ['clinical_calculation'],
+                                     'Calcium correction. One upstream skill; apply the standard '
+                                     'albumin correction with normal albumin explicitly fixed at 4 '
+                                     'g/dL. Assign only sole annotation medcalcbench_035.'),
+ 'sra_qa.logic.logicbench_000': ('formal_reasoning',
+                                 ['deductive_reasoning'],
+                                 'Modus Ponens. One upstream skill; instantiate a conditional and '
+                                 'affirm its antecedent. Negative questions ask whether the '
+                                 'opposite consequent follows. Assign only sole annotation '
+                                 'logicbench_000.'),
+ 'sra_qa.logic.logicbench_001': ('formal_reasoning',
+                                 ['deductive_reasoning'],
+                                 'Modus Tollens. One upstream skill; deny a consequent to infer '
+                                 'the negated antecedent. Assign only sole annotation '
+                                 'logicbench_001; exclude contradictory stories or probabilistic '
+                                 'conditionals.'),
+ 'sra_qa.logic.logicbench_002': ('formal_reasoning',
+                                 ['deductive_reasoning'],
+                                 'Disjunctive Syllogism. One upstream skill; eliminate a false '
+                                 'disjunct from an inclusive disjunction, including double '
+                                 'negation. Assign only sole annotation logicbench_002; exclude '
+                                 'existential-to-individual substitutions and affirming-a-disjunct '
+                                 'errors.'),
+ 'sra_qa.theoremqa.theoremqa_292': ('mathematics',
+                                    ['mathematical_reasoning'],
+                                    'Definite integration and accumulated change. Exactly first '
+                                    'skill theoremqa_292. Evaluate a definite integral by '
+                                    'antiderivatives, symmetry, or integrating a stated rate; '
+                                    'exclude rows requiring unrelated limit theory or missing '
+                                    'geometry assumptions.'),
+ 'sra_qa.theoremqa.theoremqa_291': ('mathematics',
+                                    ['mathematical_reasoning'],
+                                    'Binomial counting and coefficients. Exactly first skill '
+                                    'theoremqa_291. Count choices or position allocations with '
+                                    'binomial coefficients, including constrained subsets and '
+                                    'coefficients of a binomial power. No grouping by question '
+                                    'keywords or secondary skills.'),
+ 'sra_qa.theoremqa.theoremqa_196': ('mathematics',
+                                    ['mathematical_reasoning'],
+                                    'Limits of sequences and partial sums. Exactly first skill '
+                                    'theoremqa_196. Determine limits from asymptotic equivalence, '
+                                    'monotonicity, weighted averaging, or partial-sum limits. '
+                                    'Every row requires a limit argument; finite trivia and the '
+                                    'malformed cosine row are excluded.'),
+ 'sra_qa.champ.champ_010': ('mathematics',
+                            ['mathematical_reasoning'],
+                            'Congruence and residue constraints. Exactly first skill champ_010. '
+                            'Use congruence classes to constrain prime tuples, eliminate integer '
+                            'solutions, prove divisibility, or evaluate powers. Secondary skills '
+                            'are retained as labels but never determine assignment.'),
+ 'sra_qa.champ.champ_016': ('mathematics',
+                            ['mathematical_reasoning'],
+                            'Binomial selections and counting identities. Exactly first skill '
+                            'champ_016. Translate a counting or averaging question into binomial '
+                            'choices, stars and bars, or binomial identities. Prefer different '
+                            'structures rather than repeated increasing-digit variants.'),
+ 'sra_qa.champ.champ_012': ('mathematics',
+                            ['mathematical_reasoning'],
+                            'Counting by disjoint cases and state recurrences. Exactly first skill '
+                            'champ_012. Partition configurations by the last symbol, boundary '
+                            'tile, or boundary occupancy, then add counts using a finite-state '
+                            'recurrence. This is a focused algorithmic use of the upstream rule of '
+                            'sum, not all additive formulas.')})
+
 # Capabilities whose builder hint is per task (AutoResearch) or whose upstream
 # category does not name a domain (SkillLearnBench families) get a fixed entry.
 CAPABILITY_OVERRIDES = {
@@ -51,6 +133,11 @@ CAPABILITY_OVERRIDES = {
     "skilllearn.weighted-gdp-calculation": ("finance_economics", ["quantitative_analysis"], None),
     "skilllearn.dbscan-parameter-tuning": ("data_analysis", ["model_tuning"], None),
     "skilllearn.video-object-counting": ("media_production", ["media_processing"], None),
+    "skilllearn.financial-analysis": ("finance_economics", ["financial_analysis"], None),
+    "skilllearn.travel-planning": ("planning", ["travel_planning"], None),
+    "skilllearn.organize-messy-files": ("software_engineering", ["file_organization"], None),
+    "skilllearn.github-repo-analytics": ("software_engineering", ["repository_analysis"], None),
+    "skilllearn.dependency-vulnerability-check": ("cybersecurity", ["security_analysis"], None),
     "skilllearn.earthquake-plate-calculation": ("natural_science", ["scientific_data_analysis"], None),
 }
 NATIVE_DOMAIN = {
@@ -99,13 +186,19 @@ def main() -> int:
     args = parser.parse_args()
     caps: dict[str, dict] = {}
     counts: Counter[str] = Counter()
+    admitted: Counter[str] = Counter()
+    recipe_ready: Counter[str] = Counter()
     for path in sorted(args.pool.glob("*/*/pool_task.json")):
         record = json.loads(path.read_text())
-        if not record.get("qualification", {}).get("admitted") or record.get("pool_scope") == "explicit_dependency_only":
+        if not composition_eligible(record) or record.get("pool_scope") == "explicit_dependency_only":
             continue
         hint = record["capability_hint"]
         cap = hint["capability_id"]
         counts[cap] += 1
+        if record.get("qualification", {}).get("admitted"):
+            admitted[cap] += 1
+        else:
+            recipe_ready[cap] += 1
         if cap in caps:
             continue
         benchmark = record["source"]["benchmark_id"]
@@ -114,15 +207,22 @@ def main() -> int:
         elif cap in CAPABILITY_OVERRIDES:
             domain, types, description = CAPABILITY_OVERRIDES[cap]
             description = description or native_entry(cap, hint)[2]
+        elif cap.startswith("sra_qa."):
+            family = cap.split(".")[1]
+            domain = {"medcalc": "clinical_reasoning", "logic": "formal_reasoning"}.get(family, "mathematics")
+            types = [{"medcalc": "clinical_calculation", "logic": "deductive_reasoning"}.get(family, "mathematical_reasoning")]
+            description = f"Native {family} questions assigned by upstream primary skill {cap.rsplit('.', 1)[1]}."
         elif hint.get("domain_id") and hint.get("task_type_ids"):
             domain, types, description = hint["domain_id"], hint["task_type_ids"], hint.get("description") or hint.get("rationale", "")
         else:
             domain, types, description = native_entry(cap, hint)
         caps[cap] = {"capability_id": cap, "benchmark_id": benchmark, "domain_id": domain,
                      "task_type_ids": list(types), "description": description,
-                     "grouping_rule": hint.get("rationale", "")}
+                     "grouping_rule": description if cap.startswith("sra_qa.") else hint.get("rationale", "")}
     for cap, entry in caps.items():
-        entry["admitted_pool_tasks"] = counts[cap]
+        entry["admitted_pool_tasks"] = admitted[cap]
+        entry["recipe_ready_pool_tasks"] = recipe_ready[cap]
+        entry["composition_eligible_pool_tasks"] = counts[cap]
     groups = []
     for group in TRANSFER_GROUPS:
         members = [c for c in group["capability_ids"] if c in caps]

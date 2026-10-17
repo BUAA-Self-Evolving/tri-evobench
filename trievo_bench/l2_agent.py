@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -22,12 +23,12 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from uuid import uuid4
 
-from .baselines.base import BaselineReply, EvolutionContext, FlowContext, InteractionContext, TurnContext, UsageDetails
+from .baselines.base import BaselineReply, EvolutionContext, EvolutionResult, FlowContext, InteractionContext, TurnContext, UsageDetails
 from .baselines.manifest import BaselineManifest, find_manifest, load_manifest, merge_mappings
 from .baselines.process import ProcessBaselineRuntime
 from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationStatus
 from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
-from .model import TokenBudget, client_from_config
+from .model import TokenBudget, TokenBudgetExceeded, client_from_config
 from .run_conditions import RunCondition, parse_run_condition
 from .tau2_live import Tau2LiveSession, Tau2LiveSessionError, is_live_profile
 from .verifier import L1LifeJudge
@@ -70,6 +71,59 @@ class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
 
 
+def _require_materialized_runtime_profile(profile: dict[str, Any], turn_id: str) -> None:
+    """Fail before Docker or agent work when this Turn only ships a recipe."""
+    if profile.get("image_build_required") or profile.get("runtime_materialization_required"):
+        source_id = profile.get("source_id", "unknown source")
+        raise L2AgentRunError(
+            f"{turn_id}: {source_id} requires image build and runtime materialization; "
+            "run tools/l2_v5_build_task_images.py --package PACKAGE "
+            f"--source {source_id!r} --materialize-package to bind its sanitized image, "
+            "native environment, workspace seed and verifier assets before execution"
+        )
+
+
+def _stage_v5_verifier_package(package: Path, stream_dir: Path, destination: Path) -> None:
+    """Copy runtime verifier inputs without recipes, seeds or admission fixtures.
+
+    The original package remains the host-side source for transitions, Judge
+    rubrics and provenance. Only this private view is sent to verifier Docker.
+    """
+    for name in (
+        "manifest.json", "runtime_profiles.json", "pools.json", "panels.json",
+        "taxonomy.json", "source_tasks.jsonl", "capability_codebook.json",
+    ):
+        source = package / name
+        if source.is_file():
+            shutil.copy2(source, destination / name)
+    for name in ("runtime", "prompts"):
+        source = package / name
+        if source.is_dir():
+            shutil.copytree(source, destination / name, symlinks=True)
+    target_stream = destination / stream_dir.relative_to(package)
+    target_stream.mkdir(parents=True)
+    if (stream_dir / "stream.json").is_file():
+        shutil.copy2(stream_dir / "stream.json", target_stream / "stream.json")
+    for task_path in sorted(stream_dir.glob("turn*/task.json")):
+        target = target_stream / task_path.parent.name
+        target.mkdir()
+        shutil.copy2(task_path, target / "task.json")
+        assets = task_path.parent / "evaluation_assets"
+        if not assets.is_dir():
+            continue
+        target_assets = target / "evaluation_assets"
+        target_assets.mkdir()
+        for source in assets.iterdir():
+            # Exclude admission-only siblings, not nested upstream test data
+            # that may also happen to be named fixtures or native_oracle.
+            if source.name in {"fixtures", "native_oracle", "private_oracle_skills"}:
+                continue
+            if source.is_dir():
+                shutil.copytree(source, target_assets / source.name, symlinks=True)
+            else:
+                shutil.copy2(source, target_assets / source.name, follow_symlinks=False)
+
+
 class _TaskSandboxSession:
     """One disposable, network-disabled execution sandbox for a V5 Turn."""
 
@@ -79,8 +133,17 @@ class _TaskSandboxSession:
         profile: dict[str, Any],
         workspace: Path,
         workspace_volume: DockerVolumeMirror,
+        turn_id: str | None = None,
     ) -> None:
+        _require_materialized_runtime_profile(profile, turn_id or "unknown Turn")
         self.profile = profile
+        self.native_environment = profile.get("native_environment")
+        self.turn_id = turn_id
+        if self.native_environment is not None:
+            from .native_environment import validate_native_environment
+            validate_native_environment(self.native_environment)
+            if not turn_id or not re.fullmatch(r"[A-Za-z0-9_-]+", turn_id):
+                raise L2AgentRunError("native environment requires a safe Turn ID")
         self.workspace = workspace.resolve()
         self.workspace_volume = workspace_volume
         self.name = f"trievo-l2-task-{uuid4().hex[:12]}"
@@ -89,6 +152,17 @@ class _TaskSandboxSession:
         self.evidence: dict[str, Any] = {}
 
     def start(self) -> dict[str, Any]:
+        if self.profile.get("image_archive"):
+            from .image_archive import ensure_image_available
+            ensure_image_available(self.image, self.profile["image_archive"], docker=_docker_executable())
+        if self.native_environment or self.profile.get("environment_version"):
+            from .container_resources import docker_resource_capability_preflight
+            try:
+                capability = docker_resource_capability_preflight(docker=_docker_executable())
+                if not capability.get("allowed", capability["passed"]):
+                    raise RuntimeError("; ".join(capability["errors"]))
+            except (RuntimeError, OSError, subprocess.SubprocessError) as exc:
+                raise L2AgentRunError(f"native resource enforcement unavailable: {exc}") from exc
         inspect = subprocess.run(
             [_docker_executable(), "image", "inspect", self.image, "--format", "{{.Id}}"],
             text=True,
@@ -105,11 +179,15 @@ class _TaskSandboxSession:
         command = [
             _docker_executable(), "run", "-d", "--name", self.name,
             "--network", "none", "--cap-drop", "ALL",
+            *(["--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE"] if self.native_environment else []),
             "--security-opt", "no-new-privileges", "--pids-limit", "256",
             "--memory", "4g", "--cpus", "2",
             "--mount", self.workspace_volume.mount_spec("/workspace"),
-            "-w", "/workspace", self.image,
-            "sh", "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
+            *(["--entrypoint", self.native_environment.get("entrypoint", "/bin/sh")]
+              if self.native_environment else []),
+            "-w", self.native_environment["cwd"] if self.native_environment else "/workspace", self.image,
+            *([] if self.native_environment else ["sh"]),
+            "-c" if self.native_environment else "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
         ]
         started = subprocess.run(
             command,
@@ -140,6 +218,44 @@ class _TaskSandboxSession:
         if inspected.returncode != 0 or fields != [self.image, "none", "true"]:
             self.close()
             raise L2AgentRunError("task sandbox runtime readback failed closed")
+        if self.native_environment or self.profile.get("environment_version"):
+            from .native_environment import mapping_script
+            from .container_resources import container_resource_check_script, evaluate_resource_enforcement
+            marker = f"/tmp/{self.name}-readback.json"
+            script = (mapping_script(self.native_environment, f"/workspace/tasks/{self.turn_id}")
+                      if self.native_environment else "from pathlib import Path\nimport json\n")
+            script += "\n" + container_resource_check_script() + "\n"
+            expected = {"container": self.name, "aliases": {}}
+            if self.native_environment:
+                expected["aliases"] = {
+                    item["native_path"]: f"/workspace/tasks/{self.turn_id}/" + item["workspace_relative_path"]
+                    for item in self.native_environment["path_mappings"]}
+            script += ("\nPath(" + repr(marker) + ").write_text(json.dumps({'container': " + repr(self.name)
+                       + ", 'aliases': {p: str(Path(p).resolve()) for p in "
+                       + repr(list(expected["aliases"])) + "}, 'resources': resource_readback}))\n")
+            setup = subprocess.run(
+                [_docker_executable(), "exec", "--user", "0", self.name,
+                 (self.native_environment or {}).get("python_executable", "python"), "-c", script],
+                text=True, capture_output=True, check=False,
+            )
+            # Some Docker proxies fake successful exec status. Verify the actual effect.
+            with tempfile.TemporaryDirectory(prefix="trievo-native-readback-") as temp:
+                local_marker = Path(temp) / "readback.json"
+                copied = subprocess.run([_docker_executable(), "cp", f"{self.name}:{marker}", str(local_marker)],
+                                        text=True, capture_output=True, check=False)
+                try:
+                    observed = json.loads(local_marker.read_text())
+                except (OSError, ValueError):
+                    observed = None
+            resources = observed.pop("resources", None) if isinstance(observed, dict) else None
+            resource_validation = evaluate_resource_enforcement(resources or {})
+            if (setup.returncode or copied.returncode or observed != expected
+                    or not resource_validation["accepted"]):
+                self.close()
+                raise L2AgentRunError(
+                    "native setup readback failed; aliases or enforced resource limits are missing: "
+                    + (setup.stderr or copied.stderr or str(resource_validation["validation"]["errors"]))[-4000:])
+            self.resource_readback = {**resources, **resource_validation}
         self.evidence = {
             "runtime_profile_id": self.profile["runtime_profile_id"],
             "container_name": self.name,
@@ -149,6 +265,16 @@ class _TaskSandboxSession:
             "workspace_transport": "docker_volume",
             "tool_profile_id": self.profile["tool_profile_id"],
             "dependency_class": self.profile["dependency_class"],
+            **({"environment_version": self.profile["environment_version"]} if self.profile.get("environment_version") else {}),
+            **({"resource_readback": self.resource_readback,
+                "resource_enforcement": self.resource_readback["resource_enforcement"],
+                "resource_observation_provenance": "task_container_startup"}
+               if hasattr(self, "resource_readback") else {}),
+            **({"cwd": self.native_environment["cwd"],
+                "task_directory": f"/workspace/tasks/{self.turn_id}",
+                "python_executable": self.native_environment.get("python_executable", "python"),
+                "path_mappings": self.native_environment["path_mappings"]}
+               if self.native_environment else {}),
         }
         return dict(self.evidence)
 
@@ -252,6 +378,7 @@ class L2AgentStreamRunner:
             raise L2AgentRunError("interrupted Interaction retry requires a matrix job id")
         self._workspace_volume: DockerVolumeMirror | None = None
         self._package_volume: DockerVolumeMirror | None = None
+        self._package_staging: Path | None = None
         self._storage_gate = _storage_gate_from_environment()
         self._task_sandbox: _TaskSandboxSession | None = None
         # Sealed record of the current Interaction's live tau2 session.
@@ -574,6 +701,33 @@ class L2AgentStreamRunner:
         runtime_started = False
         stream_work_limits = self.work_limits
         try:
+            if (resume_pending is not None and self.budget.used >= self.budget.limit
+                    and not _limit_reasons(resume_pending.get("reply", {}).get("raw"))):
+                raise L2AgentRunError(
+                    "exhausted adjudication checkpoint has no saved work-limit result; "
+                    "cannot reconstruct its score without repeating evaluation"
+                )
+            if self.budget.used >= self.budget.limit and resume_pending is None:
+                report.update(
+                    budget_exhausted=True, stop_reason="token_budget_exhausted",
+                    completed=len(completed_turns) == len(turn_order),
+                    evaluation_complete=all(t.get("evaluation_status") != "evaluation_error" for t in completed_turns),
+                    success=(len(completed_turns) == len(turn_order)
+                             and all(t.get("passed") is True for t in completed_turns)),
+                )
+                if completed_turns:
+                    report["stopped_after_turn"] = completed_turns[-1]["turn_id"]
+                return report
+            # Only preflight the next Turn. Later recipe-only Turns must not
+            # prevent a bounded smoke of an earlier materialized Turn.
+            if is_v5 and resume_index < len(turn_order):
+                next_turn_id = turn_order[resume_index]
+                next_task = _load_json(_under(self.stream_dir, next_turn_id) / "task.json")
+                next_profile = self._v5_runtime_profiles.get(
+                    str(next_task.get("runtime_profile_id"))
+                )
+                if next_profile is not None:
+                    _require_materialized_runtime_profile(next_profile, next_turn_id)
             if volume_transport:
                 self._start_taskstream_volume_transport(workspace)
             if self.condition is not RunCondition.RESET or resume_pending is not None or resume_interrupted:
@@ -600,6 +754,7 @@ class L2AgentStreamRunner:
                     profile = self._v5_runtime_profiles.get(str(profile_id))
                     if profile is None:
                         raise L2AgentRunError(f"unknown runtime profile: {profile_id!r}")
+                    _require_materialized_runtime_profile(profile, turn_id)
                     self._current_v5_profile = profile
                     self.work_limits = _runtime_profile_work_limits(stream_work_limits, profile)
                 if resume_pending is None and not resume_interrupted:
@@ -632,6 +787,7 @@ class L2AgentStreamRunner:
                         profile=self._current_v5_profile,
                         workspace=workspace,
                         workspace_volume=self._workspace_volume,
+                        turn_id=turn_id,
                     )
                     task_sandbox_evidence = self._task_sandbox.start()
                 sequence_role = _validate_taskstream_turn_identity(
@@ -952,8 +1108,14 @@ class L2AgentStreamRunner:
                     turn_id=turn_id,
                     interaction_index=len(interactions),
                 )
-                evolution = self._runtime.evolve(
-                    EvolutionContext(
+                evolution_budget_exhausted = False
+                evolution_usage_before = (self.budget.used, self.budget.calls)
+                try:
+                    if self.budget.used >= self.budget.limit:
+                        raise TokenBudgetExceeded(
+                            f"token budget exhausted before evolution: {self.budget.used} >= {self.budget.limit}"
+                        )
+                    evolution = self._runtime.evolve(EvolutionContext(
                         turn_id=turn_id,
                         trajectory=[_public_taskstream_trajectory(item) for item in interactions],
                         feedback=[{
@@ -968,8 +1130,18 @@ class L2AgentStreamRunner:
                             if terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
                             else f"condition:{self.condition.value}"
                         ),
+                    ))
+                except TokenBudgetExceeded as exc:
+                    evolution_budget_exhausted = True
+                    evolution = EvolutionResult(
+                        completed=False,
+                        events=[{"type": "evolution.budget_exhausted", "error": str(exc),
+                                 "checkpoint_state": "before_evolution"}],
+                        usage=UsageDetails(
+                            total_tokens=self.budget.used - evolution_usage_before[0],
+                            api_calls=self.budget.calls - evolution_usage_before[1],
+                        ),
                     )
-                )
                 self._sync_workspace_from_volume()
                 evolution_record = {"record_type": "evolution", "turn_id": turn_id, "evolution": evolution.to_dict()}
                 with trace_path.open("a", encoding="utf-8") as trace:
@@ -1003,7 +1175,13 @@ class L2AgentStreamRunner:
                 checkpoint = output_root / "_checkpoints" / stream_key / run_id[-8:] / f"t{turn_index + 1:04d}"
                 checkpoint.mkdir(parents=True, exist_ok=True)
                 _archive_tree(workspace, checkpoint / "workspace.zip")
-                self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
+                if evolution_budget_exhausted:
+                    # A completed response may cross the token limit while its
+                    # usage is recorded. Preserve the last trusted learner state
+                    # instead of committing an unacknowledged partial evolution.
+                    shutil.copy2(pending / "baseline_state.zip", checkpoint / "baseline_state.zip")
+                else:
+                    self._runtime.save_checkpoint_state(checkpoint / "baseline_state.zip")
                 report["turns"][-1]["checkpoint"] = str(checkpoint)
                 _write_json(checkpoint / "completed_turns.json", report["turns"])
                 _write_json(checkpoint / "checkpoint.json", {
@@ -1018,6 +1196,12 @@ class L2AgentStreamRunner:
                     "token_budget": asdict(self.budget),
                 })
                 _write_json(run_dir / "report.json", report)
+                if evolution_budget_exhausted:
+                    report["budget_exhausted"] = True
+                    report["stop_reason"] = "token_budget_exhausted_during_evolution"
+                    report["stopped_after_turn"] = turn_id
+                    _write_json(run_dir / "report.json", report)
+                    break
                 if (
                     terminal_outcome.evaluation_status is EvaluationStatus.EVALUATION_ERROR
                     and self.evaluation_error_policy == "stop"
@@ -1046,19 +1230,28 @@ class L2AgentStreamRunner:
             _archive_tree(workspace, run_dir / "error_workspace.zip")
             raise
         finally:
-            self._close_task_sandbox()
-            if runtime_started and self._runtime is not None:
+            try:
+                self._close_task_sandbox()
+                if runtime_started and self._runtime is not None:
+                    try:
+                        self._runtime.end_flow()
+                    except BaseException as exc:
+                        report["cleanup_error"] = f"{type(exc).__name__}: {exc}"
+                report["finished_at"] = datetime.now(UTC).isoformat()
+                report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
+                report["token_budget"] = asdict(self.budget)
+                report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
+                resource_states = {turn.get("task_sandbox", {}).get("resource_enforcement")
+                                   for turn in report.get("turns", [])} - {None}
+                if resource_states:
+                    report["resource_enforcement"] = ("declared_not_enforced" if "declared_not_enforced" in resource_states else "enforced")
+                    report["resource_enforcement_scope"] = "new profiles; per-container observations are retained in Turn evidence"
+                _write_json(run_dir / "report.json", report)
+            finally:
                 try:
-                    self._runtime.end_flow()
-                except BaseException as exc:
-                    report["cleanup_error"] = f"{type(exc).__name__}: {exc}"
-            report["finished_at"] = datetime.now(UTC).isoformat()
-            report["wall_clock_seconds"] = round(time.monotonic() - started, 3)
-            report["token_budget"] = asdict(self.budget)
-            report["baseline_runtime"] = self._runtime.metadata() if self._runtime else {}
-            _write_json(run_dir / "report.json", report)
-            self._close_taskstream_volume_transport()
-            shutil.rmtree(workspace, ignore_errors=True)
+                    self._close_taskstream_volume_transport()
+                finally:
+                    shutil.rmtree(workspace, ignore_errors=True)
         return report
 
     def _start_tau2_live_session(self, turn_dir: Path) -> Tau2LiveSession | None:
@@ -1100,12 +1293,22 @@ class L2AgentStreamRunner:
         if self._workspace_volume is not None or self._package_volume is not None:
             raise L2AgentRunError("TaskStream Docker volume transport already started")
         try:
+            package_source = self.package_dir
+            if self._taskstream_schema_version == "l2_taskstream/1.2":
+                output = self.options.output_root.resolve()
+                output.mkdir(parents=True, exist_ok=True)
+                staging_parent = self.package_dir.parent if output.is_relative_to(self.package_dir) else output
+                self._package_staging = Path(tempfile.mkdtemp(
+                    prefix=".l2-verifier-package-", dir=staging_parent,
+                ))
+                _stage_v5_verifier_package(self.package_dir, self.stream_dir, self._package_staging)
+                package_source = self._package_staging
             self._workspace_volume = DockerVolumeMirror.create(
                 workspace,
                 role="l2-workspace",
             )
             self._package_volume = DockerVolumeMirror.create(
-                self.package_dir,
+                package_source,
                 role="l2-package",
                 writable_uid=0,
                 writable_gid=0,
@@ -1191,11 +1394,21 @@ class L2AgentStreamRunner:
         })
 
     def _close_taskstream_volume_transport(self) -> None:
+        errors = []
         for mirror in (self._package_volume, self._workspace_volume):
             if mirror is not None:
-                mirror.close()
+                try:
+                    mirror.close()
+                except BaseException as exc:
+                    errors.append(exc)
         self._package_volume = None
         self._workspace_volume = None
+        staging = getattr(self, "_package_staging", None)
+        if staging is not None:
+            shutil.rmtree(staging)
+            self._package_staging = None
+        if errors:
+            raise errors[0]
 
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
@@ -1233,6 +1446,27 @@ class L2AgentStreamRunner:
                 shutil.copy2(source, target)
 
     def _verify_taskstream(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
+        profile = getattr(self, "_current_v5_profile", None) or {}
+        if not profile.get("environment_version") and not profile.get("native_environment"):
+            return self._verify_taskstream_in_workspace(task=task, turn_dir=turn_dir, workspace=workspace, reply=reply)
+        # Native tests may write caches/output. Never give them the live agent volume.
+        original_volume = getattr(self, "_workspace_volume", None)
+        with tempfile.TemporaryDirectory(prefix="trievo-l2-verifier-snapshot-") as tmp:
+            snapshot = Path(tmp) / "workspace"
+            shutil.copytree(workspace, snapshot, symlinks=True)
+            mirror = None
+            try:
+                if original_volume is not None:
+                    mirror = DockerVolumeMirror.create(snapshot, role="l2-verifier-snapshot")
+                self._workspace_volume = mirror
+                return self._verify_taskstream_in_workspace(
+                    task=task, turn_dir=turn_dir, workspace=snapshot, reply=reply)
+            finally:
+                self._workspace_volume = original_volume
+                if mirror is not None:
+                    mirror.close()
+
+    def _verify_taskstream_in_workspace(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
         evaluation = task.get("evaluation", {})
         native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
         entrypoint = native.get("entrypoint")
@@ -1301,6 +1535,10 @@ class L2AgentStreamRunner:
                     "details": {"type": "invalid_runtime_profile_verifier_image"},
                 }
             verifier_image = declared_verifier
+            if current_v5_profile.get("image_archive"):
+                from .image_archive import ensure_image_available
+                ensure_image_available(verifier_image, current_v5_profile["image_archive"],
+                                       docker=_docker_executable())
         package_volume = getattr(self, "_package_volume", None)
         workspace_volume = getattr(self, "_workspace_volume", None)
         package_mount_args = (
@@ -1319,16 +1557,38 @@ class L2AgentStreamRunner:
             for item in ("-e", f"{name}=")
         ]
         verifier_container = f"trievo-l2-verifier-{uuid4().hex[:12]}"
+        native_environment = (current_v5_profile or {}).get("native_environment")
+        verifier_command = [verifier_image, "python", f"/opt/l2_demo/{verifier_rel}"]
+        resource_nonce = uuid4().hex
+        if native_environment or (current_v5_profile or {}).get("environment_version"):
+            from .container_resources import container_resource_check_script
+            from .native_environment import mapping_script
+            bootstrap = container_resource_check_script() + "\n"
+            bootstrap += ("print(json.dumps({'event': 'l2_resource_readback', 'nonce': " + repr(resource_nonce)
+                          + ", 'resource_readback': resource_readback}), flush=True)\n")
+            bootstrap += "os.environ['TRIEVO_RESOURCE_ENFORCEMENT'] = resource_readback['enforcement_mode']\n"
+            if native_environment:
+                bootstrap += mapping_script(native_environment, f"/workspace/tasks/{task['turn_id']}")
+            bootstrap += ("\nimport runpy, sys\nsys.argv = [" + repr(f"/opt/l2_demo/{verifier_rel}")
+                          + "]\nrunpy.run_path(sys.argv[0], run_name='__main__')\n")
+            verifier_command = [*(["--user", "0"] if native_environment else []), "--entrypoint",
+                                (native_environment or {}).get("python_executable", "python"),
+                                "-w", (native_environment or {}).get("cwd", "/workspace"),
+                                verifier_image, "-c", bootstrap]
         command = [
             _docker_executable(), "run", "--name", verifier_container, "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
+            *(["--cap-add", "CHOWN", "--cap-add", "DAC_OVERRIDE", "--cap-add", "SETUID", "--cap-add", "SETGID"]
+              if native_environment else []),
             *package_mount_args, *workspace_mount_args,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
             *blocked_proxy_environment,
-            verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
+            *verifier_command,
         ]
         timeout = int(native.get("timeout_seconds", 300))
         transport_timeout = _verifier_transport_timeout(timeout)
+        verifier_resource_readback = None
+        resource_checked = bool(native_environment or (current_v5_profile or {}).get("environment_version"))
         try:
             completed = subprocess.run(
                 command,
@@ -1385,22 +1645,42 @@ class L2AgentStreamRunner:
                 capture_output=True,
                 check=False,
             )
+        resource_evidence = {}
+        if resource_checked:
+            from .container_resources import evaluate_resource_enforcement
+            # The first flushed line predates evaluator/submission execution.
+            # A file copied after untrusted code runs would be mutable evidence.
+            try:
+                header = json.loads(completed.stdout.splitlines()[0])
+                if header.get("event") == "l2_resource_readback" and header.get("nonce") == resource_nonce:
+                    verifier_resource_readback = header.get("resource_readback")
+            except (ValueError, IndexError, AttributeError):
+                pass
+            assessment = evaluate_resource_enforcement(verifier_resource_readback or {})
+            if not assessment["accepted"]:
+                return {"category": "error", "score": None, "details": {
+                    "type": "verifier_resource_readback_rejected", "assessment": assessment}}
+            resource_evidence = {"resource_enforcement": assessment["resource_enforcement"],
+                                 "resource_readback": {**verifier_resource_readback, **assessment},
+                                 "resource_observation_provenance": "private_verifier_container"}
         if completed.returncode != 0:
-            return {"category": "error", "score": None, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
+            return {"category": "error", "score": None, **resource_evidence, "details": {"type": "verifier_error", "stderr": completed.stderr[-4000:], "stdout": completed.stdout[-4000:]}}
         try:
             result = json.loads(completed.stdout.strip().splitlines()[-1])
         except (json.JSONDecodeError, IndexError) as exc:
-            return {"category": "error", "score": None, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
+            return {"category": "error", "score": None, **resource_evidence, "details": {"type": "invalid_verifier_output", "error": str(exc), "stdout": completed.stdout[-4000:]}}
         error = _native_result_error(native, result)
         if error:
             return {
                 "category": "error",
                 "score": None,
+                **resource_evidence,
                 "details": {"type": "invalid_verifier_output", "error": error},
                 "native_result": result,
             }
         category = str(result["status"])
         return {
+            **resource_evidence,
             "category": category,
             "score": None if category == "error" else float(result["score"]),
             "details": (
@@ -1998,15 +2278,33 @@ def _load_v5_runtime_binding(
     abi_values = {tuple(profiles[profile_id].get(field) for field in abi_fields) for profile_id in referenced_ids}
     if len(abi_values) != 1 or any(not value for value in next(iter(abi_values), ())):
         raise L2AgentRunError("runtime profiles have incompatible learner-state ABI")
+    from .l2_compat import L2SpecError, _validate_pending_runtime_profile
     for profile_id in referenced_ids:
         profile = profiles[profile_id]
+        try:
+            pending_recipe = _validate_pending_runtime_profile(profile)
+        except L2SpecError as exc:
+            raise L2AgentRunError(f"runtime profile {profile_id}: {exc}") from exc
         if profile.get("network") != "disabled":
             raise L2AgentRunError(f"runtime profile {profile_id} must disable network")
+        if "environment_version" in profile and profile["environment_version"] != "l2_environment/1.0":
+            raise L2AgentRunError("unsupported environment_version")
+        if ((profile.get("environment_version") or "native_environment" in profile)
+                and profile.get("task_sandbox_image_digest") != profile.get("verifier_image_digest")):
+            raise L2AgentRunError("native task and verifier must use the same image")
+        if "native_environment" in profile:
+            from .native_environment import validate_native_environment
+            try:
+                validate_native_environment(profile["native_environment"])
+            except ValueError as exc:
+                raise L2AgentRunError(str(exc)) from exc
         image = profile.get("task_sandbox_image_digest")
-        if not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71:
+        if not pending_recipe and (
+            not isinstance(image, str) or not image.startswith("sha256:") or len(image) != 71
+        ):
             raise L2AgentRunError(f"runtime profile {profile_id} image digest is not pinned")
         verifier_image = profile.get("verifier_image_digest")
-        if (
+        if not pending_recipe and (
             not isinstance(verifier_image, str)
             or not verifier_image.startswith("sha256:")
             or len(verifier_image) != 71

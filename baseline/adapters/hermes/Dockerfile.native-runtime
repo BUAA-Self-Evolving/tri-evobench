@@ -1,0 +1,5 @@
+# Update only the tri-evo bridge in an already pinned Hermes image.
+# Supply a verified local base tag or registry digest through BASE_IMAGE.
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+COPY trievo_bench/baselines/hermes_bridge.py /opt/trievo/trievo_bench/baselines/hermes_bridge.py

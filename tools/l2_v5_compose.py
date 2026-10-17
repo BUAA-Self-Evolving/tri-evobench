@@ -121,22 +121,30 @@ try:
         outcome = {"status": "pass" if outcome[0] else "fail", "score": 1.0 if outcome[0] else 0.0,
                    "raw_metric": None, "details": outcome[1]}
     status = outcome["status"]
-    if status not in {"pass", "fail"}:
-        raise ValueError(f"unknown verifier status {status!r}")
-    score = float(outcome["score"]) if outcome.get("score") is not None else 0.0
-    score = min(1.0, max(0.0, score))
-    result = {"schema_version": "l2_native_verifier_result/1.0", "verifier_id": verifier_id,
-              "status": status, "score": score,
-              "checks": [{"check_id": "native_verifier_outcome", "status": status, "score": score,
-                          "evidence": ["package-local native verifier completed"]}],
-              "artifacts": [],
-              "public_summary": {"result_category": status, "observable_deficiencies": [] if status == "pass"
-                                 else ["The submitted result did not satisfy the native success condition."]},
-              "private_diagnostics": outcome.get("details", {}), "error": None}
-    if evaluation.get("evaluation_profile") == "auto_research" and status == "pass":
-        profile = evaluation["metric_profile"]
-        result["metric"] = {"name": profile["metric_name"], "raw_value": outcome.get("raw_metric"),
-                            "raw_direction": profile["raw_direction"], "normalized_value": score}
+    if status == "error":
+        diagnostics = outcome.get("details", {})
+        message = outcome.get("error")
+        if not message and isinstance(diagnostics, dict):
+            message = (diagnostics.get("error") or diagnostics.get("infrastructure_error")
+                       or diagnostics.get("reason"))
+        result = error(message or "source verifier returned error", diagnostics)
+    else:
+        if status not in {"pass", "fail"}:
+            raise ValueError(f"unknown verifier status {status!r}")
+        score = float(outcome["score"]) if outcome.get("score") is not None else 0.0
+        score = min(1.0, max(0.0, score))
+        result = {"schema_version": "l2_native_verifier_result/1.0", "verifier_id": verifier_id,
+                  "status": status, "score": score,
+                  "checks": [{"check_id": "native_verifier_outcome", "status": status, "score": score,
+                              "evidence": ["package-local native verifier completed"]}],
+                  "artifacts": [],
+                  "public_summary": {"result_category": status, "observable_deficiencies": [] if status == "pass"
+                                     else ["The submitted result did not satisfy the native success condition."]},
+                  "private_diagnostics": outcome.get("details", {}), "error": None}
+        if evaluation.get("evaluation_profile") == "auto_research" and status == "pass":
+            profile = evaluation["metric_profile"]
+            result["metric"] = {"name": profile["metric_name"], "raw_value": outcome.get("raw_metric"),
+                                "raw_direction": profile["raw_direction"], "normalized_value": score}
 except Exception as exc:
     result = error(f"{type(exc).__name__}: {exc}")
 json.dump(result, sys.stdout, ensure_ascii=False, sort_keys=True, default=str)
@@ -189,11 +197,20 @@ def binding(stage: Path, relative: str, schema_version: str) -> dict[str, str]:
     return {"schema_version": schema_version, "path": relative, "sha256": sha256(stage / relative)}
 
 
+def composition_eligible(record: dict[str, Any]) -> bool:
+    """Availability is separate from observed per-source red/green admission."""
+    qualification = record.get("qualification", {})
+    return bool(qualification.get("admitted")) or (
+        qualification.get("stage") == "recipe_ready"
+        and record.get("environment", {}).get("kind") in {"dockerfile", "shared_dockerfile"}
+    )
+
+
 def load_pool(pool_root: Path) -> dict[str, dict[str, Any]]:
     tasks: dict[str, dict[str, Any]] = {}
     for path in sorted(pool_root.glob("*/*/pool_task.json")):
         record = load_json(path)
-        if not record.get("qualification", {}).get("admitted"):
+        if not composition_eligible(record):
             continue
         record["_dir"] = str(path.parent)
         if record["source_id"] in tasks:
@@ -260,8 +277,19 @@ def plan(pool_root: Path, codebook_path: Path, spec_path: Path, out: Path) -> No
                 raise ValueError(f"{stream['stream_id']}: capability {cap} is not in the codebook")
             wanted = stream.get("pinned", {}).get(cap, [])
             filters = stream.get("filters", {}).get(cap, {})
-            chosen = [sid for sid in wanted if sid in pool]
+            if len(wanted) != len(set(wanted)):
+                raise ValueError(f"{stream['stream_id']}: duplicate pinned source for {cap}")
+            for sid in wanted:
+                if sid not in pool:
+                    raise ValueError(f"{stream['stream_id']}: pinned source {sid} is unavailable")
+                if sid in used:
+                    raise ValueError(f"{stream['stream_id']}: pinned source {sid} is already used in this pool")
+                if pool[sid]["capability_hint"]["capability_id"] != cap:
+                    raise ValueError(f"{stream['stream_id']}: pinned source {sid} does not belong to {cap}")
+            chosen = list(wanted)
             needed = per_cap - 1 if cap in transfers else per_cap
+            if len(chosen) > needed:
+                raise ValueError(f"{stream['stream_id']}: too many pinned sources for {cap}")
             for sid in by_cap.get(cap, []):
                 if len(chosen) == needed:
                     break
@@ -310,11 +338,11 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
     timeout = int(runtime["turn_timeout_seconds"])
     family = PROFILE_FAMILY[benchmark]
     profile_id = f"{family}_{compute}_{timeout}s_v5"
-    digest = runtime["task_image_digest"]
-    return {
+    digest = runtime.get("task_image_digest")
+    profile = {
         **LEARNER_ABI,
         "runtime_profile_id": profile_id, "dependency_class": "source_native", "network": "disabled",
-        "task_sandbox_image": runtime["task_image"], "task_sandbox_image_digest": digest,
+        "task_sandbox_image": runtime.get("task_image"), "task_sandbox_image_digest": digest,
         "verifier_image_class": "python", "verifier_image_digest": runtime.get("verifier_image_digest") or digest,
         "tool_profile_id": "terminal_filesystem_v1", "turn_timeout_seconds": timeout,
         "requires_gpu": bool(runtime.get("requires_gpu")),
@@ -326,9 +354,57 @@ def runtime_profile(record: dict[str, Any]) -> dict[str, Any]:
         # next to the agent's sandbox (see trievo_bench/tau2_live).
         **({"live_session": runtime["live_session"]} if runtime.get("live_session") else {}),
     }
+    if not digest:
+        if record.get("environment", {}).get("kind") not in {"dockerfile", "shared_dockerfile"}:
+            raise ValueError("missing image digest without a native recipe")
+        profile.update(image_build_required=True, runtime_materialization_required=True,
+                       environment_version="l2_environment/1.0",
+                       recipe_source_id=record["source_id"], source_id=record["source_id"],
+                       image_recipe=copy.deepcopy(record["environment"]),
+                       resource_enforcement="declared_not_enforced",
+                       resource_observation_provenance={
+                           "reason": "user-approved declared_only mode; no per-source image or readback yet"})
+        identity = json.dumps([record["source_id"], record["environment"]], sort_keys=True).encode()
+        profile["runtime_profile_id"] = profile_id + "_recipe_" + hashlib.sha256(identity).hexdigest()[:20]
+    if digest and (runtime.get("environment_version") or "native_environment" in runtime):
+        if runtime.get("environment_version", "l2_environment/1.0") != "l2_environment/1.0":
+            raise ValueError("unsupported environment_version")
+        profile["environment_version"] = "l2_environment/1.0"
+        if runtime.get("image_archive"):
+            profile["image_archive"] = copy.deepcopy(runtime["image_archive"])
+        if "resource_enforcement" in runtime:
+            if runtime["resource_enforcement"] not in {"enforced", "declared_not_enforced"}:
+                raise ValueError("unsupported resource_enforcement metadata")
+            if not isinstance(runtime.get("resource_readback"), dict):
+                raise ValueError("resource enforcement metadata requires actual readback")
+            for field in ("resource_enforcement", "resource_readback", "resource_observation_provenance"):
+                if field in runtime:
+                    profile[field] = copy.deepcopy(runtime[field])
+        if "native_environment" in runtime:
+            from trievo_bench.native_environment import validate_native_environment
+            profile["native_environment"] = copy.deepcopy(validate_native_environment(runtime["native_environment"]))
+        if profile["task_sandbox_image_digest"] != profile["verifier_image_digest"]:
+            raise ValueError("native task and verifier must use the same image")
+        identity = json.dumps(profile, sort_keys=True, separators=(",", ":")).encode()
+        profile["runtime_profile_id"] = profile_id + "_" + hashlib.sha256(identity).hexdigest()[:20]
+    return profile
+
+
+def register_runtime_profile(profiles: dict[str, Any], profile: dict[str, Any]) -> None:
+    key = profile["runtime_profile_id"]
+    if key in profiles and profiles[key] != profile:
+        raise ValueError(f"conflicting runtime profile: {key}")
+    profiles[key] = profile
 
 
 def path_mapping_sentence(turn_id: str, record: dict[str, Any]) -> str:
+    environment = record["runtime"].get("native_environment")
+    if environment:
+        aliases = "; ".join(
+            f"{item['native_path']} -> /workspace/tasks/{turn_id}/{item['workspace_relative_path']}"
+            for item in environment["path_mappings"])
+        return (f"Work in the native directory {environment['cwd']}. Declared native aliases are "
+                f"Workspace paths for this Turn: {aliases}. Files in /workspace persist according to the run condition.\n\n")
     roots = record["runtime"].get("upstream_workdirs") or []
     task_dir = f"/workspace/tasks/{turn_id}/"
     if roots:
@@ -422,8 +498,32 @@ def copy_pool_task(record: dict[str, Any], turn_dir: Path) -> None:
     else:
         seed.mkdir(parents=True)
     shutil.copytree(source / "evaluation_assets", turn_dir / "evaluation_assets", symlinks=True)
+    # Native pool snapshots can contain a stale generated transport/parser.
+    # Tests/oracles are upstream assets; this wrapper belongs to our adapter.
+    if record.get("runtime", {}).get("native_environment"):
+        from l2_v5_native_environment import verifier_text
+        (turn_dir / "evaluation_assets" / "source_verifier.py").write_text(
+            verifier_text(), encoding="utf-8")
     fixtures = turn_dir / "evaluation_assets" / "fixtures"
-    shutil.copytree(source / "fixtures", fixtures, symlinks=True)
+    if (source / "fixtures").is_dir():
+        shutil.copytree(source / "fixtures", fixtures, symlinks=True)
+    else:
+        fixtures.mkdir()
+    environment = record.get("environment")
+    if environment:
+        from l2_v5_build_task_images import recipe_paths
+        from l2_v5_native_sources import tree_sha256
+        _, context = recipe_paths(source, environment)
+        for name, value in environment.get("build_contexts", {}).items():
+            context_path = (source / value["path"]).resolve()
+            if not context_path.is_relative_to(source.resolve()):
+                raise ValueError(f"named build context escapes task: {name}")
+            if tree_sha256(context_path) != value["sha256"]:
+                raise ValueError(f"named build context hash mismatch: {name}")
+        shutil.copytree(context, turn_dir / "environment", symlinks=True)
+        for name in ("Dockerfile.upstream", "Dockerfile.diff"):
+            if (source / name).is_file():
+                shutil.copy2(source / name, turn_dir / name)
     (turn_dir / "evaluation_assets" / "verifier_cli.py").write_text(VERIFIER_CLI, encoding="utf-8")
 
 
@@ -485,7 +585,7 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                 turn_dir = stream_dir / turn_id
                 copy_pool_task(record, turn_dir)
                 profile = runtime_profile(record)
-                profiles[profile["runtime_profile_id"]] = profile
+                register_runtime_profile(profiles, profile)
                 entry = capability_map[capability_id]
                 taxonomy_used[capability_id] = {
                     "capability_id": capability_id, "domain_id": entry["domain_id"],
@@ -566,6 +666,16 @@ def compose(pool_root: Path, plan_path: Path, codebook_path: Path, out: Path, ru
                             claim_scope="cross_benchmark_transfer",
                             transfer_source_capability_id=stream_capability,
                             transfer_group_id=cap["transfer_group_id"])
+                if record.get("environment"):
+                    environment = copy.deepcopy(record["environment"])
+                    environment.update(kind="dockerfile", context_path="environment",
+                                       recipe_path="environment/Dockerfile")
+                    task["environment"] = environment
+                    task["qualification"] = copy.deepcopy(record["qualification"])
+                    task["runtime_materialization_required"] = bool(profile.get("runtime_materialization_required"))
+                    for field in ("recipe_adaptations", "adaptations"):
+                        if field in record:
+                            task[field] = copy.deepcopy(record[field])
                 write_json(turn_dir / "task.json", task)
                 summaries.append({
                     "turn_id": turn_id, "turn_index": index, "turn_type": "capability_application",

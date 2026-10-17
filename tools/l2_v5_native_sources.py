@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Prepare and qualify upstream file-artifact tasks for the rebuilt L2 V5 pool.
+"""Historical V5/r2 file replay and qualification (not the r3 native builder).
+
+New native records use tools/l2_v5_native_environment.py and real Docker builds.
 
 SkillLearnBench and SkillsBench ship one Dockerfile per task. The runtime uses
 one pinned, network-disabled task image, so this tool reproduces each task's

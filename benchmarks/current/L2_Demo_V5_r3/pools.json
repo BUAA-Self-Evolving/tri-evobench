@@ -1,0 +1,70 @@
+{
+  "pools": [
+    {
+      "allows_cross_pool_aggregation": false,
+      "composition_policy": "three_distinct_capabilities_one_benchmark",
+      "license_scopes": [
+        "research_noncommercial"
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "pool_type": "same_benchmark",
+      "stream_ids": [
+        "intra_sra_blocked_01",
+        "intra_sra_interleaved_01",
+        "intra_sra_delayed_01",
+        "intra_tau2_blocked_01",
+        "intra_tau2_interleaved_01",
+        "intra_tau2_delayed_01",
+        "intra_skilllearn_interleaved_01",
+        "intra_skilllearn_delayed_01",
+        "intra_skillsbench_blocked_01",
+        "intra_skillsbench_delayed_01",
+        "intra_medcalc_blocked_01",
+        "intra_logicbench_interleaved_01",
+        "intra_theoremqa_delayed_01",
+        "intra_champ_interleaved_01",
+        "intra_tau2_telecom_delayed_01",
+        "intra_tau2_airline_interleaved_01",
+        "intra_skilllearn_blocked_01",
+        "intra_skillsbench_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_pool_aggregation": false,
+      "composition_policy": "three_autoresearch_capabilities_cpu_only",
+      "license_scopes": [
+        "research_noncommercial"
+      ],
+      "pool_id": "auto_research_cpu",
+      "pool_type": "auto_research",
+      "stream_ids": [
+        "auto_research_cpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_pool_aggregation": false,
+      "composition_policy": "three_autoresearch_capabilities_cpu_and_gpu",
+      "license_scopes": [
+        "research_noncommercial"
+      ],
+      "pool_id": "auto_research_cpu_gpu",
+      "pool_type": "auto_research",
+      "stream_ids": [
+        "auto_research_cpu_gpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_pool_aggregation": false,
+      "composition_policy": "staged_native_tasks_with_artifact_dependencies",
+      "license_scopes": [
+        "research_noncommercial"
+      ],
+      "pool_id": "explicit_dependency",
+      "pool_type": "explicit_dependency",
+      "stream_ids": [
+        "dependency_autoresearch_cpu_interleaved_01"
+      ]
+    }
+  ],
+  "schema_version": "l2_pools/1.0"
+}

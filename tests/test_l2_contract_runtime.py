@@ -587,6 +587,170 @@ def test_v5_rejects_task_runtime_profile_not_in_bound_catalog(tmp_path, monkeypa
         L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
 
 
+def _mark_runtime_recipe_pending(package: Path, turn_id: str) -> None:
+    path = package / "runtime_profiles.json"
+    catalog = json.loads(path.read_text())
+    profile = {**catalog["profiles"][0], "runtime_profile_id": "pending",
+               "environment_version": "l2_environment/1.0",
+               "image_build_required": True, "runtime_materialization_required": True,
+               "source_id": "skilllearnbench:pending", "recipe_source_id": "skilllearnbench:pending",
+               "task_sandbox_image": None, "task_sandbox_image_digest": None,
+               "verifier_image_digest": None,
+               "image_recipe": {"kind": "dockerfile", "recipe_path": "environment/Dockerfile",
+                                "context_path": "environment", "recipe_sha256": "a" * 64,
+                                "context_sha256": "b" * 64}}
+    catalog["profiles"].append(profile)
+    _write_json(path, catalog)
+    manifest_path = package / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["runtime_profiles"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    _write_json(manifest_path, manifest)
+    stream_path = package / "streams/stream-a/stream.json"
+    stream = json.loads(stream_path.read_text())
+    next(t for t in stream["turns"] if t["turn_id"] == turn_id)["runtime_profile_id"] = "pending"
+    _write_json(stream_path, stream)
+    task_path = package / "streams/stream-a" / turn_id / "task.json"
+    task = json.loads(task_path.read_text())
+    task["runtime_profile_id"] = "pending"
+    _write_json(task_path, task)
+
+
+def test_v5_turn1_smoke_allows_later_recipe_only_turn(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn2")
+    runtimes = _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    options = replace(_v5_options(package, tmp_path / "out", "evolving"), stop_after_turn="turn1")
+    report = L2AgentStreamRunner(options).run()
+    assert [t["turn_id"] for t in report["turns"]] == ["turn1"]
+    assert len(runtimes) == 1
+
+
+def test_v5_pending_first_turn_rejected_before_runtime_or_docker(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn1")
+    runtimes = _install_fake_runtime(monkeypatch)
+    def forbidden_transport(*args, **kwargs):
+        pytest.fail("pending Turn attempted Docker volume startup")
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", forbidden_transport)
+    monkeypatch.setattr("trievo_bench.l2_agent.docker_volume_transport_enabled", lambda: True)
+    with pytest.raises(L2AgentRunError, match="turn1: skilllearnbench:pending requires image build and runtime materialization"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
+    assert not runtimes
+
+
+def test_v5_reaching_later_recipe_rejects_it_before_agent_interaction(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _mark_runtime_recipe_pending(package, "turn2")
+    runtimes = _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    with pytest.raises(L2AgentRunError, match="turn2:.*requires image build"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
+    assert len(runtimes) == 1
+    assert len(runtimes[0].visible_before_interact) == 1
+
+
+def test_evolution_token_exhaustion_preserves_score_checkpoint_and_stops_resume(tmp_path, monkeypatch):
+    from trievo_bench.model import TokenBudgetExceeded
+    package = _v5_package(tmp_path)
+    _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    runtimes = []
+    runner = L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving"))
+    class ExhaustingRuntime(_Runtime):
+        def evolve(self, context):
+            self.evolution_contexts.append(context)
+            runner.budget.record(runner.budget.limit + 1)
+            pytest.fail("budget record should raise TokenBudgetExceeded")
+    def create(*args, **kwargs):
+        runtime = ExhaustingRuntime()
+        runtimes.append(runtime)
+        return runtime
+    monkeypatch.setattr(L2AgentStreamRunner, "_create_runtime", create)
+    report = runner.run()
+    assert report["budget_exhausted"] is True
+    assert report["stop_reason"] == "token_budget_exhausted_during_evolution"
+    assert report["token_budget"]["used"] == report["token_budget"]["limit"] + 1
+    assert len(report["turns"]) == 1
+    turn = report["turns"][0]
+    assert turn["turn_score"] == 1.0 and turn["final_score"] == 1.0
+    assert turn["evaluation_status"] == "passed"
+    assert turn["evolution"]["completed"] is False
+    assert turn["final_category"] == "evolution_limit"
+    assert turn["evolution"]["events"][0]["type"] == "evolution.budget_exhausted"
+    checkpoint = Path(turn["checkpoint"])
+    assert (checkpoint / "baseline_state.zip").is_file()
+    assert json.loads((checkpoint / "completed_turns.json").read_text())[0]["turn_score"] == 1.0
+    assert len(runtimes[0].visible_before_interact) == 1
+    resumed = L2AgentStreamRunner(replace(_v5_options(package, tmp_path / "out", "evolving"), resume_checkpoint=checkpoint)).run()
+    assert resumed["budget_exhausted"] is True
+    assert resumed["turns"][0]["turn_score"] == 1.0
+    assert resumed["token_budget"] == report["token_budget"]
+    assert len(runtimes) == 1  # Resume cannot start the next Turn or another API call.
+
+
+def test_non_budget_evolution_error_still_propagates(tmp_path, monkeypatch):
+    package = _v5_package(tmp_path)
+    _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    class BrokenRuntime(_Runtime):
+        def evolve(self, context):
+            raise RuntimeError("unrelated evolution transport failure")
+    monkeypatch.setattr(L2AgentStreamRunner, "_create_runtime", lambda *args: BrokenRuntime())
+    with pytest.raises(RuntimeError, match="unrelated evolution transport failure"):
+        L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
+
+
+@pytest.mark.parametrize("saved_work_limit", [True, False])
+def test_exhausted_adjudication_recovery_uses_saved_limit_reply_without_paid_calls(tmp_path, monkeypatch, saved_work_limit):
+    import shutil
+    package = _v5_package(tmp_path)
+    _install_fake_runtime(monkeypatch)
+    monkeypatch.setattr(L2AgentStreamRunner, "_start_taskstream_volume_transport", lambda *args: None)
+    runner = L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving"))
+    class PaidLimitRuntime(_Runtime):
+        def interact(self, context):
+            reply = super().interact(context)
+            if saved_work_limit:
+                reply.raw = {"limit_exhausted": True, "limit_reasons": ["max_tool_calls"]}
+            return reply
+        def evolve(self, context):
+            runner.budget.record(runner.budget.limit + 1)
+    monkeypatch.setattr(L2AgentStreamRunner, "_create_runtime", lambda *args: PaidLimitRuntime())
+    report = runner.run()
+    pending = next((tmp_path / "out").glob("_checkpoints/*/*/p0000-01"))
+    original = (pending / "checkpoint.json").read_bytes()
+    recovery = tmp_path / "recovery" / "p0000-01"
+    shutil.copytree(pending, recovery)
+    metadata = json.loads((recovery / "checkpoint.json").read_text())
+    metadata["token_budget"] = report["token_budget"]
+    _write_json(recovery / "checkpoint.json", metadata)
+    class NoPaidCallsRuntime(_Runtime):
+        def interact(self, context):
+            pytest.fail("recovery repeated the paid agent interaction")
+        def evolve(self, context):
+            pytest.fail("recovery repeated paid evolution")
+    monkeypatch.setattr(L2AgentStreamRunner, "_create_runtime", lambda *args: NoPaidCallsRuntime())
+    def no_judge(*args, **kwargs):
+        pytest.fail("work-limit reply must not invoke verifier/Judge or followup")
+    for name in ("_verify_taskstream", "_judge_taskstream", "_taskstream_followup"):
+        monkeypatch.setattr(L2AgentStreamRunner, name, no_judge)
+    recovery_runner = L2AgentStreamRunner(replace(
+        _v5_options(package, tmp_path / "out", "evolving"), resume_checkpoint=recovery, stop_after_turn="turn1",
+    ))
+    if not saved_work_limit:
+        with pytest.raises(L2AgentRunError, match="no saved work-limit result"):
+            recovery_runner.run()
+        return
+    recovered = recovery_runner.run()
+    assert recovered["turns"][0]["turn_score"] == 0.0
+    assert recovered["turns"][0]["evolution"]["completed"] is False
+    assert recovered["token_budget"] == report["token_budget"]
+    assert recovered["token_budget"]["limit"] == 10000
+    assert (pending / "checkpoint.json").read_bytes() == original
+    assert Path(recovered["turns"][0]["checkpoint"]).joinpath("checkpoint.json").is_file()
+
+
 def test_evaluator_error_continue_is_null_unscored_and_does_not_evolve(tmp_path, monkeypatch):
     package = _package(tmp_path)
     runtimes = _install_fake_runtime(monkeypatch, verifier_error=True)

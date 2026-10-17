@@ -1,0 +1,2625 @@
+{
+  "schema_version": "l2_source_summary/1.0",
+  "runtime_readiness_source": "external runtime_profiles.json; see artifact_references.json",
+  "sources": [
+    {
+      "source_id": "airs_bench:CodeRetrievalCodeXGlueMRR",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "CodeRetrievalCodeXGlueMRR",
+      "source_hash": "cc698980fe7782a4f1584a0ce9ef0e5abbfc77293491f341e46d583df26baadd",
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:CoreferenceResolutionSuperGLUEWSCAccuracy",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+      "source_hash": "51a53cc768704a02e1609ec3e19dd6855a6b75b015783bf7f62c9b7148fc6c66",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:CoreferenceResolutionWinograndeAccuracy",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "CoreferenceResolutionWinograndeAccuracy",
+      "source_hash": "9cd9748efb8b1356ac1af9475f957aecd01b80ebe9d2445cd769ed13bd227388",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "source_hash": "b931e7874d6a5f56192bb99fa7e6c556fc463bfb9849cbdf3b9f05ed6188cf77",
+      "capability_id": "ar.vision_and_deep_models",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:QuestionAnsweringEli5RougeL",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "QuestionAnsweringEli5RougeL",
+      "source_hash": "a40e6185133e7e12623bf2477edfe7b0c0b98cbffc797cf02a70d4de136846e5",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "source_hash": "9bf7f18abc6b2805f66332b7f43371e6ad6138e6b7e6eb5619ab208dea69e9cf",
+      "capability_id": "ar.vision_and_deep_models",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:TextualClassificationSickAccuracy",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "TextualClassificationSickAccuracy",
+      "source_hash": "1f84c23cb08ebdfeb1f68a2c9212045422519292c090c5193751afb9c693521d",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:TextualSimilaritySickSpearmanCorrelation",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "TextualSimilaritySickSpearmanCorrelation",
+      "source_hash": "258f23d83794d41beaf814dabd2865abd398df52b770782fb7db907daa82c8c3",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "TimeSeriesForecastingRideshareMAE",
+      "source_hash": "56822f2d03ba6c3407349a7f0bdc038bcdd8ff766b09a7ccbfa12a6e191aceea",
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+      "source_hash": "6af9871b61d222530d912e10f8f1cda47210929e63ea38ebd21996c881d531a3",
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+      "benchmark_id": "airs_bench",
+      "source_task_id": "TimeSeriesForecastingSolarWeeklyMAE",
+      "source_hash": "99aee87ea88a8d323da454ef87ff80d35277488344ceed7fb9d4e70ce897f3e7",
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:battleOfSexes",
+      "benchmark_id": "mlgym",
+      "source_task_id": "battleOfSexes",
+      "source_hash": "3cb27affd97123ed9dd2d92dd522a2b2979dda059e04a8220994f4d7a891ea12",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:blotto",
+      "benchmark_id": "mlgym",
+      "source_task_id": "blotto",
+      "source_hash": "ba6b8ac14a91e54ae208f9cd0ab13950228634925a8156924055c4cf1c2e69ce",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:blotto#stage1_evaluation_harness",
+      "benchmark_id": "mlgym",
+      "source_task_id": "blotto#stage1_evaluation_harness",
+      "source_hash": "f3466bbdbea4945ef53fd2e3f22ed03b6b7ead9d8bcb4fe99109934e12bbc35c",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:imageClassificationFMnist",
+      "benchmark_id": "mlgym",
+      "source_task_id": "imageClassificationFMnist",
+      "source_hash": "8965d34a9f5e6cdf8e176afedd78d39813cae6ed4a8e94eaf5c728a2c8c6fabc",
+      "capability_id": "ar.vision_and_deep_models",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:prisonersDilemma",
+      "benchmark_id": "mlgym",
+      "source_task_id": "prisonersDilemma",
+      "source_hash": "28238c8b2f96de8fc555709f4d4228d384fa303dfce35621b5d9466f8b819611",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:regressionKaggleHousePrice",
+      "benchmark_id": "mlgym",
+      "source_task_id": "regressionKaggleHousePrice",
+      "source_hash": "8907caf24a7d65cbf46890d11d2a33af76bc8ac87ee0ed059e0be6994e949f11",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+      "benchmark_id": "mlgym",
+      "source_task_id": "regressionKaggleHousePrice#stage1_feature_tables",
+      "source_hash": "f4e736913fcc9acca3cb28667667ed1ac4fabd98d62dae3199ebe6f80468ec16",
+      "capability_id": "ar.tabular_and_text_prediction",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:rlBreakoutMinAtar",
+      "benchmark_id": "mlgym",
+      "source_task_id": "rlBreakoutMinAtar",
+      "source_hash": "f0b570f919e24bdbcf82389278821dc0c32b3131c2f572c25370982148944ee4",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:rlMetaMaze",
+      "benchmark_id": "mlgym",
+      "source_task_id": "rlMetaMaze",
+      "source_hash": "b83a28e76024cdc86461ce8b20a1a0fa512316f69ac3ef8c90adb1709ff9a775",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "mlgym:rlMountainCarContinuous",
+      "benchmark_id": "mlgym",
+      "source_task_id": "rlMountainCarContinuous",
+      "source_hash": "43d971b730d6b8dba11e6c0bff1ca60d2869ca7d5e0e4a936d7c139609b11d0d",
+      "capability_id": "ar.decision_and_game_strategy",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:court-form-filling-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "court-form-filling-1",
+      "source_hash": "714a54a39c5724034ed801557a43a245b3a7bc33199f34e15cccd72a22017876",
+      "capability_id": "skilllearn.court-form-filling",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:court-form-filling-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "court-form-filling-2",
+      "source_hash": "1bf94227742946da461d2a9d40eb471da7009cf276080c13b1ba64822732da83",
+      "capability_id": "skilllearn.court-form-filling",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:court-form-filling-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "court-form-filling-3",
+      "source_hash": "ecb4e1927939397bf58d0abac465291ef03e726df6f252e516626488be545472",
+      "capability_id": "skilllearn.court-form-filling",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:court-form-filling-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "court-form-filling-4",
+      "source_hash": "63a6cc2ed53b2ef24c6ad20370470b2d14817f73153f7b365421a16a2d2ab42d",
+      "capability_id": "skilllearn.court-form-filling",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:court-form-filling-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "court-form-filling-5",
+      "source_hash": "60860cd5f5eaf7624af57d7e14d7de7b9a982094e9951609d73b5abd06a7c0ad",
+      "capability_id": "skilllearn.court-form-filling",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:dbscan-parameter-tuning-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "dbscan-parameter-tuning-1",
+      "source_hash": "54e6d28266e1e01a10e260c2736ef672e8572836429ffe57c680a7cfc26c8e99",
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:dbscan-parameter-tuning-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "dbscan-parameter-tuning-2",
+      "source_hash": "22a43778f78749245165eb7b0e023f1f52ad78d4348b9eec54172263fb78200b",
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:dbscan-parameter-tuning-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "dbscan-parameter-tuning-3",
+      "source_hash": "df732fbce1fa01d45e5089ae2cd3099708765fe1df313b60d14214d0dae643aa",
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:dbscan-parameter-tuning-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "dbscan-parameter-tuning-4",
+      "source_hash": "7dd6eae630f878fc07eeed03eae6b17f96a4c2771ca8c7d890fdbad68544476f",
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:dbscan-parameter-tuning-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "dbscan-parameter-tuning-5",
+      "source_hash": "43d1737508891da1cdc23a2cde32ba15573814111a0d8551abf48fd4e22fc1c5",
+      "capability_id": "skilllearn.dbscan-parameter-tuning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:earthquake-plate-calculation-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "earthquake-plate-calculation-1",
+      "source_hash": "316021db611c86d9de9421b72041b3dd27628da181e5f1909b24f7f1d346b753",
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:earthquake-plate-calculation-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "earthquake-plate-calculation-2",
+      "source_hash": "a72c7c32e14a59a216786d5ed7c96c1fdcc3d5714b30a0e91e2d82397fc300ac",
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:earthquake-plate-calculation-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "earthquake-plate-calculation-3",
+      "source_hash": "e84a9e3547a4357b6d9a8bfc5414b4e9db032d0c42f42f2b5a4d16bf6e6a6bd0",
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:earthquake-plate-calculation-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "earthquake-plate-calculation-4",
+      "source_hash": "b373bcbfec9c600e5933ff54fb1e935a1d8559502ff05860e0142288dedd2f6d",
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:earthquake-plate-calculation-6",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "earthquake-plate-calculation-6",
+      "source_hash": "8e4c271d8abfd2ee6363b576fc49ecc7a430a95ce84c9fe3788329f0f67d58ed",
+      "capability_id": "skilllearn.earthquake-plate-calculation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:financial-analysis-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "financial-analysis-1",
+      "source_hash": "27618d5a5628546f4ea26879adfacbd7f6d702a495e03504aeb20d169853d61d",
+      "capability_id": "skilllearn.financial-analysis",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:financial-analysis-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "financial-analysis-2",
+      "source_hash": "a88615eed2d8ab2a4134fc8446f5887a3cc5f57bdaaf8deae999bad84f24037d",
+      "capability_id": "skilllearn.financial-analysis",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:financial-analysis-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "financial-analysis-3",
+      "source_hash": "15fe0d92db7de92056b5e71f466c4fd43b63c360daa705bddce39826d0b334b9",
+      "capability_id": "skilllearn.financial-analysis",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:financial-analysis-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "financial-analysis-4",
+      "source_hash": "59581eec87df3888f0d29e53b25f405de5a93ba4e93a15e556318f2e39154f92",
+      "capability_id": "skilllearn.financial-analysis",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:financial-analysis-6",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "financial-analysis-6",
+      "source_hash": "316de21d2630f56d2cb38ec89f2b23b91fbedc430e54a796579f285e65e9ea94",
+      "capability_id": "skilllearn.financial-analysis",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:offer-letter-generator-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "offer-letter-generator-1",
+      "source_hash": "6671d47ae500f7af26416b731c6db338d00b10871f2ee68873d03c7c8839379e",
+      "capability_id": "skilllearn.offer-letter-generator",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:offer-letter-generator-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "offer-letter-generator-2",
+      "source_hash": "3cbbdf916ed8d26d3947f9d8a2eaa217c73818ada4d66fed22b23d88608eaeca",
+      "capability_id": "skilllearn.offer-letter-generator",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:offer-letter-generator-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "offer-letter-generator-3",
+      "source_hash": "fc23a5497f1eb6c1056a62ce6905bf7f5905af60afe72b9c02d840fe35506bb7",
+      "capability_id": "skilllearn.offer-letter-generator",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:offer-letter-generator-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "offer-letter-generator-4",
+      "source_hash": "ccc025dfa040e6cb2d1753f2809cbc3f507e43ea5fea9d2b07fb68e5e355855e",
+      "capability_id": "skilllearn.offer-letter-generator",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:offer-letter-generator-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "offer-letter-generator-5",
+      "source_hash": "9bedb244c8df47337cfc87fe0209708588a4c3628407bb1fec710b543bc41374",
+      "capability_id": "skilllearn.offer-letter-generator",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:stock-data-visualization-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "stock-data-visualization-1",
+      "source_hash": "071711bd5355f7b2ce401228e24f96853fef738d50b705c83e242893561cfa2e",
+      "capability_id": "skilllearn.stock-data-visualization",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:stock-data-visualization-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "stock-data-visualization-2",
+      "source_hash": "00eb4661f4bbdc464266ffac2ece0f066be626d88e96102d947e3e88a9a03d3f",
+      "capability_id": "skilllearn.stock-data-visualization",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:stock-data-visualization-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "stock-data-visualization-3",
+      "source_hash": "99e8310606f4364128293c0e0b0b4d9d845e80703e9a0288b64a4b79476e02a7",
+      "capability_id": "skilllearn.stock-data-visualization",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:stock-data-visualization-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "stock-data-visualization-4",
+      "source_hash": "12c47a8d8b03281f024d2d55ec2ff02a4a925277a28501f4afdcf7a58e11d027",
+      "capability_id": "skilllearn.stock-data-visualization",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:stock-data-visualization-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "stock-data-visualization-5",
+      "source_hash": "838c6d4e18773ff5ba48aa4baba0acdfa7a8fd355e7c20730b04539f47a13121",
+      "capability_id": "skilllearn.stock-data-visualization",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:travel-planning-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "travel-planning-1",
+      "source_hash": "59f955a22c6c5d9fc2c3e56ec884855dedafaa3193ff3985d3a4d754d4ad3fed",
+      "capability_id": "skilllearn.travel-planning",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:travel-planning-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "travel-planning-2",
+      "source_hash": "811af1e2a70a85667a134f4be290d9bf6891cf69ea14d42306e9d77a8ad3b92b",
+      "capability_id": "skilllearn.travel-planning",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:travel-planning-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "travel-planning-3",
+      "source_hash": "46d16bb8c19a830c9fe1408392508f5a02f5562dee86329f3b72499389f8f9b5",
+      "capability_id": "skilllearn.travel-planning",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:travel-planning-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "travel-planning-4",
+      "source_hash": "d315123ca9c07123b471e375a6d56a3c0b31e733919c261376c709961ae56be3",
+      "capability_id": "skilllearn.travel-planning",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:travel-planning-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "travel-planning-5",
+      "source_hash": "57c397c8bce64a1c7a5485224d027e90c96ef71e66db847d98ba9f64dc283aa7",
+      "capability_id": "skilllearn.travel-planning",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:video-object-counting-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "video-object-counting-1",
+      "source_hash": "6d0f9d5d4c8f8ab8f7f4e298f615e8bb5993ca42089493033d524862c27645c3",
+      "capability_id": "skilllearn.video-object-counting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:video-object-counting-2",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "video-object-counting-2",
+      "source_hash": "0affa8f649c0055629a6b2f3ad01e7e8bf3fe81a871e2bd75599e4aafde6be68",
+      "capability_id": "skilllearn.video-object-counting",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:video-object-counting-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "video-object-counting-3",
+      "source_hash": "1c22e723655331d7ff249fc3687832178a82d1c8cae20bc2b7cb725b85f5b915",
+      "capability_id": "skilllearn.video-object-counting",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:video-object-counting-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "video-object-counting-4",
+      "source_hash": "4d5e17236ff8a030e7e08f05f755d5dbcf71965a48835bcb5eda4c2b6b999e43",
+      "capability_id": "skilllearn.video-object-counting",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:video-object-counting-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "video-object-counting-5",
+      "source_hash": "d964edba0d414a76585166df5983ec94d41358e07332c5b511e38dc5e1155dc6",
+      "capability_id": "skilllearn.video-object-counting",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:weighted-gdp-calculation-1",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "weighted-gdp-calculation-1",
+      "source_hash": "a19dde19f82fc8a72d0880cef2497da5e4309dcfd61d915b23a6ef9801018377",
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skilllearnbench:weighted-gdp-calculation-3",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "weighted-gdp-calculation-3",
+      "source_hash": "6d49d0532c98d93e823795e7f1b4c29c4ce3694d6a21fe6a1d3bad1b6fa1811c",
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:weighted-gdp-calculation-4",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "weighted-gdp-calculation-4",
+      "source_hash": "245f6baa6ed1a29edad3476e5730ea889e2c5e3bcb5b3fb2bba7e7b25808c3f7",
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:weighted-gdp-calculation-5",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "weighted-gdp-calculation-5",
+      "source_hash": "493e75d1a7f496490c7d2ee14a5ea60a75d4c87a834c71729ef0d11c01fe0a11",
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skilllearnbench:weighted-gdp-calculation-6",
+      "benchmark_id": "skilllearnbench",
+      "source_task_id": "weighted-gdp-calculation-6",
+      "source_hash": "5453544f1741253fa958c459edb2972751e43d70dc7fda8a781136f8d7c16220",
+      "capability_id": "skilllearn.weighted-gdp-calculation",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:ada-bathroom-plan-repair",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "ada-bathroom-plan-repair",
+      "source_hash": "3cb980c276689092aa47c4f8d58055f8ccbe277200f57ac0185b710e16495f89",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:adaptive-cruise-control",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "adaptive-cruise-control",
+      "source_hash": "e57cf92ae52c78543bde1b78b4b515ce5279ed38153869a2b18f2af4c32a74c9",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:azure-bgp-oscillation-route-leak",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "azure-bgp-oscillation-route-leak",
+      "source_hash": "e471802331f7e85f3bdd465aeb28764e9c28f9f3b70c535fe4cf92c9aa89f891",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:citation-check",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "citation-check",
+      "source_hash": "e4961ccde46fea72dd0624526c735273daead9286d9a3b4c4f277fff86926c8e",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:court-form-filling",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "court-form-filling",
+      "source_hash": "dbe3fb2c8fdd988e41425eaaf156371514a6ebdc549e25bd76124ebb1e018477",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:crystallographic-wyckoff-position-analysis",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "crystallographic-wyckoff-position-analysis",
+      "source_hash": "5766e5cdd2b4c71529a8ec58a764f6b2ebf5989fe1806373955b49e32554e332",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:data-to-d3",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "data-to-d3",
+      "source_hash": "d05b4473dc76d5bd29da0c1413560d2706f060a0706f8d6ddc1d94a74b282f57",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:dialogue-parser",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "dialogue-parser",
+      "source_hash": "1b83c2d5450cde02106ed492c5bbcb324a9a49e2a5ac2adfff3719b1737d5bc5",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skillsbench:drone-planning-control",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "drone-planning-control",
+      "source_hash": "4b31dbb49b8eb0ae9a41501fec359751ca85b43f3935225fdf7b4158e0833943",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:earthquake-phase-association",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "earthquake-phase-association",
+      "source_hash": "1a673d380efbeb9ef19883ebc357abaed87bbbfb1167da1d85a38fda5bca6b37",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:earthquake-plate-calculation",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "earthquake-plate-calculation",
+      "source_hash": "333903d41e60e205961a31ab5bb725040532d36ca4006bb33a805079434c5773",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:edit-pdf",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "edit-pdf",
+      "source_hash": "ae866abd0249514461f3c7ad5f4fc156533e407a77af9709ed5a87e5c5d2178c",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:energy-ac-optimal-power-flow",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "energy-ac-optimal-power-flow",
+      "source_hash": "b4dab4d91b8c28e01e90e43d307771e81f6d8047d0faedfe5cd200c578efbce6",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:energy-market-pricing",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "energy-market-pricing",
+      "source_hash": "cf6242c12bbfe4b3c8272a2176bc45cd69ea335dbb4a6bdece2f2c1e873a459b",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:energy-unit-commitment",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "energy-unit-commitment",
+      "source_hash": "7541472a2e8d922b77c3daff000f45e1280e48ceac97baf0c0ff2e1df799f8bf",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:enterprise-information-search",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "enterprise-information-search",
+      "source_hash": "ed683a2d5660fb6466e816bec6c0b73a439be468220a8c5a9c12f3c053b4f36e",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:exceltable-in-ppt",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "exceltable-in-ppt",
+      "source_hash": "5363f4d6ec75b987ea14dbd07eec9bd821e91bf4c3b07f21988cce12dea85491",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:financial-modeling-qa",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "financial-modeling-qa",
+      "source_hash": "aedfb9da779e7e4f31b382779f43ba0a8b8f261b7b70066d795b7ce728d1c6c8",
+      "capability_id": "skillsbench.finance-economics",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:fix-build-agentops",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "fix-build-agentops",
+      "source_hash": "bf21f165c2a912aa323dd9dfd4b163fdb1efe54ab6dc3f38f5c116969dcd2193",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:flink-query",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "flink-query",
+      "source_hash": "4465f3422c6e82db5f46d0c99781aafb6c6b112aa8022e535ce5acc79dfdf1f1",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:flood-risk-analysis",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "flood-risk-analysis",
+      "source_hash": "398722833dae3f88dbf874a1028813944d1460389d1b7ca5e33fa157c0990af4",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:glm-lake-mendota",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "glm-lake-mendota",
+      "source_hash": "3d8076d7f58859f088e8422439a8b896691cad83443591f1fbe85d92deae4da0",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:grid-dispatch-operator",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "grid-dispatch-operator",
+      "source_hash": "1c97864976671502f58a9e4ec77535b9e31a80c20c536d8521644fcd427fbc75",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:invoice-fraud-detection",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "invoice-fraud-detection",
+      "source_hash": "d8b1d68c6fa2dd13594ec192ad615996db809b4d04d17b055bfd3e3b08ed8c6a",
+      "capability_id": "skillsbench.finance-economics",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skillsbench:jax-computing-basics",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "jax-computing-basics",
+      "source_hash": "6d7a423238c01308129779958a1ad0ed1cb47e5385f07b345b2d2921289a172a",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:jpg-ocr-stat",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "jpg-ocr-stat",
+      "source_hash": "4c5a300a984587e1e3b521b17bae9cc7f0f9eb9980b534765671566427603348",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:lab-unit-harmonization",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "lab-unit-harmonization",
+      "source_hash": "ec45b23b78b6f3ec6a46eb00d6dffc69000322871b89e847dfddcc5b5eb7cef0",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skillsbench:manufacturing-codebook-normalization",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "manufacturing-codebook-normalization",
+      "source_hash": "82bb8fb3eb8d5c988ae087cf3e9fd99cd99b0bd54792ceeafdd57895630e810e",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skillsbench:manufacturing-equipment-maintenance",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "manufacturing-equipment-maintenance",
+      "source_hash": "84195d4813652aa3c85770f3b50df5b46a25fca9cd9cb5c2350c5a2cb526746a",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:manufacturing-fjsp-optimization",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "manufacturing-fjsp-optimization",
+      "source_hash": "3a74d57c0bd7c262da9830ab50a859e4cc9e15061dc6e85ee297da8c595b17e2",
+      "capability_id": "skillsbench.industrial-physical-systems",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:mars-clouds-clustering",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "mars-clouds-clustering",
+      "source_hash": "4da70e6214779cdba3d0b4c9f67120d4260a74b98e5fe7052c67499a618c92a3",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:offer-letter-generator",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "offer-letter-generator",
+      "source_hash": "b48e7b5800b28100f5be53125408932cf270099b7d8511fabece228c5e042c7f",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "skillsbench:paper-anonymizer",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "paper-anonymizer",
+      "source_hash": "4280e63f7b6200368efdf29c5ef3d839724920cb41173149d002d902a9204090",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:parallel-tfidf-search",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "parallel-tfidf-search",
+      "source_hash": "802158344be416feed9c42ef5ac8583c4b2a616e9c1fdfb3fd0981c50f862510",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:pptx-reference-formatting",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "pptx-reference-formatting",
+      "source_hash": "85f7c4ce5ffb873190e2704a6b130e28db18be02b5fedead0f668d1ae541eacc",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:protein-expression-analysis",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "protein-expression-analysis",
+      "source_hash": "3744696caf5d26a117b25149e7321cb520a7302ebb174ac63a402f51b4ba9bd9",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:python-scala-translation",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "python-scala-translation",
+      "source_hash": "dfa4ebfcec6dd982d13f3d2452998b95ec7aba18557275df181def6dcf5a8df9",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:quantum-numerical-simulation",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "quantum-numerical-simulation",
+      "source_hash": "6a9c7e406ec1091fcb114f219c4c302425ceb66ec5d029b49ee142dc84be1988",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:radar-vital-signs",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "radar-vital-signs",
+      "source_hash": "f96862de6f9a8c0b777a5aed3b038bc478e45f9e63a443699ce6795e9c03faa1",
+      "capability_id": "skillsbench.natural-science",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:sales-pivot-analysis",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "sales-pivot-analysis",
+      "source_hash": "e196b3daeb1e7192c5f0e88adde5f24aa0e98c1687640587b16c6ca2aa19c766",
+      "capability_id": "skillsbench.office-white-collar",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:shock-analysis-demand",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "shock-analysis-demand",
+      "source_hash": "2867c57f1e31b374d90accbeefb7c61d88930bca984b62b69d0cec4220f8f44c",
+      "capability_id": "skillsbench.finance-economics",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:shock-analysis-supply",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "shock-analysis-supply",
+      "source_hash": "b33752fc5f161d3bd0df8720cf92e83717189e6aa087ea8e3113254f80ccf1d3",
+      "capability_id": "skillsbench.finance-economics",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:simpo-code-reproduction",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "simpo-code-reproduction",
+      "source_hash": "36ed0d77b5aaf58de282d5a26135ebf9278cd7842e84a02da8d9742f30939757",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:tictoc-unnecessary-abort-detection",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "tictoc-unnecessary-abort-detection",
+      "source_hash": "d0f86cb340bca795e361a69092e9c4c5b2b90283349991e06a7502b123ae19aa",
+      "capability_id": "skillsbench.software-engineering",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "skillsbench:xlsx-recover-data",
+      "benchmark_id": "skillsbench",
+      "source_task_id": "xlsx-recover-data",
+      "source_hash": "9542782c2be503618a92487e82d576bfc7f559e85568ceadd847e43707a5f677",
+      "capability_id": "skillsbench.finance-economics",
+      "qualification_admitted": false,
+      "qualification_stage": "recipe_ready"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00003",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00003",
+      "source_hash": "1ca0aca99c51f892e83234aa71bdf2c7e760725d159a42b2b8a0e7752496540e",
+      "capability_id": "sra.numerical_and_ml",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00009",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00009",
+      "source_hash": "48a60da013481e0dea16b690bf8b06708f0ca061f403097e2596d48418cbf238",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00011",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00011",
+      "source_hash": "2accc09c95a040d533cc5864611c9fbeb359d61a79282b94218aec998960a38d",
+      "capability_id": "sra.numerical_and_ml",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00015",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00015",
+      "source_hash": "4186f6409bfcbdc848f6524f5e5e21d7de93fe1c566ad3ec0a7c284709c3d154",
+      "capability_id": "sra.filesystem_and_io",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00023",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00023",
+      "source_hash": "8ddae7d9a3042ac81ad796f0ff27e53b00011a391ca03d763f8519d9ccd0ef40",
+      "capability_id": "sra.numerical_and_ml",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00029",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00029",
+      "source_hash": "8c99d002d953928a7affa820acb9c197ee7c8cbba4b443b776cdf9d8869805e8",
+      "capability_id": "sra.numerical_and_ml",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00033",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00033",
+      "source_hash": "1717fadc3766c8ed4887c274cd839abfe96853e4be5c636caf1171ed965f826c",
+      "capability_id": "sra.numerical_and_ml",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00047",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00047",
+      "source_hash": "5e431f2085356ab51cbe384b246f26da94e79f69eab01c33ff26b70252c1d2bd",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00055",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00055",
+      "source_hash": "82db4f4a3dddc1b71dd56bb6ae9738e839b7570937526d142d8e4d6fcd4c5bb2",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00060",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00060",
+      "source_hash": "82985adfdb583f38556136c950be7e4932a5db94e1e7de82076c38ab33077472",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00069",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00069",
+      "source_hash": "20a0f84a01bd5010fb8b8b980bd59d6b044644edb0ffc5b28199806fe881997a",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00092",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00092",
+      "source_hash": "07d3db8a2a3dc70e615a4ce45c40a9c2a51dc296471edb51d1af972f64b2cafc",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00105",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00105",
+      "source_hash": "3ae439a955295a29c248a1df46fcf7d7cd028bb614d6808e0fb5f810208811cf",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00106",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00106",
+      "source_hash": "c83b3e054704ba08a4c9558a9725c7640a1b2b51c6078ae8170edd1608c01c3a",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00107",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00107",
+      "source_hash": "5c0404515919009ec0b86b33664356386a10891ee8467f6377e1310f3d26376d",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00131",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00131",
+      "source_hash": "40536a350faf480aac5d26b7478d0f4993159ef0f6888093f6fbd4d7acf40fd8",
+      "capability_id": "sra.filesystem_and_io",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00148",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00148",
+      "source_hash": "e25eb8e78f77c761cdffc6829c8c64995f5a44cb2404be4ba2d0c6d1bfa58c12",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00160",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00160",
+      "source_hash": "65a285ca9ff27e2dc1663e409d04be4941c764b9b2df6e3e8b29267341fc6262",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00189",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00189",
+      "source_hash": "577f8c37ae6a044cf44dc8380c9c17c0abbec86d9171d45e7f97495ff79b4258",
+      "capability_id": "sra.web_and_network",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00206",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00206",
+      "source_hash": "8ce1c0ea0fb1e732da40cfc85d014635622ca53ec2126c9fcee691d504dabe78",
+      "capability_id": "sra.filesystem_and_io",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00211",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00211",
+      "source_hash": "d0d4f30a7d88d1c84fb9aaf09b0b2c7e345a0126f5b6498c357ad2686fc2fa28",
+      "capability_id": "sra.web_and_network",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00260",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00260",
+      "source_hash": "e89fe1af74ee3b06121e9560fbdc444f75497a07bb960f4d2fe889ff8d1cb327",
+      "capability_id": "sra.filesystem_and_io",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00265",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00265",
+      "source_hash": "191ccebfa60bf4fc46b3e2ccc15c2d7decb9efe8c37d235af72b090648e2e88f",
+      "capability_id": "sra.filesystem_and_io",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00298",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00298",
+      "source_hash": "915bc78e8f0e11760f7b2a34f39ae97e5d2774a763f85aa602337a3eea8fdad0",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00433",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00433",
+      "source_hash": "1eeacc586d3b293b3ee42712b31615057975e1ac05ff011bf53288d779d0d2f1",
+      "capability_id": "sra.encoding_and_hashing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00462",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00462",
+      "source_hash": "f8a8205a48725690469ad24ed1596e2c7c3f18b5a95c93dcaea9ec9a3553d422",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00542",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00542",
+      "source_hash": "141d01f9905c8714d19ddce06c2dea34a84f6167f1f439bdd21258cd8dda23f7",
+      "capability_id": "sra.encoding_and_hashing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00571",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00571",
+      "source_hash": "6d8e43b1180332f68cef0f60246aca9fea199c1543a59ab0a272604554b6542d",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00597",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00597",
+      "source_hash": "e66652f28b16793beee08816cee8426db84fe1c8237c4c2af67afe307c941e0f",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00606",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00606",
+      "source_hash": "e91fc824163d3c31f89373ae0a5bb9339407800dce7eb45fa73847ef758de6d6",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00639",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00639",
+      "source_hash": "6784cb8981937e8b34441c9f1f963731d8f6e1aaf7b9e184802650660b7f83da",
+      "capability_id": "sra.data_visualization",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00641",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00641",
+      "source_hash": "d19fc1c7c6d197b999ddb2b4eb8f4645eac2ceeba8efdc3a19548fd89f5fa273",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00676",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00676",
+      "source_hash": "7256bdb8fd946e60069454542006ba06ed0c9fa9dd10e36d6c1bc532442df353",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00817",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00817",
+      "source_hash": "a84cd43441d418f8075ad4d28e331992b2cec73c827380a1e7d4ca8884bd3b87",
+      "capability_id": "sra.text_processing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00861",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00861",
+      "source_hash": "b5edae3cc7f903737e99cb06db861eaa262dc86e85163cd059d4b84051677677",
+      "capability_id": "sra.text_processing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00956",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00956",
+      "source_hash": "3b95add6e1662c5d3a764234c654e02cba8358f3284b25f127e0808586737037",
+      "capability_id": "sra.text_processing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_00991",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_00991",
+      "source_hash": "a24ba7cfd8752338f36bd4e24464bcbf56da91093936cfa243cd8f5fbf199d02",
+      "capability_id": "sra.text_processing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01010",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01010",
+      "source_hash": "0a7e501c8e8b1b8475918ef80f60cba246af68977fff9ad0184c561f9453571e",
+      "capability_id": "sra.web_and_network",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01013",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01013",
+      "source_hash": "48bf1107aef9318b43aa35c9a1002c0009181e0a6fa7dd15f3b1505ee12dcb13",
+      "capability_id": "sra.web_and_network",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01019",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01019",
+      "source_hash": "b67d690a665a13e02f1dc686776f480cb38cf142b24ae6f5b24ef084742d52a3",
+      "capability_id": "sra.encoding_and_hashing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01021",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01021",
+      "source_hash": "f654d0516876abe31e723d50a0fc3a0dbb4f28b1abec43b2d498a93b72842d9b",
+      "capability_id": "sra.encoding_and_hashing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01046",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01046",
+      "source_hash": "2d7c785dc459e51628ed4aaff16ff246754cd80d288e2eb4b4a53e3785cf6952",
+      "capability_id": "sra.dataframe_analysis",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01119",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01119",
+      "source_hash": "e894f43ba72081bea038f5d4eba7e8796a6743dcb2aaf921b603a50e54fd98bb",
+      "capability_id": "sra.text_processing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01120",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01120",
+      "source_hash": "32af5cbb63b8e3095f6f603a97f7c8bffee4d5454139c8ad9b3c2e8e9f6aa91b",
+      "capability_id": "sra.web_and_network",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:bigcodebench_01131",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "bigcodebench_01131",
+      "source_hash": "b8e7374ee8463c0b3d0e51ec477064ab5dd806768c02948133cd7dcccedfc413",
+      "capability_id": "sra.encoding_and_hashing",
+      "qualification_admitted": true,
+      "qualification_stage": "qualified"
+    },
+    {
+      "source_id": "sr_agents:champ_00000",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00000",
+      "source_hash": "542b8969f799eaa79bfb27688b507ee021c6a226b89c31e33167d77bd547cbc6",
+      "capability_id": "sra_qa.champ.champ_012",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00005",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00005",
+      "source_hash": "2719afcec5617425334a158142611eeff52820d06d3c0cd6ef56a7c8187981b3",
+      "capability_id": "sra_qa.champ.champ_016",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00006",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00006",
+      "source_hash": "1f4b563020b592fadd0acea22fa18d1598b50b643a907d4e63170f0d78ccbaf5",
+      "capability_id": "sra_qa.champ.champ_012",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00007",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00007",
+      "source_hash": "d0dec9204d18ac3a1c221e3c26aa217d8fb17f4805f9f412d9cac6fa300f3a98",
+      "capability_id": "sra_qa.champ.champ_016",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00010",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00010",
+      "source_hash": "5d2421fdc22e9647579cd8a951d045afb52140c352b1d9754fea27aa6641054f",
+      "capability_id": "sra_qa.champ.champ_016",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00012",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00012",
+      "source_hash": "ee4bed02bf21c90b77896d5a28f03f7dd163a3a9ad8a27f4d4149c47734d19f4",
+      "capability_id": "sra_qa.champ.champ_012",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00014",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00014",
+      "source_hash": "95190104f8884bf18c698cd82bcf14cd784a45e511b1b7a46db47eca8d7f2ad7",
+      "capability_id": "sra_qa.champ.champ_016",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00024",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00024",
+      "source_hash": "5305367351dbd09ea23b2f1f584171d4719d114136c3d9e9e614e7ca23d32ad6",
+      "capability_id": "sra_qa.champ.champ_016",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00032",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00032",
+      "source_hash": "becea2492e3e6ce4a94e3dd23c37570a6b5e8234e66e3c424d4955840109826e",
+      "capability_id": "sra_qa.champ.champ_012",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00038",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00038",
+      "source_hash": "426760442c43f8bf6faa5bc777ae10055df735f68caaeeeba494a892a98bcaf6",
+      "capability_id": "sra_qa.champ.champ_012",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00111",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00111",
+      "source_hash": "95e339e93d3069b1974ad3e0b122fbc5604341c08c258876a3a227c38a1e10af",
+      "capability_id": "sra_qa.champ.champ_010",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00113",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00113",
+      "source_hash": "a5b633c3ca526491919b9303aad98818fad280e91ff694dbfe0eff2d9c762119",
+      "capability_id": "sra_qa.champ.champ_010",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00115",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00115",
+      "source_hash": "9f1d744df295939d831b40102920a806e7b0a4f28a161d22918a29bbacca7a9e",
+      "capability_id": "sra_qa.champ.champ_010",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00133",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00133",
+      "source_hash": "ecc9e54b5ea5bb69ccd6e9bad887e98e04076bc71d54232e5aba0f58bb675975",
+      "capability_id": "sra_qa.champ.champ_010",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:champ_00142",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "champ_00142",
+      "source_hash": "b94b1bb197978e5e763c21dadf3f550cc9e669f9cf0ec083faa8bdf5d65bb3b3",
+      "capability_id": "sra_qa.champ.champ_010",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00323",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00323",
+      "source_hash": "23fb6feb7f2287ee0cc779558d0d7ae2b2db0fd377d81c8bfd97b1713db2285e",
+      "capability_id": "sra_qa.logic.logicbench_002",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00329",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00329",
+      "source_hash": "29cc34c913e6d84be1b30d4cf98d40cc9f5b149c6e1681e5ef0db8332c08f6de",
+      "capability_id": "sra_qa.logic.logicbench_002",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00341",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00341",
+      "source_hash": "2c4d6074ac54261c8290bd28ddbe5251e1aa86aa5cac41dacc0209dccb0cee5f",
+      "capability_id": "sra_qa.logic.logicbench_002",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00350",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00350",
+      "source_hash": "44cb1611c450acb18809945fb33af91e534fb8699815fbd5df0a55469ebb8068",
+      "capability_id": "sra_qa.logic.logicbench_002",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00355",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00355",
+      "source_hash": "cb99a616548fbfeef06229dd45f334206cd4aafea9881dbacf6dc4e534932a9c",
+      "capability_id": "sra_qa.logic.logicbench_002",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00481",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00481",
+      "source_hash": "96fa5c25b80b2a65dfff5e87a011470b06b988440c441e1bfea4bc85175b1029",
+      "capability_id": "sra_qa.logic.logicbench_000",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00486",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00486",
+      "source_hash": "7d02c28b00fb9c5e1c98c6382df26c325757f425b4fd1bacd21c3943db583777",
+      "capability_id": "sra_qa.logic.logicbench_000",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00488",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00488",
+      "source_hash": "4ffe992fe204115885f192fb51e494ad8837c56a48dd835e816258b854c11a62",
+      "capability_id": "sra_qa.logic.logicbench_000",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00506",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00506",
+      "source_hash": "d540d658c56b6ab4027bd3621d883eb3aba89546b3c71dad6ca33df539186bd8",
+      "capability_id": "sra_qa.logic.logicbench_000",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00513",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00513",
+      "source_hash": "69e2cca2b580478735bb12753ceb73c5856a77f589b928132220ae59682df780",
+      "capability_id": "sra_qa.logic.logicbench_000",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00522",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00522",
+      "source_hash": "6f3d34463093f434297a4d88e05b9a51d01713f6d136ea011d731f8dd2b8e589",
+      "capability_id": "sra_qa.logic.logicbench_001",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00523",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00523",
+      "source_hash": "f1804570e6a09ec26b1a9a98b422557da86c9c9dc2bbc2c656d157d36bc9402c",
+      "capability_id": "sra_qa.logic.logicbench_001",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00539",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00539",
+      "source_hash": "65bcd480cd30fae5fbd9d15f9a29c5c787ddcac227b728c0bcde40afa55a664f",
+      "capability_id": "sra_qa.logic.logicbench_001",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00540",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00540",
+      "source_hash": "7b933f3e4be12dfb35d6625717714dfdc36227b5b1b0f38718aa49b15a662368",
+      "capability_id": "sra_qa.logic.logicbench_001",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:logicbench_00549",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "logicbench_00549",
+      "source_hash": "4c470b15d08743935884b5de67419a83bd72107207457fed1d8b98c22908d4cb",
+      "capability_id": "sra_qa.logic.logicbench_001",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00061",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00061",
+      "source_hash": "4bc2ad7ab4e0f882bdadee9af6908fee2baa40825c84c1a763127cff1af0ba97",
+      "capability_id": "sra_qa.medcalc.medcalcbench_009",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00065",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00065",
+      "source_hash": "b0938d907961401f9786060384744a016141c7b3619e92475a60625528e45585",
+      "capability_id": "sra_qa.medcalc.medcalcbench_009",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00069",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00069",
+      "source_hash": "5c7cbffb08b535cbdce8445b66191638fedd882c0bbfc98085fd900b0938dcf2",
+      "capability_id": "sra_qa.medcalc.medcalcbench_009",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00070",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00070",
+      "source_hash": "da54250bf70392e830e1a27561728827f59f59739d3c27084264f826e1877a36",
+      "capability_id": "sra_qa.medcalc.medcalcbench_009",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00073",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00073",
+      "source_hash": "f7c9c60e616a60ea765136ed1dbdc83a1ec84f80efc8b9186cd899f32b82b36a",
+      "capability_id": "sra_qa.medcalc.medcalcbench_009",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00082",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00082",
+      "source_hash": "932b9c4ee9a5885f5121dc9cecd20ebef48f95ebec03c03a3d11c378f660ac66",
+      "capability_id": "sra_qa.medcalc.medcalcbench_004",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00084",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00084",
+      "source_hash": "9e466c59804d33e521a46f6d59458285a3c7dad1fc67389930d0e8aa7c85a4ba",
+      "capability_id": "sra_qa.medcalc.medcalcbench_004",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00086",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00086",
+      "source_hash": "5869ebe2f8bf008c6c5f340d35c514c08346804aff72c74a6768880e3535adc6",
+      "capability_id": "sra_qa.medcalc.medcalcbench_004",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00093",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00093",
+      "source_hash": "60adb2f6e2e1c33f256f5d8ab268ae641d2abf04cd0670620c474c51d01a2af0",
+      "capability_id": "sra_qa.medcalc.medcalcbench_004",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00098",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00098",
+      "source_hash": "851140f979960bc21fa441917d467d56830a0cc7ef6790d0572aa316ccbccdf9",
+      "capability_id": "sra_qa.medcalc.medcalcbench_004",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00100",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00100",
+      "source_hash": "56fe9d41912bb30ffc1ea9200533f9c2e99a7f3568fc25fc23e3875c50f9ac78",
+      "capability_id": "sra_qa.medcalc.medcalcbench_035",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00105",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00105",
+      "source_hash": "688f1adcefd033186ba205774f874339a16e7c47812a10a85414c002afcc7ddf",
+      "capability_id": "sra_qa.medcalc.medcalcbench_035",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00106",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00106",
+      "source_hash": "6969b5690cae7cb7aed11d15fe22f33249981dd72edc5698c721ea602c1f547c",
+      "capability_id": "sra_qa.medcalc.medcalcbench_035",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00115",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00115",
+      "source_hash": "7fa7957e4c7a136a9ba42637d791e04d8517b625371357233a9cda58b8fda192",
+      "capability_id": "sra_qa.medcalc.medcalcbench_035",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:medcalcbench_00118",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "medcalcbench_00118",
+      "source_hash": "aa094f9214827fddd2f747f757ce92a2155eca68a082ab94bcf0a19144522956",
+      "capability_id": "sra_qa.medcalc.medcalcbench_035",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00032",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00032",
+      "source_hash": "a0a1353cdd72bea6092a3604091d62bd5486a1f8945d8e38ebee04fb852028f4",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00042",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00042",
+      "source_hash": "ff95a684d00851f860bd65bd5c6b1e9be973526c7963f002852a9c648f7fae21",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00058",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00058",
+      "source_hash": "364942cf565f994750a20a06e488e8929eeffebac88b34d623deffb478b88e6d",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00149",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00149",
+      "source_hash": "7dd3c3c3b417a4f66437aa0f65b11f2f146379a346e462ba2bc72d5382feb28f",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00191",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00191",
+      "source_hash": "3ac4c3348bc81fde824564007885da24bedf015613c288ce68d0dcaff116fbf0",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00206",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00206",
+      "source_hash": "9295da73d5d931afda1aad234d5f6fbddd558e87dcb897d78c34651a1b2794aa",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00235",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00235",
+      "source_hash": "8e5870172f46e1d0ee976835c1c49c707d9a0cadba80ae9beefdd05dd73e95a3",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00292",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00292",
+      "source_hash": "cffc4d3b39c58ebf702827e0ade90e45b8cc6ea0bb12785fde2d2435641cce4c",
+      "capability_id": "sra_qa.theoremqa.theoremqa_292",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00389",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00389",
+      "source_hash": "1484b6898de0700cc76139438a858ca8b020a94a26b0390965545a5d408b6886",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00448",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00448",
+      "source_hash": "729fde7822cf6d16706a2ca972039e12dbc7e42e23545cabf63ae109a5a8cc80",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00563",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00563",
+      "source_hash": "4d5b2ac3c842c61219c8beced53e7b4b5d93bed7f1058a7cd028c021bcd12952",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00604",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00604",
+      "source_hash": "e23738c03fcbfcd130bd86cb9a42d2a6987f19fd6cd8923badbc177e7cc812a4",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00679",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00679",
+      "source_hash": "10a01823cfcbeb40ae91a7dc64709fd1792b51b29a28057fef1efab46836acbf",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00711",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00711",
+      "source_hash": "4c96bfb24b3ee335dfe213e9dcba5c9369b5a6a5cbf3c3e5ccd6bcab24511e04",
+      "capability_id": "sra_qa.theoremqa.theoremqa_196",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "sr_agents:theoremqa_00726",
+      "benchmark_id": "sr_agents",
+      "source_task_id": "theoremqa_00726",
+      "source_hash": "0488028aa53b902fc6eb734cc425de16ba917b6a17c22852d8efc5d8d0266b69",
+      "capability_id": "sra_qa.theoremqa.theoremqa_291",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:1",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:1",
+      "source_hash": "365091613cf731aaadac059d7a39b32b95a070bf358b4bd9f04ad836eec1a614",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:10",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:10",
+      "source_hash": "da9a23b545e89ed32adcfbaa86a938a317c264a96b6c1b7f75ff819b47319489",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:11",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:11",
+      "source_hash": "c76cd2fd76c9328c2bbfe5a59705707ba14a53da31fd8a451a3c4ad8ef443224",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:12",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:12",
+      "source_hash": "3b08fff117282db541608b0ca87950d1e0bceb6bc635b995ba26faa6f70905cd",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:15",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:15",
+      "source_hash": "df69592080cb6cf748177608e726824221144beab193302196d095ed3fcccaa8",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:16",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:16",
+      "source_hash": "99ff3fbfaf656b5e77e108def6c8f35b38c6dda7ed05236bfd2036de6436ebf4",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:17",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:17",
+      "source_hash": "d83db4e78ae317b5a20d7a3edb1bd0d04c828cd9b9fb04d9fd8be70a755cade0",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:19",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:19",
+      "source_hash": "afaa2ddfaaec6a2aae9d1dbb4b964fa44ca2f4b428b87e805850ca504142328a",
+      "capability_id": "tau2.airline.booking_cancellation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:2",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:2",
+      "source_hash": "b4762468fc661eef09a8b26056d556de5531437c6e2d1c953688390b759e1391",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:21",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:21",
+      "source_hash": "8ccdfd622b2d6260cf292b038ae980923524e1b6074c8a3c257d6f3c28e397bf",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:22",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:22",
+      "source_hash": "50c51521fa62fc35e288ce323b6ae62b40ca082344bbe59b1dc280c86f39f76c",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:3",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:3",
+      "source_hash": "21a59df1ca56b5332070868e6d1c696191623485b909385f4229759f4fc566ff",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:30",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:30",
+      "source_hash": "49e4797993529a661a4f3860d3707b0804566bbe53269496f312cfa01e71279b",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:32",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:32",
+      "source_hash": "db442df041dcc0fd7f127681391345890562db1322fcd5b2199d4dfb831eb9e0",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:33",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:33",
+      "source_hash": "1d4d2cbf475cf9f7daef9fbaa9d3f54f5b201b912231257c5ab5f034daeb37e7",
+      "capability_id": "tau2.airline.reservation_changes",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:38",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:38",
+      "source_hash": "2da568178256a77e0d48f93351151b212cb3c0ba77dfb2f81d2922d5a7ef2c35",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:39",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:39",
+      "source_hash": "a455a77004ea68543172d7c7fdacae21cb36a2a53aabc93fdc5d3dd084c64e7e",
+      "capability_id": "tau2.airline.booking_cancellation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:41",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:41",
+      "source_hash": "68046a6339af2a905b2e85b11ee323ca1f03139cf058ac27322932a6d281d2bb",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:42",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:42",
+      "source_hash": "2776b16461f85f6cdd3c07e5d88f45ce12db3637d6866477603d04dfdf8fcbaa",
+      "capability_id": "tau2.airline.booking_cancellation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:45",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:45",
+      "source_hash": "152dddb751923ca4204fe163f67dfb013137f5602ceb09a6bad10d9fd6f66955",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:48",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:48",
+      "source_hash": "21994153fb911fcf7e371c4c9cddb1cdde173c3e6aa6f15b9c7c971c500311da",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:5",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:5",
+      "source_hash": "e16b47dd111fe257cfeb2dc158975b196419f75e7de4d273be11d8b88154ce33",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:7",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:7",
+      "source_hash": "8c66a0f45bbb05bfd11a8444a417d26e091bb95dc9f7e309f20806cf49f17e2e",
+      "capability_id": "tau2.airline.booking_cancellation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:8",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:8",
+      "source_hash": "c2c59213e7d6be1bd09c8dff93bdd95e80adf94cb8e993d380092c7252a487c8",
+      "capability_id": "tau2.airline.booking_cancellation",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:airline:9",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "airline:9",
+      "source_hash": "c23ad243dd36b899fc7d032cc7b3692b3648a91c88c9dcb00a74a889e4ca3911",
+      "capability_id": "tau2.airline.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:banking_knowledge:task_001",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "banking_knowledge:task_001",
+      "source_hash": "421aa3044b02c1167fd72be9a538b737d6ac0eda93b54da9d6bfb3f9a806dd1a",
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:banking_knowledge:task_002",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "banking_knowledge:task_002",
+      "source_hash": "5964481f90897f01cb212a132b12f9a0bd56eb09e806ae68b3282c9084f732db",
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:banking_knowledge:task_003",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "banking_knowledge:task_003",
+      "source_hash": "f7d2efd274ef804b356dbc39c1fb65612cd32a0a553eca15936de6ebafb04459",
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:banking_knowledge:task_006",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "banking_knowledge:task_006",
+      "source_hash": "1237a51c13f478e963c4e5eb705fe6c112aa1d3cf202157a4387dd17f019f6c8",
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:banking_knowledge:task_007",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "banking_knowledge:task_007",
+      "source_hash": "ffd84e31b9c68d5f132357724c813c415f74865fd357320e85500c0bb426dace",
+      "capability_id": "tau2.banking.knowledge_procedures",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:100",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:100",
+      "source_hash": "5f18c87906aeaf359d219edace146a15c7d530b975f55fe1025515511d30db1f",
+      "capability_id": "tau2.retail.order_modification",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:102",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:102",
+      "source_hash": "986a6193659a8b34b10fa488930f843f98c3f75289b660d2b917abf739473752",
+      "capability_id": "tau2.retail.order_modification",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:104",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:104",
+      "source_hash": "695ca20d68353398a9f2c0d7e9f941af01a0c1c289336980f32c9d9940e9a1cf",
+      "capability_id": "tau2.retail.returns_exchanges",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:16",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:16",
+      "source_hash": "a46a7848d29777c7d6bb3beadea6d3cafa0da12158830a6a0c685f90fb08ca55",
+      "capability_id": "tau2.retail.order_modification",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:18",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:18",
+      "source_hash": "e0b74e02fa5a3cb1864a94039da05fa9b6967c2577b9937edba9afb3ef0431e1",
+      "capability_id": "tau2.retail.returns_exchanges",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:19",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:19",
+      "source_hash": "606aedb73174e73fcf340b00164f9e973918c46893d12902177f748b375abe88",
+      "capability_id": "tau2.retail.returns_exchanges",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:2",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:2",
+      "source_hash": "0264691c75c55cc3631b682b81106ed036288b4987633c91aa177b838a2bd62c",
+      "capability_id": "tau2.retail.returns_exchanges",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:24",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:24",
+      "source_hash": "ce2a3c2855b166a49990d2f09a849cc37b0f7f849f3cb7338f209747972e4f97",
+      "capability_id": "tau2.retail.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:25",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:25",
+      "source_hash": "d07189e320ad272fba179da906ae92256ecac3bbea30cdf2aa413c50c1bd295b",
+      "capability_id": "tau2.retail.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:27",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:27",
+      "source_hash": "168dbe31d1c4be065156e911cc8715429b428ce3be01496cbdda0d5956582b41",
+      "capability_id": "tau2.retail.returns_exchanges",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:31",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:31",
+      "source_hash": "66d805aaa09d2d0b0427a66d9a9757bd1d0ba1d7071dfbb11807f91fa49bbb86",
+      "capability_id": "tau2.retail.order_modification",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:39",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:39",
+      "source_hash": "e380c4066bf5cd3bc2fe9105c3aa1637f8d0bc9617b43007b40d72047dba638e",
+      "capability_id": "tau2.retail.order_modification",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:57",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:57",
+      "source_hash": "4c4ff215426c188639d3e35cab504cf2e83f4b1985e49c90d02706209f2447eb",
+      "capability_id": "tau2.retail.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:62",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:62",
+      "source_hash": "2f2e7704130a6ecbbc1e915efb61c1e66a4989a5a54e684476b3ef7027217f41",
+      "capability_id": "tau2.retail.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:retail:65",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "retail:65",
+      "source_hash": "8dae113cb83a83a81b69778dfed6b6ba12ff96f57bd02e726e54710aadfc5b66",
+      "capability_id": "tau2.retail.policy_refusal",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+      "source_hash": "6e986e01e94a4acccc843c0f4d3e7bdbe3e0a12dae314566035869d99ffd0bfe",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+      "source_hash": "0c143a2ff07bf6aa9768d8747c565f896306bf1891813bf04ce93369b050f2fe",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "92b3367f43bea49e782ec53b1e8dc2daf7cac77b2cbf09886962765afb858c1f",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "2b798f26f4747678a75dc8943856f86e39abf2a935c363c000623913df974962",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "cdac43512b0ffdbbc89ffa1d0f7a0b03bc76bdd532f11faa6349cda1c4b0578f",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "5c2337c47a9499d1eab9d70746f3d2d81c9436106dac60f7c25187be352b9f40",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "4a7d525daa1ec2306973734529e194408dfff0591f1cd15db147cf678e315ef0",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "c6e0c816107f8fb6e792038fd364f6690a43173ad285211fb931c3f67069578d",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "ac1c0fa459080a824e86c305ef1337be0c26f83dbe1c9b1766e4aa497b817c33",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+      "source_hash": "6a55800ca1c8d1eb816ff0ad3d72b1a05fc2d7055377246d85e89b82ff3fa0b8",
+      "capability_id": "tau2.telecom.mms_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "source_hash": "cbed61ae7c62ca669191e8f4201e20bf64d8b4b9e5a4d1d8e5013afbc18ffd39",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+      "source_hash": "de21453c080b5cafc42d7adfb393e7b9a5e9167a27952130bf1a6a478fcede8b",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "source_hash": "103c6007da9d58d5de4776833e824c47f06378d546f87355f88f412e707185db",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+      "source_hash": "4b40ea8884545d88e5246bc53b4afb6059d66819fc3f82327298e0b41805a2da",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+      "source_hash": "4b03899b75a81b5f820ddac34ecd6a9a397010f716c489e20200785a01ac3737",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+      "source_hash": "a26811d5a96e145efbc6c3c1877393d0656bd03ac862decda0e348b01dc73cfe",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "source_hash": "3e14c9efd469b53f1975ecc47786b0820fe07680783af665716b0a38716207f2",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "source_hash": "fc18c2d140e675a6b8c4b18d101c65bbdc59d664b6fd94d21617ae395819650f",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+      "source_hash": "cbfe767592fdfca5e8484288aa2b0cd6cef806ec4e8054d894a1f351e17c4fcd",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+      "source_hash": "ccdaee49973a5947d8598fbe573743ad947a811d5b7cf7bf3848963774b14937",
+      "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "source_hash": "4f88edf0b00aef53df435320b3a7fb044d4635a20cc41254afcf03be6797929f",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+      "source_hash": "f570a96d514e93630b3565564ba2724d5d1c885ab1cfc999fb08020d68826543",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "source_hash": "d658587d1f36610d46f802cdf795731ac3cb8770e2f2cb10b6fd65cde31878da",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+      "source_hash": "34266631b8b7ec5a6d90384fd03eb06937a028386aeaa13664615b9e9d202b19",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+      "source_hash": "d82584fbf38b003d7c1395eb386972cf3fe81f0cfe36868321c0bf80daaa48f6",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "source_hash": "2b085a3565129d22aef5832a5b17501f80cbac0ea5eb14dc7595a251bc4e6e74",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+      "source_hash": "df2d66447377e23077cce283008029a7c78664cc0b15bfa5b002a4d5c7c9079a",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+      "source_hash": "111c3a108e85eb12c003a980b1b6334896f5d683c54c39e2438719b2dbcbd63c",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+      "source_hash": "c902f538e7b708abfae1f9b7e9e57d6531b90811db68db243a5b5215f51bb83b",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    },
+    {
+      "source_id": "tau2_bench:telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "benchmark_id": "tau2_bench",
+      "source_task_id": "telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+      "source_hash": "b21dfeca75875d02bcb5ef7efa3dac55ee6fbd74e130f8eb8964a221e5acd451",
+      "capability_id": "tau2.telecom.service_troubleshooting",
+      "qualification_admitted": true,
+      "qualification_stage": null
+    }
+  ]
+}

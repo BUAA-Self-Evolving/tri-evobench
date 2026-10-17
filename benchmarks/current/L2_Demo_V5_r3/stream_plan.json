@@ -1,0 +1,831 @@
+{
+  "package_id": "L2_Demo_V5_r3",
+  "schema_version": "l2_v5_stream_plan/2.0",
+  "seed": 20261010,
+  "streams": [
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra.data_visualization",
+          "source_ids": [
+            "sr_agents:bigcodebench_00092",
+            "sr_agents:bigcodebench_00298",
+            "sr_agents:bigcodebench_00047",
+            "sr_agents:bigcodebench_00106",
+            "sr_agents:bigcodebench_00069"
+          ]
+        },
+        {
+          "capability_id": "sra.filesystem_and_io",
+          "source_ids": [
+            "sr_agents:bigcodebench_00131",
+            "sr_agents:bigcodebench_00206",
+            "sr_agents:bigcodebench_00260",
+            "sr_agents:bigcodebench_00265",
+            "sr_agents:bigcodebench_00015"
+          ]
+        },
+        {
+          "capability_id": "sra.text_processing",
+          "source_ids": [
+            "sr_agents:bigcodebench_00991",
+            "sr_agents:bigcodebench_00861",
+            "sr_agents:bigcodebench_01119",
+            "sr_agents:bigcodebench_00956",
+            "sr_agents:bigcodebench_00817"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "blocked",
+      "stream_id": "intra_sra_blocked_01",
+      "tasks_per_capability": 5,
+      "theme": "SR-Agents BigCodeBench: plotting, file I/O, text processing"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra.dataframe_analysis",
+          "source_ids": [
+            "sr_agents:bigcodebench_00060",
+            "sr_agents:bigcodebench_00055",
+            "sr_agents:bigcodebench_00641",
+            "sr_agents:bigcodebench_00571",
+            "sr_agents:bigcodebench_00676"
+          ]
+        },
+        {
+          "capability_id": "sra.numerical_and_ml",
+          "source_ids": [
+            "sr_agents:bigcodebench_00033",
+            "sr_agents:bigcodebench_00011",
+            "sr_agents:bigcodebench_00029",
+            "sr_agents:bigcodebench_00023",
+            "sr_agents:bigcodebench_00003"
+          ]
+        },
+        {
+          "capability_id": "sra.web_and_network",
+          "source_ids": [
+            "sr_agents:bigcodebench_00211",
+            "sr_agents:bigcodebench_01013",
+            "sr_agents:bigcodebench_01120",
+            "sr_agents:bigcodebench_01010",
+            "sr_agents:bigcodebench_00189"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_sra_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "SR-Agents BigCodeBench: pandas, numerical/ML, offline web parsing"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra.data_visualization",
+          "source_ids": [
+            "sr_agents:bigcodebench_00107",
+            "sr_agents:bigcodebench_00009",
+            "sr_agents:bigcodebench_00639",
+            "sr_agents:bigcodebench_00105",
+            "sr_agents:bigcodebench_00160"
+          ]
+        },
+        {
+          "capability_id": "sra.dataframe_analysis",
+          "source_ids": [
+            "sr_agents:bigcodebench_00597",
+            "sr_agents:bigcodebench_00606",
+            "sr_agents:bigcodebench_00462",
+            "sr_agents:bigcodebench_00148",
+            "sr_agents:bigcodebench_01046"
+          ]
+        },
+        {
+          "capability_id": "sra.encoding_and_hashing",
+          "source_ids": [
+            "sr_agents:bigcodebench_01019",
+            "sr_agents:bigcodebench_00542",
+            "sr_agents:bigcodebench_00433",
+            "sr_agents:bigcodebench_01131",
+            "sr_agents:bigcodebench_01021"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "delayed",
+      "stream_id": "intra_sra_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "SR-Agents BigCodeBench: plotting, pandas, encoding"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+            "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:Hard]",
+            "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Easy]",
+            "tau2_bench:telecom:[mobile_data_issue]data_mode_off|user_abroad_roaming_disabled_off[PERSONA:None]",
+            "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+          ]
+        },
+        {
+          "capability_id": "tau2.retail.returns_exchanges",
+          "source_ids": [
+            "tau2_bench:retail:18",
+            "tau2_bench:retail:19",
+            "tau2_bench:retail:104",
+            "tau2_bench:retail:2",
+            "tau2_bench:retail:27"
+          ]
+        },
+        {
+          "capability_id": "tau2.airline.policy_refusal",
+          "source_ids": [
+            "tau2_bench:airline:3",
+            "tau2_bench:airline:5",
+            "tau2_bench:airline:1",
+            "tau2_bench:airline:38",
+            "tau2_bench:airline:41"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "blocked",
+      "stream_id": "intra_tau2_blocked_01",
+      "tasks_per_capability": 5,
+      "theme": "tau2-bench: telecom data troubleshooting, retail returns, airline policy refusals"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "tau2.telecom.mms_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting[PERSONA:Easy]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off[PERSONA:Easy]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]"
+          ]
+        },
+        {
+          "capability_id": "tau2.retail.order_modification",
+          "source_ids": [
+            "tau2_bench:retail:100",
+            "tau2_bench:retail:16",
+            "tau2_bench:retail:31",
+            "tau2_bench:retail:102",
+            "tau2_bench:retail:39"
+          ]
+        },
+        {
+          "capability_id": "tau2.banking.knowledge_procedures",
+          "source_ids": [
+            "tau2_bench:banking_knowledge:task_006",
+            "tau2_bench:banking_knowledge:task_003",
+            "tau2_bench:banking_knowledge:task_002",
+            "tau2_bench:banking_knowledge:task_007",
+            "tau2_bench:banking_knowledge:task_001"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_tau2_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "tau2-bench: MMS troubleshooting, retail order changes, banking procedures"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "tau2.telecom.service_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+            "tau2_bench:telecom:[service_issue]break_apn_settings|unseat_sim_card[PERSONA:None]",
+            "tau2_bench:telecom:[service_issue]lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]",
+            "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|overdue_bill_suspension[PERSONA:Easy]",
+            "tau2_bench:telecom:[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]"
+          ]
+        },
+        {
+          "capability_id": "tau2.airline.reservation_changes",
+          "source_ids": [
+            "tau2_bench:airline:32",
+            "tau2_bench:airline:16",
+            "tau2_bench:airline:30",
+            "tau2_bench:airline:15",
+            "tau2_bench:airline:33"
+          ]
+        },
+        {
+          "capability_id": "tau2.retail.policy_refusal",
+          "source_ids": [
+            "tau2_bench:retail:65",
+            "tau2_bench:retail:57",
+            "tau2_bench:retail:62",
+            "tau2_bench:retail:25",
+            "tau2_bench:retail:24"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "delayed",
+      "stream_id": "intra_tau2_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "tau2-bench: telecom service, airline reservation changes, retail refusals"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skilllearn.court-form-filling",
+          "source_ids": [
+            "skilllearnbench:court-form-filling-5",
+            "skilllearnbench:court-form-filling-2",
+            "skilllearnbench:court-form-filling-1",
+            "skilllearnbench:court-form-filling-3",
+            "skilllearnbench:court-form-filling-4"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.dbscan-parameter-tuning",
+          "source_ids": [
+            "skilllearnbench:dbscan-parameter-tuning-5",
+            "skilllearnbench:dbscan-parameter-tuning-1",
+            "skilllearnbench:dbscan-parameter-tuning-3",
+            "skilllearnbench:dbscan-parameter-tuning-4",
+            "skilllearnbench:dbscan-parameter-tuning-2"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.stock-data-visualization",
+          "source_ids": [
+            "skilllearnbench:stock-data-visualization-2",
+            "skilllearnbench:stock-data-visualization-1",
+            "skilllearnbench:stock-data-visualization-5",
+            "skilllearnbench:stock-data-visualization-4",
+            "skilllearnbench:stock-data-visualization-3"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "native_family_sibling",
+      "schedule": "interleaved",
+      "stream_id": "intra_skilllearn_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "SkillLearnBench families: court forms, DBSCAN tuning, D3 stock visualization"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skilllearn.offer-letter-generator",
+          "source_ids": [
+            "skilllearnbench:offer-letter-generator-3",
+            "skilllearnbench:offer-letter-generator-4",
+            "skilllearnbench:offer-letter-generator-1",
+            "skilllearnbench:offer-letter-generator-5",
+            "skilllearnbench:offer-letter-generator-2"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.video-object-counting",
+          "source_ids": [
+            "skilllearnbench:video-object-counting-3",
+            "skilllearnbench:video-object-counting-1",
+            "skilllearnbench:video-object-counting-2",
+            "skilllearnbench:video-object-counting-4",
+            "skilllearnbench:video-object-counting-5"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.weighted-gdp-calculation",
+          "source_ids": [
+            "skilllearnbench:weighted-gdp-calculation-5",
+            "skilllearnbench:weighted-gdp-calculation-6",
+            "skilllearnbench:weighted-gdp-calculation-3",
+            "skilllearnbench:weighted-gdp-calculation-1",
+            "skilllearnbench:weighted-gdp-calculation-4"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "native_family_sibling",
+      "schedule": "delayed",
+      "stream_id": "intra_skilllearn_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "SkillLearnBench families: offer letters, video object counting, weighted GDP"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skillsbench.office-white-collar",
+          "source_ids": [
+            "skillsbench:pptx-reference-formatting",
+            "skillsbench:edit-pdf",
+            "skillsbench:court-form-filling",
+            "skillsbench:exceltable-in-ppt",
+            "skillsbench:offer-letter-generator"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.industrial-physical-systems",
+          "source_ids": [
+            "skillsbench:drone-planning-control",
+            "skillsbench:energy-unit-commitment",
+            "skillsbench:manufacturing-equipment-maintenance",
+            "skillsbench:manufacturing-codebook-normalization",
+            "skillsbench:manufacturing-fjsp-optimization"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.natural-science",
+          "source_ids": [
+            "skillsbench:lab-unit-harmonization",
+            "skillsbench:mars-clouds-clustering",
+            "skillsbench:protein-expression-analysis",
+            "skillsbench:flood-risk-analysis",
+            "skillsbench:radar-vital-signs"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "blocked",
+      "stream_id": "intra_skillsbench_blocked_01",
+      "tasks_per_capability": 5,
+      "theme": "SkillsBench: office documents, industrial systems, natural science"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skillsbench.finance-economics",
+          "source_ids": [
+            "skillsbench:shock-analysis-demand",
+            "skillsbench:invoice-fraud-detection",
+            "skillsbench:shock-analysis-supply",
+            "skillsbench:financial-modeling-qa",
+            "skillsbench:xlsx-recover-data"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.software-engineering",
+          "source_ids": [
+            "skillsbench:data-to-d3",
+            "skillsbench:azure-bgp-oscillation-route-leak",
+            "skillsbench:dialogue-parser",
+            "skillsbench:parallel-tfidf-search",
+            "skillsbench:jax-computing-basics"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.office-white-collar",
+          "source_ids": [
+            "skillsbench:paper-anonymizer",
+            "skillsbench:sales-pivot-analysis",
+            "skillsbench:enterprise-information-search",
+            "skillsbench:citation-check",
+            "skillsbench:jpg-ocr-stat"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "delayed",
+      "stream_id": "intra_skillsbench_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "SkillsBench: finance, software engineering, office documents"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "ar.tabular_and_text_prediction",
+          "source_ids": [
+            "mlgym:regressionKaggleHousePrice",
+            "airs_bench:TextualSimilaritySickSpearmanCorrelation",
+            "airs_bench:TextualClassificationSickAccuracy"
+          ]
+        },
+        {
+          "capability_id": "ar.sequence_and_math_reasoning",
+          "source_ids": [
+            "airs_bench:TimeSeriesForecastingRideshareMAE",
+            "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+            "airs_bench:CodeRetrievalCodeXGlueMRR"
+          ]
+        },
+        {
+          "capability_id": "ar.decision_and_game_strategy",
+          "source_ids": [
+            "mlgym:prisonersDilemma",
+            "mlgym:battleOfSexes",
+            "mlgym:blotto"
+          ]
+        }
+      ],
+      "pool_id": "auto_research_cpu",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "auto_research_cpu_interleaved_01",
+      "tasks_per_capability": 3,
+      "theme": "AutoResearch CPU-only: text/tabular prediction, sequence and retrieval, game strategy"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "ar.tabular_and_text_prediction",
+          "source_ids": [
+            "airs_bench:CoreferenceResolutionWinograndeAccuracy",
+            "airs_bench:CoreferenceResolutionSuperGLUEWSCAccuracy",
+            "airs_bench:QuestionAnsweringEli5RougeL"
+          ]
+        },
+        {
+          "capability_id": "ar.vision_and_deep_models",
+          "source_ids": [
+            "airs_bench:CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "airs_bench:R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "mlgym:imageClassificationFMnist"
+          ]
+        },
+        {
+          "capability_id": "ar.decision_and_game_strategy",
+          "source_ids": [
+            "mlgym:rlMountainCarContinuous",
+            "mlgym:rlBreakoutMinAtar",
+            "mlgym:rlMetaMaze"
+          ]
+        }
+      ],
+      "pool_id": "auto_research_cpu_gpu",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "auto_research_cpu_gpu_interleaved_01",
+      "tasks_per_capability": 3,
+      "theme": "AutoResearch CPU+GPU: transformer NLP, vision/graph deep models, RL control"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "ar.tabular_and_text_prediction",
+          "source_ids": [
+            "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+            "mlgym:regressionKaggleHousePrice#stage2",
+            "airs_bench:TextualClassificationSickAccuracy"
+          ]
+        },
+        {
+          "capability_id": "ar.sequence_and_math_reasoning",
+          "source_ids": [
+            "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+            "airs_bench:TimeSeriesForecastingRideshareMAE#stage2",
+            "airs_bench:TimeSeriesForecastingSolarWeeklyMAE"
+          ]
+        },
+        {
+          "capability_id": "ar.decision_and_game_strategy",
+          "source_ids": [
+            "mlgym:blotto#stage1_evaluation_harness",
+            "mlgym:blotto#stage2",
+            "mlgym:prisonersDilemma"
+          ]
+        }
+      ],
+      "pool_id": "explicit_dependency",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "dependency_autoresearch_cpu_interleaved_01",
+      "tasks_per_capability": 3,
+      "theme": "Explicit dependency: feature tables -> house-price model; series cleaning -> forecasting; evaluation harness -> Blotto strategy; held-out native probes"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra_qa.medcalc.medcalcbench_004",
+          "source_ids": [
+            "sr_agents:medcalcbench_00098",
+            "sr_agents:medcalcbench_00084",
+            "sr_agents:medcalcbench_00082",
+            "sr_agents:medcalcbench_00093",
+            "sr_agents:medcalcbench_00086"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.medcalc.medcalcbench_009",
+          "source_ids": [
+            "sr_agents:medcalcbench_00073",
+            "sr_agents:medcalcbench_00070",
+            "sr_agents:medcalcbench_00065",
+            "sr_agents:medcalcbench_00069",
+            "sr_agents:medcalcbench_00061"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.medcalc.medcalcbench_035",
+          "source_ids": [
+            "sr_agents:medcalcbench_00100",
+            "sr_agents:medcalcbench_00105",
+            "sr_agents:medcalcbench_00106",
+            "sr_agents:medcalcbench_00115",
+            "sr_agents:medcalcbench_00118"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "blocked",
+      "stream_id": "intra_medcalc_blocked_01",
+      "tasks_per_capability": 5,
+      "theme": "medcalcbench: BMI; MAP; Calcium correction"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra_qa.logic.logicbench_000",
+          "source_ids": [
+            "sr_agents:logicbench_00481",
+            "sr_agents:logicbench_00513",
+            "sr_agents:logicbench_00486",
+            "sr_agents:logicbench_00488",
+            "sr_agents:logicbench_00506"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.logic.logicbench_001",
+          "source_ids": [
+            "sr_agents:logicbench_00522",
+            "sr_agents:logicbench_00523",
+            "sr_agents:logicbench_00549",
+            "sr_agents:logicbench_00539",
+            "sr_agents:logicbench_00540"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.logic.logicbench_002",
+          "source_ids": [
+            "sr_agents:logicbench_00323",
+            "sr_agents:logicbench_00329",
+            "sr_agents:logicbench_00341",
+            "sr_agents:logicbench_00350",
+            "sr_agents:logicbench_00355"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_logicbench_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "logicbench: Modus Ponens; Modus Tollens; Disjunctive Syllogism"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra_qa.theoremqa.theoremqa_292",
+          "source_ids": [
+            "sr_agents:theoremqa_00032",
+            "sr_agents:theoremqa_00042",
+            "sr_agents:theoremqa_00292",
+            "sr_agents:theoremqa_00058",
+            "sr_agents:theoremqa_00149"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.theoremqa.theoremqa_291",
+          "source_ids": [
+            "sr_agents:theoremqa_00235",
+            "sr_agents:theoremqa_00389",
+            "sr_agents:theoremqa_00604",
+            "sr_agents:theoremqa_00563",
+            "sr_agents:theoremqa_00726"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.theoremqa.theoremqa_196",
+          "source_ids": [
+            "sr_agents:theoremqa_00191",
+            "sr_agents:theoremqa_00206",
+            "sr_agents:theoremqa_00448",
+            "sr_agents:theoremqa_00679",
+            "sr_agents:theoremqa_00711"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "delayed",
+      "stream_id": "intra_theoremqa_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "theoremqa: Definite integration and accumulated change; Binomial counting and coefficients; Limits of sequences and partial sums"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "sra_qa.champ.champ_010",
+          "source_ids": [
+            "sr_agents:champ_00111",
+            "sr_agents:champ_00113",
+            "sr_agents:champ_00115",
+            "sr_agents:champ_00133",
+            "sr_agents:champ_00142"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.champ.champ_016",
+          "source_ids": [
+            "sr_agents:champ_00005",
+            "sr_agents:champ_00007",
+            "sr_agents:champ_00010",
+            "sr_agents:champ_00014",
+            "sr_agents:champ_00024"
+          ]
+        },
+        {
+          "capability_id": "sra_qa.champ.champ_012",
+          "source_ids": [
+            "sr_agents:champ_00000",
+            "sr_agents:champ_00006",
+            "sr_agents:champ_00012",
+            "sr_agents:champ_00032",
+            "sr_agents:champ_00038"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_champ_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "champ: Congruence and residue constraints; Binomial selections and counting identities; Counting by disjoint cases and state recurrences"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "tau2.telecom.mobile_data_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mobile_data_issue]airplane_mode_on|data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+            "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+            "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on[PERSONA:Easy]",
+            "tau2_bench:telecom:[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:Easy]",
+            "tau2_bench:telecom:[mobile_data_issue]data_saver_mode_on|user_abroad_roaming_disabled_off[PERSONA:Easy]"
+          ]
+        },
+        {
+          "capability_id": "tau2.telecom.mms_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]",
+            "tau2_bench:telecom:[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Hard]"
+          ]
+        },
+        {
+          "capability_id": "tau2.telecom.service_troubleshooting",
+          "source_ids": [
+            "tau2_bench:telecom:[service_issue]airplane_mode_on|contract_end_suspension[PERSONA:Easy]",
+            "tau2_bench:telecom:[service_issue]break_apn_settings|overdue_bill_suspension[PERSONA:None]",
+            "tau2_bench:telecom:[service_issue]airplane_mode_on|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:Easy]",
+            "tau2_bench:telecom:[service_issue]break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]",
+            "tau2_bench:telecom:[service_issue]lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "delayed",
+      "stream_id": "intra_tau2_telecom_delayed_01",
+      "tasks_per_capability": 5,
+      "theme": "tau2.telecom.mobile_data_troubleshooting; tau2.telecom.mms_troubleshooting; tau2.telecom.service_troubleshooting"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "tau2.airline.booking_cancellation",
+          "source_ids": [
+            "tau2_bench:airline:19",
+            "tau2_bench:airline:42",
+            "tau2_bench:airline:39",
+            "tau2_bench:airline:7",
+            "tau2_bench:airline:8"
+          ]
+        },
+        {
+          "capability_id": "tau2.airline.policy_refusal",
+          "source_ids": [
+            "tau2_bench:airline:9",
+            "tau2_bench:airline:48",
+            "tau2_bench:airline:2",
+            "tau2_bench:airline:45",
+            "tau2_bench:airline:10"
+          ]
+        },
+        {
+          "capability_id": "tau2.airline.reservation_changes",
+          "source_ids": [
+            "tau2_bench:airline:12",
+            "tau2_bench:airline:21",
+            "tau2_bench:airline:11",
+            "tau2_bench:airline:17",
+            "tau2_bench:airline:22"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_tau2_airline_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "tau2.airline.booking_cancellation; tau2.airline.policy_refusal; tau2.airline.reservation_changes"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skilllearn.earthquake-plate-calculation",
+          "source_ids": [
+            "skilllearnbench:earthquake-plate-calculation-1",
+            "skilllearnbench:earthquake-plate-calculation-6",
+            "skilllearnbench:earthquake-plate-calculation-4",
+            "skilllearnbench:earthquake-plate-calculation-2",
+            "skilllearnbench:earthquake-plate-calculation-3"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.financial-analysis",
+          "source_ids": [
+            "skilllearnbench:financial-analysis-3",
+            "skilllearnbench:financial-analysis-1",
+            "skilllearnbench:financial-analysis-6",
+            "skilllearnbench:financial-analysis-4",
+            "skilllearnbench:financial-analysis-2"
+          ]
+        },
+        {
+          "capability_id": "skilllearn.travel-planning",
+          "source_ids": [
+            "skilllearnbench:travel-planning-5",
+            "skilllearnbench:travel-planning-1",
+            "skilllearnbench:travel-planning-2",
+            "skilllearnbench:travel-planning-3",
+            "skilllearnbench:travel-planning-4"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "native_family_sibling",
+      "schedule": "blocked",
+      "selection_status": "family_samples_verified",
+      "stream_id": "intra_skilllearn_blocked_01",
+      "tasks_per_capability": 5,
+      "theme": "skilllearn.earthquake-plate-calculation; skilllearn.financial-analysis; skilllearn.travel-planning"
+    },
+    {
+      "capabilities": [
+        {
+          "capability_id": "skillsbench.software-engineering",
+          "source_ids": [
+            "skillsbench:tictoc-unnecessary-abort-detection",
+            "skillsbench:fix-build-agentops",
+            "skillsbench:python-scala-translation",
+            "skillsbench:simpo-code-reproduction",
+            "skillsbench:flink-query"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.industrial-physical-systems",
+          "source_ids": [
+            "skillsbench:energy-market-pricing",
+            "skillsbench:adaptive-cruise-control",
+            "skillsbench:grid-dispatch-operator",
+            "skillsbench:energy-ac-optimal-power-flow",
+            "skillsbench:ada-bathroom-plan-repair"
+          ]
+        },
+        {
+          "capability_id": "skillsbench.natural-science",
+          "source_ids": [
+            "skillsbench:earthquake-phase-association",
+            "skillsbench:glm-lake-mendota",
+            "skillsbench:earthquake-plate-calculation",
+            "skillsbench:crystallographic-wyckoff-position-analysis",
+            "skillsbench:quantum-numerical-simulation"
+          ]
+        }
+      ],
+      "pool_id": "intra_benchmark_multi_capability",
+      "relation_class": "reviewed_shared_procedure",
+      "schedule": "interleaved",
+      "stream_id": "intra_skillsbench_interleaved_01",
+      "tasks_per_capability": 5,
+      "theme": "skillsbench.software-engineering; skillsbench.industrial-physical-systems; skillsbench.natural-science"
+    }
+  ],
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

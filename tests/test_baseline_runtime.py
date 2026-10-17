@@ -25,7 +25,8 @@ from trievo_bench.baselines.hermes_bridge import (
 )
 from trievo_bench.baselines.manifest import load_manifest
 from trievo_bench.baselines.process import ProcessBaselineRuntime
-from trievo_bench.model import TokenBudget
+from trievo_bench.model import TokenBudget, TokenBudgetExceeded
+from trievo_bench.baselines.base import EvolutionContext, FlowContext, TurnContext
 from trievo_bench.baselines.registry import resolve_baseline_selection
 from trievo_bench.runner import Runner
 from trievo_bench.sandbox import LocalSandbox
@@ -258,6 +259,31 @@ class BaselineRuntimeTest(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "evolution did not complete"):
                 runner.run(spec.flows[0])
+
+    def test_evolution_budget_overrun_rolls_back_state_and_keeps_checkpoint_barrier(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            budget = TokenBudget(limit=1)
+            runtime = ProcessBaselineRuntime(load_manifest(self._manifest(root)), budget=budget, repo_root=root)
+            workspace = root / "workspace"
+            workspace.mkdir()
+            (root / "output").mkdir()
+            runtime.start_flow(FlowContext("budget-flow", workspace, root / "output"))
+            try:
+                runtime.start_turn(TurnContext("budget-turn", "request", 1))
+                before = runtime.snapshot_state().to_dict()
+                with self.assertRaises(TokenBudgetExceeded):
+                    runtime.evolve(EvolutionContext("budget-turn", [], []))
+                self.assertEqual(budget.limit, 1)
+                self.assertEqual(budget.used, 2)
+                self.assertEqual(budget.calls, 1)
+                self.assertEqual(runtime.snapshot_state().to_dict(), before)
+                self.assertTrue(runtime._turn_evolved)
+                runtime.save_checkpoint_state(root / "checkpoint.zip")
+                with zipfile.ZipFile(root / "checkpoint.zip") as archive:
+                    self.assertNotIn("learning/budget-turn.json", archive.namelist())
+            finally:
+                runtime.end_flow()
 
     def test_process_runtime_archives_deep_state_on_windows_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

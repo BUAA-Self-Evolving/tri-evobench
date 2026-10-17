@@ -3,6 +3,11 @@ from __future__ import annotations
 import contextlib
 import functools
 import json
+import inspect
+import posixpath
+import re
+import shlex
+import uuid
 import os
 import sys
 import threading
@@ -12,6 +17,53 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .base import RUNTIME_PROTOCOL_VERSION
+
+
+_NATIVE_TOOL_REQUEST: Callable[[dict[str, Any]], dict[str, Any]] | None = None
+
+
+def _native_terminal(command: str, *, runtime: dict[str, Any], background: bool = False,
+                     timeout: int = 300, workdir: str | None = None, **_kwargs: Any) -> str:
+    """Request scoped host execution; the agent never receives Docker access."""
+    if background:
+        return json.dumps({"output": "", "exit_code": 124, "error": "background terminal forbidden"})
+    if _NATIVE_TOOL_REQUEST is None:
+        raise RuntimeError("Native task terminal requires scoped host transport; refusing baseline-image execution")
+    if not isinstance(command, str) or not command:
+        raise ValueError("native terminal command must be a nonempty string")
+    if workdir:
+        if not isinstance(workdir, str) or not workdir.startswith("/"):
+            raise ValueError("native terminal workdir must be absolute")
+        command = "cd " + shlex.quote(workdir) + " && " + command
+    return json.dumps(_NATIVE_TOOL_REQUEST({"command": command, "timeout_seconds": timeout}), ensure_ascii=False)
+
+
+def _native_workspace_path(path: str, runtime: dict[str, Any]) -> str:
+    """Resolve public aliases lexically in the task image, never on baseline FS."""
+    if not isinstance(path, str):
+        raise ValueError("native file path must be a string")
+    absolute = posixpath.normpath(path if path.startswith("/") else posixpath.join(runtime.get("cwd", "/workspace"), path))
+    if absolute == "/workspace" or absolute.startswith("/workspace/"):
+        return absolute
+    for mapping in runtime.get("path_mappings", []):
+        native = mapping["native_path"]
+        if absolute == native or absolute.startswith(native + "/"):
+            return (runtime["task_directory"] + "/" + mapping["workspace_relative_path"]
+                    + absolute[len(native):])
+    raise ValueError("Path is outside declared Workspace aliases; use terminal to read native image assets")
+
+
+def _native_file_handler(handler: Callable[..., str], runtime: dict[str, Any]) -> Callable[..., str]:
+    signature = inspect.signature(handler)
+
+    @functools.wraps(handler)
+    def wrapped(*args: Any, **kwargs: Any) -> str:
+        bound = signature.bind(*args, **kwargs)
+        bound.apply_defaults()
+        bound.arguments["path"] = _native_workspace_path(bound.arguments.get("path") or ".", runtime)
+        return handler(*bound.args, **bound.kwargs)
+
+    return wrapped
 
 
 class HermesBridge:
@@ -38,6 +90,7 @@ class HermesBridge:
         self._is_taskstream_turn = False
         self._is_l1_life_turn = False
         self._l1_state: dict[str, Any] = {}
+        self._task_runtime: dict[str, Any] = {}
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -71,7 +124,8 @@ class HermesBridge:
         return {
             "protocol_version": RUNTIME_PROTOCOL_VERSION,
             "adapter": "hermes-session-manager",
-            "capabilities": ["direct_workspace", "events", "usage", "memory", "skills", "evolution_barrier"],
+            "capabilities": ["direct_workspace", "events", "usage", "memory", "skills", "evolution_barrier",
+                             "native_task_execution"],
         }
 
     def start_flow(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -187,6 +241,13 @@ class HermesBridge:
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
         state = self._require_turn(str(params.get("turn_id", "")))
+        sandbox = params.get("sandbox") or {}
+        runtime = sandbox.get("task_runtime") if isinstance(sandbox, dict) else None
+        self._task_runtime = dict(runtime) if isinstance(runtime, dict) and (
+            runtime.get("environment_version") or runtime.get("path_mappings") or runtime.get("cwd")) else {}
+        if self._task_runtime and not re.fullmatch(
+                r"trievo-l2-task-[0-9a-f]{12}", str(self._task_runtime.get("container_name", ""))):
+            raise RuntimeError("invalid native task sandbox identity")
         request = str(params.get("request", ""))
         if not request:
             raise RuntimeError("Hermes interaction request is empty")
@@ -506,12 +567,18 @@ class HermesBridge:
             getattr(agent, "valid_tool_names", set()) or set()
         )
         allowed = set(previous_valid_tool_names)
+        native_runtime = self._task_runtime
+        if native_runtime:
+            # execute_code/delegation/browser tools otherwise bypass the bound
+            # image. Expose only tools routed by this foreground adapter.
+            allowed.intersection_update({"terminal", "read_file", "write_file", "patch", "search_files"})
         if self._policy == "turn_boundary":
             allowed.difference_update({"memory", "skill_manage", "session_search"})
         previous_approval = terminal_tool._get_approval_callback()
         previous_terminal_timeout = os.environ.get("TERMINAL_TIMEOUT")
         previous_terminal_handler = terminal_tool.terminal_tool
         previous_memory_handler = memory_tool.memory_tool
+        file_handlers: list[tuple[Any, str, Any]] = []
 
         def frozen_memory(*args: Any, **kwargs: Any) -> str:
             # Hermes routes built-in memory directly, bypassing the plugin
@@ -525,8 +592,10 @@ class HermesBridge:
             """Keep terminal work inside the same hard per-command budget."""
 
             terminal_limit = limits.get("terminal_timeout_seconds")
-            if terminal_limit is None:
-                return previous_terminal_handler(*args, **kwargs)
+            handler = functools.partial(_native_terminal, runtime=native_runtime) if native_runtime else previous_terminal_handler
+            if terminal_limit is None and not native_runtime:
+                return handler(*args, **kwargs)
+            terminal_limit = terminal_limit or 300
             if bool(kwargs.get("background", False)):
                 self._record_limit("background_terminal_forbidden")
                 return json.dumps(
@@ -546,7 +615,7 @@ class HermesBridge:
                     kwargs["timeout"] = min(int(requested_timeout), terminal_limit)
                 except (TypeError, ValueError):
                     kwargs["timeout"] = terminal_limit
-            result = previous_terminal_handler(*args, **kwargs)
+            result = handler(*args, **kwargs)
             if '"exit_code": 124' in str(result) or "timed out after" in str(result):
                 self._record_limit("terminal_timeout")
             return result
@@ -568,8 +637,15 @@ class HermesBridge:
             except Exception:
                 pass
             terminal_tool.set_approval_callback(approval_callback)
-            if limits.get("terminal_timeout_seconds") is not None:
-                os.environ["TERMINAL_TIMEOUT"] = str(limits["terminal_timeout_seconds"])
+            if native_runtime:
+                from tools import file_tools
+                for name in ("read_file_tool", "write_file_tool", "patch_tool", "search_tool"):
+                    original = getattr(file_tools, name)
+                    file_handlers.append((file_tools, name, original))
+                    setattr(file_tools, name, _native_file_handler(original, native_runtime))
+                agent.valid_tool_names = allowed
+            if limits.get("terminal_timeout_seconds") is not None or native_runtime:
+                os.environ["TERMINAL_TIMEOUT"] = str(limits.get("terminal_timeout_seconds", 300))
                 terminal_tool.terminal_tool = limited_terminal
             if self._policy == "turn_boundary":
                 # The plugin whitelist is thread-local and Hermes may dispatch
@@ -590,6 +666,10 @@ class HermesBridge:
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
                 agent.valid_tool_names = previous_valid_tool_names
+            if native_runtime:
+                agent.valid_tool_names = previous_valid_tool_names
+            for module, name, handler in file_handlers:
+                setattr(module, name, handler)
             terminal_tool.terminal_tool = previous_terminal_handler
             memory_tool.memory_tool = previous_memory_handler
             if previous_terminal_timeout is None:
@@ -991,7 +1071,32 @@ def _json_safe(value: Any) -> Any:
 
 
 def main() -> None:
+    global _NATIVE_TOOL_REQUEST
     protocol_stdout = sys.stdout
+    native_request_lock = threading.Lock()
+
+    def native_request(params: dict[str, Any]) -> dict[str, Any]:
+        # Hermes dispatches parallel tools on worker threads. Keep each reverse
+        # request/response pair atomic, while the main reader is in dispatch().
+        with native_request_lock:
+            tool_id = uuid.uuid4().hex
+            protocol_stdout.write(json.dumps({"event": "native_tool_request", "tool_request_id": tool_id,
+                                              "params": params}, ensure_ascii=False) + "\n")
+            protocol_stdout.flush()
+            line = sys.stdin.readline()
+            if not line:
+                raise RuntimeError("native host transport closed")
+            response = json.loads(line)
+            if response.get("tool_response_id") != tool_id:
+                raise RuntimeError("native host transport response identity mismatch")
+            if response.get("error"):
+                raise RuntimeError(str(response["error"]))
+            result = response.get("result")
+            if not isinstance(result, dict) or "exit_code" not in result:
+                raise RuntimeError("invalid native host transport result")
+            return result
+
+    _NATIVE_TOOL_REQUEST = native_request
     bridge = HermesBridge()
     for line in sys.stdin:
         stripped = line.strip()

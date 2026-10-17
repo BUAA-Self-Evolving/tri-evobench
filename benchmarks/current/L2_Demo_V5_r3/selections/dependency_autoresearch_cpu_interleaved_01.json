@@ -1,0 +1,91 @@
+{
+  "pool_id": "explicit_dependency",
+  "schedule": "interleaved",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+      "sequence_role": "learning",
+      "source_hash": "f4e736913fcc9acca3cb28667667ed1ac4fabd98d62dae3199ebe6f80468ec16",
+      "source_id": "mlgym:regressionKaggleHousePrice#stage1_feature_tables",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "pool_source_id": "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+      "sequence_role": "learning",
+      "source_hash": "6af9871b61d222530d912e10f8f1cda47210929e63ea38ebd21996c881d531a3",
+      "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE#stage1_series_cleaning",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:blotto#stage1_evaluation_harness",
+      "sequence_role": "learning",
+      "source_hash": "f3466bbdbea4945ef53fd2e3f22ed03b6b7ead9d8bcb4fe99109934e12bbc35c",
+      "source_id": "mlgym:blotto#stage1_evaluation_harness",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "mlgym:regressionKaggleHousePrice#stage2",
+      "sequence_role": "application",
+      "source_hash": "8907caf24a7d65cbf46890d11d2a33af76bc8ac87ee0ed059e0be6994e949f11",
+      "source_id": "mlgym:regressionKaggleHousePrice",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "pool_source_id": "airs_bench:TimeSeriesForecastingRideshareMAE#stage2",
+      "sequence_role": "application",
+      "source_hash": "56822f2d03ba6c3407349a7f0bdc038bcdd8ff766b09a7ccbfa12a6e191aceea",
+      "source_id": "airs_bench:TimeSeriesForecastingRideshareMAE",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:blotto#stage2",
+      "sequence_role": "application",
+      "source_hash": "ba6b8ac14a91e54ae208f9cd0ab13950228634925a8156924055c4cf1c2e69ce",
+      "source_id": "mlgym:blotto",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "airs_bench:TextualClassificationSickAccuracy",
+      "sequence_role": "probe",
+      "source_hash": "1f84c23cb08ebdfeb1f68a2c9212045422519292c090c5193751afb9c693521d",
+      "source_id": "airs_bench:TextualClassificationSickAccuracy",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "ar.sequence_and_math_reasoning",
+      "pool_source_id": "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+      "sequence_role": "probe",
+      "source_hash": "99aee87ea88a8d323da454ef87ff80d35277488344ceed7fb9d4e70ce897f3e7",
+      "source_id": "airs_bench:TimeSeriesForecastingSolarWeeklyMAE",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:prisonersDilemma",
+      "sequence_role": "probe",
+      "source_hash": "28238c8b2f96de8fc555709f4d4228d384fa303dfce35621b5d9466f8b819611",
+      "source_id": "mlgym:prisonersDilemma",
+      "turn_id": "turn9",
+      "turn_index": 9
+    }
+  ],
+  "stream_id": "dependency_autoresearch_cpu_interleaved_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

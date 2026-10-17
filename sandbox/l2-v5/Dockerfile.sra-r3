@@ -1,0 +1,25 @@
+# Dedicated task/evaluator closure for SR-Agents 277fd8d2 BigCodeBench.
+# No benchmark source, gold, private tests or retrieved skills enter any layer.
+FROM python:3.11.16-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e
+ARG DEBIAN_MIRROR=http://mirrors.tuna.tsinghua.edu.cn
+ARG PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+ENV DEBIAN_FRONTEND=noninteractive PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    MPLBACKEND=Agg NLTK_DATA=/opt/nltk_data TF_CPP_MIN_LOG_LEVEL=3 \
+    TF_ENABLE_ONEDNN_OPTS=0 OMP_NUM_THREADS=1
+RUN sed -i "s|http://deb.debian.org/debian-security|${DEBIAN_MIRROR}/debian-security|g; s|http://deb.debian.org/debian|${DEBIAN_MIRROR}/debian|g" /etc/apt/sources.list.d/debian.sources \
+    && apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 update \
+    && apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 install -y --no-install-recommends \
+       ca-certificates git curl wget zip unzip procps g++ python3-tk r-base \
+       libgdal-dev libgl1 libglib2.0-0 libgomp1 libsndfile1 tesseract-ocr \
+    && mkdir -p /opt/sra-environment \
+    && dpkg-query -W > /opt/sra-environment/dpkg-packages.txt \
+    && rm -rf /var/lib/apt/lists/*
+COPY sra-build-requirements.in sra-build-requirements.lock sra-requirements.in sra-requirements.lock /opt/sra-environment/
+RUN python -m pip install --retries 1 --no-cache-dir --require-hashes --index-url "${PIP_INDEX_URL}" -r /opt/sra-environment/sra-build-requirements.lock \
+    && python -m pip install --retries 1 --no-cache-dir --no-build-isolation --require-hashes --index-url "${PIP_INDEX_URL}" -r /opt/sra-environment/sra-requirements.lock \
+    && python -m pip check \
+    && python -m pip freeze --all > /opt/sra-environment/pip-freeze.txt
+COPY sra-nltk-assets.json sra-install-assets.py sra-BIGCODEBENCH-LICENSE sra-NLTK-DATA-LICENSE /opt/sra-environment/
+RUN python /opt/sra-environment/sra-install-assets.py /opt/sra-environment/sra-nltk-assets.json /opt/nltk_data
+WORKDIR /workspace
+CMD ["sleep", "infinity"]

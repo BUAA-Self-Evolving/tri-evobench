@@ -69,6 +69,59 @@ built before 2026-10-10 carry `performance_bands`/`band_source` instead; the
 composer ignores them and takes the shuffled-gold reference from the AIRS
 `known_correct` qualification score.
 
+## Native Dockerfile recipes
+
+Native recovery pools may materialize an environment without building its image.
+Such records have `qualification.stage = "recipe_ready"` and
+`qualification.admitted = false`: availability is not individual red/green
+verification. `family_sample_verified` names an actually verified source in the
+same family/category, or is null. The top-level `environment` contains:
+
+```json
+{
+  "kind": "dockerfile",
+  "recipe_path": "environment/Dockerfile",
+  "recipe_sha256": "<SHA-256 of Dockerfile bytes>",
+  "context_path": "environment",
+  "context_sha256": "<native source tree hash>"
+}
+```
+
+The task retains its private oracle/tests, adapted verifier entrypoint and
+verifier environment variables. Existing oracle-only helper dependencies are
+listed in `environment.oracle.private_helpers` with an asset path, mount,
+`scope: "oracle_only"`, and hash; they stay out of build contexts and images. Recipes record their upstream adaptations as a
+diff. An `image_archive` is retained only for an image actually built and
+verified. Missing-oracle sources remain excluded. Unbuilt native recipes do not
+claim an observed per-task image ID, resource enforcement, or fixture verdict.
+
+The runtime team can build selected recipes with ordinary Docker:
+
+```bash
+python tools/l2_v5_build_task_images.py --package /path/to/pool/native \
+  --source skillsbench:example --out /path/to/task-images.json
+python tools/l2_v5_build_task_images.py --package /path/to/composed-package \
+  --pool /path/to/pool --stream intra_example_01 --out /path/to/task-images.json
+```
+
+`--dry-run` validates recipe/context hashes and prints commands without building.
+`--docker-host`, repeated `--build-arg`, and `--timeout` provide ordinary Docker
+configuration. The image manifest records actual image IDs for use when binding
+runtime profiles; the script does not rewrite packages, qualify sources, or
+turn a family sample into an individual admission. BuildKit is required for
+recipe build-time mounts of private verifier setup resources. Named private
+contexts are recorded in `environment.build_contexts` as name-to-`{path, sha256}`
+entries; they are separate from the public build context, so upstream `COPY .`
+cannot place private tests in an image layer.
+
+BigCodeBench can use `environment.kind = "shared_dockerfile"`, with a single
+recipe/context in the family pool's `environment/` directory and relative
+`../environment/...` references from each task. The builder validates that shared
+paths stay within the family directory and builds identical contexts only once.
+A recipe-ready BigCodeBench record may reference the actually built shared image;
+it does not claim per-source fixture execution. Only the selected existing r2
+sources receive fresh qualification; other records remain recipe-ready.
+
 ## Path mapping
 
 Inside the runtime the persistent Workspace is mounted at `/workspace`; each

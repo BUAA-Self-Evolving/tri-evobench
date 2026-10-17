@@ -3,18 +3,23 @@ from __future__ import annotations
 import contextlib
 import json
 import os
+import posixpath
 import re
 import shutil
+import shlex
+import threading
+import uuid
 import signal
 import subprocess
 import sys
 import tempfile
 import traceback
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
 RUNTIME_PROTOCOL_VERSION = "1.0"
+_NATIVE_TOOL_REQUEST = None
 
 
 def _run_bounded(command, *, timeout, **kwargs):
@@ -82,6 +87,7 @@ class SkillOptBridge:
             "protocol_version": RUNTIME_PROTOCOL_VERSION,
             "adapter": "skillopt",
             "capabilities": [
+                "native_task_execution",
                 "target_chat",
                 "target_exec",
                 "skill_reflection",
@@ -1117,6 +1123,11 @@ def _execute_dsml_tool(
             "grep": "grep",
         }
         canonical = filesystem_aliases.get(operation, operation)
+    native_files = bool((task_runtime or {}).get("environment_version"))
+    if native_files and canonical in {"read", "ls", "glob", "grep", "write", "edit"}:
+        args = dict(args)
+        key = "file_path" if args.get("file_path") else "path"
+        args[key] = _native_workspace_path(str(args.get(key) or "."), task_runtime)
     if canonical in {"read", "ls", "glob", "grep"}:
         target = _workspace_path(workspace, str(args.get("file_path") or args.get("path") or "."))
         if canonical == "read":
@@ -1127,9 +1138,19 @@ def _execute_dsml_tool(
             return "\n".join(sorted(item.name for item in target.iterdir()))
         if canonical == "glob":
             pattern = str(args.get("pattern", "**/*"))
-            return "\n".join(str(p.relative_to(workspace)).replace("\\", "/") for p in workspace.glob(pattern))
+            if native_files:
+                if PurePosixPath(pattern).is_absolute() or ".." in PurePosixPath(pattern).parts:
+                    raise ValueError("native glob pattern escapes search directory")
+                paths = [p for p in target.glob(pattern)
+                         if p.resolve() == workspace.resolve() or workspace.resolve() in p.resolve().parents]
+            else:
+                paths = workspace.glob(pattern)
+            return "\n".join(str(p.relative_to(workspace)).replace("\\", "/") for p in paths)
         pattern = str(args.get("pattern", ""))
-        return "\n".join(f"{p}:{i+1}:{line.rstrip()}" for p in workspace.rglob("*") if p.is_file() for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines()) if pattern.lower() in line.lower())
+        paths = ([target] if target.is_file() else target.rglob("*")) if native_files else workspace.rglob("*")
+        if native_files:
+            paths = [p for p in paths if workspace.resolve() in p.resolve().parents]
+        return "\n".join(f"{p}:{i+1}:{line.rstrip()}" for p in paths if p.is_file() for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines()) if pattern.lower() in line.lower())
     if canonical in {"write", "edit"}:
         target = _workspace_path(workspace, str(args.get("file_path") or args.get("path") or ""))
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -1148,6 +1169,13 @@ def _execute_dsml_tool(
     program = str(args.get(key) or (args.get("cmd") if name == "bash" else "") or "")
     if not program:
         return "[tool error] empty program"
+    if (task_runtime or {}).get("environment_version"):
+        if _NATIVE_TOOL_REQUEST is None:
+            raise RuntimeError("native tool transport unavailable")
+        native_command = (shlex.join([(task_runtime or {}).get("python_executable", "python"), "-c", program])
+                          if name == "python" else program)
+        result = _NATIVE_TOOL_REQUEST({"command": native_command, "timeout_seconds": int(config.get("tool_timeout", 180))})
+        return result["output"] + (f"\n[Exit code: {result['exit_code']}]" if result["exit_code"] else "")
     command = [sys.executable, "-c", program] if name == "python" else ["bash", "-lc", program]
     docker_exe = os.environ.get("DOCKER_EXE") or shutil.which("docker")
     container_name = str((task_runtime or {}).get("container_name", ""))
@@ -1156,8 +1184,10 @@ def _execute_dsml_tool(
             raise ValueError("invalid task sandbox container name")
         if not docker_exe:
             return "[tool error] Docker is unavailable for the bound task sandbox"
-        inner = ["python", "-c", program] if name == "python" else ["bash", "-lc", program]
-        command = [docker_exe, "exec", "-w", "/workspace", container_name, *inner]
+        runtime = task_runtime or {}
+        inner = [runtime.get("python_executable", "python"), "-c", program] if name == "python" else [
+            "bash", "-c" if runtime.get("cwd") else "-lc", program]
+        command = [docker_exe, "exec", "-w", runtime.get("cwd", "/workspace"), container_name, *inner]
     elif os.name == "nt" and docker_exe:
         image = os.environ.get("TRIEVO_TOOL_IMAGE", "trievo-ubuntu:22.04")
         inner = ["python3", "-c", program] if name == "python" else ["bash", "-lc", program]
@@ -1178,6 +1208,19 @@ def _execute_dsml_tool(
     if result.returncode:
         output += f"\n[Exit code: {result.returncode}]"
     return output.strip() or "[tool completed with no output]"
+
+
+def _native_workspace_path(raw_path: str, runtime: dict[str, Any]) -> str:
+    """Resolve native relative paths before mapping to baseline-mounted files."""
+    cwd = runtime.get("cwd", "/workspace")
+    path = posixpath.normpath(raw_path if raw_path.startswith("/") else posixpath.join(cwd, raw_path))
+    if path == "/workspace" or path.startswith("/workspace/"):
+        return path
+    for mapping in runtime.get("path_mappings", []):
+        native = mapping["native_path"]
+        if path == native or path.startswith(native + "/"):
+            return runtime["task_directory"] + "/" + mapping["workspace_relative_path"] + path[len(native):]
+    raise ValueError("native path is outside declared Workspace aliases; use terminal for image assets")
 
 
 def _workspace_path(workspace: Path, raw_path: str) -> Path:
@@ -1207,7 +1250,22 @@ def _workspace_display_path(workspace: Path, path: Path) -> str:
 
 
 def main() -> None:
+    global _NATIVE_TOOL_REQUEST
     protocol_stdout = sys.stdout
+    request_lock = threading.Lock()
+    def native_request(params):
+        with request_lock:
+            tool_id = uuid.uuid4().hex
+            protocol_stdout.write(json.dumps({"event": "native_tool_request", "tool_request_id": tool_id,
+                                              "params": params}) + "\n")
+            protocol_stdout.flush()
+            reply = json.loads(sys.stdin.readline())
+            if reply.get("tool_response_id") != tool_id:
+                raise RuntimeError("native tool response ID mismatch")
+            if reply.get("error"):
+                raise RuntimeError(reply["error"])
+            return reply["result"]
+    _NATIVE_TOOL_REQUEST = native_request
     bridge = SkillOptBridge()
     for line in sys.stdin:
         stripped = line.strip()

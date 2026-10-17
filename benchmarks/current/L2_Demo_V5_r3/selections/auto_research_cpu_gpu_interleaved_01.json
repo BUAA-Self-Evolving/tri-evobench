@@ -1,0 +1,91 @@
+{
+  "pool_id": "auto_research_cpu_gpu",
+  "schedule": "interleaved",
+  "schema_version": "l2_selection_provenance/1.0",
+  "seed": 20261010,
+  "selected_turns": [
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "airs_bench:CoreferenceResolutionWinograndeAccuracy",
+      "sequence_role": "learning",
+      "source_hash": "9cd9748efb8b1356ac1af9475f957aecd01b80ebe9d2445cd769ed13bd227388",
+      "source_id": "airs_bench:CoreferenceResolutionWinograndeAccuracy",
+      "turn_id": "turn1",
+      "turn_index": 1
+    },
+    {
+      "capability_id": "ar.vision_and_deep_models",
+      "pool_source_id": "airs_bench:CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "sequence_role": "learning",
+      "source_hash": "b931e7874d6a5f56192bb99fa7e6c556fc463bfb9849cbdf3b9f05ed6188cf77",
+      "source_id": "airs_bench:CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "turn_id": "turn2",
+      "turn_index": 2
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:rlMountainCarContinuous",
+      "sequence_role": "learning",
+      "source_hash": "43d971b730d6b8dba11e6c0bff1ca60d2869ca7d5e0e4a936d7c139609b11d0d",
+      "source_id": "mlgym:rlMountainCarContinuous",
+      "turn_id": "turn3",
+      "turn_index": 3
+    },
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "airs_bench:CoreferenceResolutionSuperGLUEWSCAccuracy",
+      "sequence_role": "application",
+      "source_hash": "51a53cc768704a02e1609ec3e19dd6855a6b75b015783bf7f62c9b7148fc6c66",
+      "source_id": "airs_bench:CoreferenceResolutionSuperGLUEWSCAccuracy",
+      "turn_id": "turn4",
+      "turn_index": 4
+    },
+    {
+      "capability_id": "ar.vision_and_deep_models",
+      "pool_source_id": "airs_bench:R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "sequence_role": "application",
+      "source_hash": "9bf7f18abc6b2805f66332b7f43371e6ad6138e6b7e6eb5619ab208dea69e9cf",
+      "source_id": "airs_bench:R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+      "turn_id": "turn5",
+      "turn_index": 5
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:rlBreakoutMinAtar",
+      "sequence_role": "application",
+      "source_hash": "f0b570f919e24bdbcf82389278821dc0c32b3131c2f572c25370982148944ee4",
+      "source_id": "mlgym:rlBreakoutMinAtar",
+      "turn_id": "turn6",
+      "turn_index": 6
+    },
+    {
+      "capability_id": "ar.tabular_and_text_prediction",
+      "pool_source_id": "airs_bench:QuestionAnsweringEli5RougeL",
+      "sequence_role": "probe",
+      "source_hash": "a40e6185133e7e12623bf2477edfe7b0c0b98cbffc797cf02a70d4de136846e5",
+      "source_id": "airs_bench:QuestionAnsweringEli5RougeL",
+      "turn_id": "turn7",
+      "turn_index": 7
+    },
+    {
+      "capability_id": "ar.vision_and_deep_models",
+      "pool_source_id": "mlgym:imageClassificationFMnist",
+      "sequence_role": "probe",
+      "source_hash": "8965d34a9f5e6cdf8e176afedd78d39813cae6ed4a8e94eaf5c728a2c8c6fabc",
+      "source_id": "mlgym:imageClassificationFMnist",
+      "turn_id": "turn8",
+      "turn_index": 8
+    },
+    {
+      "capability_id": "ar.decision_and_game_strategy",
+      "pool_source_id": "mlgym:rlMetaMaze",
+      "sequence_role": "probe",
+      "source_hash": "b83a28e76024cdc86461ce8b20a1a0fa512316f69ac3ef8c90adb1709ff9a775",
+      "source_id": "mlgym:rlMetaMaze",
+      "turn_id": "turn9",
+      "turn_index": 9
+    }
+  ],
+  "stream_id": "auto_research_cpu_gpu_interleaved_01",
+  "taxonomy_version": "tri-evobench-l2-v5-codebook/2.0"
+}

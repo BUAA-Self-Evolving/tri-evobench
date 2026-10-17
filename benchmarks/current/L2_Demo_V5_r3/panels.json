@@ -1,0 +1,58 @@
+{
+  "panels": [
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "intra_benchmark_multi_capability_primary",
+      "pool_id": "intra_benchmark_multi_capability",
+      "purpose": "primary",
+      "stream_ids": [
+        "intra_sra_blocked_01",
+        "intra_sra_interleaved_01",
+        "intra_sra_delayed_01",
+        "intra_tau2_blocked_01",
+        "intra_tau2_interleaved_01",
+        "intra_tau2_delayed_01",
+        "intra_skilllearn_interleaved_01",
+        "intra_skilllearn_delayed_01",
+        "intra_skillsbench_blocked_01",
+        "intra_skillsbench_delayed_01",
+        "intra_medcalc_blocked_01",
+        "intra_logicbench_interleaved_01",
+        "intra_theoremqa_delayed_01",
+        "intra_champ_interleaved_01",
+        "intra_tau2_telecom_delayed_01",
+        "intra_tau2_airline_interleaved_01",
+        "intra_skilllearn_blocked_01",
+        "intra_skillsbench_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "auto_research_cpu_primary",
+      "pool_id": "auto_research_cpu",
+      "purpose": "primary",
+      "stream_ids": [
+        "auto_research_cpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "auto_research_cpu_gpu_primary",
+      "pool_id": "auto_research_cpu_gpu",
+      "purpose": "primary",
+      "stream_ids": [
+        "auto_research_cpu_gpu_interleaved_01"
+      ]
+    },
+    {
+      "allows_cross_panel_aggregation": false,
+      "panel_id": "explicit_dependency_primary",
+      "pool_id": "explicit_dependency",
+      "purpose": "primary",
+      "stream_ids": [
+        "dependency_autoresearch_cpu_interleaved_01"
+      ]
+    }
+  ],
+  "schema_version": "l2_panels/1.0"
+}
