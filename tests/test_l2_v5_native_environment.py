@@ -458,14 +458,14 @@ def test_source_budget_keeps_a_ninety_minutes_and_b_forty_five():
     assert native.source_budget({'former_admission':False},args)==2700
 
 
-def test_image_imports_share_one_slot(tmp_path,monkeypatch):
+def test_image_imports_and_cold_loads_share_one_slot(tmp_path,monkeypatch):
     import threading
     monkeypatch.setattr(native,'_RESOURCE_PREFLIGHT',{})
     first=tmp_path/'first'/'safe-rootfs.tar';first.parent.mkdir()
-    second=tmp_path/'second'/'safe-rootfs.tar';second.parent.mkdir()
+    second=tmp_path/'cold'/'archives'/'image.tar';second.parent.mkdir(parents=True)
     entered=threading.Event()
     def other():
-        with native.import_slot(second):entered.set()
+        with native.import_slot(second,tmp_path):entered.set()
     with native.import_slot(first):
         worker=threading.Thread(target=other);worker.start()
         assert not entered.wait(0.1)

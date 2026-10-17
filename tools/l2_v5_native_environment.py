@@ -292,10 +292,10 @@ def command(argv: list[str], log: Path, timeout: int = 3600) -> dict[str, Any]:
 
 
 @contextmanager
-def import_slot(archive: Path):
+def import_slot(archive: Path, lock_root: Path | None = None):
     """Serialize image imports and wait for the shared daemon disk floor."""
     import fcntl
-    with (archive.parent.parent/".import.lock").open("a+") as lock:
+    with ((lock_root or archive.parent.parent)/".import.lock").open("a+") as lock:
         fcntl.flock(lock.fileno(),fcntl.LOCK_EX)
         if _RESOURCE_PREFLIGHT:
             root=Path(subprocess.check_output(["docker","info","--format","{{.DockerRootDir}}"],text=True).strip())
@@ -931,7 +931,7 @@ def build_image(row: dict[str, Any], inputs: dict[str, Any], work: Path,
         result_path = shared / "result.json"
         if result_path.exists():
             result = json.loads(result_path.read_text())
-            ensure_image_loaded(result["image"]["Id"])
+            ensure_image_loaded(result["image"]["Id"],work.parent/"images")
         else:
             with build_slot(work.parent):
                 result = _build_image(row, inputs, shared, build_timeout)
@@ -1198,7 +1198,7 @@ def assert_private_helpers_absent(public_tree: Path, helpers: Path | None = None
             raise RuntimeError("private_skill_helper_bytes_in_public_snapshot:"+str(relative))
 
 
-def ensure_image_loaded(image_id: str) -> None:
+def ensure_image_loaded(image_id: str, lock_root: Path | None = None) -> None:
     try:
         inspect_image(image_id)
         return
@@ -1207,7 +1207,8 @@ def ensure_image_loaded(image_id: str) -> None:
     if not _IMAGE_ARCHIVES:raise RuntimeError("image missing and no archive directory: "+image_id)
     archive=_IMAGE_ARCHIVES/(image_id.removeprefix("sha256:")+".tar")
     if not archive.exists():raise RuntimeError("missing image archive: "+str(archive))
-    subprocess.run(["docker","load","--input",str(archive)],check=True,stdout=subprocess.DEVNULL)
+    with import_slot(archive,lock_root):
+        subprocess.run(["docker","load","--input",str(archive)],check=True,stdout=subprocess.DEVNULL)
     inspect_image(image_id)
 
 
