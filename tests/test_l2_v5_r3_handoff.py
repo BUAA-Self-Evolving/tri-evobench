@@ -185,9 +185,11 @@ def test_recipe_ready_counts_as_available_without_claiming_measured_failure(tmp_
               "family_sample_verified": "skillsbench:sample"}
     (task / "pool_task.json").write_text(json.dumps(record))
     (pool / "native/INDEX.jsonl").write_text(json.dumps({"source_id": sid, "admitted": False,
-        "stage": "recipe_ready", "family_sample_verified": "skillsbench:sample"}))
+        "stage": "recipe_ready", "family_sample_verified": "skillsbench:sample",
+        "resource_enforcement": "unobserved", "resource_readback": {}}))
     result = handoff(tmp_path / "old", pool, tmp_path / "package")
     row = result["counts"][0]
     assert row["admitted"] == row["rejected_with_capability_record"] == 0
     assert row["recipe_ready"] == row["available"] == row["unused_in_r2_intra"] == 1
     assert row["family_samples_verified"] == ["skillsbench:sample"]
+    assert result["observed_resources"] == []

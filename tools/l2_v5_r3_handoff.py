@@ -172,7 +172,8 @@ def handoff(old_pool: Path, new_pool: Path, package: Path, r2_qualification: Pat
     resource_counts = Counter(row.get("resource_enforcement", "unrecorded") for row in decisions.values())
     observed_resources = sorted({json.dumps({key: row.get("resource_readback", {}).get(key)
         for key in ("cpu_limit", "memory_limit_bytes", "pids_limit")}, sort_keys=True)
-        for row in decisions.values() if isinstance(row.get("resource_readback"), dict)})
+        for row in decisions.values()
+        if isinstance(row.get("resource_readback"), dict) and row["resource_readback"]})
     return {"schema_version": "l2_r3_handoff/1.0", "counts": counts, "recommendations": recommendations,
             "inventory_counts": dict(inventory_counts), "requested_streams": requested_streams,
             "existing_sra_intra": {"streams": sorted({r["stream_id"] for r in placements
