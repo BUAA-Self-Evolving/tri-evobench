@@ -1,0 +1,25 @@
+ARG BASE_IMAGE=trievo-prime-agent:local-fast-base-20261027
+ARG SCIENTIFIC_IMAGE=trievo-l2-v5:local-fast-scientific-source-20261027
+FROM ${SCIENTIFIC_IMAGE} AS scientific
+COPY baseline/adapters/prime_agent/requirements-local-fast.txt /tmp/requirements.txt
+COPY baseline/adapters/prime_agent/copy_scientific_environment.py /tmp/copy_scientific.py
+RUN python3 /tmp/copy_scientific.py export /tmp/requirements.txt /export
+
+FROM ${BASE_IMAGE}
+
+# Extend the final audited adapter image without rebuilding its native source.
+COPY baseline/adapters/prime_agent/requirements-local-fast.txt /opt/trievo/performance/requirements.txt
+COPY baseline/adapters/prime_agent/copy_scientific_environment.py /opt/trievo/performance/copy_scientific.py
+RUN --mount=type=bind,from=scientific,source=/export,target=/scientific \
+    /opt/prime-kernel/bin/python /opt/trievo/performance/copy_scientific.py install \
+    /scientific /opt/prime-kernel/lib/python3.11/site-packages \
+    && cp /scientific/distributions.json /opt/trievo/performance/installed-distributions.json \
+    && /opt/prime-kernel/bin/python -c "import numpy,scipy,pandas,sklearn,matplotlib,PIL,seaborn,openpyxl" \
+    && ln -sf /opt/prime-kernel/bin/python /usr/local/bin/python \
+    && ln -sf /opt/prime-kernel/bin/python3 /usr/local/bin/python3
+
+ENV PATH="/opt/prime-kernel/bin:${PATH}" \
+    OMP_NUM_THREADS=4 \
+    OPENBLAS_NUM_THREADS=4 \
+    MKL_NUM_THREADS=4 \
+    NUMEXPR_NUM_THREADS=4

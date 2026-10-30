@@ -34,6 +34,54 @@ from trievo_bench.verifier import LLMJudge
 
 
 class BaselineRuntimeTest(unittest.TestCase):
+    def test_failed_evolution_evidence_survives_stable_state_rollback(self) -> None:
+        from trievo_bench.baselines.base import EvolutionContext
+        for recoverable in (False, True):
+            with self.subTest(recoverable=recoverable), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                runtime = ProcessBaselineRuntime(load_manifest(self._manifest(root)),
+                                                 budget=TokenBudget(limit=100), repo_root=root)
+                runtime._state_dir = root / "state"
+                learning = runtime._state_dir / "learning"
+                learning.mkdir(parents=True)
+                (learning / "stable.txt").write_text("original")
+                runtime._flow = SimpleNamespace(output_dir=root / "output")
+                runtime._current_turn = "turn2"
+                runtime._stable_state = runtime._capture_state(include_bytes=True)
+                def request(*args, **kwargs):
+                    (learning / "stable.txt").write_text("partial change")
+                    (learning / "completion.json").write_text('{"text":"bad","usage":17}')
+                    if not recoverable:
+                        raise RuntimeError("proposal rejected")
+                    return {"completed": False, "recoverable_failure": True,
+                            "usage": {"api_calls": 1, "total_tokens": 17}}
+                with patch.object(runtime, "_request", side_effect=request) as calls:
+                    context = EvolutionContext(turn_id="turn2", trajectory=[], feedback=[])
+                    if recoverable:
+                        result = runtime.evolve(context)
+                        self.assertFalse(result.completed)
+                        self.assertEqual(result.usage.api_calls, 1)
+                        self.assertEqual(result.changed_files, [])
+                        self.assertTrue(runtime._turn_evolved)
+                    else:
+                        with self.assertRaisesRegex(RuntimeError, "proposal rejected"):
+                            runtime.evolve(context)
+                        self.assertFalse(runtime._turn_evolved)
+                    calls.assert_called_once()
+                if recoverable:
+                    runtime.end_flow()
+                else:
+                    with self.assertRaisesRegex(RuntimeError, "state changed asynchronously"):
+                        runtime.end_flow()
+                artifacts = list((root / "output/failed_evolution").glob("*/baseline_state.zip"))
+                self.assertEqual(len(artifacts), 1)
+                with zipfile.ZipFile(artifacts[0]) as bundle:
+                    self.assertEqual(bundle.read("learning/completion.json"), b'{"text":"bad","usage":17}')
+                    self.assertEqual(bundle.read("learning/stable.txt"), b"partial change")
+                with zipfile.ZipFile(root / "output/baseline_state.zip") as bundle:
+                    self.assertEqual(bundle.read("learning/stable.txt"), b"original")
+                    self.assertNotIn("learning/completion.json", bundle.namelist())
+
     def test_hermes_foreground_removes_learning_tools_from_worker_dispatch(self) -> None:
         whitelist_calls = []
         plugins = types.ModuleType("hermes_cli.plugins")
@@ -258,6 +306,46 @@ class BaselineRuntimeTest(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "evolution did not complete"):
                 runner.run(spec.flows[0])
+
+    def test_end_flow_exports_latest_volume_bytes_before_removing_volume(self) -> None:
+        from trievo_bench.docker_volume import DockerVolumeCapture
+        import hashlib
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            runtime = ProcessBaselineRuntime(
+                load_manifest(self._manifest(root)), budget=TokenBudget(limit=100), repo_root=root
+            )
+            runtime._state_dir = root / "state"
+            (runtime._state_dir / "learning").mkdir(parents=True)
+            (runtime._state_dir / "learning/stale.json").write_text("old")
+            output = root / "output"
+            output.mkdir()
+            runtime._flow = SimpleNamespace(output_dir=output)
+            content = b'{"latest":"written before interaction failure"}'
+            metadata = [{"path": "learning/latest.json", "size": len(content),
+                         "sha256": hashlib.sha256(content).hexdigest()}]
+            captures = []
+
+            def capture(_patterns, _ignored, *, include_bytes):
+                captures.append(include_bytes)
+                return DockerVolumeCapture(
+                    {"learning/latest.json": content} if include_bytes else {}, metadata
+                )
+
+            def close():
+                with zipfile.ZipFile(output / "baseline_state.zip") as bundle:
+                    self.assertEqual(bundle.namelist(), ["learning/latest.json"])
+                    self.assertEqual(bundle.read("learning/latest.json"), content)
+
+            runtime._state_volume = SimpleNamespace(capture_selected=capture, close=close)
+            runtime.end_flow()
+
+            self.assertEqual(captures, [True])
+            snapshot = json.loads((output / "baseline_state_snapshot.json").read_text())
+            self.assertEqual(snapshot["files"], metadata)
+            self.assertEqual((output / "baseline_state/learning/latest.json").read_bytes(), content)
+            self.assertIsNone(runtime._state_volume)
 
     def test_process_runtime_archives_deep_state_on_windows_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

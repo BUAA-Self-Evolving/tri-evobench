@@ -28,6 +28,7 @@ from .spec import BenchmarkSpec, FlowSpec, TurnSpec, load_spec
 from .user_sim import UserSimulator
 from .verifier import CheckResult, DeterministicVerifier, ExecVerifier, L1LifeJudge, LLMJudge, PythonVerifier
 from .arena_runtime import ArenaVerifier, apply_updates as apply_arena_updates
+from .run_conditions import RunCondition, parse_run_condition
 
 
 @dataclass
@@ -116,6 +117,7 @@ class Runner:
         repo_root: Path | None = None,
         resume_checkpoint: Path | None = None,
         fail_fast_infrastructure: bool = False,
+        condition: str | None = None,
     ) -> None:
         self.spec = spec
         self.output_dir = output_dir
@@ -127,6 +129,7 @@ class Runner:
         self.repo_root = (repo_root or Path(__file__).resolve().parents[1]).resolve()
         self.resume_checkpoint = resume_checkpoint.resolve() if resume_checkpoint else None
         self.fail_fast_infrastructure = fail_fast_infrastructure
+        self.condition = parse_run_condition(condition) if condition is not None else None
         self.baseline_id, resolved_manifest, runtime_overrides = resolve_baseline_selection(
             spec,
             baseline_override=baseline,
@@ -135,6 +138,14 @@ class Runner:
             manifest_override=baseline_manifest,
         )
         self.agent_mode = self.baseline_id
+        if self.condition is RunCondition.EVOLVING:
+            self.learner_mode = learner_mode = "evolving"
+        if self.condition is not None and not self.condition.policy.sut_evolution_enabled:
+            runtime_overrides = {**runtime_overrides, "evolution": {
+                **runtime_overrides.get("evolution", {}), "policy": "disabled"}}
+            self.learner_mode = learner_mode = "frozen"
+        self._runtime_manifest = resolved_manifest
+        self._runtime_overrides = runtime_overrides
         self.runtime = create_baseline_runtime(
             self.baseline_id,
             spec=spec,
@@ -167,6 +178,7 @@ class Runner:
         sandbox = create_sandbox(flow.sandbox, self.backend, self.image)
         turn_records: list[TurnRecord] = []
         runtime_started = False
+        run_failed = False
         resume_index = 0
         if self.resume_checkpoint is not None:
             checkpoint_meta = self.resume_checkpoint / "checkpoint.json"
@@ -178,6 +190,8 @@ class Runner:
             checkpoint_data = json.loads(checkpoint_meta.read_text(encoding="utf-8"))
             if checkpoint_data.get("flow_id") != flow.id or checkpoint_data.get("baseline", self.baseline_id) != self.baseline_id:
                 raise ValueError("checkpoint flow/baseline identity mismatch")
+            if checkpoint_data.get("condition") != (self.condition.value if self.condition else None):
+                raise ValueError("checkpoint condition mismatch")
             resume_index = int(checkpoint_data["next_turn_index"])
             restored = Path(tempfile.mkdtemp(prefix="trievo-l1-resume-"))
             try:
@@ -208,13 +222,45 @@ class Runner:
             for index, turn in enumerate(flow.turns):
                 if index < resume_index:
                     continue
+                if self.condition is RunCondition.RESET:
+                    if index > 0:
+                        self.runtime.end_flow()
+                    self._reseed_condition_workspace(sandbox, flow)
+                    if index > 0:
+                        self.runtime = create_baseline_runtime(
+                            self.baseline_id, spec=self.spec, budget=self.budget,
+                            learner_mode=self.learner_mode, repo_root=self.repo_root,
+                            manifest_path=self._runtime_manifest, overrides=self._runtime_overrides)
+                        self.runtime.start_flow(FlowContext(
+                            flow_id=flow.id, workspace=sandbox.workspace_path(),
+                            output_dir=flow_dir, metadata=self._public_metadata(flow.metadata),
+                            workspace_mount=sandbox.workspace_mount()))
                 turn_records.append(self._run_turn(turn, sandbox))
                 self._save_checkpoint(flow_dir, flow, index, turn, sandbox, turn_records)
             final_snapshot = self.runtime.snapshot_state()
+        except BaseException:
+            run_failed = True
+            raise
         finally:
             try:
                 if runtime_started:
                     self.runtime.end_flow()
+                if run_failed and self.baseline_id == "deepseek-harness":
+                    # The runtime is stopped before saving the actual failed
+                    # workspace. Sandbox.close() otherwise destroys this state.
+                    try:
+                        sandbox.sync_workspace_to_host()
+                        archive = flow_dir / "error_workspace.zip"
+                        _archive_tree(sandbox.workspace_path(), archive)
+                        (flow_dir / "error_workspace_receipt.json").write_text(json.dumps({
+                            "flow_id": flow.id, "baseline": self.baseline_id,
+                            "condition": self.condition.value if self.condition else None,
+                            "runtime_stopped_before_archive": True,
+                            "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+                        }, indent=2) + "\n")
+                    except Exception as capture_error:
+                        (flow_dir / "error_workspace_capture_failure.json").write_text(
+                            json.dumps({"error_type": type(capture_error).__name__}) + "\n")
             finally:
                 sandbox.close()
         runtime_metadata = self.runtime.metadata()
@@ -222,6 +268,7 @@ class Runner:
             "schema_version": "0.1",
             "flow_id": flow.id,
             "baseline": self.baseline_id,
+            "condition": self.condition.value if self.condition else None,
             "baseline_runtime": runtime_metadata,
             "learner_mode": runtime_metadata.get("learner", learner_mode_label(self.learner_mode)),
             "agent_mode": self.agent_mode,
@@ -264,9 +311,23 @@ class Runner:
             json.dumps([asdict(record) for record in turn_records], ensure_ascii=False, indent=2), encoding="utf-8"
         )
         (root / "checkpoint.json").write_text(
-            json.dumps({"flow_id": flow.id, "baseline": self.baseline_id, "completed_turn_index": index, "next_turn_index": index + 1, "turn_id": turn.id, "token_budget": asdict(self.budget), "exact_baseline_state": exact_baseline_state}, ensure_ascii=False, indent=2),
+            json.dumps({"flow_id": flow.id, "baseline": self.baseline_id, "condition": self.condition.value if self.condition else None, "completed_turn_index": index, "next_turn_index": index + 1, "turn_id": turn.id, "token_budget": asdict(self.budget), "exact_baseline_state": exact_baseline_state}, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+
+    def _reseed_condition_workspace(self, sandbox: Sandbox, flow: FlowSpec) -> None:
+        """Reset only this sandbox's entries, then restore the initial public seed.
+
+        Current-turn transitions remain applied by _run_turn; earlier transitions
+        and agent artifacts are deliberately not replayed in reset conditions.
+        """
+        sandbox.sync_workspace_to_host()
+        for entry in list(sandbox.workspace_path().iterdir()):
+            sandbox.remove("/workspace/" + entry.name)
+        seed = flow.turns[0].setup
+        sandbox.setup({key: seed[key] for key in ("host_copy", "files", "arena_session_seed") if key in seed})
+        apply_arena_updates({"arena_session_seed": seed["arena_session_seed"]} if "arena_session_seed" in seed else {}, sandbox.workspace_path())
+        sandbox.sync_workspace_from_host()
 
     def _run_turn(self, turn: TurnSpec, sandbox: Sandbox) -> TurnRecord:
         # A daemon-owned workspace may have been changed by the baseline in
@@ -336,7 +397,16 @@ class Runner:
             if not action_error:
                 all_events.extend(item for item in reply.events if isinstance(item, dict))
                 all_tool_calls.extend(executed_calls)
-            if model_error:
+            native_limit = isinstance(reply.raw, dict) and reply.raw.get("limit_exhausted")
+            native_error = reply.raw.get("execution_error") if isinstance(reply.raw, dict) else None
+            if native_error:
+                check = CheckResult(0.0, False, "Native agent attempt ended with an execution error; no replay.",
+                                    {"type": "native_execution_error", "error": native_error,
+                                     "usage_status": reply.raw.get("usage_status")})
+            elif native_limit:
+                check = CheckResult(0.0, False, "Native agent exhausted its declared work budget.",
+                                    {"type": "work_limit", "reasons": reply.raw.get("limit_reasons", [])})
+            elif model_error:
                 check = CheckResult(0.0, False, f"Model request failed: {model_error}", {"type": "model_error", "error": model_error})
             elif action_error:
                 check = CheckResult(0.0, False, f"Invalid agent action: {action_error}", {"type": "action_error", "error": action_error})
@@ -399,7 +469,7 @@ class Runner:
             if self.fail_fast_infrastructure and (model_error or check.details.get("type") in {"verifier_model_error", "exec_verifier_timeout"}):
                 raise RuntimeError(f"evaluation infrastructure failed in {turn.id}: {check.feedback}")
             history.extend([{"role": "user", "content": request}, {"role": "assistant", "content": reply.text}, {"role": "judge", "content": check.feedback}])
-            if check.passed and check.score >= turn.success_threshold:
+            if native_error or native_limit or (check.passed and check.score >= turn.success_threshold):
                 break
             if index < turn.max_interactions:
                 request = user.next_request(history=history, feedback=check.feedback)
@@ -414,7 +484,9 @@ class Runner:
             for item in interactions
         ]
         evolution = self.runtime.evolve(
-            EvolutionContext(turn_id=turn.id, trajectory=trajectory, feedback=feedback)
+            EvolutionContext(turn_id=turn.id, trajectory=trajectory, feedback=feedback,
+                             update_enabled=self.condition is None or self.condition.policy.sut_evolution_enabled,
+                             skip_reason=None if self.condition is None or self.condition.policy.sut_evolution_enabled else f"condition:{self.condition.value}")
         )
         # The baseline defines a Turn score as the first successful Interaction's
         # score, or the final Interaction's score when the Turn is unsuccessful.

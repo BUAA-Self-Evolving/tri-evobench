@@ -28,6 +28,7 @@ from .baselines.process import ProcessBaselineRuntime
 from .evaluation_outcome import BoundedFeedback, EvaluationOutcome, EvaluationStatus
 from .docker_volume import DockerVolumeMirror, docker_volume_transport_enabled
 from .model import TokenBudget, client_from_config
+from .performance import timed_call
 from .run_conditions import RunCondition, parse_run_condition
 from .tau2_live import Tau2LiveSession, Tau2LiveSessionError, is_live_profile
 from .verifier import L1LifeJudge
@@ -66,6 +67,12 @@ def _verifier_transport_timeout(native_timeout_seconds: int) -> int:
     return native_timeout_seconds + _VERIFIER_TRANSPORT_GRACE_SECONDS
 
 
+def _container_cpus(value: Any) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 < value <= 8:
+        raise L2AgentRunError("task/verifier CPU limit must be a number in (0,8]")
+    return float(value)
+
+
 class L2AgentRunError(RuntimeError):
     """Raised when the real-agent L2 runtime cannot safely continue."""
 
@@ -79,16 +86,26 @@ class _TaskSandboxSession:
         profile: dict[str, Any],
         workspace: Path,
         workspace_volume: DockerVolumeMirror,
+        terminal_volume: DockerVolumeMirror | None = None,
+        cpus: float = 2,
+        limit_cpu_threads: bool = False,
     ) -> None:
         self.profile = profile
         self.workspace = workspace.resolve()
         self.workspace_volume = workspace_volume
+        self.terminal_volume = terminal_volume
+        self.terminal_controller = None
+        self.cpus = cpus
+        self.limit_cpu_threads = limit_cpu_threads
         self.name = f"trievo-l2-task-{uuid4().hex[:12]}"
         self.image = str(profile["task_sandbox_image_digest"])
         self._started = False
         self.evidence: dict[str, Any] = {}
 
     def start(self) -> dict[str, Any]:
+        if self.terminal_volume is not None:
+            # A new Turn never inherits native shell snapshots or sockets.
+            self.terminal_volume.sync_from_host()
         inspect = subprocess.run(
             [_docker_executable(), "image", "inspect", self.image, "--format", "{{.Id}}"],
             text=True,
@@ -106,11 +123,20 @@ class _TaskSandboxSession:
             _docker_executable(), "run", "-d", "--name", self.name,
             "--network", "none", "--cap-drop", "ALL",
             "--security-opt", "no-new-privileges", "--pids-limit", "256",
-            "--memory", "4g", "--cpus", "2",
-            "--mount", self.workspace_volume.mount_spec("/workspace"),
+            "--memory", "4g", "--cpus", str(self.cpus),
+            "--mount", self.workspace_volume.mount_spec("/workspace") + (",volume-nocopy" if self.terminal_volume else ""),
             "-w", "/workspace", self.image,
             "sh", "-lc", "trap 'exit 0' TERM INT; while :; do sleep 3600; done",
         ]
+        if self.terminal_volume is not None:
+            from .task_terminal import PUBLIC_DIRECTORY
+            position = command.index("-w")
+            command[position:position] = ["--user", f"{os.getuid()}:{os.getgid()}",
+                                          "--mount", self.terminal_volume.mount_spec(PUBLIC_DIRECTORY) + ",volume-nocopy"]
+        if self.limit_cpu_threads:
+            position = command.index("-w")
+            for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+                command[position:position] = ["-e", f"{name}={max(1, int(self.cpus))}"]
         started = subprocess.run(
             command,
             text=True,
@@ -149,7 +175,14 @@ class _TaskSandboxSession:
             "workspace_transport": "docker_volume",
             "tool_profile_id": self.profile["tool_profile_id"],
             "dependency_class": self.profile["dependency_class"],
+            "cpus": self.cpus,
         }
+        if self.limit_cpu_threads:
+            self.evidence["cpu_thread_limit"] = max(1, int(self.cpus))
+        if self.terminal_volume is not None:
+            from .task_terminal_host import TaskTerminalController
+            self.terminal_controller = TaskTerminalController(_docker_executable(), self.name)
+            self.evidence.update(self.terminal_controller.start())
         return dict(self.evidence)
 
     def close(self) -> None:
@@ -254,6 +287,17 @@ class L2AgentStreamRunner:
         self._package_volume: DockerVolumeMirror | None = None
         self._storage_gate = _storage_gate_from_environment()
         self._task_sandbox: _TaskSandboxSession | None = None
+        self._terminal_volume: DockerVolumeMirror | None = None
+        self._terminal_mirror_dir: Path | None = None
+        runtime_options = options.baseline_overrides.get("options", {})
+        self._task_terminal_enabled = runtime_options.get("l2_task_terminal_transport", False)
+        if not isinstance(self._task_terminal_enabled, bool):
+            raise L2AgentRunError("l2_task_terminal_transport must be boolean")
+        self._task_cpus = _container_cpus(runtime_options.get("l2_task_cpus", 2))
+        self._verifier_cpus = _container_cpus(runtime_options.get("l2_verifier_cpus", 2))
+        self._limit_cpu_threads = runtime_options.get("l2_limit_cpu_threads", False)
+        if not isinstance(self._limit_cpu_threads, bool):
+            raise L2AgentRunError("l2_limit_cpu_threads must be boolean")
         # Sealed record of the current Interaction's live tau2 session.
         self._tau2_record: dict[str, Any] | None = None
 
@@ -435,6 +479,11 @@ class L2AgentStreamRunner:
                 self.options,
                 self.panel_metadata,
             )
+            if self._task_terminal_enabled:
+                from .task_terminal import SCHEMA
+                self.v5_metadata.update(task_terminal_transport=SCHEMA,
+                                        task_container_cpus=self._task_cpus,
+                                        verifier_container_cpus=self._verifier_cpus)
         execution_requirements = _execution_requirements(manifest)
         tool_catalog = _taskstream_tool_catalog(self.package_dir)
         stream_carriers = _stream_submission_carriers(self.stream_dir, turn_order)
@@ -551,6 +600,7 @@ class L2AgentStreamRunner:
             "condition": self.condition.value,
             **self.panel_metadata,
             "started_at": datetime.now(UTC).isoformat(),
+            **self.v5_metadata,
             "turns": completed_turns,
             "success": False,
             "token_budget": asdict(self.budget),
@@ -558,7 +608,11 @@ class L2AgentStreamRunner:
             "run_configuration": {
                 "condition": self.condition.value,
                 **self.panel_metadata,
+                **self.v5_metadata,
                 "budget_profile": self.budget_profile,
+                **({'judge_workspace_inventory_encoding': 'complete_paths_v1'}
+                   if self.options.baseline_overrides.get('options', {}).get('l2_judge_inventory_encoding') == 'complete_paths_v1'
+                   else {}),
                 "evaluation_error_policy": self.evaluation_error_policy,
                 "execution_requirements": execution_requirements,
                 "effective_work_limits": asdict(self.work_limits),
@@ -632,6 +686,9 @@ class L2AgentStreamRunner:
                         profile=self._current_v5_profile,
                         workspace=workspace,
                         workspace_volume=self._workspace_volume,
+                        terminal_volume=self._terminal_volume,
+                        cpus=self._task_cpus,
+                        limit_cpu_threads=self._limit_cpu_threads,
                     )
                     task_sandbox_evidence = self._task_sandbox.start()
                 sequence_role = _validate_taskstream_turn_identity(
@@ -720,9 +777,13 @@ class L2AgentStreamRunner:
                             "next_turn_index": turn_index, "interaction_index": interaction_index,
                             "token_budget": asdict(self.budget),
                         })
+                        terminal = self._task_sandbox.terminal_controller if self._task_sandbox else None
+                        if terminal is not None:
+                            terminal.begin(f"{turn_id}-i{interaction_index}", asdict(self.work_limits))
                         live_session = self._start_tau2_live_session(turn_dir)
+                        reply_recorded = False
                         try:
-                            reply = self._runtime.interact(
+                            reply = timed_call("agent_interaction", self._runtime.interact,
                                 InteractionContext(
                                     turn_id=turn_id,
                                     interaction_index=interaction_index,
@@ -737,23 +798,36 @@ class L2AgentStreamRunner:
                                     remaining_token_budget=max(0, self.budget.limit - self.budget.used),
                                 )
                             )
+                            if terminal is not None:
+                                # Preserve the paid reply before any terminal/session teardown.
+                                self._write_reply_received_checkpoint(
+                                    output_root=output_root, stream_key=stream_key, run_id=run_id,
+                                    turn_id=turn_id, turn_index=turn_index, interaction_index=interaction_index,
+                                    interaction_request=interaction_request, reply=reply, history=history,
+                                    interactions=interactions, before_files=before_files, report=report,
+                                )
+                                reply_recorded = True
                         finally:
                             if live_session is not None:
                                 self._tau2_record = self._finish_tau2_live_session(live_session)
-                        self._write_reply_received_checkpoint(
-                            output_root=output_root,
-                            stream_key=stream_key,
-                            run_id=run_id,
-                            turn_id=turn_id,
-                            turn_index=turn_index,
-                            interaction_index=interaction_index,
-                            interaction_request=interaction_request,
-                            reply=reply,
-                            history=history,
-                            interactions=interactions,
-                            before_files=before_files,
-                            report=report,
-                        )
+                            if terminal is not None:
+                                receipt = terminal.end()
+                                _write_json(started_checkpoint / "task_terminal.json", receipt)
+                        if not reply_recorded:
+                            self._write_reply_received_checkpoint(
+                                output_root=output_root,
+                                stream_key=stream_key,
+                                run_id=run_id,
+                                turn_id=turn_id,
+                                turn_index=turn_index,
+                                interaction_index=interaction_index,
+                                interaction_request=interaction_request,
+                                reply=reply,
+                                history=history,
+                                interactions=interactions,
+                                before_files=before_files,
+                                report=report,
+                            )
                         self._sync_workspace_from_volume()
                     # Durable stage evidence survives verifier/Judge/Simulator
                     # failures. A resume can reuse this paid Agent execution.
@@ -788,7 +862,19 @@ class L2AgentStreamRunner:
                             _write_json(started_metadata_path, started_metadata)
                     resume_pending = None
                     limit_reasons = _limit_reasons(reply.raw)
-                    if limit_reasons:
+                    native_error = reply.raw.get("execution_error") if isinstance(reply.raw, dict) else None
+                    if native_error:
+                        verification = {"category": "fail", "score": 0.0,
+                                        "details": {"type": "native_execution_error", "error": native_error,
+                                                    "usage_status": reply.raw.get("usage_status")}}
+                        outcome = EvaluationOutcome.scored(
+                            turn_score=0.0, passed=False,
+                            bounded_feedback=BoundedFeedback(
+                                failed_dimensions=("agent_execution",),
+                                observable_deficiency="The agent attempt ended abnormally; no replay is permitted.",
+                                public_result_category="fail"),
+                            audit_details={"native_execution_error": verification})
+                    elif limit_reasons:
                         verification = _runtime_limit_failure(", ".join(limit_reasons))
                         outcome = EvaluationOutcome.scored(
                             turn_score=0.0,
@@ -803,7 +889,7 @@ class L2AgentStreamRunner:
                             audit_details={"work_limit": verification},
                         )
                     else:
-                        verification = self._verify_taskstream(
+                        verification = timed_call("native_verifier", self._verify_taskstream,
                             task=task,
                             turn_dir=turn_dir,
                             workspace=workspace,
@@ -819,7 +905,7 @@ class L2AgentStreamRunner:
                             )
                         else:
                             try:
-                                verification["judge"] = self._judge_taskstream(
+                                verification["judge"] = timed_call("judge", self._judge_taskstream,
                                     task, reply, verification, interaction_index, history,
                                     before_files, _workspace_digest(workspace),
                                 )
@@ -882,6 +968,8 @@ class L2AgentStreamRunner:
                         ])
                     simulator_audit: dict[str, Any] | None = None
                     should_retry = (
+                        not native_error
+                        and
                         outcome.evaluation_status is not EvaluationStatus.EVALUATION_ERROR
                         and not bool(outcome.passed)
                         and interaction_index < max_interactions
@@ -952,7 +1040,7 @@ class L2AgentStreamRunner:
                     turn_id=turn_id,
                     interaction_index=len(interactions),
                 )
-                evolution = self._runtime.evolve(
+                evolution = timed_call("evolution", self._runtime.evolve,
                     EvolutionContext(
                         turn_id=turn_id,
                         trajectory=[_public_taskstream_trajectory(item) for item in interactions],
@@ -986,6 +1074,11 @@ class L2AgentStreamRunner:
                     "turn_index": turn_index + 1,
                     "sequence_role": sequence_role,
                     "timing_profile": "slow_provider" if self.slow_provider else "dataset",
+                    **({
+                        "runtime_profile_id": self._current_v5_profile["runtime_profile_id"],
+                        "runtime_profile_digest": _canonical_digest(self._current_v5_profile),
+                        "source_task_id": task.get("source_basis", {}).get("source_task_id"),
+                    } if self._current_v5_profile is not None else {}),
                     "turn_score": terminal_outcome.turn_score,
                     "evaluation_status": terminal_outcome.evaluation_status.value,
                     "passed": turn_passed,
@@ -1073,6 +1166,8 @@ class L2AgentStreamRunner:
             turn_dir=turn_dir,
             workspace_mount_spec=self._workspace_volume.mount_spec("/workspace"),
             timeout_seconds=self.work_limits.episode_timeout_seconds,
+            live_config=self.options.baseline_overrides.get("options", {}).get("tau2_live_config"),
+            workspace_owner=(os.getuid(), os.getgid()) if self._terminal_volume else None,
         )
         try:
             session.start()
@@ -1110,19 +1205,22 @@ class L2AgentStreamRunner:
                 writable_uid=0,
                 writable_gid=0,
             )
+            if self._task_terminal_enabled:
+                self._terminal_mirror_dir = Path(tempfile.mkdtemp(prefix="trievo-l2-terminal-"))
+                self._terminal_volume = DockerVolumeMirror.create(self._terminal_mirror_dir, role="l2-terminal")
         except BaseException:
             self._close_taskstream_volume_transport()
             raise
 
     def _sync_workspace_to_volume(self) -> None:
         if self._workspace_volume is not None:
-            self._workspace_volume.sync_from_host()
+            timed_call("workspace_to_volume", self._workspace_volume.sync_from_host)
 
     def _sync_workspace_from_volume(self, *, best_effort: bool = False) -> None:
         if self._workspace_volume is None:
             return
         try:
-            self._workspace_volume.sync_to_host()
+            timed_call("workspace_from_volume", self._workspace_volume.sync_to_host)
         except BaseException:
             if not best_effort:
                 raise
@@ -1191,11 +1289,15 @@ class L2AgentStreamRunner:
         })
 
     def _close_taskstream_volume_transport(self) -> None:
-        for mirror in (self._package_volume, self._workspace_volume):
+        for mirror in (self._package_volume, self._workspace_volume, getattr(self, "_terminal_volume", None)):
             if mirror is not None:
                 mirror.close()
         self._package_volume = None
         self._workspace_volume = None
+        self._terminal_volume = None
+        if getattr(self, "_terminal_mirror_dir", None) is not None:
+            shutil.rmtree(self._terminal_mirror_dir, ignore_errors=True)
+            self._terminal_mirror_dir = None
 
     def _apply_taskstream_transition(self, task: dict[str, Any], turn_dir: Path, workspace: Path) -> None:
         transition = task.get("workspace_transition", {})
@@ -1233,6 +1335,41 @@ class L2AgentStreamRunner:
                 shutil.copy2(source, target)
 
     def _verify_taskstream(self, *, task: dict[str, Any], turn_dir: Path, workspace: Path, reply: BaselineReply) -> dict[str, Any]:
+        options = getattr(self.options, "baseline_overrides", {}).get("options", {})
+        bindings = task.get("evaluation", {}).get("native_verifier", {}).get("input_bindings", [])
+        uses_workspace = any(binding.get("source") == "workspace" for binding in bindings)
+        if options.get("l2_verifier_input_copy") is not True or not uses_workspace:
+            return self._verify_taskstream_in_volume(
+                task=task, turn_dir=turn_dir, workspace=workspace, reply=reply,
+            )
+        before = _workspace_digest(workspace)
+        with tempfile.TemporaryDirectory(prefix="trievo-verifier-input-") as temporary:
+            snapshot = Path(temporary) / "workspace"
+            shutil.copytree(workspace, snapshot, symlinks=True)
+            if _workspace_digest(snapshot) != before:
+                raise L2AgentRunError("verifier input copy differs from the saved workspace")
+            mirror = DockerVolumeMirror.create(
+                snapshot, role="l2-verifier-input", writable_uid=0, writable_gid=0,
+            )
+            try:
+                result = self._verify_taskstream_in_volume(
+                    task=task, turn_dir=turn_dir, workspace=workspace, reply=reply,
+                    verifier_input_volume=mirror,
+                )
+            finally:
+                mirror.close()
+        if _workspace_digest(workspace) != before:
+            raise L2AgentRunError("original workspace changed during isolated verification")
+        result["verification_workspace"] = {
+            "schema": "verifier_input_copy/1.0", "read_only": True, "owner": "0:0",
+            "content_digest": hashlib.sha256(json.dumps(before, sort_keys=True).encode()).hexdigest(),
+        }
+        return result
+
+    def _verify_taskstream_in_volume(
+        self, *, task: dict[str, Any], turn_dir: Path, workspace: Path,
+        reply: BaselineReply, verifier_input_volume: DockerVolumeMirror | None = None,
+    ) -> dict[str, Any]:
         evaluation = task.get("evaluation", {})
         native = evaluation.get("native_verifier", {}) if isinstance(evaluation, dict) else {}
         entrypoint = native.get("entrypoint")
@@ -1302,14 +1439,14 @@ class L2AgentStreamRunner:
                 }
             verifier_image = declared_verifier
         package_volume = getattr(self, "_package_volume", None)
-        workspace_volume = getattr(self, "_workspace_volume", None)
+        workspace_volume = verifier_input_volume or getattr(self, "_workspace_volume", None)
         package_mount_args = (
             ["--mount", package_volume.mount_spec("/opt/l2_demo", read_only=True)]
             if package_volume is not None
             else ["-v", f"{package_root}:/opt/l2_demo:ro"]
         )
         workspace_mount_args = (
-            ["--mount", workspace_volume.mount_spec("/workspace")]
+            ["--mount", workspace_volume.mount_spec("/workspace", read_only=verifier_input_volume is not None)]
             if workspace_volume is not None
             else ["-v", f"{workspace}:/workspace"]
         )
@@ -1321,12 +1458,16 @@ class L2AgentStreamRunner:
         verifier_container = f"trievo-l2-verifier-{uuid4().hex[:12]}"
         command = [
             _docker_executable(), "run", "--name", verifier_container, "-i", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
-            "--pids-limit", "256", "--memory", "4g", "--cpus", "2",
+            "--pids-limit", "256", "--memory", "4g", "--cpus", str(getattr(self, "_verifier_cpus", 2)),
             *package_mount_args, *workspace_mount_args,
             "-e", "L2_VERIFIER_WORKSPACE=/workspace", "-e", "PYTHONPATH=/opt/l2_demo/runtime/src", "-e", "MPLBACKEND=Agg",
             *blocked_proxy_environment,
             verifier_image, "python", f"/opt/l2_demo/{verifier_rel}",
         ]
+        if getattr(self, "_limit_cpu_threads", False):
+            position = command.index(verifier_image)
+            for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+                command[position:position] = ["-e", f"{name}={max(1, int(self._verifier_cpus))}"]
         timeout = int(native.get("timeout_seconds", 300))
         transport_timeout = _verifier_transport_timeout(timeout)
         try:
@@ -1451,7 +1592,32 @@ class L2AgentStreamRunner:
         trajectory = {"interactions": history, "tool_calls": reply.tool_calls,
                       "tool_results": [item.get("observation", item.get("result")) for item in reply.tool_calls],
                       "workspace_before": before, "workspace_after": after}
+        inventory = None
+        if self.options.baseline_overrides.get('options', {}).get('l2_judge_inventory_encoding') == 'complete_paths_v1':
+            from .judge_inventory import encode
+            inventory = encode(before, after, self.options.output_root / '_judge_inventory')
+            if inventory is not None:
+                trajectory['workspace_before'] = inventory['before']
+                trajectory['workspace_after'] = inventory['after']
+                values['workspace_diff'] = inventory['diff']
+        if self.options.baseline == "deepseek-harness" and inventory is None:
+            # Persistent native workspaces can contain thousands of unchanged
+            # dependency files. Keep every changed digest, and bind the omitted
+            # unchanged inventory with a hash; original checkpoint evidence stays
+            # intact. This does not truncate the reply, tools or verifier result.
+            changed = _changed_workspace_files(before, after)
+            trajectory["workspace_before"] = {p: before[p] for p in changed if p in before}
+            trajectory["workspace_after"] = {p: after[p] for p in changed if p in after}
+            trajectory["unchanged_workspace_inventory"] = {
+                "count": len(set(before) & set(after)) - sum(p in before and p in after for p in changed),
+                "before_sha256": hashlib.sha256(json.dumps(before, sort_keys=True).encode()).hexdigest(),
+                "after_sha256": hashlib.sha256(json.dumps(after, sort_keys=True).encode()).hexdigest(),
+                "representation": "unchanged digests omitted; all changed digests retained",
+            }
         result = L1LifeJudge(client_from_config({"thinking": "disabled"}, self.budget)).evaluate(check, reply.text, None, trajectory)
+        if inventory is not None:
+            result.details['workspace_inventory_encoding'] = {
+                'schema': 'complete_paths_v1', 'artifact': inventory['artifact'], 'sha256': inventory['sha256']}
         if result.details.get("type") == "l1_life_judge_parse_error":
             raise L2AgentRunError(f"invalid reference judge output: {result.details}")
         component_values = [
@@ -1540,6 +1706,8 @@ class L2AgentStreamRunner:
                     "schema_version": self._taskstream_schema_version,
                     "stream_id": self.options.stream_id,
                     "condition": self.condition.value,
+                    **({"task_terminal_volume": self._terminal_volume.volume_name}
+                       if self._terminal_volume is not None else {}),
                 },
                 workspace_mount=(
                     self._workspace_volume.volume_name
@@ -1556,6 +1724,10 @@ class L2AgentStreamRunner:
         # under one evaluator. Previously this method hard-coded Hermes.
         manifest_path = find_manifest(self.options.baseline, self.options.repo_root)
         policy = "turn_boundary" if self.condition.policy.sut_evolution_enabled else "disabled"
+        # Native harnesses without a learner still run the matched workspace
+        # conditions; never invent an evolution algorithm for these baselines.
+        if self.options.baseline in {"codex", "deepseek-harness", "zcode"}:
+            policy = "disabled"
         overrides = merge_mappings(
             self.options.baseline_overrides,
             {
@@ -1998,6 +2170,24 @@ def _load_v5_runtime_binding(
     abi_values = {tuple(profiles[profile_id].get(field) for field in abi_fields) for profile_id in referenced_ids}
     if len(abi_values) != 1 or any(not value for value in next(iter(abi_values), ())):
         raise L2AgentRunError("runtime profiles have incompatible learner-state ABI")
+    declared_profile_digest = _canonical_digest([profiles[key] for key in sorted(referenced_ids)])
+    image_overrides = options.baseline_overrides.get("options", {}).get("l2_runtime_image_overrides", {})
+    if not isinstance(image_overrides, dict) or any(
+        not isinstance(value, str) or len(value) != 71 or not value.startswith("sha256:")
+        or any(c not in "0123456789abcdef" for c in value[7:])
+        for pair in image_overrides.items() for value in pair
+    ):
+        raise L2AgentRunError("l2_runtime_image_overrides must map pinned SHA-256 images")
+    known_images = {p.get(field) for p in profiles.values()
+                    for field in ("task_sandbox_image_digest", "verifier_image_digest")}
+    if set(image_overrides) - known_images:
+        raise L2AgentRunError("runtime image override does not name a declared package image")
+    # Keep the immutable package binding, and separately record the effective
+    # environment. Rebuilding an image must never masquerade as digest reuse.
+    profiles = {key: {**profile, **{
+        field: image_overrides.get(profile[field], profile[field])
+        for field in ("task_sandbox_image_digest", "verifier_image_digest")
+    }} for key, profile in profiles.items()}
     for profile_id in referenced_ids:
         profile = profiles[profile_id]
         if profile.get("network") != "disabled":
@@ -2025,6 +2215,9 @@ def _load_v5_runtime_binding(
         ),
         "learner_state_abi_set_digest": _canonical_digest(sorted(abi_values)),
         "allows_cross_pool_aggregation": False,
+        **({"declared_runtime_profile_set_digest": declared_profile_digest,
+            "runtime_image_overrides": dict(image_overrides),
+            "runtime_image_overrides_digest": _canonical_digest(image_overrides)} if image_overrides else {}),
     }, profiles)
 
 
@@ -2038,6 +2231,13 @@ def _under(root: Path, relative: str) -> Path:
 
 def _archive_tree(source: Path, archive: Path) -> None:
     """Archive a workspace without materializing deep checkpoint paths."""
+    if os.environ.get("TRIEVO_FAST_CHECKPOINTS") == "1":
+        from .fast_checkpoint import archive_tree
+        store = os.environ.get("TRIEVO_CHECKPOINT_STORE")
+        if not store:
+            raise ValueError("fast checkpoints require a private TRIEVO_CHECKPOINT_STORE")
+        archive_tree(source, archive, Path(store))
+        return
     archive.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
         for path in source.rglob("*"):
@@ -2300,6 +2500,9 @@ def _browser_verify_script(episode_relative: str) -> str:
 
 
 def _workspace_digest(workspace: Path) -> dict[str, str]:
+    if os.environ.get("TRIEVO_FAST_CHECKPOINTS") == "1":
+        from .fast_checkpoint import workspace_digest
+        return workspace_digest(workspace)
     result: dict[str, str] = {}
     for path in workspace.rglob("*"):
         if not path.is_file() or path.is_symlink() or ".l2_state" in path.parts:
@@ -2337,7 +2540,7 @@ def _work_limits(overrides: dict[str, Any]) -> L2AgentWorkLimits:
     ranges = {
         "max_model_calls": (2, 100),
         "max_tool_calls": (1, 100),
-        "terminal_timeout_seconds": (1, 600),
+        "terminal_timeout_seconds": (1, 3600 if raw_options.get("l2_task_terminal_transport") is True else 600),
         "episode_timeout_seconds": (30, 86400 if raw_options.get("slow_provider") is True else 3600),
         "max_output_tokens": (1, 1_000_000),
         "evolution_timeout_seconds": (10, 86400 if raw_options.get("slow_provider") is True else 900),

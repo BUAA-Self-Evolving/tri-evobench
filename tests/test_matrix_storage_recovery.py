@@ -199,7 +199,8 @@ def test_unsafe_storage_recovery_blocks_job_but_continues_others(tmp_path, monke
     assert unsafe["status"] == "blocked_recovery"
     assert other["status"] == "completed"
     assert attempts == {"unsafe": 0, "other": 1}
-    assert state["status"] == "paused_error"
+    assert state["status"] == "completed_with_errors"
+    assert state["failed_job_ids"] == ["unsafe"]
 
 
 def test_checkpoint_json_without_completed_turns_blocks_pre_model_recovery(tmp_path, monkeypatch):

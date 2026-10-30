@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .docker_volume import DockerVolumeMirror
 from .sandbox import Sandbox, DockerSandbox
 
 
@@ -359,10 +360,25 @@ class ExecVerifier:
 
     def evaluate(self, check: dict[str, Any], response: str, sandbox: Sandbox, trajectory: Any = None) -> CheckResult:
         script = str(check["path"])
-        workspace = sandbox.export_workspace()
+        workspace: Path | None = None
+        checker_volume: DockerVolumeMirror | None = None
         timeout = max(1.0, float(check.get("timeout", 30)))
-        command = [sys.executable, script, str(workspace)]
-        if isinstance(sandbox, DockerSandbox):
+        workspace_volume = sandbox.workspace_mount() if isinstance(sandbox, DockerSandbox) else None
+        if workspace_volume:
+            checker = Path(script).resolve()
+            checker_volume = DockerVolumeMirror.create(
+                checker.parent, role="l1-verifier", writable_uid=0, writable_gid=0,
+            )
+            command = ["docker", "run", "--rm", "--network", "none", "--cap-drop", "ALL",
+                       "--security-opt", "no-new-privileges", "--memory", "4g", "--cpus", "2",
+                       "-v", checker_volume.mount("/verifier", read_only=True),
+                       "-v", f"{workspace_volume}:/workspace:ro",
+                       os.environ.get("TRIEVO_VERIFIER_IMAGE", "trievo-l2:0.1"),
+                       "python", f"/verifier/{checker.name}", "/workspace"]
+        else:
+            workspace = sandbox.export_workspace()
+            command = [sys.executable, script, str(workspace)]
+        if isinstance(sandbox, DockerSandbox) and not workspace_volume:
             checker = Path(script).resolve()
             command = ["docker", "run", "--rm", "--network", "none", "--cap-drop", "ALL",
                        "--security-opt", "no-new-privileges", "--memory", "4g", "--cpus", "2",
@@ -383,7 +399,10 @@ class ExecVerifier:
             details = {"type": "exec_verifier_timeout", "timeout": timeout,
                        "stdout": str(exc.stdout or "")[-4000:], "stderr": str(exc.stderr or "")[-4000:]}
         finally:
-            sandbox.cleanup_export(workspace)
+            if workspace is not None:
+                sandbox.cleanup_export(workspace)
+            if checker_volume is not None:
+                checker_volume.close()
         score = 1.0 if passed else 0.0
         return CheckResult(score=score, passed=score >= float(check.get("pass_threshold", 1.0)),
                            feedback="Executable package verifier passed." if passed else "Executable package verifier failed.",

@@ -10,10 +10,11 @@ import heapq
 import hashlib
 import json
 import os
+import shlex
 import subprocess
 import sys
 import time
-from collections import deque
+from collections import Counter, deque
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -84,8 +85,8 @@ def _l2_panel(package: Path, panel_id: str | None) -> dict[str, object] | None:
     if not manifest_path.is_file():
         raise ValueError(f"panel-aware L2 package is missing manifest.json: {package}")
     manifest = load(manifest_path)
-    if manifest.get("schema_version") != "l2_taskstream/1.1":
-        raise ValueError("panel-aware L2 package must declare l2_taskstream/1.1")
+    if manifest.get("schema_version") not in {"l2_taskstream/1.1", "l2_taskstream/1.2"}:
+        raise ValueError("panel-aware L2 package must declare l2_taskstream/1.1 or 1.2")
     binding = manifest.get("panel_manifest")
     digest = _sha256_file(panels_path)
     if (
@@ -122,12 +123,25 @@ def _l2_panel(package: Path, panel_id: str | None) -> dict[str, object] | None:
         raise ValueError(f"L2 panel {panel_id!r} contains duplicate stream ids")
     if selected.get("allows_cross_panel_aggregation") is not False:
         raise ValueError(f"L2 panel {panel_id!r} must forbid cross-panel aggregation")
+    v5_binding = {}
+    if manifest.get("schema_version") == "l2_taskstream/1.2":
+        if not selected.get("pool_id"):
+            raise ValueError("V5 panel requires pool_id")
+        v5_binding = {"pool_id": selected["pool_id"],
+                      "package_manifest_sha256": _sha256_file(manifest_path)}
+        for field, filename in (("pool_manifest", "pools.json"), ("runtime_profiles", "runtime_profiles.json")):
+            catalog = manifest.get(field, {})
+            actual = _sha256_file(package / filename)
+            if catalog.get("path") != filename or catalog.get("sha256") != actual:
+                raise ValueError(f"V5 {field} binding does not match package")
+            v5_binding[field + "_sha256"] = actual
     return {
         "panel_id": panel_id,
         "panel_manifest_sha256": digest,
         "selected_stream_ids": stream_ids,
         "panel_purpose": selected.get("purpose"),
         "allows_cross_panel_aggregation": False,
+        **v5_binding,
     }
 
 
@@ -170,6 +184,8 @@ def jobs(
     l1_package: Path | None = None,
     l2_package: Path | None = None,
     l2_conditions: tuple[str, ...] | list[str] | None = None,
+    l1_conditions: tuple[str, ...] | list[str] | None = None,
+    baselines: tuple[str, ...] | list[str] | None = None,
     l2_panel: str | None = None,
     level: str | None = None,
 ):
@@ -178,11 +194,29 @@ def jobs(
     if packages is None:
         local_packages = repo.parent / "new-packages-20260903"
         packages = local_packages if local_packages.is_dir() else repo / "benchmarks/current"
+    if l2_panel == "all" and level != "l1":
+        package = _resolve_l2_package(packages, l2_package)
+        definitions = load(package / "panels.json")["panels"]
+        rows = []
+        for definition in definitions:
+            panel_id = definition["panel_id"]
+            panel_rows = jobs(repo, root / "panels" / panel_id, packages,
+                              l2_package=package, l2_conditions=l2_conditions,
+                              l2_panel=panel_id, level="l2", baselines=baselines)
+            for row in panel_rows:
+                row["id"] = "l2/" + panel_id + "/" + row["id"].removeprefix("l2/")
+            rows.extend(panel_rows)
+        if level is None:
+            rows.extend(jobs(repo, root, packages, l1_package=l1_package,
+                             l1_conditions=l1_conditions, level="l1", baselines=baselines))
+        return rows
     conditions = tuple(dict.fromkeys(l2_conditions or ("evolving",)))
     unknown = sorted(set(conditions) - set(L2_CONDITIONS))
     if unknown:
         raise ValueError(f"unknown L2 condition(s): {unknown}")
     rows = []
+    if set(l1_conditions or ()) - set(L2_CONDITIONS):
+        raise ValueError("unknown L1 condition(s)")
     selected_levels = (level,) if level else ("l2", "l1")
     for level in selected_levels:
         package = (_resolve_l2_package(packages, l2_package) if level == "l2"
@@ -203,9 +237,9 @@ def jobs(
         for index, path in enumerate(manifests, 1):
             manifest = load(path)
             turns = manifest["ordering"]["turn_order"] if level == "l2" else [item["turn_id"] for item in manifest["turns"]]
-            row_conditions = conditions if level == "l2" else (None,)
+            row_conditions = conditions if level == "l2" else tuple(dict.fromkeys(l1_conditions or (None,)))
             for condition in row_conditions:
-                for agent in BASELINES:
+                for agent in baselines or BASELINES:
                     if condition:
                         job_id = f"{level}/{condition}/{agent}/s{index:02d}"
                         output = root / level / condition / agent / f"s{index:02d}"
@@ -226,20 +260,56 @@ def _friday_affinity_key(row: dict) -> str:
     return f"{row['level']}:{row['flow_id']}:{row['agent']}"
 
 
+def restrict_plan_jobs(rows: list[dict], job_ids: list[str]) -> list[dict]:
+    """Define a new selected-stream matrix before scheduling or aggregation."""
+    if (not isinstance(job_ids, list) or not job_ids or
+            any(not isinstance(value, str) for value in job_ids) or
+            len(job_ids) != len(set(job_ids)) or
+            not set(job_ids) <= {row["id"] for row in rows}):
+        raise ValueError("matrix plan must contain unique existing job IDs")
+    wanted = set(job_ids)
+    return [row for row in rows if row["id"] in wanted]
+
+
+def friday_slot_capacities(
+    credentials: tuple[ProviderCredential, ...],
+    configured: dict | None = None,
+) -> tuple[int, ...]:
+    """Resolve public slot labels to positive worker limits, defaulting to one.
+
+    These are worker budgets, not RPM or request-level semaphores. Callers must
+    reserve headroom for native agents/judges that issue parallel API calls.
+    """
+    if configured is None:
+        configured = {}
+    if not isinstance(configured, dict) or set(configured) - {c.slot for c in credentials}:
+        raise ValueError("Friday capacities must be an object keyed by configured slot names")
+    capacities = tuple(configured.get(c.slot, 1) for c in credentials)
+    if any(type(value) is not int or value < 1 for value in capacities):
+        raise ValueError("Friday slot capacities must be positive integers (worker limits)")
+    return capacities
+
+
 def assign_friday_credentials(
     rows: list[dict],
     credentials: tuple[ProviderCredential, ...],
+    capacities: tuple[int, ...] | None = None,
 ) -> dict[str, object]:
     """Assign each stream/baseline group with deterministic LPT balancing.
 
     The credential values never enter rows or returned metadata. All jobs for
-    one baseline on one stream share a slot across conditions, preserving the
-    useful provider-side cache locality without serializing unrelated baseline
-    prompts. Longest-processing-time scheduling on turn-weighted job counts
-    minimizes the estimated makespan while retaining that bounded affinity.
+    one baseline on one stream share a slot and serial lane across conditions.
+    Independent lanes expose heterogeneous worker capacity while retaining
+    provider-side cache locality and condition order. Work estimates use Turn
+    counts, so they cannot predict actual request latency or RPM consumption.
     """
     if not credentials:
         raise ValueError("Friday credential pool is empty")
+    capacities = capacities if capacities is not None else (1,) * len(credentials)
+    if len(capacities) != len(credentials):
+        raise ValueError("Friday capacities must match the credential pool")
+    friday_slot_capacities(credentials, dict(zip((c.slot for c in credentials), capacities)))
+    capacity_mode = any(value != 1 for value in capacities)
     groups: dict[str, list[tuple[int, dict]]] = {}
     for index, row in enumerate(rows):
         groups.setdefault(_friday_affinity_key(row), []).append((index, row))
@@ -259,21 +329,32 @@ def assign_friday_credentials(
 
     slot_loads = [0] * len(credentials)
     slot_group_counts = [0] * len(credentials)
-    available_slots = [(0, index) for index in range(len(credentials))]
+    # Each independent lane runs its groups sequentially. Zero-load ties spread
+    # across accounts before filling the next lane. Bound lane allocation by
+    # group count even if a configuration declares a very large capacity.
+    available_slots = [
+        (0, lane, index)
+        for index, capacity in enumerate(capacities)
+        for lane in range(min(capacity, len(groups)))
+    ]
+    lane_loads = [[0] * min(capacity, len(groups)) for capacity in capacities]
     heapq.heapify(available_slots)
     assignments = {}
     for work_units, affinity_key, members in weighted_groups:
-        current_load, slot_index = heapq.heappop(available_slots)
+        current_load, lane, slot_index = heapq.heappop(available_slots)
         credential = credentials[slot_index]
         group_order = slot_group_counts[slot_index]
         slot_group_counts[slot_index] += 1
-        slot_loads[slot_index] = current_load + work_units
-        heapq.heappush(available_slots, (slot_loads[slot_index], slot_index))
+        slot_loads[slot_index] += work_units
+        lane_loads[slot_index][lane] = current_load + work_units
+        heapq.heappush(available_slots, (current_load + work_units, lane, slot_index))
         assignments[affinity_key] = {
             "credential_slot": slot_index + 1,
             "credential_env": credential.slot,
             "estimated_work_units": work_units,
         }
+        if capacity_mode:
+            assignments[affinity_key]["credential_lane"] = lane + 1
         for job_order, (source_index, row) in enumerate(members):
             row.update(
                 credential_slot=slot_index + 1,
@@ -282,14 +363,24 @@ def assign_friday_credentials(
                 credential_job_order=job_order,
                 credential_source_order=source_index,
             )
+            if capacity_mode:
+                row["credential_lane"] = lane + 1
+            else:
+                row.pop("credential_lane", None)
 
-    return {
-        "strategy": "stream_baseline_affinity_lpt_turn_weighted_v2",
+    schedule = {
+        "strategy": (
+            "stream_baseline_affinity_capacity_lanes_lpt_v3" if capacity_mode
+            else "stream_baseline_affinity_lpt_turn_weighted_v2"
+        ),
         "slot_names": [credential.slot for credential in credentials],
         "slot_estimated_work_units": slot_loads,
         "slot_affinity_group_counts": slot_group_counts,
         "affinity_assignments": assignments,
     }
+    if capacity_mode:
+        schedule.update(slot_capacities=list(capacities), slot_lane_work_units=lane_loads)
+    return schedule
 
 
 def validate_friday_schedule(previous: dict, current: dict) -> None:
@@ -297,7 +388,7 @@ def validate_friday_schedule(previous: dict, current: dict) -> None:
     saved = previous.get("credential_schedule") if isinstance(previous, dict) else None
     if not saved:
         return
-    for field in ("slot_names", "strategy", "affinity_assignments"):
+    for field in ("slot_names", "strategy", "affinity_assignments", "slot_capacities"):
         if saved.get(field) != current.get(field):
             raise ValueError(
                 "Friday credential schedule differs from this output root; "
@@ -306,7 +397,7 @@ def validate_friday_schedule(previous: dict, current: dict) -> None:
 
 
 def friday_concurrency(requested: int | None, credential_count: int, group_count: int) -> int:
-    """Return the safe worker count under one-active-job-per-App-ID."""
+    """Return the worker count bounded by total slot capacity and group count."""
     if credential_count < 1 or group_count < 1:
         raise ValueError("Friday scheduling requires at least one credential and one affinity group")
     available = min(credential_count, group_count)
@@ -337,6 +428,15 @@ def job_environment(
 def _scheduled_pending_rows(rows: list[dict]) -> list[dict]:
     if not any("credential_slot" in row for row in rows):
         return rows
+    if any("credential_lane" in row for row in rows):
+        # Spread admission across accounts when the machine-wide worker limit
+        # is lower than the sum of slot capacities.
+        return sorted(rows, key=lambda row: (
+            int(row.get("credential_group_order", 0)),
+            int(row.get("credential_slot", 0)),
+            int(row.get("credential_job_order", 0)),
+            int(row.get("credential_source_order", 0)),
+        ))
     return sorted(
         rows,
         key=lambda row: (
@@ -348,12 +448,28 @@ def _scheduled_pending_rows(rows: list[dict]) -> list[dict]:
     )
 
 
-def _pop_eligible(queue: deque, active_slots: set[int]) -> dict | None:
-    """Pop the first job whose App ID slot is not already active."""
+def _pop_eligible(
+    queue: deque,
+    active_slots: set[int] | dict[int, int],
+    slot_capacities: dict[int, int] | None = None,
+    active_lanes: set[tuple[int, int]] | None = None,
+    admission=None,
+) -> dict | None:
+    """Admit within slot capacity, keeping each affinity lane sequential."""
+    capacities = slot_capacities or {}
     for _ in range(len(queue)):
         row = queue.popleft()
         slot = row.get("credential_slot")
-        if slot is None or int(slot) not in active_slots:
+        if slot is None and (admission is None or admission(row)):
+            return row
+        if slot is None:
+            queue.append(row)
+            continue
+        slot = int(slot)
+        count = int(slot in active_slots) if isinstance(active_slots, set) else active_slots.get(slot, 0)
+        lane = (slot, int(row.get("credential_lane", 1)))
+        if (count < capacities.get(slot, 1) and lane not in (active_lanes or set())
+                and (admission is None or admission(row))):
             return row
         queue.append(row)
     return None
@@ -381,6 +497,10 @@ def _report_matches_row(row: dict, report: dict) -> bool:
         return False
     if report.get("error") or report.get("cleanup_error"):
         return False
+    if report.get("baseline", row["agent"]) != row["agent"]:
+        return False
+    if row["level"] == "l1" and row.get("condition") != _report_condition(report, turns):
+        return False
     if row["level"] == "l2":
         run_configuration = report.get("run_configuration", {})
         if isinstance(run_configuration, dict) and run_configuration.get("budget_profile", "formal") != "formal":
@@ -393,6 +513,9 @@ def _report_matches_row(row: dict, report: dict) -> bool:
             if run_configuration.get("panel_manifest_sha256") != row.get("panel_manifest_sha256"):
                 return False
             if run_configuration.get("selected_stream_ids") != row.get("selected_stream_ids"):
+                return False
+        for field in ("pool_id", "pool_manifest_sha256", "package_manifest_sha256", "runtime_profiles_sha256"):
+            if row.get(field) is not None and run_configuration.get(field) != row[field]:
                 return False
         condition = _report_condition(report, turns)
         # Reports produced before the condition field existed are evolving runs.
@@ -444,6 +567,8 @@ def latest_checkpoint(row):
         if data.get("invalidated"):
             continue
         if data.get("stream_id", data.get("flow_id")) != row["flow_id"]:
+            continue
+        if row["level"] == "l1" and data.get("condition") != row.get("condition"):
             continue
         if row["level"] == "l2":
             checkpoint_condition = data.get("condition", data.get("run_condition"))
@@ -539,7 +664,11 @@ def _checkpoint_preserves_prefix(row, checkpoint, expected_index):
         raise ValueError("retry checkpoint is non-resumable")
     turns = load(checkpoint / "completed_turns.json")
     condition = data.get("condition", data.get("run_condition"))
-    report = {"stream_id": row["flow_id"], "condition": condition, "turns": turns}
+    # V5 report matching reads immutable package/pool/panel identity from
+    # run_configuration. Carry the checkpoint's values, never the row's, so
+    # mismatched bindings still fail closed during prefix validation.
+    report = {"stream_id": row["flow_id"], "condition": condition, "turns": turns,
+              "run_configuration": dict(data)}
     prefix = {**row, "turns": row["turns"][:expected_index]}
     if data.get("stream_id", data.get("flow_id")) != row["flow_id"]:
         raise ValueError("retry checkpoint stream identity mismatch")
@@ -799,6 +928,15 @@ def prepare_interrupted_retry(row, retry_run, authorization_path):
 
 
 def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=None, retry_authorization=None, stop_after_turn=None):
+    fresh_authorization = Path(row["output"]) / "fresh_run_authorization.json"
+    if fresh_authorization.exists() and checkpoint is None:
+        from tools.prepare_dsh_repair_cohort import claim_fresh
+        claim_fresh(row, fresh_authorization)
+    if checkpoint and (Path(checkpoint) / "checkpoint.json").is_file():
+        metadata = load(Path(checkpoint) / "checkpoint.json")
+        if metadata.get("scored_exception_ledger"):
+            from tools.recover_dsh_reset_exceptions import claim
+            claim(row, checkpoint)
     config_root = Path(config_dir or repo)
     if row["agent"] == "hermes":
         config = f"tmp_hermes_cf_{row['level']}.override.json"
@@ -823,6 +961,8 @@ def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=Non
             "--max-total-tokens", str(stream_token_limit)]
     if row["level"] == "l1":
         args += ["--turns", ",".join(row["turns"]), "--backend", "docker", "--image", "trievo-ubuntu:22.04"]
+        if row.get("condition"):
+            args += ["--condition", row["condition"]]
     else:
         args += ["--condition", row["condition"], "--image", "trievo-l2:0.1", "--browser-image", "trievo-l2-browser:0.1", "--allow-generated-code"]
     if checkpoint:
@@ -841,6 +981,9 @@ def command(repo, row, checkpoint, config_dir=None, *, retry_interrupted_run=Non
         ]
     if stop_after_turn:
         args += ["--stop-after-turn", str(stop_after_turn)]
+    for field in ("pool_id", "pool_manifest_sha256", "package_manifest_sha256", "runtime_profiles_sha256"):
+        if row.get(field) is not None:
+            args += ["--" + field.replace("_", "-"), row[field]]
     return args
 
 
@@ -864,6 +1007,17 @@ def l2_reports_to_aggregation_records(report_rows):
             sequence_role = turn.get("sequence_role", roles.get(turn_id))
             if not sequence_role:
                 raise ValueError(f"missing sequence_role for {row.get('id')}/{turn_id}")
+            v5_record = {}
+            if row.get("pool_id"):
+                v5_record = {field: row[field] for field in (
+                    "pool_id", "pool_manifest_sha256", "package_manifest_sha256", "runtime_profiles_sha256",
+                )}
+                v5_record.update({field: turn.get(field) for field in (
+                    "source_task_id", "runtime_profile_id", "runtime_profile_digest",
+                )})
+                v5_record["effective_work_limits_digest"] = hashlib.sha256(
+                    json.dumps(turn.get("effective_work_limits"), sort_keys=True).encode()
+                ).hexdigest()
             records.append({
                 "condition": condition,
                 "panel_id": row.get("panel_id"),
@@ -874,6 +1028,7 @@ def l2_reports_to_aggregation_records(report_rows):
                 "sequence_role": sequence_role,
                 "turn_score": float(_turn_score(turn)),
                 "evaluation_status": turn.get("evaluation_status", "scored"),
+                **v5_record,
             })
     missing = set(L2_CONDITIONS) - seen_conditions
     if missing:
@@ -886,8 +1041,13 @@ def matched_l2_aggregations(rows):
 
     from trievo_bench.evolution_aggregation import aggregate_matched_runs
 
+    panels = {row.get("panel_id") for row in rows if row["level"] == "l2"}
+    if len(panels) > 1:
+        return {panel: matched_l2_aggregations([row for row in rows if row["level"] == "l2" and row.get("panel_id") == panel])
+                for panel in sorted(panels, key=lambda value: value or "")}
+
     result = {}
-    for agent in BASELINES:
+    for agent in dict.fromkeys(row["agent"] for row in rows):
         selected = [row for row in rows if row["level"] == "l2" and row["agent"] == agent]
         if len({row.get("panel_id") for row in selected}) > 1:
             continue
@@ -917,10 +1077,12 @@ def matched_l2_aggregations(rows):
 
 def matrix(rows):
     cells = []
-    for agent in BASELINES:
-        datasets = [("l1", None)] + [("l2", condition) for condition in L2_CONDITIONS if any(row["level"] == "l2" and row.get("condition") == condition for row in rows)]
-        for level, condition in datasets:
-            selected = [row for row in rows if row["agent"] == agent and row["level"] == level and row.get("condition") == condition]
+    for agent in dict.fromkeys(row["agent"] for row in rows):
+        datasets = list(dict.fromkeys((row["level"], row.get("condition"), row.get("panel_id")) for row in rows))
+        for level, condition, panel in datasets:
+            selected = [row for row in rows if row["agent"] == agent and row["level"] == level and row.get("condition") == condition and row.get("panel_id") == panel]
+            if not selected:
+                continue
             scores = []
             passed = 0
             for row in selected:
@@ -930,26 +1092,33 @@ def matrix(rows):
                         scores.append(float(_turn_score(turn)))
                         passed += bool(turn.get("passed"))
             dataset = level if condition is None else f"{level}:{condition}"
-            cells.append({"agent": agent, "dataset": dataset, "condition": condition, "completed_turns": len(scores),
+            cells.append({"agent": agent, "dataset": dataset, "condition": condition, "panel_id": panel, "completed_turns": len(scores),
                           "expected_turns": sum(len(row["turns"]) for row in selected), "passed_turns": passed,
                           "mean_score": sum(scores) / len(scores) if scores else None})
     return cells
 
 
 class AdoptedProcess:
-    """Track an existing Linux worker without signaling or replaying it."""
+    """Track a verified existing worker without signaling or replaying it."""
     def __init__(self, row):
         self.pid = int(row["pid"])
         if "process_start_ticks" not in row:
             raise ValueError("adopted worker receipt missing process_start_ticks")
         self.started = str(row["process_start_ticks"])
-        cmd = Path(f"/proc/{self.pid}/cmdline").read_bytes().split(b"\0")
-        if b"trievo_bench.l2_compat" not in cmd or str(row["output"]).encode() not in cmd:
+        if sys.platform == "darwin":
+            result = subprocess.run(["ps", "-p", str(self.pid), "-o", "command="],
+                                    capture_output=True, text=True, timeout=5)
+            cmd = [item.encode() for item in shlex.split(result.stdout)] if result.returncode == 0 else []
+        else:
+            cmd = Path(f"/proc/{self.pid}/cmdline").read_bytes().split(b"\0")
+        if not {b"trievo_bench.l2_compat", b"trievo_bench.l1_arena_compat"}.intersection(cmd) or str(row["output"]).encode() not in cmd:
             raise ValueError("adopted process identity mismatch")
         if self.poll() is not None:
             raise ValueError("adopted worker is no longer running")
 
     def poll(self):
+        if sys.platform == "darwin":
+            return None if process_start_ticks(self.pid) == self.started else 0
         try:
             fields = Path(f"/proc/{self.pid}/stat").read_text().rsplit(")", 1)[1].split()
         except FileNotFoundError:
@@ -958,6 +1127,13 @@ class AdoptedProcess:
 
 
 def process_start_ticks(pid):
+    if sys.platform == "darwin":
+        result = subprocess.run(["ps", "-p", str(int(pid)), "-o", "lstart=", "-o", "stat="],
+                                capture_output=True, text=True, timeout=5)
+        value = result.stdout.strip().rsplit(None, 1)
+        if result.returncode or len(value) != 2 or value[1].startswith("Z"):
+            return None
+        return "darwin:" + value[0].strip()
     if os.name != "posix":
         return None
     try:
@@ -1095,6 +1271,7 @@ def _same_job_identity(row, prior):
     return all(row.get(field) == prior.get(field) for field in (
         "id", "output", "package", "condition", "turns",
         "panel_id", "panel_manifest_sha256", "selected_stream_ids",
+        "pool_id", "pool_manifest_sha256", "package_manifest_sha256", "runtime_profiles_sha256",
     ))
 
 
@@ -1142,6 +1319,53 @@ def _clear_stale_attempt_error(row):
         row.pop(field, None)
 
 
+def prepare_continuation_rows(selected, source, gateway, schedule):
+    """Move dispatch ownership to a new root without moving paid worker outputs.
+
+    This is process adoption, never checkpoint recovery or retry authorization.
+    Failed/unknown execution boundaries stay excluded from new admission.
+    """
+    authorization = source.get("continuation_authorization", {})
+    if authorization.get("user_authorized") is not True:
+        raise ValueError("continuation requires explicit user authorization")
+    if process_start_ticks(source.get("pid", 0)) is not None:
+        raise ValueError("source dispatcher must exit before continuation")
+    if source.get("provider_gateway") != gateway:
+        raise ValueError("continuation gateway policy must remain unchanged")
+    validate_friday_schedule(source, schedule)
+    previous = {row["id"]: row for row in source["jobs"]}
+    if set(previous) != {row["id"] for row in selected} or len(previous) != len(source["jobs"]):
+        raise ValueError("continuation requires the exact source job scope")
+    for row in selected:
+        prior = previous[row["id"]]
+        if not _same_job_identity({**row, "output": prior["output"]}, prior):
+            raise ValueError("continuation job identity changed")
+        if any(row.get(key) != prior.get(key) for key in ("credential_slot", "credential_env", "credential_lane")):
+            raise ValueError("continuation credential slot/lane changed")
+        status = prior.get("status", "pending")
+        if status == "pending":
+            if Path(prior["output"]).exists() and any(Path(prior["output"]).rglob("*")):
+                raise ValueError("pending continuation row contains execution evidence")
+            continue  # Only never-started jobs use this new root's output/config.
+        if status not in {"running", "completed", "paused_error", "blocked_recovery", "needs_attention"}:
+            raise ValueError("unsupported continuation execution boundary")
+        row.update(prior)
+        if status == "completed":
+            if report_for(row)[1] is None:
+                raise ValueError("continuation completed report is not valid")
+        elif status == "running":
+            try:
+                AdoptedProcess(row)
+            except (OSError, ValueError):
+                report_path, report = report_for(row)
+                if report is not None:
+                    row.update(status="completed", report=str(report_path), finished_at=now())
+                else:
+                    row.update(status="blocked_recovery", recovery_reason="worker exited during handoff; no complete report, no automatic replay")
+        # Existing errors retain their original evidence and are never retried.
+    return selected
+
+
 def run_parallel(
     repo,
     selected,
@@ -1155,6 +1379,8 @@ def run_parallel(
     storage_retry_limit=5,
     provider_mode=None,
     credential_pool=(),
+    credential_capacities=None,
+    resource_gate=None,
 ):
     """One writer, isolated child per job; drain in-flight jobs on failure."""
     if job_error_policy not in {"stop", "continue"}:
@@ -1163,12 +1389,25 @@ def run_parallel(
     outputs = [str(Path(row["output"]).resolve()) for row in selected]
     if len(set(identities)) != len(identities) or len(set(outputs)) != len(outputs):
         raise ValueError("parallel jobs must have unique ids and output directories")
+    limits = friday_slot_capacities(
+        credential_pool, credential_capacities,
+    ) if provider_mode == "friday" else ()
+    slot_capacities = dict(enumerate(limits, 1))
+    for row in selected:
+        if row.get("credential_slot") is not None:
+            slot = int(row["credential_slot"])
+            lane = int(row.get("credential_lane", 1))
+            if slot_capacities and (slot not in slot_capacities or not 1 <= lane <= slot_capacities[slot]):
+                raise ValueError("job credential slot/lane exceeds configured capacity")
     active = []
     adopted_ids = set()
     for receipt in state.pop("adopted_rows", []):
         row = next(row for row in selected if row["id"] == receipt["id"])
         if row["output"] != receipt["output"]:
             raise ValueError("adopted output mismatch")
+        for field in ("credential_slot", "credential_lane"):
+            if row.get(field, 1) != receipt.get(field, 1):
+                raise ValueError("adopted credential slot/lane mismatch")
         child = AdoptedProcess(receipt)
         row.update(receipt)
         row["status"] = "running"
@@ -1176,6 +1415,17 @@ def run_parallel(
         adopted_ids.add(row["id"])
     if len(active) > concurrency:
         raise ValueError("adopted workers exceed concurrency")
+    adopted_slots = Counter()
+    adopted_lanes = set()
+    for row, _, _ in active:
+        if row.get("credential_slot") is None:
+            continue
+        slot = int(row["credential_slot"])
+        lane = (slot, int(row.get("credential_lane", 1)))
+        adopted_slots[slot] += 1
+        if adopted_slots[slot] > slot_capacities.get(slot, 1) or lane in adopted_lanes:
+            raise ValueError("adopted workers exceed credential slot/lane capacity")
+        adopted_lanes.add(lane)
     skipped = {"blocked_recovery", "deferred_storage", "needs_attention", "paused_error"}
     pending = deque(_scheduled_pending_rows([
         row for row in selected
@@ -1186,10 +1436,17 @@ def run_parallel(
         row for row in selected
         if row["id"] not in adopted_ids and row.get("status") == "deferred_storage"
     ]))
+    if resource_gate is not None:
+        pending = deque(resource_gate.order(list(pending)))
+        deferred = deque(resource_gate.order(list(deferred)))
     exhausted = False
-    failed = False
+    failed = any(row.get("status") in {"paused_error", "blocked_recovery", "needs_attention"} for row in selected)
+    if failed:
+        state["status"] = "running_with_errors" if job_error_policy == "continue" else "draining_error"
 
     def publish():
+        if resource_gate is not None:
+            state["resource_health"] = resource_gate.health
         state.update(updated_at=now(), active_jobs=[row["id"] for row, _, _ in active],
                      current_job=active[0][0]["id"] if active else None,
                      target_concurrency=concurrency,
@@ -1208,15 +1465,29 @@ def run_parallel(
                          "status": row.get("status"),
                          "reason": row.get("recovery_reason"),
                      } for row in selected if row.get("status") in {"blocked_recovery", "needs_attention"}])
+        if slot_capacities:
+            state["credential_slot_usage"] = [{
+                "slot_name": credential_pool[slot - 1].slot,
+                "worker_capacity": capacity,
+                "active_workers": sum(int(row.get("credential_slot", 0)) == slot for row, _, _ in active),
+            } for slot, capacity in slot_capacities.items()]
         save(status_path, state)
 
     def next_pending():
-        active_slots = {
+        admission = (lambda row: resource_gate.allows(row, [r for r, _, _ in active])) if resource_gate else None
+        active_slots = Counter(
             int(row["credential_slot"])
             for row, _, _ in active
             if row.get("credential_slot") is not None
+        )
+        active_lanes = {
+            (int(row["credential_slot"]), int(row.get("credential_lane", 1)))
+            for row, _, _ in active if row.get("credential_slot") is not None
         }
-        return _pop_eligible(deferred, active_slots) or _pop_eligible(pending, active_slots)
+        return (
+            _pop_eligible(deferred, active_slots, slot_capacities, active_lanes, admission)
+            or _pop_eligible(pending, active_slots, slot_capacities, active_lanes, admission)
+        )
 
     while active or not exhausted or deferred:
         if storage_gate is not None:
@@ -1258,7 +1529,8 @@ def run_parallel(
                     row["status"] = "paused_error"
                     failed = True
                     state["status"] = "draining_error" if job_error_policy == "stop" else "running_with_errors"
-                    print(f"STOPPED {row['id']}: inspect {row['log']}", flush=True)
+                    label = "STOPPED" if job_error_policy == "stop" else "SKIPPED_ERROR"
+                    print(f"{label} {row['id']}: inspect {row['log']}", flush=True)
             else:
                 row.update(status="completed", report=str(report_path))
                 print(f"COMPLETED {row['id']}", flush=True)
@@ -1284,10 +1556,10 @@ def run_parallel(
                     break
             row = next_pending()
             if row is None:
-                # Pending work may be pinned to an App ID already in use. Wait
-                # for that worker instead of violating per-App-ID concurrency.
+                # Pending work may be pinned to an occupied affinity lane.
                 if not pending and not deferred:
                     exhausted = True
+                publish()
                 break
             stream = None
             try:
@@ -1303,6 +1575,8 @@ def run_parallel(
                 _clear_stale_attempt_error(row)
                 row.update(status="running", started_at=now(),
                            checkpoint=str(checkpoint) if checkpoint else None, log=str(log))
+                if state.get("status") == "paused_resources":
+                    state["status"] = "running_with_errors" if failed else "running"
                 row.setdefault("attempt_history", []).append({
                     "event": "launch",
                     "at": row["started_at"],
@@ -1348,11 +1622,19 @@ def run_parallel(
             publish()
         if active:
             time.sleep(2)
-        elif storage_gate is not None and (pending or deferred) and not exhausted:
+        elif (storage_gate is not None or resource_gate is not None) and (pending or deferred) and not exhausted:
+            if resource_gate is not None:
+                state["status"] = "paused_resources"
+                publish()
             time.sleep(2)
     incomplete = [row for row in selected if not _has_matching_report(row) and row.get("status") != "completed"]
     if failed:
-        state.update(status="paused_error", updated_at=now(), matrix=matrix(all_rows))
+        failed_ids = [row["id"] for row in incomplete
+                      if row.get("status") in {"paused_error", "needs_attention", "blocked_recovery"}]
+        state.update(status="completed_with_errors" if job_error_policy == "continue" else "paused_error",
+                     updated_at=now(), matrix=matrix(all_rows), failed_job_ids=failed_ids,
+                     queue_drained=job_error_policy == "continue", finished_at=now())
+        save(status_path.parent / "failed-job-ids.json", failed_ids)
         save(status_path, state)
         return 1
     if incomplete:
@@ -1372,35 +1654,65 @@ def main():
     parser.add_argument("--l2-panel", help="explicit L2 panel id from package panels.json")
     parser.add_argument("--level", choices=("l1", "l2"), help="select one level; default runs both L1 and L2")
     parser.add_argument("--l2-condition", action="append", choices=L2_CONDITIONS, help="L2 condition to run; repeat for reset/frozen/evolving")
+    parser.add_argument("--l1-condition", action="append", choices=L2_CONDITIONS)
+    parser.add_argument("--baseline", action="append", choices=(*BASELINES, "codex", "deepseek-harness", "zcode"))
     parser.add_argument("--config-dir", type=Path, help="directory generated by prepare_matrix_configs.py")
     parser.add_argument("--provider-mode", choices=sorted(PROVIDER_PROFILES), default="packycode")
     parser.add_argument("--adopt-state", type=Path, help="explicit saved worker handoff; old dispatcher must be stopped")
+    parser.add_argument("--continue-state", type=Path, help="authorized immutable dispatcher handoff into a new root; preserve paid worker outputs and credential lanes")
     parser.add_argument(
         "--concurrency",
         type=int,
         help=(
-            "maximum simultaneous jobs; Friday defaults to min(App ID slots, stream/baseline groups) "
-            "and always caps each App ID at one active job"
+            "maximum simultaneous jobs; Friday defaults to min(total worker capacity, "
+            "stream/baseline groups); each App ID defaults to one worker"
         ),
     )
     parser.add_argument("--job-error-policy", choices=("stop", "continue"), default="stop", help="parallel job failure policy; default stop preserves fail-fast admission")
     parser.add_argument("--storage-guard", action="store_true", help="enable shared storage health gate for parallel admission")
+    parser.add_argument("--local-resource-policy", type=Path, help="opt-in CPU/memory/task-family admission policy for new local roots")
     parser.add_argument("--storage-retry-limit", type=int, default=5, help="maximum deferred storage recovery attempts per job")
     parser.add_argument("--recover-storage-errors", action="store_true", help="reclassify previous storage paused_error rows for guarded recovery")
     parser.add_argument("--only", help="optional exact job id for bounded preflight")
     parser.add_argument("--gate", action="store_true", help="run the three shortest L2 cells before releasing the full matrix")
     parser.add_argument("--retry-interrupted-run", help="exact failed run_id or run/report path for one authorized L2 interrupted-turn retry")
     parser.add_argument("--retry-authorization", type=Path, help="one-shot authorization ledger JSON for --retry-interrupted-run")
+    parser.add_argument("--job-ids-file", type=Path, help="public JSON list of exact job IDs for a bounded repair cohort")
+    parser.add_argument("--plan-job-ids-file", type=Path, help="new matrix scope: selected jobs define scheduling and expected coverage")
+    parser.add_argument("--friday-slot-order", help="permutation of existing slot positions, e.g. 2,3,4,5,6,1; fixed per root")
+    parser.add_argument("--friday-capacities", type=Path, help="public JSON object mapping slot names to worker limits; omitted slots default to 1, not an RPM limiter")
+    parser.add_argument("--dry-run", action="store_true", help="print a credential-free admission plan without starting workers or writing run state")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     try:
         credential_pool = provider_credentials(args.provider_mode, os.environ)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    if args.friday_slot_order:
+        order = [int(value) for value in args.friday_slot_order.split(",")]
+        if args.provider_mode != "friday" or sorted(order) != list(range(1, len(credential_pool) + 1)):
+            raise SystemExit("Friday slot order must be a permutation of all existing slots")
+        credential_pool = tuple(credential_pool[index - 1] for index in order)
+    configured_capacities = None
+    if args.friday_capacities:
+        if args.provider_mode != "friday":
+            parser.error("--friday-capacities requires --provider-mode friday")
+        try:
+            configured_capacities = load(args.friday_capacities)
+            if not isinstance(configured_capacities, dict):
+                raise ValueError("Friday capacities must be a JSON object")
+            friday_slot_capacities(credential_pool, configured_capacities)
+        except (OSError, ValueError):
+            # JSON parser errors may contain supplied text; never echo it.
+            parser.error("invalid Friday capacity file; use slot names and positive integer worker limits")
     root = (repo / args.root).resolve()
-    root.mkdir(parents=True, exist_ok=True)
+    if not args.dry_run:
+        root.mkdir(parents=True, exist_ok=True)
     execution_path = root / "matrix-execution.json"
     status_path = root / "matrix_status.json"
+    if args.continue_state and (status_path.exists() or args.adopt_state or args.retry_interrupted_run
+                                or not args.storage_guard or args.provider_mode != "friday"):
+        parser.error("continuation requires a fresh Friday root with storage guard and no retry/adoption overrides")
     requested_concurrency = args.concurrency
     concurrency = requested_concurrency
     if concurrency is None and args.provider_mode != "friday":
@@ -1416,20 +1728,21 @@ def main():
 
     # Retain an OS-owned lock for this process; stale files do not block resume.
     global _driver_lock
-    _driver_lock = (root / "driver.lock").open("a+b")
-    _driver_lock.seek(0)
-    if os.name == "nt":
-        import msvcrt
-        try:
-            msvcrt.locking(_driver_lock.fileno(), msvcrt.LK_NBLCK, 1)
-        except OSError:
-            raise SystemExit("another matrix driver already holds this output root")
-    else:
-        import fcntl
-        try:
-            fcntl.flock(_driver_lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError:
-            raise SystemExit("another matrix driver already holds this output root")
+    if not args.dry_run:
+        _driver_lock = (root / "driver.lock").open("a+b")
+        _driver_lock.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            try:
+                msvcrt.locking(_driver_lock.fileno(), msvcrt.LK_NBLCK, 1)
+            except OSError:
+                raise SystemExit("another matrix driver already holds this output root")
+        else:
+            import fcntl
+            try:
+                fcntl.flock(_driver_lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                raise SystemExit("another matrix driver already holds this output root")
     all_rows = jobs(
         repo,
         root,
@@ -1437,29 +1750,62 @@ def main():
         l1_package=args.l1_package.resolve() if args.l1_package else None,
         l2_package=args.l2_package.resolve() if args.l2_package else None,
         l2_conditions=tuple(args.l2_condition) if args.l2_condition else None,
+        l1_conditions=args.l1_condition,
+        baselines=args.baseline,
         l2_panel=args.l2_panel,
         level=args.level,
     )
+    if args.plan_job_ids_file:
+        try:
+            all_rows = restrict_plan_jobs(all_rows, load(args.plan_job_ids_file))
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     config_dir = args.config_dir.resolve() if args.config_dir else repo
     try:
         validate_generated_profile(config_dir, args.provider_mode)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    profile_path = config_dir / "provider-profile.json"
+    profile_configuration = load(profile_path) if profile_path.exists() else {}
+    gateway_configuration = profile_configuration.get("friday_gateway")
+    if args.provider_mode == "friday":
+        from trievo_bench.provider_profiles import get_provider_profile
+        request_model = get_provider_profile("friday", model=profile_configuration.get("model")).model
+        os.environ["TRIEVO_PROVIDER_MODEL"] = request_model
+        if gateway_configuration and gateway_configuration.get("model", "deepseek-v4-flash") != request_model:
+            raise SystemExit("Friday gateway request model differs from generated profile")
+    if gateway_configuration:
+        from trievo_bench.friday_gateway import GATEWAY_SCHEMA, validate_host_gateway_url, validate_policy
+        if (args.provider_mode != "friday" or gateway_configuration.get("schema") != GATEWAY_SCHEMA):
+            raise SystemExit("unsupported Friday shared gateway configuration")
+        validate_policy(gateway_configuration.get("policy"), {credential.slot for credential in credential_pool})
+        os.environ["TRIEVO_FRIDAY_GATEWAY_URL"] = validate_host_gateway_url(gateway_configuration["host_base_url"])
+    elif os.environ.get("TRIEVO_FRIDAY_GATEWAY_URL"):
+        raise SystemExit("Friday gateway environment requires a matching generated gateway profile")
     selected = [row for row in all_rows if row["id"] == args.only] if args.only else all_rows
+    if args.job_ids_file:
+        job_ids = load(args.job_ids_file)
+        if (not isinstance(job_ids, list) or not job_ids or len(set(job_ids)) != len(job_ids)
+                or not set(job_ids) <= {row["id"] for row in selected}):
+            raise SystemExit("repair cohort must contain unique existing selected job IDs")
+        selected = [row for row in selected if row["id"] in job_ids]
     if args.gate:
         selected = selected[:3]
     if not selected:
         raise SystemExit("no matching job")
     credential_schedule = None
     if args.provider_mode == "friday":
-        credential_schedule = assign_friday_credentials(selected, credential_pool)
+        capacities = friday_slot_capacities(credential_pool, configured_capacities)
+        credential_schedule = assign_friday_credentials(selected, credential_pool, capacities)
         previous_state = load(status_path) if status_path.exists() else {}
+        if previous_state and previous_state.get("provider_gateway") != gateway_configuration:
+            raise SystemExit("Friday provider gateway differs from this output root; use a new --root")
         try:
             validate_friday_schedule(previous_state, credential_schedule)
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
         group_count = len(credential_schedule["affinity_assignments"])
-        concurrency = friday_concurrency(requested_concurrency, len(credential_pool), group_count)
+        concurrency = friday_concurrency(requested_concurrency, sum(capacities), group_count)
     if args.retry_interrupted_run:
         concurrency = 1  # One authorization always binds exactly one attempt.
     if args.retry_interrupted_run and len(selected) != 1:
@@ -1467,9 +1813,40 @@ def main():
     if args.recover_storage_errors and not args.storage_guard:
         parser.error("--recover-storage-errors requires --storage-guard")
     selected_panel_ids = sorted({row.get("panel_id") for row in selected if row.get("level") == "l2" and row.get("panel_id")})
-    if len(selected_panel_ids) > 1:
+    if len(selected_panel_ids) > 1 and args.l2_panel != "all":
         raise SystemExit(f"selected L2 jobs span multiple panels: {selected_panel_ids}")
+    if args.dry_run:
+        print(json.dumps({
+            "dry_run": True,
+            "selected_jobs": len(selected),
+            "concurrency": concurrency,
+            "requested_concurrency": requested_concurrency,
+            "job_error_policy": args.job_error_policy,
+            "credential_schedule": credential_schedule,
+            "provider_gateway": gateway_configuration,
+            "local_resource_policy": load(args.local_resource_policy) if args.local_resource_policy else None,
+        }, ensure_ascii=False, indent=2))
+        return 0
+    if gateway_configuration:
+        from trievo_bench.friday_gateway import check_gateway
+        try:
+            check_gateway(gateway_configuration["host_base_url"], credential_pool, gateway_configuration["policy"], gateway_configuration.get("model"))
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     storage_gate = storage_gate_from_environment() if args.storage_guard else None
+    resource_gate = None
+    resource_policy = load(args.local_resource_policy) if args.local_resource_policy else None
+    previous_resource_policy = load(status_path).get("local_resource_policy") if status_path.exists() else None
+    if status_path.exists() and previous_resource_policy != resource_policy:
+        raise SystemExit("local resource policy differs from this output root; use a new --root")
+    if resource_policy:
+        from trievo_bench.local_resources import LocalResourceGate
+        resource_gate = LocalResourceGate(resource_policy)
+    continuation_source = load(args.continue_state) if args.continue_state else None
+    if continuation_source is not None:
+        if concurrency < 2:
+            parser.error("continuation requires parallel dispatch")
+        prepare_continuation_rows(selected, continuation_source, gateway_configuration, credential_schedule)
     if args.storage_guard and storage_gate is None:
         raise SystemExit("--storage-guard requested but StorageGate.from_environment() returned no gate")
     prior_state = load(status_path) if status_path.exists() and args.storage_guard else {}
@@ -1488,9 +1865,29 @@ def main():
         "job_error_policy": args.job_error_policy,
         "phase": "gate" if args.gate else ("only" if args.only else "full"),
     }
+    if resource_policy:
+        state["local_resource_policy"] = resource_policy
+    if continuation_source is not None:
+        state["continuation"] = {
+            "source_state": str(args.continue_state.resolve()),
+            "source_sha256": _sha256_file(args.continue_state),
+            "source_driver_pid": continuation_source["pid"],
+            "source_resource_policy": continuation_source.get("local_resource_policy"),
+            "paid_outputs_and_lanes_preserved": True,
+            "automatic_replay_authorized": False,
+        }
     if credential_schedule is not None:
         state["credential_schedule"] = credential_schedule
-    if selected_panel_ids:
+    if gateway_configuration:
+        state["provider_gateway"] = gateway_configuration
+    if len(selected_panel_ids) > 1:
+        state["l2_panels"] = [{
+            "panel_id": panel,
+            "panel_manifest_sha256": next(row["panel_manifest_sha256"] for row in selected if row.get("panel_id") == panel),
+            "selected_stream_ids": next(row["selected_stream_ids"] for row in selected if row.get("panel_id") == panel),
+            "allows_cross_panel_aggregation": False,
+        } for panel in selected_panel_ids]
+    elif selected_panel_ids:
         panel_rows = [row for row in selected if row.get("level") == "l2" and row.get("panel_id")]
         state["l2_panel"] = {
             "panel_id": selected_panel_ids[0],
@@ -1520,7 +1917,8 @@ def main():
                 parser.error("adopted job is not selected")
             AdoptedProcess(row)
     save(status_path, state)
-    if concurrency > 1:
+    if resource_gate is not None or concurrency > 1 or (args.job_error_policy == "continue"
+                           and not (args.retry_interrupted_run or args.gate or args.only)):
         code = run_parallel(
             repo,
             selected,
@@ -1534,6 +1932,8 @@ def main():
             storage_retry_limit=args.storage_retry_limit,
             provider_mode=args.provider_mode,
             credential_pool=credential_pool,
+            credential_capacities=configured_capacities,
+            resource_gate=resource_gate,
         )
         if code:
             return code

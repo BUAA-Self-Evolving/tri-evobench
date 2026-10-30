@@ -1,7 +1,7 @@
 """Credential-free runtime profiles for supported OpenAI-compatible providers."""
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 import json
 from pathlib import Path
 import re
@@ -78,9 +78,17 @@ _PROXY_ENV_NAMES = (
 _FRIDAY_SLOT_PATTERN = re.compile(r"^FRIDAY_APP_ID_([1-9][0-9]*)$")
 
 
-def get_provider_profile(name: str) -> ProviderProfile:
+FRIDAY_MODELS = ("deepseek-v4-flash", "deepseek-v4-flash-meituan", "glm-53-meituan")
+
+
+def get_provider_profile(name: str, *, model: str | None = None) -> ProviderProfile:
     try:
-        return PROVIDER_PROFILES[name]
+        profile = PROVIDER_PROFILES[name]
+        if model is not None:
+            if name == "friday" and model not in FRIDAY_MODELS:
+                raise ValueError("unsupported Friday request model")
+            profile = replace(profile, model=model)
+        return profile
     except KeyError as exc:
         choices = ", ".join(sorted(PROVIDER_PROFILES))
         raise ValueError(f"unknown provider mode {name!r}; choose one of: {choices}") from exc
@@ -156,8 +164,12 @@ def configure_provider_environment(
     credential: ProviderCredential | None = None,
 ) -> ProviderProfile:
     """Select one provider and bridge its in-memory secret to legacy adapters."""
-    profile = get_provider_profile(name)
+    profile = get_provider_profile(name, model=environ.get("TRIEVO_PROVIDER_MODEL") if name == "friday" else None)
     selected = credential or provider_credentials(name, environ)[0]
+    effective_base_url = profile.base_url
+    if name == "friday" and environ.get("TRIEVO_FRIDAY_GATEWAY_URL"):
+        from .friday_gateway import validate_host_gateway_url
+        effective_base_url = validate_host_gateway_url(environ["TRIEVO_FRIDAY_GATEWAY_URL"])
 
     if name == "friday":
         # Do not expose the whole pool to a worker. It receives only its
@@ -171,7 +183,7 @@ def configure_provider_environment(
     for key in _KEY_ALIASES:
         environ[key] = selected.value
     for key in _BASE_URL_ALIASES:
-        environ[key] = profile.base_url
+        environ[key] = effective_base_url
     environ["TRIEVO_MODEL"] = profile.model
     environ["OPENAI_COMPATIBLE_MODEL"] = profile.model
     environ["TARGET_OPENAI_COMPATIBLE_MODEL"] = profile.model

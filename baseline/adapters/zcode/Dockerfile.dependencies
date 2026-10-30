@@ -1,0 +1,11 @@
+FROM node:24.14.0-bookworm-slim AS node
+FROM trievo-prime-agent:local-fast-20261027
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+RUN npm install -g pnpm@10.33.2
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 HUSKY=0
+WORKDIR /opt/zcode
+COPY baseline/ZCode/ ./
+RUN pnpm install --ignore-scripts --frozen-lockfile --filter @zcode/cli... --filter zcode \
+    --config.supportedArchitectures.os=linux --config.supportedArchitectures.cpu=arm64 \
+    --config.supportedArchitectures.libc=glibc
+ENTRYPOINT []

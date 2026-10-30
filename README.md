@@ -1,5 +1,17 @@
 # Tri-EvoBench
 
+## 源码 ZIP 说明（2026-10-30）
+
+本包来自当前主开发目录，包含本项目运行时、全部 baseline 接入代码与 manifest、
+工具、测试、Dockerfile、配置示例及通用文档。它是用于手动上传的源码快照。
+
+**包中不含评测数据、实验结果、trace/checkpoint、凭证、本机专用启动脚本、
+虚拟环境和第三方 baseline 的完整仓库。** 下文原项目说明中涉及数据包已附带、
+Git submodule 和完整矩阵的操作，需先补齐相应依赖；不能仅凭此 ZIP 复现历史实验。
+依赖位置、manifest 声明版本和上传方法见 [源码包使用说明](SOURCE_PACKAGE.md)。
+手动上传普通文件不会创建 Git submodule；`.gitmodules` 仅保留上游地址映射。
+
+
 Tri-EvoBench 是一个面向自演化 Agent 的评测运行时，提供统一的 Flow、Turn、Interaction 执行协议，以及 L1/L2 demo 适配、Sandbox、Verifier、LLM Judge 和 Learner 接口。
 
 当前版本为研究原型，运行配置使用 `schema_version = 0.1`。

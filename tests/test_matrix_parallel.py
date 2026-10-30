@@ -5,6 +5,25 @@ import pytest
 from tools import run_new_package_matrix as m
 
 
+def test_cli_continue_uses_queue_dispatch_with_single_worker(tmp_path, monkeypatch):
+    row = dict(id='job', level='l1', agent='opencode', flow_id='s', turns=['t'], output=str(tmp_path/'job'))
+    monkeypatch.setattr(m, 'provider_credentials', lambda *args: ())
+    monkeypatch.setattr(m, 'jobs', lambda *args, **kwargs: [row])
+    monkeypatch.setattr(m, 'validate_generated_profile', lambda *args: None)
+    monkeypatch.delenv('TRIEVO_FRIDAY_GATEWAY_URL', raising=False)
+    monkeypatch.setattr(sys, 'argv', ['matrix', '--root', str(tmp_path/'run'),
+                                     '--config-dir', str(tmp_path), '--concurrency', '1',
+                                     '--job-error-policy', 'continue'])
+    dispatched = []
+    def queue(*args, **kwargs):
+        dispatched.append((args[6], args[7]))
+        return 1
+    monkeypatch.setattr(m, 'run_parallel', queue)
+    monkeypatch.setattr(m, 'report_for', lambda row: pytest.fail('entered legacy serial path'))
+    assert m.main() == 1
+    assert dispatched == [(1, 'continue')]
+
+
 @pytest.mark.parametrize('limit', [1, 10, 20])
 @pytest.mark.skipif(sys.platform != "linux", reason="PID start ticks use Linux /proc")
 def test_real_children_overlap_bounded_and_skip_complete(tmp_path, monkeypatch, limit):
@@ -59,7 +78,8 @@ def test_failure_drains_and_does_not_launch_remaining(tmp_path, monkeypatch):
     assert all('pid' not in row for row in rows[2:])
 
 
-def test_continue_policy_records_error_and_launches_remaining(tmp_path, monkeypatch):
+@pytest.mark.parametrize('concurrency', [1, 2])
+def test_continue_policy_records_error_and_launches_remaining(tmp_path, monkeypatch, concurrency):
     rows = [dict(id=str(i), output=str(tmp_path / str(i))) for i in range(5)]
     launched = []
     monkeypatch.setattr(m, 'latest_checkpoint', lambda row: None)
@@ -88,11 +108,14 @@ def test_continue_policy_records_error_and_launches_remaining(tmp_path, monkeypa
     monkeypatch.setattr(m.time, 'sleep', lambda _: None)
     state = {'jobs': rows}
 
-    assert m.run_parallel(tmp_path, rows, rows, tmp_path, state, tmp_path / 'status.json', 2, 'continue') == 1
+    assert m.run_parallel(tmp_path, rows, rows, tmp_path, state, tmp_path / 'status.json', concurrency, 'continue') == 1
     assert launched == ['0', '1', '2', '3', '4']
     assert rows[0]['status'] == 'paused_error'
     assert all(row['status'] == 'completed' for row in rows[1:])
-    assert state['status'] == 'paused_error'
+    assert state['status'] == 'completed_with_errors'
+    assert state['queue_drained'] is True
+    assert state['failed_job_ids'] == ['0']
+    assert json.loads((tmp_path / 'failed-job-ids.json').read_text()) == ['0']
     assert state['active_jobs'] == []
 
 

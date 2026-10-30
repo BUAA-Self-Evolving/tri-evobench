@@ -386,6 +386,14 @@ class OpenAICompatibleClient:
 
 def client_from_config(config: dict[str, Any], budget: TokenBudget) -> OpenAICompatibleClient:
     base_url = str(config.get("base_url") or os.environ.get("TRIEVO_BASE_URL", "https://api.deepseek.com"))
+    gateway_url = os.environ.get("TRIEVO_FRIDAY_GATEWAY_URL")
+    if gateway_url:
+        from .friday_gateway import validate_host_gateway_url
+        from .provider_profiles import get_provider_profile
+        gateway_url = validate_host_gateway_url(gateway_url)
+        if base_url.rstrip("/") not in {gateway_url, get_provider_profile("friday").base_url}:
+            raise ValueError("Friday gateway profile rejects an evaluator endpoint outside its shared request budget")
+        base_url = gateway_url
     api_key = str(config.get("api_key") or os.environ.get("TRIEVO_API_KEY", ""))
     model = str(config.get("model") or os.environ.get("TRIEVO_MODEL", "deepseek-chat"))
     if not api_key:

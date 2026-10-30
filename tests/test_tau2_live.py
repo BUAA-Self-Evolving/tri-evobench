@@ -130,6 +130,41 @@ class LauncherTest(unittest.TestCase):
                     session.start()
             run.assert_not_called()
 
+    def test_owned_workspace_service_keeps_control_private_and_uses_owner(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            original = self._session(Path(tmp))
+            session = Tau2LiveSession(
+                profile=original.profile, turn_dir=Path(tmp),
+                workspace_mount_spec=original.workspace_mount_spec,
+                timeout_seconds=1800, workspace_owner=(501, 20),
+            )
+            calls = []
+
+            def fake(args, **kwargs):
+                calls.append(args)
+                if args[0] == "inspect":
+                    return SimpleNamespace(returncode=0, stdout=DIGEST + " true", stderr="")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            with patch.dict("os.environ", {"DEEPSEEK_API_KEY": "secret-value"}, clear=True), \
+                    patch("trievo_bench.tau2_live.launcher._run", side_effect=fake):
+                evidence = session.start()
+            self.assertEqual(evidence["service_user"], "501:20")
+            self.assertIn("type=volume,src=v,dst=/workspace,volume-nocopy", calls[0])
+            service = next(args for args in calls if "-d" in args and args[0] == "exec")
+            self.assertEqual(service[:3], ["exec", "--user", "501:20"])
+            self.assertIn("--control /tmp/trievo-tau2-private/control.sock", service[-1])
+            self.assertNotIn("secret-value", str(calls))
+            self.assertFalse(any("chmod" in args and "/workspace" in args for args in calls))
+
+    def test_legacy_service_paths_are_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            session = self._session(Path(tmp))
+            self.assertIsNone(session.service_user)
+            self.assertEqual(session.private_root, "/out")
+            self.assertEqual(session.control_socket, "/run/trievo-tau2/control.sock")
+            self.assertEqual(session._service_exec(), ["exec"])
+
     def test_credential_is_passed_by_name_only(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             session = self._session(Path(tmp))

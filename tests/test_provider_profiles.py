@@ -98,6 +98,16 @@ def test_public_profile_contains_no_credential_value() -> None:
     assert "app_id" not in metadata
 
 
+def test_verified_glm_model_is_exact_and_does_not_change_friday_default():
+    environment = {"FRIDAY_APP_ID": "mock-key", "TRIEVO_PROVIDER_MODEL": "glm-53-meituan"}
+    profile = configure_provider_environment("friday", environment)
+    assert profile.model == environment["TRIEVO_MODEL"] == "glm-53-meituan"
+    assert get_provider_profile("friday").model == "deepseek-v4-flash"
+    for unverified in ["glm-5.3", "glm-53-flash-meituan"]:
+        with pytest.raises(ValueError, match="unsupported Friday"):
+            get_provider_profile("friday", model=unverified)
+
+
 def test_friday_rejects_missing_or_mismatched_generated_profile(tmp_path) -> None:
     with pytest.raises(ValueError, match="requires configs generated"):
         validate_generated_profile(tmp_path, "friday")

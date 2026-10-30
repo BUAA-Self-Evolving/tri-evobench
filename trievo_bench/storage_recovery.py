@@ -181,7 +181,8 @@ class StorageGate:
 
     def _docker_probe(self):
         actual = self._docker(["info", "--format", "{{.DockerRootDir}}"])
-        if not actual or Path(actual).resolve() != self.path.resolve():
+        remote_root = os.environ.get("TRIEVO_STORAGE_REMOTE_DOCKER_ROOT") == "1"
+        if not actual or (Path(actual).resolve() != self.path.resolve() and not remote_root):
             raise StorageUnavailable("storage guard Docker root does not match watched directory")
         name = "trievo-storage-probe-" + uuid.uuid4().hex[:12]
         owner = hashlib.sha256(str(self.root).encode()).hexdigest()

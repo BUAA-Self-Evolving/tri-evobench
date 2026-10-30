@@ -1,0 +1,16 @@
+FROM trievo-zcode:dependencies-20261027
+COPY baseline/adapters/zcode/install_runtime_hooks.py /opt/trievo/install-zcode-hooks.py
+RUN python3 /opt/trievo/install-zcode-hooks.py /opt/zcode
+ENV NODE_OPTIONS=--max-old-space-size=6144
+COPY baseline/adapters/zcode/build_native.py /opt/trievo/build-zcode.py
+RUN python3 /opt/trievo/build-zcode.py
+WORKDIR /opt/trievo
+COPY baseline/adapters/native_runtime.py baseline/adapters/native_runtime.py
+COPY baseline/adapters/native_budget.py baseline/adapters/native_budget.py
+COPY baseline/adapters/zcode/ baseline/adapters/zcode/
+COPY trievo_bench/task_terminal.py trievo_bench/task_terminal.py
+COPY baseline/adapters/task_shell.py /opt/trievo/task-shell
+RUN chmod 755 /opt/trievo/task-shell && mkdir -p /opt/trievo/task-bin \
+    && ln -s /opt/trievo/task-shell /opt/trievo/task-bin/bash
+ENV PYTHONPATH=/opt/trievo
+ENTRYPOINT ["python3", "-m", "baseline.adapters.zcode.bridge"]

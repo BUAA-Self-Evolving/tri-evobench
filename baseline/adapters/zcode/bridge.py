@@ -18,6 +18,15 @@ class ZCodeBridge(NativeBridge):
         super().__init__()
         self.run_command = run_command or subprocess.run
 
+    def start_turn(self, params: dict[str, Any]) -> dict[str, Any]:
+        from trievo_bench.task_terminal import SCHEMA, socket_from_metadata
+        socket = socket_from_metadata(params)
+        self._turn_limits = dict(params.get("metadata", {}).get("agent_limits", {})) if socket else None
+        result = super().start_turn(params)
+        if socket:
+            result["task_terminal_transport"] = SCHEMA
+        return result
+
     def provider_config(self, key: str) -> dict[str, Any]:
         model = self.options.get("model") or os.getenv("TRIEVO_MODEL")
         if not model:
@@ -67,6 +76,12 @@ class ZCodeBridge(NativeBridge):
                 "builtin_config", "/opt/zcode/config/provider/zcode-builtin.json",
             )),
         })
+        if getattr(self, "_turn_limits", None):
+            env.update(SHELL="/opt/trievo/task-bin/bash",
+                       TRIEVO_CWD_CAPTURE_DIR="/run/trievo-task-runtime/zcode-cwd",
+                       TRIEVO_NATIVE_BUDGET=str(self.state_dir / "foreground-budget.json"))
+            env["NODE_OPTIONS"] = (env.get("NODE_OPTIONS", "") +
+                " --require /opt/trievo/baseline/adapters/zcode/native_budget.cjs").strip()
         return env
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -97,16 +112,27 @@ class ZCodeBridge(NativeBridge):
         if self.session_id:
             command.extend(["--resume", self.session_id])
         command.extend(["--prompt", prompt])
+        budget_path = self.state_dir / "foreground-budget.json"
+        limits = getattr(self, "_turn_limits", None)
+        if limits:
+            from baseline.adapters.native_budget import begin
+            begin(budget_path, limits)
         try:
             completed = self.run_command(
                 command, cwd=str(self.workspace), env=self.environment(personal),
                 capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=float(self.options.get("request_timeout_seconds", 1700)),
+                timeout=float(limits["episode_timeout_seconds"] if limits else self.options.get("request_timeout_seconds", 1700)),
             )
-            if completed.returncode != 0:
+            if limits:
+                from baseline.adapters.native_budget import receipt
+                budget = receipt(budget_path)
+            else:
+                budget = {}
+            exhausted = bool(budget.get("limit_reasons"))
+            if completed.returncode != 0 and not exhausted:
                 detail = completed.stderr.strip()[-2000:].replace(key, "[redacted]")
                 raise RuntimeError(f"ZCode exited with code {completed.returncode}: {detail}")
-            parsed = parse_output(completed.stdout)
+            parsed = parse_output(completed.stdout, allow_limit_failure=exhausted)
         except subprocess.TimeoutExpired as exc:
             raise RuntimeError("ZCode timed out; do not replay executed side effects automatically") from exc
         finally:
@@ -118,11 +144,12 @@ class ZCodeBridge(NativeBridge):
             "text": parsed["text"], "actions": [], "tool_calls": parsed["tool_calls"],
             "events": parsed["events"], "usage": parsed["usage"],
             "actions_are_executed": True, "tool_calls_are_executed": True,
-            "raw": {"session_id": self.session_id},
+            "raw": {"session_id": self.session_id, **({"native_budget": budget,
+                    "limit_exhausted": exhausted, "limit_reasons": budget["limit_reasons"]} if limits else {})},
         }
 
 
-def parse_output(output: str) -> dict[str, Any]:
+def parse_output(output: str, *, allow_limit_failure: bool = False) -> dict[str, Any]:
     result = None
     events = []
     calls: dict[str, dict[str, Any]] = {}
@@ -138,7 +165,7 @@ def parse_output(output: str) -> dict[str, Any]:
         if event.get("sessionId"):
             session_ids.add(event["sessionId"])
         kind = event["type"]
-        if kind in {"turn.failed", "provider.error", "session.error"}:
+        if kind in {"turn.failed", "provider.error", "session.error"} and not allow_limit_failure:
             raise RuntimeError(f"ZCode failed: {kind}")
         if kind == "result":
             result = event
@@ -157,11 +184,30 @@ def parse_output(output: str) -> dict[str, Any]:
                 if payload.get("kind") in {"result", "error"}:
                     call["result"] = payload.get("result", payload.get("error"))
                     call["is_error"] = payload["kind"] == "error"
+    if result is None and allow_limit_failure:
+        # 原生 CLI 硬预算先写 turn.failed，再退出而不写 result。
+        # 只按唯一请求完成凭据记账，禁止重复累计投影 usage。
+        starts, completions = set(), {}
+        text_parts = []
+        for event in events:
+            payload = event.get("payload") or {}
+            key = (payload.get("requestId"), payload.get("attempt"))
+            if key[0] and payload.get("type") == "model_request_started":
+                starts.add(key)
+            if key[0] and payload.get("type") == "model_request_completed" and isinstance(payload.get("usage"), dict):
+                completions[key] = payload["usage"]
+            if event.get("type") == "model.streaming" and payload.get("kind") == "text" and isinstance(payload.get("delta"), str):
+                text_parts.append(payload["delta"])
+        if starts and starts == set(completions) and len(session_ids) == 1:
+            usage = {name: sum(integer(value.get(name, 0)) for value in completions.values())
+                     for name in ["inputTokens", "outputTokens", "totalTokens", "cacheReadTokens", "cacheWriteTokens", "reasoningTokens"]}
+            usage["modelRequestCount"] = len(starts)
+            result = {"sessionId": next(iter(session_ids)), "response": "".join(text_parts), "usage": usage}
     if result is None or not isinstance(result.get("sessionId"), str) or not result["sessionId"]:
         raise ValueError("ZCode stream is missing a terminal result or session")
     if session_ids != {result["sessionId"]}:
         raise ValueError("ZCode stream mixes sessions")
-    if result.get("projection", {}).get("status") in {"error", "failed", "running"}:
+    if result.get("projection", {}).get("status") in {"error", "failed", "running"} and not allow_limit_failure:
         raise RuntimeError("ZCode did not complete its turn")
     raw = result.get("usage")
     if not isinstance(raw, dict) or "totalTokens" not in raw:

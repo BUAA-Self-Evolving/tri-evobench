@@ -238,13 +238,20 @@ class ProcessBaselineRuntime(BaselineRuntime):
             variables = self._template_variables(context)
             self._template_values = variables
             command = [_render(item, variables) for item in adapter["command"]]
+            terminal_volume = context.metadata.get("task_terminal_volume")
+            if terminal_volume is not None:
+                from trievo_bench.task_terminal import PUBLIC_DIRECTORY
+                if not is_docker_command(command) or not isinstance(terminal_volume, str) or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*", terminal_volume):
+                    raise BaselineProtocolError("task terminal requires a valid Docker volume")
+                position = command.index("run") + 1
+                command[position:position] = ["--mount", f"type=volume,src={terminal_volume},dst={PUBLIC_DIRECTORY},volume-nocopy"]
             if context.workspace_mount is not None:
                 command = _rewrite_named_volume_mount(
-                    command, context.workspace_mount, "/workspace"
+                    command, context.workspace_mount, "/workspace", no_copy=terminal_volume is not None
                 )
             if self._state_volume is not None:
                 command = _rewrite_named_volume_mount(
-                    command, self._state_volume.volume_name, "/state"
+                    command, self._state_volume.volume_name, "/state", no_copy=terminal_volume is not None
                 )
             command[0] = _resolve_executable(command[0])
             cleanup = adapter.get("cleanup_command")
@@ -320,7 +327,7 @@ class ProcessBaselineRuntime(BaselineRuntime):
             raise RuntimeError(f"turn {self._current_turn} has not completed evolution")
         self._ensure_stable_state("between evolution and the next Turn")
         prior_state = self._stable_state
-        self._request(
+        started = self._request(
             "start_turn",
             {
                 "turn_id": context.turn_id,
@@ -333,6 +340,9 @@ class ProcessBaselineRuntime(BaselineRuntime):
                 "semantic_state": self._semantic_state,
             },
         )
+        declared_terminal = (context.metadata.get("task_sandbox") or {}).get("terminal_transport")
+        if declared_terminal is not None and started.get("task_terminal_transport") != declared_terminal:
+            raise BaselineProtocolError("baseline did not acknowledge the declared task terminal transport")
         self._current_turn = context.turn_id
         self._current_turn_metadata = dict(context.metadata)
         self._turn_evolved = False
@@ -359,6 +369,18 @@ class ProcessBaselineRuntime(BaselineRuntime):
         interaction_timeout = _positive_seconds(
             self._current_turn_metadata.get("interaction_timeout_seconds")
         )
+        if self.baseline_id == "deepseek-harness" and interaction_timeout is not None:
+            # DSH stops native work at the episode boundary, then closes its
+            # runtime and returns saved events. The transport must outlive
+            # that boundary; this grace does not extend native work or retry.
+            interaction_timeout += 60.0
+        elif ((self.baseline_id == "opencode" or (
+                  self.baseline_id == "prime-agent" and self.manifest.options.get("collect_episode_limit_reply")))
+              and interaction_timeout is not None
+              and (self._current_turn_metadata.get("task_sandbox") or {}).get("terminal_transport")):
+            # V5 native work stops at its episode deadline; transport outlives
+            # cancellation and collection of the original reply and usage.
+            interaction_timeout += 60.0
         result = self._request(
             "interact",
             {
@@ -412,20 +434,27 @@ class ProcessBaselineRuntime(BaselineRuntime):
         before_capture = self._with_current_semantic_state(before_capture)
         before = before_capture.snapshot
         timeout = float(self.manifest.evolution.get("timeout_seconds", self.manifest.adapter.get("timeout_seconds", 900)))
-        result = self._request(
-            "evolve",
-            {
-                "turn_id": context.turn_id,
-                "trajectory": context.trajectory,
-                "feedback": context.feedback,
-                "update_enabled": context.update_enabled,
-                "skip_reason": context.skip_reason,
-            },
-            timeout=timeout,
-        )
+        try:
+            result = self._request(
+                "evolve",
+                {
+                    "turn_id": context.turn_id,
+                    "trajectory": context.trajectory,
+                    "feedback": context.feedback,
+                    "update_enabled": context.update_enabled,
+                    "skip_reason": context.skip_reason,
+                },
+                timeout=timeout,
+            )
+        except Exception:
+            # end_flow enforces the stable state and can erase evidence of a
+            # failed learning pass. Export declared bytes privately first.
+            self._preserve_failed_evolution(context.turn_id)
+            raise
         usage = UsageDetails.from_mapping(result.get("usage"))
         self._record_usage(usage)
         if not bool(result.get("completed", True)):
+            self._preserve_failed_evolution(context.turn_id)
             self._restore_state(before_capture)
             self._stable_state = before_capture
             if not bool(result.get("recoverable_failure", False)):
@@ -456,6 +485,18 @@ class ProcessBaselineRuntime(BaselineRuntime):
             state_after=after,
             changed_files=_changed_paths(before, after),
         )
+
+    def _preserve_failed_evolution(self, turn_id: str) -> None:
+        if self._flow is None or self._state_dir is None:
+            return
+        capture = self._capture_state(include_bytes=True)
+        output = self._flow.output_dir / "failed_evolution" / uuid.uuid4().hex
+        output.mkdir(parents=True, exist_ok=False)
+        self._export_state(output, capture.snapshot)
+        (output / "failure.json").write_text(json.dumps({
+            "turn_id": turn_id, "state_digest": capture.snapshot.digest,
+            "recoverable_checkpoint": False,
+        }, indent=2) + "\n", encoding="utf-8")
 
     def snapshot_state(self) -> BaselineSnapshot:
         return self._capture_state(include_bytes=False).snapshot
@@ -496,7 +537,10 @@ class ProcessBaselineRuntime(BaselineRuntime):
         finally:
             if self._state_dir is not None:
                 try:
-                    final_snapshot = self.snapshot_state()
+                    # Materialize the latest daemon-owned state before teardown.
+                    # A metadata-only snapshot leaves the host mirror stale when
+                    # interact failed before its normal state capture completed.
+                    final_snapshot = self._capture_state(include_bytes=True).snapshot
                     snapshot_ready = True
                 except BaseException as exc:
                     cleanup_errors.append(exc)
@@ -881,6 +925,15 @@ class ProcessBaselineRuntime(BaselineRuntime):
             path = self.repo_root / path
         if not path.is_dir():
             raise BaselineProtocolError(f"baseline source directory not found: {path}")
+        expected_archive = str(source.get("archive_sha256", "")).strip().lower()
+        if not (path / ".git").exists() and expected_archive:
+            actual_archive = _archive_tree_sha256(path)
+            if actual_archive != expected_archive:
+                raise BaselineProtocolError(
+                    f"baseline archive digest mismatch for {self.baseline_id}: "
+                    f"expected {expected_archive}, found {actual_archive}"
+                )
+            return
         try:
             actual = subprocess.run(
                 ["git", "-C", str(path), "rev-parse", "HEAD"],
@@ -914,6 +967,30 @@ class ProcessBaselineRuntime(BaselineRuntime):
             raise BaselineProtocolError(
                 f"baseline source tree is dirty for {self.baseline_id}; commit or remove local changes before evaluation"
             )
+
+
+def _archive_tree_sha256(root: Path) -> str:
+    """Verify a delivered source archive when its Git metadata is absent.
+
+    Python bytecode is created on import and is not part of the delivered
+    source. Excluding it keeps an offline archive identity stable after local
+    tests or adapter startup.
+    """
+    digest = hashlib.sha256()
+    for path in sorted(root.rglob("*"), key=lambda item: item.relative_to(root).as_posix()):
+        relative = path.relative_to(root).as_posix()
+        if "__pycache__" in path.relative_to(root).parts or path.suffix in {".pyc", ".pyo"}:
+            continue
+        if path.is_symlink():
+            digest.update(b"L\0" + relative.encode("utf-8") + b"\0")
+            digest.update(path.readlink().as_posix().encode("utf-8") + b"\0")
+        elif path.is_file():
+            digest.update(b"F\0" + relative.encode("utf-8") + b"\0")
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def _dict_list(value: Any) -> list[dict[str, Any]]:
@@ -960,7 +1037,7 @@ def _render(value: str, variables: dict[str, str]) -> str:
 
 
 def _rewrite_named_volume_mount(
-    command: list[str], volume_name: str, target: str
+    command: list[str], volume_name: str, target: str, *, no_copy: bool = False
 ) -> list[str]:
     """Rewrite one known named-volume ``-v`` pair to explicit mount syntax."""
     expected = f"{volume_name}:{target}"
@@ -970,7 +1047,7 @@ def _rewrite_named_volume_mount(
         if index + 1 < len(command) and command[index] == "-v" and command[index + 1] == expected:
             rewritten.extend([
                 "--mount",
-                f"type=volume,src={volume_name},dst={target}",
+                f"type=volume,src={volume_name},dst={target}" + (",volume-nocopy" if no_copy else ""),
             ])
             index += 2
             continue

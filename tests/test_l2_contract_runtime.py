@@ -587,6 +587,28 @@ def test_v5_rejects_task_runtime_profile_not_in_bound_catalog(tmp_path, monkeypa
         L2AgentStreamRunner(_v5_options(package, tmp_path / "out", "evolving")).run()
 
 
+def test_v5_rebuilt_images_keep_declared_package_identity(tmp_path):
+    from trievo_bench.l2_agent import _load_v5_runtime_binding
+    package = _v5_package(tmp_path)
+    options = _v5_options(package, tmp_path / "out", "evolving")
+    original = (package / "runtime_profiles.json").read_bytes()
+    catalog = json.loads(original)
+    old = catalog["profiles"][0]["task_sandbox_image_digest"]
+    new = "sha256:" + "9" * 64
+    options.baseline_overrides["options"]["l2_runtime_image_overrides"] = {old: new}
+    stream = json.loads((package / "streams/stream-a/stream.json").read_text())
+    runner = L2AgentStreamRunner(options)
+    metadata, profiles = _load_v5_runtime_binding(package, stream, options, runner.panel_metadata)
+    assert profiles["python_v1"]["task_sandbox_image_digest"] == new
+    assert metadata["runtime_image_overrides"] == {old: new}
+    assert metadata["declared_runtime_profile_set_digest"] != metadata["runtime_profile_set_digest"]
+    assert metadata["package_manifest_sha256"] == options.package_manifest_sha256
+    assert (package / "runtime_profiles.json").read_bytes() == original
+    options.baseline_overrides["options"]["l2_runtime_image_overrides"] = {"sha256:" + "8" * 64: new}
+    with pytest.raises(L2AgentRunError, match="declared package image"):
+        _load_v5_runtime_binding(package, stream, options, runner.panel_metadata)
+
+
 def test_evaluator_error_continue_is_null_unscored_and_does_not_evolve(tmp_path, monkeypatch):
     package = _package(tmp_path)
     runtimes = _install_fake_runtime(monkeypatch, verifier_error=True)

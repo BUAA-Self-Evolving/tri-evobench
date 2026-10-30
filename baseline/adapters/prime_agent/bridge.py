@@ -19,6 +19,35 @@ class PrimeRpcError(RuntimeError):
     pass
 
 
+class PrimeRpcDeadlineError(PrimeRpcError):
+    pass
+
+
+_PROBE_LAST_UPDATE = 0.0
+_PROBE_DROPPED = 0
+
+
+def _probe(event: str, **fields: Any) -> None:
+    global _PROBE_LAST_UPDATE, _PROBE_DROPPED
+    if os.environ.get("TRIEVO_PRIME_PROBE") == "1":
+        now = time.monotonic()
+        if fields.get("event_type") == "tool_execution_update":
+            if now - _PROBE_LAST_UPDATE < 1.0:
+                _PROBE_DROPPED += 1
+                return
+            _PROBE_LAST_UPDATE = now
+        try:
+            print("TRIEVO_PRIME_PROBE " + json.dumps({
+                "event": event, "monotonic_seconds": round(now, 6),
+                "diagnostics_dropped": _PROBE_DROPPED, **fields,
+            }), file=sys.stderr, flush=True)
+        except (OSError, ValueError):
+            # A diagnostic sink must never abort an already-dispatched RPC.
+            _PROBE_DROPPED += 1
+        else:
+            _PROBE_DROPPED = 0
+
+
 _RPC_STREAM_CLOSED = object()
 
 
@@ -42,6 +71,9 @@ class PrimeRpcProcess:
         self._messages: queue.Queue[Any] = queue.Queue()
         self._pending: dict[str, dict[str, Any]] = {}
         self._write_lock = threading.Lock()
+        self._abort_request_ids: set[str] = set()
+        self.prompt_timed_out = False
+        self.collection_deadline: float | None = None
         self._reader = threading.Thread(
             target=self._read_stdout,
             name="prime-rpc-reader",
@@ -82,7 +114,7 @@ class PrimeRpcProcess:
     def abort(self) -> None:
         """Request cancellation without waiting behind the in-flight prompt."""
         if self.process.poll() is None:
-            self._send("abort", {})
+            self._abort_request_ids.add(self._send("abort", {}))
 
     def _next_message(self, deadline: float | None, command_type: str) -> dict[str, Any]:
         timeout = None if deadline is None else max(0.0, deadline - time.monotonic())
@@ -91,7 +123,7 @@ class PrimeRpcProcess:
                 self.abort()
             except PrimeRpcError:
                 pass
-            raise PrimeRpcError(f"Prime Agent RPC absolute deadline expired during {command_type}")
+            raise PrimeRpcDeadlineError(f"Prime Agent RPC absolute deadline expired during {command_type}")
         try:
             message = self._messages.get(timeout=timeout)
         except queue.Empty as exc:
@@ -99,7 +131,7 @@ class PrimeRpcProcess:
                 self.abort()
             except PrimeRpcError:
                 pass
-            raise PrimeRpcError(f"Prime Agent RPC absolute deadline expired during {command_type}") from exc
+            raise PrimeRpcDeadlineError(f"Prime Agent RPC absolute deadline expired during {command_type}") from exc
         if message is _RPC_STREAM_CLOSED:
             raise PrimeRpcError(
                 f"Prime Agent RPC closed during {command_type} (exit={self.process.poll()})"
@@ -127,30 +159,68 @@ class PrimeRpcProcess:
         *,
         deadline: float | None = None,
         event_callback: Callable[[dict[str, Any]], None] | None = None,
+        cancel_grace_seconds: float = 0,
         **params: Any,
     ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         request_id = self._send(command_type, params)
+        _probe("rpc_request_sent", command=command_type, request_id=request_id)
+        if command_type == "prompt":
+            self.prompt_timed_out = False
+            self.collection_deadline = None
         response: dict[str, Any] | None = None
         events: list[dict[str, Any]] = []
         agent_finished = command_type != "prompt"
         saw_agent_start = False
         idle_candidate = False
         state_request_id: str | None = None
+        abort_acknowledged = False
         while response is None or not agent_finished:
             message = self._pending.pop(request_id, None)
             if message is None:
-                message = self._next_message(deadline, command_type)
+                try:
+                    message = self._next_message(deadline, command_type)
+                except PrimeRpcDeadlineError:
+                    if command_type != "prompt" or cancel_grace_seconds <= 0 or self.prompt_timed_out:
+                        raise
+                    # _next_message already sent abort. Only collect the
+                    # existing request after cancellation, never send prompt.
+                    self.prompt_timed_out = True
+                    self.collection_deadline = time.monotonic() + min(30.0, cancel_grace_seconds)
+                    deadline = self.collection_deadline
+                    _probe("episode_deadline_cancel_collect", request_id=request_id)
+                    continue
             if message.get("type") == "response":
                 message_id = str(message.get("id", ""))
+                if message_id in self._abort_request_ids:
+                    self._abort_request_ids.discard(message_id)
+                    if not message.get("success", False):
+                        raise PrimeRpcError("Prime Agent cancellation was rejected")
+                    # Native abort can settle without emitting agent_end.
+                    # Preserve the L1 fix: ACK is a candidate, not proof.
+                    idle_candidate = True
+                    abort_acknowledged = True
+                    if state_request_id is None:
+                        state_request_id = self._send("get_state", {})
+                    _probe("rpc_abort_acknowledged", request_id=request_id)
+                    continue
                 if state_request_id is not None and message_id == state_request_id:
                     if not message.get("success", False):
                         raise PrimeRpcError(str(message.get("error", "get_state failed")))
                     state = message.get("data")
-                    if idle_candidate and isinstance(state, dict) and not bool(state.get("isStreaming", True)):
+                    busy = not isinstance(state, dict) or bool(
+                        state.get("isStreaming", True) or state.get("isCompacting", False)
+                    )
+                    if idle_candidate and not busy:
                         agent_finished = True
-                    elif isinstance(state, dict) and bool(state.get("isStreaming", False)):
+                        if self.prompt_timed_out and response is None:
+                            response = {}
+                    elif busy:
                         idle_candidate = False
                     state_request_id = None
+                    if busy and abort_acknowledged:
+                        time.sleep(0.05)
+                        idle_candidate = True
+                        state_request_id = self._send("get_state", {})
                     continue
                 if message_id != request_id:
                     if message_id:
@@ -164,8 +234,13 @@ class PrimeRpcProcess:
                     state_request_id = self._send("get_state", {})
                 continue
             events.append(message)
+            _probe("rpc_event", command=command_type, event_type=str(message.get("type", "")))
             if event_callback is not None:
                 event_callback(message)
+            # refine awaits its persisted result before responding. Background
+            # agent events must not turn that response into a prompt idle wait.
+            if command_type != "prompt":
+                continue
             if message.get("type") == "agent_start":
                 # A retry can start after an earlier agent_end. Only an idle
                 # state observed after the newest start is authoritative.
@@ -265,22 +340,46 @@ class PrimeAgentBridge:
                 path.unlink()
         self.turn_id = str(params["turn_id"])
         self._configure_turn_limits(params)
+        from trievo_bench.task_terminal import SCHEMA, socket_from_metadata
+        terminal_socket = socket_from_metadata(params)
         command = self._prime_command()
         env = dict(os.environ)
         env["PRIME_AGENT_CODING_AGENT_DIR"] = str(self.state_dir / "prime-home")
         env["PRIME_AGENT_SESSION_DIR"] = str(self.state_dir / "sessions")
         env["HOME"] = str(self.state_dir / "home")
+        if terminal_socket:
+            marker = self.state_dir / "sessions" / "task-terminal-active"
+            marker.write_text("foreground\n")
+            self._task_terminal_marker = marker
+            env["TRIEVO_TASK_TERMINAL_SOCKET"] = terminal_socket
+            env["TRIEVO_TASK_TERMINAL_ACTIVE_FILE"] = str(marker)
+            hooks = str(Path(__file__).with_name("task_runtime_hook"))
+            env["PYTHONPATH"] = hooks + os.pathsep + env.get("PYTHONPATH", "")
         if os.environ.get("TRIEVO_API_KEY") and not env.get("OPENAI_API_KEY"):
             env["OPENAI_API_KEY"] = os.environ["TRIEVO_API_KEY"]
         self.rpc = self._rpc_factory(command, env)
         state, _ = self._request("get_state")
         if bool(state.get("isStreaming", False)):
             raise PrimeRpcError("Prime Agent session is unexpectedly streaming at Turn start")
-        return {"turn_id": self.turn_id, "fresh_session": True}
+        return {"turn_id": self.turn_id, "fresh_session": True,
+                **({"task_terminal_transport": SCHEMA} if terminal_socket else {})}
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
         if self.rpc is None or str(params.get("turn_id")) != self.turn_id:
             raise RuntimeError("interaction belongs to an inactive turn")
+        per_interaction = self.options.get("l2_per_interaction_limits") is True
+        if per_interaction:
+            if self._turn_deadline is not None and time.monotonic() >= self._turn_deadline:
+                return {
+                    "text": "", "actions": [], "tool_calls": [], "events": [], "usage": {},
+                    "actions_are_executed": True, "tool_calls_are_executed": True,
+                    "raw": {"limit_exhausted": True, "limit_reasons": ["episode_timeout"],
+                            "model_calls": 0, "tool_calls": 0, "limit_scope": "interaction"},
+                }
+            self._model_calls = 0
+            self._tool_calls = 0
+            self._limit_reason = None
+            self._abort_sent = False
         if self._model_calls >= self._max_model_calls:
             self._exhaust("max_model_calls")
         elif self._tool_calls >= self._max_tool_calls:
@@ -293,6 +392,8 @@ class PrimeAgentBridge:
             event_callback=self._observe_event,
             message=str(params.get("request", "")),
         )
+        if getattr(self.rpc, "prompt_timed_out", False):
+            self._limit_reason = "episode_timeout"
         last, _ = self._request("get_last_assistant_text")
         after, _ = self._request("get_session_stats")
         return {
@@ -308,10 +409,14 @@ class PrimeAgentBridge:
                 "limit_reasons": [self._limit_reason] if self._limit_reason else [],
                 "model_calls": self._model_calls,
                 "tool_calls": self._tool_calls,
+                **({"limit_scope": "interaction"} if per_interaction else {}),
             },
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
+        marker = getattr(self, "_task_terminal_marker", None)
+        if marker is not None:
+            marker.unlink(missing_ok=True)
         if self.rpc is None or str(params.get("turn_id")) != self.turn_id:
             raise RuntimeError("evolution belongs to an inactive turn")
         if not bool(params.get("update_enabled", True)):
@@ -515,11 +620,16 @@ class PrimeAgentBridge:
         if self.rpc is None:
             raise PrimeRpcError("Prime Agent RPC is not running")
         effective_deadline = deadline if deadline is not None else self._turn_deadline
+        if (deadline is None and command_type in {"get_last_assistant_text", "get_session_stats"}
+                and getattr(self.rpc, "prompt_timed_out", False)):
+            effective_deadline = self.rpc.collection_deadline
         if isinstance(self.rpc, PrimeRpcProcess):
             return self.rpc.request(
                 command_type,
                 deadline=effective_deadline,
                 event_callback=event_callback,
+                cancel_grace_seconds=(30.0 if command_type == "prompt"
+                                      and self.options.get("collect_episode_limit_reply") else 0),
                 **params,
             )
         result, events = self.rpc.request(command_type, **params)

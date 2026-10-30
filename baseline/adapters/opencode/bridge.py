@@ -65,10 +65,15 @@ class OpenCodeBridge:
         if self.workspace is None or self.state_dir is None:
             raise RuntimeError("flow has not started")
         self.turn_id = str(params["turn_id"])
+        from trievo_bench.task_terminal import SCHEMA, socket_from_metadata
+        self._task_terminal_socket = socket_from_metadata(params)
+        if self._task_terminal_socket:
+            self._turn_limits = dict(params["metadata"]["agent_limits"])
         return {
             "turn_id": self.turn_id,
             "fresh_session": False,
             "session_id": self.session_id,
+            **({"task_terminal_transport": SCHEMA} if self._task_terminal_socket else {}),
         }
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -77,7 +82,12 @@ class OpenCodeBridge:
         if str(params.get("turn_id")) != self.turn_id:
             raise RuntimeError("interaction belongs to an inactive turn")
 
-        completed = self._run_command(
+        v5 = bool(getattr(self, "_task_terminal_socket", None))
+        if v5:
+            from baseline.adapters.native_budget import begin
+            begin(self.state_dir / 'foreground-budget.json', self._turn_limits)
+        try:
+            completed = self._run_command(
             self._opencode_command(),
             input=str(params.get("request", "")),
             cwd=str(self.workspace),
@@ -86,9 +96,27 @@ class OpenCodeBridge:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=float(self.options.get("request_timeout_seconds", 1800)),
-        )
+                timeout=(float(self._turn_limits["episode_timeout_seconds"]) if v5 else
+                         float(self.options.get("request_timeout_seconds", 1800))),
+            )
+        except subprocess.TimeoutExpired as error:
+            if not v5:
+                raise
+            from baseline.adapters.native_budget import receipt
+            path = self.state_dir / 'foreground-budget.json'
+            value = receipt(path)
+            value['limit_reasons'].append('episode_timeout_seconds')
+            path.write_text(json.dumps(value))
+            def decode(value):
+                return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value or ''
+            completed = subprocess.CompletedProcess(self._opencode_command(), 124,
+                decode(error.stdout), decode(error.stderr))
         parsed = _parse_output(completed.stdout)
+        budget = {}
+        if v5:
+            from baseline.adapters.native_budget import receipt
+            budget = receipt(self.state_dir / 'foreground-budget.json')
+        exhausted = bool(budget.get('limit_reasons'))
         if parsed["session_id"]:
             received = str(parsed["session_id"])
             if self.session_id is not None and received != self.session_id:
@@ -97,12 +125,12 @@ class OpenCodeBridge:
                 )
             self.session_id = received
             self._save_session_id()
-        if completed.returncode != 0:
+        if completed.returncode != 0 and not exhausted:
             detail = parsed["error"] or completed.stderr.strip() or f"exit code {completed.returncode}"
             raise OpenCodeError(f"OpenCode request failed: {detail}")
         if self.session_id is None:
             raise OpenCodeError("OpenCode output did not identify the created session")
-        if parsed["error"]:
+        if parsed["error"] and not exhausted:
             raise OpenCodeError(f"OpenCode request failed: {parsed['error']}")
 
         return {
@@ -113,12 +141,15 @@ class OpenCodeBridge:
             "usage": parsed["usage"],
             "actions_are_executed": True,
             "tool_calls_are_executed": True,
-            "raw": {"session_id": self.session_id},
+            "raw": {"session_id": self.session_id, **({"native_budget": budget,
+                    "limit_exhausted": exhausted, "limit_reasons": budget['limit_reasons']} if v5 else {})},
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
         if str(params.get("turn_id")) != self.turn_id:
             raise RuntimeError("evolution belongs to an inactive turn")
+        if getattr(self, '_task_terminal_socket', None):
+            (self.state_dir / 'foreground-budget.json').unlink(missing_ok=True)
         reason = params.get("skip_reason") if not bool(params.get("update_enabled", True)) else None
         return {
             "completed": True,
@@ -139,7 +170,7 @@ class OpenCodeBridge:
         else:
             command = ["opencode"]
 
-        if bool(self.options.get("pure", True)):
+        if bool(self.options.get("pure", True)) and not getattr(self, "_task_terminal_socket", None):
             command.append("--pure")
         command.extend(["run", "--format", "json", "--dir", str(self.workspace)])
         if bool(self.options.get("auto_approve", True)):
@@ -198,6 +229,8 @@ class OpenCodeBridge:
                 "OPENCODE_CONFIG_CONTENT": json.dumps(self._config(), ensure_ascii=True),
             }
         )
+        if getattr(self, "_task_terminal_socket", None):
+            env['TRIEVO_NATIVE_BUDGET'] = str(self.state_dir / 'foreground-budget.json')
         api_key_env = str(self.options.get("api_key_env", "TRIEVO_API_KEY"))
         if env.get(api_key_env) and not env.get("OPENAI_API_KEY"):
             env["OPENAI_API_KEY"] = env[api_key_env]
@@ -240,7 +273,11 @@ class OpenCodeBridge:
                 }
             }
         extra = self.options.get("config")
-        return _merge(config, extra) if isinstance(extra, dict) else config
+        config = _merge(config, extra) if isinstance(extra, dict) else config
+        if getattr(self, "_task_terminal_socket", None):
+            config["shell"] = "/opt/trievo/task-shell"
+            config["plugin"] = ["file:///opt/trievo/baseline/adapters/opencode/task_budget.mjs"]
+        return config
 
     def _session_file(self) -> Path:
         if self.state_dir is None:

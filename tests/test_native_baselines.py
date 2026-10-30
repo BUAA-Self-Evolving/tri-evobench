@@ -13,7 +13,7 @@ import pytest
 
 from baseline.adapters.deepseek_harness.bridge import DeepSeekHarnessBridge, parse_events
 from baseline.adapters.zcode.bridge import ZCodeBridge, parse_output
-from trievo_bench.baselines.base import FlowContext
+from trievo_bench.baselines.base import FlowContext, InteractionContext
 from trievo_bench.baselines.manifest import find_manifest, load_manifest
 from trievo_bench.baselines.process import BaselineProtocolError, ProcessBaselineRuntime
 from trievo_bench.baselines.registry import resolve_baseline_selection
@@ -26,6 +26,29 @@ REPO = Path(__file__).resolve().parents[1]
 FIXTURE = REPO / "tests/fixtures/fake_native_agent.py"
 FakeHarness = runpy.run_path(str(FIXTURE))["FakeHarness"]
 BASELINES = ("deepseek-harness", "zcode")
+
+
+@pytest.mark.parametrize("baseline,expected", [("deepseek-harness", 960), ("zcode", 900)])
+def test_native_deadline_reply_transport_grace(tmp_path, monkeypatch, baseline, expected):
+    runtime = ProcessBaselineRuntime(local_manifest(baseline),
+                                     budget=TokenBudget(1000), repo_root=REPO)
+    runtime._current_turn = "t1"
+    runtime._current_turn_metadata = {"interaction_timeout_seconds": 900}
+    state = SimpleNamespace(snapshot=SimpleNamespace(files=[]))
+    monkeypatch.setattr(runtime, "_ensure_stable_state", lambda *a, **k: None)
+    monkeypatch.setattr(runtime, "_capture_state", lambda **k: state)
+    monkeypatch.setattr(runtime, "_with_current_semantic_state", lambda saved: saved)
+    calls = []
+    def request(method, params, timeout=None):
+        calls.append((method, timeout))
+        return {"text": "saved paid answer", "raw": {
+            "execution_error": {"type": "adapter_deadline", "provider_requests_replayed": 0}}}
+    monkeypatch.setattr(runtime, "_request", request)
+    reply = runtime.interact(InteractionContext("t1", 1, "task", [], {}, 1000))
+    assert calls == [("interact", expected)]
+    assert reply.text == "saved paid answer"
+    assert reply.raw["execution_error"]["provider_requests_replayed"] == 0
+    assert runtime._current_turn_metadata["interaction_timeout_seconds"] == 900
 
 
 @pytest.mark.parametrize("baseline", BASELINES)
@@ -186,6 +209,97 @@ def test_deepseek_failure_is_not_success(tmp_path):
     with pytest.raises(RuntimeError, match="max-tokens"):
         bridge.interact({"turn_id": "t1", "request": "task"})
     bridge.end_flow()
+
+
+def test_deepseek_native_token_limit_preserves_paid_attempt(tmp_path):
+    bridge = make_bridge(tmp_path, "deepseek-harness")
+    events = [
+        {"type": "assistant/attempt", "seq": 1, "data": {"usage": {
+            "inputTokens": 8, "outputTokens": 4096, "cacheReadTokens": 2}}},
+        {"type": "turn/end", "seq": 2, "data": {"reason": {"kind": "max-tokens"}}},
+    ]
+    calls = []
+    def run(*args, **kwargs):
+        calls.append(args)
+        return SimpleNamespace(finish_reason="max-tokens", final_response="partial",
+                               session_id="limited-session", events=events)
+    bridge.harness = SimpleNamespace(run=run, close=lambda: None)
+    reply = bridge.interact({"turn_id": "t1", "request": "task"})
+    assert reply["text"] == "partial"
+    assert reply["events"] == events
+    assert reply["usage"]["api_calls"] == 1
+    assert reply["usage"]["output_tokens"] == 4096
+    assert reply["raw"]["limit_reasons"] == ["max_output_tokens"]
+    assert len(calls) == 1
+    bridge.end_flow()
+
+
+def test_native_deadline_stops_waiting_without_replaying_or_claiming_limit(tmp_path, monkeypatch):
+    import threading
+    import time
+    stopped = threading.Event()
+    paid_events = [{"type": "assistant/message", "data": {
+        "usage": {"inputTokens": 10, "outputTokens": 4},
+        "content": [{"type": "text", "text": "saved answer"}]}}]
+    session = SimpleNamespace(id="durable-session")
+    calls = []
+    def run(prompt, on_notification):
+        calls.append(prompt)
+        on_notification(SimpleNamespace(method="session.event",
+            payload={"sessionId": session.id, "event": paid_events[0]}))
+        stopped.wait(2)
+        raise RuntimeError("closed")
+    session.run = run
+    bridge = make_bridge(tmp_path, "deepseek-harness")
+    bridge.harness_factory = None
+    bridge.harness = SimpleNamespace(start_session=lambda _: session, close=stopped.set)
+    bridge.turn_limits = {"episode_timeout_seconds": 0.02}
+    monkeypatch.setitem(sys.modules, "deepseek_harness.api", SimpleNamespace(final_response=lambda events: "saved answer"))
+    start = time.monotonic()
+    reply = bridge.interact({"turn_id": "t1", "request": "task"})
+    assert time.monotonic() - start < 1
+    assert calls and len(calls) == 1
+    assert reply["text"] == "saved answer" and reply["events"] == paid_events
+    assert reply["usage"]["total_tokens"] == 14
+    assert reply["raw"]["execution_error"]["type"] == "adapter_deadline"
+    assert not reply["raw"].get("limit_exhausted")
+    bridge.end_flow()
+
+
+def test_runner_native_limit_scores_only_affected_turn_and_continues(tmp_path):
+    manifest = local_manifest("deepseek-harness").raw
+    script = """
+from baseline.adapters.deepseek_harness.bridge import DeepSeekHarnessBridge
+from baseline.adapters.native_runtime import serve
+import runpy
+from types import SimpleNamespace
+Fake = runpy.run_path(%r)['FakeHarness']
+class Limited(Fake):
+    def run(self, prompt, session_id=None):
+        result = super().run(prompt, session_id=session_id)
+        if 'limited' in prompt:
+            result.finish_reason = 'max-tokens'
+            result.events.append({'type': 'turn/end', 'seq': 4, 'data': {'reason': {'kind': 'max-tokens'}}})
+        return result
+serve(DeepSeekHarnessBridge(Limited))
+""" % str(FIXTURE)
+    manifest["adapter"]["command"] = [sys.executable, "-c", script]
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest))
+    spec = BenchmarkSpec.from_dict({
+        "schema_version": "0.1", "run": {"max_total_tokens": 1000}, "sandbox": {"backend": "local"},
+        "flows": [{"id": "f", "turns": [
+            {"id": "t1", "request": "limited", "max_interactions": 3,
+             "verifier": {"type": "response_contains", "value": "done"}},
+            {"id": "t2", "request": "solve", "verifier": {"type": "response_contains", "value": "done"}},
+        ]}],
+    })
+    result = Runner(spec, output_dir=tmp_path / "out", baseline="deepseek-harness",
+                    baseline_manifest=str(path), fail_fast_infrastructure=True).run(spec.flows[0])
+    assert [turn["score"] for turn in result["turns"]] == [0.0, 1.0]
+    assert len(result["turns"][0]["interactions"]) == 1
+    assert result["turns"][0]["interactions"][0]["verifier_details"]["type"] == "work_limit"
+    assert result["token_budget"]["used"] == 40
 
 
 def test_zcode_config_credentials_and_same_turn_resume(tmp_path, monkeypatch):

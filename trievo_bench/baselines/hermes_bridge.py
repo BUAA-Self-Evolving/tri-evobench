@@ -4,6 +4,8 @@ import contextlib
 import functools
 import json
 import os
+import queue
+import subprocess
 import sys
 import threading
 import time
@@ -26,6 +28,11 @@ class HermesBridge:
         self._turn_evolved = False
         self._policy = "turn_boundary"
         self._review_timeout = 900.0
+        self._bounded_evolution_barrier = False
+        self._evolution_teardown_grace = 10.0
+        self._evolution_unusable = False
+        self._active_review_run: Any = None
+        self._evolution_phase = "idle"
         self._approval_policy = "session"
         self._thinking = ""
         self._last_usage: dict[str, float] = {}
@@ -38,6 +45,7 @@ class HermesBridge:
         self._is_taskstream_turn = False
         self._is_l1_life_turn = False
         self._l1_state: dict[str, Any] = {}
+        self._task_terminal_socket: str | None = None
 
     def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         handler = getattr(self, method, None)
@@ -60,6 +68,7 @@ class HermesBridge:
             self._policy = str(evolution.get("policy", "turn_boundary"))
             self._review_timeout = float(evolution.get("timeout_seconds", 900))
         if isinstance(options, dict):
+            self._bounded_evolution_barrier = options.get("bounded_evolution_barrier") is True
             self._approval_policy = str(options.get("approval_policy", "session"))
             self._thinking = str(options.get("thinking", "")).strip().lower()
         if self._policy not in {"turn_boundary", "native", "disabled"}:
@@ -100,8 +109,12 @@ class HermesBridge:
         }
 
     def start_turn(self, params: dict[str, Any]) -> dict[str, Any]:
+        if self._evolution_unusable:
+            raise RuntimeError("Hermes evolution did not quiesce; this runtime cannot start another Turn")
         if self._manager is None or self._workspace is None:
             raise RuntimeError("Hermes flow has not started")
+        from trievo_bench.task_terminal import SCHEMA, socket_from_metadata
+        self._task_terminal_socket = socket_from_metadata(params)
         if self._state is not None:
             if not self._turn_evolved:
                 raise RuntimeError(f"Hermes turn {self._turn_id} has not crossed the evolution barrier")
@@ -183,7 +196,8 @@ class HermesBridge:
         self._turn_id = str(params.get("turn_id", ""))
         self._turn_evolved = False
         self._last_usage = {}
-        return {"session_id": state.session_id, "fresh_session": True}
+        return {"session_id": state.session_id, "fresh_session": True,
+                **({"task_terminal_transport": SCHEMA} if self._task_terminal_socket else {})}
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
         state = self._require_turn(str(params.get("turn_id", "")))
@@ -268,10 +282,60 @@ class HermesBridge:
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
+        if not self._bounded_evolution_barrier:
+            return self._evolve_once(params)
+        self._require_turn(str(params.get("turn_id", "")))
+        if self._evolution_unusable:
+            raise RuntimeError("Hermes evolution runtime is unusable after an earlier timeout")
+        timeout = float(self._turn_limits.get("evolution_timeout_seconds", self._review_timeout))
+        deadline = time.monotonic() + timeout
+        results: queue.Queue[tuple[bool, Any]] = queue.Queue()
+        self._evolution_phase = "starting"
+        self._active_review_run = None
+
+        def work() -> None:
+            try:
+                result = self._evolve_once(params)
+            except Exception as error:
+                results.put((False, error))
+            else:
+                results.put((True, result))
+
+        worker = threading.Thread(target=work, daemon=True, name="trievo-evolution-barrier")
+        worker.start()
+        worker.join(max(0.0, deadline - time.monotonic()))
+        if worker.is_alive() or time.monotonic() > deadline:
+            self._evolution_unusable = True
+            self._turn_evolved = False
+            phase = self._evolution_phase
+
+            def cancel() -> None:
+                try:
+                    run = self._active_review_run
+                    review_agent = run.cancel() if run is not None else None
+                    if review_agent is not None:
+                        from agent.background_review import _interrupt_background_review
+                        _interrupt_background_review(review_agent)
+                except Exception:
+                    pass
+
+            threading.Thread(target=cancel, daemon=True, name="trievo-evolution-cancel").start()
+            worker.join(self._evolution_teardown_grace)
+            raise RuntimeError(
+                f"Hermes evolution barrier timed out during {phase} after {timeout:g}s; "
+                "learning state is uncommitted and this runtime cannot continue"
+            )
+        succeeded, result = results.get_nowait()
+        if not succeeded:
+            raise result
+        return result
+
+    def _evolve_once(self, params: dict[str, Any]) -> dict[str, Any]:
         state = self._require_turn(str(params.get("turn_id", "")))
         if self._turn_evolved:
             raise RuntimeError(f"Hermes turn {self._turn_id} was already evolved")
         agent = state.agent
+        self._evolution_phase = "usage_before"
         before_usage = self._background_review_usage(agent)
         events: list[dict[str, Any]] = []
 
@@ -285,12 +349,15 @@ class HermesBridge:
             evolution_timeout = float(
                 self._turn_limits.get("evolution_timeout_seconds", self._review_timeout)
             )
+            self._evolution_phase = "prepare_review"
             focus = self._build_review_focus(params)
             review_run, review_thread = self._spawn_turn_boundary_review(
                 agent,
                 messages_snapshot=list(state.history),
                 focus=focus,
             )
+            self._active_review_run = review_run
+            self._evolution_phase = "review_wait"
             # Hermes' request_done event is deliberately published as soon as
             # the provider-capable phase returns.  The worker can still be in
             # action summarisation or teardown at that point, and those paths
@@ -299,6 +366,7 @@ class HermesBridge:
             # interaction may begin until the whole review worker has exited.
             review_thread.join(timeout=evolution_timeout)
             if review_thread.is_alive():
+                self._evolution_phase = "cancel_review"
                 try:
                     review_agent = review_run.cancel()
                     if review_agent is not None:
@@ -316,6 +384,7 @@ class HermesBridge:
                     raise RuntimeError(
                         "Hermes background review remained live after evolution timeout"
                     )
+                self._evolution_phase = "usage_after_cancel"
                 after_usage = self._background_review_usage(agent)
                 self._turn_evolved = True
                 return {
@@ -334,6 +403,7 @@ class HermesBridge:
             max_calls = self._turn_limits.get("evolution_max_model_calls")
             review_calls = int(review_trace.get("api_calls", 0) or 0) if isinstance(review_trace, dict) else 0
             if (isinstance(review_trace, dict) and review_trace.get("error")) or (max_calls and review_calls >= max_calls):
+                self._evolution_phase = "usage_after_limit"
                 after_usage = self._background_review_usage(agent)
                 self._turn_evolved = True
                 reason = "evolution_error" if review_trace.get("error") else "evolution_max_model_calls"
@@ -360,6 +430,7 @@ class HermesBridge:
         else:
             events.append({"type": "evolution.skipped", "policy": self._policy})
 
+        self._evolution_phase = "usage_after"
         after_usage = self._background_review_usage(agent)
         self._turn_evolved = True
         return {
@@ -512,6 +583,36 @@ class HermesBridge:
         previous_terminal_timeout = os.environ.get("TERMINAL_TIMEOUT")
         previous_terminal_handler = terminal_tool.terminal_tool
         previous_memory_handler = memory_tool.memory_tool
+        local_environment = None
+        previous_run_bash = previous_temp_dir = None
+        if self._task_terminal_socket:
+            from tools.environments.local import LocalEnvironment
+            from tools.environments.base import _pipe_stdin
+            from trievo_bench.task_terminal import PUBLIC_DIRECTORY
+            local_environment = LocalEnvironment
+            previous_run_bash = LocalEnvironment._run_bash
+            previous_temp_dir = LocalEnvironment.get_temp_dir
+            terminal_socket = self._task_terminal_socket
+
+            def task_temp_dir(environment):
+                path = Path(PUBLIC_DIRECTORY) / "hermes-temp"
+                path.mkdir(exist_ok=True)
+                return str(path)
+
+            def task_bash(environment, cmd_string, *, login=False, timeout=120, stdin_data=None):
+                # Preserve Hermes' snapshot/cwd protocol and subprocess lifecycle.
+                # Both containers see the transient snapshot files in this volume.
+                proc = subprocess.Popen(
+                    [sys.executable, "/opt/trievo/trievo_bench/task_terminal.py", "shell",
+                     "--socket", terminal_socket, "--timeout", str(timeout), "-c", cmd_string],
+                    cwd=environment.cwd, text=True, encoding="utf-8", errors="replace",
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    stdin=subprocess.PIPE if stdin_data is not None else subprocess.DEVNULL,
+                    start_new_session=True,
+                )
+                if stdin_data is not None:
+                    _pipe_stdin(proc, stdin_data)
+                return proc
 
         def frozen_memory(*args: Any, **kwargs: Any) -> str:
             # Hermes routes built-in memory directly, bypassing the plugin
@@ -554,6 +655,9 @@ class HermesBridge:
         session_tokens = None
         clear_session_vars = None
         try:
+            if local_environment is not None:
+                local_environment._run_bash = task_bash
+                local_environment.get_temp_dir = task_temp_dir
             try:
                 from gateway.session_context import clear_session_vars as clear_vars
                 from gateway.session_context import set_session_vars
@@ -587,6 +691,9 @@ class HermesBridge:
                 )
             yield
         finally:
+            if local_environment is not None:
+                local_environment._run_bash = previous_run_bash
+                local_environment.get_temp_dir = previous_temp_dir
             if self._policy == "turn_boundary":
                 clear_thread_tool_whitelist()
                 agent.valid_tool_names = previous_valid_tool_names
@@ -922,10 +1029,12 @@ def _parse_l2_agent_limits(metadata: Any) -> dict[str, int]:
     raw = metadata.get("agent_limits", metadata.get("l2_agent_limits"))
     if not isinstance(raw, dict):
         return {}
+    from trievo_bench.task_terminal import SCHEMA
+    task_terminal = (metadata.get("task_sandbox") or {}).get("terminal_transport") == SCHEMA
     fields = {
         "max_model_calls": (2, 100),
         "max_tool_calls": (1, 100),
-        "terminal_timeout_seconds": (1, 600),
+        "terminal_timeout_seconds": (1, 3600 if task_terminal else 600),
         "episode_timeout_seconds": (30, 86400 if metadata.get("slow_provider") is True else 3600),
         "evolution_max_model_calls": (1, 16),
         "evolution_timeout_seconds": (10, 86400 if metadata.get("slow_provider") is True else 900),

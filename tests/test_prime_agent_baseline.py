@@ -79,6 +79,105 @@ class _LimitedPrimeRpc(_FakePrimeRpc):
 
 
 class PrimeAgentBaselineContractTest(unittest.TestCase):
+    def test_refine_response_is_terminal_despite_background_agent_events(self) -> None:
+        code = r'''
+import json, sys
+def emit(value): print(json.dumps(value), flush=True)
+for line in sys.stdin:
+    q = json.loads(line)
+    if q["type"] == "refine":
+        emit({"type": "agent_start"})
+        emit({"type": "agent_end"})
+        emit({"type": "refine_complete", "result": {"id": "saved-refinement"}})
+        emit({"id": q["id"], "type": "response", "success": True,
+              "data": {"id": "saved-refinement", "appliedEdits": [{"applied": True}]}})
+    else:
+        emit({"id": q["id"], "type": "response", "success": True,
+              "data": {"isStreaming": True, "isCompacting": False}})
+'''
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        try:
+            result, events = rpc.request("refine", instructions="once", deadline=time.monotonic() + 0.3)
+            self.assertEqual(result["id"], "saved-refinement")
+            self.assertEqual(events[-1]["type"], "refine_complete")
+            self.assertEqual(rpc._request_id, 1)
+        finally:
+            rpc.close()
+
+    def test_episode_deadline_collects_original_prefix_after_confirmed_cancel(self) -> None:
+        code = r'''
+import json, sys
+prompt_count = 0
+def emit(v): print(json.dumps(v), flush=True)
+for line in sys.stdin:
+    q = json.loads(line); kind=q["type"]; data={}
+    if kind == "prompt":
+        prompt_count += 1
+        assert prompt_count == 1
+        emit({"type":"agent_start"})
+        emit({"type":"tool_execution_end","toolName":"ipython","result":"original result"})
+        continue
+    if kind == "get_state": data={"isStreaming":False,"isCompacting":False}
+    if kind == "get_session_stats": data={"assistantMessages":prompt_count,"tokens":{"input":prompt_count*10,"output":prompt_count*2}}
+    if kind == "get_last_assistant_text": data={"text":"original prefix"}
+    emit({"id":q["id"],"type":"response","success":True,"data":data})
+'''
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        with tempfile.TemporaryDirectory() as tmp:
+            bridge = PrimeAgentBridge(rpc_factory=lambda command, env: rpc)
+            bridge.initialize({"protocol_version":"1.0", "options":{"collect_episode_limit_reply":True}})
+            bridge.start_flow({"workspace":tmp+"/workspace", "state_dir":tmp+"/state"})
+            try:
+                bridge.start_turn({"turn_id":"t1", "metadata":{"agent_limits":{"episode_timeout_seconds":0.15}}})
+                reply = bridge.interact({"turn_id":"t1", "request":"original request"})
+            finally:
+                rpc.close()
+        self.assertEqual(reply["text"], "original prefix")
+        self.assertTrue(reply["raw"]["limit_exhausted"])
+        self.assertEqual(reply["raw"]["limit_reasons"], ["episode_timeout"])
+        self.assertEqual(reply["usage"]["total_tokens"], 12)
+        self.assertEqual(len(reply["tool_calls"]), 1)
+
+    def test_cancel_grace_fails_closed_if_session_never_becomes_idle(self) -> None:
+        code = r'''
+import json, sys
+for line in sys.stdin:
+    q=json.loads(line)
+    if q["type"]=="prompt": continue
+    print(json.dumps({"id":q["id"],"type":"response","success":True,"data":{"isStreaming":True}}),flush=True)
+'''
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        try:
+            with self.assertRaisesRegex(PrimeRpcError,"absolute deadline"):
+                rpc.request("prompt",message="only once",deadline=time.monotonic()+0.05,cancel_grace_seconds=0.1)
+        finally:
+            rpc.close()
+
+    def test_budget_abort_ack_requires_idle_without_agent_end(self) -> None:
+        code = r'''
+import json, sys
+def emit(v): print(json.dumps(v), flush=True)
+p = json.loads(sys.stdin.readline())
+emit({"type":"agent_start"})
+emit({"type":"tool_execution_start", "toolName":"ipython"})
+a = json.loads(sys.stdin.readline())
+assert a["type"] == "abort"
+emit({"id":p["id"],"type":"response","success":True})
+emit({"id":a["id"],"type":"response","success":True})
+s = json.loads(sys.stdin.readline())
+assert s["type"] == "get_state"
+emit({"id":s["id"],"type":"response","success":True,"data":{"isStreaming":False,"isCompacting":False}})
+'''
+        rpc = PrimeRpcProcess([sys.executable, "-u", "-c", code], env=dict(os.environ))
+        try:
+            _, events = rpc.request(
+                "prompt", message="only once", deadline=time.monotonic() + 0.5,
+                event_callback=lambda event: rpc.abort() if event.get("type") == "tool_execution_start" else None,
+            )
+        finally:
+            rpc.close()
+        self.assertEqual([e["type"] for e in events], ["agent_start", "tool_execution_start"])
+
     def test_rpc_uses_authoritative_idle_state_across_retry_race(self) -> None:
         code = r'''
 import json, sys

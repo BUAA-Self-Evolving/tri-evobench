@@ -151,6 +151,7 @@ def main() -> None:
     parser.add_argument("--backend", choices=["local", "docker"], default="docker")
     parser.add_argument("--image", default="trievo-ubuntu:22.04")
     parser.add_argument("--baseline")
+    parser.add_argument("--condition", choices=["reset", "frozen", "evolving"], default=None)
     parser.add_argument("--baseline-config")
     parser.add_argument("--max-total-tokens", type=int, default=3_000_000)
     parser.add_argument("--resume-checkpoint", help="post-turn checkpoint directory; rerun only subsequent turns")
@@ -159,7 +160,12 @@ def main() -> None:
         print(json.dumps(inspect_l1_arena(args.package), ensure_ascii=False, indent=2))
         return
     spec = load_l1_arena_stream(args.package, args.stream, [x.strip() for x in args.turns.split(",") if x.strip()], args.backend, args.image)
-    result = Runner(spec, output_dir=Path(args.output), backend=args.backend, image=args.image, agent_mode=None if args.baseline else "openai_compatible", judge_mode="deterministic", baseline=args.baseline, baseline_config=load_mapping(args.baseline_config) if args.baseline_config else None, max_total_tokens=args.max_total_tokens, resume_checkpoint=Path(args.resume_checkpoint) if args.resume_checkpoint else None, fail_fast_infrastructure=True).run(spec.flows[0])
+    baseline_config = load_mapping(args.baseline_config) if args.baseline_config else None
+    if args.baseline == "deepseek-harness" and baseline_config:
+        output_cap = int(baseline_config.get("options", {}).get("max_output_tokens", 4096))
+        for turn in spec.flows[0].turns:
+            turn.metadata["public"]["agent_limits"]["max_output_tokens"] = output_cap
+    result = Runner(spec, output_dir=Path(args.output), backend=args.backend, image=args.image, agent_mode=None if args.baseline else "openai_compatible", judge_mode="deterministic", baseline=args.baseline, baseline_config=baseline_config, max_total_tokens=args.max_total_tokens, resume_checkpoint=Path(args.resume_checkpoint) if args.resume_checkpoint else None, fail_fast_infrastructure=True, condition=args.condition).run(spec.flows[0])
     print(json.dumps({"flow_id": result["flow_id"], "metrics": result["metrics"], "token_budget": result["token_budget"]}, ensure_ascii=False))
 
 

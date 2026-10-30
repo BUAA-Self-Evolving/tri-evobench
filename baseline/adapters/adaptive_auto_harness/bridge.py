@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any, Callable
@@ -26,6 +27,15 @@ class _Completion:
     tool_calls: list[dict[str, Any]]
     usage: dict[str, Any]
     finish_reason: str = "stop"
+    reasoning_text: str = ""
+
+
+class EvolutionProposalError(ValueError):
+    """A returned learning completion cannot be applied as a JSON proposal."""
+
+    def __init__(self, message: str, usage: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.usage = dict(usage)
 
 
 @dataclass
@@ -58,9 +68,17 @@ class OpenAIChatBackend:
             or ""
         ).strip()
         self.client = OpenAI(api_key=api_key, base_url=base_url or None)
+        self.bounded_requests = bool(options.get("bounded_model_requests", False))
+        self.request_timeout = float(options.get(f"{prefix}request_timeout_seconds", 120))
+        if self.request_timeout <= 0:
+            raise ValueError("request timeout must be positive")
+        self.deadline: float | None = None
         self.temperature = float(options.get(f"{prefix}temperature", options.get("temperature", 0.0)))
         self.max_tokens = int(options.get(f"{prefix}max_tokens", options.get("max_output_tokens", 4096)))
         self.thinking = str(options.get(f"{prefix}thinking") or options.get("thinking") or os.getenv("TRIEVO_THINKING", "")).strip().lower()
+
+    def set_deadline(self, deadline: float) -> None:
+        self.deadline = deadline
 
     def complete(self, messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None = None) -> _Completion:
         kwargs: dict[str, Any] = {
@@ -74,7 +92,18 @@ class OpenAIChatBackend:
             kwargs["tool_choice"] = "auto"
         if self.thinking in {"enabled", "disabled"}:
             kwargs["extra_body"] = {"thinking": {"type": self.thinking}}
-        response = self.client.chat.completions.create(**kwargs)
+        client = self.client
+        if self.bounded_requests:
+            remaining = self.request_timeout
+            if self.deadline is not None:
+                remaining = min(remaining, self.deadline - time.monotonic())
+            if remaining <= 0:
+                raise TimeoutError("Adaptive model request exceeded episode deadline before dispatch")
+            # The old backend silently ignored configured request timeouts.
+            # Bound each new request and leave errored-cell retries to the
+            # matrix's separate pass rather than retrying an unknown dispatch.
+            client = client.with_options(timeout=remaining, max_retries=0)
+        response = client.chat.completions.create(**kwargs)
         choices = getattr(response, "choices", None) or []
         if not choices:
             status = getattr(response, "status", None)
@@ -108,6 +137,7 @@ class OpenAIChatBackend:
                 "api_calls": 1,
             },
             finish_reason=str(choice.finish_reason or "stop"),
+            reasoning_text=str(getattr(message, "reasoning_content", "") or ""),
         )
 
 
@@ -125,6 +155,7 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
         self.backend = backend
         self.options = options
         self.last_usage: dict[str, Any] = {}
+        self.last_limit_reason: str | None = None
         if _BaseAgent.__module__.startswith("agent_evolve"):
             super().__init__(workspace_dir)
         else:
@@ -149,7 +180,20 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
         total_usage: dict[str, Any] = {}
         final_text = ""
         max_steps = max(1, int(self.options.get("max_steps", 24)))
+        limits = self.options.get("_turn_limits") or {}
+        if limits:
+            max_steps = min(max_steps, int(limits["max_model_calls"]))
+        max_tools = int(limits.get("max_tool_calls", 100000))
+        deadline = time.monotonic() + float(limits.get("episode_timeout_seconds", 86400))
+        if self.options.get("bounded_model_requests", False):
+            setter = getattr(self.backend, "set_deadline", None)
+            if setter is not None:
+                setter(deadline - min(2.0, float(limits.get("episode_timeout_seconds", 86400)) / 10))
+        self.last_limit_reason = None
         for _ in range(max_steps):
+            if time.monotonic() >= deadline:
+                self.last_limit_reason = "episode_timeout_seconds"
+                break
             completion = self.backend.complete(messages, _TASK_TOOLS)
             _add_usage(total_usage, completion.usage)
             if completion.text:
@@ -171,6 +215,9 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
             if not completion.tool_calls:
                 break
             for call in completion.tool_calls:
+                if len(steps) >= max_tools or time.monotonic() >= deadline:
+                    self.last_limit_reason = "max_tool_calls" if len(steps) >= max_tools else "episode_timeout_seconds"
+                    break
                 result = self._execute_tool(call["name"], call["arguments"])
                 steps.append(
                     {
@@ -186,6 +233,11 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
                         "content": result,
                     }
                 )
+            if self.last_limit_reason:
+                break
+        else:
+            if limits and completion.tool_calls:
+                self.last_limit_reason = "max_model_calls"
         self.last_usage = total_usage
         return {"task_id": task_id, "output": final_text, "steps": steps, "conversation": messages}
 
@@ -211,8 +263,16 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
             return f"ERROR: unknown tool {name}"
         command = str(arguments.get("command", ""))
         timeout = max(1.0, float(self.options.get("tool_timeout", 120)))
+        if self.options.get("_turn_limits"):
+            timeout = min(timeout, self.options["_turn_limits"]["terminal_timeout_seconds"])
         try:
-            result = subprocess.run(
+            if self.options.get("_task_terminal_socket"):
+                from trievo_bench.task_terminal import run_command
+                remote = run_command(self.options["_task_terminal_socket"], command,
+                                     cwd=str(self.task_workspace), timeout_seconds=timeout)
+                result = subprocess.CompletedProcess([], remote["returncode"], remote["stdout"], remote["stderr"])
+            else:
+                result = subprocess.run(
                 ["bash", "-lc", command],
                 cwd=self.task_workspace,
                 capture_output=True,
@@ -221,7 +281,7 @@ class AdaptiveWorkspaceAgent(_BaseAgent):
                 errors="replace",
                 timeout=timeout,
                 env={**os.environ, "HOME": str(self.task_workspace)},
-            )
+                )
             output = (result.stdout or "") + (result.stderr or "")
             if not output.strip():
                 output = f"(exit code {result.returncode}; no output)"
@@ -272,9 +332,16 @@ class AdaptiveAutoHarnessBridge:
         if self.workspace is None or self.state_dir is None:
             raise RuntimeError("flow has not started")
         self.turn_id = str(params["turn_id"])
+        from trievo_bench.task_terminal import SCHEMA, socket_from_metadata
+        terminal_socket = socket_from_metadata(params)
+        agent_options = dict(self.options)
+        if terminal_socket:
+            agent_options.update(_task_terminal_socket=terminal_socket,
+                                 _turn_limits=params["metadata"]["agent_limits"])
         backend = self._backend_factory(self.options, "interaction")
-        self.agent = AdaptiveWorkspaceAgent(self.state_dir, self.workspace, backend, self.options)
-        return {"turn_id": self.turn_id, "fresh_session": True}
+        self.agent = AdaptiveWorkspaceAgent(self.state_dir, self.workspace, backend, agent_options)
+        return {"turn_id": self.turn_id, "fresh_session": True,
+                **({"task_terminal_transport": SCHEMA} if terminal_socket else {})}
 
     def interact(self, params: dict[str, Any]) -> dict[str, Any]:
         if self.agent is None or str(params.get("turn_id")) != self.turn_id:
@@ -291,6 +358,8 @@ class AdaptiveAutoHarnessBridge:
             "usage": self.agent.last_usage,
             "actions_are_executed": True,
             "tool_calls_are_executed": True,
+            **({"raw": {"limit_exhausted": True, "limit_reasons": [self.agent.last_limit_reason]}}
+               if self.agent.last_limit_reason else {}),
         }
 
     def evolve(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -311,12 +380,21 @@ class AdaptiveAutoHarnessBridge:
 
         public_context = _public_evolution_context(params)
         backend = self._backend_factory(self.options, "evolution")
-        result, changed = _run_native_evolution(
-            self.state_dir,
-            public_context,
-            backend,
-            self.options,
-        )
+        try:
+            result, changed = _run_native_evolution(
+                self.state_dir, public_context, backend, self.options,
+            )
+        except EvolutionProposalError as exc:
+            if not self.options.get("recoverable_evolution_proposal_errors", False):
+                raise
+            # The host records this bounded failed learning pass, preserves its
+            # evidence and rolls back state. Never repair or request it again.
+            return {
+                "completed": False,
+                "recoverable_failure": True,
+                "events": [{"type": "evolution.proposal_rejected", "reason": str(exc)}],
+                "usage": exc.usage,
+            }
         history_dir = self.state_dir / "evolution" / "history"
         history_dir.mkdir(parents=True, exist_ok=True)
         record = {
@@ -422,7 +500,24 @@ def _run_native_evolution(
                     {"role": "user", "content": proposal_prompt},
                 ]
             )
-            proposal = _extract_json_object(completion.text)
+            if options.get("preserve_evolution_completions", False):
+                evidence = state_dir / "evolution" / "history" / "completions"
+                evidence.mkdir(parents=True, exist_ok=True)
+                path = evidence / f"{_safe_name(str(public_context.get('turn_id', 'turn')))}-{time.time_ns()}.json"
+                with path.open("x", encoding="utf-8") as handle:
+                    json.dump({
+                        "schema": "trievo_evolution_completion/1.0",
+                        "turn_id": str(public_context.get("turn_id", "")),
+                        "text": completion.text,
+                        "reasoning_text": completion.reasoning_text,
+                        "finish_reason": completion.finish_reason,
+                        "usage": completion.usage,
+                    }, handle, ensure_ascii=False, indent=2)
+                    handle.write("\n")
+            try:
+                proposal = _extract_json_object(completion.text)
+            except ValueError as exc:
+                raise EvolutionProposalError(str(exc), completion.usage) from exc
             changed.extend(_apply_proposal(Path(workspace_root), proposal, config))
             return {"content": str(proposal.get("summary", "")), "usage": completion.usage}
 

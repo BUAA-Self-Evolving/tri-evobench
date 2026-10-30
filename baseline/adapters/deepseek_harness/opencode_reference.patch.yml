@@ -1,0 +1,11 @@
+# Match the terminal timeout actually configured in the prior OpenCode run.
+# This supported invocation overlay leaves the pinned DSH source unchanged.
+- insert:
+    - id: trievo-sdk-durable-session
+      name: /opt/trievo/baseline/adapters/deepseek_harness/session_resume.mjs
+- id: terminal-bash
+  config:
+    timeoutMs: 90000
+- id: persistent-bash
+  config:
+    timeoutMs: 90000

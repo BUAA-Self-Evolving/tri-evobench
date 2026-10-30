@@ -13,6 +13,10 @@ from typing import Iterable, Mapping, Sequence
 
 
 AGGREGATION_PROFILE = "l2_evolution_aggregation/1.1"
+V5_AGGREGATION_PROFILE = "l2_evolution_aggregation/1.2"
+V5_BINDING_FIELDS = (
+    "pool_id", "pool_manifest_sha256", "package_manifest_sha256", "runtime_profiles_sha256",
+)
 CONDITIONS = ("reset", "frozen", "evolving")
 LEARNING_CURVE_BIN_SIZE = 10
 SEQUENCE_ROLES = frozenset({"learning", "application", "probe", "replay", "noise"})
@@ -41,6 +45,8 @@ def aggregate_matched_runs(
     if not isinstance(bin_size, int) or isinstance(bin_size, bool) or bin_size < 1:
         raise ValueError("bin_size must be a positive integer")
 
+    records = list(records)
+    v5_binding = _validate_v5_binding(records)
     grouped: dict[str, dict[str, list[dict[str, object]]]] = {
         condition: defaultdict(list) for condition in CONDITIONS
     }
@@ -62,7 +68,8 @@ def aggregate_matched_runs(
     }
 
     return {
-        "aggregation_profile": AGGREGATION_PROFILE,
+        "aggregation_profile": V5_AGGREGATION_PROFILE if v5_binding else AGGREGATION_PROFILE,
+        **v5_binding,
         "panel_id": panel_id,
         "panel_manifest_sha256": panel_manifest_sha256,
         "allows_cross_panel_aggregation": False if panel_id else None,
@@ -82,6 +89,36 @@ def aggregate_matched_runs(
             ),
         },
     }
+
+
+def _validate_v5_binding(records: Sequence[Mapping[str, object]]) -> dict[str, object]:
+    """V5 retains the numerical contract and adds pool/package/profile identity."""
+    if not any(any(field in row for field in V5_BINDING_FIELDS) for row in records):
+        return {}
+    identities = set()
+    turns: dict[tuple[object, object], tuple[object, ...]] = {}
+    for row in records:
+        values = tuple(row.get(field) for field in V5_BINDING_FIELDS)
+        if any(not isinstance(value, str) or not value for value in values):
+            raise ValueError("V5 aggregation requires complete pool/package/profile binding")
+        for value in values[1:]:
+            if len(value) != 64 or any(c not in "0123456789abcdef" for c in value):
+                raise ValueError("V5 binding digests must be lowercase SHA-256")
+        identities.add(values)
+        if not row.get("panel_id") or not row.get("panel_manifest_sha256"):
+            raise ValueError("V5 aggregation requires panel binding")
+        identity = tuple(row.get(field) for field in (
+            "source_task_id", "runtime_profile_id", "runtime_profile_digest", "effective_work_limits_digest",
+        ))
+        if any(not isinstance(value, str) or not value for value in identity):
+            raise ValueError("V5 Turn requires source, runtime profile and budget identity")
+        key = (row.get("stream_id"), row.get("turn_id"))
+        if key in turns and turns[key] != identity:
+            raise ValueError("V5 conditions have different source/profile/budget identity")
+        turns[key] = identity
+    if len(identities) != 1:
+        raise ValueError("V5 aggregation cannot mix pools, packages or runtime profiles")
+    return {**dict(zip(V5_BINDING_FIELDS, next(iter(identities)))), "allows_cross_pool_aggregation": False}
 
 
 def aggregate_reference_runs(records: Iterable[Mapping[str, object]]) -> dict[str, object]:

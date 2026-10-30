@@ -1,0 +1,11 @@
+- id: terminal-bash
+  config:
+    shellPath: /opt/trievo/task-shell
+    shellArgs: [--pty]
+    timeoutMs: !!js Number(process.env.TRIEVO_TASK_TERMINAL_TIMEOUT_MS)
+- id: persistent-bash
+  config:
+    timeoutMs: !!js Number(process.env.TRIEVO_TASK_TERMINAL_TIMEOUT_MS)
+- insert:
+    - id: trievo-v5-native-budget
+      name: /opt/trievo/baseline/adapters/deepseek_harness/task_budget.mjs
